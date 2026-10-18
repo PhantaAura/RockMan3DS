@@ -443,6 +443,20 @@ public:
     RuntimeCheckpoint make_checkpoint(uint32_t checkpoint_id) const;
     void restore_checkpoint(const RuntimeCheckpoint& checkpoint);
 
+    // 0.0.15.0: when the source-backed combat owner (ChildRuntime Buster pool,
+    // imported-actor hit/defeat) drives gameplay, the historical candidate
+    // projectile and candidate lock-on must not run in parallel. Disabling it
+    // drops queued candidate projectiles and any candidate lock. Host sessions
+    // keep the candidate path enabled by default for existing regressions.
+    void set_candidate_combat_enabled(bool enabled) noexcept {
+        candidate_combat_enabled_=enabled;
+        if(!enabled){projectiles_.clear();locked_target_index_.reset();}
+    }
+    bool candidate_combat_enabled() const noexcept { return candidate_combat_enabled_; }
+    // Source player fields consulted before any Buster producer is admitted.
+    bool player_shot_enabled() const noexcept { return l3_pl00_shot_is_enabled(&player_)!=0; }
+    bool player_busy_8004324c() const noexcept { return l3_pl00_state_busy_8004324c(&player_)!=0; }
+
     RuntimeCombatTuning& combat_tuning() { return combat_tuning_; }
     const RuntimeCombatTuning& combat_tuning() const { return combat_tuning_; }
 
@@ -561,6 +575,7 @@ private:
     uint32_t next_projectile_serial_=1;
     std::optional<size_t> locked_target_index_;
     RuntimeCombatTuning combat_tuning_{};
+    bool candidate_combat_enabled_=true;
     RuntimeCameraState camera_{};
     RuntimeDialogueState dialogue_{};
     std::optional<MmlMessageRuntimeCursor> dialogue_cursor_;

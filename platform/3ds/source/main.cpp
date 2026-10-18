@@ -1,4 +1,5 @@
 #include "checkpoint_version.h"
+#include "legends3ds/gameplay_gates.h"
 #include <3ds.h>
 #include <citro3d.h>
 #include <algorithm>
@@ -294,6 +295,36 @@ void require_gpu_idle_for_release() {
         throw std::runtime_error("refusing to release GPU resources before queue completion");
 }
 
+// 0.0.15.0 gameplay profile. Missing gate files use the profile default
+// (source-backed combat ON); explicit files still win; malformed files fail
+// closed. gameplay_profile.ini SOURCE_COMBAT_DEFAULT=0 restores the historical
+// all-OFF defaults for A/B comparison. See include/legends3ds/gameplay_gates.h.
+static l3::GateFileState g_gameplay_profile=l3::GateFileState::Absent;
+static l3::GameplayGateDefaults g_gameplay_defaults{};
+l3::GateFileState read_gate_file(const char* path,const char* key) {
+    FILE* file=std::fopen(path,"rb");
+    if(!file)return l3::GateFileState::Absent;
+    char data[65]{};const size_t n=std::fread(data,1,sizeof(data)-1,file);
+    const bool invalid=std::ferror(file)!=0||!std::feof(file);
+    std::fclose(file);
+    if(invalid)return l3::GateFileState::Malformed;
+    return l3::parse_gate_file(data,n,key);
+}
+bool load_default_gate(const char* path,const char* key,bool default_on) {
+    const auto state=read_gate_file(path,key);
+    if(state==l3::GateFileState::Malformed){
+        char label[160];std::snprintf(label,sizeof(label),"%s file rejected; gate OFF",key);
+        boot_log(MML_BOOT_DATA,label);
+    }
+    return l3::resolve_gate(state,default_on);
+}
+void load_gameplay_profile() {
+    g_gameplay_profile=read_gate_file("sdmc:/3ds/Legends3DS/gameplay_profile.ini",l3::kGameplayProfileKey);
+    g_gameplay_defaults=l3::gameplay_gate_defaults(g_gameplay_profile);
+    boot_log(MML_BOOT_DATA,g_gameplay_defaults.source_actor_proxy
+        ?"GAMEPLAY_PROFILE=SOURCE_COMBAT_DEFAULT actor_state/proxy/textures/rng default ON; candidate projectile retired when active"
+        :"GAMEPLAY_PROFILE=HISTORICAL_DEFAULTS all source combat gates default OFF");
+}
 void load_actor_animation_gate() {
     FILE* file=std::fopen("sdmc:/3ds/Legends3DS/actor_animation_01415.cfg","rb");
     if(file){
@@ -314,39 +345,24 @@ void load_actor_animation_gate() {
 
 bool actor_state_fields_requested() { return g_actor_state_fields && use_uv_renderer(); }
 void load_actor_state_gate() {
-    FILE* file=std::fopen("sdmc:/3ds/Legends3DS/actor_state_01418.cfg","rb");
-    if(file){
-        char data[65]{};const size_t n=std::fread(data,1,sizeof(data)-1,file);
-        const bool invalid=n==0||std::ferror(file)!=0||!std::feof(file);
-        std::fclose(file);unsigned enabled=0;char trailing=0;
-        g_actor_state_fields=!invalid&&
-            std::sscanf(data,"ACTOR_STATE_FIELDS=%u %c",&enabled,&trailing)==1&&enabled==1;
-        if(!g_actor_state_fields)boot_log(MML_BOOT_DATA,"actor state-field diagnostic file rejected");
-    }
+    g_actor_state_fields=load_default_gate("sdmc:/3ds/Legends3DS/actor_state_01418.cfg",
+        "ACTOR_STATE_FIELDS",g_gameplay_defaults.actor_state_fields);
     boot_log(MML_BOOT_DATA,actor_state_fields_requested()
         ? "ACTOR_STATE_FIELDS=1 STATE1_FIELDS_ONLY BIOS_RNG=UNKNOWN outer_consumers=PARTIAL cadence=CANDIDATE full_AI=false"
         : "ACTOR_STATE_FIELDS=0 full_AI=false");
 }
 void load_actor_rng_candidate_gate() {
     char data[64]{};unsigned enabled=0;char trailing=0;
-    if(FILE* file=std::fopen("sdmc:/3ds/Legends3DS/actor_rng.ini","rb")) {
-        const auto n=std::fread(data,1,sizeof(data)-1,file);
-        const bool invalid=n==0||std::ferror(file)!=0||!std::feof(file);
-        std::fclose(file);
-        g_actor_rng_candidate=!invalid&&std::sscanf(data,"ACTOR_RNG_CANDIDATE=%u %c",&enabled,&trailing)==1&&enabled==1;
-    }
+    g_actor_rng_candidate=load_default_gate("sdmc:/3ds/Legends3DS/actor_rng.ini",
+        "ACTOR_RNG_CANDIDATE",g_gameplay_defaults.actor_rng_candidate);
     if(FILE* file=std::fopen("sdmc:/3ds/Legends3DS/source_event.ini","rb")) {
         std::memset(data,0,sizeof(data));enabled=0;
         const auto n=std::fread(data,1,sizeof(data)-1,file);
         const bool invalid=n==0||std::ferror(file)!=0||!std::feof(file);std::fclose(file);
         g_source_event_boot=!invalid&&std::sscanf(data,"SOURCE_EVENT_BOOT=%u %c",&enabled,&trailing)==1&&enabled==1;
     }
-    if(FILE* file=std::fopen("sdmc:/3ds/Legends3DS/source_actor_proxy.ini","rb")) {
-        std::memset(data,0,sizeof(data));enabled=0;
-        const auto n=std::fread(data,1,sizeof(data)-1,file);
-        const bool invalid=n==0||std::ferror(file)!=0||!std::feof(file);std::fclose(file);
-        g_source_actor_proxy=!invalid&&std::sscanf(data,"SOURCE_ACTOR_PROXY=%u %c",&enabled,&trailing)==1&&enabled==1;
-    }
+    g_source_actor_proxy=load_default_gate("sdmc:/3ds/Legends3DS/source_actor_proxy.ini",
+        "SOURCE_ACTOR_PROXY",g_gameplay_defaults.source_actor_proxy);
     if(FILE* file=std::fopen("sdmc:/3ds/Legends3DS/source_scene_e0.ini","rb")) {
         std::memset(data,0,sizeof(data));enabled=0;
         const auto n=std::fread(data,1,sizeof(data)-1,file);
@@ -403,15 +419,8 @@ void prepare_actor_animation_banks(l3::ActorAreaRuntime& actors,const l3::EbdDir
 
 bool actor_textures_requested() { return g_actor_textures&&use_uv_renderer(); }
 void load_actor_texture_gate() {
-    FILE* file=std::fopen("sdmc:/3ds/Legends3DS/actor_render_01416.cfg","rb");
-    if(file){
-        char data[65]{};const size_t n=std::fread(data,1,sizeof(data)-1,file);
-        const bool invalid=n==0||std::ferror(file)!=0||!std::feof(file);
-        std::fclose(file);
-        unsigned enabled=0;char trailing=0;
-        g_actor_textures=!invalid&&std::sscanf(data,"ACTOR_TEXTURES=%u %c",&enabled,&trailing)==1&&enabled==1;
-        if(!g_actor_textures)boot_log(MML_BOOT_DATA,"actor texture diagnostic file rejected");
-    }
+    g_actor_textures=load_default_gate("sdmc:/3ds/Legends3DS/actor_render_01416.cfg",
+        "ACTOR_TEXTURES",g_gameplay_defaults.actor_textures);
     char label[200];std::snprintf(label,sizeof(label),
         "ACTOR_TEXTURES=%u owner_only=1 material=SOURCE_BACKED_PARTIAL shade=UNKNOWN modulation=WHITE_UNLIT_DIAGNOSTIC alpha=UNKNOWN",
         unsigned(actor_textures_requested()));
@@ -1424,6 +1433,30 @@ void draw_projectiles_uv(const l3::RuntimeSession& session) {
     C3D_ImmDrawEnd();
 }
 
+// Native presentation of the live source Buster collision segment (record
+// +2C/+30 owner point to +14/+18 endpoint) during callback state 1. This is a
+// FRONTEND_DIAGNOSTIC ribbon: the original shot sprite/effect renderer is not
+// ported, and the +400/+418 endpoint owner is still a CANDIDATE forward ray.
+size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
+    const auto& pool=children.buster_pool();
+    const auto s16=[](const l3::SourceBusterWork& w,size_t o){return float(int16_t(uint16_t(w[o]|(uint16_t(w[o+1])<<8))));};
+    size_t drawn=0;
+    for(size_t slot=0;slot<l3::source_buster_capacity;++slot){
+        if(!(pool.allocated_800989f0&(0x80000000u>>slot)))continue;
+        const auto& w=pool.slots[slot];
+        if(!(int8_t(w[0])&w[6]&1)||w[2]!=0x80||w[8]!=1)continue;
+        if(!drawn){configure_texenv_uv(false);configure_immediate_attributes_uv();++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);}
+        const float ax=s16(w,0x2c),ay=s16(w,0x2e),az=s16(w,0x30);
+        const float bx=s16(w,0x14),by=s16(w,0x16),bz=s16(w,0x18);
+        constexpr float h=6.0f;
+        send_immediate_uv(ax,ay-h,az,1.0f,0.95f,0.3f);send_immediate_uv(bx,by-h,bz,1.0f,0.95f,0.3f);send_immediate_uv(bx,by+h,bz,1.0f,1.0f,0.6f);
+        send_immediate_uv(ax,ay-h,az,1.0f,0.95f,0.3f);send_immediate_uv(bx,by+h,bz,1.0f,1.0f,0.6f);send_immediate_uv(ax,ay+h,az,1.0f,1.0f,0.6f);
+        ++drawn;
+    }
+    if(drawn)C3D_ImmDrawEnd();
+    return drawn;
+}
+
 void draw_terrain() {
     if (!use_uv_renderer()) {
         configure_texenv_0143();
@@ -1704,6 +1737,7 @@ int main() {
     }
     if(!MML_CHECKPOINT_DISPLAY_TEST &&
        !hardware_test_launch(g_renderer_gate,g_terrain_xyz_candidate)){gfxExit();return 0;}
+    load_gameplay_profile();
     load_actor_animation_gate();
     load_actor_state_gate();
     load_actor_rng_candidate_gate();
@@ -1946,6 +1980,15 @@ int main() {
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
         session.set_reference_tables(refs);
+        // 0.0.15.0: one combat owner. When the source actor/Buster path is active
+        // (enhanced renderer + ACTOR_STATE_FIELDS + SOURCE_ACTOR_PROXY) the
+        // historical candidate projectile and candidate lock-on are retired. The
+        // 0143 safe path keeps the historical candidate behavior unchanged.
+        const bool source_combat_active=g_source_actor_proxy&&actor_state_fields_requested();
+        session.set_candidate_combat_enabled(!source_combat_active);
+        boot_log(MML_BOOT_DATA,source_combat_active
+            ?"COMBAT_OWNER=SOURCE Buster80035724/800433C0 hit/defeat; candidate projectile+lock-on retired; lock-on80034EB8 camera owner UNKNOWN"
+            :"COMBAT_OWNER=CANDIDATE historical projectile path (source combat inactive)");
         for(size_t i=1;i<areas.size();++i) session.register_area(i,std::move(areas[i]));
         std::vector<l3::TutorialRuntimeArea>().swap(areas);
         const auto& map = session.active_map();
@@ -2496,7 +2539,8 @@ int main() {
                 // Y is only the native frontend edge. The original animation
                 // callback which later asserts player+174 bits10/20 remains
                 // untraced, so this admission is CANDIDATE and is logged below.
-                const bool source_buster_fire_pressed=g_source_actor_proxy&&in.fire_pressed;
+                const bool source_buster_fire_pressed=l3::source_buster_fire_admitted(
+                    g_source_actor_proxy,in.fire_pressed,session.player_shot_enabled(),session.player_busy_8004324c());
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
                 if(session.source_event_result().random_callback_consumed_count&&g_actor_rng.admitted()&&!g_source_scene_rng_replay)
                     hardware_test_trace("# source_event_rng_candidate,frame=%lu,calls=%u,ordinal_after=%llu,scope=SHARED_OPENBIOS_CANDIDATE,retail_chronology=false",
@@ -3140,6 +3184,7 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)submitted,unsigned(source_camera_bound));
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){if(use_uv_renderer())draw_projectiles_uv(session);else draw_projectiles_0143(session);}
+            if(source_combat_active&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All)(void)draw_source_busters_uv(g_children);
             const auto scene_overlay=g_source_event_boot&&g_hardware_scene_draw==HardwareSceneDraw::All?session.source_event_scene_overlay():std::nullopt;
             const bool scene_overlay_submitted=scene_overlay&&scene_overlay->subtract_from_scene&&
                 scene_overlay->source_function==0x80100614u&&

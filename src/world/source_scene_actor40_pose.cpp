@@ -63,7 +63,7 @@ SourceSceneActor40IntegerPose produce_source_scene_actor40_integer_pose_8003346c
     if(!refs)return hold(Status::NeedsReference);
     if(!shift)return hold(Status::NeedsScratchShift);
     if(*shift>2)return hold(Status::UnsupportedScratchShift);
-    for(const auto window:{std::pair<size_t,size_t>{1,2},{6,1},{20,6},{86,2},{172,1},{248,96},{344,6}})
+    for(const auto& window:{std::pair<size_t,size_t>{1,2},{6,1},{20,6},{86,2},{172,1},{248,96},{344,6}})
         if(!known(w,window.first,window.second))return hold(Status::NeedsWorkFields);
     if((w.raw[1]&0xe0)!=0x40||w.raw[2]!=5)return hold(Status::UnsupportedActor);
     if(w.raw[6]&0x40)return hold(Status::NeedsPerPartScale);
@@ -121,7 +121,7 @@ SourceSceneActor40PoseCommit reset_source_scene_actor40_pose_800322a8(
     const auto* cache=find_source_scene_actor40_pose_sequence(r,request);
     if(!cache||cache->poses.empty()||cache->poses.size()!=cache->records.size()||record_index>=cache->poses.size()){
         out.status=Status::NeedsPose;return out;}
-    for(const auto window:{std::pair<size_t,size_t>{4,1},{8,1},{136,4},{144,4},{156,8}})if(!known(w,window.first,window.second)){out.status=Status::NeedsWorkFields;return out;}
+    for(const auto& window:{std::pair<size_t,size_t>{4,1},{8,1},{136,4},{144,4},{156,8}})if(!known(w,window.first,window.second)){out.status=Status::NeedsWorkFields;return out;}
     if(w.raw[4]!=1||w.raw[8]>1||get32(w.raw.data()+136)!=r.descriptor_token||get32(w.raw.data()+144)!=r.sequence_token||get32(w.raw.data()+156)!=r.translations_token||get32(w.raw.data()+160)!=r.frames_token){out.status=Status::NeedsPose;return out;}
     Work next=w;put(next,172,1,request);
     const auto& selected=cache->poses[record_index];

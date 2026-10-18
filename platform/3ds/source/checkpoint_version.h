@@ -1,7 +1,7 @@
 #pragma once
 // Shared native banner, boot log and measurement identity.
-#define MML_CHECKPOINT_VERSION "0.0.14.51"
-#define MML_CHECKPOINT_ID "01451"
+#define MML_CHECKPOINT_VERSION "0.0.15.0"
+#define MML_CHECKPOINT_ID "01500"
 
 // This separately named build always opens the hardware display bisect.
 #define MML_CHECKPOINT_DISPLAY_TEST 1

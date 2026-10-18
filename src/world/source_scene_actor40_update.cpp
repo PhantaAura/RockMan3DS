@@ -69,7 +69,7 @@ SourceSceneActor40LaterResult update_source_scene_actor40_prefix_8010d824(
     Work& work,const SourceSceneActor40Resources& r,const EbdDirectory& e,const ReferenceTables* refs,
     std::optional<uint8_t> shift,const SourceEventWork* event,SourceEventPhase5Context* scene) noexcept {
     SourceSceneActor40LaterResult out;using S=SourceSceneActor40LaterStatus;
-    for(const auto window:{std::pair<size_t,size_t>{1,2},{4,1},{8,7},{20,6},{28,12}})if(!known(work,window.first,window.second))return out;
+    for(const auto& window:{std::pair<size_t,size_t>{1,2},{4,1},{8,7},{20,6},{28,12}})if(!known(work,window.first,window.second))return out;
     if((work.raw[1]&0xe0)!=0x40||work.raw[2]!=5||work.raw[4]!=1||work.raw[8]!=1){out.status=S::UnsupportedActor;return out;}
     if(work.raw[9]>12){out.status=S::UnsupportedState;return out;}
     if(!resident(r,e)){out.status=S::NeedsResourceOwnership;return out;}

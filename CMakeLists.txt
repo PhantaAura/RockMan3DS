@@ -59,6 +59,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_event_command_package.cpp
     src/world/source_player_proxy.cpp
     src/world/source_player_buster.cpp
+    src/flow/gameplay_gates.cpp
     src/world/source_player_pose.cpp
     src/world/source_buster_profile.cpp
     src/world/source_camera.cpp
@@ -1031,3 +1032,13 @@ else()
   target_compile_options(test_gpu_frame_wait PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 endif()
 add_test(NAME gpu_frame_wait COMMAND test_gpu_frame_wait)
+
+add_executable(test_gameplay_gates tests/test_gameplay_gates.cpp)
+target_link_libraries(test_gameplay_gates PRIVATE legends3ds_core)
+target_compile_options(test_gameplay_gates PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME gameplay_gates COMMAND test_gameplay_gates)
+
+add_executable(test_combat_owner tests/test_combat_owner.cpp)
+target_link_libraries(test_combat_owner PRIVATE legends3ds_core)
+target_compile_options(test_combat_owner PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME combat_owner COMMAND test_combat_owner)

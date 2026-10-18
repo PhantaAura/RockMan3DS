@@ -65,7 +65,7 @@ SourceSceneActor40TailMirrors admit_source_scene_actor40_final_mirrors_8010d824(
     const Work& w,const SourceSceneActor40Resources& r,const EbdDirectory& e,
     const SourceSceneActor40PlayerMirrorReceipt& state) noexcept {
     SourceSceneActor40TailMirrors out;using S=SourceSceneActor40TailStatus;
-    for(const auto window:{std::pair<size_t,size_t>{1,2},{4,1},{6,1},{8,1},{20,6},{136,4}})
+    for(const auto& window:{std::pair<size_t,size_t>{1,2},{4,1},{6,1},{8,1},{20,6},{136,4}})
         if(!known(w,window.first,window.second))return out;
     if((w.raw[1]&0xe0u)!=0x40u||w.raw[2]!=5||w.raw[4]!=1||w.raw[6]!=0x23||w.raw[8]!=1){out.status=S::UnsupportedActor;return out;}
     if(!state.admitted||state.source_tag!=w.raw[1]){out.status=S::StaleStateReceipt;return out;}

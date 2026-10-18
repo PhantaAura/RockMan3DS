@@ -1321,7 +1321,11 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         ?source_player_update_gate_8003c07c(player_,source_event_player_known_):std::optional<bool>{};
     const bool gameplay_owned=!dialogue_.active&&camera_.owner==RuntimeCameraOwner::Gameplay&&!active_cutscene_id_
         &&(!source_player_gate||*source_player_gate);
-    if(gameplay_owned){update_input_compat(in);update_player_motion();update_player_contact();update_lock_on(in);if(in.fire_pressed)spawn_buster_projectile();}
+    if(gameplay_owned){
+        update_input_compat(in);update_player_motion();update_player_contact();
+        if(candidate_combat_enabled_){update_lock_on(in);if(in.fire_pressed)spawn_buster_projectile();}
+        else locked_target_index_.reset();
+    }
     else{update_input_compat({});locked_target_index_.reset();}
     update_conditional_spawns();
     SourceEventInputs source_event_input;

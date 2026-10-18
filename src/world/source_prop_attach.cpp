@@ -80,7 +80,7 @@ bool actor_need(const Actor& actor,size_t off,size_t count,SourcePropAttachResul
 SourcePropAttachResult update_source_prop_attach_80112d14(Prop& prop,uint32_t identity,const SourcePropAttachInputs& in) noexcept {
     SourcePropAttachResult out;
     if(identity<0x800bf118u || (identity-0x800bf118u)%80u || (identity-0x800bf118u)/80u>=32){out.status=SourcePropAttachStatus::InvalidIdentity;return out;}
-    for(const auto range:{std::pair<size_t,size_t>{0,4},{6,1},{9,1}})for(size_t i=0;i<range.second;++i)if(!prop.known[range.first+i]){out.status=SourcePropAttachStatus::NeedsPropFields;out.missing_prop_offset=uint16_t(range.first+i);return out;}
+    for(const auto& range:{std::pair<size_t,size_t>{0,4},{6,1},{9,1}})for(size_t i=0;i<range.second;++i)if(!prop.known[range.first+i]){out.status=SourcePropAttachStatus::NeedsPropFields;out.missing_prop_offset=uint16_t(range.first+i);return out;}
     const uint32_t slot=(identity-0x800bf118u)/80u;
     if(prop.raw[1]!=uint8_t(0xe0u|slot) || prop.raw[2]!=3 || prop.raw[3]!=0){out.status=SourcePropAttachStatus::UnsupportedProp;return out;}
     if(!(prop.raw[0]&prop.raw[6]&1u)){out.status=SourcePropAttachStatus::Inactive;return out;}
