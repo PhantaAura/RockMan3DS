@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "legends3ds/ctr_texture_layout.h"
 #include "legends3ds/classic_input.h"
 #include "legends3ds/classic_motion.h"
