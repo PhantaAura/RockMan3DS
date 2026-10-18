@@ -1,0 +1,454 @@
+{
+  "schema": "changed-files/1",
+  "parent_version": "0.0.14.17",
+  "version": "0.0.14.18",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.18_WorldComesAlive",
+  "parent_source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.17_WorldComesAlive",
+  "git": {
+    "repository": false,
+    "branch": null,
+    "commit": null
+  },
+  "changes": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified",
+      "parent_sha256": "fc05f777b329ba6311ccd06505f7fda82c201929cb6334276d638648c86aaf67",
+      "sha256": "a500202fb554ebd77cc15777c3a470135918608279b594ee3f9265fa3ecfab73"
+    },
+    {
+      "path": "PORTING_MAP_01418.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "64201bb500664ddfad1c83c398c414bdb7d37ceeaeb7546e50568e719a6b3ebf"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "parent_sha256": "7cfc1fbc877264b15fd58795bcbdcabe3615d43f0cba56bb4b1ad58b36b3c1bc",
+      "sha256": "98d9b8c44bb5519d3bdd701167267ae715492651d8c5e8cb81bbcc218e66f7b2"
+    },
+    {
+      "path": "SOURCE_MANIFEST.sha256",
+      "change": "regenerated",
+      "sha256": null,
+      "note": "Generated at final packaging; hashes all included files except itself."
+    },
+    {
+      "path": "docs/CHANGED_FILES_01418.json",
+      "change": "added",
+      "sha256": null,
+      "note": "Self-referential inventory; its hash is in SOURCE_MANIFEST.sha256."
+    },
+    {
+      "path": "docs/REPORT_01418.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "6a3f3e68f88530b1593bfb771be4e2ea7ed5ac46dc6b5cda0138cc5f31814a14"
+    },
+    {
+      "path": "docs/RESUME_01418.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "b01c52c4d063c47fcc9919c3f76f76217221a757c9376f8c23927e3d1cb69ba0"
+    },
+    {
+      "path": "docs/SCREENSHOTS_01418.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "bfb3b5b7482985adb3aa93d71b7c776b9a6a4547a056621256742672ea0090b2"
+    },
+    {
+      "path": "docs/research_01418/ACTOR_ANIMATION_BANK.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "43a318fa2114179878ffc0ca3fdff113c9230918460b1d735881b5b347b8527e"
+    },
+    {
+      "path": "docs/research_01418/CLASS20_03_STORY_PREDICATE.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "7ad946ec70e6c094cb8ecf1b6b692dba2919f0325d3ddf26d7881b8fd87250e1"
+    },
+    {
+      "path": "docs/research_01418/CLASS20_03_TRANSACTION.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "3693641a1f7acacda74a348022eb4672974c03a49fc57268e74fb5bea2b7385f"
+    },
+    {
+      "path": "docs/research_01418/class20_03_story_predicate_source_probe.py",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "cb4574492b549d303272926bc1ecff3e7c2514b6cc3ba96380ba11b6ec3c491f"
+    },
+    {
+      "path": "docs/research_01418/class20_03_transaction_source_probe.py",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "c7c67f83527eed50936cb87e9918471a8d720e28aedd6167fd27d57197c60571"
+    },
+    {
+      "path": "docs/research_01418/contact_boundary.md",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "2ca23f50895afeace6237d1a6203566155414c7d39e2877f5d4e444fd0c965f1"
+    },
+    {
+      "path": "docs/research_01418/contact_source_probe.py",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "abf5b338a9e08c17410deeb48497bac2fb4d6f1511942a754255e1475f61034a"
+    },
+    {
+      "path": "docs/validation_01418/actor-animation-bank-current-probe.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "c30f324089bba6a91f90a6a31a4f251df5747d27178534899e539b03d5f3859b"
+    },
+    {
+      "path": "docs/validation_01418/actor-animation-bank-owner-probe.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "c30f324089bba6a91f90a6a31a4f251df5747d27178534899e539b03d5f3859b"
+    },
+    {
+      "path": "docs/validation_01418/actor-behavior-owner-probe.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "fddad2c55fed4a49afafacf2b31bf2d9607208913ce7ebaaacd8783f59c10197"
+    },
+    {
+      "path": "docs/validation_01418/actor-contact-owner-differential.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "716d6da6b8c710130d07ea94cce069b3c002c783685db7f1ee9222114135a173"
+    },
+    {
+      "path": "docs/validation_01418/actor-contact-source-evidence.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "8328f777318f60457e44852134c1e409039613bd5a6445bba2e5cf04ce7e602c"
+    },
+    {
+      "path": "docs/validation_01418/azahar-boot-r2.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "8dd5783b69e8b1d383ac082aacb8631443e9b382727bc29fa67e15d036b66203"
+    },
+    {
+      "path": "docs/validation_01418/azahar-hardware-r2.csv",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "def4fb1e6cb3063ac563d19f9883e298b3ef05997fa9791c207d53edf6e389ff"
+    },
+    {
+      "path": "docs/validation_01418/azahar-launch-r2.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "b3a44881e3cb9a27c0fef34453301d7528630d78d9ffbc65e132fd9246c2f778"
+    },
+    {
+      "path": "docs/validation_01418/build-result-r2.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "14e35f8ae025df12aa687fe4bf538b7fe321806e23ffb0890ad80db29d761019"
+    },
+    {
+      "path": "docs/validation_01418/class20-03-story-predicate-source-evidence.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "6f16e820f8768b7a23dcdb4aa48a79a9d2da634506853edb32e0c138542fde8a"
+    },
+    {
+      "path": "docs/validation_01418/class20-03-transaction-differential.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "4dccf83b705b81060de2deabf7ae5588cf4bfdd11afe6beb85acb237aede4ecd"
+    },
+    {
+      "path": "docs/validation_01418/class20-03-transaction-differential.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "8c2f0dff57a80ccca35c1369335cdafd6ef4dd78a5842cf0c28438a9eaa7a3e0"
+    },
+    {
+      "path": "docs/validation_01418/class20-03-transaction-source-evidence.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "4497de46934b1d181214e7c0e7d3d167359291b8e3f1d4c951ea50ebca25219d"
+    },
+    {
+      "path": "docs/validation_01418/emulator-evidence-r2.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "6be22d2f17e4cc68523a0e2f6accab9095fbe013a3032ced1e9fded4d0e55bab"
+    },
+    {
+      "path": "docs/validation_01418/host-tests-pre-native.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "e7013eae2713feb7f830ccbcb99635382af9570684f85b4c4caf2f8b58a89607"
+    },
+    {
+      "path": "docs/validation_01418/inherited-validation.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "e7c5e3ef372907b611598d8fde7da7e0da8535d4db16c160c2d7b1a2280b609f"
+    },
+    {
+      "path": "docs/validation_01418/native-source-manifest-r2.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "8947a9b614e84a845b9cd80aba9bd3a58f71fc82fc390122c65d1ea2f7dbda50"
+    },
+    {
+      "path": "docs/validation_01418/native-source-verification-r2.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "7066e5982c07372a0d75abff40b21d7c738e9064d1818efffa411afa91c8f1e1"
+    },
+    {
+      "path": "docs/validation_01418/owner-pack-validation.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "10de94fd93d931410c587053d13abd2a62dcddff2b14d3b1fddb435fcad3576a"
+    },
+    {
+      "path": "docs/validation_01418/r2-area-inspection-probe.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "449c105093c8687ecfd23e6548cef312c1c999ef91220e91c02c1a0cd5c6df1d"
+    },
+    {
+      "path": "docs/validation_01418/r2-area-package.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "69be7a4b6a4fec54e121adf3cba3056054c4c3863269dc3c5a234cb5314c0551"
+    },
+    {
+      "path": "docs/validation_01418/r2-area-runtime-probe.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "9a6778ceba7e15dce81348478f5c1d8f582acf20be32d4e53acfd1971a500cc4"
+    },
+    {
+      "path": "docs/validation_01418/r2-host-build.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "bf45592da47b42273a1ddc95b57ece6f88b0f035e795fba990c87a38ca187256"
+    },
+    {
+      "path": "docs/validation_01418/r2-host-configure.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "de0f5169a094192b37c095218b875e400036a332b00c0fffed4fe72c565b908a"
+    },
+    {
+      "path": "docs/validation_01418/r2-host-tests.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "82a15d4e24dda0445ffc247e2577e068a0e1c62a60420d8f2800bf6056ae554a"
+    },
+    {
+      "path": "docs/validation_01418/r2-native-build.log",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "f729bdaff4618d0fc5eb000f359ea2cc5ba97378d35125037be231f5e8bd9843"
+    },
+    {
+      "path": "include/legends3ds/actor_animation_bank.h",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "705477794d3b07d37f468a4e49018743b055e2e63ee1756985d131d65fb14cfe"
+    },
+    {
+      "path": "include/legends3ds/actor_contact.h",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "8050aadee97e0ecb2b822c2fb5e7737102ec67e9eade185a9bffac8a9001d9e0"
+    },
+    {
+      "path": "include/legends3ds/actor_runtime.h",
+      "change": "modified",
+      "parent_sha256": "2f0201b509395c74844bab5974ee5af368992123553591af28575b0798359979",
+      "sha256": "a2e7407e7cd96ebe9b54c9875c0d6a5e7322e463ce5574757938353ac6ebb951"
+    },
+    {
+      "path": "include/legends3ds/actor_sequence.h",
+      "change": "modified",
+      "parent_sha256": "c187666e127317c41676e047916935b938202f403f803f87d37aac73a2e4547b",
+      "sha256": "86733593fd10c28e9dbc8b083883a095e94ad57433f909de5731c4165b88bbcd"
+    },
+    {
+      "path": "include/legends3ds/class20_03_behavior.h",
+      "change": "modified",
+      "parent_sha256": "d42208efa9fd45269174861eec60c5a9f5b0e1b66ad3e851810c945979dc2b96",
+      "sha256": "bea02e3b6e345d06b249b74771077afd164c814ac87e0f26ea3ecb90fde5dbd2"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified",
+      "parent_sha256": "0a9e773e9b39f34a7fbb35fb6312f4fdeca227b3caadb7862f65a5764bc102a9",
+      "sha256": "92bf42f55fc43b2eb4f2c991c23adbc869775b72ebbf3b85877acdb2ae5e7546"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified",
+      "parent_sha256": "cd2fbe0d1ac792100356cb8fa056dd52311ab5a9da2f5fbc8dd7bc39adc22c6c",
+      "sha256": "ca303d38fe394b26c3df371047ac259ecad8cd1bd30b421316643eee98677577"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.h",
+      "change": "modified",
+      "parent_sha256": "ec0127e61e0cf7e489f52621d57509f1df217efbc3750ce4a9e45c6b18c0c77c",
+      "sha256": "718f3bcd8b1e6d3a85ec3c1f0ac17f13ae4d399fa6452691eb9733037f1c6d18"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified",
+      "parent_sha256": "e2db13b5a39c708bf0db480cb2893f326f3396af5548752221e3fc8f11c36684",
+      "sha256": "d9c046cb9230e58962c168cc1653870eb0817f4276d7e12a5c180e08a71314ea"
+    },
+    {
+      "path": "src/player/player_collision.c",
+      "change": "modified",
+      "parent_sha256": "2a3dcc6420b6b6dcbe72059949e97bf56cf88e832b6962f8b19c389a0bb40f80",
+      "sha256": "d8cc5fa04f398bbd1b3c25c6ff419a280fe41227f6826ad63e987fd00dbc2fac"
+    },
+    {
+      "path": "src/world/actor_animation_bank.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "680bcb594f5e0f5d9403c1ac1db269aae00316ad67c9173433b11da8cbea59af"
+    },
+    {
+      "path": "src/world/actor_contact.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "d09b7b2372626a437b8a13bf84efa2bcce2840fceaaf6e3b353d39b8abac9241"
+    },
+    {
+      "path": "src/world/actor_runtime.cpp",
+      "change": "modified",
+      "parent_sha256": "8e3ef1ed93294032925a838a1fa33ceea9a5f06c36a27330e4c24f3669a5cfeb",
+      "sha256": "ad87ef0800a84675288724bd466a3cdf61e639b80a68822932fd21ab86dc050a"
+    },
+    {
+      "path": "src/world/actor_sequence.cpp",
+      "change": "modified",
+      "parent_sha256": "5814b4b1ec30d531779a3cc732d4413b9ab658160ac89aae30d94b5127e6b58d",
+      "sha256": "9c88c97ebde7da4776a80fcad4d19e0a68ed14fac555556dafc3b0d3849d8142"
+    },
+    {
+      "path": "src/world/class20_03_behavior.cpp",
+      "change": "modified",
+      "parent_sha256": "b953f76fc02e5a990341a2d4a5d90cab041d9f566b24be3d84b4f9c13ce169f1",
+      "sha256": "67d92043106690c49b1fd53cd4277a0e3d107218da4e8a3d711b672a7958ac06"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified",
+      "parent_sha256": "1c915752b5d39dc09496f9a7712049d749562c2b9499d91bbacb43260733000d",
+      "sha256": "960a502db76344aa8432c11fdac332099161951542cb2528c13dd16a799d4bfb"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified",
+      "parent_sha256": "39f981eb8a56a743c14e7ad670e34d5b6a5f369549d3c0199408cb7a9561b6b5",
+      "sha256": "6591da5806aa3c30eb0e5e55d65b6ca4e6fcf26b321d68eb636435a0728775e7"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified",
+      "parent_sha256": "fc38cf1dc013c0b1a7c7ed786e47f1f6fc524def7529d26d39dc560fea3ca7f2",
+      "sha256": "0d0d031d06976d110ea61598f7e57c8d8464cf95940719f93cf814953f515861"
+    },
+    {
+      "path": "state/PARENT_01417_CHECKPOINT.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "1c915752b5d39dc09496f9a7712049d749562c2b9499d91bbacb43260733000d"
+    },
+    {
+      "path": "state/PARENT_01417_READINESS.json",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "39f981eb8a56a743c14e7ad670e34d5b6a5f369549d3c0199408cb7a9561b6b5"
+    },
+    {
+      "path": "tests/fixtures/class20_03_transactions_01418.tsv",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "a53d2de7521fcae59d7f4646585e3459f17e871acb34a70a530f8cb56aa68a28"
+    },
+    {
+      "path": "tests/fixtures/contact_01418/authored.synthetic.tsv",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "ad2e3f88d3cfec8e292c3e1eb124362833de9705b6424c6251e50b34dc7b3d25"
+    },
+    {
+      "path": "tests/fixtures/contact_01418/authored.wrapper.tsv",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "f145022f9b5a70600dee02b06165855f4a49d58d557d26eed654ef0939d02d23"
+    },
+    {
+      "path": "tests/test_actor_animation_bank.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "3d0360be2482fc5bd8fef58575dcf9815c89ddab4ac5881659ebd4ae15e0b6d0"
+    },
+    {
+      "path": "tests/test_actor_behavior_runtime.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "9ced538638ce2b626caca6c6fd3a838026adb40aa98096001f65bd0605666e4f"
+    },
+    {
+      "path": "tests/test_actor_contact.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "b721d6de1ef067d56ed2f4f65b47dfc43f1c900bf2ab72d88cdbbc347b914202"
+    },
+    {
+      "path": "tests/test_actor_resources.cpp",
+      "change": "modified",
+      "parent_sha256": "42a444c595272b772c37b8858ec744208fb85e500dd0417e3f371899dae74227",
+      "sha256": "94d3d00988fb8de6d726ea6cd1c7b5719b4666fdcc1c28e0873d6554a6e44261"
+    },
+    {
+      "path": "tests/test_class20_03_callback.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "fe69d5e03bd7f2345716c824964c26d7bd33b76f339fcc5c7f7ec5797b7eac82"
+    },
+    {
+      "path": "tests/test_core.cpp",
+      "change": "modified",
+      "parent_sha256": "3ab9cde36844ef978e943d6bab00554b2c9e2b1ed113b5fad81a576147269bd4",
+      "sha256": "991437bfb71a48e706436db5f09c84dcfdebe41ee9262bcb67979133a77d184a"
+    },
+    {
+      "path": "tools/l3actor_animation_bank_probe.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "6b86ab0349b45d5f83beedeec8b4a87ce62779fb4ea497a1b54146bb97f8a801"
+    },
+    {
+      "path": "tools/l3actor_behavior_runtime_probe.cpp",
+      "change": "added",
+      "parent_sha256": null,
+      "sha256": "e058c95e7a636a1442b3eecac46c456c5d2ed4a1660dbf6f7f677a52df0a51bc"
+    }
+  ],
+  "removed_files": [],
+  "excluded_from_comparison": [
+    "__pycache__",
+    ".git",
+    "build_3ds"
+  ],
+  "native_code_snapshot_hashes": 160,
+  "native_code_snapshot_matches": true
+}

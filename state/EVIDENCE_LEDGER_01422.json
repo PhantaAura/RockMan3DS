@@ -1,0 +1,35 @@
+{
+  "schema": "mml-evidence-ledger/01422",
+  "world_comes_alive_complete": false,
+  "PHYSICS_1TO1": false,
+  "source_evidence_files": [
+    "docs/validation_01422/child-runtime-native-results.json",
+    "docs/validation_01422/class60-06-callback-source-evidence.json",
+    "docs/validation_01422/class60-06-contact-consumer-source-evidence.json",
+    "docs/validation_01422/class60-06-native-results.json",
+    "docs/validation_01422/class60-shadow-floor-source-evidence.json",
+    "docs/validation_01422/compiled-source-manifest.json",
+    "docs/validation_01422/native-build-r5.json",
+    "docs/validation_01422/native-observation.json",
+    "docs/validation_01422/ps1-reference-status.json",
+    "docs/validation_01422/rng-observer-lifecycle.json",
+    "docs/validation_01422/screenshots.json",
+    "docs/validation_01422/source-event-consumer-proof.json",
+    "docs/validation_01422/source-event-initialization-proof.json",
+    "docs/validation_01422/source-event-phase3-proof.json",
+    "docs/validation_01422/source-event-pipeline-proof.json",
+    "docs/validation_01422/source-event-player-header-proof.json",
+    "docs/validation_01422/source-event-player-initialization-proof.json",
+    "docs/validation_01422/source-rng-service-proof.json"
+  ],
+  "native_claim": "Source used-fields reducers/owners compiled; optional CANDIDATE RNG connected; actual damaging encounter and source progression incomplete.",
+  "strict_tape_modified": false,
+  "blockers": [
+    "Original RNG input/update/competing-consumer chronology remains UNKNOWN; optional shared native service is CANDIDATE and rolls back held callbacks.",
+    "Player/Buster GTE hit consumers80034EB8/800358F0 and source pose-derived actorpoint180 owner remain unconnected; real HP/reaction/defeat encounter absent.",
+    "Child effects128/131 and shadow/primitive rasterization/fog/physical pairs remain unported; no live child in current replay.",
+    "Eventphase2 original sound/command consumers8001B33C/8001D58C remain held; native boot subset defaultsOFF; no full original cutscene/message/normaltransition sequence.",
+    "Imported player materials/alpha and actor overlap/camera obstruction remain inaccurate; originalPS1FOV/HUD not verified.",
+    "Natural tutorial progression, full early-game boundary and physical Old3DS validation remain incomplete."
+  ]
+}

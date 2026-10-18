@@ -1,0 +1,168 @@
+{
+  "evidence_class": "synthetic emulator HID replay; not manual or hardware evidence",
+  "file": "worldalive-ground-jump-01415.ctm",
+  "sha256": "b9a7e7cba7cc5ead90c148c02759b220d68a1543ede3050b53a934f9d1f85a0e",
+  "azahar_version": "2126.0",
+  "azahar_git_revision": "fbd3fb02f71e5f9ed5134037fd59bad96c7d2b8a",
+  "program_id": "0000000000000000",
+  "header_bytes": 256,
+  "record_bytes": 7,
+  "pad_input_count": 8545,
+  "total_records": 17090,
+  "duration_emulated_seconds_approx": 36.51709401709402,
+  "file_bytes": 119886,
+  "runtime_tested": false,
+  "assumption": "Old3DS HLE HID with no enabled accelerometer, gyroscope, or IR input stream",
+  "schedule": [
+    {
+      "phase": "boot",
+      "first_hid_sample": 0,
+      "hid_samples": 1404,
+      "start_emulated_seconds_approx": 0.0,
+      "end_emulated_seconds_approx": 6.0,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "start",
+      "first_hid_sample": 1404,
+      "hid_samples": 58,
+      "start_emulated_seconds_approx": 6.0,
+      "end_emulated_seconds_approx": 6.247863247863248,
+      "buttons_hex": "0x0001",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "load",
+      "first_hid_sample": 1462,
+      "hid_samples": 2340,
+      "start_emulated_seconds_approx": 6.247863247863248,
+      "end_emulated_seconds_approx": 16.247863247863247,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "standing_jump",
+      "first_hid_sample": 3802,
+      "hid_samples": 105,
+      "start_emulated_seconds_approx": 16.247863247863247,
+      "end_emulated_seconds_approx": 16.696581196581196,
+      "buttons_hex": "0x0002",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "fall_land",
+      "first_hid_sample": 3907,
+      "hid_samples": 819,
+      "start_emulated_seconds_approx": 16.696581196581196,
+      "end_emulated_seconds_approx": 20.196581196581196,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "forward",
+      "first_hid_sample": 4726,
+      "hid_samples": 28,
+      "start_emulated_seconds_approx": 20.196581196581196,
+      "end_emulated_seconds_approx": 20.316239316239315,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 154
+    },
+    {
+      "phase": "running_jump",
+      "first_hid_sample": 4754,
+      "hid_samples": 94,
+      "start_emulated_seconds_approx": 20.316239316239315,
+      "end_emulated_seconds_approx": 20.71794871794872,
+      "buttons_hex": "0x0002",
+      "circle_x": 0,
+      "circle_y": 154
+    },
+    {
+      "phase": "release_and_land",
+      "first_hid_sample": 4848,
+      "hid_samples": 936,
+      "start_emulated_seconds_approx": 20.71794871794872,
+      "end_emulated_seconds_approx": 24.71794871794872,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "turn",
+      "first_hid_sample": 5784,
+      "hid_samples": 117,
+      "start_emulated_seconds_approx": 24.71794871794872,
+      "end_emulated_seconds_approx": 25.21794871794872,
+      "buttons_hex": "0x0100",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "view",
+      "first_hid_sample": 5901,
+      "hid_samples": 468,
+      "start_emulated_seconds_approx": 25.21794871794872,
+      "end_emulated_seconds_approx": 27.21794871794872,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "fire",
+      "first_hid_sample": 6369,
+      "hid_samples": 35,
+      "start_emulated_seconds_approx": 27.21794871794872,
+      "end_emulated_seconds_approx": 27.367521367521366,
+      "buttons_hex": "0x0800",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "fire_observe",
+      "first_hid_sample": 6404,
+      "hid_samples": 234,
+      "start_emulated_seconds_approx": 27.367521367521366,
+      "end_emulated_seconds_approx": 28.367521367521366,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "diagnostic_area",
+      "first_hid_sample": 6638,
+      "hid_samples": 35,
+      "start_emulated_seconds_approx": 28.367521367521366,
+      "end_emulated_seconds_approx": 28.517094017094017,
+      "buttons_hex": "0x0004",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "load_next",
+      "first_hid_sample": 6673,
+      "hid_samples": 936,
+      "start_emulated_seconds_approx": 28.517094017094017,
+      "end_emulated_seconds_approx": 32.51709401709402,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "final",
+      "first_hid_sample": 7609,
+      "hid_samples": 936,
+      "start_emulated_seconds_approx": 32.51709401709402,
+      "end_emulated_seconds_approx": 36.51709401709402,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema": "child-runtime-native-results/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "result": "PASS",
+  "compiler": "Apple clang C++17 -Wall -Wextra -Wpedantic -Werror; native devkitARM GNU++17 ARMv6K/O2 same warning set",
+  "child_hot_loop_allocation_check_ticks": 1024,
+  "actor_delivery_hot_loop_allocation_check_ticks": 512,
+  "shadow_floor_original_cases": 288,
+  "shadow_floor_native_admitted": 246,
+  "shadow_floor_native_held": 42,
+  "shadow_floor_original_instructions": 211434,
+  "proxy_startup_mask_80098798": 255,
+  "proxy_startup_count_800988e0": 0,
+  "proxy_startup_original_instructions": 18,
+  "lifecycle_regression_callback_cases": 2160,
+  "lifecycle_regression_motion_cases": 192,
+  "lifecycle_regression_primitive_cases": 9,
+  "native_compiler_exclusive_stack_bytes": {
+    "ChildRuntime_tick": 2608,
+    "tick_imported_actor_state1_with_delivery": 2624,
+    "prepare_parent_delivery": 72,
+    "query_class60_shadow_floor_80048e6c": 112
+  },
+  "hardware": "HARDWARE_PENDING",
+  "limits": [
+    "Authored scalar contexts and bounded queues; no observed retail encounter or damaging-player attack proof.",
+    "Effects128/131 remain held without real allocator/callback consumers; no fake allocator exhaustion.",
+    "Physical pairs80051BE4, player/GTE proxy consumers, shadow rasterizer, source GTE/fog and child subtype09 remain unported.",
+    "Compiler stack reports are exclusive function frames, not measured hardware stack/performance results."
+  ]
+}

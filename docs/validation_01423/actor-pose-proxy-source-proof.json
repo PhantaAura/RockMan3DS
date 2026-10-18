@@ -1,0 +1,82 @@
+{
+  "schema": "mml-actor-pose-proxy-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "pose_cases": 576,
+  "tail_cases": 864,
+  "instructions_executed": 582428,
+  "restricted_gte_commands": 2304,
+  "pose_fixture_sha256": "7930303b4af8b648d02c5579464a453a704dcd519f7d7011f817e6b4cdd89fd9",
+  "tail_fixture_sha256": "f38c594875227e814af9fc5c8976ad616edb1d9d76746c9382423b4531f106c1",
+  "ownership_checks": [
+    {
+      "entry": "0x8003697c",
+      "scratch_shift": 0,
+      "instructions": 19,
+      "excluded_projection_consumer": "0x8007A1CC"
+    },
+    {
+      "entry": "0x800369c0",
+      "scratch_shift": 1,
+      "instructions": 24,
+      "excluded_projection_consumer": "0x8007A1CC"
+    },
+    {
+      "entry": "0x80036a1c",
+      "scratch_shift": 2,
+      "instructions": 24,
+      "excluded_projection_consumer": "0x8007A1CC"
+    },
+    {
+      "entry": "0x8002E840..8002E854",
+      "fresh_class20_pool_halfword186": 0,
+      "all16_dirty_sentinels_cleared": true,
+      "instructions": 11527
+    },
+    {
+      "entry": "0x80031418",
+      "reused_halfword186_preserved": true,
+      "instructions": 27
+    },
+    {
+      "entry": "0x8010244C..80102460",
+      "class03_scale158_xyz": [
+        512,
+        512,
+        512
+      ],
+      "instructions": 5
+    },
+    {
+      "entry": "0x801024A8..801024B0",
+      "packet33c_and_flags340_cleared": true,
+      "point344_and_word34a_preserved": true,
+      "instructions": 2
+    }
+  ],
+  "combined_original_chain": {
+    "health6e": 97,
+    "counter332": 3,
+    "action09": 6,
+    "sound_cue": 160,
+    "packet_before_tail": 134217731,
+    "packet_after_tail": 0,
+    "next_registration_count": 1,
+    "instructions": 1440,
+    "authored_second_proxy_mode": 1,
+    "authored_second_producer": "0x08000003",
+    "real_buster_producer": false
+  },
+  "pose_code_sha256": "4ed2f2148b6a13bafc59ba09d45c48c548c7153a6fca1c1bed6ae2e313ecb012",
+  "tail_code_sha256": "d36c8691d7efa351532d5057043186f446ffb726cfe5e6852012ba0aea5b6bb4",
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "limits": [
+    "Authored inputs and restricted arithmetic GTE; no live retail combat trace.",
+    "Only root work180 collision point is translated; child render/pose transforms excluded.",
+    "Full original producer executes, including child matrix/point loops on authored parts.",
+    "Proxy tail includes actual registration and after-call packet clear; earlier outer consumers excluded.",
+    "Player/GTE80034EB8/800358F0 and real Buster producers remain pending."
+  ]
+}

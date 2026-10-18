@@ -1,0 +1,156 @@
+{
+  "schema": "source-scene-actor40-tail/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "ebd_sha256": "ea7239d21db9d06c26a70825588ad7981a980ce798f7352588c5865a0e001d15",
+  "shadow_cases": 48,
+  "cue_cases": 220,
+  "authored_material_cases": 14,
+  "authored_player_mirror_cases": 7,
+  "original_instructions": 50913,
+  "observed_instruction_addresses": 541,
+  "both_outcomes_tail_branch_sites": 16,
+  "one_outcome_floor_max_branch": [
+    "0x8002c958"
+  ],
+  "static_store_destination_audit": [
+    {
+      "name": "shadow_queue",
+      "start": "0x8002c8cc",
+      "end_exclusive": "0x8002ca10",
+      "sha256": "17f5aa1d0aabf4a1064539e39c8221bf527ba67f7e9472fb273ece5702eaaec2",
+      "store_instructions": 14,
+      "store_base_registers": [
+        1,
+        29
+      ]
+    },
+    {
+      "name": "floor_wrapper",
+      "start": "0x80048e6c",
+      "end_exclusive": "0x8004920c",
+      "sha256": "02debe52dc66099b54c61bb9097409907cb6f1e86a4b48f5431d31efcff86020",
+      "store_instructions": 26,
+      "store_base_registers": [
+        6,
+        29
+      ]
+    },
+    {
+      "name": "candidate_cells",
+      "start": "0x8004b1e0",
+      "end_exclusive": "0x8004b3c0",
+      "sha256": "09712d25ef74b7d20e4ffd364835993beb8e369a1fe469fcd1a83685a5bef356",
+      "store_instructions": 21,
+      "store_base_registers": [
+        23,
+        29
+      ]
+    },
+    {
+      "name": "floor_bounds",
+      "start": "0x8004b3c0",
+      "end_exclusive": "0x8004b414",
+      "sha256": "b497b56f80763dfa50d9075db42b281979dd3d47e8e0152b6e5274928b60bfd2",
+      "store_instructions": 6,
+      "store_base_registers": [
+        1
+      ]
+    },
+    {
+      "name": "floor_cell_lookup",
+      "start": "0x80048bec",
+      "end_exclusive": "0x80048e6c",
+      "sha256": "95dbba0d20a43c931cb7e4f6f4b2c7eb8fbaac5002b6bc7248868e5832601dc7",
+      "store_instructions": 1,
+      "store_base_registers": [
+        29
+      ]
+    },
+    {
+      "name": "floor_y_classifier",
+      "start": "0x8004a060",
+      "end_exclusive": "0x8004ac58",
+      "sha256": "3edb4318411a5ddc49581d854ec831a3771e311cef7544d4856a2961c7e72dcf",
+      "store_instructions": 15,
+      "store_base_registers": [
+        14
+      ]
+    },
+    {
+      "name": "floor_xz_classifiers",
+      "start": "0x8004e304",
+      "end_exclusive": "0x8004f44c",
+      "sha256": "277ce39fcea59514ec54dfb2aa98b3e4f3bd964b96ec4710f444b178eaf61296",
+      "store_instructions": 72,
+      "store_base_registers": [
+        1,
+        4,
+        6,
+        8
+      ]
+    },
+    {
+      "name": "material_primitive_words",
+      "start": "0x8002d320",
+      "end_exclusive": "0x8002d404",
+      "sha256": "1ba7267e7d6da05f4b6e60f649074689e7ee6cd927a9ec6163cb39ab8c14612c",
+      "store_instructions": 4,
+      "store_base_registers": [
+        4
+      ]
+    },
+    {
+      "name": "material_offset",
+      "start": "0x8002d404",
+      "end_exclusive": "0x8002d464",
+      "sha256": "f6c178c4e8956486fd8f83f7de6e4f37ae112f4cbae35464019679e67a535a03",
+      "store_instructions": 0,
+      "store_base_registers": []
+    }
+  ],
+  "observed_store_events": 2147,
+  "actor_work_1444_preserved_in_all_admitted_cases": true,
+  "deliberate_actor_alias_originally_corrupts_actor": true,
+  "material_part_pairs": [
+    [
+      16,
+      17
+    ],
+    [
+      18,
+      19
+    ]
+  ],
+  "primitive_counts": [
+    0,
+    1,
+    2,
+    3,
+    63,
+    254,
+    255
+  ],
+  "material_store_bytes_per_primitive": 8,
+  "material_stride": 12,
+  "wrapper_tail_code_sha256": "faf2a91a67045932fc6a087fb7d51199daf1f796867fea1ad0b5665de2b69635",
+  "cue_code_sha256": "7940c5c637c47329c8998d28b2b6077e8c9969413f870f5ab87aa2dd9d780b49",
+  "material_code_sha256": "bc11c559bd4aa448a9dcac51e0829459bcc78e4b400f1c59ce2a86fd62c320aa",
+  "shadow_code_sha256": "17f5aa1d0aabf4a1064539e39c8221bf527ba67f7e9472fb273ece5702eaaec2",
+  "authored_fixture_sha256": "acaf5ca36ff9979524091398caf6ab107c7455cb8a8d645856fcc65f2d95b0db",
+  "private_owner_fixture_sha256": "618479cfbfb69d692c983ecdae5aec33697fd4e77339da6b235d982e7350ffdf",
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Shadow queue/floor and cue clocks/material UV presentation remain pending in native tail.",
+    "Invariance is admitted only after resident material spans exclude the complete original class40 pool.",
+    "Shadow floor functions write caller stack and fixed scratch; map geometry ownership remains separate.",
+    "Original owner snapshots and MIPS write traces remain private; no owner asset/code bytes ship."
+  ],
+  "native_guard_cases": 180,
+  "native_owner_ebd_guard_admitted": true,
+  "native_admission_allocations": 0
+}

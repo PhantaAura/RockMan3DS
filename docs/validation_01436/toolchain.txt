@@ -1,0 +1,8 @@
+Fresh checks 2026-10-13
+/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++ --version
+arm-none-eabi-g++ (devkitARM) 16.1.0
+/opt/devkitpro/pacman/bin/pacman -Q devkitARM libctru citro3d
+devkitARM r68-1
+libctru 2.7.0-1
+citro3d 1.7.1-2
+Package query emitted GPGME Invalid crypto engine warnings; installed package versions returned.

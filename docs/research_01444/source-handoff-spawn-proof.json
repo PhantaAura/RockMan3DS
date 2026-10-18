@@ -1,0 +1,50 @@
+{
+  "schema": "mml-source-handoff-spawn/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_helper": "80015EE8",
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "authored_cases": 64,
+  "original_instructions": 2880,
+  "original_store_instructions": 1152,
+  "distinct_player_bytes_written": 74,
+  "fixture_sha256": "55386edb1af131e9fc7d8851c278a9133d6ff7ad1954f9bb1c30226ff7d77b78",
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "retained_player_state_preserved": true,
+  "xyz_lanes": [
+    0,
+    2,
+    4
+  ],
+  "heading_lane": 10,
+  "argument6_clears_player_offsets": [
+    116,
+    117
+  ],
+  "state3_copy_ranges": [
+    [
+      1080,
+      20,
+      8
+    ],
+    [
+      1064,
+      28,
+      16
+    ],
+    [
+      1088,
+      84,
+      8
+    ]
+  ],
+  "asset_payloads_written": false,
+  "retail_parity": false,
+  "physical_hardware_tested": false,
+  "limits": [
+    "Authored inputs prove the complete bounded player-store leaf, not live source chronology.",
+    "New-area callers pass argument6=1; same-area 80015ACC passes argument6=0.",
+    "Area ownership, CD callback execution and transport completion remain separate consumers.",
+    "The helper preserves player08 and does not establish a runnable player state."
+  ]
+}

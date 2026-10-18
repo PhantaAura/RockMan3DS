@@ -1,0 +1,82 @@
+{
+  "images": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-title-r2/captures/start-screen-original.png",
+      "sha256": "70c39afd4ac24e3c309011e183e04e8d34811d7b296ec5c9755e595bb177ef4b",
+      "scene": "title-r2",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "6707f1b23f171fddd5739e0663891cf234b0c2c27bbcd9c1f03b61ca41a511db",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-areas/captures/area2-companion-original.png",
+      "sha256": "f6592b522bca7a1d2cf8ec892e87a94e31f879041009dd0832563cdf96b4091c",
+      "scene": "areas",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "6707f1b23f171fddd5739e0663891cf234b0c2c27bbcd9c1f03b61ca41a511db",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-measured-view/captures/player-reference-position-original.png",
+      "sha256": "54d39bb401cfba314f5758bd73c5e0b6cb21aed7a6d206779f3d46fe78c4e1ff",
+      "scene": "measured-view",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "9af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-actor-inspection/captures/imported-actor-diagnostic-original.png",
+      "sha256": "c28896f52396a41736d156a8caa6331ed5227ffff52f3991cbaec30bd094dd4e",
+      "scene": "actor-inspection",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "9af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-safe0143/captures/safe0143-original.png",
+      "sha256": "47b9d816187d10499eab15bcbb76a84b0d8dda061a8a1037bdfdd5ed01eeec0e",
+      "scene": "safe0143",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "9af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-movement/captures/after-movement-turn-gameplay-original.png",
+      "sha256": "09726a71712e0ca2df9ae2c708ae9e7ddd67c2f9cd9c7a1e3f75eea0283e08bd",
+      "scene": "movement",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "9af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-movement/captures/after-movement-turn-original.png",
+      "sha256": "3395a89825b33ceb57f296f6d36f0db0b2264fc6609cf4403836e982f533f182",
+      "scene": "CLI launch notice; not gameplay",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "9af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": true
+    }
+  ],
+  "exclusions": "Images remain owner-local and are excluded from source ZIP. Raw captures preserved. Some views are occluded; one movement capture is a CLI warning and one has a black top screen; no retouching or compositing."
+}

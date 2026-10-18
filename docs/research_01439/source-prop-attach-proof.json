@@ -1,0 +1,35 @@
+{
+  "schema": "mml-source-prop-attachment/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "cases": 180,
+  "original_instructions": 56772,
+  "restricted_mvmva_commands": 504,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "foreign_release_cases": 36,
+  "clipped_ir_components": 64,
+  "cases_with_ir_clipping": 32,
+  "fixture_sha256": "6f5fbe24eb7e6ee223663f0b6165740f98c0a25b576b6b3af1366d81de1b79e6",
+  "limits": [
+    "Authored pose, trigonometry data, globals and stack premises, not a live retail capture.",
+    "Restricted MVMVA MAC/IR arithmetic; GTE timing and unused flags are excluded.",
+    "State1 unowned12 stack-copy bytes are UNKNOWN, not verified zero.",
+    "Foreign80031988 alias writes are preserved only with explicitly bound external mask-word ownership.",
+    "No render alpha/blend, event cadence, full scene or hardware parity claim."
+  ],
+  "native_validation": {
+    "authored_original_cases": 180,
+    "atomic_guard_checks": 6156,
+    "cpp_heap_allocations_during_callbacks": 0,
+    "host_clang_warnings_as_errors": true,
+    "devkitarm_armv6k_gcc_warnings_as_errors": true,
+    "callback_static_stack_bytes": 304,
+    "live_retail_capture": false,
+    "physical_hardware_tested": false,
+    "session_wrapper_draw_integration": "PASS",
+    "missing_parent_and_detached_copy_atomic": "PASS",
+    "targeted_ctest_results": "2/2 scene_e0 + source_prop_attach PASS"
+  }
+}

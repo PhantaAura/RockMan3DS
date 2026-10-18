@@ -1,0 +1,51 @@
+{
+  "schema": "mml-source-event-phase5-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "production_files_frozen": true,
+  "host_cpp_compile": {
+    "command": "c++ -std=c++17 -Wall -Wextra -Werror -I work/Legends3DS_0.0.14.28_WorldComesAlive/include work/Legends3DS_0.0.14.28_WorldComesAlive/tests/test_source_event_phase5.cpp work/Legends3DS_0.0.14.28_WorldComesAlive/src/flow/source_event_phase5.cpp work/Legends3DS_0.0.14.28_WorldComesAlive/src/flow/source_event_pipeline.cpp work/pass-20261010-worldalive-01428/host/liblegends3ds_core.a -o work/pass-20261010-worldalive-01428/phase5-private/test_source_event_phase5",
+    "exit_code": 0
+  },
+  "host_cpp_run": {
+    "command": "work/pass-20261010-worldalive-01428/phase5-private/test_source_event_phase5 work/pass-20261010-worldalive-01428/phase5-oracle-r2/source-event-phase5.tsv",
+    "exit_code": 0,
+    "constructor_cases": 24,
+    "camera_initializer_cases": 24,
+    "malformed_package_cases": 16,
+    "rollback_cases": 12,
+    "allocation_free_holds": 4096,
+    "host_context_bytes": 26332
+  },
+  "cooker_unit": {
+    "command": "python3 -B work/Legends3DS_0.0.14.28_WorldComesAlive/tests/test_source_event_phase5_cooker.py",
+    "exit_code": 0,
+    "tests": 9
+  },
+  "owner_local_cook": {
+    "directory": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/phase5-cooked-r1",
+    "exit_code": 0,
+    "output_bytes": 620,
+    "output_sha256": "0036cb2e598d4098887de5151ff82ccb97f3b7365cf9d2feb22d17d999d2a538"
+  },
+  "original_oracle": {
+    "directory": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/phase5-oracle-r2",
+    "exit_code": 0,
+    "instruction_patches": 0,
+    "helper_hooks": 0,
+    "constructor_instructions": 125346,
+    "camera_prefix_instructions": 1968,
+    "cold_reset_instructions": 42204
+  },
+  "initial_failures_fixed": [
+    "Source camera block address was initially calculated as800C4738 instead of800BC738; accepted oracle observes the corrected original address.",
+    "Camera rotation output lane order3968/396C/3964 was initially implemented in input order; full original differential caught and fixed the lane mismatch."
+  ],
+  "native_and_emulator_result": "Root integration report; not asserted by this scoped report.",
+  "limits": [
+    "No physical hardware validation or whole retail trace parity.",
+    "Current native player position/camera cadence remains partial.",
+    "Loader checks supported EBD profile digest but does not independently hash currently resident payload.",
+    "Phase6 callback/script interpreter/message/transition remain held.",
+    "Constructed scripted records/resource identities do not establish actor draw."
+  ]
+}

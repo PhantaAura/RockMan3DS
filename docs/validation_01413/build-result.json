@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources",
+  "native_build": "PASS",
+  "native_command": [
+    "make",
+    "-C",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/native-source/platform/3ds",
+    "-j4"
+  ],
+  "native_log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/logs/native-build.log",
+  "host_validation": "25/25 inherited+new host CTest PASS separately; see host-tests.log",
+  "cook_scope": "Only5EBD sidecars recooked; other verified assets unchanged",
+  "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/build/Legends3DS_01413_ObjectResources.3dsx",
+  "native_bytes": 455892,
+  "native_sha256": "06f5c8fc62721d192421f2a341510098c2ce58bf5b98c85b4f280220e7cff658",
+  "sd_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/sd_out",
+  "hardware": "HARDWARE_PENDING"
+}

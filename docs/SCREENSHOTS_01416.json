@@ -1,0 +1,31 @@
+{
+  "build": "0.0.14.16",
+  "binary_sha256": "3e32b79cfa506033777392cc0c944e2b370fc59b0122962e773f6a3fd59eef46",
+  "device": "Azahar2126.0 Old3DSmodel; notphysicalhardware",
+  "originals_outside_source_zip": true,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/azahar-01416-enhanced-r1/captures/native-actor-materials-top-bottom.png",
+      "scene": "Diagnosticarea1: player/terrain/companionUI",
+      "limit": "Enemytexturefidelity/retailshading notaccepted"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/azahar-01416-enhanced-r1/captures/native-after-diagnostic-transition.png",
+      "scene": "Diagnosticarea2 afterSELECT replay",
+      "limit": "Knownterrain/cameraocclusion obscuresplayer"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/azahar-01416-enhanced-r1/captures/native-during-replay-top-bottom.png",
+      "scene": "Moviecompletedmodal",
+      "limit": "This file contains thecompletiondialog, notgameplay"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/azahar-01416-fault-r2/captures/malformed-optional-cache-still-running.png",
+      "scene": "Area1 withmalformedoptionalactorcache: runtimecontinues"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/azahar-01416-safe-r1/captures/native-0143-safe-top-bottom.png",
+      "scene": "Area0: actual0143shader, texturesOFF, player/companionUI"
+    }
+  ]
+}

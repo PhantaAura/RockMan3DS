@@ -1,0 +1,178 @@
+{
+  "schema": "native-actor-resource-probe/1",
+  "area": 2,
+  "source_records": 20,
+  "actor_instances": 2,
+  "unique_resources": 1,
+  "decoded_element_bytes": 1600,
+  "actors": [
+    {
+      "source_index": 18,
+      "row": 3,
+      "initializer": "0x80106974",
+      "parts": 2,
+      "vertices": 52,
+      "triangles": 4,
+      "quads": 46,
+      "source_heading": 0,
+      "raw_scale": [
+        512,
+        512,
+        512
+      ],
+      "neutral_shade_rgb": [
+        128,
+        128,
+        128
+      ],
+      "material_words": [
+        1015021611,
+        1015021611
+      ],
+      "floor_sample": {
+        "status": "UNKNOWN",
+        "status_code": 2,
+        "candidate_cells": 3,
+        "unsupported_primitives": 1,
+        "raw_y": null
+      },
+      "pose_cases": [
+        {
+          "request": 0,
+          "record": 0,
+          "frame_index": 0,
+          "countdown": 1,
+          "next_control": -1,
+          "sequence_source_offset": 30004,
+          "pose_source_offset": 29256,
+          "world_bounds_min": [
+            -6983.62,
+            -699.875,
+            13053.4
+          ],
+          "world_bounds_max": [
+            -6840.38,
+            -577,
+            13186.5
+          ],
+          "packed_channels": 75,
+          "retail_state_selection_verified": false
+        },
+        {
+          "request": 2,
+          "record": 16,
+          "frame_index": 16,
+          "countdown": 1,
+          "next_control": -1,
+          "sequence_source_offset": 30292,
+          "pose_source_offset": 29976,
+          "world_bounds_min": [
+            -6983.62,
+            -708.962,
+            13053.5
+          ],
+          "world_bounds_max": [
+            -6840.38,
+            -577,
+            13193.1
+          ],
+          "packed_channels": 75,
+          "retail_state_selection_verified": false
+        }
+      ]
+    },
+    {
+      "source_index": 19,
+      "row": 3,
+      "initializer": "0x80106974",
+      "parts": 2,
+      "vertices": 52,
+      "triangles": 4,
+      "quads": 46,
+      "source_heading": 2048,
+      "raw_scale": [
+        512,
+        512,
+        512
+      ],
+      "neutral_shade_rgb": [
+        128,
+        128,
+        128
+      ],
+      "material_words": [
+        1015021611,
+        1015021611
+      ],
+      "floor_sample": {
+        "status": "UNKNOWN",
+        "status_code": 2,
+        "candidate_cells": 3,
+        "unsupported_primitives": 1,
+        "raw_y": null
+      },
+      "pose_cases": [
+        {
+          "request": 0,
+          "record": 0,
+          "frame_index": 0,
+          "countdown": 1,
+          "next_control": -1,
+          "sequence_source_offset": 30004,
+          "pose_source_offset": 29256,
+          "world_bounds_min": [
+            -6983.62,
+            -699.875,
+            11901.5
+          ],
+          "world_bounds_max": [
+            -6840.38,
+            -577,
+            12034.6
+          ],
+          "packed_channels": 75,
+          "retail_state_selection_verified": false
+        },
+        {
+          "request": 2,
+          "record": 16,
+          "frame_index": 16,
+          "countdown": 1,
+          "next_control": -1,
+          "sequence_source_offset": 30292,
+          "pose_source_offset": 29976,
+          "world_bounds_min": [
+            -6983.62,
+            -708.962,
+            11894.9
+          ],
+          "world_bounds_max": [
+            -6840.38,
+            -577,
+            12034.5
+          ],
+          "packed_channels": 75,
+          "retail_state_selection_verified": false
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "source_index": 18,
+      "state": 3,
+      "reason": "mesh bound; floor and retail-selected pose remain explicit"
+    },
+    {
+      "source_index": 19,
+      "state": 3,
+      "reason": "mesh bound; floor and retail-selected pose remain explicit"
+    }
+  ],
+  "unload_actor_count": 0,
+  "unload_decoded_bytes": 0,
+  "limits": [
+    "static source poses; progression flag selection unresolved",
+    "no enemy identity, AI, animation request timing, texture residency or render parity claim"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "build": "0.0.14.46",
+  "binary_sha256": "d2196f150846d904349c85f269366dca6d220900520fb0b2e40a98fa20ad3f44",
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01446/azahar-candidate46/captures/_16.10.26_23.36.11.856.png",
+      "sha256": "bf1efae5ef19d6ff12b2fc89816a923694285a3ea533c5941e9d0ed293cd20ca",
+      "device": "Azahar 2126.0, Old model, CPU100%, Vulkan",
+      "build": "0.0.14.46",
+      "binary_sha256": "d2196f150846d904349c85f269366dca6d220900520fb0b2e40a98fa20ad3f44",
+      "scope": "Shared candidate RNG + recorded constructor clock; not fresh boot or retail parity"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01446/azahar-candidate46/captures/_16.10.26_23.37.36.411.png",
+      "sha256": "b9a93c2b6c6e46e5d0c015ed833589d06805164efc837e6282dceeedb88f1316",
+      "device": "Azahar 2126.0, Old model, CPU100%, Vulkan",
+      "build": "0.0.14.46",
+      "binary_sha256": "d2196f150846d904349c85f269366dca6d220900520fb0b2e40a98fa20ad3f44",
+      "scope": "Shared candidate RNG + recorded constructor clock; not fresh boot or retail parity"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01446/azahar-candidate46/captures/_16.10.26_23.37.50.783.png",
+      "sha256": "37941d99915b7ee973723e24a5d3d56a824e2770ef582aded6feff834e14c2d3",
+      "device": "Azahar 2126.0, Old model, CPU100%, Vulkan",
+      "build": "0.0.14.46",
+      "binary_sha256": "d2196f150846d904349c85f269366dca6d220900520fb0b2e40a98fa20ad3f44",
+      "scope": "Shared candidate RNG + recorded constructor clock; not fresh boot or retail parity"
+    }
+  ],
+  "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01446/candidate-evidence/hardware.csv",
+  "trace_sha256": "699fcd7ef4b6289a979653f1f89a7e1bcc47003cc38f99f4cc7435259b2f045c",
+  "scene_retire_count": 1,
+  "retire": {
+    "# area_event": "outgoing_scene_released",
+    "area": "1",
+    "elapsed_us": "0",
+    "package_bytes": "701943",
+    "decoded_estimate": "810616",
+    "load_peak_estimate": "1898932",
+    "malloc_live": "1886568",
+    "linear_free": "27937280",
+    "vram_free": "5523456"
+  },
+  "transition": {
+    "# area_event": "source_transition_after",
+    "area": "1",
+    "elapsed_us": "1781403",
+    "package_bytes": "701943",
+    "decoded_estimate": "810616",
+    "load_peak_estimate": "1898932",
+    "malloc_live": "1886632",
+    "linear_free": "27937280",
+    "vram_free": "5523456"
+  },
+  "post_transition_old_pool_cleanup_count": 0,
+  "post_transition_source_scene_view_count": 0,
+  "sampled_post_transition_malloc_comparison": {
+    "01445_bytes": 2289712,
+    "01446_bytes": 1886632,
+    "difference_bytes": 403080,
+    "scope": "Separate matched-scope emulator runs, not an exact allocation-size or hardware-peak measurement."
+  },
+  "unload_package_bytes": 0,
+  "candidate_clock_scope": true,
+  "limits": [
+    "No fresh clock or retail RNG chronology proof.",
+    "Area resources replaced inside the existing multi-area package, not a different package file.",
+    "Destination view remains obstructed. No camera/physics/spawn rule changed.",
+    "Physical Old3DS acceptance and device peak memory/performance unknown.",
+    "Native normal/safe renderer modes were exercised in 01445; 01446 only repeats the affected gated handoff path. Shaders/layout are unchanged."
+  ]
+}

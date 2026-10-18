@@ -1,0 +1,148 @@
+{
+  "evidence_class": "synthetic emulator HID replay; not manual or hardware evidence",
+  "file": "worldalive-capture-01415.ctm",
+  "sha256": "0ed6e9a4a7d74b46b6a156cde2106073b01683287b02f3f343bea420d945853a",
+  "azahar_version": "2126.0",
+  "azahar_git_revision": "fbd3fb02f71e5f9ed5134037fd59bad96c7d2b8a",
+  "program_id": "0000000000000000",
+  "header_bytes": 256,
+  "record_bytes": 7,
+  "pad_input_count": 23322,
+  "total_records": 46644,
+  "duration_emulated_seconds_approx": 99.66666666666667,
+  "file_bytes": 326764,
+  "runtime_tested": false,
+  "assumption": "Old3DS HLE HID with no enabled accelerometer, gyroscope, or IR input stream",
+  "schedule": [
+    {
+      "phase": "boot",
+      "first_hid_sample": 0,
+      "hid_samples": 1404,
+      "start_emulated_seconds_approx": 0.0,
+      "end_emulated_seconds_approx": 6.0,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "start",
+      "first_hid_sample": 1404,
+      "hid_samples": 58,
+      "start_emulated_seconds_approx": 6.0,
+      "end_emulated_seconds_approx": 6.247863247863248,
+      "buttons_hex": "0x0001",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "load",
+      "first_hid_sample": 1462,
+      "hid_samples": 2340,
+      "start_emulated_seconds_approx": 6.247863247863248,
+      "end_emulated_seconds_approx": 16.247863247863247,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "grounded_scene_capture",
+      "first_hid_sample": 3802,
+      "hid_samples": 11700,
+      "start_emulated_seconds_approx": 16.247863247863247,
+      "end_emulated_seconds_approx": 66.24786324786325,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "standing_jump",
+      "first_hid_sample": 15502,
+      "hid_samples": 105,
+      "start_emulated_seconds_approx": 66.24786324786325,
+      "end_emulated_seconds_approx": 66.69658119658119,
+      "buttons_hex": "0x0002",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "land",
+      "first_hid_sample": 15607,
+      "hid_samples": 936,
+      "start_emulated_seconds_approx": 66.69658119658119,
+      "end_emulated_seconds_approx": 70.69658119658119,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "forward",
+      "first_hid_sample": 16543,
+      "hid_samples": 28,
+      "start_emulated_seconds_approx": 70.69658119658119,
+      "end_emulated_seconds_approx": 70.81623931623932,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 154
+    },
+    {
+      "phase": "running_jump",
+      "first_hid_sample": 16571,
+      "hid_samples": 94,
+      "start_emulated_seconds_approx": 70.81623931623932,
+      "end_emulated_seconds_approx": 71.21794871794872,
+      "buttons_hex": "0x0002",
+      "circle_x": 0,
+      "circle_y": 154
+    },
+    {
+      "phase": "running_land",
+      "first_hid_sample": 16665,
+      "hid_samples": 936,
+      "start_emulated_seconds_approx": 71.21794871794872,
+      "end_emulated_seconds_approx": 75.21794871794872,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "diagnostic_next",
+      "first_hid_sample": 17601,
+      "hid_samples": 35,
+      "start_emulated_seconds_approx": 75.21794871794872,
+      "end_emulated_seconds_approx": 75.36752136752136,
+      "buttons_hex": "0x0004",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "load_next",
+      "first_hid_sample": 17636,
+      "hid_samples": 936,
+      "start_emulated_seconds_approx": 75.36752136752136,
+      "end_emulated_seconds_approx": 79.36752136752136,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    },
+    {
+      "phase": "post_transition_forward",
+      "first_hid_sample": 18572,
+      "hid_samples": 70,
+      "start_emulated_seconds_approx": 79.36752136752136,
+      "end_emulated_seconds_approx": 79.66666666666667,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 154
+    },
+    {
+      "phase": "final_capture",
+      "first_hid_sample": 18642,
+      "hid_samples": 4680,
+      "start_emulated_seconds_approx": 79.66666666666667,
+      "end_emulated_seconds_approx": 99.66666666666667,
+      "buttons_hex": "0x0000",
+      "circle_x": 0,
+      "circle_y": 0
+    }
+  ]
+}

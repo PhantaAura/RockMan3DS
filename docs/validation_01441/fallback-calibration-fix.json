@@ -1,0 +1,8 @@
+{
+  "status": "SOURCE_FIXED_RETEST_PENDING",
+  "cause": "New lateXrenderer selection retained earlierUVcamera profile",
+  "fix": "Bind existing legacy/UV view calibration after final renderer selection",
+  "fallback_geometry_shader_and_model_math_unchanged": true,
+  "failed_capture_profile": "azahar-01441-owner-r2",
+  "build": "native-r3"
+}

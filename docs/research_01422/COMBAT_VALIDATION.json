@@ -1,0 +1,28 @@
+{
+  "schema": "mml-combat-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "retail_parity": false,
+  "hardware_validated": false,
+  "checks": [
+    {"command": "python3 tests/test_cook_actor_combat.py", "result": "PASS", "tests": 8},
+    {"command": "python3 tests/test_cook_hit_proxy.py", "result": "PASS", "tests": 2},
+    {"command": "c++ -std=c++17 -Wall -Wextra -Wpedantic -Werror -I include tests/test_class20_03_hit.cpp src/world/class20_03_hit.cpp -o ../pass-20261007-worldalive-01422/test_class20_03_hit", "result": "PASS"},
+    {"command": "../pass-20261007-worldalive-01422/test_class20_03_hit tests/fixtures/class20_03_hit_01422.tsv", "result": "PASS", "source_cases": 787, "original_instructions": 77539, "allocation_free_ticks": 4096},
+    {"command": "c++ -std=c++17 -Wall -Wextra -Wpedantic -Werror -I include tests/test_source_combat_profile.cpp src/world/source_combat_profile.cpp ../pass-20261007-worldalive-01421/host/liblegends3ds_core.a -o ../pass-20261007-worldalive-01422/test_source_combat_profile_v3", "result": "PASS", "note": "New profile source compiled; earlier core library supplies unchanged CRC implementation."},
+    {"command": "../pass-20261007-worldalive-01422/test_source_combat_profile_v3 ../pass-20261006-worldalive-01419/pack-runtime-r1/actor_combat.l3cb", "result": "PASS", "allocation_free_lookups": 1200},
+    {"command": "c++ -std=c++17 -Wall -Wextra -Wpedantic -Werror -I include tests/test_source_hit_proxy.cpp src/world/source_hit_proxy.cpp ../pass-20261007-worldalive-01421/host/liblegends3ds_core.a -o ../pass-20261007-worldalive-01422/test_source_hit_proxy", "result": "PASS", "note": "New proxy source compiled; earlier core library supplies unchanged CRC implementation."},
+    {"command": "../pass-20261007-worldalive-01422/test_source_hit_proxy tests/fixtures/source_hit_proxy_01422.tsv", "result": "PASS", "source_fixture_cases": 872, "additional_original_checks": 3, "original_instructions": 442048, "allocation_free_ticks": 4096}
+  ],
+  "diagnosed_failures": [
+    "Initial hit unknown-angle hold test used a negative counter that correctly took the earlier source threshold branch; authored test premise corrected to exercise the angle branch.",
+    "First profile compile referenced an absent new host library; rerun against the existing core CRC implementation while compiling new profile source.",
+    "First proxy differential exposed an inverted BLTZ packet-addition branch; corrected reducer to skip addition when the selected bit is set and reran all fixtures successfully."
+  ],
+  "pending": [
+    "Combined native packet-producer to class03 hit-consumer chain regression",
+    "Original GTE/player Buster packet producer",
+    "Composite proxy kinds1..3",
+    "Native full outer callback finalization for nonzero packets",
+    "Live retail encounter and physical Old 3DS validation"
+  ]
+}

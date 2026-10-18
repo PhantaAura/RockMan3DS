@@ -1,0 +1,16 @@
+{
+  "schema": "mml-source-command-empty/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "table_type0_callback": {
+    "site": "0x8001ca94",
+    "target": "0x8001b4c4"
+  },
+  "original_instructions_executed": 28,
+  "helper_hooks": [],
+  "source_region": {
+    "start": "8001B4C4",
+    "end_exclusive": "8001B4CC",
+    "sha256": "6d64edf91449c1b17746c1ef18afa2eb25c70bdf1322ab3df5a2630993b7e2f1"
+  },
+  "scope": "Complete original no-error/mode0/empty-dispatch path; actual CD status poll inputs are covered by outer boundary fixtures."
+}

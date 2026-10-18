@@ -1,0 +1,47 @@
+{
+  "build": "0.0.14.15 install-r4",
+  "binary_sha256": "b14b890e8892b7df62a950391f895c7ca57b86bb39ea66ed165119747e2ec5c3",
+  "device": "Azahar2126.0 Old-model HLE",
+  "input": "synthetic HID replay, no retail comparison",
+  "samples": 45,
+  "areas": [
+    "1",
+    "2"
+  ],
+  "standing_jump_airborne_frames": [
+    "198",
+    "207",
+    "208",
+    "209"
+  ],
+  "running_jump_airborne_frames": [
+    "317"
+  ],
+  "landing_frames": [
+    "222",
+    "345"
+  ],
+  "unknown_contact_jump_frames": [
+    "327",
+    "328"
+  ],
+  "memory": {
+    "live_heap_min_bytes": 1886560,
+    "live_heap_max_bytes": 1891536,
+    "owned_texture_bytes": [
+      3670016
+    ],
+    "owned_linear_bytes": [
+      71640,
+      82560
+    ]
+  },
+  "limitations": [
+    "Sparse logging and HLE do not establish hardware performance",
+    "Grounded=-1 is unknown; contact_status2 Unsupported",
+    "Source meshes submitted, diagnostic heading2048 occludes player",
+    "No imported actor HP or native targets bound",
+    "SELECT transition, not original progression",
+    "No physical Old3DS test"
+  ]
+}

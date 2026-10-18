@@ -1,0 +1,34 @@
+{
+  "schema": "actor-detection-source-proof/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "cases": 2588,
+  "counts": {
+    "phase0": 558,
+    "phase1_authored_helpers": 1737,
+    "phase2": 249,
+    "range_rejection": 44
+  },
+  "globals_countdown_cases": 36,
+  "original_initializer_clear_verified": true,
+  "instructions_executed": 503803,
+  "restricted_mvmva_commands": 711,
+  "fixture_sha256": "4f7a3cebe07b73aef83cd11cd955c79f7f866a4391964c1ce4231297b11ebba7",
+  "retail_parity": false,
+  "no_original_payload_exported": true,
+  "source": {
+    "detector": "0x800364B0",
+    "rotated_mask": "0x80030628/mask0x10",
+    "profile_table": "0x800899AC+profile*4",
+    "global_initialize": "0x8005C258",
+    "global_tick": "0x8005C2B8",
+    "global_setter": "0x8005EBB4"
+  },
+  "limits": [
+    "Authored scalar work/profile/trig premises; fixture does not contain original tables.",
+    "Phase1 normalized/interpolated vectors and wall segment returns are authored helper outputs.",
+    "Restricted GTE implements pure heading matrix MAC used by source; general flags/projection excluded.",
+    "Sound156 is an intent; original sound owner is not exercised.",
+    "Subsystem initialization is proved; complete New Game/frame ordering remains integration evidence."
+  ]
+}

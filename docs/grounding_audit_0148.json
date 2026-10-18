@@ -1,0 +1,39 @@
+{
+  "version": "0.0.14.8",
+  "physics_1to1": false,
+  "evidence_status": "SOURCE_BACKED_PARTIAL",
+  "source_evidence": {
+    "containing_cell": "runtime_map_collect_contact_candidates_8004b1e0: query + 0x8000, shift 9",
+    "render_contact_center": "grid * 0x200 - 0x7F00",
+    "generic_lookup_correction": "bias 0x7F00 -> 0x8000, widened arithmetic",
+    "candidate_gather_arithmetic": "widened floor division and center multiplication preserve signed shifts without negative-shift UB",
+    "diagnostic_spawn_correction": "remove extra center + 0x100 from X/Z",
+    "player_vertical_offset_added": false,
+    "contact_semantics_invented": false
+  },
+  "aggregate_cooked_observations": {
+    "render_helper_version": "0.0.14.7 legacy expansion, before candidate terrain integration",
+    "pose_action_1": {"frames": 31, "frame0_root_y": -719, "frame0_feet_max_y": -0.476532, "feet_max_y_range": [-0.476532, 19.6633]},
+    "pose_action_13": {"frames": 32, "feet_max_y_range": [-35.3567, 34.7815]},
+    "area_0": {"render_vertex_count": 7008, "expanded_y_values": [0], "actor_y": 0, "first_tile_center_xz": [-768, -2816], "old_spawn_xz": [-512, -2560]},
+    "area_1": {"render_vertex_count": 3416, "expanded_y_values": [0], "actor_y": 0, "first_tile_center_xz": [-256, -12544], "old_spawn_xz": [0, -12288]},
+    "area_2": {"expanded_y_values": [-576, -384, -192, 0], "vertical_solver_bound": false},
+    "native_world_scale": "1/512"
+  },
+  "regression_checks": {
+    "alignment_test": "tests/test_map_cell_alignment.cpp",
+    "synthetic_cells": 16,
+    "edge_and_interior_queries": 256,
+    "packed_quarter_turn_identities": 4,
+    "contains_cell_matches_existing_retail_gather": true,
+    "default_and_alternate_contact_identity": true,
+    "signed_halfword_edges": true,
+    "int32_extremes": true,
+    "negative_grid_previous_neighbors": true,
+    "standalone_alignment_address_undefined_sanitizers": "PASS",
+    "standalone_alignment_result": "PASS",
+    "standalone_map_sharing_result": "PASS",
+    "cumulative_host_native_result": "PENDING_INTEGRATION"
+  },
+  "remaining": ["native floor/contact solver binding", "height-changing movement", "retail ground adhesion and ledge response", "retail camera reconstruction", "current native screenshot verification", "physical Old 3DS validation"]
+}

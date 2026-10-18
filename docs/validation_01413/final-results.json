@@ -1,0 +1,129 @@
+{
+  "host": "25/25 PASS",
+  "native": {
+    "status": "PASS",
+    "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources",
+    "native_build": "PASS",
+    "native_command": [
+      "make",
+      "-C",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/native-source/platform/3ds",
+      "-j4"
+    ],
+    "native_log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/logs/native-build.log",
+    "host_validation": "25/25 inherited+new host CTest PASS separately; see host-tests.log",
+    "cook_scope": "Only5EBD sidecars recooked; other verified assets unchanged",
+    "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/build/Legends3DS_01413_ObjectResources.3dsx",
+    "native_bytes": 455892,
+    "native_sha256": "06f5c8fc62721d192421f2a341510098c2ce58bf5b98c85b4f280220e7cff658",
+    "sd_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/install/sd_out",
+    "hardware": "HARDWARE_PENDING"
+  },
+  "actual_source_roundtrip": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "areas": [
+      {
+        "area": 0,
+        "owner_container_sha256": "11016acb5b13a0699b22e9e4ca9066fe58b4be80d053860bc68454316768a92d",
+        "source_load_base": "0x8016c000",
+        "directory_rows": 14,
+        "source_bytes": 113808,
+        "cooked_bytes": 114072,
+        "source_sha256": "ea7239d21db9d06c26a70825588ad7981a980ce798f7352588c5865a0e001d15",
+        "cooked_sha256": "2a631d2e11cbf3a0dbb7054c8bb3fcd82863be5030ceb4ced1a5156d187d8e60",
+        "retained_bytes_exact": true,
+        "source_roles": "UNKNOWN",
+        "command": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/host/l3cook_ebd",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/ebd-original/area_00.ebd",
+          "0x8016c000",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/pack-v2/ebd/area_00.l3ebd"
+        ]
+      },
+      {
+        "area": 1,
+        "owner_container_sha256": "f7283379a49d028623fd129f938c6a318e3c1338a62d4d9b585198748fd24779",
+        "source_load_base": "0x8016c000",
+        "directory_rows": 49,
+        "source_bytes": 117360,
+        "cooked_bytes": 118184,
+        "source_sha256": "8c1dd36fbd7b5e3a48b1b45be0c232f39f8e6c9e19245f3f7de93b2905ba4ba1",
+        "cooked_sha256": "28bdb4d9e9a7f32e5c5ec7f8cb8e346cfcc46dc69d0a0c4b54deaacb4e3ccd87",
+        "retained_bytes_exact": true,
+        "source_roles": "UNKNOWN",
+        "command": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/host/l3cook_ebd",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/ebd-original/area_01.ebd",
+          "0x8016c000",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/pack-v2/ebd/area_01.l3ebd"
+        ]
+      },
+      {
+        "area": 2,
+        "owner_container_sha256": "1fb567b6f86c1654ca9ae153ceba9e62b4501794d607b1844086591772774421",
+        "source_load_base": "0x8016c000",
+        "directory_rows": 49,
+        "source_bytes": 117360,
+        "cooked_bytes": 118184,
+        "source_sha256": "8c1dd36fbd7b5e3a48b1b45be0c232f39f8e6c9e19245f3f7de93b2905ba4ba1",
+        "cooked_sha256": "28bdb4d9e9a7f32e5c5ec7f8cb8e346cfcc46dc69d0a0c4b54deaacb4e3ccd87",
+        "retained_bytes_exact": true,
+        "source_roles": "UNKNOWN",
+        "command": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/host/l3cook_ebd",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/ebd-original/area_02.ebd",
+          "0x8016c000",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/pack-v2/ebd/area_02.l3ebd"
+        ]
+      },
+      {
+        "area": 3,
+        "owner_container_sha256": "02c7bb8bb9f2dae67e10370cee23fdf748c17d741d121b479e61236aa7e36fa8",
+        "source_load_base": "0x8016c000",
+        "directory_rows": 40,
+        "source_bytes": 101808,
+        "cooked_bytes": 102488,
+        "source_sha256": "062390841dfdce3fb84f8c073ec1a0f8e3d29e4bcbcfb663286900dcf6a0d727",
+        "cooked_sha256": "edf3af6ab9c4bf945daedd7121013925662acc46052d15f662fcc57d8fa3f29f",
+        "retained_bytes_exact": true,
+        "source_roles": "UNKNOWN",
+        "command": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/host/l3cook_ebd",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/ebd-original/area_03.ebd",
+          "0x8016c000",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/pack-v2/ebd/area_03.l3ebd"
+        ]
+      },
+      {
+        "area": 4,
+        "owner_container_sha256": "da52dca72a566a6a1ad10e3925c341c89dafe79cc6c384487f60caaebb9bea20",
+        "source_load_base": "0x8016c000",
+        "directory_rows": 6,
+        "source_bytes": 116896,
+        "cooked_bytes": 117032,
+        "source_sha256": "b81eb4ee87efac077d33e71fc2a768ded076391ef1a00cd0d2422b3f579de406",
+        "cooked_sha256": "8d71ce8972cb1fc8057ddcfa5922c2b41610c20d7d7d1df1f2d29c0846a3c1b6",
+        "retained_bytes_exact": true,
+        "source_roles": "UNKNOWN",
+        "command": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/host/l3cook_ebd",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/ebd-original/area_04.ebd",
+          "0x8016c000",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/pack-v2/ebd/area_04.l3ebd"
+        ]
+      }
+    ],
+    "total_retained_bytes": 567232,
+    "pack_integrity": "PASS",
+    "unchanged_pack_files_preserved": true,
+    "retail_actor_rendering": "UNKNOWN",
+    "payloads_packaged_in_source": false
+  },
+  "emulator": "Oldmodelboot5v2payloads567232B ready",
+  "hardware": "HARDWARE_PENDING",
+  "renderer_runtime_rewrite": false,
+  "original_actor_rendering": "UNKNOWN",
+  "physics_1to1": false,
+  "warnings_present": false,
+  "source_native_snapshot_matches": true
+}

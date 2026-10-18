@@ -1,0 +1,22 @@
+{
+  "schema": "mml-source-player-lease/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "source_function": "0x80035508",
+  "source_code_sha256": "e0544f27b4a5c75e8444fa8f7fe51c48a8488fef71dc7dab38847d64d9c3b47b",
+  "source_cases": 2018,
+  "instructions_executed": 613210,
+  "rtps_commands": 15620,
+  "fixture_sha256": "86c97834d06d8640fa0b3699e37f3a4e40676441c43244c9c489a4a7607f1cad",
+  "return_only_hooks": [],
+  "source_instructions_modified": false,
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "hardware_math_reference": "https://psx-spx.consoledev.net/geometrytransformationenginegte/",
+  "limits": [
+    "Authored CPU contexts and documented restricted RTPS model; not an independent hardware GTE differential.",
+    "Internal44bit MAC overflow is rejected transactionally; otherGTE commands/cycle timing are not supported.",
+    "Original camera/OFX/OFY/H/DQA/DQB ownership remains explicit. No native float camera substitution.",
+    "80034EB8 target selection and80035724 Buster allocation/muzzle producers are not established by lease completion."
+  ]
+}

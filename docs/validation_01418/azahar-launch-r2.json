@@ -1,0 +1,27 @@
+{
+  "pid": 42512,
+  "argv": [
+    "/Applications/Azahar.app/Contents/MacOS/azahar",
+    "-w",
+    "-p",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/replays/worldalive-ground-jump-01415.ctm",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01418/install-r2/build/Legends3DS_01418_WorldComesAlive.3dsx"
+  ],
+  "binary_sha256": "0898e6d048abd5390beb8e4757583bc157b2026979e86d7c885183004344ec6b",
+  "movie_sha256": "b9a7e7cba7cc5ead90c148c02759b220d68a1543ede3050b53a934f9d1f85a0e",
+  "settings": {
+    "emulator": "Azahar2126.0",
+    "old_model": true,
+    "cpu_clock_percentage": 100,
+    "resolution_factor": 1,
+    "actor_state_fields": true,
+    "input_replay": "work/pass-20261004-worldalive/replays/worldalive-ground-jump-01415.ctm",
+    "hardware_tested": false,
+    "retail_parity": false
+  },
+  "isolated_environment": {
+    "XDG_CONFIG_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01418/azahar-01418-r2/config",
+    "XDG_DATA_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01418/azahar-01418-r2/data",
+    "XDG_CACHE_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01418/azahar-01418-r2/cache"
+  }
+}

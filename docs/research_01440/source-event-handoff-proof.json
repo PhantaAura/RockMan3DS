@@ -1,0 +1,21 @@
+{
+  "schema": "mml-source-event-handoff/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "fade_cases": 18,
+  "handoff_cases": 48,
+  "original_instructions": 25085,
+  "display_windows_changed": 127,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "fixture_sha256": "049186a2dbb12138396fac6584418ffb866d8de744caa98047a2fee4ce70905d",
+  "retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Fade stops at80012E10 scheduler intent; BIOS thread completion is not synthesized.",
+    "Phase7 tail starts after the separately owned callback/camera/timeline consumers.",
+    "Actual template/destination writes execute on authored buffers; live receipt ownership remains required.",
+    "Transition loader, later player physics and CD command execution remain separate consumers."
+  ]
+}

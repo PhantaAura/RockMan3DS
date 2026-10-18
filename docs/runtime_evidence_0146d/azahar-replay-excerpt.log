@@ -1,0 +1,5 @@
+[  78.808414] Movie <Info> core/movie.cpp:ValidateMovie:623: Validating Movie file '/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/replay-diagnostics/native-controls-generated.ctm'
+[ 100.404179] Movie <Info> core/movie.cpp:ValidateMovie:623: Validating Movie file '/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/replay-diagnostics/native-controls-generated.ctm'
+[ 101.858814] Movie <Info> core/movie.cpp:StartPlayback:525: Loading Movie for playback
+[ 101.859410] Movie <Info> core/movie.cpp:StartPlayback:551: Loaded Movie, ID: E702D40274F4335D
+[ 181.808699] Movie <Info> core/movie.cpp:CheckInputEnd:231: Playback finished

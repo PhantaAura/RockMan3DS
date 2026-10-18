@@ -1,0 +1,23 @@
+{
+  "build": "0.0.14.40",
+  "binary_sha256": "9e0d417109353d648635f222ef18b48ba242914f351512ac5abb619a8a263a83",
+  "emulator": "Azahar2126.0",
+  "is_new_3ds": false,
+  "cpu_percent": 100,
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01440/azahar-01440-r1/captures/_14.10.26_21.16.52.026.png",
+      "sha256": "c5a512ef2b9454c58da3876a51f0f51b9cffcfaae97ff0a516afc86e53f7d6cb",
+      "original_edited": false,
+      "scene": "owner-local tutorial scene and bottom UI; emulator only"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01440/azahar-01440-r1/captures/_14.10.26_21.17.53.379.png",
+      "sha256": "038d96c63635e48f3e17f4e4f963e1ee120d58b3d415f7985df0cead7b483677",
+      "original_edited": false,
+      "scene": "owner-local tutorial scene and bottom UI; emulator only"
+    }
+  ],
+  "limits": "Not proof of physical top-screen fix or retail timing. L+R probe still needs physical testing."
+}

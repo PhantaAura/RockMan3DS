@@ -1,0 +1,4 @@
+cmake -S /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.35_WorldComesAlive -B /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01435/host -DCMAKE_BUILD_TYPE=Release
+-- Configuring done (0.3s)
+-- Generating done (0.4s)
+-- Build files have been written to: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01435/host

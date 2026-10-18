@@ -1,0 +1,530 @@
+[
+  {
+    "path": "CMakeLists.txt",
+    "change": "modified"
+  },
+  {
+    "path": "README.md",
+    "change": "modified"
+  },
+  {
+    "path": "RESUME_01422.md",
+    "change": "added"
+  },
+  {
+    "path": "SOURCE_MANIFEST.sha256",
+    "change": "modified"
+  },
+  {
+    "path": "docs/PASS_REPORT_01422.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/PORTING_MAP_01422.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/TEST_COMMANDS_01422.txt",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01420/redux_rng_reference_observer.lua",
+    "change": "modified"
+  },
+  {
+    "path": "docs/research_01420/validate_rng_reference_trace.py",
+    "change": "modified"
+  },
+  {
+    "path": "docs/research_01422/CHILD_RUNTIME_TRANSACTION.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/CLASS60_06_LIFECYCLE.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/COMBAT_VALIDATION.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/NATURAL_PROGRESSION_AUDIT.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/SOURCE_HIT_AND_PROXY.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/SOURCE_RNG_SERVICE.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/class20_03_hit_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/class60_06_contact_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/class60_06_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/class60_shadow_floor_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/hit_proxy_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/redux_input_update_observer.lua",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/source_event_consumer_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/source_event_initialization_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/source_event_next_phase_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/source_event_pipeline_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/source_event_player_header_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01422/source_event_player_initialization_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/actor-child-delivery-arm-stack.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/actor-child-delivery-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/area-inspection-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/area-runtime-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/child-contact-regression-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/child-lifecycle-regression-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/child-runtime-arm-stack.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/child-runtime-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/child-runtime-native-results.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/class60-06-callback-source-evidence.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/class60-06-contact-consumer-source-evidence.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/class60-06-native-results.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/class60-shadow-floor-source-evidence.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/compiled-source-manifest.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/host-build-final.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/host-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/host-configure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/host-tests-final.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/native-build-r5.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/native-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/native-observation.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/ps1-reference-status.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/rng-observer-lifecycle.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/screenshots.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/source-event-consumer-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/source-event-initialization-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/source-event-phase3-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/source-event-pipeline-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/source-event-player-header-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/source-event-player-initialization-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01422/source-rng-service-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/actor_runtime.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/child_runtime.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/class20_03_behavior.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/class20_03_hit.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/class60_06.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/runtime_session.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/source_actor_consumers.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_combat_profile.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/source_event_consumer.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_event_pipeline.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_hit_proxy.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_profile_class60_06.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_rng_service.h",
+    "change": "added"
+  },
+  {
+    "path": "platform/3ds/Makefile",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.h",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/main.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/flow/source_event_consumer.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/flow/source_event_pipeline.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/actor_runtime.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/child_runtime.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/class20_03_behavior.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/class20_03_hit.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/class60_06.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/runtime_session.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/source_actor_consumers.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/source_combat_profile.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/source_hit_proxy.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/source_profile_class60_06.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/source_rng_service.cpp",
+    "change": "added"
+  },
+  {
+    "path": "state/CURRENT_CHECKPOINT.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/CURRENT_READINESS.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/EVIDENCE_LEDGER_01422.json",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/class20_03_hit_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/class60_06_callback_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/class60_06_contact_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/class60_06_motion_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/class60_06_primitive_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/class60_shadow_floor_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_collision_registry_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_consumer_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_initialization_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_phase3_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_pipeline_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_player_header_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_player_initialization_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_hit_proxy_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_rng_openbios_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_shadow_01422.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_actor_child_delivery.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_child_runtime.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_class20_03_hit.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_class60_06.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_class60_06_contact.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_cook_actor_combat.py",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_cook_hit_proxy.py",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_cook_source_rng_profile.py",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_rng_observer_lifecycle.lua",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_rng_reference.py",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_runtime_source_events.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_actor_consumers.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_combat_profile.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_source_event_consumer.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_event_pipeline.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_hit_proxy.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_profile_class60_06.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_rng_service.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tools/build_hardware_test.py",
+    "change": "modified"
+  },
+  {
+    "path": "tools/cook_actor_combat.py",
+    "change": "modified"
+  },
+  {
+    "path": "tools/cook_class60_06.py",
+    "change": "added"
+  },
+  {
+    "path": "tools/cook_hit_proxy.py",
+    "change": "added"
+  },
+  {
+    "path": "tools/cook_source_event_poll.py",
+    "change": "added"
+  },
+  {
+    "path": "tools/cook_source_rng_profile.py",
+    "change": "added"
+  }
+]

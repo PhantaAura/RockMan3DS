@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "ctest",
+    "--test-dir",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/build",
+    "--output-on-failure",
+    "-R",
+    "^(terrain_geometry_candidate|map_cell_alignment|map_sharing|area_package)$"
+  ],
+  "returncode": 0,
+  "ASAN_OPTIONS": "halt_on_error=1",
+  "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+  "limitation": "macOS AddressSanitizer does not support detect_leaks=1; first attempt aborted before tests. Address/undefined sanitizers retained."
+}

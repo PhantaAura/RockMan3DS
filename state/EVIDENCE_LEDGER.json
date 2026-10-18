@@ -1,0 +1,1592 @@
+{
+  "PHYSICS_1TO1": false,
+  "checkpoint": "0.0.14.51",
+  "claims": [
+    {
+      "id": "PKG_MAP_RENDER_BRIDGE",
+      "limit": "0148 actual emulator package path exercised; generalized semantic bindings still incomplete.",
+      "source": [
+        "include/legends3ds/area_package.h",
+        "src/world/area_package.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_area_package.cpp",
+        "docs/validation_0147/runtime-probe-summary.json",
+        "docs/validation_0147/native-build.log"
+      ]
+    },
+    {
+      "id": "MAP_LIFETIME",
+      "limit": "Measured host weak-owner lifetime and state preservation, not hardware memory peaks.",
+      "source": [
+        "src/world/runtime_session.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "tests/test_map_sharing.cpp",
+        "docs/validation_0147/sanitizer-tests.log"
+      ]
+    },
+    {
+      "id": "COOKED_ONLY_PACKAGE",
+      "limit": "Integrity/provenance does not establish original-game fidelity or ownership.",
+      "source": [
+        "tools/package_cooked_area.py",
+        "tools/build_hardware_test.py"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "tests/test_cooked_area.py",
+        "docs/validation_0147/pack-validation.json"
+      ]
+    },
+    {
+      "id": "OLD3DS_COMPILE",
+      "limit": "Historical 0.0.14.9 ARMv6K compilation with 119 matching source snapshots. Emulator execution was pending in that release; current 0.0.14.10 execution is recorded by NATIVE_CURRENT_01410. Physical acceptance remains pending.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_0149/native-build.log",
+        "docs/validation_0149/cache-and-snapshot-verification.json"
+      ]
+    },
+    {
+      "id": "TERRAIN_FIDELITY",
+      "limit": "Legacy coordinate gather is not verified. New XYZ/strip candidate recovers planar faces; current captures still fail continuous-room fidelity.",
+      "status": "UNKNOWN",
+      "validation": [
+        "docs/terrain_topology_audit.md",
+        "docs/REPORT_0146d_r1.md"
+      ]
+    },
+    {
+      "id": "HISTORICAL_RUNTIME_ATTEMPT_0147",
+      "limit": "Historical0147 locked-Mac attempt; superseded by separately dated0148 execution evidence. Does not establish0149 execution.",
+      "status": "HARDWARE_PENDING",
+      "validation": []
+    },
+    {
+      "id": "TERRAIN_XYZ_STRIP",
+      "limit": "Historical0148 signedY candidate retained as API; active01410 enhanced path instead uses executable-backed positive IDX decode. No retail visual parity.",
+      "source": [
+        "src/render/terrain_geometry_candidate.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "CANDIDATE",
+      "validation": [
+        "tests/test_terrain_geometry_candidate.cpp",
+        "docs/validation_0148/terrain-geometry-evidence.json",
+        "docs/validation_0148/emulator-evidence.json"
+      ]
+    },
+    {
+      "id": "CELL_CENTER_ALIGNMENT",
+      "limit": "Matches existing retail-containing-cell helper. Does not bind floor solver or prove retail physics.",
+      "source": [
+        "src/world/l3map.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_map_cell_alignment.cpp",
+        "tests/test_core.cpp",
+        "docs/grounding_audit_0148.json"
+      ]
+    },
+    {
+      "id": "NATIVE_EXECUTION_0148",
+      "limit": "Synthetic Old-model Azahar input, not retail parity/hardware evidence. Visual fidelity FAIL.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_0148/emulator-evidence.json"
+      ]
+    },
+    {
+      "id": "SCALE_PLACEMENT_BLOCKER",
+      "limit": "Historical0148 unknowns: positive placement resolved in01410 ledger; negative-cell materials, dynamic global scale and camera remain unresolved.",
+      "status": "UNKNOWN",
+      "validation": [
+        "docs/validation_0148/terrain-scale-placement-audit.json"
+      ]
+    },
+    {
+      "id": "LOCAL_OWNER_INTAKE_0149",
+      "limit": "Full supplied-dataset identity, not rights proof, independent retail authenticity or gameplay parity. Actual extraction-ZIP integration remains synthetic; directory real-data integration passed.",
+      "source": [
+        "tools/owner_data_intake.py",
+        "state/OWNER_DATA_PROFILE_USA.json"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "tests/test_owner_data_intake.py",
+        "docs/validation_0149/input-validation.json"
+      ]
+    },
+    {
+      "id": "GENERALIZED_SD_DEPLOYMENT_0149",
+      "limit": "Historical 0.0.14.9 generalized boot package map/render deployment, byte-matched to sidecars, with host five-area proof. Native execution was pending in that release; current 0.0.14.10 execution is recorded separately. Other semantic sections remain unbound.",
+      "source": [
+        "tools/build_mml3ds.py",
+        "tools/mml_pipeline.py"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_local_install.py",
+        "docs/validation_0149/area-runtime-probe.json",
+        "docs/validation_0149/build-result.json"
+      ]
+    },
+    {
+      "id": "INCREMENTAL_INSTALL_0149",
+      "limit": "Repeat339hits/0misses with tutorial cache hit and205byte-identical packages; host timing omits repeat native compile, not target performance.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "tests/test_local_install.py",
+        "docs/validation_0149/cache-and-snapshot-verification.json"
+      ]
+    },
+    {
+      "id": "SOURCE_RELEASE_EXCLUSIONS_0149",
+      "limit": "Fail-closed text/extension/type checks help avoid raw/cooked payloads; arbitrary future text content still requires review.",
+      "source": [
+        "tools/release_source.py",
+        "tools/verify_0146_source.py"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_source_tools.py"
+      ]
+    },
+    {
+      "id": "HISTORICAL_NATIVE_ATTEMPT_0149",
+      "limit": "Mac locked; no current runtime log, telemetry or screenshot. Do not reuse0148 captures as0149 evidence.",
+      "status": "HARDWARE_PENDING",
+      "validation": [
+        "docs/validation_0149/emulator-evidence.json"
+      ]
+    },
+    {
+      "id": "POSITIVE_IDX_PLACEMENT_01410",
+      "limit": "Source-backed identity/position/bank decode, not full renderer visibility/camera or retail gameplay parity.",
+      "source": [
+        "include/legends3ds/render/area_placement.h",
+        "src/render/area_placement.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_area_placement.cpp",
+        "docs/validation_01410/placement-source-evidence.json",
+        "docs/validation_01410/positive-placement-probe.json"
+      ]
+    },
+    {
+      "id": "POSITIVE_XYZ_HEIGHT_01410",
+      "limit": "128 positive and 256 negative bounded synthetic instruction probes; GTE projection excluded. Runtime implements the positive path only, with current global shift 0.",
+      "source": [
+        "src/render/positive_terrain.cpp",
+        "tools/terrain_placement_evidence.py"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_positive_terrain.cpp",
+        "docs/validation_01410/placement-source-evidence.json",
+        "docs/validation_01410/final-review.json"
+      ]
+    },
+    {
+      "id": "NATIVE_CURRENT_01410",
+      "limit": "Actual native compilation and Old-model Azahar telemetry/current area 0 view; physical hardware pending. Area 4 default view lacks terrain. Controls telemetry was preserved, but final UI verification and action capture were blocked by the locked Mac.",
+      "source": [
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01410/native-build.log",
+        "docs/validation_01410/native-source-manifest.json",
+        "docs/validation_01410/emulator-evidence.json"
+      ]
+    },
+    {
+      "id": "NEGATIVE_TERRAIN_PENDING_01410",
+      "limit": "109 negative cells counted but omitted. Grid center, flat Y, rotation and descriptor branch are decoded; cooked negative records and material override lifetime remain unbound. No guesses applied.",
+      "source": [
+        "tools/terrain_placement_evidence.py"
+      ],
+      "status": "UNKNOWN",
+      "validation": [
+        "docs/validation_01410/placement-source-evidence.json"
+      ]
+    },
+    {
+      "id": "NEGATIVE_GEOMETRY_BINDING_01411",
+      "limit": "All58000 default/specialnegative Mid identities bound in actual37packages; original near/clipping/renderparity unproven.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01411/negative-default-source-evidence.json",
+        "docs/validation_01411/negative-special-HD2-audit.json",
+        "docs/validation_01411/visibility-audit-comparison.json"
+      ]
+    },
+    {
+      "id": "NEGATIVE_MATERIAL_UV_01411",
+      "limit": "109baselinebindings only; otherdefaults andallspecials UNKNOWN; no borrowedpalettes.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01411/material-binding-evidence.json"
+      ]
+    },
+    {
+      "id": "PS1_UPLOAD_COMPOSITION_01411",
+      "limit": "PartialVRAMlastwriter andinitial dirtyCPUbankstaging recovered; dynamicpalette timing/fadesUNKNOWN.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01411/palette-bank-evidence.json",
+        "docs/validation_01411/palette-retry-result.json"
+      ]
+    },
+    {
+      "id": "DIAGNOSTIC_ENTRY_01411",
+      "limit": "Diagnosticentry/yaw isnotretailspawn orcamera;area4actualviewobstructed.",
+      "status": "CANDIDATE",
+      "validation": [
+        "docs/validation_01411/area-inspection-probe.json"
+      ]
+    },
+    {
+      "id": "OBJECT_PRESENTATION_GAP_01411",
+      "limit": "Placement/dispatchanchorspartial; no complete initializer/resource/presentationchain; EBDpayloads omitted.",
+      "status": "UNKNOWN",
+      "validation": [
+        "docs/validation_01411/object-binding-evidence.json"
+      ]
+    },
+    {
+      "id": "CURRENT_NATIVE_01411",
+      "limit": "Actual430564B ARMv6K compile;129identitiesmatch; emulatordoesnotprovehardware orfaithfulgameplay.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01411/native-source-manifest.json",
+        "docs/validation_01411/final-results.json"
+      ]
+    },
+    {
+      "id": "CAMERA_BASELINE_01412",
+      "limit": "Measured ordinary camera only; full dynamic/scripted/fixedpoint behavior UNKNOWN. Widescreen extra scenery is an adaptation.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01412/camera-player-transform-source-evidence.json",
+        "docs/validation_01412/camera-player-transform-live-evidence.json"
+      ]
+    },
+    {
+      "id": "PLAYER_TRANSFORM_STORAGE_01412",
+      "limit": "1/8 baseline scale/correctY sign appliedUV; original complete pixel parity UNKNOWN. Zero allocations refers pose storage only.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01412/player-storage-check.json",
+        "docs/validation_01412/player-camera-final-consistency.json"
+      ]
+    },
+    {
+      "id": "BOTTOM_UI_01412",
+      "limit": "Actual map/state rasterization natively observed; pan/zoom/touch host-tested only. Original topHUD binding UNKNOWN; projectile proxy CANDIDATE.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01412/host-tests.log"
+      ]
+    },
+    {
+      "id": "CURRENT_NATIVE_01412",
+      "limit": "Actual455340B native compile and Old-model emulator exercise; physical Old3DS HARDWARE_PENDING.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01412/build-result.json",
+        "docs/validation_01412/native-source-manifest.json"
+      ]
+    },
+    {
+      "id": "EBD_PAYLOAD_RETENTION_01413",
+      "limit": "Exact bytes and bounded access retained; opaque bytes are not executed/rendered resources until semantics proven.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01413/ebd-resource-preservation-evidence.json",
+        "docs/validation_01413/ebd-owner-roundtrip.json",
+        "docs/validation_01413/native-boot.log"
+      ]
+    },
+    {
+      "id": "GCC_WARNING_GUARD_01413",
+      "limit": "Actual historical type-limits expression reconstructed onlyinnegativecontrol; baseline sourcefix inherited; native fatalwarning guard preventsrecurrence.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01413/gcc-warning/results.json",
+        "docs/validation_01413/host-tests.log",
+        "docs/validation_01413/native-build.log"
+      ]
+    },
+    {
+      "id": "OBJECT_INITIALIZER_CHAIN_01413",
+      "limit": "Static supportedoriginalsource path, not executed nativeactor or fullpresentationbinding.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/OBJECT_INITIALIZER_CHAIN_01413.md"
+      ]
+    },
+    {
+      "id": "PKG_OBJECT_EBD_BINDING_01414",
+      "limit": "Explicit supported backend only; unknown semantic owners stay unbound.",
+      "source": [
+        "include/legends3ds/area_package.h",
+        "src/world/area_package.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01414/area-runtime-probe.log",
+        "tests/test_area_package.cpp"
+      ]
+    },
+    {
+      "id": "ACTOR_NATIVE_MESH_01414",
+      "limit": "Static source pose and diagnostic placement; texture/floor/progression choice UNKNOWN.",
+      "source": [
+        "src/world/actor_resource.cpp",
+        "src/world/actor_runtime.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01414/actor-resource-integration-evidence.json",
+        "docs/validation_01414/SCREENSHOTS.json"
+      ]
+    },
+    {
+      "id": "PLAYER_FORWARD_25_01414",
+      "limit": "25-update portable replay scalar window; retail area ID unverified; hardware/full physics false.",
+      "source": [
+        "src/world/runtime_session.cpp",
+        "include/legends3ds/runtime_animation.h",
+        "tools/l3replay.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01414/flat-forward-profile-comparison.json"
+      ]
+    },
+    {
+      "id": "PLAYER_CONTACT_01414",
+      "limit": "Rectangle/negative-cell subset; slopes/deep overlap and running jump remain incomplete.",
+      "source": [
+        "src/player/player_contact_runtime.cpp",
+        "src/world/runtime_session.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_runtime_contact.cpp",
+        "docs/validation_01414/player-contact-source-evidence.json"
+      ]
+    },
+    {
+      "id": "COMPANION_01414",
+      "limit": "Actual native render; dedicated native gesture exercise pending.",
+      "source": [
+        "src/ui/mockup_ui.cpp",
+        "platform/3ds/source/mockup_hud.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_companion_ui.cpp",
+        "docs/validation_01414/SCREENSHOTS.json"
+      ]
+    },
+    {
+      "id": "RUNNING_JUMP_01415",
+      "limit": "672 original action8 scalarcases; motionintegration/audio calls excluded; ordinarydirection0 only, notcompletephysics.",
+      "source": [
+        "src/world/runtime_session.cpp",
+        "docs/research_01415/running_jump_source_probe.py"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01415/running-jump-source-cases.json",
+        "tests/test_running_jump_source.cpp"
+      ]
+    },
+    {
+      "id": "CONDITIONAL_SPAWN_01415",
+      "limit": "C0/21 binds E0sourcegate; lastwinningregion,nexttickflagfilteredrecords. Nativecombinedpoolsbounded. Cleanupflagwrites, originalallocationfailure andfullcallbacklifecycle incomplete.",
+      "source": [
+        "src/world/st00_spawn.cpp",
+        "src/world/runtime_session.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01415/event-source-evidence.json",
+        "tests/test_runtime_spawns.cpp",
+        "docs/validation_01415/runtime-spawn-owner.log"
+      ]
+    },
+    {
+      "id": "C0_03_PALETTE_CORRECTION_01415",
+      "limit": "Historical01413selected_script/command_base inference disproved; sourceconsumerinterpolatesRGB555palettes. Completeeventruntime remainsunimplemented.",
+      "source": [
+        "docs/research_01415/EVENT_AND_SPAWN_EVIDENCE.md"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01415/event-source-evidence.json"
+      ]
+    },
+    {
+      "id": "ACTUAL_CLASS20_03_01415",
+      "limit": "Genuine conditional class03 geometry/initializer pose0 bound. Optional default-off request0 cache has eight distinct source poses; full AI/request changes, shade/materials, live HP context, attacks/hit delivery/defeat/event lifecycle remain unresolved.",
+      "source": [
+        "src/world/actor_runtime.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01415/class20-03-source-evidence.json"
+      ]
+    },
+    {
+      "id": "FLOOR_INTERVAL_01415",
+      "limit": "240originalfloorintervalscalarcases; player/actor/zero/asymmetricbounds. Slope movement remainsUNKNOWN.",
+      "source": [
+        "src/player/player_contact_runtime.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01415/floor08-source-evidence.json",
+        "tests/test_runtime_contact.cpp"
+      ]
+    },
+    {
+      "id": "GCC_WARNING_01415",
+      "limit": "Inherited enumwarningfixretained; negativecontrolfails andcurrentcodepasses actualGCC-Werror. Four serializersalsoPASS; GNUhostGCCunavailable. No warning suppressions/newpretendhostfix.",
+      "source": [
+        "src/p2/mml_renderer_recovery.c"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01415/renderer-gcc-warning/results.json",
+        "docs/validation_01415/serializer-gcc/results.json"
+      ]
+    },
+    {
+      "id": "AREA_GPU_TRANSACTION_01415",
+      "limit": "CPU/sessionretaineduntilGPUprepare succeeds; oldGPUreleasedthenincomingbuilt; failedprepare restoresoldGPU. Restorefailure fatalcleanup. PolicycapsareCANDIDATE, not measuredhardwarebudgets.",
+      "source": [
+        "platform/3ds/source/main.cpp",
+        "src/world/area_package.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_area_package.cpp",
+        "docs/WORLDALIVE_AREA_TRANSITIONS_01415.md"
+      ]
+    },
+    {
+      "id": "NATIVE_CURRENT_01415",
+      "limit": "Final r6:36/36host suitesPASS, actual ARMv6K warning-free build548820B,150snapshot hashes; OldAzahar boot/cache/diagnostic switch and movement. No complete enemy encounter, physical hardware or fullparity.",
+      "source": [
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01415/build-result.json",
+        "docs/validation_01415/native-snapshot-verification.json",
+        "docs/validation_01415/azahar-animation-r6-summary.json"
+      ]
+    },
+    {
+      "id": "CONTACT_MISSING_SELECTED_LIST_01415",
+      "limit": "Cooked owner descriptors raw6=0 select defaultptr0; original consumers read selectedptr+8 without explicit null guard. Live tutorial observation RAM8=0 and same IDX78/94/123 identities raw6=1 select alternate contacts. Mutable IDX setup/admission ownership and universal gameplay NULL behavior remain unknown; runtime Unsupported stays unknown, no borrowed alternate/render floor.",
+      "status": "UNKNOWN",
+      "validation": [
+        "docs/validation_01415/selected-contact-admission-audit.json",
+        "docs/validation_01415/redux-tutorial-live-profile.json"
+      ]
+    },
+    {
+      "id": "ACTOR_RELOAD_FAILURE_01415",
+      "limit": "Fixed portable/native presentation transaction: loader exception propagates exactly; old group/resources retained; failed observed revision consumed once, no per-frame retry; successful commit releases old ownership. RuntimeSession logical group may already be new, so old presentation is explicitly STALE, not full world rollback. Native failure-path/hardware exercise pending r6.",
+      "source": [
+        "include/legends3ds/actor_runtime.h",
+        "src/world/actor_runtime.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_actor_resources.cpp"
+      ]
+    },
+    {
+      "id": "POST_DIAGNOSTIC_LOAD_MOVEMENT_01415",
+      "limit": "SyntheticHID moves area2 player after SELECT reload; contact2 remainsUnsupported. This is not original trigger/message/transition progression.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01415/azahar-capture-r4.csv",
+        "docs/validation_01415/azahar-capture-r4-summary.json"
+      ]
+    },
+    {
+      "id": "ACTOR_BEHAVIOR_KERNELS_01415",
+      "limit": "2018 action0/1 cases \u00d710 scalar fields and675 work80 distance cases under authored state premises. Heading/detection/RNG, full callback/motion/collision, action2+, attacks, hit packet delivery and live AI progression are not integrated/proved.",
+      "source": [
+        "include/legends3ds/class20_03_behavior.h",
+        "src/world/class20_03_behavior.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01415/class20-03-action-source-evidence.json",
+        "docs/validation_01415/class20-03-distance-source-evidence.json",
+        "tests/test_class20_03_behavior.cpp"
+      ]
+    },
+    {
+      "id": "ACTOR_SEQUENCE_KERNEL_01415",
+      "limit": "240 source scalar sequence cases \u00d75 fields and36 source dispatcher-admission cases; class03 request-change/reset versus unchanged/advance callback ownership proved. Pose/GTE rounding, full frame/pause cadence, distance-flag ownership and original allocation-first-tick timing remain unknown.",
+      "source": [
+        "include/legends3ds/actor_sequence.h",
+        "src/world/actor_sequence.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01415/actor-sequence-source-evidence.json",
+        "tests/test_actor_sequence.cpp"
+      ]
+    },
+    {
+      "id": "ACTOR_REQUEST0_CACHE_01415",
+      "limit": "Default-off owner-only request0 diagnostic for initializer-selected class03; class35 excluded. Eight distinct genuine owner poses share one cache;480 ticks/1440 actor steps, no portable per-tick/matrix allocations, failure preserves initial poses, unload releases cache. Host cache2024B+mesh3252B are decoded elements, not process/GPU total. Native cadence CANDIDATE; lifecycle/pause/distance owner UNKNOWN; r6 native owner-opt-in cache initialized:1836 cache element bytes/4888 totalactor elements onARM. Clear native playback/cadence/hardware acceptance pending.",
+      "source": [
+        "include/legends3ds/actor_resource.h",
+        "src/world/actor_resource.cpp",
+        "include/legends3ds/actor_runtime.h",
+        "src/world/actor_runtime.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01415/class20-03-request0-cache.json",
+        "docs/research_01415/CLASS20_03_REQUEST0_CACHE.md",
+        "tests/test_actor_resources.cpp"
+      ]
+    },
+    {
+      "id": "PS1_TUTORIAL_LIVE_SCALARS_01415",
+      "limit": "Read-only original-game scalar snapshot with three EXE range hashes matching owner reference; player930,-1,-10135, RAM8=0, selector1, matching IDX78/94/123 raw6=1 alternate selection. No active20/03 actors observed. One snapshot is not universal NULL semantics, mutable IDX setup ownership, native HP default, controller trajectory parity or physical hardware evidence; no raw RAM retained.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01415/redux-tutorial-live-profile.json",
+        "docs/validation_01415/redux-tutorial-controller-proof.json"
+      ]
+    },
+    {
+      "id": "ORIGINAL_ENGINE_PRIMARY_RESEARCH_01416",
+      "limit": "External incomplete/unlicensed decomp and viewer code used only as navigation; no external code/assets imported.",
+      "source": [
+        "docs/research_01416/PRIMARY_RESEARCH.json",
+        "docs/research_01416/ENGINE_ARCHITECTURE.md"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "OwnerEXE SHA1 matches public pinned decomp reference"
+      ]
+    },
+    {
+      "id": "SOURCE_IDX_VARIANT_WRITER_01416",
+      "limit": "1120 bounded original-instruction synthetic cases; writes0/100/200 and pointers, not observed gameplay1. No native flag mutation.",
+      "source": [
+        "docs/research_01416/idx_variant_source_probe.py"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/research_01416/idx-variant-source-cases.json"
+      ]
+    },
+    {
+      "id": "ACTOR_MATERIAL_NATIVE_BINDING_01416",
+      "limit": "Actual native ARMv6K/Oldmodel upload/path exercised; optionaldefaultOFF WHITE_UNLIT_DIAGNOSTIC. Original shading,alpha,liveVRAM correspondence and visibleenemy fidelity remain UNKNOWN; malformedcache rejects and0143 remainsbootable.",
+      "source": [
+        "src/render/actor_material.cpp",
+        "platform/3ds/source/main.cpp",
+        "tools/l3cook_actor_material_cache.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_actor_materials.cpp",
+        "docs/research_01416/first-enemy-material-audit.json",
+        "docs/validation_01416/azahar-enhanced-result.json",
+        "docs/validation_01416/azahar-fault-result.json",
+        "docs/validation_01416/azahar-safe-result.json"
+      ]
+    },
+    {
+      "id": "SOURCE_ANGLE_NATIVE_QUERY_01416",
+      "limit": "1848 synthetic-table+462owner-table originalinstructioncases; currentnative emits54 evidence rows for3actualimportedactors. FullAI/lock-on/combat/callbackorderingunbound.",
+      "source": [
+        "src/world/source_angle.cpp",
+        "src/world/actor_runtime.cpp",
+        "platform/3ds/source/hardware_test.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "tests/test_source_angle.cpp",
+        "docs/validation_01416/source-angle-synthetic-cases.tsv",
+        "docs/validation_01416/azahar-enhanced.csv"
+      ]
+    },
+    {
+      "id": "MAP_STARTUP_MATERIALIZATION_01417",
+      "limit": "995owner records/994writes match original source replay; Stage0Startup only, no fullretail/hardware parity.",
+      "source": [
+        "src/world/map_initialization.cpp",
+        "src/world/area_package.cpp"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "tests/test_map_initialization.cpp",
+        "tests/test_map_initialization_package.cpp",
+        "docs/research_01417/idx-map-initialization-owner-comparison.json"
+      ]
+    },
+    {
+      "id": "ACTOR_FLOOR_INITIALIZATION_01417",
+      "limit": "Three original spawnfloors and128 classifieredges; intersecting/unknown contacts remainUnsupported.",
+      "source": [
+        "src/world/actor_runtime.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_actor_floor_init.cpp",
+        "docs/research_01417/CLASS20_03_FLOOR_INIT.md"
+      ]
+    },
+    {
+      "id": "SESSION_TRANSACTIONS_01417",
+      "limit": "Host exception/lifetime tests; diagnosticrecovery policy CANDIDATE.",
+      "source": [
+        "src/world/runtime_session.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_runtime_transactions.cpp"
+      ]
+    },
+    {
+      "id": "ACTOR_REQUEST_BANKS_01418",
+      "limit": "Original request-specific data,host tick allocation/lifetime tests and native bank initialization; no full AI or retail cadence claim.",
+      "source": [
+        "include/legends3ds/actor_animation_bank.h",
+        "src/world/actor_animation_bank.cpp",
+        "src/world/actor_runtime.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_actor_animation_bank.cpp",
+        "tests/test_actor_behavior_runtime.cpp",
+        "docs/validation_01418/actor-animation-bank-current-probe.json",
+        "docs/validation_01418/azahar-boot-r2.log"
+      ]
+    },
+    {
+      "id": "CLASS20_03_TRANSACTIONS_01418",
+      "limit": "2309cases/65fields under authored helper premises; native state1 subset excludes outer finalizer/effect/proxy owners and holds all123 sampled rows NeedsDetection.",
+      "source": [
+        "include/legends3ds/class20_03_behavior.h",
+        "src/world/class20_03_behavior.cpp",
+        "src/world/actor_runtime.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/fixtures/class20_03_transactions_01418.tsv",
+        "docs/validation_01418/class20-03-transaction-source-evidence.json",
+        "docs/validation_01418/class20-03-transaction-differential.log"
+      ]
+    },
+    {
+      "id": "ACTOR_CONTACT_01418",
+      "limit": "Supported rectangle/packed-cell families only; slopes/unknown/deep overlap fail closed. Native temporary action2 admission authored,active actors unchanged.",
+      "source": [
+        "include/legends3ds/actor_contact.h",
+        "src/world/actor_contact.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_actor_contact.cpp",
+        "docs/validation_01418/actor-contact-source-evidence.json",
+        "docs/validation_01418/azahar-hardware-r2.csv"
+      ]
+    },
+    {
+      "id": "PLAYER_CONTACT_ZERO_FIX_01418",
+      "limit": "Zero result preserves work as original wrapper proves; negative rollback unchanged. Does not verify all collision or physics.",
+      "source": [
+        "src/player/player_collision.c"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_core.cpp",
+        "tests/fixtures/contact_01418/authored.wrapper.tsv",
+        "docs/validation_01418/actor-contact-source-evidence.json"
+      ]
+    },
+    {
+      "id": "CLASS20_03_STORY_PREDICATE_01418",
+      "limit": "8200helper/4096caller no-hook authored flag contexts. Semantic IDs0..2047 bind; no original flag creation/event timing/save-layout claim.",
+      "source": [
+        "platform/3ds/source/main.cpp",
+        "src/world/runtime_session.cpp",
+        "docs/research_01418/class20_03_story_predicate_source_probe.py"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01418/class20-03-story-predicate-source-evidence.json"
+      ]
+    },
+    {
+      "id": "NATIVE_BUILD_RUNTIME_01418",
+      "limit": "Actual ARM build/source hashes and Oldmodel HLE telemetry;96MiB memory-mode/hardware unverified,Maclocked no visual captures,fullpass unfinished.",
+      "source": [
+        "platform/3ds/Makefile",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01418/native-source-verification-r2.json",
+        "docs/validation_01418/r2-host-tests.log",
+        "docs/validation_01418/emulator-evidence-r2.json"
+      ]
+    },
+    {
+      "id": "01419_DETECTOR",
+      "limit": "1478/1548 authored and82/90 owner-stage exact; other cases held. Not live parity.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01419/detector-preparation-source-evidence.json"
+      ]
+    },
+    {
+      "id": "01419_ACTION3",
+      "limit": "832/1152 authored admitted,24/24 owner-stage exact; full callback unproved.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01419/actor-action3-contact-source-evidence.json"
+      ]
+    },
+    {
+      "id": "01419_COMBAT_METADATA",
+      "limit": "2owner+10boundary cases; strict fresh context. Hit/defeat unported.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01419/combat-source-evidence.json"
+      ]
+    },
+    {
+      "id": "01419_NATIVE",
+      "limit": "Actual boot/replay/context loading; unsupported geometry holds encounter. Hardware pending.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01419/emulator-observation-r2.json"
+      ]
+    },
+    {
+      "id": "01419_ACTION9_RESEARCH",
+      "limit": "78 authored contexts6804instructions; no native implementation.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01419/action9-source-evidence.json"
+      ]
+    },
+    {
+      "id": "DETECTOR_EXTENDED_01420",
+      "limit": "No helper replacements in original query proof; authored premises and local-stage samples do not establish full collision or retail gameplay parity. Family7interior/slopes stillheld.",
+      "source": [
+        "src/world/actor_detection_segment.cpp",
+        "src/world/actor_detection_preparation.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01420/actor-segment-extended-source-evidence.json",
+        "tests/test_actor_detection_segment_extended.cpp"
+      ]
+    },
+    {
+      "id": "PURSUIT_NATIVE_BRIDGE_01420",
+      "limit": "Actually connected and compiled; host original-instruction/source-contact/transaction exercised. Native live pursuit not reached because required shared RNG sample remainsunknown.",
+      "source": [
+        "src/world/class20_03_action9.cpp",
+        "src/world/actor_action9_contact.cpp",
+        "src/world/class20_03_behavior.cpp",
+        "src/world/actor_runtime.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01420/action9-source-evidence.json",
+        "docs/validation_01420/action9-native-differential.json",
+        "tests/test_actor_action9_runtime.cpp",
+        "docs/validation_01420/native-build-r2.json"
+      ]
+    },
+    {
+      "id": "SHARED_RNG_REFERENCE_01420",
+      "limit": "Selected installed OpenBIOS routine and actual startup measured; no enemy RNGreturn yet, Sonyretailseed and complete native consumer cadenceUNKNOWN. No private RNGinvented.",
+      "source": [
+        "docs/research_01420/redux_rng_reference_observer.lua",
+        "docs/research_01420/validate_rng_reference_trace.py"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01420/openbios-profile-proof-r1.json",
+        "docs/validation_01420/live-startup-proof-r1.json",
+        "tests/test_rng_reference.py"
+      ]
+    },
+    {
+      "id": "ACTION4_CHILD_BOUNDARY_01420",
+      "limit": "Research only:392body+144child authored cases. CombatbyteC,32-slot lifecycle and residentcallbacks unported; no attack/damage/render claim.",
+      "source": [
+        "docs/research_01420/class20_03_action4_child_source_probe.py"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01420/action4-child-source-evidence.json"
+      ]
+    },
+    {
+      "id": "TYPE1_SECTOR_LAYOUT_01427",
+      "limit": "Owner original CPU LoadImage argument observations for6authored sizes/33uploads/1601instructions,0patches/hooks. External GPUboundary not executed; original livechronology/fullPS1parity not established.",
+      "source": [
+        "src/texture/ps1_texture.cpp",
+        "include/legends3ds/ps1_texture.h"
+      ],
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "tests/test_texture_sector_layout.cpp",
+        "docs/research_01427/TYPE1_SECTOR_LAYOUT.md",
+        "docs/research_01427/type1-sector-source-proof.json",
+        "docs/validation_01427/independent-source-proof.json"
+      ]
+    },
+    {
+      "id": "HAIR_VISUAL_FIX_01427",
+      "limit": "Production original-model Azahar rear+movement and camera-only front diagnostic show restored original hair/face/armor. Geometry/UV/palette/pose unchanged. Five-area localrecook; area0visual acceptance, nohardware/fullpresentationparity.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01427/recook-result.json",
+        "docs/validation_01427/screenshots.json",
+        "docs/SCREENSHOTS_01427.md"
+      ]
+    },
+    {
+      "id": "NATIVE_CURRENT_01427",
+      "limit": "Actualnativebinary705744B SHAbde6d0ffd32d0dee6d27f4d6e6930f87d06969788bde8724f01e23eea2f64cbd;232sourcefiles match,100/100hosttests,0warnings. Enhancedboot/movementandsafe0143boot separately recorded; hardwarepending.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01427/build-result.json",
+        "docs/validation_01427/compiled-source-manifest.json",
+        "docs/validation_01427/host-tests.log",
+        "docs/validation_01427/native-build.log"
+      ]
+    },
+    {
+      "id": "SOURCE_FADE_CALLBACK_01428",
+      "limit": "1632callback/192packet authored source comparisons; native cadence/RGB destinationprecision/hardware unverified.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01428/SOURCE_FADE_CALLBACK.md"
+      ]
+    },
+    {
+      "id": "SOURCE_EVENT_PHASE5_01428",
+      "limit": "24constructor/24camera differentials;logicalrecords notcomplete scene. Freshmatchingarea0only;residentEBD crossvalidationpending.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01428/SOURCE_EVENT_PHASE5.md"
+      ]
+    },
+    {
+      "id": "SOURCE_PHASE6_01429",
+      "limit": "Explicit cold bootstrap subset and one source update; no complete live retail chronology, renderer camera, natural progression or hardware.",
+      "source": [
+        "src/flow/source_event_phase6.cpp",
+        "src/flow/source_event_pipeline.cpp",
+        "src/world/runtime_session.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01429/phase6-prefix-source-proof.json",
+        "docs/research_01429/camera-timeline-source-proof.json",
+        "docs/research_01429/camera_retained_source_proof.json",
+        "docs/validation_01429/host-tests.log"
+      ]
+    },
+    {
+      "evidence": [
+        "docs/research_01430",
+        "docs/validation_01430",
+        "docs/validation_01429_emulator"
+      ],
+      "id": "SOURCE_SCENE_CALLER_E0_COLOR_01430",
+      "limit": "Native presentation is a bounded submission adapter; E0 chronology/NearLOD/untextured rendering diagnostic; no retail physics, full scene, natural progression or hardware parity.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/research_01431",
+        "docs/validation_01431"
+      ],
+      "id": "SOURCE_SCENE_CONTINUATION_VIEW_MATERIAL_01431",
+      "limit": "Original-instruction field comparisons do not prove full scheduling, rendered retail parity or physical performance. Initial materials are not current-frame VRAM truth. Prior01430 CameraField diagnosis corrected: native status5 was UnsupportedCallbackTable.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/research_01432",
+        "docs/validation_01432"
+      ],
+      "id": "SOURCE_PAD_ACTOR40_REACTION_01432",
+      "limit": "Original-instruction field comparisons do not prove full scheduling, rendered retail parity or physical performance. Initial materials are not current-frame VRAM truth. Prior01430 CameraField diagnosis corrected: native status5 was UnsupportedCallbackTable.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/research_01433",
+        "docs/validation_01433"
+      ],
+      "id": "SOURCE_FIRST_POSE_LOOP_REPLAY_01433",
+      "limits": [
+        "162 matched matrix banks establish measured fields, not full retail or hardware parity.",
+        "Observed counter4133 is optional selected OpenBIOS constructor replay, not a universal native seed.",
+        "Original-camera isolated capture suppresses legacy player; initial pose/texture residency does not establish later animation/palette state.",
+        "World Comes Alive incomplete."
+      ],
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/research_01433",
+        "docs/validation_01433"
+      ],
+      "id": "SOURCE_FIRST_POSE_LOOP_REPLAY_01433",
+      "limits": [
+        "162 matched matrix banks establish measured fields, not full retail or hardware parity.",
+        "Observed counter4133 is optional selected OpenBIOS constructor replay, not a universal native seed.",
+        "Original-camera isolated capture suppresses legacy player; initial pose/texture residency does not establish later animation/palette state.",
+        "World Comes Alive incomplete."
+      ],
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/validation_01440/HARDWARE_BLACK_SCREEN.md",
+        "docs/research_01440/source-event-handoff-proof.json",
+        "docs/research_01440/source-prop-foreign-globals-proof.json"
+      ],
+      "id": "01440_source_chain_and_hardware_failure",
+      "limitations": "Source instruction/callback/host tests do not establish retail chronology or physical hardware success. User reports01439topblack even in fallback.01440physicalvalidation pending.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "change": "Automatic CPU/GPU diagnostics before assets/shaders, flushed console prompts and completed-command usage logging.",
+      "evidence": [
+        "docs/validation_01441/HARDWARE_TEST.md",
+        "docs/validation_01441/GPU_AUDIT.md"
+      ],
+      "id": "01441_automatic_display_bisect",
+      "limitations": "Display cause not established; source change is not hardware proof. Previous inference thatSELECTfallback definitively failed is withdrawn.",
+      "observation": "User says14.40colour-test prompts did not appear. Neither physical colour path was tested.",
+      "status": "HARDWARE_PENDING"
+    },
+    {
+      "id": "PHYSICAL_01442_RENDER_SPLIT",
+      "limit": "User hardware photos: safe path visibly renders, enhanced textured and textures-off modes time out. No motion or speed measurements.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01443/hardware-01442.json"
+      ]
+    },
+    {
+      "id": "ENHANCED_LAYOUT_01443",
+      "limit": "Layout and whole-output MOV are compatibility candidates, not an established GPU fault diagnosis. Physical acceptance is pending.",
+      "source": [
+        "platform/3ds/source/main.cpp",
+        "platform/3ds/source/vshader_uv.v.pica",
+        "tools/verify_0146_source.py"
+      ],
+      "status": "CANDIDATE",
+      "validation": [
+        "docs/validation_01443/renderer-change.json",
+        "docs/validation_01443/build-result.json",
+        "docs/validation_01443/emulator-observation.json"
+      ]
+    },
+    {
+      "id": "PLAYER_CONTACT_ORDER_01444",
+      "limit": "Floor-order oracle explicitly hooks floor return. Two new regressions fail43and pass44. Sampled edge still unresolved; no original whole-game or physical recovery proof.",
+      "source": [
+        "src/player/player_contact_runtime.cpp",
+        "src/world/runtime_session.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01444/player-floor-order-proof.json",
+        "docs/research_01444/player-map-edge-proof.json",
+        "tests/test_runtime_contact.cpp",
+        "docs/validation_01444/contact-before.log",
+        "docs/validation_01444/contact-rollback-before.log"
+      ]
+    },
+    {
+      "id": "HEAD_UV_RESET_01444",
+      "limit": "Actual head16/17baseline and bounded material reset;587originalinstructions and81authoredcases. Admitted10native records; phase7restore not naturally reached in44emulator sample.",
+      "source": [
+        "src/flow/source_event_phase6.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01444/source-head-uv-reset-proof.json",
+        "tests/test_source_event_handoff.cpp"
+      ]
+    },
+    {
+      "id": "SOURCE_SPAWN_AND_AREA_HANDOFF_01444",
+      "limit": "64original spawn cases/704guards; current-generation intent passes existing fallible staging before commit, waits outgoing audio. Full scene/player initialization and natural progression incomplete.",
+      "source": [
+        "src/flow/source_event_phase6.cpp",
+        "src/world/runtime_session.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01444/source-handoff-spawn-proof.json",
+        "tests/test_source_event_handoff.cpp"
+      ]
+    },
+    {
+      "id": "ORDERED_COMMAND2_NATIVE_PAUSE_01444",
+      "limit": "Type2index1 exact254mixcalls then pause;36orderedtransactions/252guards. Source oracle stops at declared transport boundary. Native protocol is CANDIDATE; physical timing/audibility/live phase7not proven. Indices2/3unsupported.",
+      "source": [
+        "src/flow/source_event_command.cpp",
+        "src/world/xa_transport.cpp",
+        "platform/3ds/source/native_xa_audio.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01444/source-event-command2-pause-boundary-proof.json",
+        "tests/test_source_event_command.cpp",
+        "tests/test_xa_stream.cpp"
+      ]
+    },
+    {
+      "id": "PHYSICAL_01443_RENDERING",
+      "limit": "User photographs/report show textured room/player. No physical44acceptance, measuredperformance or full-gameplayparity.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01444/hardware-01443.json"
+      ]
+    },
+    {
+      "id": "SHARED_TYPED_RNG_01445",
+      "limit": "One observed-profile service and ordinal, exact existing scalar planners, bounded rollback and original unknown guards. Generated call scheduling is candidate; not live retail chronology.",
+      "source": [
+        "src/world/source_rng_service.cpp",
+        "src/world/source_effect2.cpp",
+        "src/world/source_effect34.cpp",
+        "src/world/source_prop_lift.cpp",
+        "src/flow/source_event_random_effect.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "CANDIDATE",
+      "validation": [
+        "tests/test_source_rng_service.cpp",
+        "tests/test_source_effect_dispatch.cpp",
+        "docs/validation_01445/owner-dispatch-tests-r3.json",
+        "docs/validation_01445/host-tests.log"
+      ]
+    },
+    {
+      "id": "SCENE_TO_AREA_HANDOFF_01445",
+      "limit": "Candidate RNG plus recorded constructor clock reached live head UV reset, native 254-call mix prefix, NDSP pause and Area 0 to 1 resource replacement. Destination accepted movement, view obstructed. Not fresh boot, different-package streaming, retail parity or full tutorial.",
+      "status": "CANDIDATE",
+      "validation": [
+        "docs/validation_01445/emulator-observation.json",
+        "docs/validation_01445/candidate-handoff-trace.txt"
+      ]
+    },
+    {
+      "id": "OUTGOING_SCENE_LIFETIME_01446",
+      "limit": "Native ownership/lifetime fix, not a retail gameplay rule. Candidate intro uses a recorded constructor clock; no camera/physics correction or physical memory peak established.",
+      "source": [
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01446/emulator-observation.json",
+        "docs/validation_01446/handoff-trace.txt",
+        "docs/validation_01446/host-tests.log"
+      ]
+    },
+    {
+      "id": "SOURCE_ENEMY_DEFEAT_01451",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "source": [
+        "include/legends3ds/child_runtime.h",
+        "src/world/child_runtime.cpp",
+        "src/world/actor_runtime.cpp",
+        "tools/cook_actor_combat.py"
+      ],
+      "validation": [
+        "tests/test_actor_defeat_runtime.cpp",
+        "tests/test_source_combat_profile.cpp",
+        "tests/test_cook_actor_combat.py",
+        "docs/validation_01451/host-tests.log",
+        "docs/validation_01451/native-build.log"
+      ],
+      "limit": "Original zero-HP effect/release/reward/audio boundary and exact reward descriptor are integrated once. RNG-driven subtype87 pickup expansion, defeat-effect callback, collection/progression and physical hardware remain incomplete."
+    }
+  ],
+  "correction_01428": "Complete laterCSV reaches eventphase6, fade endsframe77; prior phase2 claim confused CD queue with event phase. Earlier captures not synchronized with that gameplay run.",
+  "correction_01439_r1": {
+    "claim": "Primary grab not reached during normal playback",
+    "correction": "Incorrect interpretation: both locked r1 and unlocked r2 sampled primary attachment1800/1920/2520. Auxiliary slot14 holds status20 and stays anchored.",
+    "evidence": [
+      "docs/validation_01439/capture-trace-review-r1.json",
+      "docs/validation_01439/capture-validation-r1.json"
+    ],
+    "native_code_changed": false
+  },
+  "corrections": [
+    {
+      "correction": "contact_status2 is Unsupported, not SourceBackedPartial; current probe uses supportedfixture352,-1,-8128.",
+      "source": "docs/RESUME_01415.md in Recovery002"
+    },
+    {
+      "correction": "Original full wrapper evidence shows inherited bound/sign ordering was wrong. Current actor floor path returns Unsupported; shared player slope scratch repair remains pending.",
+      "source": "inherited actor floor slope8..11 helper contract"
+    },
+    {
+      "correction": "Original rand returns801022F8; sample store801022FC. Earlier validator conflated them. Childsubtype<128 dispatches via scratchpad1F800060, notresident80089820; ST00 table8011A5D4 gives subtype6callback8010F354, subtype9null. Previous unrelatedresidentanchorswithdrawn.",
+      "pass": "01421",
+      "source": "docs/research_01421/RNG_CHRONOLOGY_BOUNDARY.md"
+    },
+    {
+      "correction": "Previous01425/recovery diagnosis of80017C30 as logical audio driver/context is withdrawn. It is type2fade/displaystartup. Currentnextblockedconsumer80100EFC and pendingfadecallback80017E94 are distinct unresolved owners.",
+      "pass": "01426",
+      "source": "docs/research_01426/SOURCE_FADE_STARTUP.md"
+    }
+  ],
+  "current_pass_claims": [
+    {
+      "evidence": [
+        "docs/research_01439/SOURCE_PROP_LIFT.md",
+        "tests/test_source_prop_lift.cpp"
+      ],
+      "id": "SOURCE_PROP_LIFT_01439",
+      "scope": "202 original cases; 2759 public/3143 private guards; actual changing lift RNG remains held.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/research_01439/SOURCE_PROP_ATTACH.md",
+        "tests/test_source_prop_attach.cpp",
+        "tests/test_scene_e0.cpp"
+      ],
+      "id": "SOURCE_PROP_ATTACH_01439",
+      "scope": "180source cases/6156guards and RuntimeSession integration; primary states1/2/3 observed in scripted playback, auxiliary release held.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/research_01439/SOURCE_E0_MATERIAL.md",
+        "docs/validation_01439/emulator-observation.json"
+      ],
+      "id": "SOURCE_E0_MATERIAL_01439",
+      "scope": "256 original packet+16ordering cases; native gated STP/ABR submission; pixel parity remains CANDIDATE.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/validation_01439/host-tests.log",
+        "docs/validation_01439/build-result.json",
+        "docs/validation_01439/compiled-source-verification.json"
+      ],
+      "id": "BUILD_01439",
+      "scope": "136/136host, actualARMv6Kbuild,279matching inputs; source-scene andfallback captures accepted as emulator evidence; no hardware proof.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "evidence": [
+        "docs/validation_01439/capture-validation-r1.json"
+      ],
+      "id": "CAPTURES_01439_R1",
+      "scope": "Three original emulator captures; same binary; no gameplay-completion, visual1to1 orhardwareclaim.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    }
+  ],
+  "draw_submission_01441_r2": {
+    "current_build_hardware": "HARDWARE_PENDING",
+    "evidence": [
+      "docs/validation_01441_r2/build-result.json",
+      "docs/validation_01441_r2/emulator-observation.json",
+      "docs/validation_01441_r2/GPU_AUDIT.md"
+    ],
+    "hardware_cause": "UNKNOWN",
+    "observed": "User prior01441 RGB/cyan pass, world remains cyan; liveness inconclusive. Native source omitted empty projectile/material/model immediate groups. Emulator all draw_calls3\u21922,triangles3990 unchanged. Terrain3504/player486triangles in isolated views.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "gpu_and_actor_tail_01442": {
+    "evidence": [
+      "docs/validation_01442/FINAL_REPORT.md",
+      "docs/validation_01442/build-result.json",
+      "docs/validation_01442/emulator-observation.json",
+      "docs/research_01442/actor-tail-evidence.json"
+    ],
+    "hardware": "HARDWARE_PENDING",
+    "retail_parity": false,
+    "scope": "GPUownership correction+boundedwait;atomic actorbody/shadow/pose/proxy/no-damage packet continuation,actualnative diagnostics.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "historical_pass_claims": {
+    "0.0.14.25": [
+      {
+        "evidence": "docs/validation_01425/xa-import-owner-proof.json",
+        "id": "XA_IMPORT_01425",
+        "scope": "Hash-guarded original2352-byte Mode2Form2 stream245;1948selected sectors/3927168stereo frames. Exact measured EOF duplicate-header exception; unsupported formats rejected. Cold-zero predictor history; retail seek/history and hardware quantization parity UNKNOWN.",
+        "status": "SOURCE_BACKED_PARTIAL"
+      },
+      {
+        "evidence": "docs/validation_01425/azahar-r3-analysis.json",
+        "id": "XA_NATIVE_01425",
+        "scope": "Actual r4 ARM binary NDSPinit succeeds using private owner DSP component. Real playing/DONE observations:437472completed frames,0sampled underruns/dropped DSP frames. Command pops/frame13; source event3to4. Explicit unload0PCM/index. Not hardware, audible-quality, full-stream or retail timing parity.",
+        "status": "SOURCE_BACKED_PARTIAL"
+      },
+      {
+        "id": "XA_PROTOCOL_01425",
+        "scope": "Native actual-playback protocol translation for supported mode/filter/location/read/status. Getloc absolute position usescompletedbuffers; unknown prefix remainsUNKNOWN; unsupportedseek/pause/recovery/loops hold. NotPS1CDemulation.",
+        "status": "CANDIDATE"
+      },
+      {
+        "evidence": "docs/validation_01425/camera-proof.json",
+        "id": "CAMERA_HELPERS_01425",
+        "scope": "Original direct camera/projection helpers;768camera/634projection authored cases,227883originalCPU instructions,1536modeledMVMVA. No native ordinary camera writer binding, independent GTE/hardware or live chronology parity.",
+        "status": "SOURCE_BACKED_PARTIAL"
+      },
+      {
+        "evidence": "docs/validation_01425/original-reference-observation-r2.json",
+        "id": "REFERENCE_01425",
+        "scope": "4094original empty-owner leases match262016rawCP2fields;64bounded source replays match4096fields. No selectedowners/RTPS/store proof.32765continuous RNG returns and15340inputupdates;0class03admission. Process exception causeUNESTABLISHED.",
+        "status": "MATCHES_MEASURED_FIELDS"
+      },
+      {
+        "id": "LIFETIME_01425",
+        "scope": "Accepted transitions invalidate outgoing phase2/commandmetadata, queues, inbox/context/mix thencloseNDSP/index/PCM. Rejected transition preservesactiveowners. Always-on Release regressionchecks plusASan/UBSan. Developer switching is not natural progression.",
+        "status": "SOURCE_BACKED_PARTIAL"
+      }
+    ]
+  },
+  "historical_pass_claims_01435": [
+    {
+      "scope": "Complete fresh class40 initializer/wrapper and exact12 player mirrors; later update is unported",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "scope": "42 original conditional RNG body cases,50 observed callback boundaries and186 paired actual scene returns",
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "scope": "Native phase6/recorded owner plumbing reaches strict context mismatch with zero tape advance",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "scope": "No physicalOld3DS test",
+      "status": "HARDWARE_PENDING"
+    }
+  ],
+  "historical_pass_claims_01437": [
+    {
+      "id": "CLASS40_STATES_01436",
+      "scope": "145 original state-prefix cases,1216398 unchanged instructions;1018 atomic guards. Native wiring is partial and frame chronology unproved.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/research_01436/source-scene-actor40-state-proof.json",
+        "tests/test_source_scene_actor40_update.cpp"
+      ]
+    },
+    {
+      "id": "CLASS40_FINAL_MIRRORS_01436",
+      "scope": "Guarded shadow/cue store audit and7 original finalmirror cases,50913 original instructions;180nativeguards. Shadows/UV/audio presentation are pending.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/research_01436/source-scene-actor40-tail-proof.json",
+        "tests/test_source_scene_actor40_tail.cpp"
+      ]
+    },
+    {
+      "id": "EFFECT131_SWEEP_01436",
+      "scope": "Known-lane131sweep/deferredcleanup connected;13invocations not13provenretailframes. Othercallbacks held.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01436/PHASE5_EFFECT131.md",
+        "tests/test_source_effects.cpp"
+      ]
+    },
+    {
+      "id": "BUSTER_OWNED_PRODUCER_01436",
+      "scope": "258spawn/758lease original cases,16sourcepool. Actual gameplayfiring and projectile/damage chronology remainunknown.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/research_01436/SOURCE_BUSTER_SPAWN.md",
+        "tests/test_child_runtime.cpp",
+        "tests/test_source_hit_proxy.cpp"
+      ]
+    },
+    {
+      "id": "BUILD_01436",
+      "scope": "131hosttestsPASS and actualOld3DSnativecompilePASS;269source hashes match. Physicalhardware untested.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01436/build-result.json",
+        "docs/validation_01436/compiled-source-verification.json"
+      ]
+    }
+  ],
+  "historical_pass_claims_01438": [
+    {
+      "id": "SOURCE_EFFECTS_01438",
+      "scope": "402callback2/354callback3-4 original scalar cases; explicit authored or selectedBIOS input scope. Full RNG/cadence/draw not proved.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/research_01438/source-effect2-proof.json",
+        "docs/research_01438/source-effects34-proof.json"
+      ]
+    },
+    {
+      "id": "LOWER_DISPATCH_RUNTIME_01438",
+      "scope": "Explicit checked ownerprofile/lease and ascending source callbacks2/3/4 native-wired;3children/4release receipts inOld-modelAzahar. Missing consumers remain held.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01438/SOURCE_EFFECT_DISPATCH.md",
+        "docs/validation_01438/emulator-observation.json"
+      ]
+    },
+    {
+      "id": "BUILD_01438",
+      "scope": "134hostchecksPASS;actualnativecompilePASS;275sourcehashesmatch. Physicalhardwarepending.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01438/build-result.json",
+        "docs/validation_01438/compiled-source-verification.json"
+      ]
+    }
+  ],
+  "pass_01421": {
+    "action4_body_cases": 1568,
+    "action4_child_consumer_native": false,
+    "action4_contact_corrections": 4,
+    "action4_contact_holds": 56,
+    "action4_contact_matches": 430,
+    "action4_live_encounter": false,
+    "actor_runtime_stale_guards": 26,
+    "child_initializer_cases": 135,
+    "child_release_cases": 32,
+    "combat_byte_c_source_cases": 14,
+    "complete_enemy_attack": false,
+    "current_build_evidence": "docs/validation_01421/native-build-r3.json",
+    "decomp": "Incomplete PS1/MIPS, no tutorialactorC; no externalcodecopied",
+    "host_tests": "67/67 PASS",
+    "live_rng_tape_native": false,
+    "native_build": "r3 PASS",
+    "observation_evidence": "docs/validation_01421/native-observation.json",
+    "original_instruction_differential_is_live_retail_parity": false,
+    "original_rng_dispatcher_contexts": 72,
+    "physics_1to1": false,
+    "research": "docs/research_01421/RESEARCH.json",
+    "rng_validator_tests": 27,
+    "source_actor_variant32E_admitted": 0
+  },
+  "pass_01434": {
+    "claims": "Selected scalar fields and guards only; native-vs-native replay is not retail parity; no hardware claim.",
+    "emulator": "docs/validation_01434/emulator-results.json",
+    "fresh_initializer": "docs/research_01434/scene_actor40_init/source-proof.json",
+    "initializer_guards": "docs/research_01434/scene_actor40_init/native-validation.json",
+    "live_reference": "docs/research_01434/live-scene-rng-evidence.json",
+    "original_random_effect_rechecked": "docs/validation_01434/integrated-random-effect.log",
+    "original_wrapper_rechecked": "docs/validation_01434/integrated-owner-wrapper.log",
+    "random_effect": "docs/research_01434/random-effect-source-proof.json",
+    "tape": "docs/research_01434/SOURCE_EVENT_RANDOM_TAPE.md"
+  },
+  "prior_current_claims_01433": [
+    {
+      "id": "FRESH_HEAD_01426",
+      "scope": "Fresh store+16A=0,table80089200/fileID28 selects ownerHEAD01/PL00H01P.PBD.264authoredcases/4476unchanged instructions; oldH00corrected. Resumed/equipment/dynamichead/complete visualparity UNKNOWN.",
+      "source": [
+        "tools/source_player_head.py",
+        "tools/build_tutorial_pack.py"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/research_01426/fresh-player-head-source-proof.json",
+        "tests/test_source_player_head.py",
+        "docs/validation_01426/head-cook-result.json"
+      ]
+    },
+    {
+      "id": "PLAYER_OPAQUE_STP_01426",
+      "primary_reference": "https://psx.arthus.net/sdk/Psy-Q/DOCS/LibOver47.pdf#page=106",
+      "scope": "Player opaque/semi packet groups bounded; opaque TEValpha scale2 treats STP128 as opaque and zero stays discarded.8opcodes*6authored texel classes. Does not prove PS1 blendmodes/terrain/actors/materialtiming/full rendering parity.",
+      "source": [
+        "include/legends3ds/render/ps1_texture_modulation.h",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_ps1_geometry.cpp",
+        "docs/validation_01426/emulator-observation.json"
+      ]
+    },
+    {
+      "id": "FADE_TYPE2_STARTUP_01426",
+      "scope": "517authoredcases/126709unchangedinstructions,5busy noops,256GPUtype domain.80017C30 type2startup committed; sourceeventphase5/frame68,pending80012E10(slot2,80017E94). Callback/BIOSthread/display/fadecompletion unbound; next80100EFC holds.",
+      "source": [
+        "include/legends3ds/source_fade.h",
+        "src/flow/source_fade.cpp",
+        "src/flow/source_event_pipeline.cpp",
+        "src/world/runtime_session.cpp",
+        "platform/3ds/source/main.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01426/fade-source-proof.json",
+        "docs/validation_01426/fade-module-proof.json",
+        "tests/test_source_fade.cpp",
+        "tests/test_runtime_fade.cpp",
+        "docs/validation_01426/emulator-observation.json"
+      ]
+    },
+    {
+      "id": "FADE_LIFETIME_01426",
+      "scope": "Missing/malformed/full queue holds without mutation; busy no-op independent of metadata; profile rebind preserves pending intent; acceptedarea/save invalidate, rejectedtransition retains.4096allocation-free authoredticks. Not natural progression/hardwareproof.",
+      "source": [
+        "src/world/runtime_session.cpp"
+      ],
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "tests/test_runtime_fade.cpp",
+        "docs/validation_01426/sanitizer-result.json"
+      ]
+    },
+    {
+      "id": "CURRENT_NATIVE_01426",
+      "scope": "Actual705744B ARMv6K binarySHA943db29d8b45b0b4063aa6150396a12d24a3e62078e5520e20e3d9e6f023d9f3 matches232sources;99tests/3sanitizers and0warnings. Manualinput enhanced/safe0143 AzaharOldmodel. No recordedmovie execution or physicalhardware.",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "validation": [
+        "docs/validation_01426/build-result.json",
+        "docs/validation_01426/compiled-source-verification.json",
+        "docs/validation_01426/emulator-observation.json",
+        "docs/validation_01426/final-host-tests.log",
+        "docs/validation_01426/safe0143-observation.json"
+      ]
+    },
+    {
+      "id": "XA_FULL_BUFFER_COMPLETION_01426",
+      "scope": "Measuredstream245:3927168native NDSPcompleted frames (PLAYING/DONE),0sampled underruns/drops in emulator. This is not audiblequality, sourcehistory/seek/loop/timing or physicalhardware validation.",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "validation": [
+        "docs/validation_01426/emulator-observation.json"
+      ]
+    },
+    {
+      "id": "WCA_COMPLETION_01426",
+      "scope": "Full enemy attack/lock-on/Busterhit/damage/reaction/defeat/events/dialogue/naturaltransition/tutorial progression remain unfinished. PHYSICS_1TO1=false.",
+      "status": "UNKNOWN"
+    }
+  ],
+  "source_buster_callback_damage_01450": {
+    "physical_hardware_tested": false,
+    "retail_parity": false,
+    "scope": "Original normal subtype80 callback states0-2 are adapted into the existing fixed child pool. They publish composite producer 0x28000008 to imported class20/03, exercise 8HP damage/reaction and effect84, then release. Native source-actor mode is wired. Endpoint writers, map bounds, exact cadence and final defeat lifecycle remain unknown/candidate.",
+    "source": [
+      "include/legends3ds/child_runtime.h",
+      "src/world/child_runtime.cpp",
+      "include/legends3ds/source_hit_proxy.h",
+      "src/world/source_hit_proxy.cpp",
+      "include/legends3ds/runtime_session.h",
+      "platform/3ds/source/main.cpp"
+    ],
+    "status": "SOURCE_BACKED_PARTIAL",
+    "validation": [
+      "tests/test_child_runtime.cpp",
+      "docs/validation_01450/host-tests.log",
+      "docs/validation_01450/native-build.log",
+      "docs/validation_01450/FINAL_REPORT.md"
+    ]
+  },
+  "source_player_buster_bridge_01448": {
+    "physical_hardware_tested": false,
+    "retail_parity": false,
+    "scope": "Owner-supplied external decompiler export revealed source80035508\u219280034EB8\u219280035724. Native bounded two-lane proxy selector calls the established exact producer. Six authored broad-lane cases pass across 1,648 unchanged original instructions and 12 RTPS commands. Strict owner-profile differential, live camera/projection, muzzle/counter/firing ownership, projectile motion, hit/damage/reaction/defeat and retail chronology remain unproved.",
+    "source": [
+      "include/legends3ds/source_player_buster.h",
+      "src/world/source_player_buster.cpp",
+      "tools/cook_source_player_target.py"
+    ],
+    "status": "SOURCE_BACKED_PARTIAL",
+    "validation": [
+      "tests/test_source_player_buster.cpp",
+      "docs/research_01448/source-player-buster-select-proof.json",
+      "docs/research_01448/decomp-export-audit.json",
+      "docs/research_01448/SOURCE_PLAYER_BUSTER_BRIDGE.md"
+    ]
+  },
+  "source_player_pose_fire_01449": {
+    "physical_hardware_tested": false,
+    "retail_parity": false,
+    "scope": "External decompiler evidence traces 800325D4 -> 800331A0 -> 80035724. Native primary 15-part integer pose publishes part4/part7 muzzles; strict L3BP/1 initializes 16 selections; direct 80040E9C actions0-3 execute unchanged instruction cases. Alternate limb banks, actions4-7 helpers, projectile motion and hit delivery remain held.",
+    "source": [
+      "include/legends3ds/source_player_pose.h",
+      "src/world/source_player_pose.cpp",
+      "include/legends3ds/source_buster_profile.h",
+      "src/world/source_buster_profile.cpp",
+      "src/player/player_runtime.c",
+      "tools/cook_source_buster_profile.py"
+    ],
+    "status": "SOURCE_BACKED_PARTIAL",
+    "validation": [
+      "tests/test_source_player_pose.cpp",
+      "tests/test_source_buster_profile.cpp",
+      "tests/test_player_fire_state.cpp",
+      "docs/research_01449/source-player-pose-fire-proof.json",
+      "docs/research_01449/SOURCE_PLAYER_POSE_FIRE.md",
+      "docs/validation_01449/build-result.json"
+    ]
+  },
+  "source_transition_completion_01447": {
+    "physical_hardware_tested": false,
+    "retail_parity": false,
+    "scope": "Original callback 80015840 state-1 tail: 16 authored cases, 480 unchanged instructions, two explicit return-only helper hooks. Native acknowledgment requires matching owner/destination and committed area/spawn/gameplay-camera receipts. Old-model Azahar clears status and resumes movement/collision in Area1. Candidate RNG/recorded clock; same package; no retail parity or hardware claim.",
+    "source": [
+      "include/legends3ds/source_event_phase6.h",
+      "src/flow/source_event_phase6.cpp",
+      "src/world/runtime_session.cpp"
+    ],
+    "status": "SOURCE_BACKED_PARTIAL",
+    "validation": [
+      "docs/research_01447/source-transition-completion-proof.json",
+      "tests/test_source_event_handoff.cpp",
+      "docs/validation_01447/build-result.json",
+      "docs/validation_01447/emulator-observation.json",
+      "docs/validation_01447/handoff-trace.txt",
+      "docs/validation_01447/movement-trace.txt"
+    ]
+  },
+  "version": "0.0.14.51",
+  "world_comes_alive_complete": false
+}

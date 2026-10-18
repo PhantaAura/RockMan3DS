@@ -1,0 +1,101 @@
+{
+  "schema": "redux-contact-live-profile/2",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "scope": "Read-only original-game emulator snapshot; no hardware or retail parity claim",
+  "api": "localhost:18081 GET /api/v1/cpu/ram/raw",
+  "read_bytes": 2097152,
+  "raw_ram_retained": false,
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "regions": [
+    {
+      "begin": "0x8004b984",
+      "end_exclusive": "0x8004b9fc",
+      "owner_exe_range_sha256": "013ec15b839c10b1be83a87d46aae4488a27c72657606f302f6e676700b758ab",
+      "live_ram_range_sha256": "013ec15b839c10b1be83a87d46aae4488a27c72657606f302f6e676700b758ab",
+      "matches": true
+    },
+    {
+      "begin": "0x80048fb0",
+      "end_exclusive": "0x80049028",
+      "owner_exe_range_sha256": "a590927ee1b97b7601cd6b453b1466a7e419ba38a47c9337b1e708b0573133a0",
+      "live_ram_range_sha256": "a590927ee1b97b7601cd6b453b1466a7e419ba38a47c9337b1e708b0573133a0",
+      "matches": true
+    },
+    {
+      "begin": "0x80064718",
+      "end_exclusive": "0x80064794",
+      "owner_exe_range_sha256": "b3eecc07481c3b1c3ee1fb7693840d5a87a52d5ce00cba1bb0162f477d331634",
+      "live_ram_range_sha256": "b3eecc07481c3b1c3ee1fb7693840d5a87a52d5ce00cba1bb0162f477d331634",
+      "matches": true
+    }
+  ],
+  "profile_match": true,
+  "ram_u32_at_0x00000008": 0,
+  "raw_stats_selector": 1,
+  "stats_table_pointer": "0x8008edc4",
+  "player_active": 3,
+  "player_class": 0,
+  "player_state": 1,
+  "player_state_raw_9": 0,
+  "player_state_raw_a": 1,
+  "player_position": [
+    930,
+    -1,
+    -10135
+  ],
+  "idx": [
+    {
+      "source_idx_index": 78,
+      "position": [
+        -256,
+        0,
+        -8448
+      ],
+      "raw6": 1,
+      "descriptor_word": "0x80194630",
+      "source_identity_matches": true,
+      "alternate_contact_pointer": "0x801a25a8",
+      "default_contact_pointer": "0x0",
+      "selected_contact_pointer": "0x801a25a8",
+      "selection": "alternate",
+      "selected_pointer_plus8_word": "0x801a2e28"
+    },
+    {
+      "source_idx_index": 94,
+      "position": [
+        256,
+        0,
+        -7424
+      ],
+      "raw6": 1,
+      "descriptor_word": "0x801947b0",
+      "source_identity_matches": true,
+      "alternate_contact_pointer": "0x801a2708",
+      "default_contact_pointer": "0x0",
+      "selected_contact_pointer": "0x801a2708",
+      "selection": "alternate",
+      "selected_pointer_plus8_word": "0x801a2db0"
+    },
+    {
+      "source_idx_index": 123,
+      "position": [
+        -256,
+        0,
+        -5376
+      ],
+      "raw6": 1,
+      "descriptor_word": "0x80194600",
+      "source_identity_matches": true,
+      "alternate_contact_pointer": "0x801a2508",
+      "default_contact_pointer": "0x0",
+      "selected_contact_pointer": "0x801a2508",
+      "selection": "alternate",
+      "selected_pointer_plus8_word": "0x801a2e28"
+    }
+  ],
+  "actors_class20_03": [],
+  "limits": [
+    "Scene must be confirmed by original rendered capture/user observation.",
+    "One snapshot does not prove mutable IDX semantics or all gameplay NULL behavior."
+  ]
+}

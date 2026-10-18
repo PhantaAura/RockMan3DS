@@ -1,0 +1,102 @@
+{
+  "schema": "mml-source-event-command2/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "entry": "8001B858",
+  "outer_type2_slot": "80087688",
+  "callback_table": "80087670",
+  "bounded_callback_indices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "cases": {
+    "subtype0_noop": 36,
+    "subtype12_complete": 120,
+    "subtype3_complete": 720,
+    "phase0_incomplete_prefix": 6
+  },
+  "original_instructions_executed": 6598530,
+  "original_cd_mix_calls": 92202,
+  "complete_case_queue_pops": 740,
+  "max_case_instructions": 9291,
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "output_scalars_digest": "bb49a9022c4377103d0dceb4ae8ad695ec2d398d1139812159b2e6ff0493a004",
+  "phase0_boundaries": [
+    {
+      "subtype": 1,
+      "flags": 0,
+      "stop_before": "8001CB7C",
+      "mix_calls": 127,
+      "complete": false
+    },
+    {
+      "subtype": 1,
+      "flags": 1,
+      "stop_before": "8001CB7C",
+      "mix_calls": 127,
+      "complete": false
+    },
+    {
+      "subtype": 1,
+      "flags": 65535,
+      "stop_before": "8001CB7C",
+      "mix_calls": 127,
+      "complete": false
+    },
+    {
+      "subtype": 2,
+      "flags": 0,
+      "stop_before": "8001CB7C",
+      "mix_calls": 127,
+      "complete": false
+    },
+    {
+      "subtype": 2,
+      "flags": 1,
+      "stop_before": "8001CB7C",
+      "mix_calls": 127,
+      "complete": false
+    },
+    {
+      "subtype": 2,
+      "flags": 65535,
+      "stop_before": "8001CB7C",
+      "mix_calls": 127,
+      "complete": false
+    }
+  ],
+  "regions": [
+    {
+      "start": "0x8001b63c",
+      "end_exclusive": "0x8001b89c",
+      "sha256": "6d93761be230cbae97770b602d4a07f85bacf9cb3fb239ad59ac5ab00e2e4190"
+    },
+    {
+      "start": "0x8001caac",
+      "end_exclusive": "0x8001cb30",
+      "sha256": "bbe8b2728475c80abd745b7d4416bebb303f0eacd1398df80d9c07c4a1f84b79"
+    },
+    {
+      "start": "0x8001d394",
+      "end_exclusive": "0x8001d414",
+      "sha256": "966e7edbb3e57c98227f5116d05a6ad102ace19f1c7dca4da01c4388c9b66829"
+    },
+    {
+      "start": "0x80078efc",
+      "end_exclusive": "0x80078f84",
+      "sha256": "ab4f5bf88b2a2520f2535d501bffec8f9bbc1e80b13075482970a9240122df31"
+    }
+  ],
+  "limits": [
+    "Authored scalar/queue states, not recorded retail chronology.",
+    "Indices outside0..3 are not admitted; source owner has no bounds check.",
+    "Subtype1/2 phase0 stops before pause helper; no transport receipt or real media chronology is claimed.",
+    "MMIO mix stores are logical packets only, not audible or hardware verification.",
+    "No owner instructions, lookup tables, audio or assets are exported."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false
+}

@@ -1,0 +1,9 @@
+{
+  "parent_archive_sha256": "b12241d9e667ebd54c7ab824f9b6158fcb8e22cbf7cb3e0e102ce0900dc93cd7",
+  "parent_manifest_hashes": 875,
+  "host_tests": 42,
+  "passed": 42,
+  "command": "ctest --test-dir work/pass-20261005-worldalive-01417/install-r1/host --output-on-failure -j4",
+  "source_changes_before_inherited_tests": false,
+  "git": null
+}

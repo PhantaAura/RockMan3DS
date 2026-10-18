@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.33_WorldComesAlive/tools/cook_source_loop_snapshot.py", line 145, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+  File "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.33_WorldComesAlive/tools/cook_source_loop_snapshot.py", line 139, in main
+    package,provenance=cook(args.observation.read_bytes(),args.profile.read_bytes(),args.exe.read_bytes(),args.bios.read_bytes(),args.st00)
+  File "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.33_WorldComesAlive/tools/cook_source_loop_snapshot.py", line 113, in cook
+    require(len(ebds)==1 and sha(ebds[0]['payload'])==EBD_SHA,'Unsupported supplied ST00 EBD owner')
+  File "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.33_WorldComesAlive/tools/cook_source_loop_snapshot.py", line 33, in require
+    if not condition:raise ValueError(reason)
+ValueError: Unsupported supplied ST00 EBD owner

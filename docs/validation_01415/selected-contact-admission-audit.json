@@ -1,0 +1,129 @@
+{
+  "schema": "selected-contact-admission-audit/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "null_admission_status": "UNKNOWN",
+  "method": "Read-only owner resource and exact executable branch audit; no CPU default-memory assumption",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "stage_container_sha256": "3f46c6bac9261ee1def37bddd8a91377343e5ee1235391b2ed3a18f2cbcc8dc0",
+  "resource_hashes": {
+    "IDX": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e",
+    "MDT": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e",
+    "STG": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+    "HED": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+  },
+  "cooked_map_sha256": "3891ff3588e882f77a684461459e9379258285d0e7a58fd7fcfefeaaf61da333",
+  "descriptor_cases": [
+    {
+      "source_idx_index": 78,
+      "cooked_descriptor_index": 33,
+      "cooked_alternate_contact_index": 17,
+      "cooked_default_contact_index": 65535,
+      "source_idx_address": "0x8015c3a8",
+      "source_idx_sha256": "fc6d79198c70fda7d4dc180880bf8ff48f5f430877abd9202ad8e67a29e02576",
+      "source_position": [
+        -256,
+        0,
+        -8448
+      ],
+      "raw6": 0,
+      "raw6_low12_nonzero": false,
+      "source_descriptor_address": "0x80194630",
+      "source_descriptor_sha256": "0f4810eb247f3a447d9ad3956f297ffe4d606bb2544f3e1a9e85fde7d7d9b8f5",
+      "alternate_contact_pointer": "0x801a25a8",
+      "default_contact_pointer": "0x0",
+      "selected_pointer": "0x0"
+    },
+    {
+      "source_idx_index": 94,
+      "cooked_descriptor_index": 41,
+      "cooked_alternate_contact_index": 21,
+      "cooked_default_contact_index": 65535,
+      "source_idx_address": "0x8015c468",
+      "source_idx_sha256": "24d0e6b55594c8df6cf9285ee79f18a7cdcfd9ffa2cd5ae13d9c1e50d4c82ad3",
+      "source_position": [
+        256,
+        0,
+        -7424
+      ],
+      "raw6": 0,
+      "raw6_low12_nonzero": false,
+      "source_descriptor_address": "0x801947b0",
+      "source_descriptor_sha256": "a0ab1b6714ebb87cb8f98d1117f69bcb777fb21fd1f1d05e3c9be07e084ae9d1",
+      "alternate_contact_pointer": "0x801a2708",
+      "default_contact_pointer": "0x0",
+      "selected_pointer": "0x0"
+    },
+    {
+      "source_idx_index": 123,
+      "cooked_descriptor_index": 32,
+      "cooked_alternate_contact_index": 16,
+      "cooked_default_contact_index": 65535,
+      "source_idx_address": "0x8015c5c4",
+      "source_idx_sha256": "02064dd3bf1146ad4f0654588ecf78ec163d9c33ec41c9dab8701c0884644774",
+      "source_position": [
+        -256,
+        0,
+        -5376
+      ],
+      "raw6": 0,
+      "raw6_low12_nonzero": false,
+      "source_descriptor_address": "0x80194600",
+      "source_descriptor_sha256": "fbef5c52e0dcfae74e86b41df32d04e0ca463555111906d1d2974f4b651025b3",
+      "alternate_contact_pointer": "0x801a2508",
+      "default_contact_pointer": "0x0",
+      "selected_pointer": "0x0"
+    }
+  ],
+  "selector_rule": "IDX+6 low12 nonzero selects descriptor+4, zero selects descriptor+8; descriptor pointer is masked to24bits",
+  "branches": {
+    "geometry": {
+      "selector": "0x8004B9B0",
+      "alternate_pointer_load": "0x8004B9B8",
+      "default_pointer_load": "0x8004B9C4",
+      "selected_pointer_plus8_load": "0x8004B9EC",
+      "loaded_first_group_pointer_zero_branch": "0x8004B9F4",
+      "zero_branch_destination": "0x8004BB14",
+      "selected_pointer_null_guard_present": false
+    },
+    "floor": {
+      "selector": "0x80048FDC",
+      "alternate_pointer_load": "0x80048FE4",
+      "default_pointer_load": "0x80048FF0",
+      "selected_pointer_plus8_load": "0x80049018",
+      "loaded_first_group_pointer_zero_branch": "0x80049020",
+      "zero_branch_destination": "0x800491B0",
+      "selected_pointer_null_guard_present": false
+    }
+  },
+  "code_blocks": [
+    {
+      "start": "0x8004b984",
+      "end_exclusive": "0x8004b9fc",
+      "sha256": "013ec15b839c10b1be83a87d46aae4488a27c72657606f302f6e676700b758ab"
+    },
+    {
+      "start": "0x80048fb0",
+      "end_exclusive": "0x80049028",
+      "sha256": "a590927ee1b97b7601cd6b453b1466a7e419ba38a47c9337b1e708b0573133a0"
+    }
+  ],
+  "limits": [
+    "The zero branch tests the word read from selected_pointer+8, not selected_pointer itself.",
+    "For selected_pointer0 the source reads address0x00000008; its live PS1 RAM value is not supplied by the executable/STG resource.",
+    "CPU.get returning zero for unmapped addresses is not evidence of real NULL handling.",
+    "IDX all-zero initial raw6 does not prove the field cannot change in live retail state.",
+    "No NULL-as-empty guard, alternate-list fallback, or guessed actor floor was implemented."
+  ],
+  "next_concrete_step": "During an owner-authorized new-game/area reload, use official read-only debugger write breakpoints over IDX78/94/123 word+4 to capture original flag-writer PC/domain/timing and compare source behavior. No current-session restart or RAM writes were performed; native admission must wait for that proof.",
+  "live_measurements": {
+    "evidence": "redux-tutorial-live-profile.json",
+    "status": "MATCHES_MEASURED_FIELDS",
+    "static_raw6": 0,
+    "live_raw6_for_idx78_94_123": 1,
+    "source_identity_match": true,
+    "selected_live_lists": "alternate, non-null",
+    "ram8": 0,
+    "writer_status": "UNKNOWN",
+    "native_rule_changed": false
+  }
+}

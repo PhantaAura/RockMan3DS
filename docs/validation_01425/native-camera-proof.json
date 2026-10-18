@@ -1,0 +1,17 @@
+{
+  "schema": "mml-native-camera-validation/1",
+  "status": "PASS",
+  "camera_cases": 768,
+  "projection_cases": 634,
+  "hot_ticks": 4096,
+  "hot_allocations": 0,
+  "compiler_command": "c++ -std=c++17 -Wall -Wextra -Werror -I include tests/test_source_camera.cpp src/world/source_camera.cpp -o ../pass-20261010-worldalive-01425/player-camera/test_source_camera",
+  "run_command": "./test_source_camera camera-direct.tsv projection-control.tsv",
+  "native_current_camera_bound": false,
+  "limits": [
+    "Authored CPU/MVMVA fixtures; no original-emulator camera-update parity.",
+    "Native module produces persistent outputs only; transient GTE effects remain excluded."
+  ],
+  "undefined_behavior_sanitizer": "PASS",
+  "sanitizer_command": "c++ -std=c++17 -Wall -Wextra -Werror -fsanitize=undefined -fno-sanitize-recover=undefined -I include tests/test_source_camera.cpp src/world/source_camera.cpp -o ../pass-20261010-worldalive-01425/player-camera/test_source_camera_ubsan"
+}

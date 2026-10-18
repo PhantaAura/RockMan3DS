@@ -1,0 +1,112 @@
+{
+  "build": "0.0.14.25",
+  "binary_revision": "r4",
+  "binary_sha256": "0142638f404ecace2fae3abbde5879b2f439165ed45720a8d16ea5214a941b1e",
+  "emulator": "Azahar2126.0",
+  "model_new3ds": 0,
+  "renderer": "ENHANCED",
+  "hardware_tested": false,
+  "audio_requested": true,
+  "owner_dsp_component": {
+    "owner_path": "/Users/emeraldhunter/Downloads/3ds backups/3ds/dspfirm.cdc",
+    "bytes": 49756,
+    "sha256": "8e213f3e71d2e3e45d1169bac6465a70eabeb22b303f1fa6d7679370ffad0f54",
+    "included_in_source_release": false
+  },
+  "audio_initialization_result": "0x00000000",
+  "audio_playback_observed": true,
+  "audio_played_frames_max": 437472,
+  "underrun_sample_count_max": 0,
+  "dropped_dsp_frames_max": 0,
+  "max_sector_read_us": 2312,
+  "actual_audio_transport_receipts_observed": 236,
+  "command_pop_frames": [
+    13
+  ],
+  "event_phase4_frames": [
+    13,
+    60,
+    68,
+    120,
+    180,
+    240,
+    300,
+    360,
+    361,
+    420,
+    480
+  ],
+  "first_next_held_source_consumer": "80017c30",
+  "committed_diagnostic_transition_audio_invalidation_observed": true,
+  "sample_rows": 49,
+  "areas": [
+    0,
+    1
+  ],
+  "screenshots": [
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r3/screenshots/audio-test-completed-area1-paused.png"
+  ],
+  "metrics_scope": "Sparse emulated timings and buffer completion; not hardware benchmark, audible-quality assessment, end-of-stream playback or retail parity.",
+  "natural_tutorial_progression_proven": false,
+  "frame_before_log_us": {
+    "min": 8161,
+    "median": 16522,
+    "max": 2062484
+  },
+  "interval_us": {
+    "min": 0,
+    "median": 16713,
+    "max": 2062677
+  },
+  "update_us": {
+    "min": 2,
+    "median": 29,
+    "max": 4705
+  },
+  "render_us": {
+    "min": 6639,
+    "median": 16306,
+    "max": 16678
+  },
+  "draw_calls": {
+    "min": 12,
+    "median": 12,
+    "max": 18
+  },
+  "triangles": {
+    "min": 1508,
+    "median": 1508,
+    "max": 2184
+  },
+  "owned_linear": {
+    "min": 59520,
+    "median": 59520,
+    "max": 71640
+  },
+  "owned_texture": {
+    "min": 2883584,
+    "median": 2883584,
+    "max": 3670016
+  },
+  "malloc_live": {
+    "min": 1787488,
+    "median": 1787488,
+    "max": 1937464
+  },
+  "linear_free": {
+    "min": 27937280,
+    "median": 28719616,
+    "max": 28719616
+  },
+  "vram_free": {
+    "min": 5523456,
+    "median": 5523456,
+    "max": 5523456
+  },
+  "snapshot_sha256": {
+    "boot_01425.log": "6832e2fe4507dab16698a6730d84e6a2d07a67b77ade922dc7f7619ebcd2f7ed",
+    "settings-verification.json": "928d6e395e749ccbca1dca0b3c25d4189025a13b3b281afb4c08479d7602e444",
+    "launch.json": "7e43017b6b246d8b6d6af0ca04e8aeac122650505851e68005a7b076c30ec8f5",
+    "hardware_01425_4000086010088.csv": "df7397db1ceda492d78ce71ca9941453451028e88b03ec637c191cd7de0ecde7"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "project": "Mega Man Legends 3DS",
+  "version": "0.0.14.6",
+  "checkpoint_name": "Staged Renderer Recovery Integration Candidate",
+  "status": "HOST_VALIDATED_SOURCE_HARDWARE_PENDING",
+  "parents": {
+    "trusted_0143_zip_sha256": "5263b82eb03b1279303c7c417912342801a153cd367b85ae5924e4b8c22dd382",
+    "experimental_0145_zip_sha256": "79ccb84f2d6f41be53e4971f633d612ea748cf7e3bc27692b9af18371a5d4c1a",
+    "push2_cumulative_sha256": "8973bce98b2ba258593119ab21d563ec0685f3d667d11b7f21c0e270360bc052"
+  },
+  "integration": {
+    "base": "0.0.14.3",
+    "true_0143_renderer_fallback": true,
+    "dual_shader_paths": true,
+    "staged_uv_material_texture_player_alpha_animation_gates": true,
+    "boot_sd_log": "sdmc:/3ds/Legends3DS/boot_0146.log",
+    "retail_animation_request_bridge_from_0145": true,
+    "player_material_caches_from_0145": true,
+    "push2_modules_compiled_as_separate_host_library": true
+  },
+  "validation": {
+    "host_core_tests": "PASS",
+    "push2_c_runtime_tests": "PASS",
+    "owner_tutorial_cook_files": 101,
+    "terrain_primitives_total": 15512,
+    "terrain_primitives_resolved": 14328,
+    "terrain_primitives_unresolved": 1184,
+    "player_materials": 2,
+    "player_materials_all_five_areas_resolved": true,
+    "animation_mapped_requests": 55,
+    "animation_s_records": 833,
+    "required_request_0x0c_structural": "PASS",
+    "devkitarm_3dsx_build": "NOT_RUN_IN_THIS_ENVIRONMENT",
+    "old_3ds_hardware": "PENDING"
+  },
+  "claims": {
+    "physics_1to1": false,
+    "tutorial_0_14_complete": false,
+    "release_0_15_complete": false,
+    "release_1_0_complete": false
+  }
+}

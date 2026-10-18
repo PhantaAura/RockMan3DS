@@ -1,0 +1,2079 @@
+{
+  "native_source_files_matching": 129,
+  "binary_sha256": "36502c9ce5af6d2be319aed709cd7069a12ad51273196724eec99a6ad10ed02a",
+  "binary_bytes": 430564,
+  "native_build": "PASS",
+  "host_ctest": "20/20 PASS",
+  "full_content": {
+    "cache_hits": 340,
+    "cache_misses": 0,
+    "edges": 3916,
+    "geometry_families": 31,
+    "nodes": 4115,
+    "packages": 205,
+    "packages_with_errors": 0
+  },
+  "tutorial": {
+    "bytes": 4331419,
+    "cache_hit": false,
+    "files": 101,
+    "manifest_sha256": "c9035b63a75b19979052138d9548bdb7dc6bb4d66c46b6c49f0206a8b09af932",
+    "recipe_key": "66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e"
+  },
+  "native_native_replays": 9,
+  "retail_parity": false,
+  "hardware": "HARDWARE_PENDING",
+  "installer_output": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2",
+  "failed_installer_output": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final",
+  "exact_commands": [
+    {
+      "argv": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tools/verify_0146_source.py"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/source-verification.json",
+      "returncode": 0,
+      "seconds": 0.050533
+    },
+    {
+      "argv": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tools/p2/verify_cumulative_tree.py",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/cumulative-verification.json",
+      "returncode": 0,
+      "seconds": 0.040505
+    },
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility",
+        "-B",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/host-configure.log",
+      "returncode": 0,
+      "seconds": 0.494774
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58",
+        "--parallel",
+        "4"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/host-build.log",
+      "returncode": 0,
+      "seconds": 10.363888
+    },
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58",
+        "--output-on-failure"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/host-tests.log",
+      "returncode": 0,
+      "seconds": 1.570817
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM00L.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-000-validation.log",
+      "returncode": 0,
+      "seconds": 0.00473
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM00R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-001-validation.log",
+      "returncode": 0,
+      "seconds": 0.002533
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM01R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-002-validation.log",
+      "returncode": 0,
+      "seconds": 0.002202
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM02R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-003-validation.log",
+      "returncode": 0,
+      "seconds": 0.002198
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM03R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-004-validation.log",
+      "returncode": 0,
+      "seconds": 0.002167
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM04L.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-005-validation.log",
+      "returncode": 0,
+      "seconds": 0.002254
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM04R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-006-validation.log",
+      "returncode": 0,
+      "seconds": 0.002069
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM05R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-007-validation.log",
+      "returncode": 0,
+      "seconds": 0.002319
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM06R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-008-validation.log",
+      "returncode": 0,
+      "seconds": 0.002099
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM07R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-009-validation.log",
+      "returncode": 0,
+      "seconds": 0.00204
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM08R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-010-validation.log",
+      "returncode": 0,
+      "seconds": 0.002023
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM09R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-011-validation.log",
+      "returncode": 0,
+      "seconds": 0.001997
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM10R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-012-validation.log",
+      "returncode": 0,
+      "seconds": 0.003836
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM11R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-013-validation.log",
+      "returncode": 0,
+      "seconds": 0.003751
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM12R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-014-validation.log",
+      "returncode": 0,
+      "seconds": 0.002781
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ARM13R.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-015-validation.log",
+      "returncode": 0,
+      "seconds": 0.004099
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/BS16VAB1.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-016-validation.log",
+      "returncode": 0,
+      "seconds": 0.005674
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/DEMO_DAT.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-017-validation.log",
+      "returncode": 0,
+      "seconds": 0.004222
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/EXIT_MAP.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-018-validation.log",
+      "returncode": 0,
+      "seconds": 0.002472
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/EXIT_SUB.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-019-validation.log",
+      "returncode": 0,
+      "seconds": 0.003857
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/EXIT_SUP.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-020-validation.log",
+      "returncode": 0,
+      "seconds": 0.002289
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/FONT.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-021-validation.log",
+      "returncode": 0,
+      "seconds": 0.002297
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/GAMEOVER.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-022-validation.log",
+      "returncode": 0,
+      "seconds": 0.002221
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/GAUGE.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-023-validation.log",
+      "returncode": 0,
+      "seconds": 0.002356
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/HEAD00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-024-validation.log",
+      "returncode": 0,
+      "seconds": 0.002581
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/HEAD01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-025-validation.log",
+      "returncode": 0,
+      "seconds": 0.003022
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/INIT_DAT.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-026-validation.log",
+      "returncode": 0,
+      "seconds": 0.003642
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/KAIFONT.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-027-validation.log",
+      "returncode": 0,
+      "seconds": 0.003046
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/LEG00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-028-validation.log",
+      "returncode": 0,
+      "seconds": 0.002313
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/LEG01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-029-validation.log",
+      "returncode": 0,
+      "seconds": 0.002151
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/MAP_A1.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-030-validation.log",
+      "returncode": 0,
+      "seconds": 0.002173
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/MAP_A2.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-031-validation.log",
+      "returncode": 0,
+      "seconds": 0.002149
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/MAP_B1.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-032-validation.log",
+      "returncode": 0,
+      "seconds": 0.002096
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/MAP_B2.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-033-validation.log",
+      "returncode": 0,
+      "seconds": 0.002061
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/MAP_B3.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-034-validation.log",
+      "returncode": 0,
+      "seconds": 0.002295
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-035-validation.log",
+      "returncode": 0,
+      "seconds": 0.005095
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-036-validation.log",
+      "returncode": 0,
+      "seconds": 0.002243
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-037-validation.log",
+      "returncode": 0,
+      "seconds": 0.002584
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-038-validation.log",
+      "returncode": 0,
+      "seconds": 0.002635
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-039-validation.log",
+      "returncode": 0,
+      "seconds": 0.002404
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00_04.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-040-validation.log",
+      "returncode": 0,
+      "seconds": 0.002298
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-041-validation.log",
+      "returncode": 0,
+      "seconds": 0.002721
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-042-validation.log",
+      "returncode": 0,
+      "seconds": 0.00364
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST02_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-043-validation.log",
+      "returncode": 0,
+      "seconds": 0.002861
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST02_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-044-validation.log",
+      "returncode": 0,
+      "seconds": 0.002449
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST02_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-045-validation.log",
+      "returncode": 0,
+      "seconds": 0.002272
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-046-validation.log",
+      "returncode": 0,
+      "seconds": 0.00548
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-047-validation.log",
+      "returncode": 0,
+      "seconds": 0.005585
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-048-validation.log",
+      "returncode": 0,
+      "seconds": 0.004032
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-049-validation.log",
+      "returncode": 0,
+      "seconds": 0.003702
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-050-validation.log",
+      "returncode": 0,
+      "seconds": 0.003617
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_00D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-051-validation.log",
+      "returncode": 0,
+      "seconds": 0.004028
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-052-validation.log",
+      "returncode": 0,
+      "seconds": 0.003515
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_05.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-053-validation.log",
+      "returncode": 0,
+      "seconds": 0.00229
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_06.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-054-validation.log",
+      "returncode": 0,
+      "seconds": 0.002987
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_07.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-055-validation.log",
+      "returncode": 0,
+      "seconds": 0.002842
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST03_08.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-056-validation.log",
+      "returncode": 0,
+      "seconds": 0.002169
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-057-validation.log",
+      "returncode": 0,
+      "seconds": 0.0042
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-058-validation.log",
+      "returncode": 0,
+      "seconds": 0.00436
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-059-validation.log",
+      "returncode": 0,
+      "seconds": 0.004101
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-060-validation.log",
+      "returncode": 0,
+      "seconds": 0.004038
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-061-validation.log",
+      "returncode": 0,
+      "seconds": 0.003958
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_00D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-062-validation.log",
+      "returncode": 0,
+      "seconds": 0.004068
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_00E.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-063-validation.log",
+      "returncode": 0,
+      "seconds": 0.004004
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_00F.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-064-validation.log",
+      "returncode": 0,
+      "seconds": 0.004085
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-065-validation.log",
+      "returncode": 0,
+      "seconds": 0.003851
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-066-validation.log",
+      "returncode": 0,
+      "seconds": 0.002735
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-067-validation.log",
+      "returncode": 0,
+      "seconds": 0.002963
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_04.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-068-validation.log",
+      "returncode": 0,
+      "seconds": 0.002483
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST04_05.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-069-validation.log",
+      "returncode": 0,
+      "seconds": 0.00248
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-070-validation.log",
+      "returncode": 0,
+      "seconds": 0.005727
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-071-validation.log",
+      "returncode": 0,
+      "seconds": 0.004715
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-072-validation.log",
+      "returncode": 0,
+      "seconds": 0.00429
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-073-validation.log",
+      "returncode": 0,
+      "seconds": 0.004008
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-074-validation.log",
+      "returncode": 0,
+      "seconds": 0.003951
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00E.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-075-validation.log",
+      "returncode": 0,
+      "seconds": 0.004906
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00F.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-076-validation.log",
+      "returncode": 0,
+      "seconds": 0.004993
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00G.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-077-validation.log",
+      "returncode": 0,
+      "seconds": 0.005058
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00H.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-078-validation.log",
+      "returncode": 0,
+      "seconds": 0.005033
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00I.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-079-validation.log",
+      "returncode": 0,
+      "seconds": 0.004755
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_00J.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-080-validation.log",
+      "returncode": 0,
+      "seconds": 0.004398
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-081-validation.log",
+      "returncode": 0,
+      "seconds": 0.003131
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_01C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-082-validation.log",
+      "returncode": 0,
+      "seconds": 0.002841
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-083-validation.log",
+      "returncode": 0,
+      "seconds": 0.003716
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST05_04.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-084-validation.log",
+      "returncode": 0,
+      "seconds": 0.00252
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-085-validation.log",
+      "returncode": 0,
+      "seconds": 0.006722
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-086-validation.log",
+      "returncode": 0,
+      "seconds": 0.004993
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-087-validation.log",
+      "returncode": 0,
+      "seconds": 0.005186
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-088-validation.log",
+      "returncode": 0,
+      "seconds": 0.004499
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_00D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-089-validation.log",
+      "returncode": 0,
+      "seconds": 0.00825
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-090-validation.log",
+      "returncode": 0,
+      "seconds": 0.005963
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_01B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-091-validation.log",
+      "returncode": 0,
+      "seconds": 0.005919
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-092-validation.log",
+      "returncode": 0,
+      "seconds": 0.00328
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_02C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-093-validation.log",
+      "returncode": 0,
+      "seconds": 0.002687
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_02D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-094-validation.log",
+      "returncode": 0,
+      "seconds": 0.002623
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-095-validation.log",
+      "returncode": 0,
+      "seconds": 0.002357
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST06_04.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-096-validation.log",
+      "returncode": 0,
+      "seconds": 0.00512
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST07.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-097-validation.log",
+      "returncode": 0,
+      "seconds": 0.008783
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST07_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-098-validation.log",
+      "returncode": 0,
+      "seconds": 0.007886
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST07_05.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-099-validation.log",
+      "returncode": 0,
+      "seconds": 0.004509
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST07_05B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-100-validation.log",
+      "returncode": 0,
+      "seconds": 0.002721
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-101-validation.log",
+      "returncode": 0,
+      "seconds": 0.00599
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-102-validation.log",
+      "returncode": 0,
+      "seconds": 0.004625
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-103-validation.log",
+      "returncode": 0,
+      "seconds": 0.004757
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-104-validation.log",
+      "returncode": 0,
+      "seconds": 0.003549
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-105-validation.log",
+      "returncode": 0,
+      "seconds": 0.003472
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-106-validation.log",
+      "returncode": 0,
+      "seconds": 0.003075
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-107-validation.log",
+      "returncode": 0,
+      "seconds": 0.003423
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST08_04.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-108-validation.log",
+      "returncode": 0,
+      "seconds": 0.003127
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST09.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-109-validation.log",
+      "returncode": 0,
+      "seconds": 0.006494
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST09_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-110-validation.log",
+      "returncode": 0,
+      "seconds": 0.004099
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST09_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-111-validation.log",
+      "returncode": 0,
+      "seconds": 0.005437
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST09_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-112-validation.log",
+      "returncode": 0,
+      "seconds": 0.004289
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST09_05.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-113-validation.log",
+      "returncode": 0,
+      "seconds": 0.002942
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0A.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-114-validation.log",
+      "returncode": 0,
+      "seconds": 0.005003
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0A_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-115-validation.log",
+      "returncode": 0,
+      "seconds": 0.002832
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0A_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-116-validation.log",
+      "returncode": 0,
+      "seconds": 0.002807
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0A_00D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-117-validation.log",
+      "returncode": 0,
+      "seconds": 0.002809
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-118-validation.log",
+      "returncode": 0,
+      "seconds": 0.006205
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-119-validation.log",
+      "returncode": 0,
+      "seconds": 0.004229
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-120-validation.log",
+      "returncode": 0,
+      "seconds": 0.003228
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-121-validation.log",
+      "returncode": 0,
+      "seconds": 0.00302
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B_00D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-122-validation.log",
+      "returncode": 0,
+      "seconds": 0.002436
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B_00E.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-123-validation.log",
+      "returncode": 0,
+      "seconds": 0.002352
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-124-validation.log",
+      "returncode": 0,
+      "seconds": 0.002398
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0B_01B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-125-validation.log",
+      "returncode": 0,
+      "seconds": 0.002134
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-126-validation.log",
+      "returncode": 0,
+      "seconds": 0.004449
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0CB.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-127-validation.log",
+      "returncode": 0,
+      "seconds": 0.004688
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0CC.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-128-validation.log",
+      "returncode": 0,
+      "seconds": 0.006713
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-129-validation.log",
+      "returncode": 0,
+      "seconds": 0.003521
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0D_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-130-validation.log",
+      "returncode": 0,
+      "seconds": 0.003223
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0D_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-131-validation.log",
+      "returncode": 0,
+      "seconds": 0.003353
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0D_00D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-132-validation.log",
+      "returncode": 0,
+      "seconds": 0.003392
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0D_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-133-validation.log",
+      "returncode": 0,
+      "seconds": 0.002601
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0D_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-134-validation.log",
+      "returncode": 0,
+      "seconds": 0.002405
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0D_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-135-validation.log",
+      "returncode": 0,
+      "seconds": 0.002147
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0E.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-136-validation.log",
+      "returncode": 0,
+      "seconds": 0.007186
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0F.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-137-validation.log",
+      "returncode": 0,
+      "seconds": 0.005207
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0F_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-138-validation.log",
+      "returncode": 0,
+      "seconds": 0.004872
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0F_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-139-validation.log",
+      "returncode": 0,
+      "seconds": 0.003127
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0F_02B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-140-validation.log",
+      "returncode": 0,
+      "seconds": 0.002926
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0F_02C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-141-validation.log",
+      "returncode": 0,
+      "seconds": 0.003181
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0F_02D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-142-validation.log",
+      "returncode": 0,
+      "seconds": 0.002826
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST0F_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-143-validation.log",
+      "returncode": 0,
+      "seconds": 0.003057
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-144-validation.log",
+      "returncode": 0,
+      "seconds": 0.004578
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-145-validation.log",
+      "returncode": 0,
+      "seconds": 0.005551
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-146-validation.log",
+      "returncode": 0,
+      "seconds": 0.006074
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-147-validation.log",
+      "returncode": 0,
+      "seconds": 0.006027
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-148-validation.log",
+      "returncode": 0,
+      "seconds": 0.003834
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-149-validation.log",
+      "returncode": 0,
+      "seconds": 0.005326
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-150-validation.log",
+      "returncode": 0,
+      "seconds": 0.007068
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-151-validation.log",
+      "returncode": 0,
+      "seconds": 0.006776
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_04.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-152-validation.log",
+      "returncode": 0,
+      "seconds": 0.005752
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST10_05.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-153-validation.log",
+      "returncode": 0,
+      "seconds": 0.012459
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST11.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-154-validation.log",
+      "returncode": 0,
+      "seconds": 0.006431
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST11B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-155-validation.log",
+      "returncode": 0,
+      "seconds": 0.00548
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST11_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-156-validation.log",
+      "returncode": 0,
+      "seconds": 0.011628
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST11_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-157-validation.log",
+      "returncode": 0,
+      "seconds": 0.005799
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST11_00C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-158-validation.log",
+      "returncode": 0,
+      "seconds": 0.0035
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST12.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-159-validation.log",
+      "returncode": 0,
+      "seconds": 0.004566
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST12_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-160-validation.log",
+      "returncode": 0,
+      "seconds": 0.007793
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST13.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-161-validation.log",
+      "returncode": 0,
+      "seconds": 0.009808
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST13_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-162-validation.log",
+      "returncode": 0,
+      "seconds": 0.003868
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST13_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-163-validation.log",
+      "returncode": 0,
+      "seconds": 0.002918
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST14.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-164-validation.log",
+      "returncode": 0,
+      "seconds": 0.007477
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST14_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-165-validation.log",
+      "returncode": 0,
+      "seconds": 0.00382
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST14_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-166-validation.log",
+      "returncode": 0,
+      "seconds": 0.003259
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST15.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-167-validation.log",
+      "returncode": 0,
+      "seconds": 0.002723
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST15_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-168-validation.log",
+      "returncode": 0,
+      "seconds": 0.002172
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST16.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-169-validation.log",
+      "returncode": 0,
+      "seconds": 0.004591
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST16_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-170-validation.log",
+      "returncode": 0,
+      "seconds": 0.002245
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST16_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-171-validation.log",
+      "returncode": 0,
+      "seconds": 0.003061
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST17.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-172-validation.log",
+      "returncode": 0,
+      "seconds": 0.005274
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST17B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-173-validation.log",
+      "returncode": 0,
+      "seconds": 0.003757
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST17C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-174-validation.log",
+      "returncode": 0,
+      "seconds": 0.005598
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST18.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-175-validation.log",
+      "returncode": 0,
+      "seconds": 0.00482
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST18_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-176-validation.log",
+      "returncode": 0,
+      "seconds": 0.002284
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST19.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-177-validation.log",
+      "returncode": 0,
+      "seconds": 0.005172
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST19B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-178-validation.log",
+      "returncode": 0,
+      "seconds": 0.00199
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST19C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-179-validation.log",
+      "returncode": 0,
+      "seconds": 0.001973
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST19_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-180-validation.log",
+      "returncode": 0,
+      "seconds": 0.002224
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST19_03.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-181-validation.log",
+      "returncode": 0,
+      "seconds": 0.002876
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-182-validation.log",
+      "returncode": 0,
+      "seconds": 0.005473
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-183-validation.log",
+      "returncode": 0,
+      "seconds": 0.003898
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-184-validation.log",
+      "returncode": 0,
+      "seconds": 0.003822
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_01B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-185-validation.log",
+      "returncode": 0,
+      "seconds": 0.00298
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_01C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-186-validation.log",
+      "returncode": 0,
+      "seconds": 0.002717
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-187-validation.log",
+      "returncode": 0,
+      "seconds": 0.003196
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_02B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-188-validation.log",
+      "returncode": 0,
+      "seconds": 0.00285
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_02C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-189-validation.log",
+      "returncode": 0,
+      "seconds": 0.003767
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1A_02D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-190-validation.log",
+      "returncode": 0,
+      "seconds": 0.002863
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-191-validation.log",
+      "returncode": 0,
+      "seconds": 0.005403
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1B_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-192-validation.log",
+      "returncode": 0,
+      "seconds": 0.003944
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1B_00B.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-193-validation.log",
+      "returncode": 0,
+      "seconds": 0.005091
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1C.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-194-validation.log",
+      "returncode": 0,
+      "seconds": 0.004618
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1D.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-195-validation.log",
+      "returncode": 0,
+      "seconds": 0.005994
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1D_00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-196-validation.log",
+      "returncode": 0,
+      "seconds": 0.002929
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1D_01.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-197-validation.log",
+      "returncode": 0,
+      "seconds": 0.002622
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1D_02.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-198-validation.log",
+      "returncode": 0,
+      "seconds": 0.002348
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1E.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-199-validation.log",
+      "returncode": 0,
+      "seconds": 0.003596
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST1E_06.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-200-validation.log",
+      "returncode": 0,
+      "seconds": 0.002205
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/SUB_KEY.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-201-validation.log",
+      "returncode": 0,
+      "seconds": 0.00458
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/SUB_WPN.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-202-validation.log",
+      "returncode": 0,
+      "seconds": 0.005834
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/SUPPORT.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-203-validation.log",
+      "returncode": 0,
+      "seconds": 0.006769
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_validate",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/SUPPORT2.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-204-validation.log",
+      "returncode": 0,
+      "seconds": 0.006821
+    },
+    {
+      "argv": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tools/build_tutorial_pack.py",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack",
+        "--with-indexed",
+        "--with-material-cache"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/tutorial-cook.log",
+      "returncode": 0,
+      "seconds": 0.523378
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_runtime_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-runtime-probe.json",
+      "returncode": 0,
+      "seconds": 0.008748
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_placement_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/positive-placement-probe.json",
+      "returncode": 0,
+      "seconds": 0.017958
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3area_inspection_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/content/areas/ST00.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/area-inspection-probe.json",
+      "returncode": 0,
+      "seconds": 0.009159
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3player_runtime_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/l3player_runtime_probe.log",
+      "returncode": 0,
+      "seconds": 0.004652
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3runtime_session_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack/legends3ds/tutorial"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/l3runtime_session_probe.log",
+      "returncode": 0,
+      "seconds": 0.009814
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3flight_render_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack/legends3ds/tutorial"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/l3flight_render_probe.log",
+      "returncode": 0,
+      "seconds": 0.005332
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3flight_material_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack/legends3ds/tutorial"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/l3flight_material_probe.log",
+      "returncode": 0,
+      "seconds": 0.036342
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3flight_animation_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack/legends3ds/tutorial/player/main.l3anim",
+        "0x0c"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/l3flight_animation_probe.log",
+      "returncode": 0,
+      "seconds": 0.007155
+    },
+    {
+      "argv": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tools/mml_replay_suite.py",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack/legends3ds/tutorial",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/replays"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/replays.log",
+      "returncode": 0,
+      "seconds": 0.300185
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/46763bdc593fea58/l3animation_evidence",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/tutorial/66b1fba2d6e336eee1ccb2729376b4aab4270c7d3990ad74c5dc9533aa0f8c0e/pack/legends3ds/tutorial/player/main.l3anim"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/animation-evidence.json",
+      "returncode": 0,
+      "seconds": 0.005175
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/native-source/platform/3ds",
+        "-j4"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/logs/native-build.log",
+      "returncode": 0,
+      "seconds": 13.125535
+    }
+  ],
+  "emulator": {
+    "build": "0.0.14.11",
+    "emulator": "Azahar2126.0",
+    "new_3ds": false,
+    "cpu_percent": 100,
+    "resolution": 1,
+    "homebrew_application_region_bytes": 100663296,
+    "hardware": "HARDWARE_PENDING",
+    "tests": {
+      "title": "captured",
+      "baseline_areas": "0..4 nativegeometrycounts496/597/688/136/3028 match host",
+      "controls": "nativepositions/headings/projectile/transition observed; retailparitynotestablished",
+      "safe0143": "bootandlegacydecode captured",
+      "broader_package": "emptyarea0skipped; nativearea1 renders492primitive records; texture/gameplaybindingsUNKNOWN",
+      "textures_off": "not separately exercised this build"
+    },
+    "visual_fidelity_accepted": false,
+    "issues": [
+      "area4diagnosticviewobstructed",
+      "remainingterrain/playerpresentation defects",
+      "noobjectpresentationbinding",
+      "nativecontactsolverunbound",
+      "naturalprogressionincomplete"
+    ],
+    "captures": 6,
+    "native_unload_acceptance": "hostownership unload37/37 PASS; native gracefulunload not established by emulator UI shutdown",
+    "source_zip_excludes_game_data": true
+  },
+  "screenshot_gallery": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01411_Azahar_20261003_001",
+  "source_zip": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.11_Source_20261003_002.zip"
+}

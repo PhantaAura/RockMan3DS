@@ -1,0 +1,9 @@
+{
+  "baseline_host_tests": "PASS6/6",
+  "git_repository": false,
+  "parent_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0146d_r1_SceneTest_Source_20260930_002.zip",
+  "parent_archive_sha256": "85c4b518fc1fafb0f10048b516c33fcbebbf28f92dca56b4dee8f2f3aff04b71",
+  "parent_source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6d_SceneTest",
+  "preserved_prior_trees_and_archives": true,
+  "synced_sources_modified": false
+}

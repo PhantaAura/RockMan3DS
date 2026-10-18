@@ -1,0 +1,7 @@
+{
+  "scope": "Sparse native counters under Azahar Old-model HLE, not physicaldevice performance",
+  "areas": {},
+  "unique_loaded_ebd_payload_bytes": 567232,
+  "session_area1_ebd_copy_bytes": 1251824,
+  "copy_model": "Inherited area_registry+location_registry plus activearea deep-copy payloads; not rewritten in this scoped pass"
+}

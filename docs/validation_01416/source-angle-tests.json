@@ -1,0 +1,30 @@
+{
+  "schema": "source-angle-tests/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "focused_ctest": {
+    "test": "source_angle",
+    "passed": 1,
+    "failed": 0,
+    "configuration": "AppleClang21 Release warnings-as-errors"
+  },
+  "strict_clang": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Wconversion",
+    "-Wsign-conversion",
+    "-Werror"
+  ],
+  "synthetic_original_code_cases": 1848,
+  "table_corruption_offsets": 80,
+  "table_profiles": 4,
+  "owner_table_values_distributed": false,
+  "unknown_guards": [
+    "missing table non-axis",
+    "signed16 player position range",
+    "unsupported subtype",
+    "unsupported class"
+  ],
+  "native_full_AI_verified": false,
+  "owner_table_comparison_artifacts": "outside source tree in work/pass-20261005-worldalive/source-angle/"
+}

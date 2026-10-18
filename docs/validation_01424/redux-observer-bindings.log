@@ -1,0 +1,24 @@
+Loading memory card /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01424/lua-observer-harness-r7/session/unused1.mcd
+Loading memory card /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01424/lua-observer-harness-r7/session/unused2.mcd
+Audio: driver coreaudio, 44100 Hz, 64 frames per period
+Warning: OpenGL error reporting disabled. See About dialog for more information.
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/NotoSans-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/fonts/NotoSans-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/../share/pcsx-redux/fonts/NotoSans-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/NotoSansCJKjp-Regular.otf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/fonts/NotoSansCJKjp-Regular.otf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/../share/pcsx-redux/fonts/NotoSansCJKjp-Regular.otf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/NotoMono-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/fonts/NotoMono-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/../share/pcsx-redux/fonts/NotoMono-Regular.ttf'
+PCSX-Redux Lua Console 
+LuaJIT 2.1.1785598229 
+JIT: ON fold cse dce fwd dse narrow loop abc sink fuse 
+Shader compiled: program ID = 4 
+Shader compiled: program ID = 7 
+PCSX-Redux booting
+Copyright (C) 2019-2025 PCSX-Redux authors
+CPU type: Interpreted
+Loaded BIOS: /Applications/PCSX-Redux.app/Contents/Resources/share/pcsx-redux/resources/openbios.bin
+OpenBIOS detected (0b0359a7)
+{"schema":"mml-redux-observer-binding-test/1","status":"PASS_INSTALLED_API","raw_cp2_words_read":64,"retained_return_capacity_checked":128,"range_listeners_tested":0,"leaf_listeners_tested":131,"listeners_removed":131,"no_game_loaded":true,"real_emulator_state_mutated":false,"callback_execution_proved":false,"retail_parity":false} 

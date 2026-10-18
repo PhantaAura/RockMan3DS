@@ -1,0 +1,18 @@
+{
+  "emulator": "Azahar2126.0",
+  "old_model": true,
+  "cpu_clock_percentage": 100,
+  "resolution_factor": 1,
+  "hardware_tested": false,
+  "retail_parity": false,
+  "build": "0.0.14.25",
+  "binary_revision": "r4",
+  "actor_rng_candidate": false,
+  "source_event_boot": true,
+  "source_xa_audio": false,
+  "source_actor_proxy": false,
+  "renderer_flags": "7f",
+  "renderer": "ENHANCED",
+  "isolated_storage": true,
+  "actor_state_fields": true
+}

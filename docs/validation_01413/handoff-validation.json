@@ -1,0 +1,9 @@
+{
+  "native_source_snapshot_match": true,
+  "fallback_shader_identical": true,
+  "fallback_shader_path": "platform/3ds/source/vshader0143.v.pica",
+  "initializer_probe_byte_identical": true,
+  "readiness_labels_valid": true,
+  "initial_packaging_check": "Initial shader path lacked .v; corrected actual filename. Earlier002 archive preserved; final003 contains complete changed list and validated source manifest.",
+  "source_release_excludes_all_owner_payloads": true
+}

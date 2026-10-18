@@ -1,0 +1,15 @@
+# Resume 0.0.14.14
+
+Exact source path: `/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.14_GameplayParity`. No Git repository/branch/commit exists. Parent01413 source and original input archives are preserved. `sources/` is read-only. No usage reset was used.
+
+Completed: native package flow/EBD/object bridge; bounded class20 mesh/pose decoder and native static presentation; shared immutable EBD bytes; source-backed ordinary player action2/direction/reverse/turn subset; source-backed rectangle/negative-cell contact; actual player S-record flag feedback; nominal30Hz gameplay clock; optional companion/follow/heading/cache controls; strict provenance/unknown-field trace comparator; source corpus and diagnostic replay seed. See CHANGED_FILES_01414.json for every changed file.
+
+Final host:31/31 CTest PASS. Native: actual ARMv6K505408B `.3dsx`, SHA2569af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02. Source warnings guard and actor sanitizers pass. First25 PS1 forward scalar updates match portable native replay; retail active area ID remains ambiguous. No physical hardware validation or whole-physics parity.
+
+Build exactly from source: `python3 -B tools/build_hardware_test.py --pack ../pass-20261003-objects/pack-v2 --out /NEW/output`. Existing local pack is manifest-verified, no recook/extraction. Final build/logs/SD are `work/pass-20261003-gameplay/install-01414-r5/`. SD tree contains owner-local payloads and is not part of the source release. Host configure/build/ctest and replay commands/results are in REPORT_01414.md and docs/validation_01414.
+
+Azahar2126.0 Old-model runs reside in `work/pass-20261003-gameplay/azahar-01414-*`. Keep original captures/configs/CSV/failed attempts. Original PS1 reference raw captures/traces are `work/pass-20261003-gameplay/ps1-reference/`. The old raw camera-eye field at0x800a39c0 is invalid (actor mirror); do not treat it as recovered camera behavior. PCSX interpreter/OpenBIOS reference used unused memory cards; original saves were not modified.
+
+Pending/blockers: terrain/camera occlusion at default and measured candidate view, retail area/spawn ownership, actor floor (unsupported contact family), actor texture0x3c80002b/current-upload identity, progression-selected pose, original top PS1 HUD data and placement, running jump/slopes/deep overlap, combat/enemy/event/cutscene/audio/save completeness and physical Old3DS frame/memory validation. All unknown semantics stay UNKNOWN. PHYSICS_1TO1=false. The optional diagnostic spawn file is not a production entry rule.
+
+Next concrete step: capture actual retail active area ID and actor-floor call/pose selector/upload chain, use those to correct visibility/placement, then test this existing build on original Old3DS/XL. Avoid another disconnected rewrite or claiming a completed tutorial. Source-only cumulative checkpoint ZIP is deliverables/Legends3DS_0.0.14.14_Source_r1.zip with adjacent SHA256. Do not overwrite checkpoints or include any raw/cooked retail payload, save, screenshot or build in source releases.

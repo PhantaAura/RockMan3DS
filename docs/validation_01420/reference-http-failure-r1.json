@@ -1,0 +1,24 @@
+{
+  "schema": "mml-reference-http-failure/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "timestamp_utc": "2026-10-07T14:17:18.754218+00:00",
+  "stdout_sha256": "6d2c85957e4cd249f92bd142173105ea4cc240156196e623cdd499e8cf87c191",
+  "stdout_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/ps1-reference-r1/stdout.log",
+  "last_stdout_lines": [
+    "Received web api request, path: /api/v1/lua/rng_reference_01420, query: ",
+    "An unknown exception occured.",
+    "libc++abi: terminating"
+  ],
+  "candidate_trigger": "First rng_reference_01420 HTTP status request precedes fatal termination",
+  "crash_root_cause": "UNKNOWN",
+  "live_observer_failure_row_recorded": false,
+  "earlier_guarded_startup_rows_preserved": true,
+  "mitigation": "HTTP status registration is now opt-in; preferred live-r3 explicitly disables it",
+  "new_bootstrap_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/rng-reference/live-r3/observer.lua",
+  "new_bootstrap_sha256": "a860130f3089e9a6e945b925ac9150ba5a5f079ed9cb9c1952c2dc480c309067",
+  "new_observer_source_sha256": "f70f1d28dfa8dd35578d0fd1ad02f585617c513717b60186c7688941bfd9ef06",
+  "http_status_enabled": false,
+  "mitigation_exercised_in_emulator": false,
+  "native_source_changed": false,
+  "retail_parity": false
+}

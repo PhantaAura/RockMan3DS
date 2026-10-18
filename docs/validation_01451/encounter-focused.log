@@ -1,0 +1,11 @@
+Test project /private/tmp/legends3ds-01450-host
+    Start 56: source_combat_profile
+1/3 Test #56: source_combat_profile ............   Passed    0.02 sec
+    Start 57: cook_actor_combat
+2/3 Test #57: cook_actor_combat ................   Passed    0.25 sec
+    Start 83: actor_defeat_runtime
+3/3 Test #83: actor_defeat_runtime .............   Passed    0.01 sec
+
+100% tests passed out of 3
+
+Total Test time (real) =   0.29 sec

@@ -1,0 +1,103 @@
+{
+  "schema": "mml-source-event-world-order/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "cases": 12,
+  "unchanged_original_instructions": 306,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "fresh_main_phase_owner": "800158C8..800158D8 stores main+00=3, main+01=0",
+  "event_call": {
+    "caller": "800158F0",
+    "site": "80015904",
+    "target": "8001D990"
+  },
+  "e0_call": {
+    "caller": "80015DB4",
+    "site": "80015E0C",
+    "target": "80017528"
+  },
+  "main_phase0_gate": [
+    {
+      "seed": 0,
+      "busy_bits": 0,
+      "world_update_reached": true,
+      "phase1_after": 2
+    },
+    {
+      "seed": 1,
+      "busy_bits": 1,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 2,
+      "busy_bits": 32768,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 3,
+      "busy_bits": 65535,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 4,
+      "busy_bits": 0,
+      "world_update_reached": true,
+      "phase1_after": 2
+    },
+    {
+      "seed": 5,
+      "busy_bits": 1,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 6,
+      "busy_bits": 32768,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 7,
+      "busy_bits": 65535,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 8,
+      "busy_bits": 0,
+      "world_update_reached": true,
+      "phase1_after": 2
+    },
+    {
+      "seed": 9,
+      "busy_bits": 1,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 10,
+      "busy_bits": 32768,
+      "world_update_reached": false,
+      "phase1_after": 0
+    },
+    {
+      "seed": 11,
+      "busy_bits": 65535,
+      "world_update_reached": false,
+      "phase1_after": 0
+    }
+  ],
+  "native_diagnostic_service_chronology": "CANDIDATE",
+  "limits": [
+    "Main phase0 with nonzero busy does not reach the world sweep.",
+    "Busy0 samples use authored transition byte800C3570=255 to avoid an unowned fade call.",
+    "Calls stop at actual consumer entries; they are not acknowledged or hooked.",
+    "All earlier world helpers and full native main-phase ownership remain unproved.",
+    "This proves source ordering, not retail-vs-native frame timing."
+  ]
+}

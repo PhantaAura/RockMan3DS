@@ -1,0 +1,32 @@
+{
+  "schema": "class20-03-transaction-source-cases/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "case_counts": {
+    "callback": 71,
+    "state1": 1198,
+    "tail": 1024,
+    "initializer": 16,
+    "prepared_action2": 961
+  },
+  "total_cases": 2309,
+  "state_fields_per_case": 65,
+  "instructions_executed": 289285,
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "fixture_sha256": "a53d2de7521fcae59d7f4646585e3459f17e871acb34a70a530f8cb56aa68a28",
+  "hooks": [
+    "Explicit BIOS sample and admitted detection scalar when supplied.",
+    "Animation/effect/proxy consumers excluded; source call order is examined.",
+    "Authored sound instrumentation records a call argument; sound engine excluded.",
+    "Explicit target heading/predicate when supplied; their solvers excluded.",
+    "Initializer resource setup/floor/pose excluded; explicit stats-selector0 context."
+  ],
+  "limits": [
+    "Scalar authored premises, not a live encounter or whole retail AI.",
+    "Detection rejection runs original EXE instructions and reads profile4 range byte.",
+    "Admitted detection, BIOS seed/state, hit delivery and consumer side effects remain external.",
+    "Action2 fixtures use authored motion/contact premises; actual native ownership is independently gated.",
+    "Profile-dependent/lethal hits, actions3..10 and defeat lifetime are held by native reducer.",
+    "No original bytes, instruction listings, profile tables or assets exported."
+  ]
+}

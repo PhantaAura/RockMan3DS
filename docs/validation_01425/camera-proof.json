@@ -1,0 +1,94 @@
+{
+  "schema": "mml-source-camera-producer/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "st00_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "camera_cases": 768,
+  "projection_cases": 634,
+  "instructions_executed": 227883,
+  "mvmva_commands": 1536,
+  "fixture_sha256": {
+    "camera-direct": "a631f5963c9b2c6fd2d7b53ad5b09b08713655d19c514f17a20dd93bf5e81ac4",
+    "projection-control": "05c597ea15f9232b3346e71873977183df97b1cfb41c16230adad2aa5fcc8df0"
+  },
+  "source_blocks": [
+    {
+      "id": "camera_direct",
+      "start": "0x800384f0",
+      "end_exclusive": "0x80038648",
+      "sha256": "17d8d86f904ec4043b68b78999b5e50bf9e19f2b732f90a566cf396cc8fd7d9c"
+    },
+    {
+      "id": "RotMatrixYX",
+      "start": "0x8007b838",
+      "end_exclusive": "0x8007bac4",
+      "sha256": "080133c7f75521fbf0db398b33f8fa81391df98736de1285050d64e372d624db"
+    },
+    {
+      "id": "transpose",
+      "start": "0x8007b568",
+      "end_exclusive": "0x8007b5a8",
+      "sha256": "9fc271c9be12d61166eb7b2f679904083cb1caa92cb3e64d437e44d2598bf93e"
+    },
+    {
+      "id": "ApplyMatrixLV",
+      "start": "0x8007a9b8",
+      "end_exclusive": "0x8007ab18",
+      "sha256": "b5cca44ff50bf0ca0e5996e8f5cf1b954740710e6773d57827b764a47fee082e"
+    },
+    {
+      "id": "fog",
+      "start": "0x8007a1cc",
+      "end_exclusive": "0x8007a230",
+      "sha256": "84f21f65bd98fd087127a613060b876ea6850464d32dfeeeb5aa77c9a0da1b7a"
+    },
+    {
+      "id": "offset",
+      "start": "0x8007b118",
+      "end_exclusive": "0x8007b130",
+      "sha256": "9aa95b09a0c5f31d49c3f954d1bc4cbe5101b46feb9a7a9a92673d0716fdfcf1"
+    },
+    {
+      "id": "H",
+      "start": "0x8007b138",
+      "end_exclusive": "0x8007b144",
+      "sha256": "d8c79a8c2661cba5b0c79fdf925407b5a4945c383bb0c8c293287878a693cac2"
+    },
+    {
+      "id": "DQA",
+      "start": "0x8007b0c0",
+      "end_exclusive": "0x8007b0cc",
+      "sha256": "137430d515cfca2b9014536398a80cdb7341660e9b7ae4b91b8ffbe4fe866406"
+    },
+    {
+      "id": "DQB",
+      "start": "0x8007b0cc",
+      "end_exclusive": "0x8007b0d8",
+      "sha256": "82fe222ec657dc8d11063c998d2a78c33a8c451f20b4c3e8f96d693f9a091070"
+    }
+  ],
+  "projection_ctc_sites": [
+    "0x8007a53c",
+    "0x8007a548",
+    "0x8007a554",
+    "0x8007a55c",
+    "0x8007a560",
+    "0x8007b0c0",
+    "0x8007b0cc",
+    "0x8007b120",
+    "0x8007b124",
+    "0x8007b138"
+  ],
+  "st00_direct_projection_writers": 0,
+  "source_instructions_modified": false,
+  "return_only_hooks": [],
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "current_native_camera_bound": false,
+  "limits": [
+    "Authored original CPU differential with documented restricted MVMVA arithmetic; no independent hardware GTE parity.",
+    "Persistent camera outputs only; transient GTE FLAG/IR/control effects are outside the native producer.",
+    "No original follow update inputs, obstruction, interpolation, script transition chronology or current camera binding.",
+    "Retained scratch matrix pad1F8000F2 remains an explicit premise; no zero-on-reuse assumption."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01433/l3cook_scene_actor40_material",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01432/pack-runtime-r1/source_event_phase5.l3p5",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01432/pack-runtime-r1/ebd/area_00.l3ebd",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01433/scene_actor40_initial.l3sm",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/INIT_DAT.BIN",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/HEAD01.BIN",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00R.BIN",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00L.BIN",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/LEG00.BIN",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00.BIN",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00_00.BIN"
+  ],
+  "returncode": 0,
+  "output": "word=3c000025 resolved=1 image=16384/16384 clut=16/16\nword=3e48002f resolved=1 image=16384/16384 clut=16/16\nentries=2 resolved=2 bytes=131328 snapshot=INITIAL_UPLOAD_BATCH chronology=SOURCE_BACKED_PARTIAL live_palette=UNKNOWN\n",
+  "sha256": "d5fab8efbf066d9baf06f8ede304f38a92e88397fb4b19fd5d9914242ad07531",
+  "redistributable": false,
+  "snapshot": "INITIAL_UPLOAD_BATCH",
+  "live_palette": "UNKNOWN"
+}

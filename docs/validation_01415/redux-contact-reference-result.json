@@ -1,0 +1,210 @@
+{
+  "schema": "redux-contact-reference-result/2",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "null_gameplay_admission_status": "UNKNOWN",
+  "hardware_status": "HARDWARE_PENDING",
+  "scope": "Original retail disc in existing official PCSX-Redux interpreter, isolated portable settings and cards disabled. Read-only source-profile checks, bounded scalar fields and controller counters; genuine original-game tutorial capture outside source tree.",
+  "reference_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/ps1-contact-reference",
+  "binary_sha256": "4a1333a3ab2abbd3269352a5fc201175bcba86c32bfaeb04bd5af4de54623523",
+  "openbios_sha256": "713ea2aed58606282b3ff5e91d77f8c5892ea36f5adcd279d2c7dd26604a625d",
+  "disc_id": "SLUS00603",
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "profile_ranges_match_live_ram": true,
+  "intro_measurements": {
+    "ram_u32_at_0x00000008": 0,
+    "ram_u32_at_0x80000008": 0,
+    "raw_stats_selector_at_0x800C1B6B": 1,
+    "stats_table_pointer_at_0x80098844": "0x8008EDC4",
+    "player_class": 0,
+    "player_position": [
+      0,
+      0,
+      0
+    ],
+    "active_20_03_actors_observed": 0
+  },
+  "selected_pointer_guard": {
+    "explicit_null_guard_in_floor_or_geometry": false,
+    "loaded_word_zero_guard": true,
+    "actual_live_gameplay_IDX_and_NULL_word_captured": true,
+    "null_word_observation_scope": "RAM8 measured zero in initialized ST00; measured IDX78/94/123 select non-null alternate lists, so no live NULL-selected contact call was established."
+  },
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/ps1-contact-reference/captures/boot-reference.png",
+      "bytes": 51843,
+      "sha256": "5bb0ee99f33df4d9039ba610cf21bc6e78a6e896a4169730b64a5df429fba954",
+      "scene": "opening text / intro; not gameplay",
+      "emulator": "PCSX-Redux f78f8ef8 interpreter + OpenBIOS0b0359a7",
+      "source_zip_included": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/ps1-contact-reference/captures/title-reference.png",
+      "bytes": 43528,
+      "sha256": "02a93642016eaf68ef598f12411b511c51c8245bf7fb067b836cf3293cd268ea",
+      "scene": "opening text / intro; not gameplay",
+      "emulator": "PCSX-Redux f78f8ef8 interpreter + OpenBIOS0b0359a7",
+      "source_zip_included": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/ps1-contact-reference/captures/user-tutorial-original.png",
+      "bytes": 21046,
+      "sha256": "47a91a4e0ffe0b6562cd337e9c3d1fb5c07971aede30850dd22e43f980ec8f20",
+      "scene": "original tutorial gameplay, player against wall; PS1 HUD visible",
+      "emulator": "PCSX-Redux f78f8ef8 interpreter + OpenBIOS0b0359a7",
+      "source_zip_included": false
+    }
+  ],
+  "cua_result": {
+    "local_official_app_copy_with_bundle_identity_bound": true,
+    "binary_unchanged": true,
+    "last_input_attempt": "Historical coordinate failure; later source API measured successful key delivery and user reached gameplay.",
+    "owned_interpreter_exit_or_crash": false,
+    "diagnosis": "Earlier coordinate input failed with NoWindowsAvailable. Copied Pad0 Keyboard configuration plus CUA delivered Start/Cross; user manual control then reached original tutorial gameplay. Current reference remains running without further input from observer."
+  },
+  "limits": [
+    "Original tutorial rendering and profile-matched live fields are PS1 emulator evidence, not native 3DS or PS1 hardware proof.",
+    "Player raw slot marker0 is not an inactive-class guard; flags0=3 and live source identity/state/position were measured.",
+    "IDX78/94/123 static raw6=0 but live raw6=1; exact writer, initialization timing and domain remain UNKNOWN.",
+    "RAM8 zero does not establish a live NULL-selected floor query: all three measured live IDX records select non-null alternate lists.",
+    "No NULL-as-empty guard, blanket raw6 toggle, alternate-list substitution, default enemy HP profile or invented floor was added.",
+    "No active class20/subtype03 was observed across all16 slots in the latest RAM snapshot; source observer older running version filtered only rawclass20, so its empty actor list is not exhaustive.",
+    "No raw RAM, game bytes, owner save, emulator binary or original rendered capture is included in the source tree."
+  ],
+  "next_concrete_step": "During an owner-authorized new-game/area reload, use official read-only debugger write breakpoints over IDX78/94/123 word+4 to capture original flag-writer PC/domain/timing and compare source behavior. No current-session restart or RAM writes were performed; native admission must wait for that proof.",
+  "last_successful_scalar": {
+    "vsync": 91814,
+    "pc": 2147556588,
+    "gp": 2148104292,
+    "ram_u32_at_0x00000008": 0,
+    "ram_u32_at_0x80000008": 0,
+    "raw_stats_selector_at_0x800c1b6b": 1,
+    "stats_table_pointer_at_0x80098844": 2148068804,
+    "map_idx_pointer_at_0x1f80004c": 2148909056,
+    "player_class": 0,
+    "player_state": 1,
+    "player_position": [
+      930,
+      -1,
+      -10135
+    ],
+    "idx": [
+      {
+        "index": 78,
+        "raw6": 1,
+        "descriptor_word": 2149140016,
+        "default_contact_pointer": 0
+      },
+      {
+        "index": 94,
+        "raw6": 1,
+        "descriptor_word": 2149140400,
+        "default_contact_pointer": 0
+      },
+      {
+        "index": 123,
+        "raw6": 1,
+        "descriptor_word": 2149139968,
+        "default_contact_pointer": 0
+      }
+    ],
+    "actors_class20_03": [],
+    "pad_start_pressed": false,
+    "pad_cross_pressed": false,
+    "pad_start_frames_observed": 107,
+    "pad_cross_frames_observed": 289,
+    "pad_start_last_vsync": 52887,
+    "pad_cross_last_vsync": 58634
+  },
+  "reference_runtime_failure": {
+    "final_scalar_api_read": "Timed out after5005ms with zero bytes",
+    "api_quit": "Timed out after5006ms with zero bytes",
+    "process_status": "Prior owned interpreter execsession62282 later exited143 after graceful SIGTERM.",
+    "log_messages": [
+      "Capture buffer is overflowing. Increase CB_SIZE.",
+      "Unknown error in event listenerAn unknown exception occured."
+    ],
+    "cause": "UNKNOWN; no crash or successful gameplay observation is established.",
+    "scope": "Historical r2 session only; not the currently running r4 gameplay session."
+  },
+  "owned_reference_session_final_action": "r2 stopped by graceful SIGTERM exit143; r3 exited0 via isolated APIquit; keyboard-only r4 session98981 remains running under user control.",
+  "keyboard_source_audit": "redux-keyboard-source-audit.json",
+  "keyboard_input_delivery": {
+    "evidence": "redux-tutorial-controller-proof.json",
+    "vsync": 91814,
+    "START_frames_observed": 107,
+    "CROSS_frames_observed": 289,
+    "START_last_vsync": 52887,
+    "CROSS_last_vsync": 58634,
+    "scope": "Read-only frame counters establish delivered button state in isolated original reference; current snapshot buttons released."
+  },
+  "live_idx_status": "MATCHES_MEASURED_FIELDS",
+  "idx_raw6_writer_status": "UNKNOWN",
+  "tutorial_measurements": {
+    "evidence": "redux-tutorial-live-profile.json",
+    "profile_ranges_match_live_ram": true,
+    "player_work_flags_0": 3,
+    "player_slot_marker_raw_1": 0,
+    "player_state_raw_8": 1,
+    "player_state_raw_9": 0,
+    "player_state_raw_a": 1,
+    "player_position": [
+      930,
+      -1,
+      -10135
+    ],
+    "ram_u32_at_0x00000008": 0,
+    "raw_stats_selector": 1,
+    "idx": [
+      {
+        "source_idx_index": 78,
+        "position": [
+          -256,
+          0,
+          -8448
+        ],
+        "raw6": 1,
+        "descriptor_word": "0x80194630",
+        "source_identity_matches": true,
+        "alternate_contact_pointer": "0x801a25a8",
+        "default_contact_pointer": "0x0",
+        "selected_contact_pointer": "0x801a25a8",
+        "selection": "alternate",
+        "selected_pointer_plus8_word": "0x801a2e28"
+      },
+      {
+        "source_idx_index": 94,
+        "position": [
+          256,
+          0,
+          -7424
+        ],
+        "raw6": 1,
+        "descriptor_word": "0x801947b0",
+        "source_identity_matches": true,
+        "alternate_contact_pointer": "0x801a2708",
+        "default_contact_pointer": "0x0",
+        "selected_contact_pointer": "0x801a2708",
+        "selection": "alternate",
+        "selected_pointer_plus8_word": "0x801a2db0"
+      },
+      {
+        "source_idx_index": 123,
+        "position": [
+          -256,
+          0,
+          -5376
+        ],
+        "raw6": 1,
+        "descriptor_word": "0x80194600",
+        "source_identity_matches": true,
+        "alternate_contact_pointer": "0x801a2508",
+        "default_contact_pointer": "0x0",
+        "selected_contact_pointer": "0x801a2508",
+        "selection": "alternate",
+        "selected_pointer_plus8_word": "0x801a2e28"
+      }
+    ],
+    "active_20_03_actors_observed": 0
+  }
+}

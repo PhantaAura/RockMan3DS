@@ -1,0 +1,21 @@
+Test project /private/tmp/siblingpass-20261011-worldalive-01432-combat-build/upstream
+    Start  46: class20_03_callback
+1/8 Test  #46: class20_03_callback ..............   Passed    0.12 sec
+    Start  50: class20_03_action3
+2/8 Test  #50: class20_03_action3 ...............   Passed    0.27 sec
+    Start  59: actor_source_transaction
+3/8 Test  #59: actor_source_transaction .........   Passed    0.01 sec
+    Start  63: actor_action9_runtime
+4/8 Test  #63: actor_action9_runtime ............   Passed    0.01 sec
+    Start  66: actor_action4_runtime
+5/8 Test  #66: actor_action4_runtime ............   Passed    0.01 sec
+    Start  67: class20_03_action4
+6/8 Test  #67: class20_03_action4 ...............   Passed    0.03 sec
+    Start  70: class20_03_hit
+7/8 Test  #70: class20_03_hit ...................   Passed    0.01 sec
+    Start 116: class20_03_reaction
+8/8 Test #116: class20_03_reaction ..............   Passed    0.01 sec
+
+100% tests passed out of 8
+
+Total Test time (real) =   0.50 sec

@@ -1,0 +1,49 @@
+{
+  "status": "SOURCE_BACKED_PARTIAL",
+  "compiler_reports": [
+    {
+      "unit": "runtime_session.su",
+      "largest_reported_function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/native-r1/native-source/platform/3ds/../../src/world/runtime_session.cpp:50:17:l3::RuntimeSession& l3::RuntimeSession::operator=(const l3::RuntimeSession&)",
+      "bytes": 71056,
+      "classification": "static"
+    },
+    {
+      "unit": "source_event_command.su",
+      "largest_reported_function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/native-r1/native-source/platform/3ds/../../src/flow/source_event_command.cpp:297:26:l3::SourceEventCommandResult l3::consume_source_event_command_dispatch_8001c95c(SourceEventCommandQueue&, SourceEventCommandContext&, const SourceEventCommandProfile&, const SourceEventCommandInputs&, SourceEventCdMixQueue*)",
+      "bytes": 4248,
+      "classification": "static"
+    },
+    {
+      "unit": "main.su",
+      "largest_reported_function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/native-r1/native-source/platform/3ds/source/main.cpp:1677:5:int main()",
+      "bytes": 124184,
+      "classification": "static"
+    },
+    {
+      "unit": "native_xa_audio.su",
+      "largest_reported_function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/native-r1/native-source/platform/3ds/source/native_xa_audio.cpp:78:6:bool NativeXaAudio::apply_diagonal_mix(const std::array<unsigned char, 4>&)",
+      "bytes": 72,
+      "classification": "static"
+    },
+    {
+      "unit": "source_event_phase6.su",
+      "largest_reported_function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/native-r1/native-source/platform/3ds/../../src/flow/source_event_phase6.cpp:542:25:l3::SourceEventPhase6Result l3::consume_source_event1_handoff_80101260(SourceEventWork&, SourceEventPhase6Context&, const SourceFadeContext&, const SourceEventHandoffInputs&)",
+      "bytes": 3760,
+      "classification": "static"
+    },
+    {
+      "unit": "xa_transport.su",
+      "largest_reported_function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/native-r1/native-source/platform/3ds/../../src/world/xa_transport.cpp:4:19:l3::XaTransportResult l3::service_native_xa_cd_request(XaNativeCdState&, const XaStreamReader&, const SourceEventCdRequest&, const XaPlaybackObservation&)",
+      "bytes": 104,
+      "classification": "static"
+    },
+    {
+      "unit": "player_contact_runtime.su",
+      "largest_reported_function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/native-r1/native-source/platform/3ds/../../src/player/player_contact_runtime.cpp:201:22:l3::RuntimePlayerContact l3::runtime_player_contact_step(const RuntimeMap&, size_t, const L3PlayerCompatWork&, RetailPlayerBounds)",
+      "bytes": 304,
+      "classification": "static"
+    }
+  ],
+  "reserved_stack_bytes": 262144,
+  "limit": "Per-function compiler estimates only; call-chain sum, physical high-water and whole-device peak remain unmeasured."
+}

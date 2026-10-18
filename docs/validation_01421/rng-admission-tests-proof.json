@@ -1,0 +1,32 @@
+{
+  "schema": "mml-rng-admission-authored-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "compiler": "Apple clang 21.0.0 (clang-2100.1.1.101), arm64-apple-darwin25.5.0",
+  "compile_flags": [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-pedantic"
+  ],
+  "compile_exit_code": 0,
+  "cpp_test_exit_code": 0,
+  "cpp_test_scope": "Authored capture/context/order/stale-ticket/rebind/rollback/exhaustion rejection tests plus 4096 allocation-free default-held peeks",
+  "python_command": "python3 -B tests/test_rng_reference.py",
+  "python_test_count": 27,
+  "python_test_exit_code": 0,
+  "original_dispatcher_proof": "docs/validation_01421/rng-callback-chronology-source-proof.json",
+  "original_dispatcher_authored_contexts": 72,
+  "original_plus_instrumentation_instructions": 101040,
+  "actual_native_samples_admitted": 0,
+  "live_retail_parity": false,
+  "hardware_tested": false,
+  "source_hashes": {
+    "include/legends3ds/retail_rng_tape.h": "2fc0e656398d82f080b11d28e176858696e1c408f759bdf0c82087d3c506c0dc",
+    "src/world/retail_rng_tape.cpp": "5de7933d3c41bdbba22a7ce3191694ec1f5fbd0fe48d8ada103607c9c9ed26b6",
+    "tests/test_retail_rng_tape.cpp": "a88f7e7d552e7a25ffb64b9a94e8e205ac1d6ac2d1a93d1d78e0e3a1171b2129",
+    "docs/research_01420/validate_rng_reference_trace.py": "eeb6f19f7c92340e67e2f7dc422337b4440abbed7bd7717b83a00f9f5d87e31a",
+    "tests/test_rng_reference.py": "a7f556eb6d1463d70eaebe702bc93fcc7237e19719dc3ae5c75caac0824ae60a",
+    "docs/research_01421/rng_callback_chronology_source_probe.py": "04370e9c36e618ad1de695bf5605b3a1168f92d278add46ddd3aea7952948aac"
+  }
+}

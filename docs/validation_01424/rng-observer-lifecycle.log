@@ -1,0 +1,24 @@
+Loading memory card /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01424/lua-observer-harness-r6/session/unused1.mcd
+Loading memory card /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01424/lua-observer-harness-r6/session/unused2.mcd
+Audio: driver coreaudio, 44100 Hz, 64 frames per period
+Warning: OpenGL error reporting disabled. See About dialog for more information.
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/NotoSans-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/fonts/NotoSans-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/../share/pcsx-redux/fonts/NotoSans-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/NotoSansCJKjp-Regular.otf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/fonts/NotoSansCJKjp-Regular.otf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/../share/pcsx-redux/fonts/NotoSansCJKjp-Regular.otf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/NotoMono-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/fonts/NotoMono-Regular.ttf'
+[00000] While loading '/Applications/PCSX-Redux.app/Contents/MacOS/../share/pcsx-redux/fonts/NotoMono-Regular.ttf'
+PCSX-Redux Lua Console 
+LuaJIT 2.1.1785598229 
+JIT: ON fold cse dce fwd dse narrow loop abc sink fuse 
+Shader compiled: program ID = 4 
+Shader compiled: program ID = 7 
+PCSX-Redux booting
+Copyright (C) 2019-2025 PCSX-Redux authors
+CPU type: Interpreted
+Loaded BIOS: /Applications/PCSX-Redux.app/Contents/Resources/share/pcsx-redux/resources/openbios.bin
+OpenBIOS detected (0b0359a7)
+{"schema":"mml-rng-observer-authored-harness/2","status":"PASS_AUTHORED_LIFECYCLE","longrun_returns":100000,"distinct_callers":128,"return_strategy":"bounded_retained_exact_callers","return_listeners":128,"total_registrations":131,"peak_active":131,"peak_enabled":4,"capacity_complete_returns":128,"capacity_guard_129":true,"longrun_batches":4,"domain_returns":13,"unsupported_domains":8,"budget_returns":5,"failure_status":"UNKNOWN","failed_whole_trace_accepted":false,"close_active_listeners":0,"synthetic_guards":true,"real_owner_files_used":false,"real_emulator_state_mutated":false,"retail_parity":false} 

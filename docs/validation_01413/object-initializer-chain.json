@@ -1,0 +1,232 @@
+{
+  "schema": "object-initializer-chain/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "method": "Static selected-address trace plus hash-checked owner data; no actor execution claimed",
+  "sources": {
+    "executable": {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/ROCK_NEO.EXE",
+      "sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0"
+    },
+    "stage_container": {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00.BIN",
+      "sha256": "3f46c6bac9261ee1def37bddd8a91377343e5ee1235391b2ed3a18f2cbcc8dc0"
+    },
+    "overlay": {
+      "load": "0x80100000",
+      "bytes": 141056,
+      "sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c"
+    },
+    "ebd": {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00_02.BIN",
+      "load": "0x8016c000",
+      "bytes": 117360,
+      "sha256": "8c1dd36fbd7b5e3a48b1b45be0c232f39f8e6c9e19245f3f7de93b2905ba4ba1",
+      "identical_to_ST00_01": true
+    }
+  },
+  "first_imported_record": {
+    "area": 0,
+    "index": 0,
+    "address": "0x8011a704",
+    "id": 1,
+    "class": "0xc0",
+    "subtype": 3,
+    "parameter_3": 0,
+    "allocation": {
+      "parser_call": "0x8002ed6c",
+      "allocator": "0x800316bc",
+      "pool": "0x800a2d08",
+      "slots": 16,
+      "stride": 36,
+      "slot": 0,
+      "condition": "fresh cleared pool"
+    },
+    "fresh_seed": {
+      "work_0": 1,
+      "work_1": 192,
+      "work_2": 3,
+      "work_3": 0,
+      "work_6": 3,
+      "work_8": 0
+    },
+    "update_gate": "(work[0] & work[6] & 1) != 0",
+    "scratch_table": "0x1f800068",
+    "installed_table": "0x8011a644",
+    "subtype_entry": "0x8011a650",
+    "callback": "0x80119398",
+    "state_entry": "0x8011cf48",
+    "initializer": "0x801193d4",
+    "selector": "work[3] indexes u32 table 0x8011cf28",
+    "selected_script": "0x8011cec8",
+    "script_step_helper": "0x8011974c",
+    "command_base": "0x800ad168",
+    "command_index_u16_initial": 4672,
+    "command_index_u16_after_first_step": 4688,
+    "initial_command_pointer": "0x800af5e8",
+    "after_step_command_pointer": "0x800af608",
+    "initializer_calls_ebd": false,
+    "local_ebd_candidates": 0,
+    "boundary": "Script command storage/consumer semantics and any presentation consequences not decoded"
+  },
+  "first_unique_actor_record": {
+    "label": "actor record A",
+    "area": 2,
+    "index": 18,
+    "address": "0x8011a9e8",
+    "id": 1,
+    "class": "0x20",
+    "subtype": 53,
+    "parameter_3": 0,
+    "dispatch_byte_4": 0,
+    "allocation": {
+      "parser_call": "0x8002ec14",
+      "allocator": "0x80031418",
+      "pool": "0x8009f108",
+      "slots": 16,
+      "stride": 960,
+      "slot": 0,
+      "condition": "fresh cleared pool"
+    },
+    "update_gate": "(work[0] & work[6] & 1) != 0",
+    "scratch_table": "0x1f800058",
+    "installed_table": "0x8011a4d0",
+    "subtype_entry": "0x8011a5a4",
+    "subtype_target_table": "0x8011a4a4",
+    "byte4_entry": "0x8011a4a4",
+    "callback": "0x801068a8",
+    "parameter3_entry": "0x8011c020",
+    "state_handler": "0x80106b10",
+    "fresh_state_entry": "0x801000d4",
+    "fresh_state_block": "0x80106b5c",
+    "initializer_call": "0x80106b5c",
+    "initializer": "0x80106974",
+    "lookup_call": "0x801069a0",
+    "wrapper": "0x8002f9c4",
+    "lookup": "0x8002fa38",
+    "variant_pointer": null,
+    "selector_rule": "first normalized-class/subtype row; variant ignored",
+    "selected_row": 3,
+    "row_variant": 0,
+    "row_extra": 0,
+    "row_resource_offsets": [
+      "0x6ab4",
+      "0x7224",
+      "0x7528"
+    ],
+    "resource_assignments": [
+      {
+        "slot": 0,
+        "pointer": "0x80172ab4",
+        "work_pointer_field": "0x88",
+        "additional_use": "copy 24 bytes from pointer+0x10 into work+0xf8",
+        "consumed_window_offset": "0x6ac4",
+        "consumed_window_bytes": 24,
+        "consumed_window_sha256": "e2799996e825e10e7af07cb71d77352d0b3d4e39351348f8418ccfa4c2604ee0"
+      },
+      {
+        "slot": 1,
+        "pointer": "0x80173224",
+        "work_pointer_field": "0xa0",
+        "additional_use": "work+0x9c = u32(pointer); work+0xa0 = pointer+4",
+        "header_u32": 2149003828,
+        "consumed_window_bytes": 4,
+        "consumed_window_sha256": "14106d4730f99c73a48d8cc1d576519435a3636c96278e0051c9b158416340cd"
+      },
+      {
+        "slot": 2,
+        "pointer": "0x80173528",
+        "work_pointer_field": "0x90",
+        "additional_use": "pointer stored; payload format not decoded"
+      }
+    ],
+    "return_handling": "lookup result is not checked before remaining initializer stores",
+    "boundary": "Resource binary roles/decoder and native actor transform/animation/draw binding still unproved"
+  },
+  "code_regions": [
+    {
+      "start": "0x80100324",
+      "end_exclusive": "0x8010038c",
+      "image": "overlay",
+      "sha256": "0fa3b2042dfc094c56149ce871c97a0664fa33114e912e1c1f9e61aa16a30632"
+    },
+    {
+      "start": "0x8002e840",
+      "end_exclusive": "0x8002e88c",
+      "image": "exe",
+      "sha256": "867681f6f7e56f59464855e49d01bb3f6068b41529b6cebfb610eed52319efbb"
+    },
+    {
+      "start": "0x8002e980",
+      "end_exclusive": "0x8002e9cc",
+      "image": "exe",
+      "sha256": "88d2c2bc3ac6611ebac2e88223f96e2832d12683ef32c4be4bfd3b6dd99095e8"
+    },
+    {
+      "start": "0x80016fd4",
+      "end_exclusive": "0x80017094",
+      "image": "exe",
+      "sha256": "0e6b8bb3e3f1d6066ad6111cf5baadcfad9499b9d0df2ba5786e39ab1e906dbc"
+    },
+    {
+      "start": "0x80017478",
+      "end_exclusive": "0x80017528",
+      "image": "exe",
+      "sha256": "b0bda38b062e1948b08c0c10e3c4630b28a017530ed98fedba362bdbc0ab2f4f"
+    },
+    {
+      "start": "0x80031418",
+      "end_exclusive": "0x80031498",
+      "image": "exe",
+      "sha256": "223e08e0592aba2f37e03fdd9b012c20ffbbb0d1a04fda85f8051b8afae45fe6"
+    },
+    {
+      "start": "0x800316bc",
+      "end_exclusive": "0x80031734",
+      "image": "exe",
+      "sha256": "6a18b1c4d45af9f84932f4237801bee419e9d9a306bdc0fa03a7e87570a8207f"
+    },
+    {
+      "start": "0x80119398",
+      "end_exclusive": "0x80119470",
+      "image": "overlay",
+      "sha256": "4f6ea30e89b83b16e40034a69e7a0facc7f9270af1ba2872a0d4e26ee4727e2d"
+    },
+    {
+      "start": "0x8011974c",
+      "end_exclusive": "0x80119800",
+      "image": "overlay",
+      "sha256": "e6041adfd7c3ba51bf504a3b7bd442dd96615bea9348dabd189a69d2ec34b0f8"
+    },
+    {
+      "start": "0x801068a8",
+      "end_exclusive": "0x80106b10",
+      "image": "overlay",
+      "sha256": "fdc0b1a1775927f832b75f8432807406ce2a45ecd602789bdb126b5d60dede14"
+    },
+    {
+      "start": "0x80106b10",
+      "end_exclusive": "0x80106b74",
+      "image": "overlay",
+      "sha256": "024166b22ff3537b01b4e623d415ab66606588fa407ce05727eba9cd0a25d7f7"
+    },
+    {
+      "start": "0x8002f9c4",
+      "end_exclusive": "0x8002f9ec",
+      "image": "exe",
+      "sha256": "1cb556f2a67a85c9c8b4caf1a7d38ff0948fae2458f31342eb3f93d729b92908"
+    },
+    {
+      "start": "0x8002fa38",
+      "end_exclusive": "0x8002fbf4",
+      "image": "exe",
+      "sha256": "e0654d2b0f9ae38a70e9fdec63cf6da91afe2cc01c51a16b79da3bbc90fc75a4"
+    }
+  ],
+  "limits": [
+    "static trace only; emulator remains paused before first encounter",
+    "fresh slots depend on empty pools, not asserted current live allocation",
+    "0x80089a78 -> 0x80047318 is not the active ST00 subtype table proved here",
+    "no AI, naming, model format, full initializer translation or draw parity claimed"
+  ],
+  "payload_policy": "Selected addresses, scalar selectors, hashes and derived behavior only; no bytes, disassembly or original tables emitted"
+}

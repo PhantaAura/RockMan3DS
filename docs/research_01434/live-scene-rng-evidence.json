@@ -1,0 +1,36 @@
+{
+  "schema": "mml-live-scene-rng-evidence/1",
+  "status": "MATCHES_MEASURED_FIELDS",
+  "scope": "RECORDED_OPENBIOS_SCENE",
+  "callback_records": 50,
+  "scene_returns": 186,
+  "audited_global_returns": 24341,
+  "semantic_trace_sha256": "07d6811e6c9a17faff8c8ffdcdc044c38bc351073c36c71a849043012b5b1bad",
+  "global_trace_sha256": "63a559e62e819a43539d2562625e7838d30af589e871917b673ddf555c465fdb",
+  "read_only": true,
+  "memory_cards_inserted": false,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "constructor_scratch_half": 6796,
+  "constructor_listener_loops": 6802,
+  "listener_count_defines_scratch": false,
+  "first_callback_position": [
+    0,
+    0,
+    -574
+  ],
+  "first_callback_pool_bitmaps": [
+    3758096384,
+    0
+  ],
+  "first_callback_ordinal_before": 2708,
+  "native_context_must_match": true,
+  "limits": [
+    "Actual observed return replay only; no generated/default seed or universal chronology.",
+    "Original effect updates/reclamation and later actor update/animation are not proved by these receipts.",
+    "Runtime must hold on any position/pool/scratch/owner mismatch.",
+    "Loop listener count does not define scratch counter; constructor halfword is directly observed."
+  ],
+  "reference_capture_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/ps1-reference-r1/captures/01434_original_reference.png",
+  "reference_capture_sha256": "ff81a22fcc0953eb0442da93fdb1217674de741565401ea350accfc18fbee1ab"
+}

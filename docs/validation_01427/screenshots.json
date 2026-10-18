@@ -1,0 +1,65 @@
+[
+  {
+    "build_sha256": null,
+    "capture": "Original unedited capture retained outside code-only ZIP.",
+    "device_emulator_scene": "PCSX-Redux / OpenBIOS; original tutorial idle",
+    "label": "PS1 original reference",
+    "limit": "Historical reference, not a matched camera/pose/lighting capture or physical PS1 test.",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/ps1-reference/captures/tutorial_stable_idle.png",
+    "sha256": "eb512fd7a3d3f546153db4177b8c2bb4efb3a8013ef007af1532ec698383a878"
+  },
+  {
+    "build_sha256": "943db29d8b45b0b4063aa6150396a12d24a3e62078e5520e20e3d9e6f023d9f3",
+    "capture": "Original unedited capture retained outside code-only ZIP.",
+    "device_emulator_scene": "Azahar 2126.0 Old model; 01426 tutorial",
+    "label": "Before rear",
+    "limit": "Historical production capture.",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r2/screenshots/fresh-head-area0-native01426.png",
+    "sha256": "cb055c24aa7d7d31792356ab163ff9016b2f9b0bee208518145dda27ed50957c"
+  },
+  {
+    "build_sha256": null,
+    "capture": "Original unedited capture retained outside code-only ZIP.",
+    "device_emulator_scene": "Azahar 2126.0 Old model; 01426 inspection camera",
+    "label": "Before front",
+    "limit": "Historical camera-only diagnostic, not released gameplay framing.",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-head-comparison/azahar-rearview-r1/screenshots/opposite-angle-native01426-diagnostic.png",
+    "sha256": "904e3433cb7ad38041615022e91de46ac01684852664d35eb5e719fd917d0524"
+  },
+  {
+    "build_sha256": "bde6d0ffd32d0dee6d27f4d6e6930f87d06969788bde8724f01e23eea2f64cbd",
+    "capture": "Original unedited capture retained outside code-only ZIP.",
+    "device_emulator_scene": "Azahar 2126.0 Old model; 01427 production tutorial",
+    "label": "After rear",
+    "limit": "Unmodified production camera. Hair visible; armor and terrain texture placement repaired.",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/azahar-01427-r1/screenshots/player-rear-corrected.png",
+    "sha256": "675ac4cf1bf0a4b9214ea78688606ae435ed845e51e59535f033b4ae6c4b2c7f"
+  },
+  {
+    "build_sha256": "bde6d0ffd32d0dee6d27f4d6e6930f87d06969788bde8724f01e23eea2f64cbd",
+    "capture": "Original unedited capture retained outside code-only ZIP.",
+    "device_emulator_scene": "Azahar 2126.0 Old model; 01427 production tutorial",
+    "label": "After movement",
+    "limit": "Captured after releasing held Up input; position changed 0,0,512 to 0,-1,1472. Not a frame captured mid-key-hold.",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/azahar-01427-r1/screenshots/player-movement-corrected.png",
+    "sha256": "b1abe1ebb32ce4852281b636f3d90aa419d341397225a3243c6d28ccf7176857"
+  },
+  {
+    "build_sha256": "3b07b842560cf66a023551743e07f3cde6917a4acc7019ad2e57be2e8c7ac679",
+    "capture": "Original unedited capture retained outside code-only ZIP.",
+    "device_emulator_scene": "Azahar 2126.0 Old model; 01427 inspection camera",
+    "label": "After front diagnostic",
+    "limit": "Separate compiled inspection binary with camera heading offset +2048/4096 (180 degrees). Single-line diff retained privately. Production camera unchanged.",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/azahar-front-r1/screenshots/player-front-corrected-diagnostic.png",
+    "sha256": "f858b5900d957950480fc12b9a047935e7c9799b14bdadf811a0b64084feba17"
+  },
+  {
+    "build_sha256": "bde6d0ffd32d0dee6d27f4d6e6930f87d06969788bde8724f01e23eea2f64cbd",
+    "capture": "Original unedited capture retained outside code-only ZIP.",
+    "device_emulator_scene": "Azahar 2126.0 Old model; 01427 production fallback",
+    "label": "Safe0143 boot",
+    "limit": "Independent baseline renderer boots. Flat legacy presentation, no textures; no new safe-path movement acceptance claim.",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/azahar-01427-r1/screenshots/safe0143-boot.png",
+    "sha256": "99cf981dc9dc0687b41b00912dd0d8c6c04541d58fe441a7c90540e1fce8eafd"
+  }
+]

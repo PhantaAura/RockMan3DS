@@ -1,0 +1,48 @@
+{
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.9_LocalImporter",
+  "results": [
+    {
+      "stage": "configure",
+      "command": [
+        "cmake",
+        "-S",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.9_LocalImporter",
+        "-B",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/baseline-host/build",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "exit_code": 0,
+      "seconds": 1.443,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/baseline-host/configure.log"
+    },
+    {
+      "stage": "build",
+      "command": [
+        "cmake",
+        "--build",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/baseline-host/build",
+        "-j",
+        "4"
+      ],
+      "exit_code": 0,
+      "seconds": 37.554,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/baseline-host/build.log"
+    },
+    {
+      "stage": "ctest",
+      "command": [
+        "ctest",
+        "--test-dir",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/baseline-host/build",
+        "--output-on-failure"
+      ],
+      "exit_code": 0,
+      "seconds": 3.239,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/baseline-host/ctest.log"
+    }
+  ],
+  "success": true,
+  "ctest_suites": 13,
+  "ctest_passed": 13,
+  "compiler_warning_error_lines": []
+}

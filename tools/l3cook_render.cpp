@@ -1,0 +1,5 @@
+#include "legends3ds/st00_render.h"
+#include "legends3ds/st00_source.h"
+#include <fstream>
+#include <iostream>
+int main(int argc,char**argv){try{if(argc!=6&&argc!=7){std::cerr<<"usage: l3cook_render MDT IDX STG HED OUT.l3render [HD2]\n";return 2;}auto mdt=l3::read_file(argv[1]),idx=l3::read_file(argv[2]),stg=l3::read_file(argv[3]),hed=l3::read_file(argv[4]);auto src=l3::parse_st00(mdt,idx,stg,hed,argc==7?l3::read_file(argv[6]):std::vector<uint8_t>{});auto rs=l3::parse_st00_render(src,stg);l3::L3RenderStats s;auto out=l3::cook_l3render(rs,&s);std::ofstream f(argv[5],std::ios::binary);f.write(reinterpret_cast<const char*>(out.data()),out.size());if(!f)throw std::runtime_error("write failed");std::cout<<"descriptors="<<s.descriptor_count<<" records="<<s.record_count<<" unique_streams="<<s.stream_count<<" refs="<<s.stream_references<<" materials="<<s.material_words<<" unique_primitives="<<s.primitive_count<<" bytes="<<out.size()<<"\n";return 0;}catch(const std::exception&e){std::cerr<<"l3cook_render: "<<e.what()<<"\n";return 1;}}

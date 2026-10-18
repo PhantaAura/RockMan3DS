@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "scope": "Five tutorial terrain caches and the negative table only; no full installer retry",
+  "steps": [
+    {
+      "tool": "l3cook_negative_materials",
+      "returncode": 0,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/negative-materials.log"
+    },
+    {
+      "tool": "l3cook_material_cache",
+      "returncode": 0,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area-00.log"
+    },
+    {
+      "tool": "l3cook_material_cache",
+      "returncode": 0,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area-01.log"
+    },
+    {
+      "tool": "l3cook_material_cache",
+      "returncode": 0,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area-02.log"
+    },
+    {
+      "tool": "l3cook_material_cache",
+      "returncode": 0,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area-03.log"
+    },
+    {
+      "tool": "l3cook_material_cache",
+      "returncode": 0,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area-04.log"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area_00.l3mc",
+      "bytes": 590520,
+      "sha256": "2555a672358cc78fcc732dbd3a8e064a0a58b3eb2e87ed37b5154e616a8a96b1"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area_01.l3mc",
+      "bytes": 787344,
+      "sha256": "01120e0b586cee59a730ff082f4f35c5ea703cc594e8311546b85ad68908d289"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area_02.l3mc",
+      "bytes": 787344,
+      "sha256": "add736450a04abfe3eaa3ba0302e70b004f92909545548a6e7acf9d12f05d127"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area_03.l3mc",
+      "bytes": 262480,
+      "sha256": "98cf0363ab28ddb23cfcb8e5d8210957e57ae75fd1f0c000a1377ea90f151464"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/area_04.l3mc",
+      "bytes": 131264,
+      "sha256": "2537d67e59f32235e2368d63aa6eb30251ed9afd97f4cccb2b4f89ca1355aff6"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/palette-retry/st00.l3nm",
+      "bytes": 1296,
+      "sha256": "29d03350eec31733c881ac590a68f8f8a35d85c538b3184f530db02f57db821f"
+    }
+  ]
+}

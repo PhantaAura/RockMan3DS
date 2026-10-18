@@ -1,0 +1,40 @@
+{
+  "schema": "class20-03-action-source-cases/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "fixture_sha256": "7feaafcb6897204f4ec57af1a30230c65efcecba894e8dce1ece8628c9105b4a",
+  "case_count": 2018,
+  "scalar_output_fields": 10,
+  "instructions_executed": 155334,
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "code_regions": [
+    {
+      "start": "0x80102884",
+      "end_exclusive": "0x801029b4",
+      "sha256": "10c52c35d7b23cce781b2a9acf0a3b74c7dedbb1e4d04a406d0928eeab2021f9"
+    },
+    {
+      "start": "0x801029b4",
+      "end_exclusive": "0x80102ae0",
+      "sha256": "20d79f02fb3097cf2478c363eb35cfeb45a13ccc91117df3c3c981ff2c8f476b"
+    },
+    {
+      "start": "0x80103fac",
+      "end_exclusive": "0x80104078",
+      "sha256": "98519e080ab6c23e26654155b71fb555f94d46e3d966fee51fe819359d6e6249"
+    }
+  ],
+  "hooks": {
+    "action0_phase2_parameter20": "8001DA58 supplied explicit boolean",
+    "action1": "80031198 supplied explicit scalar target heading;80031BEC executes original code"
+  },
+  "limits": [
+    "Action0/1 dispatch functions only, not full callback or state1 tick.",
+    "Detection helper8003648C and hit packet lifecycle excluded.",
+    "Work80 arithmetic has separate675-case evidence; full callback ownership is not established here.",
+    "World-position atan helper and RNG owner/seeding not ported.",
+    "Generic animation advance, motion/collision, action2+ and attack child excluded.",
+    "Fixtures are synthetic state premises, not live retail parity traces.",
+    "No original bytes, assets or source function tables serialized."
+  ]
+}

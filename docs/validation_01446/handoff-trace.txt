@@ -1,0 +1,7 @@
+# source_head_uv_handoff,frame=3082,reset=1,admitted=1,records=10,generation=1,next_original_tick=true,scene_complete=false
+# source_native_mix_prefix,frame=3085,applied=254,count=254,digest=48622e70bcb474db,pause_allowed=1
+# source_native_pause,frame=3085,requested=true,backend_paused=1,prefix_count=254,receipt_deferred_until_observation=true
+# area_event=source_transition_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=2191120,linear_free=26622464,vram_free=5523456
+# area_event=outgoing_scene_released,area=1,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1886568,linear_free=27937280,vram_free=5523456
+# area_event=source_transition_after,area=1,elapsed_us=1781403,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1886632,linear_free=27937280,vram_free=5523456
+# area_event=cpu_scope_unloaded,area=1,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35840,linear_free=31941632,vram_free=6291456

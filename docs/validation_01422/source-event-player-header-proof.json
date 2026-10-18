@@ -1,0 +1,29 @@
+{
+  "schema": "mml-source-event-fresh-player-header/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "cases": 24,
+  "original_instructions_executed": 600,
+  "accepted_cases_helper_hooks": [],
+  "fixture_sha256": "f8d31bc44dd0e5d07112daf0a7e0da3e11826f566d314286348018ce4278e0e0",
+  "fresh_byte_writer": "NewGame80013C7C writes raw800C1B92=0 before callback800156A4.",
+  "regions": [
+    {
+      "start": "0x80013c78",
+      "end_exclusive": "0x80013c80",
+      "sha256": "a8a3026dd726d736d3c33afb43b1dd0449f854f91fd6f8dda702956904c53fbc"
+    },
+    {
+      "start": "0x8003be6c",
+      "end_exclusive": "0x8003bed4",
+      "sha256": "cea46794312095e10ba0cd072e8fe26768de5459b9a2cf0a364e3cd611d120b7"
+    }
+  ],
+  "limits": [
+    "Two explicit original prefixes execute; no claim of complete NewGame or original callback scheduling.",
+    "Continuation/statusbit80 branch is not admitted as fresh state.",
+    "Player01/07 and every field outside header stores remain unknown unless separately initialized."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false
+}

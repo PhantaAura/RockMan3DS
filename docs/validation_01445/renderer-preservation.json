@@ -1,0 +1,8 @@
+{
+  "status": "SOURCE_BACKED_PARTIAL",
+  "shader_and_vertex_layout_changed": false,
+  "enhanced_shader_sha256": "ce29518b567b3bfc3fd891a0d098a68de1aa7f186da2ce5cd888c86251178e25",
+  "safe_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "physical_current_build": "HARDWARE_PENDING",
+  "prior_physical_01443": "User reported textured player/room on Old 3DS XL, then a collision escape."
+}

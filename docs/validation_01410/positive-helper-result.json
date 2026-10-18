@@ -1,0 +1,22 @@
+{
+  "compile_command": [
+    "c++",
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Werror",
+    "-O2",
+    "-DNDEBUG",
+    "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/include",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/src/render/positive_terrain.cpp",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/tests/test_positive_terrain.cpp",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/baseline-host/build/liblegends3ds_core.a",
+    "-lm",
+    "-o",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/positive-helper/test_positive_terrain"
+  ],
+  "compile_exit_code": 0,
+  "test_exit_code": 0,
+  "test_output": "positive terrain source-backed coordinate and malformed-input tests passed\n"
+}

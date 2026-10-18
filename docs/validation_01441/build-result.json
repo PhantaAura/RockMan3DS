@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "native_build": "PASS",
+  "host_tests": "138/138 PASS(41.79s)",
+  "native_binary_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r3/native-source/platform/3ds/Legends3DS_01441_WorldComesAlive.3dsx",
+  "native_binary_bytes": 868008,
+  "native_binary_sha256": "b1dfc9531a3dbc43aa73588ae7470d2869769d2e556d3fd4f173bcef55e56a82",
+  "verified_source_inputs": 279,
+  "parent_full_build": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r1/build-result.json",
+  "incremental_parent": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r2/build-result.json",
+  "changed_native_translation_unit": "platform/3ds/source/main.cpp",
+  "native_build_log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r3/logs/native-build.log",
+  "sd_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r3/sd_out",
+  "hardware": "HARDWARE_PENDING"
+}

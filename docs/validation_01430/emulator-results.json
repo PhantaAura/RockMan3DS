@@ -1,0 +1,349 @@
+{
+  "status": "EXERCISED",
+  "hardware_tested": false,
+  "retail_parity": false,
+  "runs": [
+    {
+      "profile": "on",
+      "emulator": "Azahar2126.0",
+      "build": "0.0.14.30",
+      "scene": "Tutorial area0; safe path uses inherited fallback spawn",
+      "profile_configuration": {
+        "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-on-r1",
+        "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/native-r1/build/Legends3DS_01430_WorldComesAlive.3dsx",
+        "binary_sha256": "0eee5139b8805638c317c4b12cd85811772e57c5fd1e53698923929ff68597c1",
+        "source_event_boot": true,
+        "source_audio": true,
+        "old_3ds": true,
+        "hardware_tested": false,
+        "source_scene_e0": true,
+        "scene_e0_chronology": "CANDIDATE"
+      },
+      "trace_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-on-r1/sdmc/3ds/Legends3DS/hardware_01430_4000700073381.csv",
+      "trace_sha256": "a1ba61258f560e31ecd5053e49513347ebee1379da6f097c590fa0f0ee69b242",
+      "boot_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-on-r1/sdmc/3ds/Legends3DS/boot_01430.log",
+      "boot_sha256": "15ab3b4bde7d8a73b595ea875d614a49fed07b4080d27e95124859035a83eb30",
+      "boot_ready": true,
+      "sample_rows": 33,
+      "sample_ranges": {
+        "frame": {
+          "min": 0,
+          "max": 1200
+        },
+        "x": {
+          "min": 0,
+          "max": 0
+        },
+        "y": {
+          "min": -1,
+          "max": 0
+        },
+        "z": {
+          "min": 512,
+          "max": 928
+        },
+        "heading": {
+          "min": 2048,
+          "max": 2048
+        },
+        "projectiles": {
+          "min": 0,
+          "max": 0
+        },
+        "malloc_live": {
+          "min": 1795592,
+          "max": 1795592
+        },
+        "owned_linear": {
+          "min": 59520,
+          "max": 59520
+        },
+        "owned_texture": {
+          "min": 2883584,
+          "max": 2883584
+        },
+        "linear_free": {
+          "min": 28719616,
+          "max": 28719616
+        },
+        "vram_free": {
+          "min": 5523456,
+          "max": 5523456
+        },
+        "draw_calls": {
+          "min": 12,
+          "max": 27
+        },
+        "triangles": {
+          "min": 1478,
+          "max": 1924
+        },
+        "frame_before_log_us": {
+          "min": 10351,
+          "max": 89657
+        },
+        "update_us": {
+          "min": 3,
+          "max": 504
+        },
+        "render_us": {
+          "min": 6392,
+          "max": 16643
+        }
+      },
+      "captures": [
+        {
+          "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-on-r1/captures/01430_on_after_input.png",
+          "sha256": "c0d630552baa37d8d635c2d521417b144db6522ec9f56343f784b7d82f0fb399",
+          "scene": "Tutorial area0, on configuration",
+          "device": "Azahar2126.0 Old-model configuration",
+          "build": "0.0.14.30",
+          "original": true
+        },
+        {
+          "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-on-r1/captures/01430_on_ready.png",
+          "sha256": "8320555b79846036a5fd26d714bc2beedb26a7a092cea4dc9fa9962e3c013838",
+          "scene": "Tutorial area0, on configuration",
+          "device": "Azahar2126.0 Old-model configuration",
+          "build": "0.0.14.30",
+          "original": true
+        }
+      ],
+      "source_callback_commits": 515,
+      "overlay_receipts": [
+        "# source_scene_overlay,frame=70,serial=71,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=120,serial=121,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=180,serial=181,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=240,serial=241,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=300,serial=301,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=360,serial=361,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=420,serial=421,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=480,serial=481,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false",
+        "# source_scene_overlay,frame=540,serial=541,r=64,g=64,b=64,submitted=1,accepted=1,source_function=80100614,device_parity=false"
+      ],
+      "E0_first_updates": [
+        "# source_scene_E0_update,frame=69,status=0,initialized=15,held=0,chronology=CANDIDATE,later_behavior=UNKNOWN"
+      ],
+      "limitations": "15 real E0 records initialized;14 untextured diagnostic meshes submitted, visibility from frontend camera not established. Source later holds NeedsCameraField; complete scene false."
+    },
+    {
+      "profile": "off",
+      "emulator": "Azahar2126.0",
+      "build": "0.0.14.30",
+      "scene": "Tutorial area0; safe path uses inherited fallback spawn",
+      "profile_configuration": {
+        "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-off-r1",
+        "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/native-r1/build/Legends3DS_01430_WorldComesAlive.3dsx",
+        "binary_sha256": "0eee5139b8805638c317c4b12cd85811772e57c5fd1e53698923929ff68597c1",
+        "source_event_boot": false,
+        "source_audio": false,
+        "old_3ds": true,
+        "hardware_tested": false
+      },
+      "trace_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-off-r1/sdmc/3ds/Legends3DS/hardware_01430_4000700141984.csv",
+      "trace_sha256": "aa86afaef9a58b0c95ea878ccfed2c5f37349d8195461299b0d36cf61d42a8b7",
+      "boot_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-off-r1/sdmc/3ds/Legends3DS/boot_01430.log",
+      "boot_sha256": "138644db265b4719bb2fd130525359c435cb26ef517c9351ca1c8d721d22f90e",
+      "boot_ready": true,
+      "sample_rows": 37,
+      "sample_ranges": {
+        "frame": {
+          "min": 0,
+          "max": 1200
+        },
+        "x": {
+          "min": 0,
+          "max": 0
+        },
+        "y": {
+          "min": -1,
+          "max": 0
+        },
+        "z": {
+          "min": 512,
+          "max": 1024
+        },
+        "heading": {
+          "min": 1736,
+          "max": 2048
+        },
+        "projectiles": {
+          "min": 0,
+          "max": 1
+        },
+        "malloc_live": {
+          "min": 1683016,
+          "max": 1683064
+        },
+        "owned_linear": {
+          "min": 59520,
+          "max": 59520
+        },
+        "owned_texture": {
+          "min": 2883584,
+          "max": 2883584
+        },
+        "linear_free": {
+          "min": 28735744,
+          "max": 28735744
+        },
+        "vram_free": {
+          "min": 5523456,
+          "max": 5523456
+        },
+        "draw_calls": {
+          "min": 12,
+          "max": 12
+        },
+        "triangles": {
+          "min": 1478,
+          "max": 1479
+        },
+        "frame_before_log_us": {
+          "min": 10395,
+          "max": 89613
+        },
+        "update_us": {
+          "min": 3,
+          "max": 73
+        },
+        "render_us": {
+          "min": 6815,
+          "max": 16679
+        }
+      },
+      "captures": [
+        {
+          "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-off-r1/captures/01430_off_after_input.png",
+          "sha256": "033280816a49b04b2ae270199a1e31f5f4199a9a182afcc79358638871c65e4c",
+          "scene": "Tutorial area0, off configuration",
+          "device": "Azahar2126.0 Old-model configuration",
+          "build": "0.0.14.30",
+          "original": true
+        },
+        {
+          "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-off-r1/captures/01430_off_idle.png",
+          "sha256": "2f5a814df42b4fb74e29e7da26228cb42a4856c1199650508596df93bb8477e3",
+          "scene": "Tutorial area0, off configuration",
+          "device": "Azahar2126.0 Old-model configuration",
+          "build": "0.0.14.30",
+          "original": true
+        }
+      ],
+      "source_callback_commits": 0,
+      "overlay_receipts": [],
+      "E0_first_updates": []
+    },
+    {
+      "profile": "safe",
+      "emulator": "Azahar2126.0",
+      "build": "0.0.14.30",
+      "scene": "Tutorial area0; safe path uses inherited fallback spawn",
+      "profile_configuration": {
+        "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-safe-r1",
+        "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/native-r1/build/Legends3DS_01430_WorldComesAlive.3dsx",
+        "binary_sha256": "0eee5139b8805638c317c4b12cd85811772e57c5fd1e53698923929ff68597c1",
+        "source_event_boot": false,
+        "source_audio": false,
+        "old_3ds": true,
+        "hardware_tested": false,
+        "renderer_mask": 0
+      },
+      "trace_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-safe-r1/sdmc/3ds/Legends3DS/hardware_01430_4000700221575.csv",
+      "trace_sha256": "3b7f3698a35a51ca7beeed6016b54e0e2edba4b7efedbda738c4beea5e9d62ce",
+      "boot_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-safe-r1/sdmc/3ds/Legends3DS/boot_01430.log",
+      "boot_sha256": "b06c3ec7b759cadb7be6661e87b1f958fc764bd93226cad4b308ba3b29786200",
+      "boot_ready": true,
+      "sample_rows": 29,
+      "sample_ranges": {
+        "frame": {
+          "min": 0,
+          "max": 1080
+        },
+        "x": {
+          "min": -768,
+          "max": -768
+        },
+        "y": {
+          "min": 0,
+          "max": 0
+        },
+        "z": {
+          "min": -3296,
+          "max": -2816
+        },
+        "heading": {
+          "min": 0,
+          "max": 0
+        },
+        "projectiles": {
+          "min": 0,
+          "max": 0
+        },
+        "malloc_live": {
+          "min": 960240,
+          "max": 960240
+        },
+        "owned_linear": {
+          "min": 126144,
+          "max": 126144
+        },
+        "owned_texture": {
+          "min": 0,
+          "max": 0
+        },
+        "linear_free": {
+          "min": 31553280,
+          "max": 31553280
+        },
+        "vram_free": {
+          "min": 5523456,
+          "max": 5523456
+        },
+        "draw_calls": {
+          "min": 3,
+          "max": 3
+        },
+        "triangles": {
+          "min": 3990,
+          "max": 3990
+        },
+        "frame_before_log_us": {
+          "min": 10402,
+          "max": 89614
+        },
+        "update_us": {
+          "min": 3,
+          "max": 71
+        },
+        "render_us": {
+          "min": 5628,
+          "max": 16668
+        }
+      },
+      "captures": [
+        {
+          "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-safe-r1/captures/01430_safe_after_input.png",
+          "sha256": "41a4e605cd0873ee1d347f4551eb71c591be3d2854a8d88d1e717a5e93070b38",
+          "scene": "Tutorial area0, safe configuration",
+          "device": "Azahar2126.0 Old-model configuration",
+          "build": "0.0.14.30",
+          "original": true
+        },
+        {
+          "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/azahar-01430-safe-r1/captures/01430_safe_idle.png",
+          "sha256": "44568ff6ffd46bd6c90e586789decc442f799a4fb3d703fc6e86d3a958a03bd7",
+          "scene": "Tutorial area0, safe configuration",
+          "device": "Azahar2126.0 Old-model configuration",
+          "build": "0.0.14.30",
+          "original": true
+        }
+      ],
+      "source_callback_commits": 0,
+      "overlay_receipts": [],
+      "E0_first_updates": [],
+      "limitations": "Boot and movement only; retained untextured geometry remains visually incomplete."
+    }
+  ],
+  "limits": "Sparse emulator observations include synchronization, cannot prove physical Old3DS frame pacing, peak memory or stack. No scene/encounter/progression acceptance."
+}

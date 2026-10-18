@@ -1,0 +1,36 @@
+{
+  "schema": "mml-source-effects34-oracle/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "selected_bios_sha256": "713ea2aed58606282b3ff5e91d77f8c5892ea36f5adcd279d2c7dd26604a625d",
+  "callbacks": [
+    "801172FC",
+    "80117558"
+  ],
+  "cases": 354,
+  "unchanged_original_instructions": 516022,
+  "selected_bios_calls": 3465,
+  "maximum_rng_per_callback": 120,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "controls_sha256": "6b4a4bba9eb0b6bc707c67902a78387d8e8b703778fa4ad55b2d17f3d47125e7",
+  "private_fixture_sha256": "ea73031f6314c3e4ae997daadf0da859bbcb947c411e25dc0fd3ecb8753bd162",
+  "fixture_owner_local": true,
+  "native_hardware": false,
+  "retail_parity": false,
+  "limits": [
+    "All initial pool records, masks and selected-BIOS seeds are authored original-instruction differential inputs.",
+    "Original callback, allocator, release and selected-BIOS rand execute unchanged at declared A0 service boundaries; outer scheduler/BIOS dispatcher excluded.",
+    "Neither passive original parent context nor source-global competing-consumer RNG chronology is established.",
+    "Rendering, original primitive submission and physicalOld3DS remain untested."
+  ],
+  "native_host_differential_cases": 354,
+  "native_guard_cases": 38,
+  "native_callback_heap_allocations_observed": 0,
+  "host_warnings_as_errors": true,
+  "old_3ds_module_compile": true,
+  "armv6k_static_stack_bytes": 3848,
+  "linked_native_build_exercised": false,
+  "zero_and_whole_scope_ordinal_overflow_atomic_guards": true
+}

@@ -1,0 +1,297 @@
+{
+  "schema": "mml-action4-byteC-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "transient_v2_package_sha256": "a6cb5eacb6ab64b93b621ad9608a0e1fbc254f9428c1eaa1942d1b7fd5faa26f",
+  "cases": [
+    {
+      "raw_stats_selector": 1,
+      "source_table_tag": 0,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f35c",
+      "selected_byte_address": "0x8008f368",
+      "authored_byteC": null,
+      "source_reads": [
+        {
+          "address": "0x8008f368",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 65,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": true,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 1,
+      "source_table_tag": 0,
+      "actor_variant32E": 1,
+      "source_record_base": "0x8008f35c",
+      "selected_byte_address": "0x8008f378",
+      "authored_byteC": null,
+      "source_reads": [
+        {
+          "address": "0x8008f378",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 65,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": true
+    },
+    {
+      "raw_stats_selector": 1,
+      "source_table_tag": 0,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f35c",
+      "selected_byte_address": "0x8008f368",
+      "authored_byteC": 0,
+      "source_reads": [
+        {
+          "address": "0x8008f368",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 65,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 1,
+      "source_table_tag": 0,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f35c",
+      "selected_byte_address": "0x8008f368",
+      "authored_byteC": 1,
+      "source_reads": [
+        {
+          "address": "0x8008f368",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 65,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 1,
+      "source_table_tag": 0,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f35c",
+      "selected_byte_address": "0x8008f368",
+      "authored_byteC": 127,
+      "source_reads": [
+        {
+          "address": "0x8008f368",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 65,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 1,
+      "source_table_tag": 0,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f35c",
+      "selected_byte_address": "0x8008f368",
+      "authored_byteC": 128,
+      "source_reads": [
+        {
+          "address": "0x8008f368",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 65,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 1,
+      "source_table_tag": 0,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f35c",
+      "selected_byte_address": "0x8008f368",
+      "authored_byteC": 255,
+      "source_reads": [
+        {
+          "address": "0x8008f368",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 65,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 2,
+      "source_table_tag": 1,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f6bc",
+      "selected_byte_address": "0x8008f6c8",
+      "authored_byteC": null,
+      "source_reads": [
+        {
+          "address": "0x8008f6c8",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 67,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": true,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 2,
+      "source_table_tag": 1,
+      "actor_variant32E": 1,
+      "source_record_base": "0x8008f6bc",
+      "selected_byte_address": "0x8008f6d8",
+      "authored_byteC": null,
+      "source_reads": [
+        {
+          "address": "0x8008f6d8",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 67,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": true
+    },
+    {
+      "raw_stats_selector": 2,
+      "source_table_tag": 1,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f6bc",
+      "selected_byte_address": "0x8008f6c8",
+      "authored_byteC": 0,
+      "source_reads": [
+        {
+          "address": "0x8008f6c8",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 67,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 2,
+      "source_table_tag": 1,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f6bc",
+      "selected_byte_address": "0x8008f6c8",
+      "authored_byteC": 1,
+      "source_reads": [
+        {
+          "address": "0x8008f6c8",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 67,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 2,
+      "source_table_tag": 1,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f6bc",
+      "selected_byte_address": "0x8008f6c8",
+      "authored_byteC": 127,
+      "source_reads": [
+        {
+          "address": "0x8008f6c8",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 67,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 2,
+      "source_table_tag": 1,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f6bc",
+      "selected_byte_address": "0x8008f6c8",
+      "authored_byteC": 128,
+      "source_reads": [
+        {
+          "address": "0x8008f6c8",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 67,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    },
+    {
+      "raw_stats_selector": 2,
+      "source_table_tag": 1,
+      "actor_variant32E": 0,
+      "source_record_base": "0x8008f6bc",
+      "selected_byte_address": "0x8008f6c8",
+      "authored_byteC": 255,
+      "source_reads": [
+        {
+          "address": "0x8008f6c8",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "instructions": 67,
+      "matches_original_unsigned_field": true,
+      "matches_cooked_field": false,
+      "nonzero_actor_variant_not_retained": false
+    }
+  ],
+  "owner_base_record_cases": 2,
+  "authored_unsigned_boundary_cases": 10,
+  "alternate_record_rejection_cases": 2,
+  "instructions_executed": 924,
+  "selection": {
+    "phase4_expiry_entry": "0x80102FC0",
+    "subtype_load": "0x80103158",
+    "table_global": "0x80098844",
+    "variant_load": "0x8010316C",
+    "unsigned_byteC_load": "0x80103180",
+    "work35C_store": "0x80103190"
+  },
+  "original_code_region_sha256": "26f512cced1dffd1a76ef74f6bf5fffd3e710be02f61cf6ded0e83f3a3edd4f2",
+  "limits": [
+    "Actor phase, timer and context are authored, not a live encounter.",
+    "Only subtype03/context0F0/index0C0 and raw selector1/2 are retained.",
+    "Actor variant32E must be0; legacy source_variant metadata tags table selection.",
+    "Original unsigned byteC semantics beyond source work35C store are not named.",
+    "No retail payload or owner record values exported; PHYSICS_1TO1 remains false."
+  ],
+  "retail_parity": false,
+  "retail_payload_exported": false
+}

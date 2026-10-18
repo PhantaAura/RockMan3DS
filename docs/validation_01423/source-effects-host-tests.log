@@ -1,0 +1,5 @@
+allocator original source cases=65
+callback131 original source cases=1624
+callback128 original source cases=120
+release original source cases=64
+PASS source effects; bounded64-slot allocator,131 lifecycle,128 explicit receipts

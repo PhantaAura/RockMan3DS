@@ -1,0 +1,20 @@
+{
+  "schema": "mml-action4-contact-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "authored_cases": 486,
+  "original_instructions": 1078288,
+  "distinct_motion_forwards": [
+    -352,
+    -112,
+    -32,
+    0,
+    224
+  ],
+  "limits": [
+    "GTE delta boundary authored; original action4 timers/motion accumulator/rawconversion/wall/floor execute.",
+    "No child consumer executes or becomes ready. Unsupported native geometry must remain held.",
+    "No live retail or hardware parity claim."
+  ]
+}

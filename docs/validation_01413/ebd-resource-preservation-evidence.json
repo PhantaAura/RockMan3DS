@@ -1,0 +1,92 @@
+{
+  "format": "ebd-resource-preservation-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "checkpoint": "0.0.14.13",
+  "owner_payloads_included": false,
+  "format_contract": "docs/L3EB_FORMAT_01413.md",
+  "implementation": {
+    "latest_version": 2,
+    "legacy_v1_load_and_cook": true,
+    "v2_complete_original_source_bytes": true,
+    "normalized_offsets_unchanged": true,
+    "no_adjacent_pointer_extent_inference": true,
+    "borrowed_spans_require_caller_length": true,
+    "source_row_key_and_pointer_consistency_validation": true,
+    "flags_counts_ranges_address_overflow_and_CRC_validation": true
+  },
+  "synthetic_test": {
+    "status": "MATCHES_MEASURED_FIELDS",
+    "checks": {
+      "format": "ebd-resource-check/1",
+      "synthetic_only": true,
+      "v1_compatible": true,
+      "v2_payload_exact": true,
+      "aliases_preserved": true,
+      "caller_sized_bounds": true,
+      "malformed_rejected": true,
+      "resource_semantics": "UNKNOWN"
+    },
+    "assertions_enabled": true,
+    "warning_as_error_compile": true,
+    "asan_ubsan_exit_code": 0,
+    "sanitizer_scope": "dedicated test and modified EBD implementation instrumented; inherited core library linked for CRC/endian dependencies",
+    "sanitizer_commands": {
+      "working_directory": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources",
+      "compile_argv": [
+        "c++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-UNDEBUG",
+        "-I",
+        "include",
+        "tests/test_ebd_resources.cpp",
+        "src/world/ebd_directory.cpp",
+        "../pass-20261003-visual/host-current/liblegends3ds_core.a",
+        "-o",
+        "/tmp/l3-ebd-resources-01413-san"
+      ],
+      "compile_exit_code": 0,
+      "run_argv": [
+        "/tmp/l3-ebd-resources-01413-san"
+      ],
+      "run_exit_code": 0,
+      "provenance": "actual commands executed during implementation; recorded without rerun"
+    }
+  },
+  "ARM_GCC_warning_evidence": "gcc-warning/ebd-v2-current.json",
+  "owner_original_EBD_audit": {
+    "status": "MATCHES_MEASURED_FIELDS",
+    "validation": "ebd-owner-roundtrip.json",
+    "areas": 5,
+    "source_bytes_exact": 567232,
+    "available_runtime_pointer_windows": 198,
+    "runtime_session_probe": "PASS",
+    "native_boot_payload_bytes": 567232,
+    "retail_actor_rendering": "UNKNOWN"
+  },
+  "blockers": [
+    {
+      "id": "EBD_RESOURCE_TYPES_AND_EXACT_LENGTHS",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "ACTOR_RENDER_RESOURCE_BINDINGS",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "ORIGINAL_OBJECT_PRESENTATION",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "PHYSICAL_OLD3DS_RESOURCE_MEMORY_ACCEPTANCE",
+      "status": "HARDWARE_PENDING"
+    }
+  ]
+}

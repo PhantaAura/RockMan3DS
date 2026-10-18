@@ -1,0 +1,143 @@
+{
+  "schema": "class20-03-owner-map-floor/1",
+  "area": 1,
+  "records": [
+    {
+      "origin": [
+        367,
+        -1,
+        -6946
+      ],
+      "status": "UNKNOWN",
+      "status_code": 2,
+      "candidate_cells": 4,
+      "unsupported_primitives": 2,
+      "floor_y": null,
+      "cell": null,
+      "primitive": null,
+      "candidate_diagnostics": [
+        {
+          "cell": 473,
+          "packed": -16384,
+          "idx_available": false,
+          "contact_list_available": false,
+          "descriptor": null
+        },
+        {
+          "cell": 474,
+          "packed": -16384,
+          "idx_available": false,
+          "contact_list_available": false,
+          "descriptor": null
+        },
+        {
+          "cell": 451,
+          "packed": 94,
+          "idx_available": true,
+          "contact_list_available": false,
+          "descriptor": 41
+        },
+        {
+          "cell": 452,
+          "packed": -16384,
+          "idx_available": false,
+          "contact_list_available": false,
+          "descriptor": null
+        }
+      ]
+    },
+    {
+      "origin": [
+        -300,
+        -1,
+        -5654
+      ],
+      "status": "UNKNOWN",
+      "status_code": 2,
+      "candidate_cells": 4,
+      "unsupported_primitives": 2,
+      "floor_y": null,
+      "cell": null,
+      "primitive": null,
+      "candidate_diagnostics": [
+        {
+          "cell": 516,
+          "packed": 114,
+          "idx_available": true,
+          "contact_list_available": true,
+          "descriptor": 38
+        },
+        {
+          "cell": 515,
+          "packed": -16384,
+          "idx_available": false,
+          "contact_list_available": false,
+          "descriptor": null
+        },
+        {
+          "cell": 538,
+          "packed": 123,
+          "idx_available": true,
+          "contact_list_available": false,
+          "descriptor": 32
+        },
+        {
+          "cell": 537,
+          "packed": 122,
+          "idx_available": true,
+          "contact_list_available": true,
+          "descriptor": 64
+        }
+      ]
+    },
+    {
+      "origin": [
+        -200,
+        -1,
+        -5654
+      ],
+      "status": "UNKNOWN",
+      "status_code": 2,
+      "candidate_cells": 4,
+      "unsupported_primitives": 2,
+      "floor_y": null,
+      "cell": null,
+      "primitive": null,
+      "candidate_diagnostics": [
+        {
+          "cell": 516,
+          "packed": 114,
+          "idx_available": true,
+          "contact_list_available": true,
+          "descriptor": 38
+        },
+        {
+          "cell": 517,
+          "packed": -16384,
+          "idx_available": false,
+          "contact_list_available": false,
+          "descriptor": null
+        },
+        {
+          "cell": 538,
+          "packed": 123,
+          "idx_available": true,
+          "contact_list_available": false,
+          "descriptor": 32
+        },
+        {
+          "cell": 539,
+          "packed": 124,
+          "idx_available": true,
+          "contact_list_available": true,
+          "descriptor": 64
+        }
+      ]
+    }
+  ],
+  "cooked_map_sha256": "3891ff3588e882f77a684461459e9379258285d0e7a58fd7fcfefeaaf61da333",
+  "limits": [
+    "Candidate diagnostics identify unavailable positive-cell contact lists; negative packed cells use their separate supported floor path.",
+    "No missing-list admission behavior is inferred; no source Y is replaced without a supported height."
+  ]
+}

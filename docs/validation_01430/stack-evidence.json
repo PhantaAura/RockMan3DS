@@ -1,0 +1,22 @@
+{
+  "reports": [
+    {
+      "file": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/native-r1/native-source/platform/3ds/build_3ds/main.su",
+      "sha256": "0aef37c9cde5f07748d7bb9d7dc5c7a070ef0e00ab3e61347ace2e5b0f009980"
+    },
+    {
+      "file": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/native-r1/native-source/platform/3ds/build_3ds/runtime_session.su",
+      "sha256": "9dc5abb19d800cac43c5fc70796a04fcd1deba5b298642cddbc9f95fe097fab5"
+    },
+    {
+      "file": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/native-r1/native-source/platform/3ds/build_3ds/scene_e0.su",
+      "sha256": "3b8856f63b4dfae779216e7671490e4fc8a9c8d46f2d3a046858996bee59ae68"
+    },
+    {
+      "file": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01430/native-r1/native-source/platform/3ds/build_3ds/source_event_phase6.su",
+      "sha256": "cd3dc6bf7e4b0292a5111f96181e320baddf93fc370dc61a5e426b7f72450762"
+    }
+  ],
+  "physical_peak": "UNKNOWN",
+  "stack_reserved_bytes": 262144
+}

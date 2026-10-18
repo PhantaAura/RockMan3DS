@@ -1,0 +1,40 @@
+{
+  "baseline_host_tests": "96/96 PASS",
+  "final_host_tests": "99/99 PASS",
+  "asan_ubsan_targets": [
+    "ps1_geometry",
+    "source_fade",
+    "runtime_fade"
+  ],
+  "asan_ubsan_result": "3/3 PASS",
+  "source_head_authored_cases": 264,
+  "source_head_original_instructions": 4476,
+  "fade_authored_cases": 517,
+  "fade_original_instructions": 126709,
+  "fade_helper_hooks": 0,
+  "fade_instruction_patches": 0,
+  "fade_allocation_free_updates": 4096,
+  "host_warnings": 0,
+  "native_warnings": 0,
+  "native_build": "PASS",
+  "compiled_source_files_match": 232,
+  "private_pack_hash_validation": "121/121 PASS; integrity is not fidelity",
+  "hardware": "HARDWARE_PENDING",
+  "PHYSICS_1TO1": false,
+  "world_comes_alive_complete": false,
+  "retained_failures": [
+    {
+      "log": "host-tests-r2.log",
+      "cause": "New exactOwnerEXE guard encountered authoredfakeEXE in existingcooker-routing test. Corrected mocked fixture boundary and added selector/fade routing assertions; real guard remains intact."
+    },
+    {
+      "log": "head-cook-r1.log",
+      "cause": "Samearmresource present inINIT_DAT andARM containers; helper verified duplicatebytes identical then keptfirst. Conflictingduplicates stillreject."
+    },
+    {
+      "scope": "native-r3 startmenu",
+      "cause": "Intermediate actualbinary had stale01425menu label; fixed and recompiled finalnative-r4. Earliercapture retained outside source."
+    }
+  ],
+  "interpretation": "Passing authored/source/host/build tests do not establish a completed retail encounter or full playable tutorial."
+}

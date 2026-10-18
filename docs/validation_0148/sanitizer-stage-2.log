@@ -1,0 +1,28 @@
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/build
+    Start 2: map_sharing
+1/4 Test #2: map_sharing ......................Subprocess aborted***Exception:   0.56 sec
+==730==AddressSanitizer: detect_leaks is not supported on this platform.
+
+    Start 4: area_package
+2/4 Test #4: area_package .....................Subprocess aborted***Exception:   0.04 sec
+==769==AddressSanitizer: detect_leaks is not supported on this platform.
+
+    Start 5: terrain_geometry_candidate
+3/4 Test #5: terrain_geometry_candidate .......Subprocess aborted***Exception:   0.04 sec
+==770==AddressSanitizer: detect_leaks is not supported on this platform.
+
+    Start 6: map_cell_alignment
+4/4 Test #6: map_cell_alignment ...............Subprocess aborted***Exception:   0.05 sec
+==771==AddressSanitizer: detect_leaks is not supported on this platform.
+
+
+0% tests passed, 4 tests failed out of 4
+
+Total Test time (real) =   0.71 sec
+
+The following tests FAILED:
+	  2 - map_sharing (Subprocess aborted)
+	  4 - area_package (Subprocess aborted)
+	  5 - terrain_geometry_candidate (Subprocess aborted)
+	  6 - map_cell_alignment (Subprocess aborted)
+Errors while running CTest

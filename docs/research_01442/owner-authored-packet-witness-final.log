@@ -1,0 +1,6 @@
+area=1,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=1,authored_packet_continued=1,authored_packet_status=0,authored_packet_shadow=1,authored_packet_proxy=1
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,authored_packet_continued=0,authored_packet_status=6,authored_packet_shadow=0,authored_packet_proxy=0
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,authored_packet_continued=0,authored_packet_status=6,authored_packet_shadow=0,authored_packet_proxy=0
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,authored_packet_continued=0,authored_packet_status=6,authored_packet_shadow=0,authored_packet_proxy=0
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,authored_packet_continued=0,authored_packet_status=6,authored_packet_shadow=0,authored_packet_proxy=0
+loaded=5,body_shadow_proxy_commits=5,child_commits=0,actual_owner_rule_pairs=0,packet_continuations=0,authored_external_player_and_attack_phase=true,live_parity=false

@@ -1,0 +1,158 @@
+{
+  "schema": "mml-source-event-command/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "cases": {
+    "dispatch": 335,
+    "bcd_encode": 512,
+    "bcd_decode": 512,
+    "sync_callback": 256,
+    "transport_boundaries": 6
+  },
+  "original_instructions_executed": 1453832,
+  "original_cd_mix_calls": 18415,
+  "complete_case_helper_hooks": [],
+  "transport_boundaries": [
+    {
+      "kind": "mode",
+      "function": "0x8001d2bc",
+      "args": [
+        "0xe",
+        "0x800988ec",
+        "0x80098a98"
+      ],
+      "parameters": "c8",
+      "globals": [
+        1,
+        2,
+        7,
+        73,
+        1,
+        0,
+        2,
+        37426,
+        127,
+        200,
+        71,
+        2166572391
+      ],
+      "source_slice_complete": false
+    },
+    {
+      "kind": "seek",
+      "command": 13,
+      "args": [
+        "0xd",
+        "0x6ffff0",
+        "0x80098a98"
+      ],
+      "parameters": "0113",
+      "end_sector": 6688110,
+      "source_slice_complete": false
+    },
+    {
+      "kind": "seek",
+      "command": 2,
+      "args": [
+        "0x2",
+        "0x6fffe8",
+        "0x80098a98"
+      ],
+      "parameters": "b63960",
+      "end_sector": 6688110,
+      "source_slice_complete": false
+    },
+    {
+      "kind": "seek",
+      "command": 27,
+      "args": [
+        "0x1b",
+        "0x0",
+        "0x80098a98"
+      ],
+      "parameters": "",
+      "end_sector": 6688110,
+      "source_slice_complete": false
+    },
+    {
+      "kind": "read_response_tail",
+      "authored_response0": 33,
+      "after_status80098AB8": 33,
+      "after_phase": 0,
+      "mix_calls": 127,
+      "transport_executed": false
+    },
+    {
+      "kind": "pause",
+      "function": "0x8001d254",
+      "args": [
+        "0x9",
+        "0x0",
+        "0x80098a98"
+      ],
+      "mix_calls": 127,
+      "last_mix": "01000100",
+      "callback": "0x8001cc08",
+      "source_slice_complete": false
+    }
+  ],
+  "fixture_sha256": "de63bed0b2f04eb09fd6ebfcb7ac9888a4f6e8829fd1af8929593f526a00e355",
+  "regions": [
+    {
+      "start": "0x8001b89c",
+      "end_exclusive": "0x8001bb4c",
+      "sha256": "15d166a1335e4b0a3f566ffa5ac7edbc6b21e3a6d54dd1e6f7619841cb6a8df9"
+    },
+    {
+      "start": "0x8001caac",
+      "end_exclusive": "0x8001cb30",
+      "sha256": "bbe8b2728475c80abd745b7d4416bebb303f0eacd1398df80d9c07c4a1f84b79"
+    },
+    {
+      "start": "0x8001cb7c",
+      "end_exclusive": "0x8001cc08",
+      "sha256": "b1d86016fbd3e9a94c344be4469c98cc069e68a28fa8a519659ec7752093a1f7"
+    },
+    {
+      "start": "0x8001cc08",
+      "end_exclusive": "0x8001cc7c",
+      "sha256": "1f0e9f7dbb8efe9f08531a2a2884ed36ec8b43055ebcaf810117785f5976adf2"
+    },
+    {
+      "start": "0x8001d254",
+      "end_exclusive": "0x8001d324",
+      "sha256": "d133c1a35e1874b4e311da3674a0ee4a218c62d8342c860df02234f757e67612"
+    },
+    {
+      "start": "0x8001d324",
+      "end_exclusive": "0x8001d414",
+      "sha256": "59ca5bfe4ed377fe6754816b3b7baf0a6549eee09a94a431c1892fceddd3b06b"
+    },
+    {
+      "start": "0x80077e88",
+      "end_exclusive": "0x8007800c",
+      "sha256": "01e46412426fec4f1d069bb8148486db214d89f5be5c7d1f50f285640f2134a1"
+    },
+    {
+      "start": "0x80078efc",
+      "end_exclusive": "0x80078f84",
+      "sha256": "ab4f5bf88b2a2520f2535d501bffec8f9bbc1e80b13075482970a9240122df31"
+    }
+  ],
+  "status_owner": {
+    "writer": "8001BA7C",
+    "source": "response80098A98[0] after8001D2BC(27)",
+    "reader": "8001D878",
+    "raw_bit20": "CD reading flag; not inferred generic event completion"
+  },
+  "limits": [
+    "Full dispatch cases avoid CD transport calls through already-mode200/specialmode2 or source phases3+; completecases have no hooks.",
+    "Normal seek caller slices and response-tail use explicit authored transport boundaries; original CD driver and real media chronology remain unverified.",
+    "MMIO mix writes are observed logical packets only, not audible or CD hardware behavior.",
+    "No source instruction, lookup table, audio, assets, save data or cooked owner payload is exported."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false,
+  "PHYSICS_1TO1": false
+}

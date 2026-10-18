@@ -1,0 +1,656 @@
+Start testing: Oct 05 00:16 EDT
+----------------------------------------------------------
+1/36 Testing: core
+1/36 Test: core
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_core"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"core" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+core tests: PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"core" end time: Oct 05 00:16 EDT
+"core" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/36 Testing: map_sharing
+2/36 Test: map_sharing
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_map_sharing"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"map_sharing" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"map_sharing" end time: Oct 05 00:16 EDT
+"map_sharing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/36 Testing: ps1_geometry
+3/36 Test: ps1_geometry
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_ps1_geometry"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"ps1_geometry" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"ps1_geometry" end time: Oct 05 00:16 EDT
+"ps1_geometry" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/36 Testing: area_package
+4/36 Test: area_package
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_area_package"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"area_package" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+PASS: two-package geometry/contact loading, streaming validation, admission, failure preservation, unload/reload
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"area_package" end time: Oct 05 00:16 EDT
+"area_package" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/36 Testing: terrain_geometry_candidate
+5/36 Test: terrain_geometry_candidate
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_terrain_geometry_candidate"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"terrain_geometry_candidate" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"terrain_geometry_candidate" end time: Oct 05 00:16 EDT
+"terrain_geometry_candidate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/36 Testing: map_cell_alignment
+6/36 Test: map_cell_alignment
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_map_cell_alignment"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"map_cell_alignment" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"map_cell_alignment" end time: Oct 05 00:16 EDT
+"map_cell_alignment" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/36 Testing: area_placement
+7/36 Test: area_placement
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_area_placement"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"area_placement" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+area placement: identity/order/origin/bank/budget/malformed cases PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"area_placement" end time: Oct 05 00:16 EDT
+"area_placement" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/36 Testing: positive_terrain
+8/36 Test: positive_terrain
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_positive_terrain"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"positive_terrain" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+positive terrain source-backed coordinate and malformed-input tests passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"positive_terrain" end time: Oct 05 00:16 EDT
+"positive_terrain" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/36 Testing: push2
+9/36 Test: push2
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_push2"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"push2" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+PASS: cumulative H1-H9 C runtime regression
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"push2" end time: Oct 05 00:16 EDT
+"push2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/36 Testing: integrity
+10/36 Test: integrity
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_integrity"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"integrity" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+PASS: malformed packages and save recovery
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"integrity" end time: Oct 05 00:16 EDT
+"integrity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/36 Testing: pipeline_python
+11/36 Test: pipeline_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/tests/test_pipeline.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"pipeline_python" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 0.023s
+
+OK
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"pipeline_python" end time: Oct 05 00:16 EDT
+"pipeline_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/36 Testing: cooked_area_python
+12/36 Test: cooked_area_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/tests/test_cooked_area.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"cooked_area_python" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+.......................
+----------------------------------------------------------------------
+Ran 23 tests in 0.054s
+
+OK
+<end of output>
+Test time =   0.16 sec
+----------------------------------------------------------
+Test Passed.
+"cooked_area_python" end time: Oct 05 00:16 EDT
+"cooked_area_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/36 Testing: owner_data_intake_python
+13/36 Test: owner_data_intake_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/tests/test_owner_data_intake.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"owner_data_intake_python" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.077s
+
+OK
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"owner_data_intake_python" end time: Oct 05 00:16 EDT
+"owner_data_intake_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/36 Testing: local_install_python
+14/36 Test: local_install_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/tests/test_local_install.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"local_install_python" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+..............................
+----------------------------------------------------------------------
+Ran 30 tests in 0.873s
+
+OK
+<end of output>
+Test time =   0.99 sec
+----------------------------------------------------------
+Test Passed.
+"local_install_python" end time: Oct 05 00:16 EDT
+"local_install_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/36 Testing: source_tools_python
+15/36 Test: source_tools_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/tests/test_source_tools.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"source_tools_python" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.071s
+
+OK
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"source_tools_python" end time: Oct 05 00:16 EDT
+"source_tools_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/36 Testing: negative_package
+16/36 Test: negative_package
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_negative_package"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"negative_package" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+negative descriptor admission, default/HD2 neutral bindings, old-v3 compatibility and malformed rejection PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"negative_package" end time: Oct 05 00:16 EDT
+"negative_package" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/36 Testing: negative_terrain
+17/36 Test: negative_terrain
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_negative_terrain"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"negative_terrain" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"negative_terrain" end time: Oct 05 00:16 EDT
+"negative_terrain" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/36 Testing: negative_material
+18/36 Test: negative_material
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_negative_material"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"negative_material" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+negative material tables: area/slot/UV/unknown/bounded malformed rejection PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"negative_material" end time: Oct 05 00:16 EDT
+"negative_material" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/36 Testing: material_vram
+19/36 Test: material_vram
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_material_vram"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"material_vram" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+material VRAM: stripes/last writes/CLUT banks/deferred staging/unknown tails/strict bounds PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"material_vram" end time: Oct 05 00:16 EDT
+"material_vram" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/36 Testing: area_inspection
+20/36 Test: area_inspection
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_area_inspection"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"area_inspection" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+area inspection: source candidates/frustum/bounds/budget/release/malformed cases PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"area_inspection" end time: Oct 05 00:16 EDT
+"area_inspection" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/36 Testing: frontend_view
+21/36 Test: frontend_view
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_frontend_view"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"frontend_view" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"frontend_view" end time: Oct 05 00:16 EDT
+"frontend_view" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/36 Testing: mockup_ui
+22/36 Test: mockup_ui
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_mockup_ui"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"mockup_ui" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"mockup_ui" end time: Oct 05 00:16 EDT
+"mockup_ui" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/36 Testing: player_visual_storage
+23/36 Test: player_visual_storage
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_player_visual_storage"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"player_visual_storage" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+{"format":"player-visual-storage-check/1","synthetic_frames_checked":128,"host_posed_primitive_bytes":68,"actor_transform_cases_checked":98,"actor_world_translation_unscaled":true,"actor_local_render_scale":0.125,"pose_equivalence":true,"material_order_equivalence":true,"hot_pose_heap_allocations":0,"malformed_input_preserves_output":true}
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"player_visual_storage" end time: Oct 05 00:16 EDT
+"player_visual_storage" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/36 Testing: ebd_resources
+24/36 Test: ebd_resources
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_ebd_resources"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"ebd_resources" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+{"format":"ebd-resource-check/1","synthetic_only":true,"v1_compatible":true,"v2_payload_exact":true,"aliases_preserved":true,"caller_sized_bounds":true,"malformed_rejected":true,"resource_semantics":"UNKNOWN"}
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"ebd_resources" end time: Oct 05 00:16 EDT
+"ebd_resources" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/36 Testing: ebd_sharing
+25/36 Test: ebd_sharing
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_ebd_sharing"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"ebd_sharing" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"ebd_sharing" end time: Oct 05 00:16 EDT
+"ebd_sharing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/36 Testing: actor_resources
+26/36 Test: actor_resources
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_actor_resources"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"actor_resources" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+actor resources: bounds, packets, pose, hierarchy, shared lifecycle and failure isolation passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"actor_resources" end time: Oct 05 00:16 EDT
+"actor_resources" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/36 Testing: parity_trace_python
+27/36 Test: parity_trace_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/tests/test_parity_trace.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"parity_trace_python" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.165s
+
+OK
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"parity_trace_python" end time: Oct 05 00:16 EDT
+"parity_trace_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/36 Testing: companion_ui
+28/36 Test: companion_ui
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_companion_ui"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"companion_ui" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"companion_ui" end time: Oct 05 00:16 EDT
+"companion_ui" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/36 Testing: runtime_contact
+29/36 Test: runtime_contact
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_runtime_contact" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/docs/validation_01415/floor08-source-cases.tsv"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"runtime_contact" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+PASS: 240 original source floor interval scalar cases; slope movement remains UNKNOWN
+PASS: source-backed contact subset, ordinary action2 forward/reverse/release/turn, bounded retail scalar window, diagnostic seed, animation-gated jump and zero-allocation ticks; PHYSICS_1TO1=false
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"runtime_contact" end time: Oct 05 00:16 EDT
+"runtime_contact" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/36 Testing: renderer_gcc_warning
+30/36 Test: renderer_gcc_warning
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/tools/check_renderer_gate_gcc.py" "--compiler" "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"renderer_gcc_warning" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+{
+  "schema_version": 1,
+  "compiler": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+  "compiler_version": "arm-none-eabi-gcc (devkitARM) 16.1.0\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/src/p2/mml_renderer_recovery.c",
+  "source_sha256": "927174974bbdac7a36868d2e38bc186baed11f6c28b7fe45475753842b6c184e",
+  "historical_source_kind": "temporary reconstruction of the exact expression in work/3ds-patch.log",
+  "historical_expression": "if(!g||s<MML_RENDER_0143_FALLBACK||s>MML_RENDER_ANIMATION)return false;",
+  "existing_fixed_expression": "if(!g||(unsigned)s>(unsigned)MML_RENDER_ANIMATION)return false;",
+  "warning": "-Wtype-limits",
+  "suppressions_used": false,
+  "checks": [
+    {
+      "label": "historical-before",
+      "command": [
+        "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+        "-std=gnu11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-march=armv6k",
+        "-mtune=mpcore",
+        "-mfloat-abi=hard",
+        "-mtp=soft",
+        "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/include/legends3ds/p2",
+        "-c",
+        "/var/folders/m2/f1c7swg500qgptgzj64t0bm40000gn/T/l3-gcc-renderer-gate-x_agjbmb/historical-type-limits-reconstruction.c",
+        "-o",
+        "/var/folders/m2/f1c7swg500qgptgzj64t0bm40000gn/T/l3-gcc-renderer-gate-x_agjbmb/historical-before.o"
+      ],
+      "exit_code": 1,
+      "log": "/var/folders/m2/f1c7swg500qgptgzj64t0bm40000gn/T/l3-gcc-renderer-gate-x_agjbmb/historical-before.log",
+      "expected_result_met": true
+    },
+    {
+      "label": "current-after",
+      "command": [
+        "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+        "-std=gnu11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-march=armv6k",
+        "-mtune=mpcore",
+        "-mfloat-abi=hard",
+        "-mtp=soft",
+        "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/include/legends3ds/p2",
+        "-c",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/src/p2/mml_renderer_recovery.c",
+        "-o",
+        "/var/folders/m2/f1c7swg500qgptgzj64t0bm40000gn/T/l3-gcc-renderer-gate-x_agjbmb/current-after.o"
+      ],
+      "exit_code": 0,
+      "log": "/var/folders/m2/f1c7swg500qgptgzj64t0bm40000gn/T/l3-gcc-renderer-gate-x_agjbmb/current-after.log",
+      "expected_result_met": true
+    }
+  ],
+  "passed": true
+}
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"renderer_gcc_warning" end time: Oct 05 00:16 EDT
+"renderer_gcc_warning" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/36 Testing: gameplay_clock
+31/36 Test: gameplay_clock
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_gameplay_clock"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"gameplay_clock" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"gameplay_clock" end time: Oct 05 00:16 EDT
+"gameplay_clock" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/36 Testing: running_jump_source
+32/36 Test: running_jump_source
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_running_jump_source" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/docs/validation_01415/running-jump-source-cases.tsv"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"running_jump_source" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+PASS 672 owner-source action8 scalar cases; integration/audio excluded; PHYSICS_1TO1=false
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"running_jump_source" end time: Oct 05 00:16 EDT
+"running_jump_source" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/36 Testing: class20_03_behavior
+33/36 Test: class20_03_behavior
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_class20_03_behavior" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/docs/validation_01415/class20-03-action-source-cases.tsv" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/docs/validation_01415/class20-03-distance-source-cases.tsv"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"class20_03_behavior" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+2018 source action/selector cases x10 fields; missing-input guards passed
+675 source distance store cases passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"class20_03_behavior" end time: Oct 05 00:16 EDT
+"class20_03_behavior" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/36 Testing: actor_sequence
+34/36 Test: actor_sequence
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_actor_sequence" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration/docs/validation_01415/actor-sequence-source-cases.tsv"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"actor_sequence" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+240 original sequence cases x5 fields; malformed-cache guards passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"actor_sequence" end time: Oct 05 00:16 EDT
+"actor_sequence" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/36 Testing: st00_spawn
+35/36 Test: st00_spawn
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_st00_spawn"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"st00_spawn" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"st00_spawn" end time: Oct 05 00:16 EDT
+"st00_spawn" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/36 Testing: runtime_spawns
+36/36 Test: runtime_spawns
+Command: "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline/test_runtime_spawns"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/baseline
+"runtime_spawns" start time: Oct 05 00:16 EDT
+Output:
+----------------------------------------------------------
+runtime conditional spawn: two-tick gate, predicates, qualifier, cleanup, controller binding PASS
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"runtime_spawns" end time: Oct 05 00:16 EDT
+"runtime_spawns" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 05 00:16 EDT

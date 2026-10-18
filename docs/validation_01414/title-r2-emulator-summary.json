@@ -1,0 +1,26 @@
+{
+  "stage": "title-r2",
+  "build_sha256": "6707f1b23f171fddd5739e0663891cf234b0c2c27bbcd9c1f03b61ca41a511db",
+  "settings": {
+    "azahar": "2126.0",
+    "new_3ds": false,
+    "cpu_percent": 100,
+    "resolution": 1
+  },
+  "hardware_tested": false,
+  "synthetic_input": false,
+  "ranges": {},
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-title-r2/captures/start-screen-original.png",
+      "sha256": "70c39afd4ac24e3c309011e183e04e8d34811d7b296ec5c9755e595bb177ef4b",
+      "scene": "title-r2",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "6707f1b23f171fddd5739e0663891cf234b0c2c27bbcd9c1f03b61ca41a511db",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": false
+    }
+  ]
+}

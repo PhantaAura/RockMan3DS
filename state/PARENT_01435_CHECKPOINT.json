@@ -1,0 +1,142 @@
+{
+  "PHYSICS_1TO1": false,
+  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.34_Source.zip",
+  "baseline_sha256": "34899aab8c58ae90adf8d20a8f26fe44c97b52e118be1731998ce50f296617d8",
+  "blockers": [
+    "Later class40 pose sequence is connected and seven consecutive original wrapper calls match selected owned fields; original script/movement and callback chronology remain incomplete.",
+    "Source effect131/other consumers, native recorded RNG context, enemy combat and natural tutorial progression remain incomplete.",
+    "Physical Old 3DS validation, full retail physics/camera/HUD/materials/audio/save acceptance remain pending."
+  ],
+  "branch": null,
+  "commit": null,
+  "compiled_source_hashes_match": true,
+  "created_utc": "2026-10-13T02:03:11.414365+00:00",
+  "current_emulator_validation": "PENDING for 0.0.14.35; inherited 0.0.14.34 captures are historical only",
+  "emulator": {
+    "current_capture_count": 0,
+    "hardware_tested": false,
+    "status": "NOT_RUN_01435"
+  },
+  "emulator_previous_checkpoint": {
+    "PHYSICS_1TO1": false,
+    "captures": [
+      {
+        "binary_sha256": "1cbab9bd46cc6ca154aaa6f58d5c2fd6c2977bf9cea6243672a98b35fc57c279",
+        "build": "0.0.14.34 native-r4",
+        "device": "Azahar2126.0 Old-model",
+        "hardware_tested": false,
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/azahar-01434-source-r2/captures/01434_final_source_actor_rng_hold.png",
+        "scene": "Final native-r4 source-camera view; imported18-part first pose/hair/face/body; later motion held",
+        "sha256": "a0bf86684dc48eba1ee6f3aa091856f3be0d5d078de205d63ebea6109853304b"
+      },
+      {
+        "binary_sha256": "1cbab9bd46cc6ca154aaa6f58d5c2fd6c2977bf9cea6243672a98b35fc57c279",
+        "build": "0.0.14.34 native-r4",
+        "device": "Azahar2126.0 Old-model",
+        "hardware_tested": false,
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/azahar-01434-safe-r3/captures/01434_hardware_test_start.png",
+        "scene": "Final native-r4 hardware-test start menu; not original retail title screen",
+        "sha256": "4fb9176af94cfbb6dca1d00231213a53b9a16966a8f8e5f384b8cfaf5cda1663"
+      },
+      {
+        "binary_sha256": "1cbab9bd46cc6ca154aaa6f58d5c2fd6c2977bf9cea6243672a98b35fc57c279",
+        "build": "0.0.14.34 native-r4",
+        "device": "Azahar2126.0 Old-model",
+        "hardware_tested": false,
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/azahar-01434-safe-r3/captures/01434_safe0143_movement_fire.png",
+        "scene": "Final native-r4 safe0143 movement/fire smoke, legacy geometry artifacts retained",
+        "sha256": "b80b5ecf05876ed3b5d05046e29e28a6a74a79921d5d5c70d0b2cf603eaa1d1f"
+      },
+      {
+        "build": "Supplied USA owner data",
+        "device": "PCSX-Redux Reference interpreter, selected OpenBIOS",
+        "hardware_tested": false,
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/ps1-reference-r1/captures/01434_original_reference.png",
+        "scene": "Original tutorial gameplay after read-only observation, memory cards disabled",
+        "sha256": "ff81a22fcc0953eb0442da93fdb1217674de741565401ea350accfc18fbee1ab"
+      }
+    ],
+    "constructor_and_initializer": "# source_actor40_initializer,frame=70,status=0,committed=1,parts=18,work08_ack=1,mirror_bytes=12,fixed_position_written=false,global70=8011c338,global74=8011c3a4,chronology=CANDIDATE",
+    "cpu_clock_percentage": 100,
+    "emulator": "Azahar2126.0",
+    "final_binary_sha256": "1cbab9bd46cc6ca154aaa6f58d5c2fd6c2977bf9cea6243672a98b35fc57c279",
+    "hardware_tested": false,
+    "is_new_3ds": false,
+    "limits": [
+      "Later scripted actor motion/animation, effect lifecycle and native chronology remain incomplete; strict mismatches hold zero stores and no tape advance.",
+      "Source camera can temporarily show terrain without the stationary actor because later movement is absent. Visible first pose is not full scene playback.",
+      "Initial materials/neutral color/raster are diagnostic; lighting/depth cue/current palette/alpha and PS1 top HUD remain incomplete.",
+      "0143 fallback is texture independent and retains visible legacy geometry artifacts; boot/movement/fire smoke does not establish faithful rendering/physics/combat.",
+      "Old-model emulation and sparse timings/reservations cannot prove physical CPU/GPU speed, memory peak, nested stack watermark or DSP latency.",
+      "Genuine unedited emulator images; no desktop render labelled hardware.",
+      "Native-r1 had stale diagnostic version and incorrect raw08 callback preflight; finalr4 corrects both. Native-r2 version-test false-positive and r3 selector issue retained in history."
+    ],
+    "memory_reservation": {
+      "application_bytes": 100663296,
+      "heap_bytes": 66240512,
+      "linear_bytes": 33554432,
+      "stack_bytes": 262144
+    },
+    "native_source_hashes_match": true,
+    "process_exit_check": "ps -p2380,15117,15332 returned no rows after CUA exit confirmations",
+    "recorded_callback_tape_cursor": 0,
+    "safe_max_diagnostic_projectiles": 1,
+    "safe_movement_positions": [
+      [
+        "-768",
+        "0",
+        "-2816"
+      ],
+      [
+        "-768",
+        "0",
+        "-2848"
+      ],
+      [
+        "-768",
+        "0",
+        "-4000"
+      ]
+    ],
+    "safe_profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/azahar-01434-safe-r3",
+    "safe_renderer": 0,
+    "safe_texture_bytes": 0,
+    "sampled_context_mismatch": "# source_scene_rng_mismatch,frame=2640,actual_actor=80/0/-544,recorded_actor=0/0/-574,actual_pool=c0000000/00000000,recorded_pool=e0000000/00000000,actual_half=9367,recorded_half=9336,stores=0,cursor_advanced=false",
+    "scene_complete": false,
+    "schema": "mml-emulator-validation/01434",
+    "simulate_3ds_gpu_timings": false,
+    "source_memory_last_sample": {
+      "draw_calls": 41,
+      "frame": 10680,
+      "linear_free": 26622464,
+      "malloc_live": 1806040,
+      "owned_linear": 59520,
+      "owned_texture": 4980736,
+      "triangles": 1794,
+      "vram_free": 5523456
+    },
+    "source_profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/azahar-01434-source-r2",
+    "stack_static_main_bytes": 121520,
+    "stack_static_tape_decode_bytes": 9488,
+    "status": "SOURCE_BACKED_PARTIAL",
+    "test_processes_closed": true
+  },
+  "git_repository": false,
+  "hardware_tested": false,
+  "host_tests": "129/129 PASS",
+  "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01435_WorldComesAlive.3dsx",
+  "native_binary_bytes": 811948,
+  "native_binary_sha256": "5347245c2377a331e5013cd55acf65c1ee1ef5ad203252a605fc18f7061cd1d5",
+  "native_build": "PASS",
+  "project_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.35_WorldComesAlive",
+  "recovery_checkpoint": "Legends3DS_0.0.14.35_Recovery_20261012_001_Source.zip",
+  "sd_layout": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01435/native-r1/sd_out",
+  "source_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.35_Source.zip",
+  "source_release_excludes_retail_payloads": true,
+  "source_snapshot_files": 265,
+  "title": "World Comes Alive \u2014 source actor pose sequence runtime",
+  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hard float",
+  "usage_reset_used": false,
+  "version": "0.0.14.35",
+  "world_comes_alive_finished": false
+}

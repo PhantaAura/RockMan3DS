@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/Applications/Azahar.app/Contents/MacOS/azahar",
+    "-w",
+    "-p",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/candidate-controls-delayed.ctm",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/build/Legends3DS_01412_VisualParity.3dsx"
+  ],
+  "pid": 56046,
+  "binary_sha256": "d4c5d88ab40424553b93c2d88534f74dbb0f843ec138f1f5da3c952989cd3416",
+  "movie_sha256": "d1e8ba574824cd4b07dbd189a827c25de32c79c942ae812a7fe56e808ae7c35f",
+  "settings": {
+    "azahar": "2126.0",
+    "new_3ds": false,
+    "cpu_percent": 100,
+    "resolution": 1
+  },
+  "env": {
+    "XDG_CONFIG_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/azahar-01412-gameplay-r3/config",
+    "XDG_DATA_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/azahar-01412-gameplay-r3/data",
+    "XDG_CACHE_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/azahar-01412-gameplay-r3/cache"
+  }
+}

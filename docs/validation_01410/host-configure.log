@@ -1,0 +1,4 @@
+cmake -S /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement -B /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/2a7ec8ce255b89e2 -DCMAKE_BUILD_TYPE=Release
+-- Configuring done (1.9s)
+-- Generating done (1.2s)
+-- Build files have been written to: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/2a7ec8ce255b89e2

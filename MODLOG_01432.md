@@ -1,0 +1,21 @@
+# 0.0.14.32 — World Comes Alive continuation
+
+Continued frozen01431 source;1713 baseline hashes verified,115 inherited checks rerun PASS. NoGit branch/commit. Original assets and0143safe renderer preserved. UniversalModder reverse-engineering and game-automation workflows used. This is a gameplay technical prototype; WorldComesAlive remains incomplete.
+
+Original two-port80012298 pad decode/repeat is now native wired into RuntimeSession and the source event800C0C2A pressed owner.256 full72-byte differential cases,96911 original instructions, no patches/hooks. Explicit cold800177CC clear; warm state retained. Native digital packet/edge-latching translation is CANDIDATE; it never seeds scratch2. Source mainphase/subphase eligibility and VBlank arithmetic have exact consumers; full native service chronology still unproved.
+
+Actual first scripted actor resource now admits18parts (307vertices,146triangles,170quads,10212decodedmeshbytes). The phase5 dispatch1 route8011A5B0→8010D824→8010C930 was proved before native integration. A initially proposed global initializer was rejected for this scene. Actualrequest0/record0 resource and scalarprefix have24 full1444-byte comparisons/5976 unchanged instructions and expired-owner guards. SOURCE_SCENE_ACTOR40=1 independently loads/calls/draws the real retained model. Prefix ends before800322A8; work08/full initializer never acknowledged. Later request changes hold the fixed pose. Azahartrace confirms18part submissions; correct actor visibility is not established by the door-only capture. Float matrix/raster/NearLOD remain CANDIDATE; original shade and scene-actor textures UNKNOWN. No replacement model, borrowed globalshade4210 or fabricated animation.
+
+Enemy source actions7/8 reaction and motion/wall consumers added with owner-local100B L3R7metadata.6556 reaction cases plus608 admitted contact cases,1246983 original instructions;40unsupported contact cases remain held. Verified proxy packet/context aliases stage into the body, and pending packets block separate finalization. Zero-packet reaction receipts retain velocity/contact/table atomically. Nonzero damage/HP commits still hold until complete effect/fulltail/packetclear ownership is admitted. No completed Buster-enemy encounter claim.
+
+119/119 fullhost tests passed. Native build uses devkitARM r68-1/GCC16.1.0/libctru2.7.0-1/Citro3D1.7.1-2, ARMv6K/mpcore/256KiB stack; exact result below. Native attempts caught a diagnostic field spelling error and GCC misleading indentation; both fixed with the checks unchanged. Logs/commands/source hashes in docs/validation_01432. No physical hardware test. Emulator captures/results separately identify Azahar2126.0Old-model; sparse timings include synchronization and cannot prove hardware performance.
+
+Read-only original reference accepted Start/NewGame. At executable entry/firstloop the observed scratchhalf2 was0; firstsceneconstructor atloop4134 had4133 and mainphase3/subphase2. These are current OpenBIOS-reference measurements, not a universal retail seed or admitted native chronology. Reference later terminated with an unknown exception; no final PS1 screenshot/completed reference-run claim. The trace and original inputs/cards were not modified. Observer uses the official read-onlymemory API: https://pcsx-redux.consoledev.net/Lua/memory-and-registers/. Exact observations/limits in ps1-main-loop-observation.json.
+
+Owner-local reaction metadata recipe: python3 tools/cook_reaction_profile.py --exe OWNER_EXE --dat OWNER_DAT --out NEW_PRIVATE_DIRECTORY; copy its actor_reactions.l3r7 into a NEW pack and declare its hash. Supplied privatepack-runtime-r1 keeps125 prior files unchanged plus this100Bmetadata. Missing optional metadata holds dependent reactions. Full retail packages are never distributed.
+
+Remaining: complete scripted actor update/animation/shade/textures; universal sourcecounter/service/RNG chronology; nonzerohit effects/HP/reaction/defeat and Buster acquisition; natural event→dialogue→transition/unload/load progression, fullretailphysics, physicalOld3DS. PHYSICS_1TO1=false.
+
+SourceZIP excludes ROM/CHD/BIN/CUE/EXE, Capcomraw/cooked models/textures/audio/video, retailsaves/DSP, generatedbuild output and reproduciblecaches. Original archives untouched. Separatelynamed recoveryZIP saved; noreset used.
+
+Final native result: PASS; host: 119/119 PASS.

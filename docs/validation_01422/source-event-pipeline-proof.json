@@ -1,0 +1,38 @@
+{
+  "schema": "mml-source-event-pipeline-differential/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "original_instruction_cases": 336,
+  "original_instructions_executed": 21591,
+  "fixture_sha256": "b96e38052bf921412e98b7c9252c7a5f53344d9d810afa3df5ee4bd889e3dc1f",
+  "regions": [
+    {
+      "start": "0x8001d990",
+      "end_exclusive": "0x8001da58",
+      "sha256": "82c0dc90f6b976b38d43e807c4376aa300b6884f547e32942a2e794586632b28"
+    },
+    {
+      "start": "0x8001dde4",
+      "end_exclusive": "0x8001de78",
+      "sha256": "85b21796677eab24e9331e750bde3094b05c243c87b8a6433ef075734b7f6988"
+    }
+  ],
+  "corrected_original_busy_halfword": "0x80098A72",
+  "incorrect_inherited_busy_halfword": "0x800A8A72",
+  "initializer_hp_gate": "signed player800B521E >=0; negative HP leaves event work unchanged",
+  "poll_order": "first enabled authored flag; no further poll after refused initializer",
+  "same_tick_dispatch": true,
+  "accepted_cases_helper_hooks": [],
+  "authored_tables": "Three flag/event records replace source table data only; original code unchanged",
+  "retail_parity": false,
+  "live_gameplay": false,
+  "hardware_tested": false,
+  "limits": [
+    "Source table/work/global premises are authored, not an original gameplay trace.",
+    "Event1phase1 requires real player consumer80042238; no readiness acknowledgement is invented.",
+    "Phase4expiry requires80017C30; only pure nonexpiry source branches are accepted here.",
+    "Actor command/message/audio/camera/transition consumers and normal tutorial completion are not established.",
+    "No original bytecode/table/code/assets/save data serialized."
+  ]
+}

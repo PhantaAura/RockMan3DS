@@ -1,0 +1,65 @@
+{
+  "checkpoint": "0.0.6 native runtime bridge",
+  "host_build": {
+    "compiler": "GCC 14.2.0",
+    "warnings_as_errors": true,
+    "ctest": "1/1 PASS"
+  },
+  "st00_overlay": {
+    "payload": "R3_ST00.BIN type-0 payload",
+    "load_base": "0x80100000",
+    "bytes": 141056,
+    "sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+    "area_count": 5,
+    "object_counts": [1, 16, 20, 11, 1],
+    "object_total": 49,
+    "object_class_histogram": {"00": 3, "20": 2, "C0": 9, "E0": 35},
+    "aux_active_counts": [0, 3, 2, 0, 0],
+    "aux_active_total": 5,
+    "aux_record_bytes": 24,
+    "aux_terminator": "signed halfword -1 at +0x00 in a 24-byte sentinel slot",
+    "setup_selectors": [0, 5, 10, 15, 20]
+  },
+  "l3sf": {
+    "version": 1,
+    "areas": 5,
+    "objects": 49,
+    "aux_records": 5,
+    "bytes": 1580,
+    "sha256_local_validation_asset": "4cb48b1ade145f09a37b67e10c4e43600f8eac95913e9b4b1fbe318f0ad19cfa",
+    "crc": "PASS",
+    "local_validation_asset_shipped": false
+  },
+  "camera_trace": {
+    "msg_cam_opcodes": 0,
+    "swing_camera2_call_sites": [
+      "0x8010879C", "0x80108A88", "0x80108BB0", "0x8010984C", "0x80109B08"
+    ],
+    "camera_core_call_sites": ["0x80111068", "0x80111100", "0x80115C10"],
+    "camera_semantic_script_complete": false
+  },
+  "player_pose": {
+    "transform_count": 15,
+    "world_space_visual_bridge": true,
+    "hierarchy_operation": "world = parent * (T * R)",
+    "rotation_order": "X*Y*Z",
+    "original_pose_routine_evidence": "around ROCK_NEO.EXE 0x800331A0",
+    "fixed_point_bit_exact": false
+  },
+  "classic_motion": {
+    "turn_reversal_zero_frame": true,
+    "turn_ramp_reference": "0x80042154",
+    "direction_accumulator_reference": "0x8003E068",
+    "direction_accumulator_asymmetry_tested": true
+  },
+  "tutorial_pack_cooker": {
+    "local_full_validation_files_including_manifest": 85,
+    "indexed_resources_cooked": 69,
+    "generated_assets_in_source_archive": false
+  },
+  "3ds_build": {
+    "devkitpro_available_in_validation_environment": false,
+    "citro3d_compile_claimed": false,
+    "real_3dsx_produced": false
+  }
+}

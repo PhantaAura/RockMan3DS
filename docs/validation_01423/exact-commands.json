@@ -1,0 +1,95 @@
+[
+  {
+    "argv": [
+      "cmake",
+      "-S",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.23_WorldComesAlive",
+      "-B",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/host",
+      "-DCMAKE_BUILD_TYPE=Release"
+    ],
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/logs/host-configure.log",
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "cmake",
+      "--build",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/host",
+      "--parallel",
+      "4"
+    ],
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/logs/host-build.log",
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "ctest",
+      "--test-dir",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/host",
+      "--output-on-failure"
+    ],
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/logs/host-tests.log",
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.23_WorldComesAlive/tools/package_cooked_area.py",
+      "--map",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/st00.l3map",
+      "--render",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/st00.l3render",
+      "--state-id",
+      "local:verified-tutorial-pair",
+      "--out",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/local-data/boot.mmlpkg",
+      "--negative-materials",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/st00.l3nm",
+      "--spawns",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/st00.l3spawn",
+      "--map-initialization",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/st00.l3init",
+      "--runtime-flow",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/st00.l3flow",
+      "--runtime-ebd",
+      "0:0:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/ebd/area_00.l3ebd",
+      "--runtime-ebd",
+      "1:1:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/ebd/area_01.l3ebd",
+      "--runtime-ebd",
+      "2:2:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/ebd/area_02.l3ebd",
+      "--runtime-ebd",
+      "3:3:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/ebd/area_03.l3ebd",
+      "--runtime-ebd",
+      "4:4:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/pack-runtime-r1/ebd/area_04.l3ebd"
+    ],
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/logs/area-package.log",
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/host/l3area_runtime_probe",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/local-data/boot.mmlpkg"
+    ],
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/logs/area-runtime-probe.log",
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/host/l3area_inspection_probe",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/local-data/boot.mmlpkg"
+    ],
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/logs/area-inspection-probe.log",
+    "returncode": 0
+  },
+  {
+    "argv": [
+      "make",
+      "-C",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/native-source/platform/3ds",
+      "-j4"
+    ],
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/logs/native-build.log",
+    "returncode": 0
+  }
+]

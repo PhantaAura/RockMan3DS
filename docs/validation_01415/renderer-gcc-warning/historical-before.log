@@ -1,0 +1,5 @@
+/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/host-baseline/renderer-gcc-warning/historical-type-limits-reconstruction.c: In function 'mml_renderer_gate_set':
+/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/host-baseline/renderer-gcc-warning/historical-type-limits-reconstruction.c:11:13: error: comparison is always false due to limited range of data type [-Werror=type-limits]
+   11 |     if(!g||s<MML_RENDER_0143_FALLBACK||s>MML_RENDER_ANIMATION)return false;
+      |             ^
+cc1: all warnings being treated as errors

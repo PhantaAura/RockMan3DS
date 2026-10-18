@@ -1,0 +1,666 @@
+{
+  "format": "animation-evidence/1",
+  "request_mutator": "0x80041ddc",
+  "mappings": [
+    {
+      "request_id": 0,
+      "s_action": 0,
+      "m_action": 1,
+      "record_count": 60,
+      "m_frame_count": 31,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 1,
+      "s_action": 1,
+      "m_action": 2,
+      "record_count": 16,
+      "m_frame_count": 16,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 4,
+      "s_action": 4,
+      "m_action": 5,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 5,
+      "s_action": 5,
+      "m_action": 6,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 6,
+      "s_action": 6,
+      "m_action": 7,
+      "record_count": 4,
+      "m_frame_count": 4,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 7,
+      "s_action": 7,
+      "m_action": 8,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 8,
+      "s_action": 8,
+      "m_action": 9,
+      "record_count": 4,
+      "m_frame_count": 4,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 9,
+      "s_action": 9,
+      "m_action": 10,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 10,
+      "s_action": 10,
+      "m_action": 11,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 12,
+      "s_action": 12,
+      "m_action": 13,
+      "record_count": 32,
+      "m_frame_count": 32,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 13,
+      "s_action": 13,
+      "m_action": 14,
+      "record_count": 28,
+      "m_frame_count": 28,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 14,
+      "s_action": 14,
+      "m_action": 15,
+      "record_count": 24,
+      "m_frame_count": 24,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 15,
+      "s_action": 15,
+      "m_action": 16,
+      "record_count": 24,
+      "m_frame_count": 24,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 16,
+      "s_action": 16,
+      "m_action": 17,
+      "record_count": 3,
+      "m_frame_count": 3,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 17,
+      "s_action": 17,
+      "m_action": 18,
+      "record_count": 18,
+      "m_frame_count": 18,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 18,
+      "s_action": 18,
+      "m_action": 19,
+      "record_count": 18,
+      "m_frame_count": 18,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 19,
+      "s_action": 19,
+      "m_action": 20,
+      "record_count": 3,
+      "m_frame_count": 3,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 20,
+      "s_action": 20,
+      "m_action": 21,
+      "record_count": 18,
+      "m_frame_count": 18,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 21,
+      "s_action": 21,
+      "m_action": 22,
+      "record_count": 18,
+      "m_frame_count": 18,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 22,
+      "s_action": 22,
+      "m_action": 23,
+      "record_count": 3,
+      "m_frame_count": 3,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 23,
+      "s_action": 23,
+      "m_action": 24,
+      "record_count": 6,
+      "m_frame_count": 6,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 24,
+      "s_action": 24,
+      "m_action": 25,
+      "record_count": 3,
+      "m_frame_count": 3,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 25,
+      "s_action": 25,
+      "m_action": 26,
+      "record_count": 3,
+      "m_frame_count": 3,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 26,
+      "s_action": 26,
+      "m_action": 27,
+      "record_count": 9,
+      "m_frame_count": 9,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 27,
+      "s_action": 27,
+      "m_action": 28,
+      "record_count": 8,
+      "m_frame_count": 8,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 28,
+      "s_action": 28,
+      "m_action": 29,
+      "record_count": 8,
+      "m_frame_count": 8,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 29,
+      "s_action": 29,
+      "m_action": 30,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 30,
+      "s_action": 30,
+      "m_action": 31,
+      "record_count": 58,
+      "m_frame_count": 30,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 31,
+      "s_action": 31,
+      "m_action": 32,
+      "record_count": 20,
+      "m_frame_count": 20,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 32,
+      "s_action": 32,
+      "m_action": 33,
+      "record_count": 12,
+      "m_frame_count": 14,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 33,
+      "s_action": 33,
+      "m_action": 34,
+      "record_count": 14,
+      "m_frame_count": 14,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 34,
+      "s_action": 34,
+      "m_action": 35,
+      "record_count": 32,
+      "m_frame_count": 32,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 35,
+      "s_action": 35,
+      "m_action": 36,
+      "record_count": 10,
+      "m_frame_count": 10,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 36,
+      "s_action": 36,
+      "m_action": 37,
+      "record_count": 17,
+      "m_frame_count": 17,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 37,
+      "s_action": 37,
+      "m_action": 38,
+      "record_count": 21,
+      "m_frame_count": 21,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 38,
+      "s_action": 38,
+      "m_action": 39,
+      "record_count": 32,
+      "m_frame_count": 32,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 39,
+      "s_action": 39,
+      "m_action": 40,
+      "record_count": 10,
+      "m_frame_count": 10,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 41,
+      "s_action": 41,
+      "m_action": 42,
+      "record_count": 21,
+      "m_frame_count": 21,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 42,
+      "s_action": 42,
+      "m_action": 43,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 43,
+      "s_action": 43,
+      "m_action": 44,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 44,
+      "s_action": 44,
+      "m_action": 45,
+      "record_count": 5,
+      "m_frame_count": 5,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 45,
+      "s_action": 45,
+      "m_action": 46,
+      "record_count": 7,
+      "m_frame_count": 7,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 48,
+      "s_action": 48,
+      "m_action": 49,
+      "record_count": 10,
+      "m_frame_count": 10,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 49,
+      "s_action": 49,
+      "m_action": 50,
+      "record_count": 10,
+      "m_frame_count": 10,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 50,
+      "s_action": 50,
+      "m_action": 51,
+      "record_count": 20,
+      "m_frame_count": 20,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 51,
+      "s_action": 51,
+      "m_action": 52,
+      "record_count": 32,
+      "m_frame_count": 32,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 52,
+      "s_action": 52,
+      "m_action": 53,
+      "record_count": 32,
+      "m_frame_count": 32,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 53,
+      "s_action": 53,
+      "m_action": 54,
+      "record_count": 30,
+      "m_frame_count": 30,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 54,
+      "s_action": 54,
+      "m_action": 55,
+      "record_count": 36,
+      "m_frame_count": 19,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 56,
+      "s_action": 56,
+      "m_action": 57,
+      "record_count": 20,
+      "m_frame_count": 20,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 57,
+      "s_action": 57,
+      "m_action": 58,
+      "record_count": 4,
+      "m_frame_count": 4,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 58,
+      "s_action": 58,
+      "m_action": 59,
+      "record_count": 13,
+      "m_frame_count": 13,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 59,
+      "s_action": 59,
+      "m_action": 60,
+      "record_count": 9,
+      "m_frame_count": 9,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 60,
+      "s_action": 60,
+      "m_action": 61,
+      "record_count": 4,
+      "m_frame_count": 4,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    },
+    {
+      "request_id": 61,
+      "s_action": 61,
+      "m_action": 62,
+      "record_count": 4,
+      "m_frame_count": 4,
+      "structural_valid": true,
+      "status": "SOURCE_BACKED_PARTIAL",
+      "semantic_status": "UNKNOWN",
+      "confidence": "structural mapping only"
+    }
+  ],
+  "source_profile": "Mega Man Legends USA",
+  "source_executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "cooked_animation_sha256": "e0ab6305a7e24610e10af2797cc835a36ed7a29e5cf9ef6dd7ce9cc71b3ad69f",
+  "caller_callee_evidence": [
+    {
+      "function": "0x8003cbf8",
+      "site": "0x8003cce8",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003cbf8",
+      "site": "0x8003ccc8",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003cbf8",
+      "site": "0x8003cc7c",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003ccb0",
+      "site": "0x8003cce8",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003ccb0",
+      "site": "0x8003ccc8",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003dac0",
+      "site": "0x8003db18",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003db08",
+      "site": "0x8003db18",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003db50",
+      "site": "0x8003db88",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003db78",
+      "site": "0x8003db88",
+      "callee": "0x80041ddc"
+    },
+    {
+      "function": "0x8003e068",
+      "site": "0x8003e1e8",
+      "callee": "0x80041ddc"
+    }
+  ]
+}

@@ -1,0 +1,201 @@
+11787,1,0,0,2706,-1,-6071,2228,0,10165,17046,49,10083,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,16,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11795,1,536870912,536870912,2706,-1,-6071,2228,0,16149,17202,3,16114,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,24,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11796,1,536870912,0,2706,-1,-6071,2224,0,17203,16387,50,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,0,432,1,1,1024,1024,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11802,1,0,0,2706,-1,-6071,2144,0,17200,16153,49,17118,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,15,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11819,1,1,1,2706,-1,-6071,2144,0,17154,16197,3,17119,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=11820,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=11820,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=11820,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=11820,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=11820,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=11820,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=11820,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+11826,1,0,0,2706,-1,-6071,2144,0,17199,16152,49,17119,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11830,1,2,2,2706,-1,-6071,2144,0,17154,17202,3,17119,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11831,1,2,0,2706,-1,-6071,2144,0,16194,17377,49,16114,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,7,0,0,30,432,1,1,16384,16384,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11832,1,2,0,2706,-1,-6071,2144,0,24120,16152,50,17121,6936,14,1680,71640,3670016,1888608,1355424,27937280,5523456,7,1,16,0,432,1,1,16384,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11835,1,2,0,2706,-29,-6071,2144,0,24126,16154,51,17119,6942,14,1680,71640,3670016,1888608,1355424,27937280,5523456,7,2,17,0,-448,0,1,16384,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11837,1,0,0,2706,-82,-6071,2144,0,17203,16191,51,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,7,3,17,2,-400,0,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11838,1,0,0,2706,-107,-6071,2144,0,17205,16153,51,17121,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,7,5,18,0,0,0,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11847,1,0,0,2706,-1,-6071,2144,0,16203,17159,55,16116,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,7,5,18,9,432,1,1,0,0,1,-1,522,-1,4101,4,4,4,0,2,0,0,1
+11848,1,0,0,2706,-1,-6071,2144,0,17207,16154,55,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,8,6,19,0,432,1,1,0,0,1,-1,522,-1,4101,4,4,4,0,2,0,0,0
+11851,1,0,0,2706,-1,-6071,2144,0,24125,16154,53,17122,6936,14,1680,71640,3670016,1888608,1355424,27937280,5523456,8,7,42,0,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11856,1,0,0,2706,-1,-6071,2144,0,23119,17159,50,16113,6942,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,0,0,15,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11857,1,0,0,2706,-1,-6071,2144,0,9160,17046,49,9078,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,16,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11867,1,32,32,2706,-1,-6071,2140,0,17203,16152,50,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,0,432,1,1,1024,1024,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11878,1,0,0,2706,-1,-6071,1832,0,17156,16201,3,17121,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,11,432,1,1,1024,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11879,1,0,0,2706,-1,-6071,1832,0,16195,17381,49,16113,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,15,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=11880,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=11880,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=11880,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=11880,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=11880,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=11880,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=11880,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+11880,1,0,0,2706,-1,-6071,1832,0,17578,16152,360,17186,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,16,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=11880,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+11880,1,0,0,2706,-1,-6071,1832,0,16216,17971,3,16181,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,16,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11895,1,128,128,2716,-1,-6101,1832,0,24121,16152,50,17121,6936,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,2,9,0,432,1,1,64,64,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+11900,1,128,0,2768,-1,-6252,1832,0,23120,17159,50,16114,6942,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,0,432,1,1,64,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11901,1,0,0,2778,-1,-6282,1832,0,17155,9220,3,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,1,432,1,1,64,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11902,1,0,0,2789,-1,-6313,1832,0,23116,17378,50,16115,6936,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,6,10,0,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11905,1,0,0,2789,-1,-6313,1832,0,23180,17159,49,16175,6942,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,0,0,15,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11906,1,0,0,2789,-1,-6313,1832,0,10165,17046,49,10083,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,16,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11908,1,16,16,2789,-1,-6313,1832,0,17154,16197,3,17118,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,18,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11909,1,16,0,2789,-1,-6313,1836,0,16198,17378,50,16115,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,0,432,1,1,2048,2048,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11912,1,0,0,2789,-1,-6313,1872,0,17156,16201,3,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,3,432,1,1,2048,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11913,1,0,0,2789,-1,-6313,1872,0,16195,17381,49,16113,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,15,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11931,1,32,32,2789,-1,-6313,1868,0,16198,17157,50,16115,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,0,432,1,1,1024,1024,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=11940,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=11940,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=11940,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=11940,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=11940,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=11940,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=11940,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+11942,1,0,0,2789,-1,-6313,1560,0,17156,16201,3,17121,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,11,432,1,1,1024,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11943,1,0,0,2789,-1,-6313,1560,0,16195,17381,49,16113,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,15,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11949,1,32,32,2789,-1,-6313,1560,0,17154,16197,3,17118,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,21,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11950,1,32,0,2789,-1,-6313,1556,0,16198,17378,50,16115,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,0,432,1,1,1024,1024,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11971,1,268435488,268435456,2789,-1,-6313,660,0,16240,17158,49,16160,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,0,15,432,1,1,3072,2048,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11981,1,268435456,0,2789,-1,-6313,660,0,16149,17203,3,16114,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,0,25,432,1,1,3072,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11982,1,268435456,0,2789,-1,-6313,664,0,17203,16381,50,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,0,432,1,1,2048,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11984,1,0,0,2789,-1,-6313,684,0,16151,17206,3,16116,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,2,432,1,1,2048,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11985,1,0,0,2789,-1,-6313,684,0,16221,16375,49,16140,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,15,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11995,1,1073741824,1073741824,2789,-1,-6313,684,0,16164,17202,3,16129,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,25,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+11996,1,1073741824,0,2761,-1,-6329,684,0,17202,16403,50,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,2,4,0,432,1,1,16,16,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12000,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12000,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12000,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12000,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=12000,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=12000,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12000,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+12000,1,1073741824,0,2650,-1,-6392,684,0,16575,17159,361,16183,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,2,4,4,432,1,1,16,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=12000,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12000,1,1073741824,0,2650,-1,-6392,684,0,16218,16976,3,16183,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,2,4,4,432,1,1,16,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+12001,1,1073741824,0,2622,-1,-6408,684,0,16196,16448,50,16114,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,0,432,1,1,16,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+12003,1,1073741824,0,2593,-1,-6440,684,0,16197,17158,51,16114,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,2,432,1,1,16,0,1,-1,500,-1,514,4,2,2,0,1,1,0,0
+12015,1,1342177280,268435456,2593,-1,-6623,724,0,17203,16152,52,17119,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,14,432,1,1,2064,2048,1,-1,500,-1,2562,4,2,2,0,1,1,0,0
+12048,1,1342177280,0,2593,-1,-6089,2044,0,9215,17047,50,9133,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,15,432,1,1,2064,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12052,1,1342177312,32,2610,-1,-5962,2164,0,16245,17157,50,16163,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,3,432,1,1,3088,1024,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12052,1,32,0,2610,-1,-5962,2164,0,17155,16481,3,17119,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,3,432,1,1,3088,1024,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12053,1,32,0,2610,-1,-5962,2164,0,16195,17382,49,16113,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,15,432,1,1,1024,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12054,1,32,0,2610,-1,-5962,2160,0,17203,16152,50,17120,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,0,432,1,1,1024,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12057,1,0,0,2610,-1,-5962,2124,0,16151,17206,3,16115,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,4,1,13,3,432,1,1,1024,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12058,1,0,0,2610,-1,-5962,2124,0,17200,16375,49,17118,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,15,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12060,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12060,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12060,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12060,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=12060,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12060,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=12060,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12077,1,2147483648,2147483648,2610,-1,-5962,2124,0,17154,16197,3,17119,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12078,1,2147483648,0,2606,-1,-5994,2124,0,23116,17394,50,16115,6936,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,2,9,0,432,1,1,64,64,1,-1,522,-1,0,4,2,2,0,1,0,0,0
+12082,1,2147483648,0,2593,-1,-6121,2124,0,16199,17158,52,16115,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,2,9,4,432,1,1,64,0,1,-1,522,-1,514,4,2,2,0,1,1,0,0
+12083,1,2147483648,0,2593,-1,-6153,2124,0,23121,17158,51,16114,6942,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,0,432,1,1,64,0,1,-1,500,-1,514,4,2,2,0,1,1,0,0
+12095,1,0,0,2593,-1,-6534,2124,0,17154,17204,3,17118,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,4,1,12,432,1,1,64,0,1,-1,500,-1,514,4,2,2,0,1,1,0,0
+12096,1,0,0,2593,-1,-6566,2124,0,23116,17379,51,16115,6936,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,6,10,0,432,1,1,0,0,1,-1,500,-1,514,4,2,2,0,1,1,0,0
+12097,1,0,0,2593,-1,-6566,2124,0,10168,16036,50,10085,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,2,6,10,1,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+12099,1,0,0,2593,-1,-6566,2124,0,24124,16153,49,17118,6942,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,0,0,15,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+12100,1,0,0,2593,-1,-6566,2124,0,10165,16041,49,10083,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,16,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12120,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12120,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12120,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12120,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=12120,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=12120,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12120,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+12120,1,0,0,2593,-1,-6566,2124,0,17578,16169,359,17186,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=12120,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12120,1,0,0,2593,-1,-6566,2124,0,16216,17971,3,16181,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12180,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12180,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12180,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12180,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=12180,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12180,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=12180,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=12240,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12240,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12240,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12240,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=12240,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=12240,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12240,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+12240,1,0,0,2593,-1,-6566,2124,0,16572,17157,359,16181,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,9,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=12240,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12240,1,0,0,2593,-1,-6566,2124,0,16216,16966,3,16181,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,9,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12300,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12300,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12300,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12300,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=12300,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12300,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=12300,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=12360,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12360,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12360,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12360,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=12360,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=12360,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12360,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+12360,1,0,0,2593,-1,-6566,2124,0,16572,17156,360,16180,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,6,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=12360,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12360,1,0,0,2593,-1,-6566,2124,0,16216,16965,3,16180,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,6,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12420,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12420,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12420,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12420,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=12420,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12420,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=12420,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=12480,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12480,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12480,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12480,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=12480,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=12480,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12480,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+12480,1,0,0,2593,-1,-6566,2124,0,17577,16152,359,17186,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=12480,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12480,1,0,0,2593,-1,-6566,2124,0,16216,17971,3,16181,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,30,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12540,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12540,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12540,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12540,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=12540,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12540,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=12540,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=12600,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12600,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12600,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12600,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=12600,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=12600,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12600,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+12600,1,0,0,2593,-1,-6566,2124,0,17578,16152,360,17186,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,9,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=12600,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12600,1,0,0,2593,-1,-6566,2124,0,15250,17971,3,15215,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,9,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12660,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12660,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12660,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12660,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=12660,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12660,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=12660,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=12720,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12720,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12720,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12720,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=12720,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=12720,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=12720,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+12720,1,0,0,2593,-1,-6566,2124,0,17577,16151,360,17186,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,6,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=12720,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+12720,1,0,0,2593,-1,-6566,2124,0,16216,17971,3,16180,18,14,1680,71640,3670016,1888608,1355424,27937280,5523456,0,1,0,6,432,1,1,0,0,1,-1,500,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=12780,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=12780,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=12780,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=12780,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND

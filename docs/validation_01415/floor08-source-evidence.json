@@ -1,0 +1,17 @@
+{
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "routine": "0x8004A060",
+  "source_range_sha256": "5447c8d8872de4d014653a458ef814ade00fd07d5f228585937d1b5fc2a6b33d",
+  "cases": 240,
+  "matched_fields": [
+    "transformed_floor_y",
+    "transformed_ceiling_y"
+  ],
+  "fixture_sha256": "626341024529a4d2a25dc8d09947473df88082b9f410fabe98bdca7e9cc8c328",
+  "limits": [
+    "synthetic bounded scalar transform; not movement solver or retail trajectories",
+    "requires classifier-expanded X/Z extents",
+    "unsupported degenerate/overflow-trap cases rejected",
+    "movement codes08..0B not claimed implemented"
+  ]
+}

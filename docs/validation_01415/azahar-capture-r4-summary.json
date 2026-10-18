@@ -1,0 +1,8 @@
+{
+  "input": "synthetic HID replay",
+  "build": "install-r4",
+  "area2_gameplay_ticks": 14,
+  "area2_position_changed": true,
+  "normal_progression": false,
+  "contact_unknown": true
+}

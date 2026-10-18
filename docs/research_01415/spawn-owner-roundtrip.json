@@ -1,0 +1,14 @@
+{
+  "schema": "st00-spawn-owner-roundtrip/1",
+  "status": "MATCHES_MEASURED_FIELDS",
+  "areas": 5,
+  "regions": 7,
+  "conditional_records": 45,
+  "cooked_bytes": 1272,
+  "cooked_sha256": "f2bc45ce3750b850cc7aacd734aa45eee67be4020fe406a619247bb9b091c72f",
+  "source_overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "source_record_bytes_preserved": 1080,
+  "source_descriptor_scalar_bytes_preserved": 56,
+  "pointer_bytes_exported": 0,
+  "payload_policy": "counts/hashes only; cooked owner payload lives outside source tree"
+}

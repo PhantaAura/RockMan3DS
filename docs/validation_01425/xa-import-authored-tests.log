@@ -1,0 +1,19 @@
+test_all_filters_ranges_against_independent_exact_rational_oracle (test_cook_xa_stream.DecoderTests) ... ok
+test_authored_nibble_sign_channel_and_unit_parameter_layout (test_cook_xa_stream.DecoderTests) ... ok
+test_authored_signed_rounding_ties_and_clipping (test_cook_xa_stream.DecoderTests) ... ok
+test_malformed_parameters_rejected_without_sector_history_change (test_cook_xa_stream.DecoderTests) ... ok
+test_predictor_continuity_across_selected_sectors (test_cook_xa_stream.DecoderTests) ... ok
+test_cue_profile_and_binary_identity (test_cook_xa_stream.ImportGuardTests) ... ok
+test_exact_eof_subheader_profile_exception (test_cook_xa_stream.ImportGuardTests) ... ok
+test_headers_coding_padding_and_edc (test_cook_xa_stream.ImportGuardTests) ... ok
+test_source_and_span_bounds (test_cook_xa_stream.ImportGuardTests) ... ok
+test_eof_exception_requires_owner_hash_even_for_authored_inputs (test_cook_xa_stream.PackageTests) ... ok
+test_failed_stream_leaves_no_output_or_partial (test_cook_xa_stream.PackageTests) ... ok
+test_independent_ffmpeg_authored_decode_when_available (test_cook_xa_stream.PackageTests) ... skipped 'Existing FFmpeg is unavailable; no dependencies installed'
+test_output_in_source_or_reference_tree_rejected (test_cook_xa_stream.PackageTests) ... ok
+test_streamed_package_index_crc_sha_and_pcm_are_exact (test_cook_xa_stream.PackageTests) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.338s
+
+OK (skipped=1)

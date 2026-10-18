@@ -1,0 +1,17 @@
+{
+  "checkpoint": "Legends3DS Tutorial Core 0.0.2",
+  "host_tests": "PASS",
+  "source_validation": {
+    "edition": "Mega Man Legends USA user-owned extracted disc",
+    "baseline_player_meshes": [
+      {"name":"PL00B00P.PBD","container":"INIT_DAT.BIN","source_bytes":7540,"parts":6,"vertices":85,"triangles":34,"quads":53,"inferred_ps1_base":"0x800F5600","cooked_bytes":2888},
+      {"name":"PL00H00P.PBD","container":"HEAD00.BIN","source_bytes":9852,"parts":4,"vertices":112,"triangles":46,"quads":61,"inferred_ps1_base":"0x800F7800","cooked_bytes":3472},
+      {"name":"PL00R00P.PBD","container":"ARM00R.BIN","source_bytes":4232,"parts":3,"vertices":47,"triangles":14,"quads":34,"inferred_ps1_base":"0x800FA000","cooked_bytes":1632},
+      {"name":"PL00L00P.PBD","container":"ARM00L.BIN","source_bytes":4232,"parts":3,"vertices":47,"triangles":14,"quads":34,"inferred_ps1_base":"0x800FCA00","cooked_bytes":1632},
+      {"name":"PL00F00P.PBD","container":"LEG00.BIN","source_bytes":2296,"parts":2,"vertices":26,"triangles":8,"quads":18,"inferred_ps1_base":"0x800FF400","cooked_bytes":928}
+    ],
+    "combined": {"parts":18,"vertices":317,"triangles":116,"quads":200},
+    "all_l3model_crc_checks": "PASS"
+  },
+  "asset_policy": "No extracted PBDs or cooked game-asset files are included in this checkpoint. Only code, synthetic tests, and derived validation metadata are packaged."
+}

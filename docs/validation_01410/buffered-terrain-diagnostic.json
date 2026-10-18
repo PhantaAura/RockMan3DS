@@ -1,0 +1,34 @@
+{
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_edited": false,
+  "scope": "Bounded source/header/official Citro3D review; stopped when stationary area0 rendered textured walls.",
+  "findings": [
+    {
+      "finding": "No global VBO defect established. Parent observed current area0 textured walls, proving buffered terrain can render in this build.",
+      "evidence": "Root emulator test update; screenshot capture owned by root."
+    },
+    {
+      "finding": "UV terrain attribute permutation is consistent: loaders id0\u2192v0 (float3), fixed id1\u2192v1, loader id2\u2192v2 (float2); BufInfo permutation0x20 supplies ids0 and2 at20-byte stride.",
+      "evidence": "main.cpp configure_terrain_attributes_uv; installed c3d/attribs.h and buffers.h; official Citro3D v1.7.1 attribs.c/buffers.c."
+    },
+    {
+      "finding": "An absent explicit VBO flush does not establish a defect: current main calls C3D_FrameEnd(0), whose official implementation flushes the entire linear heap before queue execution.",
+      "evidence": "main.cpp C3D_FrameEnd(0); Citro3D v1.7.1 renderqueue.c lines199-205."
+    },
+    {
+      "finding": "Legacy0143 uses one float3 loader plus fixedcolor and BufInfo permutation0; enhancedUV uses separate layout and shader. Both apply same world scale1/512 and invert Y.",
+      "evidence": "main.cpp world_vertex_0143/world_vertex_uv and attribute setup; vshader0143 and vshader_uv."
+    },
+    {
+      "finding": "Camera is inherited generic player-following LookAt/PerspTilt, not recovered retail camera. Area4 absence at diagnostic spawn does not prove geometry absent or attributefailure. Negative/special geometry paths and diagnosticspawn/camera must remain unverified.",
+      "evidence": "main.cpp lines1112-1116 uses eye offset5.2, height3 andtargetheight1.1; parent area4/area0 observations."
+    }
+  ],
+  "primary_sources": [
+    "https://github.com/devkitPro/citro3d/blob/v1.7.1/source/attribs.c",
+    "https://github.com/devkitPro/citro3d/blob/v1.7.1/source/buffers.c",
+    "https://github.com/devkitPro/citro3d/blob/v1.7.1/source/renderqueue.c",
+    "https://github.com/devkitPro/citro3d/blob/v1.7.1/source/maths/mtx_persptilt.c"
+  ],
+  "recommended_code_changes": []
+}

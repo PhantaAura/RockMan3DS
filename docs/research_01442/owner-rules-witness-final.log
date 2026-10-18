@@ -1,0 +1,6 @@
+area=1,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=1,child_committed=0,child_status=13
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,child_committed=1,child_status=0,owner_rule_pairs=0,packet_present=0
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,child_committed=0,child_status=13
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,child_committed=1,child_status=0,owner_rule_pairs=0,packet_present=0
+area=2,actual_initialized_work00=3,parts=5,initial_committed=1,status=0,shadow=1,proxy=0,child_committed=0,child_status=13
+loaded=5,body_shadow_proxy_commits=5,child_commits=2,actual_owner_rule_pairs=0,packet_continuations=0,authored_external_player_and_attack_phase=true,live_parity=false

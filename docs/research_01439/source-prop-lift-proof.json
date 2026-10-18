@@ -1,0 +1,34 @@
+{
+  "schema": "mml-source-prop-lift/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "selected_bios_sha256": "713ea2aed58606282b3ff5e91d77f8c5892ea36f5adcd279d2c7dd26604a625d",
+  "cases": 202,
+  "original_instructions": 13279,
+  "selected_bios_calls": 120,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "coverage": {
+    "(1, 0, 0, False)": 4,
+    "(1, 4, 0, False)": 4,
+    "(2, 2, 0, False)": 4,
+    "(1, 2, 0, False)": 4,
+    "(2, 0, 0, False)": 4,
+    "(1, 1, 1, False)": 88,
+    "(1, 1, 2, True)": 16,
+    "(1, 1, 0, False)": 60,
+    "(1, 3, 0, False)": 9,
+    "(2, 1, 0, False)": 9
+  },
+  "fixture_sha256": "cf26e1fb633bff92b26b9863daa4d0ba4d57ee3b7c2498129a8b404e02f76f28",
+  "authored_curve_and_actor_inputs": true,
+  "original_assets_exported": false,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Original callback/allocator/selected BIOS rand execute on authored scalar work/curve inputs.",
+    "Only data pointers/windows are authored; original instructions are unchanged.",
+    "Outer scheduler, BIOS dispatcher, live parent/RNG chronology and renderer are excluded."
+  ]
+}

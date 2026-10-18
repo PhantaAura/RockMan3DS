@@ -1,0 +1,22 @@
+{
+  "schema": "source-scene-actor40-prefix/1",
+  "status": "SOURCE_BACKED_PREFIX",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "owner_initializer_cases": 24,
+  "owner_initializer_instructions": 5976,
+  "authored_script_cases": 28,
+  "authored_script_instructions": 1791,
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "prefix_end": "0x800322A8",
+  "route": "phase5",
+  "private_initializer_fixture_sha256": "c98199121e7a5c66a5e3c83e3d6f523227c243a9585dcaf171d77f85d6ed10e8",
+  "authored_script_fixture_sha256": "5376205902262fd705f42f90071e3c31f4cb5ca012bc67376266d37fdf42495d",
+  "limits": [
+    "Owner initializer fixtures contain retained owner descriptor bytes and stay private.",
+    "Authored script fixture contains no original script words.",
+    "Actual phase5 prefix ends before integer/GTE pose consumer, wrapper/global stores and later callbacks; global script oracle is a separate route."
+  ]
+}

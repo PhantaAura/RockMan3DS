@@ -1,0 +1,23 @@
+{
+  "schema": "mml-source-event-phase3/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "cases": 256,
+  "original_instructions_executed": 8576,
+  "accepted_cases_helper_hooks": [],
+  "fixture_sha256": "b0375a883d37a04aec15329d55c4e61c1715ffe10f2f0916617e251dfb25d247",
+  "predicate_region": {
+    "start": "0x8001D878",
+    "end_exclusive": "0x8001D888",
+    "sha256": "ee42c5d7a0c8a4524764fd3b7e6456025e1aae8be35c4b59a39e084046706571"
+  },
+  "semantics": "Explicit raw80098AB8 bit20 gates phase4 and word+0C=55; bitclear retains work.",
+  "limits": [
+    "Status byte is authored; camera/command/message completion and native writers are not established.",
+    "Phase2 consumer8001B33C and packet producer8001D58C are not skipped.",
+    "No whole scene, native progression, audible playback or hardware parity claim."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false
+}

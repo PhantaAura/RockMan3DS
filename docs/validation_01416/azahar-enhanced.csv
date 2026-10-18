@@ -1,0 +1,150 @@
+# build=0.0.14.16,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66531328,linear_reserved=33554432,stack_reserved=262144
+# terrain_decode=IDX_AND_GRID_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false
+# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.
+frame,area,held,pressed,x,y,z,heading,projectiles,frame_before_log_us,interval_us,update_us,render_us,bottom_ui_us,draw_calls,triangles,owned_linear,owned_texture,malloc_live,malloc_arena_free,linear_free,vram_free,action,phase,animation,animation_pose,vertical_velocity,grounded,contact_status,psx_held,psx_pressed
+# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35792,linear_free=31941632,vram_free=0
+# area_event=package_loaded,area=0,elapsed_us=1320388,package_bytes=685745,decoded_estimate=810560,load_peak_estimate=1898896,malloc_live=748232,linear_free=31941632,vram_free=0
+# visibility_event,area=0,negative_bound=8,default_unbound=0,special_unbound=0,negative_material_unknown=0,diagnostic_visible=292,inspection_storage=24576,entry_source=POSITIVE_IDX,entry_status=CANDIDATE,retail_entry=UNKNOWN,ground_contact_applied=false
+# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# geometry_event,area=1,decode=IDX_AND_GRID_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=597,min_y=-768,max_y=0
+# gameplay_clock,updates=0,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+0,1,0,0,0,-1,-7200,2048,0,107121,0,45,13390,6942,15,1710,71640,4194304,1886680,718376,27412992,5523456,0,0,0,0,0,-1,0,0,0
+# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# area_event=conditional_spawn,area=1,elapsed_us=26456,package_bytes=0,decoded_estimate=0,load_peak_estimate=3,malloc_live=1886680,linear_free=27412992,vram_free=5523456
+# actor_event,area=1,instances=3,unique_resources=1,decoded_element_bytes=4888,source_poses=3,floor_bound=0,initializer_selected_poses=3,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# area_event=conditional_spawn,area=1,elapsed_us=33264,package_bytes=4888,decoded_estimate=3,load_peak_estimate=4,malloc_live=1893640,linear_free=27412992,vram_free=5523456
+3,1,0,0,0,-1,-7200,2048,0,84045,107308,60084,17008,6942,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,18,0,-1,2,0,0
+# actor_target,frame=3,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=3,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=3,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+5,1,0,0,0,-1,-7200,2048,0,9324,84511,34,9261,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,20,0,-1,2,0,0
+# actor_target,frame=5,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=5,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=5,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# gameplay_clock,updates=120,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+120,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16619,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# actor_target,frame=120,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=120,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=120,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+120,1,0,0,0,-1,-7200,2048,0,16248,17175,3,16216,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# gameplay_clock,updates=240,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+240,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16619,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# actor_target,frame=240,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=240,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=240,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+240,1,0,0,0,-1,-7200,2048,0,16248,17175,3,16216,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# gameplay_clock,updates=360,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+360,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# actor_target,frame=360,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=360,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=360,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+360,1,0,0,0,-1,-7200,2048,0,16247,17176,3,16215,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# gameplay_clock,updates=480,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+480,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16619,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# actor_target,frame=480,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=480,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=480,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+480,1,0,0,0,-1,-7200,2048,0,16247,17176,3,16215,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# gameplay_clock,updates=600,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+600,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# actor_target,frame=600,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=600,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=600,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+600,1,0,0,0,-1,-7200,2048,0,16247,17176,3,16215,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# gameplay_clock,updates=720,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+720,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# actor_target,frame=720,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=720,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=720,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+720,1,0,0,0,-1,-7200,2048,0,16247,17176,3,16215,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# gameplay_clock,updates=840,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+840,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16619,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# actor_target,frame=840,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=840,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=840,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+840,1,0,0,0,-1,-7200,2048,0,16246,17176,3,16214,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# gameplay_clock,updates=960,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+960,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# actor_target,frame=960,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=960,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=960,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+960,1,0,0,0,-1,-7200,2048,0,16247,17176,3,16215,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# gameplay_clock,updates=1080,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1080,1,0,0,0,-1,-7200,2048,0,16710,16713,63,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# actor_target,frame=1080,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1080,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1080,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1080,1,0,0,0,-1,-7200,2048,0,16245,17178,3,16213,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# gameplay_clock,updates=1200,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1200,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# actor_target,frame=1200,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1200,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1200,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1200,1,0,0,0,-1,-7200,2048,0,16245,17178,3,16213,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# gameplay_clock,updates=1320,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1320,1,0,0,0,-1,-7200,2048,0,16710,16713,63,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# actor_target,frame=1320,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1320,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1320,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1320,1,0,0,0,-1,-7200,2048,0,16245,17177,3,16213,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,0,0
+# gameplay_clock,updates=1440,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1440,1,0,0,0,-1,-7200,2048,0,16710,16713,63,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# actor_target,frame=1440,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1440,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1440,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1440,1,0,0,0,-1,-7200,2048,0,16245,17178,3,16213,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# gameplay_clock,updates=1560,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1560,1,0,0,0,-1,-7200,2048,0,16710,16713,62,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# actor_target,frame=1560,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1560,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1560,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1560,1,0,0,0,-1,-7200,2048,0,16245,17178,3,16213,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# gameplay_clock,updates=1680,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1680,1,2,2,0,-1,-7200,2048,0,16710,16713,63,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,16384,16384
+# actor_target,frame=1680,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1680,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1680,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1680,1,2,0,0,-1,-7200,2048,0,16240,17183,3,16208,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,16384,16384
+1693,1,0,0,0,-1,-7200,2048,0,16711,16712,3,16679,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,0,0,-1,2,16384,0
+# gameplay_clock,updates=1800,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1800,1,0,0,0,-1,-7200,2048,0,16710,16713,63,16618,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# actor_target,frame=1800,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1800,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1800,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1800,1,0,0,0,-1,-7200,2048,0,16244,17179,3,16212,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+1813,1,1073741824,1073741824,0,-1,-7200,2048,0,16711,16712,3,16679,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,28,0,-1,2,0,0
+1814,1,1073741824,0,0,-1,-7168,2048,0,23432,16915,21,16457,6942,18,2184,71640,4194304,1893640,711416,27412992,5523456,2,2,4,0,0,-1,2,16,16
+1817,1,1073741826,2,0,-1,-7072,2048,0,16713,16713,21,16662,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,2,2,4,3,0,-1,2,16400,16384
+1819,1,1073741826,0,0,-1,-7008,2048,0,16708,16713,21,16658,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,2,4,1,0,0,-1,2,16400,0
+1829,1,0,0,0,-1,-6720,2048,0,16709,16713,20,16659,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,15,0,-1,2,0,0
+# gameplay_clock,updates=1920,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+1920,1,0,0,0,-1,-6720,2048,0,16710,16713,65,16616,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,16,0,-1,2,0,0
+# actor_target,frame=1920,source_index=16,work80=185032,source_heading=1385,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1920,source_index=17,work80=1226356,source_heading=3917,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=1920,source_index=18,work80=1176356,source_heading=3977,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+1920,1,0,0,0,-1,-6720,2048,0,16244,17179,3,16212,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,16,0,-1,2,0,0
+1948,1,4,4,0,-1,-6720,2048,0,16711,16713,2,16678,18,18,2184,71640,4194304,1893640,711416,27412992,5523456,0,1,0,30,0,-1,2,0,0
+# area_event=transition_before,area=1,elapsed_us=0,package_bytes=685745,decoded_estimate=810560,load_peak_estimate=1898896,malloc_live=1893640,linear_free=27412992,vram_free=5523456
+# visibility_event,area=2,negative_bound=14,default_unbound=0,special_unbound=0,negative_material_unknown=0,diagnostic_visible=247,inspection_storage=49152,entry_source=POSITIVE_IDX,entry_status=CANDIDATE,retail_entry=UNKNOWN,ground_contact_applied=false
+# actor_event,area=2,instances=2,unique_resources=1,decoded_element_bytes=1520,source_poses=2,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# geometry_event,area=2,decode=IDX_AND_GRID_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=688,min_y=-1152,max_y=0
+# area_event=transition_after,area=2,elapsed_us=2189220,package_bytes=685745,decoded_estimate=810560,load_peak_estimate=1898896,malloc_live=1890880,linear_free=27664128,vram_free=5523456
+1948,2,0,0,-256,-384,11008,2688,0,2210676,16713,3,14441,6828,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,30,0,-1,0,0,0
+2002,2,1073741824,1073741824,-229,-384,11026,2688,0,16713,16713,21,16662,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,2,2,4,0,0,-1,2,16,16
+2007,2,1073741824,0,-96,-384,11114,2688,0,16710,16713,21,16659,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,2,4,1,0,0,-1,2,16,0
+2011,2,0,0,-17,-384,11168,2688,0,16710,16713,26,16655,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,15,0,-1,2,0,0
+# gameplay_clock,updates=2040,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+2040,2,0,0,-17,-384,11168,2688,0,16711,16713,70,16611,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,30,0,-1,2,0,0
+2040,2,0,0,-17,-384,11168,2688,0,16520,16904,3,16488,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,30,0,-1,2,0,0
+# gameplay_clock,updates=2160,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+2160,2,0,0,-17,-384,11168,2688,0,16710,16713,71,16611,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,1,0,-1,2,0,0
+2160,2,0,0,-17,-384,11168,2688,0,16520,16903,3,16488,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,1,0,-1,2,0,0
+# gameplay_clock,updates=2280,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+2280,2,0,0,-17,-384,11168,2688,0,16711,16713,71,16611,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,14,0,-1,2,0,0
+2280,2,0,0,-17,-384,11168,2688,0,16520,16904,3,16488,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,14,0,-1,2,0,0
+# gameplay_clock,updates=2400,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+2400,2,0,0,-17,-384,11168,2688,0,16711,16713,70,16611,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,30,0,-1,2,0,0
+2400,2,0,0,-17,-384,11168,2688,0,16520,16904,3,16488,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,30,0,-1,2,0,0
+# gameplay_clock,updates=2520,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+2520,2,0,0,-17,-384,11168,2688,0,16710,16713,71,16610,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,1,0,-1,2,0,0
+2520,2,0,0,-17,-384,11168,2688,0,16520,16903,3,16488,18,17,2084,82560,3932160,1890880,325056,27664128,5523456,0,1,0,1,0,-1,2,0,0

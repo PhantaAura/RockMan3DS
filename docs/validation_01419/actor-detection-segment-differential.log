@@ -1,0 +1,3 @@
+original segment authored cases=2537 supported=2017 held=520 nonzero_results=483
+materialized original segment cases=21 supported=14 held=7
+PASS: source detectorsegment guards/L3DB and640 allocation-free queries; no whole encounter parity

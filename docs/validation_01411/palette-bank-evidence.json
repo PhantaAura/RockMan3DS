@@ -1,0 +1,84 @@
+{
+  "schema": "palette-bank-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "failure": "Valid low-X type 1/type 9 headers retained eight stored palette rows at source Y505 through Y511. Treating storage height as a direct VRAM upload height exceeded 512.",
+  "source_refs": [
+    "0x80010284 type dispatch table: type 1 routes 0x8001bd98; type 4 and type 9 route0x8001bf44",
+    "0x8001be18 type 1 X<320 CPU bank path; otherwise direct rectangle",
+    "0x8001bf4c type 4/type 9 X<256 CPU bank path; otherwise direct rectangle",
+    "0x8001be24..0x8001be6c and0x8001bf58..0x8001bfa0 contiguous palette_entries*palette_rows*2 byte copy",
+    "0x8001be70..0x8001bea0 and0x8001bfa4..0x8001bfd4 mark only the starting bank row dirty",
+    "0x8001786c..0x800178fc stage 256 words per dirty bank row",
+    "0x800178fc..0x80017944 upload two fixed 16-row bank rectangles; frame upload call 0x80011eb0"
+  ],
+  "storage_layout": {
+    "cpu_base": "0x800ad168",
+    "staging_base": "0x800b1168",
+    "rows": 32,
+    "words_per_row": 256,
+    "row_selector": "source_y - (source_y & 0x100) + ((source_y & 0x100) >> 4) - 240",
+    "copy_offset_words": "row_selector * 256 + source_x",
+    "upload_rectangles": [
+      {
+        "source_ref": "0x80097a28",
+        "x": 0,
+        "y": 240,
+        "width_words": 256,
+        "height": 16
+      },
+      {
+        "source_ref": "0x80097a30",
+        "x": 0,
+        "y": 496,
+        "width_words": 256,
+        "height": 16
+      }
+    ]
+  },
+  "supported_scope": "Offline initial ordered upload batch, followed by dirty CPU-bank staging. All source palette storage bytes are retained; unwritten bank words remain unknown.",
+  "unknown": [
+    "Dynamic frame timing of dirty staging",
+    "Palette animation/fades and later gameplay uploads",
+    "Original-run pixel parity"
+  ],
+  "regressions": [
+    "Eight stored 16-color rows remain horizontal slots of one physical bank row",
+    "Bank 15 to 16 contiguous CPU span maps physical Y255 to Y496 without wrapping",
+    "Crossing tail remains GPU-unknown unless its bank row is dirtied",
+    "Later dirty-row staging retains earlier CPU tail and follows direct writes in the initial batch",
+    "Out-of-bank CPU span and direct out-of-VRAM rectangles remain rejected"
+  ],
+  "blocks": [
+    {
+      "start": "0x8001bd98",
+      "end_exclusive": "0x8001bee0",
+      "meaning": "type 1 palette routing and CPU copy",
+      "sha256": "8fe16b324be5fa118c8899808fefbc6988cc3f64e687dbb6f033da2309a0c2dc"
+    },
+    {
+      "start": "0x8001bf44",
+      "end_exclusive": "0x8001c060",
+      "meaning": "type 4/type 9 palette routing and CPU copy",
+      "sha256": "32ddb99caa02cd035c89b16e5343a52ec176ca773a313b254fbd55282f097b24"
+    },
+    {
+      "start": "0x8001786c",
+      "end_exclusive": "0x800178fc",
+      "meaning": "dirty row staging",
+      "sha256": "43f26ff06daa9846a0ea6939312612816cebf9bb87684fa7a8dc279b619c34a4"
+    },
+    {
+      "start": "0x800178fc",
+      "end_exclusive": "0x80017944",
+      "meaning": "two fixed bank upload rectangles",
+      "sha256": "16ea5b84f19d8fb18bbe9eb6dac17d0597ef89cbb18ecf3c8114e482af401710"
+    },
+    {
+      "start": "0x80011e80",
+      "end_exclusive": "0x80011eb8",
+      "meaning": "frame services before palette upload",
+      "sha256": "c8bb57134fea0897fbef8c00cbcf2c95471446038891a704b80cb68a01c870e2"
+    }
+  ]
+}

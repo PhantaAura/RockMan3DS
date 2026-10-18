@@ -1,0 +1,24 @@
+{
+  "schema": "mml-decompiler-export-audit-01448/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "artifact_sha256": "adab7ad8e5832491af2fb76c577b5e786c48c9c1acfca3b916d23ac3953de488",
+  "bytes": 1365168,
+  "lines": 54376,
+  "address_named_function_definitions": 607,
+  "useful_definitions": [
+    "0x80034EB8",
+    "0x80035508",
+    "0x80035724",
+    "0x800358F0",
+    "0x8003606C",
+    "0x80038648"
+  ],
+  "missing_or_incomplete": [
+    "dynamically loaded 0x8010 tutorial overlay definitions",
+    "0x80015840 discovered function definition",
+    "authoritative types and argument counts",
+    "live retail chronology"
+  ],
+  "packaged": false,
+  "policy": "Hash, addresses and derived behavior only; no decompiler export or retail payload in deliverables."
+}

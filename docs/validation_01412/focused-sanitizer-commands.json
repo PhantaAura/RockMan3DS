@@ -1,0 +1,11 @@
+{
+  "frontend_view_sanitizer": [
+    "clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer -g -Iinclude src/render/frontend_view.cpp tests/test_frontend_view.cpp -o ../pass-20261003-visual/test_frontend_view_sanitized",
+    "../pass-20261003-visual/test_frontend_view_sanitized"
+  ],
+  "mockup_ui_sanitizer": [
+    "clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer -g -Iinclude -Iinclude/legends3ds/p2 src/ui/mockup_ui.cpp platform/3ds/source/mockup_hud.cpp tests/test_mockup_ui.cpp ../pass-20261003-visual/host-current/liblegends3ds_core.a -o ../pass-20261003-visual/test_mockup_ui_sanitized",
+    "../pass-20261003-visual/test_mockup_ui_sanitized"
+  ],
+  "results": "Each compile and run returned0; modified source/test units instrumented, inherited core library not fully instrumented"
+}

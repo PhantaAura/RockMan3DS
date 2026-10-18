@@ -1,0 +1,92 @@
+[
+  {
+    "scene": "technical-test launch screen",
+    "device": "Azahar2126.0 emulator,New3DSdisabled",
+    "build": "0.0.14.11",
+    "original_capture_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/azahar-01411-title-r2/captures/_03.10.26_09.59.24.188.png",
+    "gallery_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01411_Azahar_20261003_001/01_title.png",
+    "capture_sha256": "7b927bcb64cf3de5f22b872b9034c10448a029a93a30090040d1c0de380794df",
+    "binary_sha256": "36502c9ce5af6d2be319aed709cd7069a12ad51273196724eec99a6ad10ed02a",
+    "settings": {
+      "azahar": "2126.0",
+      "new_3ds": false,
+      "cpu_percent": 100,
+      "resolution": 1
+    }
+  },
+  {
+    "scene": "baseline area0; player visible, visual fidelity unaccepted",
+    "device": "Azahar2126.0 emulator,New3DSdisabled",
+    "build": "0.0.14.11",
+    "original_capture_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/azahar-01411-area0/captures/_03.10.26_10.07.16.086.png",
+    "gallery_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01411_Azahar_20261003_001/02_area0.png",
+    "capture_sha256": "d7626a32ae8ec070a0425ee43d71bbd3c41c25ed275b928208e2374e9a17c22a",
+    "binary_sha256": "36502c9ce5af6d2be319aed709cd7069a12ad51273196724eec99a6ad10ed02a",
+    "settings": {
+      "azahar": "2126.0",
+      "new_3ds": false,
+      "cpu_percent": 100,
+      "resolution": 1
+    }
+  },
+  {
+    "scene": "baseline area4; scenery visible, diagnostic camera obstructed",
+    "device": "Azahar2126.0 emulator,New3DSdisabled",
+    "build": "0.0.14.11",
+    "original_capture_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/azahar-01411-areas/captures/_03.10.26_10.02.02.715.png",
+    "gallery_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01411_Azahar_20261003_001/03_area4_obstructed.png",
+    "capture_sha256": "85187ee3212baf681463f7404d13cba52526ebaf512962f372d72c7a1be3cefd",
+    "binary_sha256": "36502c9ce5af6d2be319aed709cd7069a12ad51273196724eec99a6ad10ed02a",
+    "settings": {
+      "azahar": "2126.0",
+      "new_3ds": false,
+      "cpu_percent": 100,
+      "resolution": 1
+    }
+  },
+  {
+    "scene": "post movement/turn/fire replay, baselinearea1; presentationdefects remain",
+    "device": "Azahar2126.0 emulator,New3DSdisabled",
+    "build": "0.0.14.11",
+    "original_capture_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/azahar-01411-controls/captures/_03.10.26_10.15.23.798.png",
+    "gallery_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01411_Azahar_20261003_001/04_post_controls.png",
+    "capture_sha256": "17453975d67effa05015d959913a585ac1cc25a7b7c9fbc62007440494c71cd5",
+    "binary_sha256": "36502c9ce5af6d2be319aed709cd7069a12ad51273196724eec99a6ad10ed02a",
+    "settings": {
+      "azahar": "2126.0",
+      "new_3ds": false,
+      "cpu_percent": 100,
+      "resolution": 1
+    }
+  },
+  {
+    "scene": "preserved safe0143 fallback; legacy sparse geometry",
+    "device": "Azahar2126.0 emulator,New3DSdisabled",
+    "build": "0.0.14.11",
+    "original_capture_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/azahar-01411-safe0143/captures/_03.10.26_10.17.41.637.png",
+    "gallery_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01411_Azahar_20261003_001/05_safe0143.png",
+    "capture_sha256": "0d954144258e7d98954b9e17faa8920d17972ba16981565408d356ac23f006e7",
+    "binary_sha256": "36502c9ce5af6d2be319aed709cd7069a12ad51273196724eec99a6ad10ed02a",
+    "settings": {
+      "azahar": "2126.0",
+      "new_3ds": false,
+      "cpu_percent": 100,
+      "resolution": 1
+    }
+  },
+  {
+    "scene": "EARLY_AREA_B populatedarea1 afteremptyarea0; untexturedlimitedview, gameplaybindingsUNKNOWN",
+    "device": "Azahar2126.0 emulator,New3DSdisabled",
+    "build": "0.0.14.11",
+    "original_capture_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/azahar-01411-broader/captures/_03.10.26_10.23.16.077.png",
+    "gallery_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01411_Azahar_20261003_001/06_early_area_b.png",
+    "capture_sha256": "897bbe722df3380690a8d32e86241c06cde09209f16150b6bbbfb2848bffe32d",
+    "binary_sha256": "36502c9ce5af6d2be319aed709cd7069a12ad51273196724eec99a6ad10ed02a",
+    "settings": {
+      "azahar": "2126.0",
+      "new_3ds": false,
+      "cpu_percent": 100,
+      "resolution": 1
+    }
+  }
+]

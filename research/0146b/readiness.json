@@ -1,0 +1,134 @@
+{
+  "BOOT": {
+    "status": "HARDWARE_PENDING",
+    "evidence": "Real native binary built; no device test this task."
+  },
+  "RENDERER": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Frozen fallback shader verified; independent gates and timings compiled."
+  },
+  "TERRAIN GEOMETRY": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "37 inherited geometry cooks; 31 byte identities."
+  },
+  "TERRAIN TEXTURES": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "14328/15512 tutorial primitives resolved; 1184 dynamic cases unresolved."
+  },
+  "MEGA MAN MODEL": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Five retail components cooked; host pose probe passes."
+  },
+  "MEGA MAN MATERIALS": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Two material words resolved in five tutorial states; GPU appearance pending."
+  },
+  "ANIMATION": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "55 structural mappings; request/frame evidence and presentation isolation tests."
+  },
+  "MOVEMENT": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Inherited ordinary-motion helpers retained; nine integration replays repeat."
+  },
+  "PHYSICS": {
+    "status": "UNKNOWN",
+    "evidence": "No PS1 golden trajectories; full state dispatch/solver not reconstructed."
+  },
+  "COLLISION": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Inherited cell-indexed contact data and response helpers; full solver pending."
+  },
+  "CAMERA": {
+    "status": "CANDIDATE",
+    "evidence": "Inherited session and frontend camera approximations remain; retail camera ownership incomplete."
+  },
+  "LOCK-ON": {
+    "status": "CANDIDATE",
+    "evidence": "Inherited integration selection is not verified retail acquisition."
+  },
+  "BUSTER": {
+    "status": "CANDIDATE",
+    "evidence": "Inherited tunable projectile defaults, no newly proved cadence."
+  },
+  "COMBAT": {
+    "status": "CANDIDATE",
+    "evidence": "Existing bridge retained; retail damage and reactions unverified."
+  },
+  "ENEMIES": {
+    "status": "CANDIDATE",
+    "evidence": "Object lists discovered; dispatch semantics not reconstructed."
+  },
+  "OBJECTS": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "34 candidate pointer tables, 207 lists, 649 records; roles unknown."
+  },
+  "EBD / EVENTS": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "136 directories cooked; raw opcode semantics not inferred."
+  },
+  "DIALOGUE": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "129 message banks parsed; waits retained; event coordination incomplete."
+  },
+  "TRANSITIONS": {
+    "status": "CANDIDATE",
+    "evidence": "Location API exists; automatic retail transition bindings unknown."
+  },
+  "CUTSCENES": {
+    "status": "CANDIDATE",
+    "evidence": "Inherited isolated cue framework; original scene execution not complete."
+  },
+  "EXPRESSIONS": {
+    "status": "UNKNOWN",
+    "evidence": "Retail expression-state mapping not established."
+  },
+  "AUDIO": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "38 XA and one STR catalogued; runtime routing/playback incomplete."
+  },
+  "SAVE": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Executable anchor xrefs and safe native host persistence; original validated save absent."
+  },
+  "CONTENT GRAPH": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "4115 nodes/3916 edges; measured containment and identities, unknown relationships explicit."
+  },
+  "GENERALIZED IMPORTER": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "205 envelopes accepted by native readers; unknown components omitted."
+  },
+  "EARLY-GAME IMPORT": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Five tutorial state structures tested; broad structural sweep does not establish early-game reachability."
+  },
+  "BOTTOM SCREEN": {
+    "status": "CANDIDATE",
+    "evidence": "Inherited developer frontend and map retained; retail UI unfinished."
+  },
+  "QoL": {
+    "status": "CANDIDATE",
+    "evidence": "Classic defaults retained; no new mandatory gameplay behavior."
+  },
+  "LOADING": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Incremental cook keys/provenance and checked parsers; general frontend area loading pending."
+  },
+  "MEMORY": {
+    "status": "HARDWARE_PENDING",
+    "evidence": "Host sanitizers pass; device peaks and allocation coverage unmeasured."
+  },
+  "FRAME PACING": {
+    "status": "HARDWARE_PENDING",
+    "evidence": "CPU timing instrumentation compiled; no device measurements."
+  },
+  "OLD-3DS BUILD": {
+    "status": "MATCHES_MEASURED_FIELDS",
+    "evidence": "devkitARM/libctru/Citro3D compile/link and 3DSX output succeeded."
+  },
+  "OLD-3DS HARDWARE": {
+    "status": "HARDWARE_PENDING",
+    "evidence": "No physical Old 3DS tested."
+  }
+}

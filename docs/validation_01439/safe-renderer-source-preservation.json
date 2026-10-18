@@ -1,0 +1,7 @@
+{
+  "status": "MATCHES_MEASURED_FIELDS",
+  "function": "draw_player_0143",
+  "sha256": "2579431536d66084888e5322db5ae1fb5819ecfe0ee7d8baea7d6baa44ef78c0",
+  "baseline": "0.0.14.38-r2",
+  "scope": "Exact unchanged fallback source span; not a new visual/hardware acceptance"
+}

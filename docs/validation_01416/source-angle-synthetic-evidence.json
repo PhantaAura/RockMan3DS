@@ -1,0 +1,26 @@
+{
+  "schema": "source-angle-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "hooks": [],
+  "regions": [
+    {
+      "start": "0x80031198",
+      "end_exclusive": "0x80031268",
+      "sha256": "7ab81f18c03d89d55af799b89f29046cb2a21b7c22341f46189178f28b6673f3"
+    },
+    {
+      "start": "0x8007a414",
+      "end_exclusive": "0x8007a4e8",
+      "sha256": "d635ddb238b896ee6f5127b32f610d257da159743a5556204b4d73764c926f73"
+    }
+  ],
+  "synthetic_cases": 1848,
+  "synthetic_fixture_sha256": "fb2561e339108f37537a02b9d9c38afd2f92ad9ee68a3b59bd245eca9b2ab99f",
+  "synthetic_overrides": "Only12 angle-step words in the isolated Python memory dictionary; four explicitly authored tables.",
+  "limits": [
+    "Four authored synthetic tables only; no original table payload is distributed.",
+    "Original-owner-table regression is retained outside the source tree.",
+    "Source helper-only comparisons; native AI and full retail parity are not established."
+  ]
+}

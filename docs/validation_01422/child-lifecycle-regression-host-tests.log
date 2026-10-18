@@ -1,0 +1,4 @@
+original child callbacks=2160 releases=816 effects=408 contacts=1008
+original child motion cases=192
+original child primitive packing cases=9
+PASS source child lifecycle and strong consumer holds

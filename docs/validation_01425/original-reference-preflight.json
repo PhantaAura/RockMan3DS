@@ -1,0 +1,17 @@
+{
+  "schema": "mml-original-reference-preflight/1",
+  "prepared_manifest_sha256": "b1af1c115c6bc69ad50cd82f4027df1f75a78d1907f0bcbcbfcbf6228baeda8d",
+  "launcher_sha256": "d6a3fc8a331ccc2661c96145336cef2b0467a955ed8f2f41fa779da8a175703f",
+  "launcher_syntax_parsed": true,
+  "rng_exact_caller_capacity": 128,
+  "rng_module_sha256": "a85c6e12264db487dac37bfe361ac6310498f5225ef72f526025bd69a950eb4e",
+  "bootstrap_sha256": "a61d5bafe6e7f3766322c2005a820a8ffb1b18be1385e14fbe2b13398987a9f1",
+  "launch_state": "NOT_LAUNCHED",
+  "capture_status": "UNKNOWN",
+  "hardware_tested": false,
+  "retail_parity": false,
+  "memory_cards_inserted": false,
+  "http_enabled": false,
+  "gdb_enabled": false,
+  "pcdrv_enabled": false
+}

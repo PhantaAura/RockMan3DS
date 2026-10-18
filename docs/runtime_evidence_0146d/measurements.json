@@ -1,0 +1,131 @@
+{
+  "build": "0.0.14.6d",
+  "binary_sha256": "6349eafdea17edf35476aba4bd29d1a5c2a2ba185638605cec8cb2b0e4ed771b",
+  "evidence": "synthetic Azahar HID replay, not manual/hardware",
+  "model": "Old",
+  "memory_layout": 2,
+  "app_region_bytes": 100663296,
+  "csv_header": "# build=0.0.14.6d,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66707456,linear_reserved=33554432,stack_reserved=262144",
+  "samples": 49,
+  "areas": [
+    0,
+    1
+  ],
+  "forward_start": {
+    "frame": 1,
+    "x": -512,
+    "y": 0,
+    "z": -2560,
+    "heading": 0
+  },
+  "position_changes": true,
+  "heading_changes": true,
+  "max_projectiles": 1,
+  "select_transition": true,
+  "button_samples": [
+    {
+      "frame": 688,
+      "area": 0,
+      "held": 512,
+      "pressed": 512,
+      "x": -512,
+      "z": -3460,
+      "heading": 4080,
+      "projectiles": 0
+    },
+    {
+      "frame": 987,
+      "area": 0,
+      "held": 256,
+      "pressed": 256,
+      "x": -869,
+      "z": -3941,
+      "heading": 432,
+      "projectiles": 0
+    },
+    {
+      "frame": 1166,
+      "area": 0,
+      "held": 2048,
+      "pressed": 2048,
+      "x": -869,
+      "z": -3941,
+      "heading": 3840,
+      "projectiles": 1
+    },
+    {
+      "frame": 1226,
+      "area": 0,
+      "held": 2048,
+      "pressed": 2048,
+      "x": -869,
+      "z": -3941,
+      "heading": 3840,
+      "projectiles": 1
+    },
+    {
+      "frame": 1286,
+      "area": 0,
+      "held": 2048,
+      "pressed": 2048,
+      "x": -869,
+      "z": -3941,
+      "heading": 3840,
+      "projectiles": 1
+    },
+    {
+      "frame": 1345,
+      "area": 0,
+      "held": 2048,
+      "pressed": 2048,
+      "x": -869,
+      "z": -3941,
+      "heading": 3840,
+      "projectiles": 1
+    },
+    {
+      "frame": 1525,
+      "area": 1,
+      "held": 4,
+      "pressed": 4,
+      "x": 0,
+      "z": -12288,
+      "heading": 0,
+      "projectiles": 0
+    }
+  ],
+  "per_area": {
+    "0": {
+      "draw_range": [
+        11,
+        11
+      ],
+      "triangle_range": [
+        4020,
+        4021
+      ],
+      "max_malloc_live": 934968,
+      "max_owned_linear": 210240,
+      "max_owned_texture": 1835008,
+      "max_frame_before_log_us": 75778,
+      "median_frame_before_log_us": 16711
+    },
+    "1": {
+      "draw_range": [
+        13,
+        13
+      ],
+      "triangle_range": [
+        2224,
+        2224
+      ],
+      "max_malloc_live": 1202360,
+      "max_owned_linear": 102480,
+      "max_owned_texture": 2883584,
+      "max_frame_before_log_us": 748161,
+      "median_frame_before_log_us": 20703
+    }
+  },
+  "fidelity": "FAIL: terrain and player texture placement remain defective",
+  "timing_limit": "Sparse emulator CPU/sync timings; no physical performance claim; sampled loading pause included."
+}

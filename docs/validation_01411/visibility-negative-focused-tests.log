@@ -1,0 +1,103 @@
+Start testing: Oct 03 09:33 EDT
+----------------------------------------------------------
+11/20 Testing: pipeline_python
+11/20 Test: pipeline_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tests/test_pipeline.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/host-current
+"pipeline_python" start time: Oct 03 09:33 EDT
+Output:
+----------------------------------------------------------
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 0.018s
+
+OK
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"pipeline_python" end time: Oct 03 09:33 EDT
+"pipeline_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/20 Testing: cooked_area_python
+12/20 Test: cooked_area_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tests/test_cooked_area.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/host-current
+"cooked_area_python" start time: Oct 03 09:33 EDT
+Output:
+----------------------------------------------------------
+.................
+----------------------------------------------------------------------
+Ran 17 tests in 0.024s
+
+OK
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"cooked_area_python" end time: Oct 03 09:33 EDT
+"cooked_area_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/20 Testing: owner_data_intake_python
+13/20 Test: owner_data_intake_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tests/test_owner_data_intake.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/host-current
+"owner_data_intake_python" start time: Oct 03 09:33 EDT
+Output:
+----------------------------------------------------------
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 0.085s
+
+OK
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"owner_data_intake_python" end time: Oct 03 09:33 EDT
+"owner_data_intake_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/20 Testing: local_install_python
+14/20 Test: local_install_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tests/test_local_install.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/host-current
+"local_install_python" start time: Oct 03 09:33 EDT
+Output:
+----------------------------------------------------------
+.............................
+----------------------------------------------------------------------
+Ran 29 tests in 0.911s
+
+OK
+<end of output>
+Test time =   1.03 sec
+----------------------------------------------------------
+Test Passed.
+"local_install_python" end time: Oct 03 09:33 EDT
+"local_install_python" time elapsed: 00:00:01
+----------------------------------------------------------
+
+15/20 Testing: source_tools_python
+15/20 Test: source_tools_python
+Command: "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9" "-B" "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.11_Visibility/tests/test_source_tools.py"
+Directory: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/host-current
+"source_tools_python" start time: Oct 03 09:33 EDT
+Output:
+----------------------------------------------------------
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.053s
+
+OK
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"source_tools_python" end time: Oct 03 09:33 EDT
+"source_tools_python" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 03 09:33 EDT

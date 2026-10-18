@@ -1,0 +1,208 @@
+# build=0.0.14.18,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66502656,linear_reserved=33554432,stack_reserved=262144
+# terrain_decode=IDX_AND_GRID_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false
+# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.
+frame,area,held,pressed,x,y,z,heading,projectiles,frame_before_log_us,interval_us,update_us,render_us,bottom_ui_us,draw_calls,triangles,owned_linear,owned_texture,malloc_live,malloc_arena_free,linear_free,vram_free,action,phase,animation,animation_pose,vertical_velocity,grounded,contact_status,psx_held,psx_pressed
+# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35792,linear_free=31941632,vram_free=0
+# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810596,load_peak_estimate=1898932,malloc_live=748240,linear_free=31941632,vram_free=0
+# visibility_event,area=0,negative_bound=8,default_unbound=0,special_unbound=0,negative_material_unknown=0,diagnostic_visible=292,inspection_storage=24576,entry_source=POSITIVE_IDX,entry_status=CANDIDATE,retail_entry=UNKNOWN,ground_contact_applied=false
+# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# geometry_event,area=1,decode=IDX_AND_GRID_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=597,min_y=-768,max_y=0
+# gameplay_clock,updates=0,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+0,1,0,0,0,-1,-7200,2048,0,90408,0,46,13390,6942,15,1710,71640,4194304,1886712,734728,27412992,5523456,0,0,0,0,0,-1,0,0,0
+# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# area_event=conditional_spawn,area=1,elapsed_us=26441,package_bytes=0,decoded_estimate=0,load_peak_estimate=3,malloc_live=1886712,linear_free=27412992,vram_free=5523456
+# actor_event,area=1,instances=3,unique_resources=1,decoded_element_bytes=44618,source_poses=3,floor_bound=3,initializer_selected_poses=3,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# actor_action2_query,source_index=16,status=1,wall_status=1,wall_result=0,floor_status=1,floor_word=-1,input_ready=1,after_x=364,after_y=-1,after_z=-6946,active_actor_modified=false,admission=AUTHORED_ACTION2,retail_parity=false
+# actor_action2_query,source_index=17,status=1,wall_status=1,wall_result=0,floor_status=1,floor_word=-1,input_ready=1,after_x=-302,after_y=-1,after_z=-5656,active_actor_modified=false,admission=AUTHORED_ACTION2,retail_parity=false
+# actor_action2_query,source_index=18,status=1,wall_status=1,wall_result=0,floor_status=1,floor_word=-1,input_ready=1,after_x=-198,after_y=-1,after_z=-5656,active_actor_modified=false,admission=AUTHORED_ACTION2,retail_parity=false
+# area_event=conditional_spawn,area=1,elapsed_us=33759,package_bytes=44618,decoded_estimate=3,load_peak_estimate=4,malloc_live=1935376,linear_free=27412992,vram_free=5523456
+2,1,0,0,0,-1,-7200,2048,0,84047,90595,60585,16509,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,17,0,1,1,0,0
+# actor_target,frame=2,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=2,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=2,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_state1,frame=2,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=2,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=2,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+5,1,0,0,0,-1,-7200,2048,0,25621,84929,119,25472,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,20,0,1,1,0,0
+# actor_target,frame=5,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=5,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=5,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_state1,frame=5,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=5,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=5,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=6,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=6,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=6,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=7,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=7,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=7,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=8,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=8,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=8,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=9,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=9,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=9,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=10,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=10,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=10,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=11,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=11,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=11,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=12,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=12,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=12,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=13,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=13,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=13,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=14,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=14,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=14,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=15,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=15,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=15,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=16,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=16,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=16,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=17,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=17,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=17,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=18,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=18,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=18,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=19,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=19,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=19,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=20,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=20,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=20,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=21,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=21,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=21,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=22,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=22,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=22,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=23,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=23,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=23,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=24,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=24,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=24,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=25,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=25,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=25,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=26,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=26,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=26,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=27,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=27,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=27,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=28,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=28,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=28,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=29,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=29,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=29,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=30,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=30,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=30,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=31,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=31,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=31,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=32,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=32,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=32,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=33,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=33,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=33,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=34,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=34,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=34,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=35,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=35,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=35,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=36,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=36,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=36,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=37,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=37,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=37,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=38,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=38,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=38,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=39,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=39,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=39,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=40,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=40,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=40,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# gameplay_clock,updates=120,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+120,1,0,0,0,-1,-7200,2048,0,16711,16713,85,16596,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,30,0,1,1,0,0
+# actor_target,frame=120,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=120,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=120,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_state1,frame=120,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=120,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=120,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+120,1,0,0,0,-1,-7200,2048,0,15891,17533,3,15859,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,30,0,1,1,0,0
+172,1,2,2,0,-1,-7200,2048,0,16710,16714,3,16678,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,7,0,1,1,0,0
+173,1,2,0,0,-1,-7200,2048,0,16529,16895,42,16458,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,7,0,0,8,0,1,1,16384,16384
+174,1,2,0,0,-1,-7200,2048,0,23443,16719,43,16453,6936,18,2184,71640,4194304,1935376,686064,27412992,5523456,7,1,16,0,0,1,1,16384,0
+177,1,2,0,0,-29,-7200,2048,0,23633,16713,44,16636,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,7,2,17,0,-448,0,1,16384,0
+186,1,0,0,0,-173,-7200,2048,0,16711,16715,3,16678,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,7,2,17,9,-16,0,1,16384,0
+187,1,0,0,0,-174,-7200,2048,0,16523,16900,44,16450,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,7,3,17,10,-16,0,1,0,0
+188,1,0,0,0,-175,-7200,2048,0,16711,16527,44,16638,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,7,5,18,0,0,0,1,0,0
+201,1,0,0,0,-1,-7200,2048,0,16710,16713,47,16634,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,6,19,0,576,1,1,0,0
+204,1,0,0,0,-1,-7200,2048,0,23630,16713,46,16637,6936,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,7,42,0,576,1,1,0,0
+209,1,0,0,0,-1,-7200,2048,0,23632,16713,42,16636,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,0,0,15,576,1,1,0,0
+210,1,0,0,0,-1,-7200,2048,0,9787,16527,42,9716,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,16,576,1,1,0,0
+# gameplay_clock,updates=240,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+240,1,0,0,0,-1,-7200,2048,0,16710,16713,86,16596,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,29,576,1,1,0,0
+# actor_target,frame=240,source_index=16,work80=198472,source_heading=627,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=240,source_index=17,work80=2480116,source_heading=3973,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=240,source_index=18,work80=2430116,source_heading=4013,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_state1,frame=240,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=240,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=240,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+240,1,0,0,0,-1,-7200,2048,0,15889,17535,3,15857,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,29,576,1,1,0,0
+291,1,1073741824,1073741824,0,-1,-7200,2048,0,16711,16714,3,16678,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,7,576,1,1,0,0
+292,1,1073741824,0,0,-1,-7168,2048,0,23437,16912,43,16441,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,2,2,4,0,576,1,1,16,16
+295,1,1073741826,2,0,-1,-7072,2048,0,16710,16713,42,16639,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,0,4,3,576,1,1,16400,16384
+296,1,1073741826,0,0,-29,-7037,2048,0,16708,16516,43,16636,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,2,20,0,-448,0,1,16400,0
+306,1,1073741826,0,0,-174,-6641,2048,0,23634,16713,45,16636,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,5,21,0,32,0,1,16400,0
+307,1,0,0,0,-172,-6601,2048,0,16513,23834,45,9515,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,5,21,1,80,0,1,0,0
+318,1,0,0,0,-1,-6161,2048,0,16711,16713,52,16630,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,6,22,0,608,1,1,0,0
+321,1,0,0,0,-1,-6161,2048,0,23629,16713,52,16630,6936,18,2184,71640,4194304,1935376,686064,27412992,5523456,8,7,42,0,608,1,1,0,0
+326,1,0,0,0,-1,-6161,2048,0,23632,16713,48,16630,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,0,0,15,608,1,1,0,0
+327,1,0,0,0,-1,-6161,2048,0,16524,23820,48,9524,6942,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,16,608,1,1,0,0
+# gameplay_clock,updates=360,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+360,1,0,0,0,-1,-6161,2048,0,16711,16713,92,16590,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,26,608,1,1,0,0
+# actor_target,frame=360,source_index=16,work80=751752,source_heading=1765,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=360,source_index=17,work80=346036,source_heading=3749,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=360,source_index=18,work80=296036,source_heading=3853,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_state1,frame=360,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=360,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=360,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+360,1,0,0,0,-1,-6161,2048,0,15889,17534,3,15857,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,26,608,1,1,0,0
+427,1,256,256,0,-1,-6161,2052,0,16712,16713,49,16634,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,4,1,13,0,608,1,1,2048,2048
+442,1,0,0,0,-1,-6161,2528,0,16709,16713,48,16632,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,15,608,1,1,0,0
+# gameplay_clock,updates=480,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+480,1,0,0,0,-1,-6161,2528,0,16710,16713,92,16589,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,22,608,1,1,0,0
+# actor_target,frame=480,source_index=16,work80=751752,source_heading=1765,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=480,source_index=17,work80=346036,source_heading=3749,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_target,frame=480,source_index=18,work80=296036,source_heading=3853,angle_table=CRC_VALID,evidence=SOURCE_BACKED_PARTIAL,ai_bound=false,lock_bound=false
+# actor_state1,frame=480,source_index=16,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=480,source_index=17,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+# actor_state1,frame=480,source_index=18,initialized=1,status=4,action=0,phase=0,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=0,hp_known=0,bank_requests=7,full_callback=false,retail_parity=false
+480,1,0,0,0,-1,-6161,2528,0,15889,17534,3,15857,18,18,2184,71640,4194304,1935376,686064,27412992,5523456,0,1,0,22,608,1,1,0,0
+502,1,2048,2048,0,-1,-6161,2528,1,16717,16713,51,16637,18,18,2185,71640,4194304,1935424,686016,27412992,5523456,0,1,0,0,608,1,1,0,0
+506,1,0,0,0,-1,-6161,2528,1,16710,16713,3,16678,18,18,2185,71640,4194304,1935424,686016,27412992,5523456,0,1,0,0,608,1,1,0,0
+536,1,4,4,0,-1,-6161,2528,1,16711,16713,2,16678,18,18,2185,71640,4194304,1935424,686016,27412992,5523456,0,1,0,19,608,1,1,0,0
+# area_event=transition_before,area=1,elapsed_us=0,package_bytes=701943,decoded_estimate=810596,load_peak_estimate=1898932,malloc_live=1935424,linear_free=27412992,vram_free=5523456
+# visibility_event,area=2,negative_bound=14,default_unbound=0,special_unbound=0,negative_material_unknown=0,diagnostic_visible=247,inspection_storage=49152,entry_source=POSITIVE_IDX,entry_status=CANDIDATE,retail_entry=UNKNOWN,ground_contact_applied=false
+# actor_event,area=2,instances=2,unique_resources=1,decoded_element_bytes=1520,source_poses=2,floor_bound=2,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# geometry_event,area=2,decode=IDX_AND_GRID_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=688,min_y=-1152,max_y=0
+# area_event=transition_after,area=2,elapsed_us=2222722,package_bytes=701943,decoded_estimate=810596,load_peak_estimate=1898932,malloc_live=1891320,linear_free=27664128,vram_free=5523456
+536,2,0,0,-256,-384,11008,2688,0,2244095,16713,3,14358,6828,17,2084,82560,3932160,1891320,336904,27664128,5523456,0,1,0,19,0,-1,0,0,0
+# gameplay_clock,updates=600,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+600,2,0,0,-256,-385,11008,2688,0,16710,16713,78,16603,18,17,2084,82560,3932160,1891320,336904,27664128,5523456,0,1,0,0,0,1,1,0,0
+600,2,0,0,-256,-385,11008,2688,0,16519,16905,3,16487,18,17,2084,82560,3932160,1891320,336904,27664128,5523456,0,1,0,0,0,1,1,0,0

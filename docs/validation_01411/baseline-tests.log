@@ -1,0 +1,35 @@
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/baseline-host
+      Start  1: core
+ 1/15 Test  #1: core .............................   Passed    0.01 sec
+      Start  2: map_sharing
+ 2/15 Test  #2: map_sharing ......................   Passed    0.00 sec
+      Start  3: ps1_geometry
+ 3/15 Test  #3: ps1_geometry .....................   Passed    0.00 sec
+      Start  4: area_package
+ 4/15 Test  #4: area_package .....................   Passed    0.01 sec
+      Start  5: terrain_geometry_candidate
+ 5/15 Test  #5: terrain_geometry_candidate .......   Passed    0.00 sec
+      Start  6: map_cell_alignment
+ 6/15 Test  #6: map_cell_alignment ...............   Passed    0.00 sec
+      Start  7: area_placement
+ 7/15 Test  #7: area_placement ...................   Passed    0.00 sec
+      Start  8: positive_terrain
+ 8/15 Test  #8: positive_terrain .................   Passed    0.00 sec
+      Start  9: push2
+ 9/15 Test  #9: push2 ............................   Passed    0.00 sec
+      Start 10: integrity
+10/15 Test #10: integrity ........................   Passed    0.00 sec
+      Start 11: pipeline_python
+11/15 Test #11: pipeline_python ..................   Passed    0.16 sec
+      Start 12: cooked_area_python
+12/15 Test #12: cooked_area_python ...............   Passed    0.11 sec
+      Start 13: owner_data_intake_python
+13/15 Test #13: owner_data_intake_python .........   Passed    0.17 sec
+      Start 14: local_install_python
+14/15 Test #14: local_install_python .............   Passed    0.78 sec
+      Start 15: source_tools_python
+15/15 Test #15: source_tools_python ..............   Passed    0.13 sec
+
+100% tests passed out of 15
+
+Total Test time (real) =   1.40 sec

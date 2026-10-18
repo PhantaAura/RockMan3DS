@@ -1,0 +1,42 @@
+{
+  "schema": "mml-source-event-caller-tail/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "unchanged_original_instructions": 15105,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "fixtures": {
+    "predicate": {
+      "cases": 192,
+      "sha256": "b06b54ec05cc5b74a19377503c6937b9c756aca99f97dd9406dae46f4ab11976"
+    },
+    "color": {
+      "cases": 48,
+      "sha256": "414ba3390e8ddc3d3e7d2abceb20075a0b2cbb0ba5c259ac7207dc2a344ae781"
+    },
+    "caller": {
+      "cases": 64,
+      "sha256": "70d8e7fd882b4108ca62c98b6b93e7d97e025610652fea0faf9293e6c53ad2f7"
+    }
+  },
+  "predicate_short_circuit_verified": true,
+  "color_tile": {
+    "width": 320,
+    "height": 240,
+    "opcode": 98,
+    "allocator_bytes": 80,
+    "draw_mode2_word": 3774873679,
+    "ordering_table_byte_offset": 116
+  },
+  "type10_source_entry_only": true,
+  "phase_completion_acknowledged": false,
+  "live_retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Authored inputs and packet buffers are not live retail state.",
+    "Input bit8 meaning is not inferred from its test.",
+    "Type10 fade source entry is reached but not executed by this probe.",
+    "Caller false/ busy branches preserve phase6; no scene completion is acknowledged."
+  ]
+}

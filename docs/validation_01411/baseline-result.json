@@ -1,0 +1,28 @@
+{
+  "steps": [
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/baseline-host",
+        "--parallel",
+        "4"
+      ],
+      "returncode": 0,
+      "seconds": 19.37490475,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/baseline-build.log"
+    },
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/baseline-host",
+        "--output-on-failure"
+      ],
+      "returncode": 0,
+      "seconds": 1.4471583750000008,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/baseline-tests.log"
+    }
+  ],
+  "status": "PASS"
+}

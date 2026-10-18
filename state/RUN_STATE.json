@@ -1,0 +1,26 @@
+{
+  "checkpoint": "0.0.14.49",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.41_WorldComesAlive",
+  "native_stage": "/private/tmp/l3-native-01449-r1",
+  "host_cache": "/private/tmp/l3-host-01449",
+  "native_build": "PASS, 909556 bytes, SHA a47d0cc3b78d06dc17b68677bcbaf48a75920977eaa14fc859078cd1a16808a9",
+  "host_tests": "143/143 PASS, 5.94 seconds",
+  "emulator": "NOT_RUN_01449",
+  "hardware_tested": false,
+  "PHYSICS_1TO1": false,
+  "world_comes_alive_finished": false,
+  "next_concrete_step": "Recover live player muzzle and source projection owners, then exercise imported proxy selection through Buster projectile motion and guarded enemy hit delivery.",
+  "blockers": [
+    "Live camera/projection and player muzzle/counter/firing ownership remain incomplete.",
+    "Projectile motion, Buster hit, HP/damage, reaction and defeat remain incomplete.",
+    "Fresh source RNG chronology, broader EBD/dialogue and cross-package natural progression remain incomplete.",
+    "Physical 0.0.14.48, device performance and memory peaks remain pending."
+  ],
+  "status": "PASS",
+  "hardware": "HARDWARE_PENDING",
+  "notes": [
+    "Owner-data cook PASS with 119 local files and L3BP/1 profile.",
+    "No cooked retail payload is packaged.",
+    "Physical 0.0.14.49, device performance and memory peaks remain pending."
+  ]
+}

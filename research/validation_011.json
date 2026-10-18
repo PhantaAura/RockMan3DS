@@ -1,0 +1,22 @@
+{
+  "checkpoint": "0.0.11",
+  "name": "Collision Ownership Pass",
+  "host_release_build": "PASS",
+  "warnings_as_errors": true,
+  "ctest": {"passed": 1, "failed": 0},
+  "usa_reference": {"supported": true, "dat_files": 205, "xa_files": 38, "str_files": 1},
+  "tutorial_cook_files": 91,
+  "runtime_session_probe": {"areas": 5, "mapped": 5, "moved": 5, "ui_commands": 65, "dialogue_audio_requests": 1, "save_area": 4, "save_bytes": 322},
+  "new_exact_bridges": [
+    "ROCK_NEO 0x8002FE74 object group bits",
+    "ROCK_NEO 0x8004B414 post-solver player collision response",
+    "ROCK_NEO 0x8003DAC0..0x8003DB08 jump launch work mutation",
+    "ROCK_NEO 0x8003DB50..0x8003DB78 jump-hold gravity branch"
+  ],
+  "not_claimed": [
+    "complete 0x8004B6AC geometry solver",
+    "complete player action-state machine",
+    "tutorial-complete 0.1",
+    "3DS hardware build"
+  ]
+}

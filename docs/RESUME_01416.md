@@ -1,0 +1,13 @@
+# Resume0.0.14.16
+
+Editable source: `/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.16_WorldComesAliveIntegration`. No Git repository/branch/commit. Parent archive SHA-256494eaaa7fb0951397932e0991b436e5c83d313ee69de4aaa39f485ecb4e764cd. Parent/original references remain untouched.
+
+Completed: primary research before coding; optional original actor material/UV/CLUT native path; exact source heading/table loader/cooker/native sparse query; original IDX variant writer1120 cases; inherited36/36 and current38/38 host suites PASS; actual ARMv6K native553828B SHA3e32b79cfa506033777392cc0c944e2b370fc59b0122962e773f6a3fd59eef46,154 source hashes match,0warnings; Oldmodel Azahar enhanced replay plus malformed-cache and0143 fallback checks PASS. Original captures and logs retained outside ZIP. Changed files: CHANGED_FILES_01416.json; exact commands/results: REPORT_01416.md and validation_01416/build-result.json.
+
+Owner-local pack: `/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-runtime`. Verified install/SD: `/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/install-r1/sd_out`. Do not overwrite these or earlier checkpoints. Source version/gates are current01416; actor_animation_01415.cfg remains compatible deliberately.
+
+World Comes Alive remains unfinished. Next: capture the actual IDX.raw6=1 writer during original New Game initialization, verify owner instructions/inputs/timing, then implement that proved shared load rule before native collision/geometry construction. Current reference portable root: `/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/ps1-init-reference`; read-only observerV2 watches IDX78/94/123, uninserted memory cards, no RAM/pad/register override. Intro/attract CPU clearing writes do not prove gameplay initialization; no sourceflag patch was made. Re-arm in a fresh isolated reference run if its96admitted-write cap is consumed.
+
+Then bind the complete original actor scheduler/detection/RNG/contact and HP packet lifecycle, genuine event/message/normal-transition/unload/load chain. Originalshade/alpha, visibleenemy fidelity, fullcamera/HUD, audio/cutscenes and physicalOld3DS performance remain pending. PHYSICS_1TO1=false; no fullnative AI or retailparity claim.
+
+No reset is authorized. Recheck fresh usage before expensive work, preserve unique complete recovery ZIPs and never overwrite earlier source releases. Source ZIP contains no original/cooked assets, binaries, saves or screenshots.

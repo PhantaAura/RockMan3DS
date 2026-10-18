@@ -1,0 +1,99 @@
+{
+  "schema": "mml-source-rng-candidate-profile-cook/1",
+  "status": "CANDIDATE",
+  "algorithm_evidence": "SOURCE_BACKED_SELECTED_OPENBIOS",
+  "consumer_chronology": "CANDIDATE_UNMODELED_CONSUMERS",
+  "origin": {
+    "kind": "game_entry",
+    "vsync": 1062,
+    "game_entry_count": 1,
+    "rand_ordinal": 0,
+    "seed32": 0,
+    "source_identity_matches": true
+  },
+  "origin_seed_invented": false,
+  "scope": "COMPLETED_CAPTURE_PREFIX",
+  "whole_trace_accepted": false,
+  "capture_prefix_explicit": true,
+  "snapshot_sha256": "df118de389b835380b04b58f8a73bc9a72a2b280fb210aa915adee141bb378b4",
+  "snapshot_bytes": 3904527,
+  "validated_prefix_sha256": "f1f3df4a3ee11a838d24bca9113b212aec1761f1a798caad8df4476616a650d6",
+  "validated_prefix_bytes": 3904293,
+  "complete_snapshot_rows": 23280,
+  "validated_prefix_rows": 23278,
+  "excluded_complete_rows": 2,
+  "terminating_observer_failure": {
+    "kind": "observer_guard_failure",
+    "reason": "lua_callback_error"
+  },
+  "unfinished_final_call_excluded": true,
+  "actual_rand_returns": 11638,
+  "actual_class03_samples": 0,
+  "observed_original_caller_counts": {
+    "0x801048f0": 4362,
+    "0x80106378": 5820,
+    "0x80113238": 90,
+    "0x80113e54": 17,
+    "0x80116f60": 427,
+    "0x80116f98": 427,
+    "0x80116fe4": 427,
+    "0x801173c4": 34,
+    "0x80117408": 34
+  },
+  "warnings_mask": 31,
+  "input_reference_audit": {
+    "provided": true,
+    "snapshot_sha256": "5eb4c143f01f42b9cd46b24d059c578f03a5fff32ac9ff9d85a7019d4ef88537",
+    "snapshot_bytes": 32845485,
+    "complete_rows_audited": 15342,
+    "partial_tail_excluded": false,
+    "complete_prefix_sha256": "5eb4c143f01f42b9cd46b24d059c578f03a5fff32ac9ff9d85a7019d4ef88537",
+    "complete_native_chronology_matches": false,
+    "limits": [
+      "Input rows are audit provenance only; no replay or callback binding is inferred."
+    ]
+  },
+  "output": {
+    "name": "source_rng.l3rg",
+    "bytes": 256,
+    "sha256": "8db657383f9aff097e119361e877b30046d6478db39ab97381636a5fe2dddd54",
+    "private_local_only": true
+  },
+  "retail_bios_profile_proved": false,
+  "shared_native_consumer_lifecycle_proved": false,
+  "retail_parity": false,
+  "limits": [
+    "Only the supplied selected OpenBIOS algorithm and observed game-entry origin are admitted.",
+    "Candidate native freeplay omits competing original consumers and reseeding; generated actor samples are not measured actor samples.",
+    "No input/update/callback chronology matching or retail BIOS parity is inferred.",
+    "The strict RetailRngTape remains a separate measured-context replay gate.",
+    "No BIOS image, instruction bytes, retail assets or random-return tape are serialized.",
+    "The sidecar and owner-derived origin metadata stay outside source/release archives."
+  ],
+  "tests": {
+    "cook_authored_guards": 12,
+    "reference_validator_unchanged_tests": 28,
+    "original_scalar_checkpoints": 512,
+    "original_rand_calls": 4096,
+    "original_instructions": 45824,
+    "zero_heap_fixed_updates": 4096,
+    "zero_heap_staged_calls": 65536,
+    "hot_allocations": 0,
+    "standalone_warnings_as_errors": true,
+    "combined_native_integration_verified": false
+  },
+  "fixture_sha256": "c0906291e14a8c3ecfab4bb728f1c224d2d5deb61c6bee8b9fd54821b2cf584b",
+  "lua_observer_harness": {
+    "status": "UNEXECUTED",
+    "source": "tests/test_rng_observer_lifecycle.lua",
+    "sha256": "4cb80053bd54cbae96793e6491bfefb162b5cb38852ba797c4e5eac3054f05b1",
+    "synthetic_guards_only": true,
+    "intended_returns": 12000,
+    "intended_retained_caller_listeners": 9,
+    "capacity_case_status": "UNKNOWN",
+    "runtime_limitation": "No lua/lua5.4/lua5.3/luajit executable on PATH or installed standalone Lua/liblua/fengari in checked local/app/bundled paths; system and bundled Python have no lupa.",
+    "emulator_launched": false,
+    "real_owner_files_used": false,
+    "actual_runtime_pass_claimed": false
+  }
+}

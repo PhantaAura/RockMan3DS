@@ -1,0 +1,55 @@
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/host
+      Start  1: core
+ 1/25 Test  #1: core .............................   Passed    0.02 sec
+      Start  2: map_sharing
+ 2/25 Test  #2: map_sharing ......................   Passed    0.01 sec
+      Start  3: ps1_geometry
+ 3/25 Test  #3: ps1_geometry .....................   Passed    0.00 sec
+      Start  4: area_package
+ 4/25 Test  #4: area_package .....................   Passed    0.02 sec
+      Start  5: terrain_geometry_candidate
+ 5/25 Test  #5: terrain_geometry_candidate .......   Passed    0.02 sec
+      Start  6: map_cell_alignment
+ 6/25 Test  #6: map_cell_alignment ...............   Passed    0.01 sec
+      Start  7: area_placement
+ 7/25 Test  #7: area_placement ...................   Passed    0.00 sec
+      Start  8: positive_terrain
+ 8/25 Test  #8: positive_terrain .................   Passed    0.00 sec
+      Start  9: push2
+ 9/25 Test  #9: push2 ............................   Passed    0.00 sec
+      Start 10: integrity
+10/25 Test #10: integrity ........................   Passed    0.01 sec
+      Start 11: pipeline_python
+11/25 Test #11: pipeline_python ..................   Passed    0.16 sec
+      Start 12: cooked_area_python
+12/25 Test #12: cooked_area_python ...............   Passed    0.12 sec
+      Start 13: owner_data_intake_python
+13/25 Test #13: owner_data_intake_python .........   Passed    0.18 sec
+      Start 14: local_install_python
+14/25 Test #14: local_install_python .............   Passed    1.32 sec
+      Start 15: source_tools_python
+15/25 Test #15: source_tools_python ..............   Passed    0.28 sec
+      Start 16: negative_package
+16/25 Test #16: negative_package .................   Passed    0.00 sec
+      Start 17: negative_terrain
+17/25 Test #17: negative_terrain .................   Passed    0.01 sec
+      Start 18: negative_material
+18/25 Test #18: negative_material ................   Passed    0.00 sec
+      Start 19: material_vram
+19/25 Test #19: material_vram ....................   Passed    0.00 sec
+      Start 20: area_inspection
+20/25 Test #20: area_inspection ..................   Passed    0.00 sec
+      Start 21: frontend_view
+21/25 Test #21: frontend_view ....................   Passed    0.00 sec
+      Start 22: mockup_ui
+22/25 Test #22: mockup_ui ........................   Passed    0.00 sec
+      Start 23: player_visual_storage
+23/25 Test #23: player_visual_storage ............   Passed    0.24 sec
+      Start 24: ebd_resources
+24/25 Test #24: ebd_resources ....................   Passed    0.00 sec
+      Start 25: renderer_gcc_warning
+25/25 Test #25: renderer_gcc_warning .............   Passed    0.29 sec
+
+100% tests passed out of 25
+
+Total Test time (real) =   2.74 sec

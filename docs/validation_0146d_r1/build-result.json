@@ -1,0 +1,61 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6d_SceneTest",
+        "-B",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/host",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/logs/host-configure.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/host",
+        "--parallel",
+        "4"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/logs/host-build.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/host",
+        "--output-on-failure"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/logs/host-tests.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/native-source/platform/3ds",
+        "-j4"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/logs/native-build.log",
+      "returncode": 0
+    }
+  ],
+  "cookers_or_extractors_invoked": false,
+  "created_utc": "2026-10-01T01:49:02.860322+00:00",
+  "hardware": "PENDING",
+  "host_tests": "PASS",
+  "native_binary_bytes": 381036,
+  "native_binary_path": "build/Legends3DS_0146d_r1_SceneTest.3dsx",
+  "native_binary_sha256": "6ab74dcdda0240159921da99125b457c2560220c1b140dd8103b28514eaf03c4",
+  "native_build": "PASS",
+  "pack": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial",
+  "pack_manifest_sha256": "58d4b63e82ef33001f67222cfbfc86a0f772d7117d37ff69bcf104403dbd783a",
+  "sd_binary_path": "sd_out/3ds/Legends3DS/Legends3DS_0146d_r1_SceneTest.3dsx",
+  "sd_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/sd_out",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6d_SceneTest",
+  "status": "PASS"
+}

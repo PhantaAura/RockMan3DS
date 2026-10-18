@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-O2",
+    "-mword-relocations",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-march=armv6k",
+    "-mtune=mpcore",
+    "-mfloat-abi=hard",
+    "-mtp=soft",
+    "-D__3DS__",
+    "-std=gnu++17",
+    "-fstack-usage",
+    "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/native-source/include",
+    "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/native-source/include/legends3ds/p2",
+    "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/native-source/platform/3ds/source",
+    "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/native-source/platform/3ds/build_3ds",
+    "-I/opt/devkitpro/libctru/include",
+    "-c",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r3/native-source/platform/3ds/source/main.cpp",
+    "-o",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/arm-stack-r3/main.o"
+  ],
+  "returncode": 0
+}

@@ -1,0 +1,291 @@
+cmake --build /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/host --parallel 4
+[  5%] Built target mml3ds_push2
+[  5%] Built target test_integrity
+[  5%] Built target test_push2
+[  5%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_phase5.cpp.o
+[  5%] Linking CXX static library liblegends3ds_core.a
+[ 28%] Built target legends3ds_core
+[ 28%] Linking CXX executable l3cook_st00
+[ 28%] Linking CXX executable l3inspect_model
+[ 28%] Linking CXX executable l3inspect_map
+[ 28%] Linking CXX executable l3cook_pbd
+[ 29%] Built target l3cook_pbd
+[ 30%] Built target l3inspect_map
+[ 30%] Built target l3cook_st00
+[ 31%] Built target l3inspect_model
+[ 31%] Linking CXX executable l3cook_palette
+[ 31%] Linking CXX executable l3cook_texture
+[ 31%] Linking CXX executable l3inspect_texture
+[ 31%] Linking CXX executable l3inspect_palette
+[ 32%] Built target l3cook_palette
+[ 32%] Built target l3cook_texture
+[ 32%] Built target l3inspect_texture
+[ 33%] Built target l3inspect_palette
+[ 33%] Linking CXX executable l3inspect_anim
+[ 33%] Linking CXX executable l3cook_anim
+[ 33%] Linking CXX executable l3cook_skeleton
+[ 33%] Linking CXX executable l3inspect_skeleton
+[ 33%] Built target l3inspect_anim
+[ 33%] Built target l3cook_anim
+[ 34%] Built target l3cook_skeleton
+[ 35%] Built target l3inspect_skeleton
+[ 35%] Linking CXX executable l3cook_render
+[ 35%] Linking CXX executable l3inspect_render
+[ 35%] Linking CXX executable l3cook_player_comp
+[ 35%] Linking CXX executable l3inspect_player_comp
+[ 35%] Built target l3cook_player_comp
+[ 36%] Built target l3inspect_player_comp
+[ 36%] Built target l3inspect_render
+[ 36%] Built target l3cook_render
+[ 36%] Linking CXX executable l3inspect_material_cache
+[ 36%] Linking CXX executable l3cook_player_material_cache
+[ 36%] Linking CXX executable l3cook_material_cache
+[ 36%] Linking CXX executable l3scan_materials
+[ 37%] Built target l3cook_player_material_cache
+[ 37%] Built target l3scan_materials
+[ 37%] Built target l3inspect_material_cache
+[ 38%] Built target l3cook_material_cache
+[ 38%] Linking CXX executable l3cook_actor_material_cache
+[ 38%] Linking CXX executable l3inspect_msg
+[ 38%] Linking CXX executable l3cook_msg
+[ 38%] Linking CXX executable l3visual_probe
+[ 39%] Built target l3cook_actor_material_cache
+[ 40%] Built target l3visual_probe
+[ 40%] Built target l3inspect_msg
+[ 40%] Built target l3cook_msg
+[ 40%] Linking CXX executable l3cook_st00_flow
+[ 40%] Linking CXX executable l3inspect_st00_flow
+[ 40%] Linking CXX executable l3runtime_pack_probe
+[ 40%] Linking CXX executable l3runtime_probe
+[ 40%] Built target l3runtime_pack_probe
+[ 40%] Built target l3inspect_st00_flow
+[ 42%] Built target l3cook_st00_flow
+[ 42%] Built target l3runtime_probe
+[ 42%] Linking CXX executable l3runtime_msg_probe
+[ 42%] Linking CXX executable l3inspect_stage_catalog
+[ 42%] Linking CXX executable l3game_pack_probe
+[ 42%] Linking CXX executable l3runtime_session_probe
+[ 44%] Built target l3runtime_msg_probe
+[ 44%] Built target l3game_pack_probe
+[ 45%] Built target l3inspect_stage_catalog
+[ 45%] Built target l3runtime_session_probe
+[ 45%] Linking CXX executable l3inspect_audio_catalog
+[ 45%] Linking CXX executable l3stage_object_pack_probe
+[ 45%] Linking CXX executable l3inspect_resource_catalog
+[ 45%] Linking CXX executable l3script_pack_probe
+[ 45%] Built target l3stage_object_pack_probe
+[ 45%] Built target l3inspect_resource_catalog
+[ 46%] Built target l3script_pack_probe
+[ 47%] Built target l3inspect_audio_catalog
+[ 47%] Linking CXX executable l3player_runtime_probe
+[ 47%] Linking CXX executable l3flight_render_probe
+[ 47%] Linking CXX executable l3flight_material_probe
+[ 47%] Linking CXX executable l3flight_animation_probe
+[ 47%] Built target l3flight_render_probe
+[ 47%] Built target l3flight_animation_probe
+[ 48%] Built target l3flight_material_probe
+[ 49%] Built target l3player_runtime_probe
+[ 49%] Linking CXX executable l3cook_map_init
+[ 49%] Linking CXX executable l3cook_ebd
+[ 49%] Linking CXX executable l3inspect_ebd
+[ 49%] Linking CXX executable test_core
+[ 49%] Built target l3cook_map_init
+[ 50%] Built target l3cook_ebd
+[ 51%] Built target test_core
+[ 51%] Built target l3inspect_ebd
+[ 51%] Linking CXX executable test_area_package
+[ 51%] Linking CXX executable test_map_sharing
+[ 52%] Linking CXX executable test_ps1_geometry
+[ 52%] Linking CXX executable test_map_initialization
+[ 52%] Built target test_ps1_geometry
+[ 52%] Built target test_map_sharing
+[ 52%] Built target test_area_package
+[ 52%] Built target test_map_initialization
+[ 52%] Linking CXX executable test_map_cell_alignment
+[ 52%] Linking CXX executable test_positive_terrain
+[ 53%] Linking CXX executable test_area_placement
+[ 54%] Linking CXX executable test_terrain_geometry_candidate
+[ 54%] Built target test_positive_terrain
+[ 54%] Built target test_area_placement
+[ 54%] Built target test_terrain_geometry_candidate
+[ 55%] Built target test_map_cell_alignment
+[ 55%] Linking CXX executable l3replay
+[ 55%] Linking CXX executable l3area_placement_probe
+[ 55%] Linking CXX executable l3area_runtime_probe
+[ 55%] Linking CXX executable l3area_validate
+[ 56%] Built target l3area_validate
+[ 56%] Built target l3replay
+[ 57%] Built target l3area_placement_probe
+[ 57%] Built target l3area_runtime_probe
+[ 57%] Linking CXX executable l3animation_evidence
+[ 58%] Linking CXX executable test_negative_package
+[ 58%] Linking CXX executable test_negative_terrain
+[ 58%] Linking CXX executable test_negative_material
+[ 58%] Built target test_negative_terrain
+[ 59%] Built target l3animation_evidence
+[ 59%] Built target test_negative_package
+[ 59%] Built target test_negative_material
+[ 59%] Linking CXX executable test_texture_sector_layout
+[ 59%] Linking CXX executable test_material_vram
+[ 60%] Linking CXX executable test_area_inspection
+[ 60%] Linking CXX executable l3cook_negative_materials
+[ 60%] Built target test_area_inspection
+[ 61%] Built target test_material_vram
+[ 61%] Built target test_texture_sector_layout
+[ 62%] Built target l3cook_negative_materials
+[ 62%] Linking CXX executable l3area_visibility_audit
+[ 62%] Linking CXX executable test_frontend_view
+[ 62%] Linking CXX executable l3area_inspection_probe
+[ 63%] Linking CXX executable test_mockup_ui
+[ 63%] Built target l3area_visibility_audit
+[ 63%] Built target l3area_inspection_probe
+[ 63%] Built target test_frontend_view
+[ 63%] Built target test_mockup_ui
+[ 63%] Linking CXX executable test_ebd_resources
+[ 63%] Linking CXX executable test_ebd_sharing
+[ 64%] Linking CXX executable test_player_visual_storage
+[ 64%] Linking CXX executable test_actor_resources
+[ 64%] Built target test_player_visual_storage
+[ 65%] Built target test_ebd_sharing
+[ 65%] Built target test_ebd_resources
+[ 65%] Built target test_actor_resources
+[ 66%] Linking CXX executable test_actor_materials
+[ 66%] Linking CXX executable test_runtime_contact
+[ 66%] Linking CXX executable test_companion_ui
+[ 66%] Linking CXX executable l3probe_actor_resources
+[ 66%] Built target test_companion_ui
+[ 66%] Built target test_runtime_contact
+[ 66%] Built target test_actor_materials
+[ 67%] Built target l3probe_actor_resources
+[ 67%] Linking CXX executable test_gameplay_clock
+[ 67%] Linking CXX executable l3probe_actor_class20_03
+[ 67%] Linking CXX executable test_running_jump_source
+[ 67%] Linking CXX executable test_class20_03_behavior
+[ 68%] Built target test_gameplay_clock
+[ 68%] Built target l3probe_actor_class20_03
+[ 68%] Built target test_running_jump_source
+[ 68%] Built target test_class20_03_behavior
+[ 68%] Linking CXX executable test_source_angle
+[ 68%] Linking CXX executable l3cook_st00_spawn
+[ 69%] Linking CXX executable test_actor_sequence
+[ 69%] Linking CXX executable test_st00_spawn
+[ 69%] Built target l3cook_st00_spawn
+[ 69%] Built target test_source_angle
+[ 69%] Built target test_st00_spawn
+[ 69%] Built target test_actor_sequence
+[ 70%] Linking CXX executable test_runtime_spawns
+[ 70%] Linking CXX executable l3runtime_spawn_probe
+[ 70%] Linking CXX executable test_runtime_transactions
+[ 70%] Linking CXX executable test_map_initialization_package
+[ 70%] Built target test_runtime_spawns
+[ 71%] Built target l3runtime_spawn_probe
+[ 71%] Built target test_runtime_transactions
+[ 72%] Built target test_map_initialization_package
+[ 72%] Linking CXX executable l3actor_animation_bank_probe
+[ 72%] Linking CXX executable l3test_actor_animation_bank
+[ 72%] Linking CXX executable l3test_actor_behavior_runtime
+[ 72%] Linking CXX executable test_actor_floor_init
+[ 72%] Built target l3actor_animation_bank_probe
+[ 72%] Built target l3test_actor_behavior_runtime
+[ 73%] Built target l3test_actor_animation_bank
+[ 73%] Built target test_actor_floor_init
+[ 73%] Linking CXX executable l3test_class20_03_callback
+[ 73%] Linking CXX executable test_actor_detection
+[ 73%] Linking CXX executable l3test_actor_contact
+[ 73%] Linking CXX executable l3actor_behavior_runtime_probe
+[ 73%] Built target l3test_class20_03_callback
+[ 73%] Built target test_actor_detection
+[ 74%] Built target l3test_actor_contact
+[ 74%] Built target l3actor_behavior_runtime_probe
+[ 75%] Linking CXX executable test_actor_detection_profile
+[ 76%] Linking CXX executable test_actor_detection_math
+[ 77%] Linking CXX executable test_class20_03_action3
+[ 77%] Linking CXX executable test_actor_detection_segment
+[ 77%] Built target test_actor_detection_profile
+[ 77%] Built target test_actor_detection_segment
+[ 77%] Built target test_actor_detection_math
+[ 77%] Built target test_class20_03_action3
+[ 78%] Linking CXX executable test_source_audio_queue
+[ 78%] Linking CXX executable test_actor_action3_contact
+[ 78%] Linking CXX executable test_actor_detection_preparation
+[ 79%] Linking CXX executable test_source_combat_profile
+[ 79%] Built target test_source_audio_queue
+[ 79%] Built target test_source_combat_profile
+[ 79%] Built target test_actor_action3_contact
+[ 79%] Built target test_actor_detection_preparation
+[ 79%] Linking CXX executable test_runtime_source_context
+[ 79%] Linking CXX executable test_actor_source_transaction
+[ 80%] Linking CXX executable test_actor_action9_contact
+[ 81%] Linking CXX executable test_class20_03_action9
+[ 81%] Built target test_runtime_source_context
+[ 81%] Built target test_actor_source_transaction
+[ 81%] Built target test_actor_action9_contact
+[ 81%] Built target test_class20_03_action9
+[ 82%] Linking CXX executable test_actor_detection_segment_extended
+[ 83%] Linking CXX executable test_retail_rng_tape
+[ 83%] Linking CXX executable test_actor_action9_runtime
+[ 83%] Linking CXX executable test_actor_action4_runtime
+[ 83%] Built target test_retail_rng_tape
+[ 83%] Built target test_actor_detection_segment_extended
+[ 83%] Built target test_actor_action4_runtime
+[ 83%] Built target test_actor_action9_runtime
+[ 83%] Linking CXX executable test_source_profile_class60_06
+[ 83%] Linking CXX executable test_class60_06
+[ 83%] Linking CXX executable test_class20_03_action4
+[ 84%] Linking CXX executable test_actor_action4_contact
+[ 84%] Built target test_source_profile_class60_06
+[ 84%] Built target test_actor_action4_contact
+[ 84%] Built target test_class20_03_action4
+[ 84%] Built target test_class60_06
+[ 85%] Linking CXX executable test_class20_03_hit
+[ 87%] Linking CXX executable test_source_event_pipeline
+[ 87%] Linking CXX executable test_class60_06_contact
+[ 87%] Linking CXX executable test_source_hit_proxy
+[ 87%] Built target test_source_event_pipeline
+[ 87%] Built target test_class20_03_hit
+[ 87%] Built target test_source_hit_proxy
+[ 87%] Built target test_class60_06_contact
+[ 88%] Linking CXX executable test_source_event_consumer
+[ 89%] Linking CXX executable test_source_rng_service
+[ 90%] Linking CXX executable test_runtime_source_events
+[ 91%] Linking CXX executable test_source_actor_consumers
+[ 91%] Built target test_source_event_consumer
+[ 91%] Built target test_source_rng_service
+[ 91%] Built target test_source_actor_consumers
+[ 91%] Built target test_runtime_source_events
+[ 91%] Linking CXX executable test_child_runtime
+[ 92%] Linking CXX executable test_actor_child_delivery
+[ 92%] Linking CXX executable test_actor_pose_proxy
+[ 92%] Linking CXX executable test_source_event_package
+[ 92%] Built target test_child_runtime
+[ 92%] Built target test_actor_pose_proxy
+[ 92%] Built target test_actor_child_delivery
+[ 92%] Built target test_source_event_package
+[ 92%] Linking CXX executable test_source_effects
+[ 93%] Linking CXX executable test_source_event_phase2
+[ 94%] Linking CXX executable test_actor_pose_proxy_runtime
+[ 95%] Linking CXX executable test_source_event_command
+[ 95%] Built target test_source_effects
+[ 95%] Built target test_source_event_phase2
+[ 95%] Built target test_actor_pose_proxy_runtime
+[ 95%] Built target test_source_event_command
+[ 95%] Linking CXX executable test_source_event_command_package
+[ 96%] Linking CXX executable test_source_player_proxy
+[ 97%] Linking CXX executable test_runtime_command_lease
+[ 98%] Linking CXX executable test_xa_stream
+[ 98%] Built target test_source_event_command_package
+[ 98%] Built target test_source_player_proxy
+[ 98%] Built target test_runtime_command_lease
+[ 98%] Built target test_xa_stream
+[ 98%] Linking CXX executable test_source_fade
+[ 99%] Linking CXX executable test_source_camera
+[ 99%] Linking CXX executable test_source_fade_callback
+[ 99%] Linking CXX executable test_runtime_source_fade
+[ 99%] Built target test_source_fade
+[ 99%] Built target test_source_fade_callback
+[ 99%] Built target test_source_camera
+[ 99%] Built target test_runtime_source_fade
+[ 99%] Linking CXX executable test_source_event_phase5
+[100%] Linking CXX executable test_runtime_fade
+[100%] Built target test_source_event_phase5
+[100%] Built target test_runtime_fade

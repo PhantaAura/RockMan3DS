@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "emulator": "Azahar2126.0 Oldmodel",
+  "build": "0.0.14.16",
+  "fixture": "Corruptlastbyte ofcopied optional actor_area_01.l3mc; originalcache/verifiedinstall unchanged",
+  "actor_textures_requested": true,
+  "crc_rejection_logged": true,
+  "runtime_ready": true,
+  "actor_texture_pages_retained": 0,
+  "known_scene_occlusion_unchanged": true,
+  "capture": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/azahar-01416-fault-r2/captures/malformed-optional-cache-still-running.png"
+}

@@ -1,0 +1,103 @@
+[  0%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/st00_spawn.cpp.o
+[  4%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/st00_source.cpp.o
+[  4%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_runtime.cpp.o
+[  4%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_spawn.cpp.o
+[  4%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_catalog.cpp.o
+[  8%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/resource_catalog.cpp.o
+[  8%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/audio_catalog.cpp.o
+[  8%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_object_catalog.cpp.o
+[  8%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/ebd_directory.cpp.o
+[ 12%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_resource.cpp.o
+[ 12%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_contact.cpp.o
+[ 12%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_detection.cpp.o
+[ 12%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_detection_profile.cpp.o
+[ 16%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_detection_math.cpp.o
+[ 16%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_detection_segment.cpp.o
+[ 16%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_detection_preparation.cpp.o
+[ 16%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_action4_contact.cpp.o
+[ 20%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_action9_contact.cpp.o
+[ 20%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_action3_contact.cpp.o
+[ 20%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_combat_profile.cpp.o
+[ 20%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_audio_queue.cpp.o
+[ 24%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class60_06.cpp.o
+[ 24%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_profile_class60_06.cpp.o
+[ 24%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class20_03_hit.cpp.o
+[ 24%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_hit_proxy.cpp.o
+[ 28%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_actor_consumers.cpp.o
+[ 28%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/child_runtime.cpp.o
+[ 28%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_rng_service.cpp.o
+[ 32%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_pipeline.cpp.o
+[ 32%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_consumer.cpp.o
+[ 32%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_phase2.cpp.o
+[ 32%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_package.cpp.o
+[ 36%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_command.cpp.o
+[ 36%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_command_package.cpp.o
+[ 36%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_player_proxy.cpp.o
+[ 36%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_camera.cpp.o
+[ 40%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/xa_stream.cpp.o
+[ 40%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/xa_transport.cpp.o
+[ 40%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_effects.cpp.o
+[ 40%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_pose_runtime.cpp.o
+[ 44%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class20_03_proxy.cpp.o
+[ 44%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class20_03_action4.cpp.o
+[ 44%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/retail_rng_tape.cpp.o
+[ 44%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class20_03_action9.cpp.o
+[ 48%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class20_03_action3.cpp.o
+[ 48%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_runtime.cpp.o
+[ 48%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class20_03_behavior.cpp.o
+[ 48%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_angle.cpp.o
+[ 52%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_animation_bank.cpp.o
+[ 52%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_sequence.cpp.o
+[ 52%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/ebd_dynamic_selector.cpp.o
+[ 52%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/tutorial_runtime.cpp.o
+[ 56%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/runtime_session.cpp.o
+[ 56%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/l3map.cpp.o
+[ 56%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/st00_render.cpp.o
+[ 56%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/area_package.cpp.o
+[ 60%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/map_initialization.cpp.o
+[ 60%] Building C object CMakeFiles/legends3ds_core.dir/src/world/tile_transform.c.o
+[ 60%] Building CXX object CMakeFiles/legends3ds_core.dir/src/model/pbd_model.cpp.o
+[ 64%] Building CXX object CMakeFiles/legends3ds_core.dir/src/model/player_composition.cpp.o
+[ 64%] Building CXX object CMakeFiles/legends3ds_core.dir/src/texture/ps1_texture.cpp.o
+[ 64%] Building CXX object CMakeFiles/legends3ds_core.dir/src/texture/material_resolver.cpp.o
+[ 64%] Building CXX object CMakeFiles/legends3ds_core.dir/src/texture/material_cache.cpp.o
+[ 68%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/terrain_geometry_candidate.cpp.o
+[ 68%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/area_placement.cpp.o
+[ 68%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/positive_terrain.cpp.o
+[ 68%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/negative_terrain.cpp.o
+[ 72%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/negative_materials.cpp.o
+[ 72%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/area_inspection.cpp.o
+[ 72%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/frontend_view.cpp.o
+[ 72%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/visual_bridge.cpp.o
+[ 76%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/ctr_texture_layout.cpp.o
+[ 76%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/actor_material.cpp.o
+[ 76%] Building CXX object CMakeFiles/legends3ds_core.dir/src/animation/pbd_animation.cpp.o
+[ 76%] Building CXX object CMakeFiles/legends3ds_core.dir/src/animation/player_pose.cpp.o
+[ 80%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/mml_message.cpp.o
+[ 80%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/st00_flow.cpp.o
+[ 80%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/st00_event.cpp.o
+[ 80%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/save_state.cpp.o
+[ 84%] Building C object CMakeFiles/legends3ds_core.dir/src/input/classic_input.c.o
+[ 84%] Building C object CMakeFiles/legends3ds_core.dir/src/player/classic_motion.c.o
+[ 84%] Building C object CMakeFiles/legends3ds_core.dir/src/player/player_runtime.c.o
+[ 84%] Building C object CMakeFiles/legends3ds_core.dir/src/player/player_collision.c.o
+[ 88%] Building CXX object CMakeFiles/legends3ds_core.dir/src/player/player_contact_runtime.cpp.o
+[ 88%] Building CXX object CMakeFiles/legends3ds_core.dir/src/player/reference_tables.cpp.o
+[ 88%] Building C object CMakeFiles/legends3ds_core.dir/src/ui/qol_settings.c.o
+[ 92%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/dialogue_history.cpp.o
+[ 92%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/bottom_screen.cpp.o
+[ 92%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/bottom_map.cpp.o
+[ 92%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/mockup_ui.cpp.o
+[ 96%] Linking CXX static library liblegends3ds_core.a
+[ 96%] Built target legends3ds_core
+[ 96%] Building CXX object CMakeFiles/test_xa_stream.dir/tests/test_xa_stream.cpp.o
+[100%] Linking CXX executable test_xa_stream
+[100%] Built target test_xa_stream
+[100%] Built target legends3ds_core
+[100%] Building CXX object CMakeFiles/test_runtime_command_lease.dir/tests/test_runtime_command_lease.cpp.o
+[100%] Linking CXX executable test_runtime_command_lease
+[100%] Built target test_runtime_command_lease
+[ 96%] Built target legends3ds_core
+[ 96%] Building CXX object CMakeFiles/test_source_camera.dir/tests/test_source_camera.cpp.o
+[100%] Linking CXX executable test_source_camera
+[100%] Built target test_source_camera

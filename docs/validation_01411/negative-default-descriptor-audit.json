@@ -1,0 +1,754 @@
+{
+  "schema": "negative-default-descriptor-audit/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "packages": 37,
+  "unique_geometry_identities": 31,
+  "packages_with_default_negative_cells": 30,
+  "packages_with_special_negative_cells": 4,
+  "default_cells_total": 55817,
+  "special_cells_total": 2183,
+  "default_descriptor_omitted_packages": 30,
+  "default_descriptor_invalid_packages": 0,
+  "items": [
+    {
+      "neutral_package": "PACKAGE_000",
+      "geometry_identity": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+      "canonical_load": true,
+      "negative_cells": 109,
+      "default_negative_cells": 109,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+      "stg_bytes": 61296,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_001",
+      "geometry_identity": "844a118390a03105cc1a1dd696db342cb5be97b55140cec2e8394ebc06165eec",
+      "canonical_load": true,
+      "negative_cells": 0,
+      "default_negative_cells": 0,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "844a118390a03105cc1a1dd696db342cb5be97b55140cec2e8394ebc06165eec",
+      "stg_bytes": 812,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_002",
+      "geometry_identity": "cb687232f54d267fdd995e17c8134ea66c25ea46a1886e443d04408b9ba25774",
+      "canonical_load": true,
+      "negative_cells": 2115,
+      "default_negative_cells": 2115,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "cb687232f54d267fdd995e17c8134ea66c25ea46a1886e443d04408b9ba25774",
+      "stg_bytes": 39024,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_003",
+      "geometry_identity": "17c71eff0df6043f7902cfddedbca915da8776b469fe78b8f1c7114478ecdc70",
+      "canonical_load": true,
+      "negative_cells": 1923,
+      "default_negative_cells": 1923,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "17c71eff0df6043f7902cfddedbca915da8776b469fe78b8f1c7114478ecdc70",
+      "stg_bytes": 118888,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_004",
+      "geometry_identity": "17c71eff0df6043f7902cfddedbca915da8776b469fe78b8f1c7114478ecdc70",
+      "canonical_load": true,
+      "negative_cells": 1923,
+      "default_negative_cells": 1923,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "17c71eff0df6043f7902cfddedbca915da8776b469fe78b8f1c7114478ecdc70",
+      "stg_bytes": 118888,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_005",
+      "geometry_identity": "345ff4b49eaca2efd0b723caff51c780a671b0bfaa1272d27ad2b723ac4615f4",
+      "canonical_load": true,
+      "negative_cells": 0,
+      "default_negative_cells": 0,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "345ff4b49eaca2efd0b723caff51c780a671b0bfaa1272d27ad2b723ac4615f4",
+      "stg_bytes": 92884,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_006",
+      "geometry_identity": "345ff4b49eaca2efd0b723caff51c780a671b0bfaa1272d27ad2b723ac4615f4",
+      "canonical_load": true,
+      "negative_cells": 0,
+      "default_negative_cells": 0,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "345ff4b49eaca2efd0b723caff51c780a671b0bfaa1272d27ad2b723ac4615f4",
+      "stg_bytes": 92884,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_007",
+      "geometry_identity": "0c582ce1f5ce32c467ac07394694c9d4e184239a5a577903f07cd9a209aced80",
+      "canonical_load": true,
+      "negative_cells": 1080,
+      "default_negative_cells": 432,
+      "special_negative_cells": 648,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "0c582ce1f5ce32c467ac07394694c9d4e184239a5a577903f07cd9a209aced80",
+      "stg_bytes": 127532,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_008",
+      "geometry_identity": "f67aa0c9bcca3063aae7cbe10bf4c5feef3278fcaa4298e4770bb811fd7ef87e",
+      "canonical_load": true,
+      "negative_cells": 4384,
+      "default_negative_cells": 3510,
+      "special_negative_cells": 874,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "f67aa0c9bcca3063aae7cbe10bf4c5feef3278fcaa4298e4770bb811fd7ef87e",
+      "stg_bytes": 134312,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_009",
+      "geometry_identity": "9fc55b20f54bcaf3dbcbdd2f23d78da761500fde70491c4db5ee6166fb51fee8",
+      "canonical_load": true,
+      "negative_cells": 0,
+      "default_negative_cells": 0,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "9fc55b20f54bcaf3dbcbdd2f23d78da761500fde70491c4db5ee6166fb51fee8",
+      "stg_bytes": 42552,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_010",
+      "geometry_identity": "0b82d7fa68b8381ebe1a9689a5c7f1a0a27db8551c4b3521f86ff5f456d58ff9",
+      "canonical_load": true,
+      "negative_cells": 2299,
+      "default_negative_cells": 2026,
+      "special_negative_cells": 273,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "0b82d7fa68b8381ebe1a9689a5c7f1a0a27db8551c4b3521f86ff5f456d58ff9",
+      "stg_bytes": 132936,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_011",
+      "geometry_identity": "1947449c506cc6e12b2923a4b1a98ba0bb47d500cc2d5ae20d69d68839e32ebd",
+      "canonical_load": true,
+      "negative_cells": 591,
+      "default_negative_cells": 591,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "1947449c506cc6e12b2923a4b1a98ba0bb47d500cc2d5ae20d69d68839e32ebd",
+      "stg_bytes": 99320,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_012",
+      "geometry_identity": "98cc6ebbbd98a053a81a49940a69113715da3b5a7a450a42abe10718a9daf9ec",
+      "canonical_load": true,
+      "negative_cells": 307,
+      "default_negative_cells": 307,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "98cc6ebbbd98a053a81a49940a69113715da3b5a7a450a42abe10718a9daf9ec",
+      "stg_bytes": 108856,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_013",
+      "geometry_identity": "acb12a191f2d7526ce38086ac1407adec5d91d503fe7e0668d3ae94f47897c07",
+      "canonical_load": true,
+      "negative_cells": 3618,
+      "default_negative_cells": 3618,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "acb12a191f2d7526ce38086ac1407adec5d91d503fe7e0668d3ae94f47897c07",
+      "stg_bytes": 83116,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_014",
+      "geometry_identity": "3451e4dda9008c6b18d288c67b510d93f44da0a92b41a036d4e784f1a5644431",
+      "canonical_load": true,
+      "negative_cells": 1027,
+      "default_negative_cells": 1027,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "3451e4dda9008c6b18d288c67b510d93f44da0a92b41a036d4e784f1a5644431",
+      "stg_bytes": 50812,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_015",
+      "geometry_identity": "3451e4dda9008c6b18d288c67b510d93f44da0a92b41a036d4e784f1a5644431",
+      "canonical_load": true,
+      "negative_cells": 1027,
+      "default_negative_cells": 1027,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "3451e4dda9008c6b18d288c67b510d93f44da0a92b41a036d4e784f1a5644431",
+      "stg_bytes": 50812,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_016",
+      "geometry_identity": "3451e4dda9008c6b18d288c67b510d93f44da0a92b41a036d4e784f1a5644431",
+      "canonical_load": true,
+      "negative_cells": 1027,
+      "default_negative_cells": 1027,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "3451e4dda9008c6b18d288c67b510d93f44da0a92b41a036d4e784f1a5644431",
+      "stg_bytes": 50812,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_017",
+      "geometry_identity": "acf9ad35ee37b574735094e34a8b59b4f84ac90c89230f4b6597abeb1f7d1d37",
+      "canonical_load": true,
+      "negative_cells": 2414,
+      "default_negative_cells": 2414,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "acf9ad35ee37b574735094e34a8b59b4f84ac90c89230f4b6597abeb1f7d1d37",
+      "stg_bytes": 36412,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_018",
+      "geometry_identity": "56582549106c8f8eed8568eab07b25e56435e99799c9c2dcd691adc6ea6ff640",
+      "canonical_load": true,
+      "negative_cells": 263,
+      "default_negative_cells": 263,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "56582549106c8f8eed8568eab07b25e56435e99799c9c2dcd691adc6ea6ff640",
+      "stg_bytes": 112532,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_019",
+      "geometry_identity": "d626861a979dcbacd0ea0e4a6952d3c9c52da416ff5e890ff70244b5d6692c2c",
+      "canonical_load": true,
+      "negative_cells": 0,
+      "default_negative_cells": 0,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "d626861a979dcbacd0ea0e4a6952d3c9c52da416ff5e890ff70244b5d6692c2c",
+      "stg_bytes": 29600,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_020",
+      "geometry_identity": "60e0886dc5e016876fca818f02be64261f51043062611955078d2e5562de750e",
+      "canonical_load": true,
+      "negative_cells": 4708,
+      "default_negative_cells": 4708,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "60e0886dc5e016876fca818f02be64261f51043062611955078d2e5562de750e",
+      "stg_bytes": 62424,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_021",
+      "geometry_identity": "60e0886dc5e016876fca818f02be64261f51043062611955078d2e5562de750e",
+      "canonical_load": true,
+      "negative_cells": 4708,
+      "default_negative_cells": 4708,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "60e0886dc5e016876fca818f02be64261f51043062611955078d2e5562de750e",
+      "stg_bytes": 62424,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_022",
+      "geometry_identity": "97eeae99be3ec4fb0f84f2add136d08987f76e6f3f6b357a5eef402a2fdbde2f",
+      "canonical_load": true,
+      "negative_cells": 4011,
+      "default_negative_cells": 4011,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "97eeae99be3ec4fb0f84f2add136d08987f76e6f3f6b357a5eef402a2fdbde2f",
+      "stg_bytes": 43772,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_023",
+      "geometry_identity": "97eeae99be3ec4fb0f84f2add136d08987f76e6f3f6b357a5eef402a2fdbde2f",
+      "canonical_load": true,
+      "negative_cells": 4011,
+      "default_negative_cells": 4011,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "97eeae99be3ec4fb0f84f2add136d08987f76e6f3f6b357a5eef402a2fdbde2f",
+      "stg_bytes": 43772,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_024",
+      "geometry_identity": "d03545c8dfb568559c958482debad03ae3efa9076a6ee8bd1383aa993be0ec79",
+      "canonical_load": true,
+      "negative_cells": 1298,
+      "default_negative_cells": 1298,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "d03545c8dfb568559c958482debad03ae3efa9076a6ee8bd1383aa993be0ec79",
+      "stg_bytes": 78528,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_025",
+      "geometry_identity": "98a98a028de7780860437a629373ca926ef394a780e92739b637cba078b0f87d",
+      "canonical_load": true,
+      "negative_cells": 311,
+      "default_negative_cells": 311,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "98a98a028de7780860437a629373ca926ef394a780e92739b637cba078b0f87d",
+      "stg_bytes": 134696,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_026",
+      "geometry_identity": "6be0fea5714bd3859f8d53fa7f08a8abd53612e2e50b8f7b3ca6099511bf2640",
+      "canonical_load": true,
+      "negative_cells": 670,
+      "default_negative_cells": 670,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "6be0fea5714bd3859f8d53fa7f08a8abd53612e2e50b8f7b3ca6099511bf2640",
+      "stg_bytes": 111476,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_027",
+      "geometry_identity": "48ece59895b663ab25938000318628354025e0eab5edeef1956dc9c7119537ed",
+      "canonical_load": true,
+      "negative_cells": 4096,
+      "default_negative_cells": 4096,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "48ece59895b663ab25938000318628354025e0eab5edeef1956dc9c7119537ed",
+      "stg_bytes": 6296,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_028",
+      "geometry_identity": "95c8b414cd9036a61b738f6b97a1fbfbd6e9d4f3343a9e688290ffb9ba4b5009",
+      "canonical_load": true,
+      "negative_cells": 589,
+      "default_negative_cells": 589,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "95c8b414cd9036a61b738f6b97a1fbfbd6e9d4f3343a9e688290ffb9ba4b5009",
+      "stg_bytes": 60172,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_029",
+      "geometry_identity": "20a6b8983ff5ec7e81304b8d294907df503f47cbe06793054bc9db733949ea05",
+      "canonical_load": true,
+      "negative_cells": 0,
+      "default_negative_cells": 0,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "20a6b8983ff5ec7e81304b8d294907df503f47cbe06793054bc9db733949ea05",
+      "stg_bytes": 26840,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_030",
+      "geometry_identity": "ac061e616e740900b31ce706705750e4433ffb813eac636db31a5f732c1e6964",
+      "canonical_load": true,
+      "negative_cells": 593,
+      "default_negative_cells": 593,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "ac061e616e740900b31ce706705750e4433ffb813eac636db31a5f732c1e6964",
+      "stg_bytes": 43720,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_031",
+      "geometry_identity": "6789c2cee689bc5ada092c85a96740375e8f05a16c0b228035134fe1fc9f49b6",
+      "canonical_load": true,
+      "negative_cells": 1708,
+      "default_negative_cells": 1708,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "6789c2cee689bc5ada092c85a96740375e8f05a16c0b228035134fe1fc9f49b6",
+      "stg_bytes": 87284,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_032",
+      "geometry_identity": "8ec334c074ae155d64d9c2cff9dce05eedf53bb1c7d3c6d64a9162d3d18927d4",
+      "canonical_load": true,
+      "negative_cells": 1085,
+      "default_negative_cells": 697,
+      "special_negative_cells": 388,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "8ec334c074ae155d64d9c2cff9dce05eedf53bb1c7d3c6d64a9162d3d18927d4",
+      "stg_bytes": 112700,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_033",
+      "geometry_identity": "b97d71ff58a113d1ba833996b5da07c5c4c4d131f51d91b5da90c4933fb71d7e",
+      "canonical_load": true,
+      "negative_cells": 1931,
+      "default_negative_cells": 1931,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "b97d71ff58a113d1ba833996b5da07c5c4c4d131f51d91b5da90c4933fb71d7e",
+      "stg_bytes": 108472,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_034",
+      "geometry_identity": "59a355790f7410cd3b53eb221f9b9583dec8c2dfef100a15bbeec80ccc09026e",
+      "canonical_load": true,
+      "negative_cells": 0,
+      "default_negative_cells": 0,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "59a355790f7410cd3b53eb221f9b9583dec8c2dfef100a15bbeec80ccc09026e",
+      "stg_bytes": 24100,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_035",
+      "geometry_identity": "a781f827463426ca408a6d00ae7d8482fb60d4cdfef9c0572b271c5d84cc00fd",
+      "canonical_load": true,
+      "negative_cells": 1936,
+      "default_negative_cells": 1936,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "a781f827463426ca408a6d00ae7d8482fb60d4cdfef9c0572b271c5d84cc00fd",
+      "stg_bytes": 112200,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    },
+    {
+      "neutral_package": "PACKAGE_036",
+      "geometry_identity": "cb27aae793b7af405a1f1309ccea5a0a96ab507a85306d6ab0c88337dab0ae54",
+      "canonical_load": true,
+      "negative_cells": 2238,
+      "default_negative_cells": 2238,
+      "special_negative_cells": 0,
+      "default_descriptor_in_legacy_refs": false,
+      "stg_sha256": "cb27aae793b7af405a1f1309ccea5a0a96ab507a85306d6ab0c88337dab0ae54",
+      "stg_bytes": 30112,
+      "default_descriptor_valid_bounds": true,
+      "default_descriptor_slot_primitive_counts": [
+        8,
+        1,
+        1,
+        8,
+        1,
+        1
+      ]
+    }
+  ]
+}

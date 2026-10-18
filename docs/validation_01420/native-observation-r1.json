@@ -1,0 +1,485 @@
+{
+  "schema": "mml-native-csv-observation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_csv_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/azahar-01420-r1/sdmc/3ds/Legends3DS/hardware_01420_4000086009955.csv",
+  "source_csv_sha256": "ca4700422227c5273111eb840ec107a31d4e5dc3cbdbdefe215a2cf90eaa0b46",
+  "source_csv_bytes": 12149,
+  "csv_rows": 80,
+  "environment": {
+    "emulator": "Azahar 2126",
+    "native_build": "0.0.14.20",
+    "reported_old_model": true,
+    "reported_model_query_rc": 0,
+    "physical_hardware_tested": false
+  },
+  "sdk_reservations": {
+    "memory_layout": 2,
+    "app_region_bytes": 100663296,
+    "heap_reserved": 66478080,
+    "linear_reserved": 33554432,
+    "stack_reserved": 262144
+  },
+  "sampling": {
+    "frame_rows": 44,
+    "unique_gameplay_frames": 34,
+    "minimum_gameplay_frame": 0,
+    "maximum_gameplay_frame": 600,
+    "samples_by_area": {
+      "0": 41,
+      "1": 3
+    },
+    "sparse_samples": true,
+    "fps_computed": false
+  },
+  "sampled_time_us": {
+    "frame_before_log_us": {
+      "samples": 44,
+      "minimum": 10395,
+      "median": 16710.0,
+      "maximum": 2280021
+    },
+    "interval_us": {
+      "samples": 44,
+      "minimum": 0,
+      "median": 16713.0,
+      "maximum": 89799
+    },
+    "update_us": {
+      "samples": 44,
+      "minimum": 2,
+      "median": 14.5,
+      "maximum": 221
+    },
+    "render_us": {
+      "samples": 44,
+      "minimum": 7056,
+      "median": 16624.0,
+      "maximum": 16678
+    },
+    "bottom_ui_us": {
+      "samples": 44,
+      "minimum": 18,
+      "median": 18.0,
+      "maximum": 6942
+    }
+  },
+  "sampled_memory_bytes": {
+    "owned_linear": {
+      "samples": 44,
+      "minimum": 59520,
+      "median": 59520.0,
+      "maximum": 71640
+    },
+    "owned_texture": {
+      "samples": 44,
+      "minimum": 2883584,
+      "median": 2883584.0,
+      "maximum": 4194304
+    },
+    "malloc_live": {
+      "samples": 44,
+      "minimum": 1683136,
+      "median": 1683136.0,
+      "maximum": 1937384
+    },
+    "malloc_arena_free": {
+      "samples": 44,
+      "minimum": 545040,
+      "median": 545088.0,
+      "maximum": 734600
+    },
+    "linear_free": {
+      "samples": 44,
+      "minimum": 27412992,
+      "median": 28735744.0,
+      "maximum": 28735744
+    },
+    "vram_free": {
+      "samples": 44,
+      "minimum": 5523456,
+      "median": 5523456.0,
+      "maximum": 5523456
+    }
+  },
+  "sampled_render_submission": {
+    "draw_calls": {
+      "samples": 44,
+      "minimum": 12,
+      "median": 12.0,
+      "maximum": 18
+    },
+    "triangles": {
+      "samples": 44,
+      "minimum": 1508,
+      "median": 1508.0,
+      "maximum": 2184
+    }
+  },
+  "sampled_player_contact": {
+    "counts": {
+      "NoData": 2,
+      "SourceBackedPartial": 40,
+      "Unsupported": 2
+    },
+    "grounded_raw_counts": {
+      "-1": 4,
+      "1": 34,
+      "0": 6
+    },
+    "by_area": {
+      "0": {
+        "NoData": 1,
+        "SourceBackedPartial": 40
+      },
+      "1": {
+        "NoData": 1,
+        "Unsupported": 2
+      }
+    }
+  },
+  "actor_sample_evidence": {
+    "state_rows": 3,
+    "context_rows": 3,
+    "callback_status_counts": {
+      "NeedsRandomSample": 1,
+      "SourceBackedPartial": 2
+    },
+    "detector_status_counts": {
+      "SourceBackedPartial": 3
+    },
+    "preparation_status_counts": {
+      "Ready": 3
+    },
+    "source_state_rows": [
+      {
+        "frame": 600,
+        "source_index": 16,
+        "initialized": 1,
+        "status": 3,
+        "action": 0,
+        "phase": 1,
+        "timer32c": 0,
+        "flags328": 14,
+        "request": 0,
+        "pose_request": 0,
+        "pose_record": 6,
+        "hp_known": 1,
+        "bank_requests": 8,
+        "full_callback": false,
+        "retail_parity": false,
+        "record_kind": "actor_state1"
+      },
+      {
+        "frame": 600,
+        "source_index": 17,
+        "initialized": 1,
+        "status": 0,
+        "action": 0,
+        "phase": 2,
+        "timer32c": 29,
+        "flags328": 46,
+        "request": 0,
+        "pose_request": 0,
+        "pose_record": 2,
+        "hp_known": 1,
+        "bank_requests": 8,
+        "full_callback": false,
+        "retail_parity": false,
+        "record_kind": "actor_state1"
+      },
+      {
+        "frame": 600,
+        "source_index": 18,
+        "initialized": 1,
+        "status": 0,
+        "action": 0,
+        "phase": 2,
+        "timer32c": 29,
+        "flags328": 46,
+        "request": 0,
+        "pose_request": 0,
+        "pose_record": 2,
+        "hp_known": 1,
+        "bank_requests": 8,
+        "full_callback": false,
+        "retail_parity": false,
+        "record_kind": "actor_state1"
+      }
+    ],
+    "source_context_rows": [
+      {
+        "frame": 600,
+        "source_index": 16,
+        "detector_status": 0,
+        "preparation_status": 0,
+        "detector_phase": 1,
+        "detector_countdown": 29,
+        "hp": 64,
+        "combat_A_known": 1,
+        "stats_selector": 1,
+        "scratch75": 2,
+        "audio_count": 0,
+        "last_audio_queued": 0,
+        "last_audio_drops": 0,
+        "audio_playback": false,
+        "record_kind": "actor_source_context"
+      },
+      {
+        "frame": 600,
+        "source_index": 17,
+        "detector_status": 0,
+        "preparation_status": 0,
+        "detector_phase": 1,
+        "detector_countdown": 29,
+        "hp": 64,
+        "combat_A_known": 1,
+        "stats_selector": 1,
+        "scratch75": 2,
+        "audio_count": 0,
+        "last_audio_queued": 0,
+        "last_audio_drops": 0,
+        "audio_playback": false,
+        "record_kind": "actor_source_context"
+      },
+      {
+        "frame": 600,
+        "source_index": 18,
+        "detector_status": 0,
+        "preparation_status": 0,
+        "detector_phase": 1,
+        "detector_countdown": 27,
+        "hp": 64,
+        "combat_A_known": 1,
+        "stats_selector": 1,
+        "scratch75": 2,
+        "audio_count": 0,
+        "last_audio_queued": 0,
+        "last_audio_drops": 0,
+        "audio_playback": false,
+        "record_kind": "actor_source_context"
+      }
+    ],
+    "full_callback_verified": false,
+    "retail_parity": false
+  },
+  "authored_action2_queries": {
+    "rows": 3,
+    "input_ready": 3,
+    "query_status_counts": {
+      "SourceBackedPartial": 3
+    },
+    "wall_status_counts": {
+      "SourceBackedPartial": 3
+    },
+    "floor_status_counts": {
+      "SourceBackedPartial": 3
+    },
+    "active_actor_modified": false,
+    "actual_enemy_AI_admission": false
+  },
+  "area_load_transition_and_spawn_events": [
+    {
+      "area_event": "package_before",
+      "area": 0,
+      "elapsed_us": 0,
+      "package_bytes": 0,
+      "decoded_estimate": 0,
+      "load_peak_estimate": 0,
+      "malloc_live": 35792,
+      "linear_free": 31941632,
+      "vram_free": 0,
+      "record_kind": "area_event"
+    },
+    {
+      "area_event": "package_loaded",
+      "area": 0,
+      "elapsed_us": 1370528,
+      "package_bytes": 701943,
+      "decoded_estimate": 810616,
+      "load_peak_estimate": 1898932,
+      "malloc_live": 748240,
+      "linear_free": 31941632,
+      "vram_free": 0,
+      "record_kind": "area_event"
+    },
+    {
+      "area_event": "transition_before",
+      "area": 0,
+      "elapsed_us": 0,
+      "package_bytes": 701943,
+      "decoded_estimate": 810616,
+      "load_peak_estimate": 1898932,
+      "malloc_live": 1683184,
+      "linear_free": 28735744,
+      "vram_free": 5523456,
+      "record_kind": "area_event"
+    },
+    {
+      "area_event": "transition_after",
+      "area": 1,
+      "elapsed_us": 2259956,
+      "package_bytes": 701943,
+      "decoded_estimate": 810616,
+      "load_peak_estimate": 1898932,
+      "malloc_live": 1886840,
+      "linear_free": 27412992,
+      "vram_free": 5523456,
+      "record_kind": "area_event"
+    },
+    {
+      "area_event": "conditional_spawn",
+      "area": 1,
+      "elapsed_us": 29857,
+      "package_bytes": 0,
+      "decoded_estimate": 0,
+      "load_peak_estimate": 3,
+      "malloc_live": 1886840,
+      "linear_free": 27412992,
+      "vram_free": 5523456,
+      "record_kind": "area_event"
+    },
+    {
+      "area_event": "conditional_spawn",
+      "area": 1,
+      "elapsed_us": 37297,
+      "package_bytes": 46308,
+      "decoded_estimate": 3,
+      "load_peak_estimate": 4,
+      "malloc_live": 1937384,
+      "linear_free": 27412992,
+      "vram_free": 5523456,
+      "record_kind": "area_event"
+    }
+  ],
+  "imported_actor_events": [
+    {
+      "area": 0,
+      "instances": 0,
+      "unique_resources": 0,
+      "decoded_element_bytes": 0,
+      "source_poses": 0,
+      "floor_bound": 0,
+      "initializer_selected_poses": 0,
+      "texture": "UNKNOWN",
+      "progression_pose_selection": "UNKNOWN",
+      "placement": "CANDIDATE",
+      "record_kind": "actor_event"
+    },
+    {
+      "area": 1,
+      "instances": 0,
+      "unique_resources": 0,
+      "decoded_element_bytes": 0,
+      "source_poses": 0,
+      "floor_bound": 0,
+      "initializer_selected_poses": 0,
+      "texture": "UNKNOWN",
+      "progression_pose_selection": "UNKNOWN",
+      "placement": "CANDIDATE",
+      "record_kind": "actor_event"
+    },
+    {
+      "area": 1,
+      "instances": 0,
+      "unique_resources": 0,
+      "decoded_element_bytes": 0,
+      "source_poses": 0,
+      "floor_bound": 0,
+      "initializer_selected_poses": 0,
+      "texture": "UNKNOWN",
+      "progression_pose_selection": "UNKNOWN",
+      "placement": "CANDIDATE",
+      "record_kind": "actor_event"
+    },
+    {
+      "area": 1,
+      "instances": 3,
+      "unique_resources": 1,
+      "decoded_element_bytes": 46308,
+      "source_poses": 3,
+      "floor_bound": 3,
+      "initializer_selected_poses": 3,
+      "texture": "UNKNOWN",
+      "progression_pose_selection": "UNKNOWN",
+      "placement": "CANDIDATE",
+      "record_kind": "actor_event"
+    }
+  ],
+  "gameplay_clock_events": [
+    {
+      "updates": 0,
+      "pending": 0,
+      "discarded_us": 0,
+      "nominal_hz": 30,
+      "hardware_rate": "HARDWARE_PENDING",
+      "record_kind": "gameplay_clock"
+    },
+    {
+      "updates": 120,
+      "pending": 0,
+      "discarded_us": 0,
+      "nominal_hz": 30,
+      "hardware_rate": "HARDWARE_PENDING",
+      "record_kind": "gameplay_clock"
+    },
+    {
+      "updates": 240,
+      "pending": 0,
+      "discarded_us": 0,
+      "nominal_hz": 30,
+      "hardware_rate": "HARDWARE_PENDING",
+      "record_kind": "gameplay_clock"
+    },
+    {
+      "updates": 360,
+      "pending": 0,
+      "discarded_us": 0,
+      "nominal_hz": 30,
+      "hardware_rate": "HARDWARE_PENDING",
+      "record_kind": "gameplay_clock"
+    },
+    {
+      "updates": 480,
+      "pending": 0,
+      "discarded_us": 0,
+      "nominal_hz": 30,
+      "hardware_rate": "HARDWARE_PENDING",
+      "record_kind": "gameplay_clock"
+    },
+    {
+      "updates": 600,
+      "pending": 0,
+      "discarded_us": 0,
+      "nominal_hz": 30,
+      "hardware_rate": "HARDWARE_PENDING",
+      "record_kind": "gameplay_clock"
+    }
+  ],
+  "event_record_counts": {
+    "build": 1,
+    "terrain_decode": 1,
+    "CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.": 1,
+    "area_event": 6,
+    "visibility_event": 2,
+    "actor_event": 4,
+    "geometry_event": 2,
+    "gameplay_clock": 6,
+    "actor_action2_query": 3,
+    "actor_target": 3,
+    "actor_state1": 3,
+    "actor_source_context": 3
+  },
+  "PHYSICS_1TO1": false,
+  "retail_parity": false,
+  "limits": [
+    "Emulator measurements do not establish physical Old 3DS performance.",
+    "Sparse rows and repeated gameplay frame counters do not establish FPS or worst-case pacing.",
+    "frame_before_log_us excludes its log write; interval includes previous logging.",
+    "Render timing includes synchronization; loading and host scheduling affect samples.",
+    "SDK reservations are not live usage; reported owned memory pools must not be summed blindly.",
+    "Action2 area-load queries use authored admission on copies; they are not active AI encounters.",
+    "Detector Ready only admits that source subset; missing callback dependencies remain explicit.",
+    "An observed transition does not prove retail events or normal tutorial progression."
+  ],
+  "frozen_csv_snapshot_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/azahar-01420-r1/native-csv-observation-r1.csv"
+}

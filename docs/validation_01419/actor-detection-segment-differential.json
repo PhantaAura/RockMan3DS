@@ -1,0 +1,28 @@
+{
+  "schema": "actor-detection-segment-native-differential/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "result": "PASS",
+  "authored_cases": 2537,
+  "supported_authored_cases": 2017,
+  "held_authored_cases": 520,
+  "nonzero_authored_results": 483,
+  "materialized_stage_cases": 21,
+  "supported_stage_cases": 14,
+  "held_stage_cases": 7,
+  "hot_loop_queries_without_allocations": 640,
+  "strict_L3DB_format": "PASS",
+  "fixture_sha256": "a64397ddc0b71bd5c8dcdb6168800da4a6acfab29e4b44ac677def8f30e700c1",
+  "compiler_flags": [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "retail_parity": false,
+  "hardware_verified": false,
+  "limitations": [
+    "Unsupported families and slopes never become fabricated clear/blocked results.",
+    "Ownerbounds/positions and private stagefixture stay outside sourceZIP.",
+    "Actual detector scheduling, native phase1 integration and physicalOld3DS require independentvalidation."
+  ]
+}

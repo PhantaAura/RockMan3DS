@@ -1,0 +1,282 @@
+[
+  {
+    "mode": "candidate-area0",
+    "setup": {
+      "variant": "candidate-area0",
+      "run": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/azahar-0148-candidate-area0",
+      "movie": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/candidate-area0.ctm",
+      "movie_sha256": "39a4c58648d77398a366da8110067c16f8dbe527cf076358d6ee089785a98e0b",
+      "seconds": 21.02991452991453,
+      "synthetic": true,
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/build/Legends3DS_0148_TerrainRepair.3dsx",
+      "binary_sha256": "6bfdec806febd9aa6c6a0421efdd93215716fa8ee5044aeb3bb756bf808c12bc",
+      "native_source_files_matched": 119,
+      "screenshots": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0148_Azahar_20261001_001/candidate-area0/screenshots",
+      "original_user_config_sha256": "2dd179635754cf02955b7dfb60aefb4ad07c090406fb7b14f35722d09ce4f35a",
+      "settings": {
+        "is_new_3ds": "false",
+        "is_new_3ds\\default": "false",
+        "cpu_clock_percentage": "100",
+        "cpu_clock_percentage\\default": "false",
+        "sdmc_directory": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/azahar-0148-candidate-area0/sdmc/",
+        "sdmc_directory\\default": "false",
+        "use_custom_storage": "true",
+        "use_custom_storage\\default": "false",
+        "Paths\\screenshotPath": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0148_Azahar_20261001_001/candidate-area0/screenshots/",
+        "Paths\\gamedirs\\1\\path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/build",
+        "Paths\\gamedirs\\size": "1"
+      }
+    },
+    "exit_code": 0,
+    "csv_samples": 19,
+    "native_headers": [
+      "# build=0.0.14.8,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66682880,linear_reserved=33554432,stack_reserved=262144",
+      "# terrain_decode=XYZ_STRIP,evidence=CANDIDATE,PHYSICS_1TO1=false",
+      "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.",
+      "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+      "# area_event=package_loaded,area=0,elapsed_us=406075,package_bytes=109672,decoded_estimate=171988,load_peak_estimate=340636,malloc_live=156112,linear_free=31941632,vram_free=0",
+      "# geometry_event,area=0,decode=XYZ_STRIP,evidence=CANDIDATE,primitives=1752,min_y=0,max_y=960"
+    ],
+    "hid_mismatches": 0,
+    "movie_completed": true,
+    "area_values": [
+      0
+    ],
+    "heading_values": [
+      0
+    ],
+    "projectile_max": 0,
+    "first_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "last_xyz": [
+      -768,
+      0,
+      -3711
+    ],
+    "malloc_live_max_sampled": 823840,
+    "owned_linear_max_sampled": 210240,
+    "owned_texture_max_sampled": 1835008
+  },
+  {
+    "mode": "candidate-idle",
+    "setup": {
+      "variant": "candidate-idle",
+      "run": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/azahar-0148-candidate-idle",
+      "movie": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/candidate-idle.ctm",
+      "movie_sha256": "8d4ec5032080045223304f1e9136cbe54624872f45d8ea18aa5fbf0f029c9f66",
+      "seconds": 17,
+      "synthetic": true,
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/build/Legends3DS_0148_TerrainRepair.3dsx",
+      "binary_sha256": "6bfdec806febd9aa6c6a0421efdd93215716fa8ee5044aeb3bb756bf808c12bc",
+      "native_source_files_matched": 119,
+      "screenshots": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0148_Azahar_20261001_001/candidate-idle/screenshots",
+      "original_user_config_sha256": "2dd179635754cf02955b7dfb60aefb4ad07c090406fb7b14f35722d09ce4f35a",
+      "settings": null
+    },
+    "exit_code": 0,
+    "csv_samples": 15,
+    "native_headers": [
+      "# build=0.0.14.8,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66682880,linear_reserved=33554432,stack_reserved=262144",
+      "# terrain_decode=XYZ_STRIP,evidence=CANDIDATE,PHYSICS_1TO1=false",
+      "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.",
+      "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+      "# area_event=package_loaded,area=0,elapsed_us=401134,package_bytes=109672,decoded_estimate=171988,load_peak_estimate=340636,malloc_live=156112,linear_free=31941632,vram_free=0",
+      "# geometry_event,area=0,decode=XYZ_STRIP,evidence=CANDIDATE,primitives=1752,min_y=0,max_y=960"
+    ],
+    "hid_mismatches": 0,
+    "movie_completed": true,
+    "area_values": [
+      0
+    ],
+    "heading_values": [
+      0
+    ],
+    "projectile_max": 0,
+    "first_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "last_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "malloc_live_max_sampled": 823840,
+    "owned_linear_max_sampled": 210240,
+    "owned_texture_max_sampled": 1835008
+  },
+  {
+    "mode": "textures-off-idle",
+    "setup": {
+      "variant": "textures-off-idle",
+      "run": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/azahar-0148-textures-off-idle",
+      "movie": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/textures-off-idle.ctm",
+      "movie_sha256": "a4a94647a02be11fb83191bb2d487db301508e00d1dbbd84562ffda03d7a95b4",
+      "seconds": 17,
+      "synthetic": true,
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/build/Legends3DS_0148_TerrainRepair.3dsx",
+      "binary_sha256": "6bfdec806febd9aa6c6a0421efdd93215716fa8ee5044aeb3bb756bf808c12bc",
+      "native_source_files_matched": 119,
+      "screenshots": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0148_Azahar_20261001_001/textures-off-idle/screenshots",
+      "original_user_config_sha256": "2dd179635754cf02955b7dfb60aefb4ad07c090406fb7b14f35722d09ce4f35a",
+      "settings": null
+    },
+    "exit_code": 0,
+    "csv_samples": 60,
+    "native_headers": [
+      "# build=0.0.14.8,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66682880,linear_reserved=33554432,stack_reserved=262144",
+      "# terrain_decode=XYZ_STRIP,evidence=CANDIDATE,PHYSICS_1TO1=false",
+      "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.",
+      "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+      "# area_event=package_loaded,area=0,elapsed_us=393003,package_bytes=109672,decoded_estimate=171988,load_peak_estimate=340636,malloc_live=156112,linear_free=31941632,vram_free=0",
+      "# geometry_event,area=0,decode=XYZ_STRIP,evidence=CANDIDATE,primitives=1752,min_y=0,max_y=960"
+    ],
+    "hid_mismatches": 0,
+    "movie_completed": true,
+    "area_values": [
+      0
+    ],
+    "heading_values": [
+      0
+    ],
+    "projectile_max": 0,
+    "first_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "last_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "malloc_live_max_sampled": 364096,
+    "owned_linear_max_sampled": 210240,
+    "owned_texture_max_sampled": 0
+  },
+  {
+    "mode": "safe0143-idle",
+    "setup": {
+      "variant": "safe0143-idle",
+      "run": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/azahar-0148-safe0143-idle",
+      "movie": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/safe0143-idle.ctm",
+      "movie_sha256": "3b207765b1b8e05dd81d7d2f9eadf73d65ed2d7341244a1a28fa53f3049698c9",
+      "seconds": 17,
+      "synthetic": true,
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/build/Legends3DS_0148_TerrainRepair.3dsx",
+      "binary_sha256": "6bfdec806febd9aa6c6a0421efdd93215716fa8ee5044aeb3bb756bf808c12bc",
+      "native_source_files_matched": 119,
+      "screenshots": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0148_Azahar_20261001_001/safe0143-idle/screenshots",
+      "original_user_config_sha256": "2dd179635754cf02955b7dfb60aefb4ad07c090406fb7b14f35722d09ce4f35a",
+      "settings": null
+    },
+    "exit_code": 0,
+    "csv_samples": 53,
+    "native_headers": [
+      "# build=0.0.14.8,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66682880,linear_reserved=33554432,stack_reserved=262144",
+      "# terrain_decode=LEGACY_FLAT,evidence=UNKNOWN,PHYSICS_1TO1=false",
+      "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.",
+      "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+      "# area_event=package_loaded,area=0,elapsed_us=384420,package_bytes=109672,decoded_estimate=171988,load_peak_estimate=340636,malloc_live=156112,linear_free=31941632,vram_free=0",
+      "# geometry_event,area=0,decode=LEGACY_FLAT,evidence=UNKNOWN,primitives=1752,min_y=0,max_y=0"
+    ],
+    "hid_mismatches": 0,
+    "movie_completed": true,
+    "area_values": [
+      0
+    ],
+    "heading_values": [
+      0
+    ],
+    "projectile_max": 0,
+    "first_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "last_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "malloc_live_max_sampled": 363624,
+    "owned_linear_max_sampled": 126144,
+    "owned_texture_max_sampled": 0
+  },
+  {
+    "mode": "candidate-controls",
+    "setup": {
+      "variant": "candidate-controls",
+      "run": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/azahar-0148-candidate-controls",
+      "movie": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/candidate-controls-delayed.ctm",
+      "movie_sha256": "d1e8ba574824cd4b07dbd189a827c25de32c79c942ae812a7fe56e808ae7c35f",
+      "seconds": 56.17948717948718,
+      "synthetic": true,
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/build/Legends3DS_0148_TerrainRepair.3dsx",
+      "binary_sha256": "6bfdec806febd9aa6c6a0421efdd93215716fa8ee5044aeb3bb756bf808c12bc",
+      "native_source_files_matched": 119,
+      "screenshots": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0148_Azahar_20261001_001/candidate-controls/screenshots",
+      "original_user_config_sha256": "2dd179635754cf02955b7dfb60aefb4ad07c090406fb7b14f35722d09ce4f35a",
+      "settings": {
+        "is_new_3ds": "false",
+        "is_new_3ds\\default": "false",
+        "cpu_clock_percentage": "100",
+        "cpu_clock_percentage\\default": "false",
+        "sdmc_directory": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/azahar-0148-candidate-controls/sdmc/",
+        "sdmc_directory\\default": "false",
+        "use_custom_storage": "true",
+        "use_custom_storage\\default": "false",
+        "Paths\\screenshotPath": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0148_Azahar_20261001_001/candidate-controls/screenshots/",
+        "Paths\\gamedirs\\1\\path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/build",
+        "Paths\\gamedirs\\size": "1"
+      },
+      "added_initial_neutral_seconds": 10
+    },
+    "exit_code": 0,
+    "csv_samples": 78,
+    "native_headers": [
+      "# build=0.0.14.8,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66682880,linear_reserved=33554432,stack_reserved=262144",
+      "# terrain_decode=XYZ_STRIP,evidence=CANDIDATE,PHYSICS_1TO1=false",
+      "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.",
+      "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+      "# area_event=package_loaded,area=0,elapsed_us=408497,package_bytes=109672,decoded_estimate=171988,load_peak_estimate=340636,malloc_live=156112,linear_free=31941632,vram_free=0",
+      "# geometry_event,area=0,decode=XYZ_STRIP,evidence=CANDIDATE,primitives=1752,min_y=0,max_y=960",
+      "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=109672,decoded_estimate=171988,load_peak_estimate=340636,malloc_live=823928,linear_free=29634048,vram_free=5523456",
+      "# geometry_event,area=1,decode=XYZ_STRIP,evidence=CANDIDATE,primitives=854,min_y=0,max_y=768",
+      "# area_event=transition_after,area=1,elapsed_us=709329,package_bytes=109672,decoded_estimate=171988,load_peak_estimate=340636,malloc_live=1091352,linear_free=28692992,vram_free=5523456"
+    ],
+    "hid_mismatches": 0,
+    "movie_completed": true,
+    "area_values": [
+      0,
+      1
+    ],
+    "heading_values": [
+      0,
+      352,
+      368,
+      672,
+      3584,
+      3840,
+      4080
+    ],
+    "projectile_max": 1,
+    "first_xyz": [
+      -768,
+      0,
+      -2816
+    ],
+    "last_xyz": [
+      -256,
+      0,
+      -13139
+    ],
+    "malloc_live_max_sampled": 1091352,
+    "owned_linear_max_sampled": 210240,
+    "owned_texture_max_sampled": 2883584
+  }
+]

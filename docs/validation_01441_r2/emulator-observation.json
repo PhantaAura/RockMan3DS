@@ -1,0 +1,175 @@
+{
+  "version": "0.0.14.41-r2",
+  "binary_sha256": "135f6517c449af35aa6f6f528f08f3be6e84e27340bb2e92c7b3379cf83f270a",
+  "emulator": "Azahar2126.0",
+  "old_model_setting": true,
+  "is_new_3ds": false,
+  "cpu_percent": 100,
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.04.30.312.png",
+      "sha256": "7b1fa7d79fdf16d6cbd0fe65591589154a6b3a4697f8d9efa5fc7fab53e3d324",
+      "scene": "CPU RGB bars",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.04.41.82.png",
+      "sha256": "dd3f251c1587f81e534df0d9832185094b13c75c0b9488497dcd15ab368c0008",
+      "scene": "GPU cyan clear",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.04.56.598.png",
+      "sha256": "a51a5caec725615450fe245f03bda6eb2f8c712ce35c2cb545f8e7f23dc73f7f",
+      "scene": "X / all0143; full gray player + terrain + bottom map",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.06.20.717.png",
+      "sha256": "bc527781e3d343d597a4211972d2673692953f82ea35bcc837c90c91018780f2",
+      "scene": "D-pad LEFT / terrain-only0143 + bottom map",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.07.10.83.png",
+      "sha256": "8cb59d2519fe45b10bb61195ec880724cdce85eb79c3ad05ba5cc2a962bef83e",
+      "scene": "D-pad RIGHT / player-only0143; bottom black in this capture",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.07.38.955.png",
+      "sha256": "cc36f0e1664d0720621a52e70b140c65f6c34864beb02cb8111b62b3a41dc65d",
+      "scene": "D-pad RIGHT / player-only0143 + bottom map",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    }
+  ],
+  "modes": [
+    {
+      "mode": "all",
+      "samples": 14,
+      "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/native-r1/sd_out/3ds/Legends3DS/hardware_01441r2_4001007840725.csv",
+      "trace_sha256": "e0b6f04b6f2c1435f5e83f8ee64c250ac1b992a1eb1cdc45dabfc27f4420d765",
+      "metrics": {
+        "draw_calls": [
+          2
+        ],
+        "triangles": [
+          3990
+        ],
+        "owned_linear": [
+          126144
+        ],
+        "owned_texture": [
+          0
+        ],
+        "malloc_live": [
+          960264
+        ],
+        "linear_free": [
+          31553280
+        ],
+        "vram_free": [
+          5523456
+        ]
+      },
+      "first_gpu_sync_returned": true
+    },
+    {
+      "mode": "terrain_only",
+      "samples": 16,
+      "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/native-r1/sd_out/3ds/Legends3DS/hardware_01441r2_4001007932711.csv",
+      "trace_sha256": "df0a65027bcae07c4475eca506dbb61303fb0d39fc2ffdeb77a9a28a09a34e22",
+      "metrics": {
+        "draw_calls": [
+          1
+        ],
+        "triangles": [
+          3504
+        ],
+        "owned_linear": [
+          126144
+        ],
+        "owned_texture": [
+          0
+        ],
+        "malloc_live": [
+          960264
+        ],
+        "linear_free": [
+          31553280
+        ],
+        "vram_free": [
+          5523456
+        ]
+      },
+      "first_gpu_sync_returned": true
+    },
+    {
+      "mode": "player_only",
+      "samples": 28,
+      "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/native-r1/sd_out/3ds/Legends3DS/hardware_01441r2_4001008011142.csv",
+      "trace_sha256": "baa99a68032482aaf4bde26e808d486c28e63b50b5b4984212e90cc98399672c",
+      "metrics": {
+        "draw_calls": [
+          1
+        ],
+        "triangles": [
+          486
+        ],
+        "owned_linear": [
+          126144
+        ],
+        "owned_texture": [
+          0
+        ],
+        "malloc_live": [
+          960264
+        ],
+        "linear_free": [
+          31553280
+        ],
+        "vram_free": [
+          5523456
+        ]
+      },
+      "first_gpu_sync_returned": true
+    }
+  ],
+  "regression": {
+    "previous_all_draw_calls": 3,
+    "current_all_draw_calls": 2,
+    "previous_and_current_all_triangles": 3990,
+    "owned_geometry_bytes_unchanged": 126144
+  },
+  "limits": [
+    "Not a physical GPU/performance proof.",
+    "Safe0143 is intentionally untextured; no PS1 visual-parity claim.",
+    "One player-only capture has a black bottom; a later capture shows the map. Possible existing bottom presentation flicker remains unverified.",
+    "Full enhanced renderer not exercised in this r2 session; inherited implementation retained."
+  ]
+}

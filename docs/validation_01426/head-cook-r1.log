@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/cook_fresh_head_pack.py", line 15, in <module>
+    assert res.typ==0 and res.internal not in files
+AssertionError

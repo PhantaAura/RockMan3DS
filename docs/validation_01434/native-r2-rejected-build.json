@@ -1,0 +1,46 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.34_WorldComesAlive",
+        "-B",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/host",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/native-r2/logs/host-configure.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/host",
+        "--parallel",
+        "4"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/native-r2/logs/host-build.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/host",
+        "--output-on-failure"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/native-r2/logs/host-tests.log",
+      "returncode": 8
+    }
+  ],
+  "cookers_or_extractors_invoked": false,
+  "created_utc": "2026-10-12T19:33:47.775142+00:00",
+  "error": "command failed (8); see /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/native-r2/logs/host-tests.log",
+  "hardware": "PENDING",
+  "host_build_cache": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/host",
+  "pack": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01434/pack-runtime-r1",
+  "pack_manifest_sha256": "3128f1de001603a3dd54448c0a3f6cf6872916d1803d8d7c2895f1970b87e9f4",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.34_WorldComesAlive",
+  "status": "FAILED"
+}

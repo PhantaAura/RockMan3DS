@@ -1,0 +1,305 @@
+ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r1/host --output-on-failure
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r1/host
+        Start   1: map_initialization
+  1/139 Test   #1: map_initialization .................   Passed    0.22 sec
+        Start   2: core
+  2/139 Test   #2: core ...............................   Passed    0.01 sec
+        Start   3: map_sharing
+  3/139 Test   #3: map_sharing ........................   Passed    0.01 sec
+        Start   4: ps1_geometry
+  4/139 Test   #4: ps1_geometry .......................   Passed    0.00 sec
+        Start   5: area_package
+  5/139 Test   #5: area_package .......................   Passed    0.03 sec
+        Start   6: terrain_geometry_candidate
+  6/139 Test   #6: terrain_geometry_candidate .........   Passed    0.00 sec
+        Start   7: map_cell_alignment
+  7/139 Test   #7: map_cell_alignment .................   Passed    0.00 sec
+        Start   8: area_placement
+  8/139 Test   #8: area_placement .....................   Passed    0.00 sec
+        Start   9: positive_terrain
+  9/139 Test   #9: positive_terrain ...................   Passed    0.00 sec
+        Start  10: push2
+ 10/139 Test  #10: push2 ..............................   Passed    0.00 sec
+        Start  11: integrity
+ 11/139 Test  #11: integrity ..........................   Passed    0.00 sec
+        Start  12: pipeline_python
+ 12/139 Test  #12: pipeline_python ....................   Passed    0.21 sec
+        Start  13: cooked_area_python
+ 13/139 Test  #13: cooked_area_python .................   Passed    0.20 sec
+        Start  14: owner_data_intake_python
+ 14/139 Test  #14: owner_data_intake_python ...........   Passed    0.23 sec
+        Start  15: local_install_python
+ 15/139 Test  #15: local_install_python ...............   Passed    1.11 sec
+        Start  16: source_tools_python
+ 16/139 Test  #16: source_tools_python ................***Failed    0.68 sec
+.........F............
+======================================================================
+FAIL: test_current_cumulative_native_target_and_frozen_shaders (__main__.SourcePolicyTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.41_WorldComesAlive/tests/test_source_tools.py", line 362, in test_current_cumulative_native_target_and_frozen_shaders
+    self.assertEqual(result['status'], 'PASS', result['errors'])
+AssertionError: 'FAIL' != 'PASS'
+- FAIL
++ PASS
+ : ['platform/3ds/source/vshader_uv.v.pica: frozen shader hash mismatch']
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.555s
+
+FAILED (failures=1)
+
+        Start  17: negative_package
+ 17/139 Test  #17: negative_package ...................   Passed    0.00 sec
+        Start  18: negative_terrain
+ 18/139 Test  #18: negative_terrain ...................   Passed    0.00 sec
+        Start  19: negative_material
+ 19/139 Test  #19: negative_material ..................   Passed    0.00 sec
+        Start  20: material_vram
+ 20/139 Test  #20: material_vram ......................   Passed    0.01 sec
+        Start  21: texture_sector_layout
+ 21/139 Test  #21: texture_sector_layout ..............   Passed    0.01 sec
+        Start  22: area_inspection
+ 22/139 Test  #22: area_inspection ....................   Passed    0.00 sec
+        Start  23: frontend_view
+ 23/139 Test  #23: frontend_view ......................   Passed    0.00 sec
+        Start  24: mockup_ui
+ 24/139 Test  #24: mockup_ui ..........................   Passed    0.01 sec
+        Start  25: player_visual_storage
+ 25/139 Test  #25: player_visual_storage ..............   Passed    0.01 sec
+        Start  26: ebd_resources
+ 26/139 Test  #26: ebd_resources ......................   Passed    0.00 sec
+        Start  27: ebd_sharing
+ 27/139 Test  #27: ebd_sharing ........................   Passed    0.00 sec
+        Start  28: actor_resources
+ 28/139 Test  #28: actor_resources ....................   Passed    0.01 sec
+        Start  29: actor_materials
+ 29/139 Test  #29: actor_materials ....................   Passed    0.01 sec
+        Start  30: parity_trace_python
+ 30/139 Test  #30: parity_trace_python ................   Passed    0.33 sec
+        Start  31: companion_ui
+ 31/139 Test  #31: companion_ui .......................   Passed    0.00 sec
+        Start  32: runtime_contact
+ 32/139 Test  #32: runtime_contact ....................   Passed    0.01 sec
+        Start  33: renderer_gcc_warning
+ 33/139 Test  #33: renderer_gcc_warning ...............   Passed    0.33 sec
+        Start  34: gameplay_clock
+ 34/139 Test  #34: gameplay_clock .....................   Passed    0.01 sec
+        Start  35: running_jump_source
+ 35/139 Test  #35: running_jump_source ................   Passed    0.01 sec
+        Start  36: class20_03_behavior
+ 36/139 Test  #36: class20_03_behavior ................   Passed    0.01 sec
+        Start  37: source_angle
+ 37/139 Test  #37: source_angle .......................   Passed    0.01 sec
+        Start  38: actor_sequence
+ 38/139 Test  #38: actor_sequence .....................   Passed    0.00 sec
+        Start  39: st00_spawn
+ 39/139 Test  #39: st00_spawn .........................   Passed    0.01 sec
+        Start  40: runtime_spawns
+ 40/139 Test  #40: runtime_spawns .....................   Passed    0.01 sec
+        Start  41: map_initialization_package
+ 41/139 Test  #41: map_initialization_package .........   Passed    0.01 sec
+        Start  42: runtime_transactions
+ 42/139 Test  #42: runtime_transactions ...............   Passed    0.01 sec
+        Start  43: actor_floor_init
+ 43/139 Test  #43: actor_floor_init ...................   Passed    0.00 sec
+        Start  44: actor_animation_bank
+ 44/139 Test  #44: actor_animation_bank ...............   Passed    0.01 sec
+        Start  45: actor_behavior_runtime
+ 45/139 Test  #45: actor_behavior_runtime .............   Passed    0.01 sec
+        Start  46: class20_03_callback
+ 46/139 Test  #46: class20_03_callback ................   Passed    0.04 sec
+        Start  47: actor_contact
+ 47/139 Test  #47: actor_contact ......................   Passed    0.02 sec
+        Start  48: actor_detection
+ 48/139 Test  #48: actor_detection ....................   Passed    0.02 sec
+        Start  49: actor_detection_profile
+ 49/139 Test  #49: actor_detection_profile ............   Passed    0.00 sec
+        Start  50: class20_03_action3
+ 50/139 Test  #50: class20_03_action3 .................   Passed    0.03 sec
+        Start  51: actor_detection_math
+ 51/139 Test  #51: actor_detection_math ...............   Passed    0.01 sec
+        Start  52: actor_detection_segment
+ 52/139 Test  #52: actor_detection_segment ............   Passed    0.01 sec
+        Start  53: source_audio_queue
+ 53/139 Test  #53: source_audio_queue .................   Passed    0.01 sec
+        Start  54: actor_detection_preparation
+ 54/139 Test  #54: actor_detection_preparation ........   Passed    0.02 sec
+        Start  55: actor_action3_contact
+ 55/139 Test  #55: actor_action3_contact ..............   Passed    0.01 sec
+        Start  56: source_combat_profile
+ 56/139 Test  #56: source_combat_profile ..............   Passed    0.01 sec
+        Start  57: cook_actor_combat
+ 57/139 Test  #57: cook_actor_combat ..................   Passed    0.36 sec
+        Start  58: runtime_source_context
+ 58/139 Test  #58: runtime_source_context .............   Passed    0.02 sec
+        Start  59: actor_source_transaction
+ 59/139 Test  #59: actor_source_transaction ...........   Passed    0.03 sec
+        Start  60: class20_03_action9
+ 60/139 Test  #60: class20_03_action9 .................   Passed    0.06 sec
+        Start  61: actor_action9_contact
+ 61/139 Test  #61: actor_action9_contact ..............   Passed    0.02 sec
+        Start  62: actor_detection_segment_extended
+ 62/139 Test  #62: actor_detection_segment_extended ...   Passed    0.07 sec
+        Start  63: actor_action9_runtime
+ 63/139 Test  #63: actor_action9_runtime ..............   Passed    0.01 sec
+        Start  64: rng_reference_trace
+ 64/139 Test  #64: rng_reference_trace ................   Passed    0.09 sec
+        Start  65: retail_rng_tape
+ 65/139 Test  #65: retail_rng_tape ....................   Passed    0.01 sec
+        Start  66: actor_action4_runtime
+ 66/139 Test  #66: actor_action4_runtime ..............   Passed    0.01 sec
+        Start  67: class20_03_action4
+ 67/139 Test  #67: class20_03_action4 .................   Passed    0.03 sec
+        Start  68: actor_action4_contact
+ 68/139 Test  #68: actor_action4_contact ..............   Passed    0.01 sec
+        Start  69: source_profile_class60_06
+ 69/139 Test  #69: source_profile_class60_06 ..........   Passed    0.00 sec
+        Start  70: class20_03_hit
+ 70/139 Test  #70: class20_03_hit .....................   Passed    0.01 sec
+        Start  71: source_event_pipeline
+ 71/139 Test  #71: source_event_pipeline ..............   Passed    0.01 sec
+        Start  72: source_hit_proxy
+ 72/139 Test  #72: source_hit_proxy ...................   Passed    0.02 sec
+        Start  73: class60_06
+ 73/139 Test  #73: class60_06 .........................   Passed    0.29 sec
+        Start  74: class60_06_contact
+ 74/139 Test  #74: class60_06_contact .................   Passed    0.05 sec
+        Start  75: source_actor_consumers
+ 75/139 Test  #75: source_actor_consumers .............   Passed    0.00 sec
+        Start  76: runtime_source_events
+ 76/139 Test  #76: runtime_source_events ..............   Passed    0.01 sec
+        Start  77: cook_hit_proxy
+ 77/139 Test  #77: cook_hit_proxy .....................   Passed    0.07 sec
+        Start  78: source_rng_service
+ 78/139 Test  #78: source_rng_service .................   Passed    0.01 sec
+        Start  79: cook_source_rng_profile
+ 79/139 Test  #79: cook_source_rng_profile ............   Passed    0.07 sec
+        Start  80: source_event_consumer
+ 80/139 Test  #80: source_event_consumer ..............   Passed    0.01 sec
+        Start  81: child_runtime
+ 81/139 Test  #81: child_runtime ......................   Passed    0.01 sec
+        Start  82: actor_child_delivery
+ 82/139 Test  #82: actor_child_delivery ...............   Passed    0.01 sec
+        Start  83: source_event_package
+ 83/139 Test  #83: source_event_package ...............   Passed    0.00 sec
+        Start  84: cook_source_event_phase2
+ 84/139 Test  #84: cook_source_event_phase2 ...........   Passed    0.06 sec
+        Start  85: actor_pose_proxy
+ 85/139 Test  #85: actor_pose_proxy ...................   Passed    0.01 sec
+        Start  86: source_effects
+ 86/139 Test  #86: source_effects .....................   Passed    0.03 sec
+        Start  87: source_effect2
+ 87/139 Test  #87: source_effect2 .....................   Passed    0.02 sec
+        Start  88: source_event_phase2
+ 88/139 Test  #88: source_event_phase2 ................   Passed    0.01 sec
+        Start  89: actor_pose_proxy_runtime
+ 89/139 Test  #89: actor_pose_proxy_runtime ...........   Passed    0.00 sec
+        Start  90: source_event_command
+ 90/139 Test  #90: source_event_command ...............   Passed    0.01 sec
+        Start  91: source_event_command_package
+ 91/139 Test  #91: source_event_command_package .......   Passed    0.00 sec
+        Start  92: source_player_proxy
+ 92/139 Test  #92: source_player_proxy ................   Passed    0.04 sec
+        Start  93: cook_source_event_command
+ 93/139 Test  #93: cook_source_event_command ..........   Passed    0.12 sec
+        Start  94: player_lease_reference
+ 94/139 Test  #94: player_lease_reference .............   Passed    0.31 sec
+        Start  95: runtime_command_lease
+ 95/139 Test  #95: runtime_command_lease ..............   Passed    0.00 sec
+        Start  96: xa_stream
+ 96/139 Test  #96: xa_stream ..........................   Passed    0.12 sec
+        Start  97: source_camera
+ 97/139 Test  #97: source_camera ......................   Passed    0.01 sec
+        Start  98: cook_xa_stream
+ 98/139 Test  #98: cook_xa_stream .....................   Passed    0.30 sec
+        Start  99: source_fade
+ 99/139 Test  #99: source_fade ........................   Passed    0.01 sec
+        Start 100: source_fade_callback
+100/139 Test #100: source_fade_callback ...............   Passed    0.01 sec
+        Start 101: runtime_source_fade
+101/139 Test #101: runtime_source_fade ................   Passed    0.01 sec
+        Start 102: source_event_phase5
+102/139 Test #102: source_event_phase5 ................   Passed    0.04 sec
+        Start 103: source_event_phase5_cooker
+103/139 Test #103: source_event_phase5_cooker .........   Passed    0.11 sec
+        Start 104: source_event_phase5_resources
+104/139 Test #104: source_event_phase5_resources ......   Passed    0.02 sec
+        Start 105: source_event_phase6
+105/139 Test #105: source_event_phase6 ................   Passed    0.02 sec
+        Start 106: source_event_phase6_cooker
+106/139 Test #106: source_event_phase6_cooker .........   Passed    0.13 sec
+        Start 107: native_trace_summary
+107/139 Test #107: native_trace_summary ...............   Passed    0.14 sec
+        Start 108: test_boot_policy
+108/139 Test #108: test_boot_policy ...................   Passed    0.00 sec
+        Start 109: runtime_fade
+109/139 Test #109: runtime_fade .......................   Passed    0.00 sec
+        Start 110: source_player_head
+110/139 Test #110: source_player_head .................   Passed    0.15 sec
+        Start 111: source_event_caller
+111/139 Test #111: source_event_caller ................   Passed    0.02 sec
+        Start 112: scene_e0
+112/139 Test #112: scene_e0 ...........................   Passed    0.02 sec
+        Start 113: source_render_color
+113/139 Test #113: source_render_color ................   Passed    0.01 sec
+        Start 114: scene_e0_material
+114/139 Test #114: scene_e0_material ..................   Passed    0.02 sec
+        Start 115: source_scene_view
+115/139 Test #115: source_scene_view ..................   Passed    0.01 sec
+        Start 116: source_scene_view_cooker
+116/139 Test #116: source_scene_view_cooker ...........   Passed    0.11 sec
+        Start 117: class20_03_reaction
+117/139 Test #117: class20_03_reaction ................   Passed    0.03 sec
+        Start 118: source_main_loop
+118/139 Test #118: source_main_loop ...................   Passed    0.02 sec
+        Start 119: source_scene_actor40
+119/139 Test #119: source_scene_actor40 ...............   Passed    0.04 sec
+        Start 120: runtime_source_pad
+120/139 Test #120: runtime_source_pad .................   Passed    0.02 sec
+        Start 121: source_scene_actor40_pose
+121/139 Test #121: source_scene_actor40_pose ..........   Passed    0.02 sec
+        Start 122: source_scene_actor40_init
+122/139 Test #122: source_scene_actor40_init ..........   Passed    0.02 sec
+        Start 123: source_scene_actor40_update
+123/139 Test #123: source_scene_actor40_update ........   Passed    0.01 sec
+        Start 124: source_scene_actor40_tail
+124/139 Test #124: source_scene_actor40_tail ..........   Passed    0.01 sec
+        Start 125: source_loop_snapshot
+125/139 Test #125: source_loop_snapshot ...............   Passed    0.01 sec
+        Start 126: source_loop_snapshot_cook
+126/139 Test #126: source_loop_snapshot_cook ..........   Passed    0.33 sec
+        Start 127: runtime_source_loop_snapshot
+127/139 Test #127: runtime_source_loop_snapshot .......   Passed    0.02 sec
+        Start 128: source_event_random_effect
+128/139 Test #128: source_event_random_effect .........   Passed    0.02 sec
+        Start 129: source_event_random_tape
+129/139 Test #129: source_event_random_tape ...........   Passed    0.01 sec
+        Start 130: source_scene_rng_cook
+130/139 Test #130: source_scene_rng_cook ..............   Passed    0.10 sec
+        Start 131: runtime_source_scene_rng
+131/139 Test #131: runtime_source_scene_rng ...........   Passed    0.00 sec
+        Start 132: native_checkpoint_version
+132/139 Test #132: native_checkpoint_version ..........   Passed    0.03 sec
+        Start 133: source_effect_dispatch
+133/139 Test #133: source_effect_dispatch .............   Passed    0.01 sec
+        Start 134: source_effect34
+134/139 Test #134: source_effect34 ....................   Passed    0.01 sec
+        Start 135: source_prop_attach
+135/139 Test #135: source_prop_attach .................   Passed    0.02 sec
+        Start 136: source_prop_lift
+136/139 Test #136: source_prop_lift ...................   Passed    0.02 sec
+        Start 137: source_prop_foreign_globals
+137/139 Test #137: source_prop_foreign_globals ........   Passed    0.01 sec
+        Start 138: source_event_handoff
+138/139 Test #138: source_event_handoff ...............   Passed    0.01 sec
+        Start 139: gpu_frame_wait
+139/139 Test #139: gpu_frame_wait .....................   Passed    0.00 sec
+
+99% tests passed, 1 tests failed out of 139
+
+Total Test time (real) =   7.80 sec
+
+The following tests FAILED:
+	 16 - source_tools_python (Failed)
+Errors while running CTest

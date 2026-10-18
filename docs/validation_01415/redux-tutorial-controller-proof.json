@@ -1,0 +1,44 @@
+{
+  "vsync": 91814,
+  "pc": 2147556588,
+  "gp": 2148104292,
+  "ram_u32_at_0x00000008": 0,
+  "ram_u32_at_0x80000008": 0,
+  "raw_stats_selector_at_0x800c1b6b": 1,
+  "stats_table_pointer_at_0x80098844": 2148068804,
+  "map_idx_pointer_at_0x1f80004c": 2148909056,
+  "player_class": 0,
+  "player_state": 1,
+  "player_position": [
+    930,
+    -1,
+    -10135
+  ],
+  "idx": [
+    {
+      "index": 78,
+      "raw6": 1,
+      "descriptor_word": 2149140016,
+      "default_contact_pointer": 0
+    },
+    {
+      "index": 94,
+      "raw6": 1,
+      "descriptor_word": 2149140400,
+      "default_contact_pointer": 0
+    },
+    {
+      "index": 123,
+      "raw6": 1,
+      "descriptor_word": 2149139968,
+      "default_contact_pointer": 0
+    }
+  ],
+  "actors_class20_03": [],
+  "pad_start_pressed": false,
+  "pad_cross_pressed": false,
+  "pad_start_frames_observed": 107,
+  "pad_cross_frames_observed": 289,
+  "pad_start_last_vsync": 52887,
+  "pad_cross_last_vsync": 58634
+}

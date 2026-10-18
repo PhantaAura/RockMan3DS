@@ -1,0 +1,39 @@
+make -C /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/old3ds-test-20260924/validated-final/native-source/platform/3ds -j4
+vshader0143.v.pica
+vshader_uv.v.pica
+built ... Legends3DS_FlightProbe_0146.smdh
+vshader0143.shbin
+vshader_uv.shbin
+hardware_test.cpp
+l3map.cpp
+st00_render.cpp
+main.cpp
+pbd_model.cpp
+player_composition.cpp
+pbd_animation.cpp
+player_pose.cpp
+visual_bridge.cpp
+ctr_texture_layout.cpp
+reference_tables.cpp
+runtime_session.cpp
+tutorial_runtime.cpp
+mml_message.cpp
+st00_flow.cpp
+st00_event.cpp
+ebd_directory.cpp
+stage_runtime.cpp
+stage_spawn.cpp
+bottom_screen.cpp
+bottom_map.cpp
+dialogue_history.cpp
+material_cache.cpp
+material_resolver.cpp
+ps1_texture.cpp
+tile_transform.c
+player_runtime.c
+player_collision.c
+qol_settings.c
+mml_renderer_recovery.c
+mml_runtime_diag_v2.c
+linking Legends3DS_FlightProbe_0146.elf
+built ... Legends3DS_FlightProbe_0146.3dsx

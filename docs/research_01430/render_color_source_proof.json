@@ -1,0 +1,72 @@
+{
+  "schema": "mml-source-render-color/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "far_setter_cases": 128,
+  "back_setter_cases": 128,
+  "authored_area_config_cases": 80,
+  "owner_area_config_cases": 5,
+  "flat_packet_cases": 128,
+  "dpcs_cases": 256,
+  "unchanged_original_instructions": 37580,
+  "modeled_dpcs_commands": 256,
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "fixture_sha256": "f8a79f345648ce71ae99b14eec8fdb6a87c9d0667c1ab989ccff80aeef70a833",
+  "terrain_color_aggregate": {
+    "input_sha256": "8b65bd54dd6cfb28059c73684879fd6f3e77eec1270d1669883a51b9dca9d4cc",
+    "primitive_count": 2502,
+    "distinct_rgb_count": 1,
+    "neutral_808080_count": 2502,
+    "nonneutral_rgb_count": 0
+  },
+  "source_blocks": [
+    {
+      "id": "far_setter",
+      "start": "0x8007b0f8",
+      "end_exclusive": "0x8007b118",
+      "sha256": "7c5febbc8fceb4e4b3065c8276416832651867316006f05c53e0a20b893d522d"
+    },
+    {
+      "id": "back_setter",
+      "start": "0x8007b0d8",
+      "end_exclusive": "0x8007b0f8",
+      "sha256": "e4dc8b65f4b8d01e34793cfd9e1ecc838abd27d016ca1c2a4291a20b613ab61e"
+    },
+    {
+      "id": "area_config_writer",
+      "start": "0x800371a0",
+      "end_exclusive": "0x80037440",
+      "sha256": "2a8fd70fd6dec51a543f4ed4503759f2962226a0e7b4339b5be1b13c6950522f"
+    },
+    {
+      "id": "positive_flat_quad_color",
+      "start": "0x800251d4",
+      "end_exclusive": "0x800251f0",
+      "sha256": "0489576fff2024915a9b06724b5a0e8ed4828ae3e996837c0769701f8e8c9538"
+    },
+    {
+      "id": "positive_dpcs_output",
+      "start": "0x800252f4",
+      "end_exclusive": "0x80025334",
+      "sha256": "a387a7a2630d673e67783095b1ef008c4608ccc9b560447313fff3a5d6554540"
+    }
+  ],
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "native_depth_cue_bound": false,
+  "references": [
+    "https://psx-spx.consoledev.net/geometrytransformationenginegte/",
+    "https://psx-spx.consoledev.net/graphicsprocessingunitgpu/",
+    "https://github.com/devkitPro/citro3d/blob/master/include/c3d/texenv.h"
+  ],
+  "limits": [
+    "FarColor is control21..23; BackColor13..15 has separate source ownership.",
+    "Area config +32..34 reaches FarColor; no live/current render cadence is inferred.",
+    "DPCS is a restricted published arithmetic model, not independent hardware GTE measurement.",
+    "IR0 inputs are authored; current H, matrix, depth and per-primitive command ownership are unbound.",
+    "No generic GPU fog, guessed far RGB, source shading completion or visual acceptance is claimed."
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "build": "0.0.14.25",
+  "binary_revision": "r4",
+  "binary_sha256": "0142638f404ecace2fae3abbde5879b2f439165ed45720a8d16ea5214a941b1e",
+  "emulator": "Azahar2126.0",
+  "model_new3ds": 0,
+  "renderer": "ENHANCED",
+  "hardware_tested": false,
+  "audio_requested": false,
+  "audio_playback_observed": false,
+  "native_transport_receipts": 0,
+  "source_event_held_phase": 3,
+  "committed_diagnostic_transition_audio_invalidation_observed": true,
+  "sample_rows": 44,
+  "areas": [
+    0,
+    1
+  ],
+  "screenshots": [
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r2/screenshots/enhanced-gameplay-native-01425.png",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r2/screenshots/replay-completed-dialog.png",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r2/screenshots/enhanced-area1-paused-native-01425.png"
+  ],
+  "metrics_scope": "Sparse emulated timings; not hardware benchmark or worst-case proof.",
+  "known_visual_problems": [
+    "Translucent player and dark floating primitives in area0 capture.",
+    "Imported actors obscure player/camera in final area1 view.",
+    "Original camera ownership/FOV and PS1 top HUD remain incomplete."
+  ],
+  "natural_tutorial_progression_proven": false,
+  "frame_before_log_us": {
+    "min": 10395,
+    "median": 16710.0,
+    "max": 2079457
+  },
+  "interval_us": {
+    "min": 0,
+    "median": 16713.0,
+    "max": 89799
+  },
+  "update_us": {
+    "min": 2,
+    "median": 38.0,
+    "max": 392
+  },
+  "render_us": {
+    "min": 6749,
+    "median": 16493.0,
+    "max": 16678
+  },
+  "draw_calls": {
+    "min": 12,
+    "median": 12.0,
+    "max": 18
+  },
+  "triangles": {
+    "min": 1508,
+    "median": 1508.0,
+    "max": 2184
+  },
+  "owned_linear": {
+    "min": 59520,
+    "median": 59520.0,
+    "max": 71640
+  },
+  "owned_texture": {
+    "min": 2883584,
+    "median": 2883584.0,
+    "max": 3670016
+  },
+  "malloc_live": {
+    "min": 1683176,
+    "median": 1683176.0,
+    "max": 1937448
+  },
+  "linear_free": {
+    "min": 27937280,
+    "median": 28735744.0,
+    "max": 28735744
+  },
+  "vram_free": {
+    "min": 5523456,
+    "median": 5523456.0,
+    "max": 5523456
+  },
+  "position_samples": 12,
+  "projectile_count_max": 1,
+  "snapshot_sha256": {
+    "boot_01425.log": "6832e2fe4507dab16698a6730d84e6a2d07a67b77ade922dc7f7619ebcd2f7ed",
+    "settings-verification.json": "54ce5091d0e02cb930e292b40a5add229b7def08db458f9cc32a3ece6406f0a1",
+    "launch.json": "a50053d4a9682b435ef573b56aaffdd61537d99463ae0182474f111739e5ed00",
+    "hardware_01425_4000086010088.csv": "46501f60df41690730c92f10733de055f84119c5f20e18aef6800fefabeda44e"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "native_files": 150,
+  "mismatches": [],
+  "native_binary_sha256": "eba03c7de31ee4e2b8294457bc325e0a12370dcb38ad4406f1088880783a56cb",
+  "status": "MATCHES_MEASURED_FIELDS",
+  "limit": "Native source snapshot identity and build/SD byte identity; hardware acceptance pending."
+}

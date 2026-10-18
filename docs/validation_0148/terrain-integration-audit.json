@@ -1,0 +1,43 @@
+{
+  "status": "SOURCE_BACKED_PARTIAL",
+  "reviewed_files": {
+    "platform/3ds/source/main.cpp": "3d42ac47063066aed338147b2d2192394373c94a5d3dfef02d6e1fef7273015e",
+    "platform/3ds/source/hardware_test.cpp": "a81ab7182bc8b7274fc06fdefbce19fe0dbe13daa302f4ffa96839ded2cd8f42",
+    "src/render/terrain_geometry_candidate.cpp": "899ffffa636cebd46817244d4e214f353fed8d29bc9f1bbac09f814257514d9f"
+  },
+  "render_baseline_byte_checks": {
+    "src/world/tile_transform.c": {
+      "same_bytes": true,
+      "parent_sha256": "cf778ff622126c7b3c89e1566a7967b6cc6d28675d61b491c8c6f987ea5aaed1",
+      "current_sha256": "cf778ff622126c7b3c89e1566a7967b6cc6d28675d61b491c8c6f987ea5aaed1"
+    },
+    "src/world/st00_render.cpp": {
+      "same_bytes": true,
+      "parent_sha256": "4c6547c9c773c7519aa803f205bc640b1314bfb6a5a157ec6c13553ec36f5db7",
+      "current_sha256": "4c6547c9c773c7519aa803f205bc640b1314bfb6a5a157ec6c13553ec36f5db7"
+    },
+    "platform/3ds/source/vshader0143.v.pica": {
+      "same_bytes": true,
+      "parent_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+      "current_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb"
+    }
+  },
+  "integration_static_checks": {
+    "candidate_only_if_uv_renderer": true,
+    "candidate_expansion_and_strip_share_same_gate": true,
+    "fallback_keeps_fan_indices": true,
+    "uv_indices_follow_original_vertex_slots": true,
+    "xyz_uses_existing_world_axis_conversion": true,
+    "per_area_metric_first_vertex_initialized": true,
+    "triangle_counter_terrain_and_immediate": true
+  },
+  "evidence_log": "terrain-geometry-evidence.json",
+  "findings": [
+    "Candidate XYZ expansion and strip topology use the same gate. If UV is disabled the original flat expansion and fan path remain selected.",
+    "Recovered vertex order is not modified by material batching; per-vertex UV association stays consistent.",
+    "Area primitive/minimumY/maximumY counters reset and initialize correctly for each VBO rebuild.",
+    "The triangle diagnostic counts terrain and immediate player/projectile submissions; it counts degenerate triangle submissions too.",
+    "Launch screen shows candidate requested flag; runtime HUD and CSV show actual activation. LEGACY Y0 wording is imprecise because legacy uses IDX originY, not universal zero.",
+    "No integration blocker was found in this static review; current native execution must still exercise geometry, controls, transitions and fallback."
+  ]
+}

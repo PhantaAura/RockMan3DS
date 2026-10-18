@@ -1,0 +1,265 @@
+{
+  "status": "PASS",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement",
+  "baseline": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.9_LocalImporter",
+  "native_snapshot": {
+    "members": 123,
+    "mismatches": [],
+    "matches_current_source_and_recorded_hash": true
+  },
+  "binaries": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/build/Legends3DS.3dsx",
+      "bytes": 412332,
+      "sha256": "7a4d4d426aa89a9649d4903df6ab1f2851f55fe83b466513dd5cc48ea642ec7e",
+      "matches_build_sha": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/sd_out/3ds/Legends3DS/Legends3DS.3dsx",
+      "bytes": 412332,
+      "sha256": "7a4d4d426aa89a9649d4903df6ab1f2851f55fe83b466513dd5cc48ea642ec7e",
+      "matches_build_sha": true
+    }
+  ],
+  "fallback_functions": {
+    "use_uv_renderer": true,
+    "terrain_xyz_active": true,
+    "rebuild_terrain_0143": true,
+    "configure_terrain_attributes_0143": true,
+    "draw_terrain": true,
+    "push_quad_0143": true,
+    "world_vertex_0143": true,
+    "legacy_cell_loop_after_normalizing_old_false_ternary": true
+  },
+  "fallback_shaders": {
+    "platform/3ds/source/vshader0143.v.pica": {
+      "sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+      "same_as_0149": true
+    },
+    "platform/3ds/source/vshader_uv.v.pica": {
+      "sha256": "7ddf62f20bc02fa2b2e9d1eb2e0b4c62338d758112d05594202eb1982cf94248",
+      "same_as_0149": true
+    }
+  },
+  "shared_legacy_sources_unchanged": {
+    "src/world/st00_render.cpp": true,
+    "src/world/tile_transform.c": true,
+    "src/render/terrain_geometry_candidate.cpp": true,
+    "src/render/visual_bridge.cpp": true,
+    "src/p2/mml_renderer_recovery.c": true
+  },
+  "enhanced_adapter_review": {
+    "ascending_full_idx_once": true,
+    "authored_idx_xyz": true,
+    "raw6_bank_selection": true,
+    "positive_rotation_not_inferred": true,
+    "admission_counts_same_bank_and_lod_as_expansion": true,
+    "explicit_limits_before_geometry_construction": true,
+    "temporary_bitmap_cap_bytes": 4096,
+    "negative_cells_unimplemented_and_counted": true,
+    "legacy_path_gate": "use_uv_renderer() && g_terrain_xyz_candidate; false reaches original legacy branch"
+  },
+  "probe_vertex_uv_size": {
+    "extracted_actual_declaration": "struct ProbeVertexUV { float x, y, z, u, v; };",
+    "host_size_bytes": 20,
+    "command": [
+      "clang++",
+      "-std=c++17",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Werror",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/sizeof_probe_vertex.cpp",
+      "-o",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/sizeof_probe_vertex"
+    ],
+    "run_command": [
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/sizeof_probe_vertex"
+    ],
+    "compile_exit": 0,
+    "run_exit": 0
+  },
+  "memory_deltas": [
+    {
+      "area": 0,
+      "legacy_primitives": 1752,
+      "new_primitives": 488,
+      "legacy_uv_vbo_bytes": 210240,
+      "new_uv_vbo_bytes": 58560,
+      "uv_vbo_bytes_saved": 151680,
+      "bitmap_bytes": 125,
+      "negative_cells_pending": 8
+    },
+    {
+      "area": 1,
+      "legacy_primitives": 854,
+      "new_primitives": 526,
+      "legacy_uv_vbo_bytes": 102480,
+      "new_uv_vbo_bytes": 63120,
+      "uv_vbo_bytes_saved": 39360,
+      "bitmap_bytes": 125,
+      "negative_cells_pending": 71
+    },
+    {
+      "area": 2,
+      "legacy_primitives": 674,
+      "new_primitives": 674,
+      "legacy_uv_vbo_bytes": 80880,
+      "new_uv_vbo_bytes": 80880,
+      "uv_vbo_bytes_saved": 0,
+      "bitmap_bytes": 125,
+      "negative_cells_pending": 14
+    },
+    {
+      "area": 3,
+      "legacy_primitives": 120,
+      "new_primitives": 120,
+      "legacy_uv_vbo_bytes": 14400,
+      "new_uv_vbo_bytes": 14400,
+      "uv_vbo_bytes_saved": 0,
+      "bitmap_bytes": 125,
+      "negative_cells_pending": 16
+    },
+    {
+      "area": 4,
+      "legacy_primitives": 12112,
+      "new_primitives": 3028,
+      "legacy_uv_vbo_bytes": 1453440,
+      "new_uv_vbo_bytes": 363360,
+      "uv_vbo_bytes_saved": 1090080,
+      "bitmap_bytes": 125,
+      "negative_cells_pending": 0
+    }
+  ],
+  "memory_limitations": [
+    "VBO bytes are exact vertex-count calculations, not measured whole-process or hardware peaks.",
+    "Temporary CPU expanded primitive vectors and batch-map allocations remain during area rebuild; no per-frame placement allocation was introduced."
+  ],
+  "issues": [],
+  "limitations": [
+    "Current emulator/hardware fallback execution is not established by this source review.",
+    "Fixed Mid LOD, negative-cell rendering, contact origin binding, camera and physics parity remain outside this correction."
+  ],
+  "focused_sanitizers": {
+    "steps": [
+      {
+        "step": "test_area_placement_linked_compile",
+        "command": [
+          "clang++",
+          "-std=c++17",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-omit-frame-pointer",
+          "-fno-sanitize-recover=all",
+          "-Wall",
+          "-Wextra",
+          "-Wpedantic",
+          "-Werror",
+          "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/include",
+          "-UNDEBUG",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/tests/test_area_placement.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/src/render/area_placement.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/src/world/st00_render.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/src/world/l3map.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/tile_transform.o",
+          "-o",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_area_placement"
+        ],
+        "exit_code": 0,
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_area_placement_linked_compile.log"
+      },
+      {
+        "step": "test_area_placement_run",
+        "command": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_area_placement"
+        ],
+        "exit_code": 0,
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_area_placement_run.log"
+      },
+      {
+        "step": "test_positive_terrain_linked_compile",
+        "command": [
+          "clang++",
+          "-std=c++17",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-omit-frame-pointer",
+          "-fno-sanitize-recover=all",
+          "-Wall",
+          "-Wextra",
+          "-Wpedantic",
+          "-Werror",
+          "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/include",
+          "-UNDEBUG",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/tests/test_positive_terrain.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/src/render/positive_terrain.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/src/world/st00_render.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.10_TerrainPlacement/src/world/l3map.cpp",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/tile_transform.o",
+          "-o",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_positive_terrain"
+        ],
+        "exit_code": 0,
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_positive_terrain_linked_compile.log"
+      },
+      {
+        "step": "test_positive_terrain_run",
+        "command": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_positive_terrain"
+        ],
+        "exit_code": 0,
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/final-sanitized/test_positive_terrain_run.log"
+      }
+    ],
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "leak_detector": false,
+    "env": {
+      "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1",
+      "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+    },
+    "initial_harness_fix": "Added src/world/l3map.cpp containing crc32; initial link failure preserved.",
+    "status": "PASS"
+  },
+  "inherited_full_build": {
+    "result_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/build-result.json",
+    "host_tests": "PASS",
+    "native_build": "PASS",
+    "test_commands": [
+      {
+        "argv": [
+          "ctest",
+          "--test-dir",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/2a7ec8ce255b89e2",
+          "--output-on-failure"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/logs/host-tests.log",
+        "returncode": 0,
+        "seconds": 2.739213
+      }
+    ],
+    "native_commands": [
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/native-source/platform/3ds",
+          "-j4"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/logs/native-build.log",
+        "returncode": 0,
+        "seconds": 20.044859
+      }
+    ]
+  },
+  "real_package_probe": {
+    "result_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/verified-placement-probe.json",
+    "commands_results_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/audit/verified-placement-build-result.json",
+    "status": "PASS",
+    "source_xyz_uv_material_and_expanded_count_checked": true
+  }
+}

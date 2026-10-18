@@ -1,0 +1,26 @@
+[
+  {
+    "device": "Azahar2126.0 original3DS model,100%CPU,1x",
+    "build": "0.0.14.23 r3",
+    "scene": "Area1 diagnostic replay end; paused; actor/camera overlap bug",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/captures/azahar-old3ds-01423-r3-gameplay-replay-end.png",
+    "sha256": "040d8ae24e0170e4f1ef71cdf2c50fc237c54ac52d586c540f02393e83d9ebe3",
+    "hardware_capture": false
+  },
+  {
+    "device": "Azahar2126.0 original3DS model,100%CPU,1x",
+    "build": "0.0.14.23 r3",
+    "scene": "Area0 source event diagnostic phase3 hold; player visible; texture artifacts",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/captures/azahar-old3ds-01423-r3-event-phase3-hold.png",
+    "sha256": "cdd78cfb8508626f47a9b32900176a9dfdbb22b115c3d71b740d5d54f692f92b",
+    "hardware_capture": false
+  },
+  {
+    "device": "Azahar2126.0 original3DS model,100%CPU,1x",
+    "build": "0.0.14.23 r3",
+    "scene": "Preserved safe0143 renderer; recorded native gameplay replay end; paused",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/captures/azahar-old3ds-01423-r3-safe0143.png",
+    "sha256": "5236168cd8fc663eaee170abf76bde2808390e734293a4ed61a655020c60475c",
+    "hardware_capture": false
+  }
+]

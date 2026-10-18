@@ -1,0 +1,42 @@
+{
+  "checkpoint": "0.0.14",
+  "name": "Stateful ST00 Material Cache Foundation",
+  "host_release_build": "PASS",
+  "warnings_as_errors": true,
+  "ctest": {"passed": 1, "failed": 0},
+  "full_owner_flight_qa": "PASS",
+  "fresh_tutorial_pack_files": 96,
+  "material_cache": {
+    "format": "L3MC v1",
+    "page_dimensions": "256x256 indices",
+    "raw_palette": "PS1 BGR555",
+    "resolution_rule": "last matching VRAM writer in reconstructed area upload order",
+    "areas": [
+      {"area": 0, "materials": 8, "resolved": 5, "unresolved": 3},
+      {"area": 1, "materials": 10, "resolved": 9, "unresolved": 1},
+      {"area": 2, "materials": 10, "resolved": 10, "unresolved": 0},
+      {"area": 3, "materials": 3, "resolved": 3, "unresolved": 0},
+      {"area": 4, "materials": 2, "resolved": 2, "unresolved": 0}
+    ],
+    "unresolved_unique": ["0x7C810016", "0x7C830016", "0x7CC20017"],
+    "cross_stage_same_vram_fallback_allowed": false
+  },
+  "runtime_probes": {
+    "player_runtime": "PASS",
+    "runtime_session": "PASS",
+    "flight_render": "PASS",
+    "tutorial_mid_primitives": 15512,
+    "triangulated_vertices": 93072
+  },
+  "source_archive_game_assets": 0,
+  "source_archive_cooked_game_assets": 0,
+  "real_3ds_compile": "NOT RUN - devkitARM/libctru/Citro3D unavailable in validation container",
+  "not_claimed": [
+    "Citro3D terrain texture binding",
+    "three dynamic CLUT writes recovered",
+    "exact PS1 ABR/semitransparency parity",
+    "later-stage load-order parity",
+    "tutorial-complete 0.1",
+    "compiled 3DSX"
+  ]
+}

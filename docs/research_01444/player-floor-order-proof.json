@@ -1,0 +1,81 @@
+{
+  "format": "mml-player-floor-order/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "PHYSICS_1TO1": false,
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "source_block": "0x8003C61C..0x8003C6FC",
+  "block_sha256": "dda6ddfeafb4242bbd69e9930bda0eb3c191f9acc45d6dbef349c88cf17a5b96",
+  "subsequent_contact_call": "0x8003C6FC -> 0x8004B414",
+  "floor_return_explicit_hook": true,
+  "bounds_y1": 0,
+  "cases": [
+    {
+      "input_y": -8,
+      "floor_return": -512,
+      "output_y": -8,
+      "contact": 0,
+      "action": 0,
+      "phase": 0,
+      "original_instructions": 14
+    },
+    {
+      "input_y": -8,
+      "floor_return": 0,
+      "output_y": 0,
+      "contact": 0,
+      "action": 0,
+      "phase": 0,
+      "original_instructions": 16
+    },
+    {
+      "input_y": -40,
+      "floor_return": 0,
+      "output_y": -40,
+      "contact": 1,
+      "action": 7,
+      "phase": 4,
+      "original_instructions": 31
+    },
+    {
+      "input_y": -32,
+      "floor_return": 0,
+      "output_y": 0,
+      "contact": 0,
+      "action": 0,
+      "phase": 0,
+      "original_instructions": 16
+    },
+    {
+      "input_y": -16,
+      "floor_return": 0,
+      "output_y": 0,
+      "contact": 0,
+      "action": 0,
+      "phase": 0,
+      "original_instructions": 16
+    },
+    {
+      "input_y": 0,
+      "floor_return": 0,
+      "output_y": 0,
+      "contact": 0,
+      "action": 0,
+      "phase": 0,
+      "original_instructions": 14
+    },
+    {
+      "input_y": -1,
+      "floor_return": 32767,
+      "output_y": -1,
+      "contact": 1,
+      "action": 7,
+      "phase": 4,
+      "original_instructions": 31
+    }
+  ],
+  "limits": [
+    "Authored scalar floor returns; not live game chronology.",
+    "No full movement, collision, slope or hardware parity claim.",
+    "No hidden barrier or retail recovery behavior inferred."
+  ]
+}

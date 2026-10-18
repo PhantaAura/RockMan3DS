@@ -1,0 +1,25 @@
+{
+  "version": "0.0.14.41-r2",
+  "status": "PASS",
+  "native_build": "PASS",
+  "host_tests": {
+    "passed": 138,
+    "failed": 0,
+    "seconds": 18.74
+  },
+  "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/native-r1/native-source/platform/3ds/Legends3DS_01441r2_WorldComesAlive.3dsx",
+  "native_binary_sha256": "135f6517c449af35aa6f6f528f08f3be6e84e27340bb2e92c7b3379cf83f270a",
+  "native_binary_bytes": 868916,
+  "smdh_title": "Legends3DS 01441r2 Draw Test",
+  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hard float",
+  "compiled_source_inputs_verified": 279,
+  "warnings_in_changed_translation_units": 0,
+  "reuse": "Verified inherited object cache from native-r3; main.cpp and hardware_test.cpp rebuilt; actual native link and 3dsxtool output. No portable core changes.",
+  "intermediate_failure": "Cache invalidation removed hardware_test.o during an ongoing make; that link failed with missing hardware_test.o. Final make rebuilt hardware_test.cpp and linked successfully. No error suppressed.",
+  "commands": [
+    "cmake --build /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r1/host -j4",
+    "ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r1/host --output-on-failure -j4",
+    "make -C /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/native-r1/native-source/platform/3ds -j4"
+  ],
+  "physical_hardware_current_build_tested": false
+}

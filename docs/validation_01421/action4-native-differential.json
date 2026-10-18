@@ -1,0 +1,48 @@
+{
+  "schema": "mml-action4-native-differential/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "compiler_flags": [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "body": {
+    "exit_code": 0,
+    "cases": 1568,
+    "motion_cases": 768,
+    "child_boundaries": 128,
+    "entry_cues": 224,
+    "timer_wrap_included": true
+  },
+  "pool": {
+    "exit_code": 0,
+    "whole_slot_cases": 135,
+    "release_cases": 32,
+    "capacity": 32,
+    "slot_bytes": 268
+  },
+  "contact": {
+    "exit_code": 0,
+    "authored_cases": 486,
+    "admitted_matching": 430,
+    "held": 56,
+    "corrected": 4
+  },
+  "hot_loop_allocations": {
+    "body_640": 0,
+    "child_producer_640": 0,
+    "contact_640": 0
+  },
+  "fixtures": {
+    "class20_03_action4_01421.tsv": "9dba798cc7e86139c11d22fa0f441f942bd9f89ca85a9cddecf9e47a7de5432c",
+    "class60_child_pool_01421.tsv": "c5e905e478731125d4dff9eee7f2a0f7717d9a05e1eebea78532b6c66c610208",
+    "class60_child_release_01421.tsv": "d589dc0e373bff4da98ff147e6384ba7efc92d27ab1972ec5280c30dce23fac0",
+    "actor_action4_contact_01421.tsv": "e43d7fd5d71e6c51591d9f6ea08ee860b3c88ce4255c739f34d5ff7fc1d89952"
+  },
+  "limits": [
+    "Standalone and authored original-instruction subset tests; no live retail/native chronology comparison or hardware validation.",
+    "Scalar child pool/producer does not imply native child lifecycle or attack consumer readiness.",
+    "Native bridge remains explicitly held at child spawn boundary."
+  ]
+}

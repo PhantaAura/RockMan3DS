@@ -1,0 +1,24 @@
+{
+  "schema": "actor-detection-math-source-proof/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "normalization_cases": 959,
+  "interpolation_cases": 196,
+  "owner_normalization_cases": 137,
+  "owner_interpolation_cases": 959,
+  "instructions_executed": 392292,
+  "restricted_gte_commands": 8582,
+  "lookup": {
+    "source_base": "0x80092D38",
+    "records": 192,
+    "record_bytes": 2,
+    "package": "L3NRv1"
+  },
+  "original_table_exported": false,
+  "retail_parity": false,
+  "limits": [
+    "Fixtures overwrite reciprocal-sqrt lookup with authored uniform scalar records.",
+    "Supported GTE commands are SQR, GPF, OP and MVMVA with original command fields.",
+    "General flags/projection and overflow-trap domains remain outside this proof."
+  ]
+}

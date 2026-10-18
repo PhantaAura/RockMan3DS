@@ -1,0 +1,29 @@
+{
+  "emulator": "Azahar2126.0",
+  "build": "01426native-r4",
+  "binary_sha256": "943db29d8b45b0b4063aa6150396a12d24a3e62078e5520e20e3d9e6f023d9f3",
+  "old_model": true,
+  "hardware_tested": false,
+  "renderer_flags_file": "0",
+  "resolved_renderer_boot_value": 8,
+  "decode": "LEGACY_FLAT",
+  "source_event_boot": false,
+  "source_xa_audio": false,
+  "input": "manual CUA-held A and Up; F4 resumed paused emulation; no recorded movie executed",
+  "samples": 25,
+  "unique_positions": 4,
+  "movement_observed": true,
+  "first_position": [
+    "-768",
+    "0",
+    "-2816"
+  ],
+  "last_position": [
+    "-768",
+    "0",
+    "-4416"
+  ],
+  "owned_linear_bytes": 126144,
+  "owned_texture_bytes": 0,
+  "scope": "Boot and movement regression only; inherited flat diagnostic geometry remains inaccurate."
+}

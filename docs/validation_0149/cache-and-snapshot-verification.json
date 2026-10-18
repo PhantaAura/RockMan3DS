@@ -1,0 +1,15 @@
+{
+  "first_seconds": 29.78648,
+  "host_only_contains_no_3dsx": true,
+  "native_snapshot_files": 119,
+  "native_snapshot_matches_current_source": true,
+  "no_repeat_tutorial_cook_command": true,
+  "packages_byte_identical": true,
+  "packages_compared": 205,
+  "repeat_cache_hits": 339,
+  "repeat_cache_misses": 0,
+  "repeat_host_only_seconds": 4.65626,
+  "repeat_tutorial_cache_hit": true,
+  "timing_scope": "Host installer wall time, not device loading/frame timing; repeat omitted native compile.",
+  "tutorial_manifest_identical": true
+}

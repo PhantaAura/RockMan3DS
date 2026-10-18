@@ -1,0 +1,57 @@
+{
+  "schema": "class20-03-combat-byte-a-invariance/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "source_consumer": "0x80102d10..0x80102d3c",
+  "rows": [
+    {
+      "candidate_table": "0x8008edc4",
+      "subtype_index": 3,
+      "record_pointer": "0x8008f35c",
+      "variant_32e": 0,
+      "record": "0x8008f35c",
+      "offset": "0x0a",
+      "record_sha256": "c218baf33f8edca5403559a17a23effe148eb96cb88911f9648dd7bdb637e640"
+    },
+    {
+      "candidate_table": "0x8008edc4",
+      "subtype_index": 3,
+      "record_pointer": "0x8008f35c",
+      "variant_32e": 1,
+      "record": "0x8008f36c",
+      "offset": "0x0a",
+      "record_sha256": "da8f05743b459c5fc4bdd5cd84930ab93a83ee47c415047a6117a9add7f66757"
+    },
+    {
+      "candidate_table": "0x8008f060",
+      "subtype_index": 3,
+      "record_pointer": "0x8008f6bc",
+      "variant_32e": 0,
+      "record": "0x8008f6bc",
+      "offset": "0x0a",
+      "record_sha256": "a709e02ba3edb88aca7328d5659f2b44cff7a91fabe55a1403ad42a1f0b2b342"
+    },
+    {
+      "candidate_table": "0x8008f060",
+      "subtype_index": 3,
+      "record_pointer": "0x8008f6bc",
+      "variant_32e": 1,
+      "record": "0x8008f6cc",
+      "offset": "0x0a",
+      "record_sha256": "0cbddf5037e071a83a01b505ee995a179514bf132db9fba90ceebce37d7fa795"
+    }
+  ],
+  "candidate_contexts": 4,
+  "all_candidate_contexts_equal": false,
+  "same_variant_cross_table_equal": [
+    false,
+    false
+  ],
+  "selected_context_owned": false,
+  "limits": [
+    "Only the two established statistics-table candidates and initializer variants0/1.",
+    "Actual80098844 selector ownership/timing is not established here.",
+    "A source-byteA difference prohibits an invariant native default.",
+    "No record bytes or byteA values in this source-safe evidence."
+  ]
+}

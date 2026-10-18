@@ -1,0 +1,36 @@
+{
+  "schema": "actor-detection-segment-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "entry": "0x80049c54",
+  "authored_cases": 2537,
+  "authored_case_categories": {
+    "authored_primitive": 2160,
+    "packed_negative_y": 320,
+    "overflow_empty_boundary": 57
+  },
+  "authored_fixture_sha256": "a64397ddc0b71bd5c8dcdb6168800da4a6acfab29e4b44ac677def8f30e700c1",
+  "materialized_stage_cases": 21,
+  "owner_stage_fixture_sha256": "346a86fd01c50a86fe9a3ebcd31ed62bfa6e7f174696d64439aa2992a63e531f",
+  "materialized_identities": 994,
+  "resources": {
+    "idx": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e",
+    "mdt": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e",
+    "stg": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+    "hed": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+  },
+  "instructions_executed": 2371015,
+  "return_only_hooks": [],
+  "bounds_contract": {
+    "source": "0x80097d0c",
+    "bytes": 12,
+    "payload_exported": false
+  },
+  "limits": [
+    "Authored helper contexts and materialized stage mirror; not live retail encounter or hardware.",
+    "Native only admits proved supported families; excludes unknown intersecting geometry.",
+    "Source-safe authored fixtures do not contain original bounds or payload.",
+    "Private stage scalar fixture must stay owner-local."
+  ]
+}

@@ -1,0 +1,40 @@
+# Changed files relative to 0.0.14.47
+
+Added:
+A RESUME_01448.md
+A docs/research_01448/DECOMP_EXPORT_AUDIT.md
+A docs/research_01448/SOURCE_PLAYER_BUSTER_BRIDGE.md
+A docs/research_01448/decomp-export-audit.json
+A docs/research_01448/source-player-buster-select-proof.json
+A docs/research_01448/source_player_buster_select_probe.py
+A docs/validation_01448/FINAL_REPORT.md
+A docs/validation_01448/PORTING_MAP.md
+A docs/validation_01448/TEST_COMMANDS.md
+A docs/validation_01448/area-inspection-probe.log
+A docs/validation_01448/area-package.log
+A docs/validation_01448/area-runtime-probe.log
+A docs/validation_01448/build-result.json
+A docs/validation_01448/host-build.log
+A docs/validation_01448/host-configure.log
+A docs/validation_01448/host-tests.log
+A docs/validation_01448/native-build.log
+A docs/validation_01448/native-source-manifest.json
+A docs/validation_01448/pack-validation.json
+A include/legends3ds/source_player_buster.h
+A src/world/source_player_buster.cpp
+A tests/test_source_player_buster.cpp
+A tools/cook_source_player_target.py
+
+Modified:
+M CMakeLists.txt
+M MODLOG.md
+M README.md
+M platform/3ds/Makefile
+M platform/3ds/source/checkpoint_version.h
+M state/CURRENT_CHECKPOINT.json
+M state/CURRENT_READINESS.json
+M state/EVIDENCE_LEDGER.json
+M state/RUN_STATE.json
+
+Deleted:
+(none)

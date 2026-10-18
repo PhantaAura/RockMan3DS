@@ -1,0 +1,17 @@
+{
+  "schema": "mml-reference-observer-regressions/1",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.24_WorldComesAlive/tests",
+    "-p",
+    "test_rng_reference.py"
+  ],
+  "exit_code": 0,
+  "cases": 28,
+  "status": "PASS",
+  "retail_parity": false
+}

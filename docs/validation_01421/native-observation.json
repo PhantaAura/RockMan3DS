@@ -1,0 +1,74 @@
+{
+  "build": "0.0.14.21",
+  "binary_revision": "r3",
+  "emulator": "Azahar2126.0",
+  "profile": {
+    "emulator": "Azahar2126.0",
+    "old_model": true,
+    "cpu_clock_percentage": 100,
+    "resolution_factor": 1,
+    "actor_state_fields": true,
+    "input_replay": "work/pass-20261004-worldalive/replays/worldalive-ground-jump-01415.ctm",
+    "hardware_tested": false,
+    "retail_parity": false,
+    "build": "0.0.14.21",
+    "binary_revision": "r3"
+  },
+  "native_binary_sha256": "5b34a79e6d8dce2f30ccecf41ff6847943dbf2fa78e51d0eda86d5084980e602",
+  "csv_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01421/native-observation-r3/hardware_01421_4000086009955.csv",
+  "csv_sha256": "a92ba9d216f0047d715d8db1373cfefc165352ba56633793a4b4e858f8b892fa",
+  "samples": 44,
+  "last_sample": {
+    "frame": 600,
+    "area": 1,
+    "draw_calls": 18,
+    "triangles": 2184,
+    "owned_linear": 71640,
+    "owned_texture": 4194304,
+    "malloc_live": 1937400,
+    "linear_free": 27412992,
+    "vram_free": 5523456,
+    "update_us": 3,
+    "render_us": 15441,
+    "frame_before_log_us": 15473
+  },
+  "sampled_maxima": {
+    "draw_calls": 18,
+    "triangles": 2184,
+    "owned_linear": 71640,
+    "owned_texture": 4194304,
+    "malloc_live": 1937400,
+    "linear_free": 28735744,
+    "vram_free": 5523456,
+    "update_us": 222,
+    "render_us": 16678,
+    "frame_before_log_us": 2246593
+  },
+  "area_events": [
+    "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35792,linear_free=31941632,vram_free=0",
+    "# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=748240,linear_free=31941632,vram_free=0",
+    "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1683184,linear_free=28735744,vram_free=5523456",
+    "# area_event=transition_after,area=1,elapsed_us=2226529,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1886840,linear_free=27412992,vram_free=5523456",
+    "# area_event=conditional_spawn,area=1,elapsed_us=29859,package_bytes=0,decoded_estimate=0,load_peak_estimate=3,malloc_live=1886840,linear_free=27412992,vram_free=5523456",
+    "# area_event=conditional_spawn,area=1,elapsed_us=38139,package_bytes=46308,decoded_estimate=3,load_peak_estimate=4,malloc_live=1937400,linear_free=27412992,vram_free=5523456"
+  ],
+  "action4_authored_copy_probes": [
+    "# actor_action4_runtime_probe,area=1,source_index=16,motion=0,body=0,committed=1,phase=1,timer=12,request=21,audio=1,byte_c_available=1,active_actor_modified=false,admission=AUTHORED_ACTION4,retail_parity=false",
+    "# actor_action4_child_boundary,area=1,source_index=16,body=26,committed=0,active_actor_modified=false,admission=AUTHORED_CHILD_HOLD,retail_parity=false",
+    "# actor_action4_runtime_probe,area=1,source_index=17,motion=0,body=0,committed=1,phase=1,timer=12,request=21,audio=1,byte_c_available=1,active_actor_modified=false,admission=AUTHORED_ACTION4,retail_parity=false",
+    "# actor_action4_child_boundary,area=1,source_index=17,body=26,committed=0,active_actor_modified=false,admission=AUTHORED_CHILD_HOLD,retail_parity=false",
+    "# actor_action4_runtime_probe,area=1,source_index=18,motion=0,body=0,committed=1,phase=1,timer=12,request=21,audio=1,byte_c_available=1,active_actor_modified=false,admission=AUTHORED_ACTION4,retail_parity=false",
+    "# actor_action4_child_boundary,area=1,source_index=18,body=26,committed=0,active_actor_modified=false,admission=AUTHORED_CHILD_HOLD,retail_parity=false"
+  ],
+  "actor_state_samples": [
+    "# actor_state1,frame=600,source_index=16,initialized=1,status=3,action=0,phase=1,timer32c=0,flags328=14,request=0,pose_request=0,pose_record=6,hp_known=1,bank_requests=8,full_callback=false,retail_parity=false",
+    "# actor_source_context,frame=600,source_index=16,detector_status=0,preparation_status=0,detector_phase=1,detector_countdown=29,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=0,last_audio_queued=0,last_audio_drops=0,audio_playback=false",
+    "# actor_state1,frame=600,source_index=17,initialized=1,status=0,action=0,phase=2,timer32c=29,flags328=46,request=0,pose_request=0,pose_record=2,hp_known=1,bank_requests=8,full_callback=false,retail_parity=false",
+    "# actor_source_context,frame=600,source_index=17,detector_status=0,preparation_status=0,detector_phase=1,detector_countdown=29,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=0,last_audio_queued=0,last_audio_drops=0,audio_playback=false",
+    "# actor_state1,frame=600,source_index=18,initialized=1,status=0,action=0,phase=2,timer32c=29,flags328=46,request=0,pose_request=0,pose_record=2,hp_known=1,bank_requests=8,full_callback=false,retail_parity=false",
+    "# actor_source_context,frame=600,source_index=18,detector_status=0,preparation_status=0,detector_phase=1,detector_countdown=27,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=0,last_audio_queued=0,last_audio_drops=0,audio_playback=false"
+  ],
+  "physical_hardware_tested": false,
+  "retail_parity": false,
+  "limitation": "Sparse emulator samples and authored actor copies do not establish hardware pacing, complete enemy attack or retail input/callback chronology."
+}

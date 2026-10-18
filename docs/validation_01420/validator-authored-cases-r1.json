@@ -1,0 +1,68 @@
+{
+  "schema": "mml-rng-trace-validator-authored-cases/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "cases": [
+    {
+      "case": "AUTHORED_VALID_RETURN_AND_STORE",
+      "accepted": true
+    },
+    {
+      "case": "AUTHORED_SAME_PC_OBSERVER_CALLBACK_ORDER",
+      "accepted": true
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_RETURN",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_AFTER_STATE",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_STORE",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_CALLER",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_SLOT",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_WORK",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_ORDINAL",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_IDENTITY_FALSE",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_INVALID_UNSIGNED",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_REJECT_WRONG_SOURCE_HASH",
+      "accepted": false
+    },
+    {
+      "case": "AUTHORED_INCOMPLETE_TAIL_EXPLICITLY_HELD",
+      "accepted": true
+    },
+    {
+      "case": "AUTHORED_GUARD_FAILURE_REJECTED",
+      "accepted": false
+    }
+  ],
+  "cases_passed": 14,
+  "live_reference_capture": false,
+  "game_seed_measured": false,
+  "retail_parity": false,
+  "process_inventory": "No PCSX-Redux process; only inventory shell and rg were observed",
+  "process_inventory_time_utc": "2026-10-07T14:02:22.749187+00:00"
+}

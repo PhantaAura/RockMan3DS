@@ -1,0 +1,1078 @@
+[
+  {
+    "path": "include/legends3ds/actor_action3_contact.h",
+    "sha256": "82d0bfad768b6184cfb7258a966413d14c56483480485311434c2ba75f186439"
+  },
+  {
+    "path": "include/legends3ds/actor_action4_contact.h",
+    "sha256": "d7a028390a690ba889c523ccae28da159a01c35ab25b871bc32d329713561dc2"
+  },
+  {
+    "path": "include/legends3ds/actor_action9_contact.h",
+    "sha256": "3b6921accb0a015dcee4f43acc670f303c9beb735f1e06307b4190fcdf37d7ae"
+  },
+  {
+    "path": "include/legends3ds/actor_animation_bank.h",
+    "sha256": "2163e1cded2b3c17eaee88fe6756bb55423bfc9000fd267ae51ca2d1800431cf"
+  },
+  {
+    "path": "include/legends3ds/actor_contact.h",
+    "sha256": "8050aadee97e0ecb2b822c2fb5e7737102ec67e9eade185a9bffac8a9001d9e0"
+  },
+  {
+    "path": "include/legends3ds/actor_detection.h",
+    "sha256": "0f0d9fb26eff5210006283565acf56e83aa2194f4471b4fe9a25536a1e52e543"
+  },
+  {
+    "path": "include/legends3ds/actor_detection_math.h",
+    "sha256": "32e48b3f2f3d6a763edfc619b26901a2366ec429088c5256964ea3a05629324b"
+  },
+  {
+    "path": "include/legends3ds/actor_detection_preparation.h",
+    "sha256": "ca681df2375f365e6ec31167342bdff17804cb5335c0eab78718ec8f46ca9895"
+  },
+  {
+    "path": "include/legends3ds/actor_detection_profile.h",
+    "sha256": "5a445d365d629428ed0f90ac0d3eb9a737bbfee992cf50053507295ae9d38aaa"
+  },
+  {
+    "path": "include/legends3ds/actor_detection_segment.h",
+    "sha256": "c4fe449bfaa13931bf3716f6ad3f1cd6aa9826d65a56d9e78e2235ff5e512028"
+  },
+  {
+    "path": "include/legends3ds/actor_material.h",
+    "sha256": "ead2903cee3f40311018997f6ab42a6b10e6612f1e42bd54b0bf94fbd2906fcd"
+  },
+  {
+    "path": "include/legends3ds/actor_pose_runtime.h",
+    "sha256": "66e0780641fe8819ebc8c458bb72a8302b132a12ac95ae78509b6b3ba4084db1"
+  },
+  {
+    "path": "include/legends3ds/actor_reaction_contact.h",
+    "sha256": "b862ba9bc15080f55eb58d500fecfea912f24e5ef9f33e703a09c031696b30fa"
+  },
+  {
+    "path": "include/legends3ds/actor_resource.h",
+    "sha256": "c2212920a541ecf24bc9bdef9a74a63ee92fa7bf1c722966f237eaaed7f0694b"
+  },
+  {
+    "path": "include/legends3ds/actor_runtime.h",
+    "sha256": "d020793177184bc39721c63900b76e62a55ff01b1a0b77f5628fb3cac69cee31"
+  },
+  {
+    "path": "include/legends3ds/actor_sequence.h",
+    "sha256": "86733593fd10c28e9dbc8b083883a095e94ad57433f909de5731c4165b88bbcd"
+  },
+  {
+    "path": "include/legends3ds/area_package.h",
+    "sha256": "b61270c38487feeb40cd3eb34da64a78fa419f76e1510a8e650657664c10c78c"
+  },
+  {
+    "path": "include/legends3ds/audio_catalog.h",
+    "sha256": "431c1b15cda228958914bbcc62025197e11fe4b2ca34a6cdc642681206fabd80"
+  },
+  {
+    "path": "include/legends3ds/bottom_map.h",
+    "sha256": "884ef04086d704df496a499f3eac4595828bd383b2ac6ea97a2ba614dc5a1787"
+  },
+  {
+    "path": "include/legends3ds/bottom_screen.h",
+    "sha256": "d8797de1c728cee4f6853d761e4482c6bb9f3492ebd1a1c5599e7a947851e9e4"
+  },
+  {
+    "path": "include/legends3ds/child_runtime.h",
+    "sha256": "d9f9db6ab7488bbc114ec756f7082c706aa3d3d09743d4cdc666e69e77c9fa7b"
+  },
+  {
+    "path": "include/legends3ds/class20_03_action3.h",
+    "sha256": "ea85ed6a961569b03aede72f0f76133ef26e526d78669979da6366fa83959465"
+  },
+  {
+    "path": "include/legends3ds/class20_03_action4.h",
+    "sha256": "e38c891fde3767c6ba01768280cdbb9ce3ebfed5a85ebe3c94e1ed4c39a6b6e7"
+  },
+  {
+    "path": "include/legends3ds/class20_03_action9.h",
+    "sha256": "86801487fff768044258ce49f72699f4419af9ccc43627ef2b6d166de032a55c"
+  },
+  {
+    "path": "include/legends3ds/class20_03_behavior.h",
+    "sha256": "a4a0db9f1c7b3cde86437c633cef15f31997a36c244dd7d25bf25940fdfdc748"
+  },
+  {
+    "path": "include/legends3ds/class20_03_hit.h",
+    "sha256": "aee2aaa913e8091312132ca51d95d678b3d9dd5f08ce7cac5a2685fa36bda02e"
+  },
+  {
+    "path": "include/legends3ds/class20_03_proxy.h",
+    "sha256": "f89ca548dff6a42b902e3598e5a928a3bf1cd065d506c9b9823657f623c34372"
+  },
+  {
+    "path": "include/legends3ds/class20_03_reaction.h",
+    "sha256": "9bfdb24e21afee994465a8bfcf34e9d2290d152ba2b63fc9f3b0407cc33b70ce"
+  },
+  {
+    "path": "include/legends3ds/class60_06.h",
+    "sha256": "fe64b785e05f65bd017d90e5dd8185b12513823046aca32962b6161b3c39ab8b"
+  },
+  {
+    "path": "include/legends3ds/classic_input.h",
+    "sha256": "0e27b371686f96ffee11f8ca294f159a9733b539587e305aba5230a172fe904d"
+  },
+  {
+    "path": "include/legends3ds/classic_motion.h",
+    "sha256": "8c760d91b7996098ed759eca100a593857d0432cb0352602d18ff231703cca40"
+  },
+  {
+    "path": "include/legends3ds/ctr_texture_layout.h",
+    "sha256": "722f992c33d05cd6952a220eab73f657acc4f5edbf318ed0d71170efe2ee3faa"
+  },
+  {
+    "path": "include/legends3ds/dialogue_history.h",
+    "sha256": "c4562ac1dccbb9cfe9d85542130fabd550ed05ff5b5716a55d639e88a0cc94cf"
+  },
+  {
+    "path": "include/legends3ds/ebd_directory.h",
+    "sha256": "61cca626b700eb1c7728d6dfdea3e755d15af4ea494cff0364ae89c38980e3b8"
+  },
+  {
+    "path": "include/legends3ds/ebd_dynamic_selector.h",
+    "sha256": "a45019c3077b7fca5a08cab7d09cbb06f1abd7f0771c05e9e716ecd01bb873b7"
+  },
+  {
+    "path": "include/legends3ds/endian_io.h",
+    "sha256": "405315d3f9bcd404b1d8ce170952d4294dee531cf974248a2b6ff0a7ee1c53a6"
+  },
+  {
+    "path": "include/legends3ds/gameplay_clock.h",
+    "sha256": "b4c14c563398fb5aeafa981e49c090ba552467e2cd5b5e21dc5df888ff8bc93b"
+  },
+  {
+    "path": "include/legends3ds/l3map.h",
+    "sha256": "b09dfcf02b7cb3766f73bf67b5e70a336fe3bb34bf96e3d5f224d6c989b336f0"
+  },
+  {
+    "path": "include/legends3ds/map_initialization.h",
+    "sha256": "149012f72c2fc1b7af33d23902fc2938018ffa68d2829e34eb277bea9a6f29b3"
+  },
+  {
+    "path": "include/legends3ds/material_cache.h",
+    "sha256": "0c02fdcda4ab5e1efbed92349e0545090af58516d78296c0222642865c345712"
+  },
+  {
+    "path": "include/legends3ds/material_resolver.h",
+    "sha256": "530b6d0efadaa48a55ba61b6fc22cfa48ae26da51585402c830cfca6b51a5f6e"
+  },
+  {
+    "path": "include/legends3ds/mml_message.h",
+    "sha256": "41f55261566ff12bf8d29de076b394c108c11a00e0d8f3282ee703e1a856e4f4"
+  },
+  {
+    "path": "include/legends3ds/mockup_ui.h",
+    "sha256": "4b4d73a76ef78735f38f3f416cf17d6fd7f9e2792ea6f5fa1f8265ed4dad8682"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_bottom_ui_v2.h",
+    "sha256": "1de0bebba9e1fb869494ed06ce601a44888c8aca2d0088fa3e7ddff78ade1865"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_combat_v2.h",
+    "sha256": "f1e9506050389defd8e1bdb81419b945b36336fd017400db45e1eed4e099d929"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_cutscene_v2.h",
+    "sha256": "d5bfb2212d61aea94d29636f274a847825ff61cba8890dd68b60ddb16d1445f0"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_enemy_bridge_v2.h",
+    "sha256": "ee85cd2240da578f236c50141974c4da7eb6eee2fb4531e59c71eec93a12bec0"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_event_vm_v2.h",
+    "sha256": "660e3c17688f9f82ba854cd9a844b1155443f887796afe3fdb030d9e26b85f53"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_h4_runtime.h",
+    "sha256": "7882dcc695fc1d03f19f7cee545d29aa8e7b6d3b09169f547616ab36d69975d7"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_loader_guard_v2.h",
+    "sha256": "b0f3f8281f80b2bd8c96c916fae6d0bfab7899e9c83107b7973d679dbffcd2c3"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_native_save_v2.h",
+    "sha256": "f41c3d2f07dcd1dec1b2627c673bd24419d20b584385d8d7ede44ef250a1aa17"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_package_v2.h",
+    "sha256": "cef2588f6002d5673f644586743e4edc56c553cb75c52e00ad99d602b813be0d"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_player_material.h",
+    "sha256": "77e941aaa59ac7b9088a0823c6b9fe5d320016328b2c99117de57e8837a7f197"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_qol_v2.h",
+    "sha256": "9a2e8d67da5694d9ac000c06b1521aa3e284bfd1e10730341acab0d46ba65711"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_renderer_recovery.h",
+    "sha256": "868f71a3f190ce59534c475376b6695ffd868c543f3e53deb302b757d10d633c"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_retail_anim_request.h",
+    "sha256": "b40e1fb7d9074773b5974220d9d9352f1571081e3fddc0d94c18496d1c39e370"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_retail_motion.h",
+    "sha256": "ffcd3c019a937967cfc549b90ae8d45e9ab1375f49dae55277702ee1833e1194"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_retail_save_v2.h",
+    "sha256": "a2deda803cba3724882273fe98a6c5d22a8b2422382c86e181b5c8e7f096cbe1"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_runtime_diag_v2.h",
+    "sha256": "52ca703e88a8a83787f4dff89997090d133419d3dde40d371257beab52d3d870"
+  },
+  {
+    "path": "include/legends3ds/p2/mml_world_v2.h",
+    "sha256": "dd126624014dc362084fce37f0c7df8ab9ac9f3f5dd232432a0047f1eb897093"
+  },
+  {
+    "path": "include/legends3ds/pbd_animation.h",
+    "sha256": "4e6ebe57cc2b073ca20fec178e295baba37eb2deedeee4bbe8643c51f7528a2e"
+  },
+  {
+    "path": "include/legends3ds/pbd_model.h",
+    "sha256": "968beccec702a979022c0b91f765806c34b9b8882bf09aa3cb4e46a9319dc948"
+  },
+  {
+    "path": "include/legends3ds/player_collision.h",
+    "sha256": "ab82f4e2d95c94dc8e93675999ac714d21a573ba98db5ed27e632bd503d3a6b8"
+  },
+  {
+    "path": "include/legends3ds/player_composition.h",
+    "sha256": "e97db04125ed0eec7702d0acc6441fc0cc22ad439752725f0a6a9e003c648b55"
+  },
+  {
+    "path": "include/legends3ds/player_contact_runtime.h",
+    "sha256": "dcd911a3d6db80aff5e51b055d3d799d30ced7aeec0eda3ec878e9babacfca82"
+  },
+  {
+    "path": "include/legends3ds/player_pose.h",
+    "sha256": "36c873212c66639166cc94a2d75f4aac406e1d09a96655bd75656553acb7e619"
+  },
+  {
+    "path": "include/legends3ds/player_runtime.h",
+    "sha256": "bd021d253215b48f62424f10ea912f665d2d4477cb37d2e58833545463053a26"
+  },
+  {
+    "path": "include/legends3ds/ps1_texture.h",
+    "sha256": "c7a56d18bfdccfec8f8288bc186716a6ee3a981e4378a1c440d6c4ad27ed2c45"
+  },
+  {
+    "path": "include/legends3ds/qol_settings.h",
+    "sha256": "4c85571353589fda4b489399c67212efecda45491b7f300ab403310bce7f1c38"
+  },
+  {
+    "path": "include/legends3ds/reference_tables.h",
+    "sha256": "73855763d1113ff4ad60777a1a6110c0d79c02d3c62454e28e2dbec9f7dbbfd9"
+  },
+  {
+    "path": "include/legends3ds/render/area_inspection.h",
+    "sha256": "861b5f3bfcec882a9579642e3c4beff2df82d04a3447ebcff3acbef9bfdcb0ed"
+  },
+  {
+    "path": "include/legends3ds/render/area_placement.h",
+    "sha256": "a81564ad6e668bed9d4525b200057dd9c598684e3ffc437642fee4752be16f28"
+  },
+  {
+    "path": "include/legends3ds/render/frontend_view.h",
+    "sha256": "8f0e9d14b93cda9ee9853fbb299b19f8589dfb07eb2fa4b32073fef90f64d1c4"
+  },
+  {
+    "path": "include/legends3ds/render/negative_materials.h",
+    "sha256": "c4ac27c0dcdf2b216cbbc0d8ec43645a1221389a065045ddda1f056125c371cf"
+  },
+  {
+    "path": "include/legends3ds/render/negative_terrain.h",
+    "sha256": "b21c5ffa1665d72887fe3dac0762208bd36d2b0aac732bdfee3d5a54ff46b3b7"
+  },
+  {
+    "path": "include/legends3ds/render/positive_terrain.h",
+    "sha256": "1251498c5251849fbd55f17983817bce2952b69305a295358098bbf3993293fc"
+  },
+  {
+    "path": "include/legends3ds/render/ps1_geometry.h",
+    "sha256": "40b6be9072b2651676ab3b60c3c9d122265b18f3215bdc64e942ef3f1413cee4"
+  },
+  {
+    "path": "include/legends3ds/render/ps1_texture_modulation.h",
+    "sha256": "f85ccdba03bec8a7183cd5272f30f13626a27cfb2ca54c27f4e922e404fb9248"
+  },
+  {
+    "path": "include/legends3ds/render/source_depth_cue.h",
+    "sha256": "ce090b3f7a80528414d54db9d1aa297ccb587461b2f13ad6cc617a7884f5eb4a"
+  },
+  {
+    "path": "include/legends3ds/render/terrain_geometry_candidate.h",
+    "sha256": "af704dbbc9179eafdfc769c5e235faff5b5bc66cd2d07f81c4ec51f4cd8a3f76"
+  },
+  {
+    "path": "include/legends3ds/resource_catalog.h",
+    "sha256": "20f8cf960aa4482a4e0f9e45336fea8b83ea97d5efd2fe3031ca88e389800efd"
+  },
+  {
+    "path": "include/legends3ds/retail_rng_tape.h",
+    "sha256": "2fc0e656398d82f080b11d28e176858696e1c408f759bdf0c82087d3c506c0dc"
+  },
+  {
+    "path": "include/legends3ds/runtime_animation.h",
+    "sha256": "1561bf709fd0ad3f881f68ca090ca844ef4133deffcc7a4f5d85ffdc05b42710"
+  },
+  {
+    "path": "include/legends3ds/runtime_session.h",
+    "sha256": "d6e47fac7007a07023259d7ca92a49a8644fba9aa3329ea3a56c78da59e15e57"
+  },
+  {
+    "path": "include/legends3ds/save_state.h",
+    "sha256": "15b6ca361bb57f8a90825e53b81307e74ebc19f491a4dc704648d470b44e2dee"
+  },
+  {
+    "path": "include/legends3ds/scene_e0.h",
+    "sha256": "f5dda88f3fc78c49632379631530f8c35ae04920052eb490f9c0855e5cf6cfd3"
+  },
+  {
+    "path": "include/legends3ds/scene_e0_material.h",
+    "sha256": "4095282b511745db3d57a85c86747e4de22862d3ef7315bc3e910b4b2d3c0ad9"
+  },
+  {
+    "path": "include/legends3ds/shared_byte_payload.h",
+    "sha256": "453180995dbca4eb021a31596f676b1d04c662c64ecc2c1910fbd77db27e3af8"
+  },
+  {
+    "path": "include/legends3ds/source_actor_consumers.h",
+    "sha256": "15a031f539370e62d2d48d895eea358623d79ce063fa627c02dccd83e2f7e23f"
+  },
+  {
+    "path": "include/legends3ds/source_angle.h",
+    "sha256": "e6d0482280fe8e73676d3f6feb99406bb4916100b3bcb664eed0c8ab3e3a52a6"
+  },
+  {
+    "path": "include/legends3ds/source_audio_queue.h",
+    "sha256": "e4ff38e9761134aa5ffb4e20a3f975684decc6b33db542998ea674788eb8f91a"
+  },
+  {
+    "path": "include/legends3ds/source_camera.h",
+    "sha256": "70707188ce2571c96a9378dacda734beeaf43f0c63a4f8f91e0bba1dd55d8a32"
+  },
+  {
+    "path": "include/legends3ds/source_combat_profile.h",
+    "sha256": "e9f2d6c0cf57d6292768e14ac1fe6966f6fd5ab4b3314b6ee3c1d8485b5a66fc"
+  },
+  {
+    "path": "include/legends3ds/source_effects.h",
+    "sha256": "b7eebcf174f11394388e0c5cfbff5744233ed20cd5d81560ea336cc1a0e14242"
+  },
+  {
+    "path": "include/legends3ds/source_event_command.h",
+    "sha256": "a5f40afad7870481898e17a791953922edb5ffb9c8be0843583ab934e8ba05bc"
+  },
+  {
+    "path": "include/legends3ds/source_event_command_package.h",
+    "sha256": "914f2c2b9de79b5df8244732cfc11b923a3562bb927200424c34b043018aeacf"
+  },
+  {
+    "path": "include/legends3ds/source_event_consumer.h",
+    "sha256": "5bddb408e2f2cdbc48f59a6d530f0ee493c475c9220a5f02438b7a921edd7121"
+  },
+  {
+    "path": "include/legends3ds/source_event_package.h",
+    "sha256": "7adcca3d24e3a958b8ac4085754fcfc10ede1496a8b9e36613c4dc5925d1af5a"
+  },
+  {
+    "path": "include/legends3ds/source_event_phase2.h",
+    "sha256": "fbb75572cea7cde405fe64e8b8e1862d84b4cee0d1081df575c3e8b938af3530"
+  },
+  {
+    "path": "include/legends3ds/source_event_phase5.h",
+    "sha256": "946736cf657902acf4861e1b36ce3b29ba43f8d68ed8e9caa6acf512bf2efc3a"
+  },
+  {
+    "path": "include/legends3ds/source_event_phase6.h",
+    "sha256": "c6b5c198c24056d78f0523e42c78454821619d1ef5d309ca4412e7bb3fae5016"
+  },
+  {
+    "path": "include/legends3ds/source_event_pipeline.h",
+    "sha256": "2df560942d6d12a846e2993a995dcf9e8aecd8fc86f1050e32f1b9d6f2bac196"
+  },
+  {
+    "path": "include/legends3ds/source_event_random_effect.h",
+    "sha256": "dd2448c801f4052dad1c2e118d8d6a3b0ac9f44ffcf78397842dffeb377f3133"
+  },
+  {
+    "path": "include/legends3ds/source_event_random_tape.h",
+    "sha256": "21422b3d5087b2fcbe9ccb453573484f4f38032587860452aed3a2bb4d050068"
+  },
+  {
+    "path": "include/legends3ds/source_fade.h",
+    "sha256": "a83fffd34410be7c512de0e50d1846708f0fa962ae56f16583cc9755c86df7fc"
+  },
+  {
+    "path": "include/legends3ds/source_hit_proxy.h",
+    "sha256": "6a52caa023fda11f0c06f0f1289cb8238d657549132acf78eb3114bf2f4b24bc"
+  },
+  {
+    "path": "include/legends3ds/source_loop_snapshot.h",
+    "sha256": "f676ed7efe68a8dbb9475e2f18a16e89dab80bee41d206005d46cf934601897e"
+  },
+  {
+    "path": "include/legends3ds/source_main_loop.h",
+    "sha256": "9966b8412db353995de76e4f34a291892f37e0fc239537ffbb2f0e2cebba255c"
+  },
+  {
+    "path": "include/legends3ds/source_player_proxy.h",
+    "sha256": "a6dca83b5c8421524b5916f5a9a46480db57e226886a8f0e17bfe9531fee788a"
+  },
+  {
+    "path": "include/legends3ds/source_profile_class60_06.h",
+    "sha256": "2b1c568388ccc8c634f3ccc6fddd0aae2b2f2a570ba9d784ebf9774a50dc7163"
+  },
+  {
+    "path": "include/legends3ds/source_reaction_profile.h",
+    "sha256": "3d7041dcc7249df0bb103e13f166dd00b636b3abe89e36efaa3dc4ced8512a32"
+  },
+  {
+    "path": "include/legends3ds/source_rng_service.h",
+    "sha256": "0b1402efa1331faa1b56a03dc851275e109319910ede2bc11b0090f9a77de9e5"
+  },
+  {
+    "path": "include/legends3ds/source_scene_actor40.h",
+    "sha256": "995c38040d27c922649611afe811f403446a69d3e8ce63ca1c3181efefbebeca"
+  },
+  {
+    "path": "include/legends3ds/source_scene_actor40_init.h",
+    "sha256": "3d66f7992f130683d36f682370c872a391198b7daebc507378020d5cf9fca9b7"
+  },
+  {
+    "path": "include/legends3ds/source_scene_actor40_pose.h",
+    "sha256": "fca5dd01d40d6c8eb3c37fb1d672590868f9677adb9bc0bc57c8e86834af7f60"
+  },
+  {
+    "path": "include/legends3ds/source_scene_actor40_tail.h",
+    "sha256": "8a6d709e23309684e8723501c26124c177c9bf76691c2ac9bc986f880847d43d"
+  },
+  {
+    "path": "include/legends3ds/source_scene_actor40_update.h",
+    "sha256": "41a1c637f306ef069351ace56b25d94b286b52aab007371ebc44f2ea5170d920"
+  },
+  {
+    "path": "include/legends3ds/source_scene_view.h",
+    "sha256": "fc191ee7b133c223488f8f0c8a915b5fb070524d9c456d2fb76eeff0b949838b"
+  },
+  {
+    "path": "include/legends3ds/st00_event.h",
+    "sha256": "58e968a1f66124376c7018376cc7c0328a4bca38183227342b8e0df02ceddea3"
+  },
+  {
+    "path": "include/legends3ds/st00_flow.h",
+    "sha256": "21dad9c1a3d2e7ccc93b78d6f12f9b940af69b021129cba8ab4a46b22153f900"
+  },
+  {
+    "path": "include/legends3ds/st00_render.h",
+    "sha256": "43153bfd8ca5993af69732c73bfd7e7240294c6399e08030c4930d689cd1c3e6"
+  },
+  {
+    "path": "include/legends3ds/st00_source.h",
+    "sha256": "bff25f496fb1e7ce6b6995e483c77fc0e34470b605f537f86d62e2ec07a501a9"
+  },
+  {
+    "path": "include/legends3ds/st00_spawn.h",
+    "sha256": "6e3c87de8c9ffc55ad9960dc380ed9183592de6b5a74c2063afbc80d78221f9d"
+  },
+  {
+    "path": "include/legends3ds/stage_catalog.h",
+    "sha256": "4438c2bffaa9cb56a8d5f8a19c477c8e2aa9bac1e9091c35769979c03beaffd7"
+  },
+  {
+    "path": "include/legends3ds/stage_object_catalog.h",
+    "sha256": "4376e374d2840d48f43390528fc361091941f8516f27e16e483b904981f903e4"
+  },
+  {
+    "path": "include/legends3ds/stage_runtime.h",
+    "sha256": "d7efebd68af03e0942e84bab94bebe571bb2f1d57574c285ecf2d90da36ac58b"
+  },
+  {
+    "path": "include/legends3ds/stage_spawn.h",
+    "sha256": "8aa28edc99af9c1c0f8c34856bd211825b65d6b504c3373ecacbc596bdac2d56"
+  },
+  {
+    "path": "include/legends3ds/test_boot_policy.h",
+    "sha256": "69b4b1bf0959be764ea16e4b983647df5595e86c0fededfb8c44d12e89fecfef"
+  },
+  {
+    "path": "include/legends3ds/tile_transform.h",
+    "sha256": "cafbca19f8c803db498009d01beabcee489d6acf8c452ffb608967b069301bf2"
+  },
+  {
+    "path": "include/legends3ds/tutorial_runtime.h",
+    "sha256": "b06c0231e300cdd0e01e3ead108278a9d1528e59d0291e18bbf94b5ad9f0b059"
+  },
+  {
+    "path": "include/legends3ds/visual_bridge.h",
+    "sha256": "87685443ead76ca8f40ebae810d0a8cacf1ee256f297fb70606d26b25db247d7"
+  },
+  {
+    "path": "include/legends3ds/xa_stream.h",
+    "sha256": "ea6f16779d1b992fe4330bc4470fdd276457a49145dbb79e253f72f20c7d6db5"
+  },
+  {
+    "path": "include/legends3ds/xa_transport.h",
+    "sha256": "f4fb7e8311dce551a14b9656dec1b2b1504ddebf9baca5464a423fd897d05dca"
+  },
+  {
+    "path": "src/animation/pbd_animation.cpp",
+    "sha256": "52e1c1780ff35c3e4e00e628ecd961934ffe67f0db6ea8baeb63bf579a3627ca"
+  },
+  {
+    "path": "src/animation/player_pose.cpp",
+    "sha256": "bed2c85a739d8d3c76d68bc83b4bd726d50a29d2909cfa07ca72897865df17c2"
+  },
+  {
+    "path": "src/flow/mml_message.cpp",
+    "sha256": "05ba2428c06a040f0917187f1ea60f4db866cad155f3d71b0809fd6545710686"
+  },
+  {
+    "path": "src/flow/save_state.cpp",
+    "sha256": "ab40c66dd9dff4f4f6e1890d876ab2a602134d766821dbc475d5afb413d56dcc"
+  },
+  {
+    "path": "src/flow/source_event_command.cpp",
+    "sha256": "9e6fcb4a36a4cf83b47f2c8c2c66ce9c2dfad5732903fd141ae0795976c28d02"
+  },
+  {
+    "path": "src/flow/source_event_command_package.cpp",
+    "sha256": "b461bf1a694743f74933dd853e9eed4f283419fd195aa4a371d5aed3fa467ec7"
+  },
+  {
+    "path": "src/flow/source_event_consumer.cpp",
+    "sha256": "a045156bb55d66dfb598fb5738e2168c6e439358fb04e6430505ef63bdd6d280"
+  },
+  {
+    "path": "src/flow/source_event_package.cpp",
+    "sha256": "b8c88794bd60c8474698dfc5142953d2754081a20d30ec7d2e8632b6b6b7c550"
+  },
+  {
+    "path": "src/flow/source_event_phase2.cpp",
+    "sha256": "de058c91690c4ec903b6882b9b805c5585ed185e337eb5505a804e9ba420e2de"
+  },
+  {
+    "path": "src/flow/source_event_phase5.cpp",
+    "sha256": "a5a7cd268868620096174e0c57e84626b35e2f7453a24e76e6b40d9278019896"
+  },
+  {
+    "path": "src/flow/source_event_phase6.cpp",
+    "sha256": "aa238f3208fc77dddfd69805f99942ed0e5d235638a5a528c8b2d219e5c6cbb4"
+  },
+  {
+    "path": "src/flow/source_event_pipeline.cpp",
+    "sha256": "c2b16a973b0e911723a2fafbd2ebb1864d0d531091b288e5957b6ec4cbfefe8a"
+  },
+  {
+    "path": "src/flow/source_event_random_effect.cpp",
+    "sha256": "0154a0c6bbf710a8328766b86e547c95d97d58b06fd0b8e69a7c02b51a08a60a"
+  },
+  {
+    "path": "src/flow/source_event_random_tape.cpp",
+    "sha256": "6df44782a3b0f2265ae16214aede6adae4ac836ba1ba8dfc683cef822bad8e96"
+  },
+  {
+    "path": "src/flow/source_fade.cpp",
+    "sha256": "a83f7bf05607ff81b2ca066a01529dc417f93b55c97a50b10b34c92222eb37ec"
+  },
+  {
+    "path": "src/flow/source_loop_snapshot.cpp",
+    "sha256": "6b3cad3ef71af69e7cbacc7287233713e52bc71900b4eeb890297c449e7ef5bc"
+  },
+  {
+    "path": "src/flow/source_main_loop.cpp",
+    "sha256": "0c90a757fb4e807816d28a9cb674ac4ba2af4c51e9a352d22e42ca26bef3fde5"
+  },
+  {
+    "path": "src/flow/st00_event.cpp",
+    "sha256": "ecd36b991e1c77bf988ba4731868cf1bc1026683e65f1ac7fb1e00cd23ce5fe9"
+  },
+  {
+    "path": "src/flow/st00_flow.cpp",
+    "sha256": "7d94dc324bfabe15430a93572c1a6700aebd3f1a0104a6b05a14ebd81d0d74c9"
+  },
+  {
+    "path": "src/input/classic_input.c",
+    "sha256": "d52c96b8b5df00d69dee1aa38d7b941c48a157ed8e73505d4528b8ccdbf737fa"
+  },
+  {
+    "path": "src/model/pbd_model.cpp",
+    "sha256": "987ccd133788c8b4dd319747f55b6fee338742fcdbfd466d19529121e0be5228"
+  },
+  {
+    "path": "src/model/player_composition.cpp",
+    "sha256": "1b74bca12b0d43f445536cf547d519ea2c8f1812630bf200e39a2b00a517bde2"
+  },
+  {
+    "path": "src/p2/mml_bottom_ui_v2.c",
+    "sha256": "1099b16d19b8e20305b9c3d990781ff8223cb1c27f47bad6670cf0e5106674f4"
+  },
+  {
+    "path": "src/p2/mml_combat_v2.c",
+    "sha256": "98ba1d4ef1ff2af840ab22c78f853cab359c524e1d005c2d6d00494faa09ec1c"
+  },
+  {
+    "path": "src/p2/mml_cutscene_v2.c",
+    "sha256": "d62937f5b0f04771b6b7c07418eee0a1081d9692004b77c5bfcbae31b3d5b3fd"
+  },
+  {
+    "path": "src/p2/mml_enemy_bridge_v2.c",
+    "sha256": "d56deb9126188a77c3415fc68b3d817b2c6de317ab5f9a11e1a5504487427599"
+  },
+  {
+    "path": "src/p2/mml_event_vm_v2.c",
+    "sha256": "a1d631b80b534affea41bdbd1e8490e8ed48fefc07c7ce4051e540a3c1c8fc17"
+  },
+  {
+    "path": "src/p2/mml_h4_runtime.c",
+    "sha256": "60d4cd63df679c9b6c9139ba9ccb09289bffda0735d8e407c44ef828697ecbe0"
+  },
+  {
+    "path": "src/p2/mml_loader_guard_v2.c",
+    "sha256": "ad802edf889d3dd8db13eb1fb475068231d9a62c103012298796d6989e2b7b75"
+  },
+  {
+    "path": "src/p2/mml_native_save_v2.c",
+    "sha256": "03cd0694dfb2e4c93cb4c89c8c23c5adc712ebdab3ddc172f65055c3cc454a53"
+  },
+  {
+    "path": "src/p2/mml_package_v2.c",
+    "sha256": "9d71d4098845d6aa6906729e73d753c58fdf8ce7ac724858e674034e2cfc61c9"
+  },
+  {
+    "path": "src/p2/mml_player_material.c",
+    "sha256": "ae41456f893dbb8c6f2e50331dab94cf7757be14d818eb3d373dd969c1c85ab6"
+  },
+  {
+    "path": "src/p2/mml_qol_v2.c",
+    "sha256": "96f770c7fd915f67bdaaf2bb88d108558d9dd64f7f4f4bbb558d0eb3d790f28c"
+  },
+  {
+    "path": "src/p2/mml_renderer_recovery.c",
+    "sha256": "927174974bbdac7a36868d2e38bc186baed11f6c28b7fe45475753842b6c184e"
+  },
+  {
+    "path": "src/p2/mml_retail_anim_request.c",
+    "sha256": "2dfcb65c47a5d02d3c350f9b728fc5d18d5049b6748a207a414489792683f632"
+  },
+  {
+    "path": "src/p2/mml_retail_motion.c",
+    "sha256": "65c44b54af67445a285c5e47abd8f07152eb90a36c0270991fede5c5dca50a75"
+  },
+  {
+    "path": "src/p2/mml_retail_save_v2.c",
+    "sha256": "d7b233e6b3548051d71dd49074e5d617767acb28b48d1a6bfbf4a8718fae614e"
+  },
+  {
+    "path": "src/p2/mml_runtime_diag_v2.c",
+    "sha256": "333d3ae2865fd7cb8eeccf40ec3f919f96c111c415a595b6d797af44880bb912"
+  },
+  {
+    "path": "src/p2/mml_world_v2.c",
+    "sha256": "cf7dabaf81f5f19ee72f3d7db124d5da81673436c59f09c570683c3fa9c7eb47"
+  },
+  {
+    "path": "src/player/classic_motion.c",
+    "sha256": "15393a3246cefb624ee2f6ea387c13aafed20889ceb0cdd2e2ac647663070279"
+  },
+  {
+    "path": "src/player/player_collision.c",
+    "sha256": "d8cc5fa04f398bbd1b3c25c6ff419a280fe41227f6826ad63e987fd00dbc2fac"
+  },
+  {
+    "path": "src/player/player_contact_runtime.cpp",
+    "sha256": "940a09ca160419c48de025ca21b71865d76e5ca4d356d18b9bc701d2af8bd98c"
+  },
+  {
+    "path": "src/player/player_runtime.c",
+    "sha256": "bee8481e067eb6570f30a1d2c2e051610837db34e4c35838d986a7eaeb94e5d0"
+  },
+  {
+    "path": "src/player/reference_tables.cpp",
+    "sha256": "0584ae02a55eafa56c170fea9acce42c4cb7c73c7d8d2de9cc7eda43135e8231"
+  },
+  {
+    "path": "src/render/actor_material.cpp",
+    "sha256": "b884d642edf607627f925d245e5422819ffe82886bab23555b60f245e2dbb9c7"
+  },
+  {
+    "path": "src/render/area_inspection.cpp",
+    "sha256": "9ad8770f9a51eebeb24a8b913a4969635a2fb6b1f395ff98d5fe87ab14b2b462"
+  },
+  {
+    "path": "src/render/area_placement.cpp",
+    "sha256": "8552226f0a2246e1ca6ad74ce442bfe37882e3f04162f6b3b5e0170d1652dbf3"
+  },
+  {
+    "path": "src/render/ctr_texture_layout.cpp",
+    "sha256": "322735811dac6ab0fd6a1a45c449d4aa51581d3f11007d8256527aa63960c37b"
+  },
+  {
+    "path": "src/render/frontend_view.cpp",
+    "sha256": "ad691098a59ebcb0751b2dbd238c6d0627ef72406d91adddec65ef23b36d8f19"
+  },
+  {
+    "path": "src/render/negative_materials.cpp",
+    "sha256": "dc422314910ae2963fcbbec99674ad2fae9b4bf4efa2d3d8d0708648c08daa1a"
+  },
+  {
+    "path": "src/render/negative_terrain.cpp",
+    "sha256": "136162aaa4f74f9fce3b79420e826b188161cdfb05c8022e4baa51a144395b52"
+  },
+  {
+    "path": "src/render/positive_terrain.cpp",
+    "sha256": "1d2c7a4de2d1ded53821e7cc9cbde685bc48a6151bd383e7e4a782d88f78f032"
+  },
+  {
+    "path": "src/render/scene_e0_material.cpp",
+    "sha256": "93b3bbb62f7bcb52414ab29a667e0fc40fff1c9309b9a1d362505bc071edbf76"
+  },
+  {
+    "path": "src/render/terrain_geometry_candidate.cpp",
+    "sha256": "899ffffa636cebd46817244d4e214f353fed8d29bc9f1bbac09f814257514d9f"
+  },
+  {
+    "path": "src/render/visual_bridge.cpp",
+    "sha256": "b80768859b1588baa8ce991a57c60a9b8be73d73bb82772361495cc4d19737d1"
+  },
+  {
+    "path": "src/texture/material_cache.cpp",
+    "sha256": "6bda3a62bba1b9be0f3a009afb90f0c5968fd2671ab1523c58f25202a8e9297f"
+  },
+  {
+    "path": "src/texture/material_resolver.cpp",
+    "sha256": "96ec2717db5e9c80f85ec2d9aebbff89a36b7dd9ecf4d92382909add6c4819b9"
+  },
+  {
+    "path": "src/texture/ps1_texture.cpp",
+    "sha256": "a87195a493e375dbf1171c4a2f2046eae7b188943b34731707d514403d403a8c"
+  },
+  {
+    "path": "src/ui/bottom_map.cpp",
+    "sha256": "7b69af147f2cdb8544a96b34f6ef8300391c0bf79f94457e4649eee3b7f8549b"
+  },
+  {
+    "path": "src/ui/bottom_screen.cpp",
+    "sha256": "14518d0d11bc92e4e7d6dd0e17b4664edec5a43310c179e6ef57537afe9aa4bf"
+  },
+  {
+    "path": "src/ui/dialogue_history.cpp",
+    "sha256": "42ff6e5de94b984fd3322a02606babe69a8014847204851cf47fec4205cf8f71"
+  },
+  {
+    "path": "src/ui/mockup_ui.cpp",
+    "sha256": "6f35d4fed4624e9c092b7170d814406229cbd503c4e611a25cdcad8ee25a0fb5"
+  },
+  {
+    "path": "src/ui/qol_settings.c",
+    "sha256": "9b06e9d0da0d76a2d8d9092d51d37c70cfed8e9038288149cbf7dcc21603684d"
+  },
+  {
+    "path": "src/world/actor_action3_contact.cpp",
+    "sha256": "42430c9aad837f9c2f43a4b76ea42a1c206f1d453c4dbf226d5f12c8842811d2"
+  },
+  {
+    "path": "src/world/actor_action4_contact.cpp",
+    "sha256": "4c5f64ce95e49eca84437a1cdca0a7c3c71819a2eca6bae188ca068d9f54291c"
+  },
+  {
+    "path": "src/world/actor_action9_contact.cpp",
+    "sha256": "c14d7044b78a53b1d57a992b168295fad055f68315ee4473f77d37919c65c6f5"
+  },
+  {
+    "path": "src/world/actor_animation_bank.cpp",
+    "sha256": "7f5a8cb6ae5520bbd119d444b8cacb27435b3e1366aefed16ab946eb9fe41d8a"
+  },
+  {
+    "path": "src/world/actor_contact.cpp",
+    "sha256": "d09b7b2372626a437b8a13bf84efa2bcce2840fceaaf6e3b353d39b8abac9241"
+  },
+  {
+    "path": "src/world/actor_detection.cpp",
+    "sha256": "c5209fbcbc9b9b95a726bcf0288f2156d8a75ba31f668ec2f809581153a4cddd"
+  },
+  {
+    "path": "src/world/actor_detection_math.cpp",
+    "sha256": "cc152cc55a4a680963aa37403bf93d2e991081e63d18dfd98fe5dd5c6212f42e"
+  },
+  {
+    "path": "src/world/actor_detection_preparation.cpp",
+    "sha256": "91706f51d9309398eb3c5825fbb438738e8f77db045845fa1ccb47c4b905465f"
+  },
+  {
+    "path": "src/world/actor_detection_profile.cpp",
+    "sha256": "2178277bff3f2b548153774921d05a39c3aa0b45b67a0631cc4353836560a9d1"
+  },
+  {
+    "path": "src/world/actor_detection_segment.cpp",
+    "sha256": "d555002afc11d98f25d6476f686ba64e440355b8a33c69f7f2fe71f1ff183964"
+  },
+  {
+    "path": "src/world/actor_pose_runtime.cpp",
+    "sha256": "aa9c3e5988ac6feff3050ed74bbbc66fd59794619604acc90ca6b1fe9dab4730"
+  },
+  {
+    "path": "src/world/actor_reaction_contact.cpp",
+    "sha256": "9251dd9c74dcd0ae5892bd02da0aea70d2b7fe69ddedab5209c01bddd8390c22"
+  },
+  {
+    "path": "src/world/actor_resource.cpp",
+    "sha256": "2a6c3656c0c9db9d60119b515bd833f29a24d2d16b398f152f7877b16818da18"
+  },
+  {
+    "path": "src/world/actor_runtime.cpp",
+    "sha256": "2b603108db8b6a3cee01287c550852c49fdbb46974098d72abaf5f7b66e680fe"
+  },
+  {
+    "path": "src/world/actor_sequence.cpp",
+    "sha256": "9c88c97ebde7da4776a80fcad4d19e0a68ed14fac555556dafc3b0d3849d8142"
+  },
+  {
+    "path": "src/world/area_package.cpp",
+    "sha256": "c1afb7193dc8bf9a7749f20690bc7e57ddd354565ab7f6dd641285b20e7e45dd"
+  },
+  {
+    "path": "src/world/audio_catalog.cpp",
+    "sha256": "12988e31c1a46688fc0667f9d500f6f578f0d0fdef5b8b9c5ceddce603aae6f4"
+  },
+  {
+    "path": "src/world/child_runtime.cpp",
+    "sha256": "d311a674f033375e808e502e73892372a832ec2dc0ad396c39e316d80e8a08bd"
+  },
+  {
+    "path": "src/world/class20_03_action3.cpp",
+    "sha256": "d63371a827c3ce666e95b557625d0775ad3a26c1ee60b5f6735eda35e3f80401"
+  },
+  {
+    "path": "src/world/class20_03_action4.cpp",
+    "sha256": "e1983ebfbf8ec2d0f331af9de9032dbe0faa5040e8587e51c2882b0bfaab82fa"
+  },
+  {
+    "path": "src/world/class20_03_action9.cpp",
+    "sha256": "d708c4300d98f6400d6b7f8ed22c93dbc9e3c7cbe873b261b0161fbefb62f904"
+  },
+  {
+    "path": "src/world/class20_03_behavior.cpp",
+    "sha256": "3ea6310bf2df8a741ebc221ca9521798dfcd0b5b11741e8be857dded6b0a7231"
+  },
+  {
+    "path": "src/world/class20_03_hit.cpp",
+    "sha256": "231c3c4d9db95cbd42b620ea8868f726ab39f1ce81a7b35229840e3a664b93a8"
+  },
+  {
+    "path": "src/world/class20_03_proxy.cpp",
+    "sha256": "ae04fd4cd6fab51bb780b5d2126f41dc11e52bf97d672995c02241b2490aae80"
+  },
+  {
+    "path": "src/world/class20_03_reaction.cpp",
+    "sha256": "8a9af68d9aea2e0dc71d6e194a5410a5973003af046928ed19f9460411cdb606"
+  },
+  {
+    "path": "src/world/class60_06.cpp",
+    "sha256": "7b557fbf1e7e7d564b6dab6ca5108d66803c7a80d0cf32aa3249aa98db636820"
+  },
+  {
+    "path": "src/world/ebd_directory.cpp",
+    "sha256": "ea1900c93dba8851c11610e5c8d5471d7fae292ca382282602d663e3d241acae"
+  },
+  {
+    "path": "src/world/ebd_dynamic_selector.cpp",
+    "sha256": "5f62fd769a58b4787096e8a86a61438ac895e4c9137ca46b0fb5c4d33a72e224"
+  },
+  {
+    "path": "src/world/l3map.cpp",
+    "sha256": "b6c945164fe85a0d8e9177682cbe20002cf2d417f81267dcee029772a5ecae2e"
+  },
+  {
+    "path": "src/world/map_initialization.cpp",
+    "sha256": "010a679ad43e3eb905b7fec15fdf508d4ad0fd51828ad408484b288c4de6604e"
+  },
+  {
+    "path": "src/world/resource_catalog.cpp",
+    "sha256": "44303db627e168fbb416a0fd5a28d308291e24163dd8ad33f44aed5e7fb87bfb"
+  },
+  {
+    "path": "src/world/retail_rng_tape.cpp",
+    "sha256": "5de7933d3c41bdbba22a7ce3191694ec1f5fbd0fe48d8ada103607c9c9ed26b6"
+  },
+  {
+    "path": "src/world/runtime_session.cpp",
+    "sha256": "d7cacb61a313ec60b6d0453ad5c7c6681e150ec3f2df9eca72c7ff4b412ba716"
+  },
+  {
+    "path": "src/world/scene_e0.cpp",
+    "sha256": "5fe53605c7e38adfb4415e3db6759a2a57a5c596720077201018844a3993a07a"
+  },
+  {
+    "path": "src/world/source_actor_consumers.cpp",
+    "sha256": "b8550d1c95e6d4a477b62a05814ae3dbf3fa05b78b216ea02235d7bab49eec13"
+  },
+  {
+    "path": "src/world/source_angle.cpp",
+    "sha256": "ad9df649dae44e5e150ef65466fe99c31b376f9d1ba1282c5a96e648590f65a6"
+  },
+  {
+    "path": "src/world/source_audio_queue.cpp",
+    "sha256": "6cdf411095d4791f622a0c31c2682c42d611efd2fae2fa5b036e795ef9b7952a"
+  },
+  {
+    "path": "src/world/source_camera.cpp",
+    "sha256": "7a4b27b4a3196e9ad59e428a1b16280994527c58d8f3885056be2da5f248c01a"
+  },
+  {
+    "path": "src/world/source_combat_profile.cpp",
+    "sha256": "48f044f93a90803ea46dd67ee45e6fd8bde8bc242578be312598346a23fa5324"
+  },
+  {
+    "path": "src/world/source_effects.cpp",
+    "sha256": "7b35c31205354df6df407354d7ce68f005ce69d8d22006a8a9ee1c88ad342773"
+  },
+  {
+    "path": "src/world/source_hit_proxy.cpp",
+    "sha256": "df1097c1d233f15902183342de5e0da26f0460ca6adb75783fe0b2ad65db8095"
+  },
+  {
+    "path": "src/world/source_player_proxy.cpp",
+    "sha256": "fd60ceea8aa8993aa95e3e3b30b72f391cd6854fd89890037fbf85c97edcf171"
+  },
+  {
+    "path": "src/world/source_profile_class60_06.cpp",
+    "sha256": "6ef1180b0d3d1c16255931d1fda9b40cd3902b0fcf20ca9e0dd876a5e84a2f52"
+  },
+  {
+    "path": "src/world/source_reaction_profile.cpp",
+    "sha256": "40bd026578ebfde176abd00c24c38ead092ffa53a4491b8046ea3b2a47814dce"
+  },
+  {
+    "path": "src/world/source_rng_service.cpp",
+    "sha256": "45a71c0e3c3ec87330e28523e3945b3f46e0ead946c77cbc9791042f99caf9e1"
+  },
+  {
+    "path": "src/world/source_scene_actor40.cpp",
+    "sha256": "48a89f7afe7ddb9a47d0834bf7b65b23cf349da636ecfdb54377acf4298bfbb3"
+  },
+  {
+    "path": "src/world/source_scene_actor40_init.cpp",
+    "sha256": "2d4daed07503056f2295d4368e59467e13ef0a8f3d0e23756f4efb88ff48a93b"
+  },
+  {
+    "path": "src/world/source_scene_actor40_pose.cpp",
+    "sha256": "6091ade4a504ea42bbb3810eb8c15daea0f63cb74c582911459eb018460b5a4d"
+  },
+  {
+    "path": "src/world/source_scene_actor40_tail.cpp",
+    "sha256": "38bbc5100df41eeefe4d5c79e90c92a5333edb521752975108ff1f733b441336"
+  },
+  {
+    "path": "src/world/source_scene_actor40_update.cpp",
+    "sha256": "f16efc76b12f9c6c5f9f1dab00e4002738fe3523a8b28113989fbd0da327ebaa"
+  },
+  {
+    "path": "src/world/source_scene_view.cpp",
+    "sha256": "3a2b66d54e8a3b47830fc33df9ba75d886a1b87da211f8114cb4a4cbd477ef0f"
+  },
+  {
+    "path": "src/world/st00_render.cpp",
+    "sha256": "f87a0ca571fc08135d8c62fcbe54111bb9b7a3a0b67e8435bcf1cf64dcae1048"
+  },
+  {
+    "path": "src/world/st00_source.cpp",
+    "sha256": "0e591e873ed47e5cac65d073124c14fe2ee58aec7f2fd1f3db29b0ae6f34020f"
+  },
+  {
+    "path": "src/world/st00_spawn.cpp",
+    "sha256": "44769cf1712973950ffd4c66f72935ab037e170520ddcf5bc15b460a66f56372"
+  },
+  {
+    "path": "src/world/stage_catalog.cpp",
+    "sha256": "fb9509ab3a1d0d46b3f44a404b44db5582b00bb78a430ab0d3c82e837a88233e"
+  },
+  {
+    "path": "src/world/stage_object_catalog.cpp",
+    "sha256": "76f5fda745ce103efc86b538456156cf9805e119225301a28b2ce32c0f395a8f"
+  },
+  {
+    "path": "src/world/stage_runtime.cpp",
+    "sha256": "4642bd4bbf48a13b8d47792d0e3fad77259d65af975881b6ed64c903af5e19ac"
+  },
+  {
+    "path": "src/world/stage_spawn.cpp",
+    "sha256": "babe170be1f6fbeb2eba61b0a17e205ead0c7ab434a12316b2a1523b214657a6"
+  },
+  {
+    "path": "src/world/tile_transform.c",
+    "sha256": "cf778ff622126c7b3c89e1566a7967b6cc6d28675d61b491c8c6f987ea5aaed1"
+  },
+  {
+    "path": "src/world/tutorial_runtime.cpp",
+    "sha256": "b8a69d7346772b6e12b2a054ff0cfb2f2e99e0d5fec1ddf55906215f4b8d8326"
+  },
+  {
+    "path": "src/world/xa_stream.cpp",
+    "sha256": "cbfcb5146427b0b3b29bea002d9c87dd7fa7f34ef89330ad966e68d88e9d7834"
+  },
+  {
+    "path": "src/world/xa_transport.cpp",
+    "sha256": "9439eb31efdc72e7a86fb0b1b85a5d885fc1921635cc36258305ec37ce02ec40"
+  },
+  {
+    "path": "platform/3ds/source/checkpoint_version.h",
+    "sha256": "8519f39766923b86221a3f41d4cb17ed6d2f0cc1a12396f0fcf2c81463a1d194"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.cpp",
+    "sha256": "0c36d882ba23dc8bc5723344f96a78673a8539be83e56c9bf5529624ae5efc54"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.h",
+    "sha256": "eb2a232924dcf836291ce55af474bf92eb8c12fc6808fed71bf0ac8815d59020"
+  },
+  {
+    "path": "platform/3ds/source/main.cpp",
+    "sha256": "d583df36fdad9140bddea30b6ccd42e3139096f1e9ab8709a8224873502551af"
+  },
+  {
+    "path": "platform/3ds/source/mockup_hud.cpp",
+    "sha256": "03ec1647c390eaed8b2ff8209b307734a8a98c971d611dfe141303170f726278"
+  },
+  {
+    "path": "platform/3ds/source/mockup_hud.h",
+    "sha256": "019ec8b918a6388a86eb3f28422f4f14d59e3dc24bb084a34dd8df4cab423ec9"
+  },
+  {
+    "path": "platform/3ds/source/native_xa_audio.cpp",
+    "sha256": "8e4fc9cda706cce5990881ee1e4c208be7dc790e5410d41f220fe2bcc9a4d929"
+  },
+  {
+    "path": "platform/3ds/source/native_xa_audio.h",
+    "sha256": "392cb10f1d0bea3e18efb9621aaa0310613dd2480068f1a3eac7b410e043b87d"
+  },
+  {
+    "path": "platform/3ds/source/vshader0143.v.pica",
+    "sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb"
+  },
+  {
+    "path": "platform/3ds/source/vshader_uv.v.pica",
+    "sha256": "7ddf62f20bc02fa2b2e9d1eb2e0b4c62338d758112d05594202eb1982cf94248"
+  },
+  {
+    "path": "platform/3ds/Makefile",
+    "sha256": "853ec1f83e2c8bb278d570c15f7aad8875cad00aa52291ee0bedc385a5ed6513"
+  }
+]

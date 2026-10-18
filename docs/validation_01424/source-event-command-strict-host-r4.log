@@ -1,0 +1,2 @@
+335 full source dispatch/1024 BCD/256 callbacks/3 transport boundary/1 explicit response tail PASS; explicit transport/atomic queue+mix/validity/4096 no-allocation/status-not-inferred guards PASS
+32 unchanged outer caller cases with explicit transport boundaries PASS

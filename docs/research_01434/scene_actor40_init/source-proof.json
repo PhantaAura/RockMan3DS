@@ -1,0 +1,54 @@
+{
+  "schema": "source-scene-actor40-complete-initializer/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "ebd_sha256": "ea7239d21db9d06c26a70825588ad7981a980ce798f7352588c5865a0e001d15",
+  "player_dispatch_gate_cases": 65536,
+  "player_dispatch_gate_instructions": 458752,
+  "player_dispatch_gate_code_sha256": "7fcb5d5369c86261651a130c18d1d71adc61c7c7b2eb5243191ee70faa4095f8",
+  "player_before_class40_call_order": [
+    "0x80015DD4->0x8003C07C",
+    "0x80015DEC->0x80017094"
+  ],
+  "player_class40_order_code_sha256": "54865eba02c481643791ed1bcecc52410c85642cd03c349497281a5a3bf4d8cd",
+  "complete_wrapper_cases": 12,
+  "original_wrapper_instructions": 90660,
+  "restricted_mvmva_commands": 864,
+  "authored_halfword_copy_cases": 32,
+  "original_halfword_copy_instructions": 576,
+  "actual_initialized_byte08": 1,
+  "initializer_global_identity_addresses": [
+    "0x80122470",
+    "0x80122474"
+  ],
+  "initializer_global_tokens": [
+    "0x8011C338",
+    "0x8011C3A4"
+  ],
+  "player_halfword_offsets": [
+    20,
+    22,
+    24,
+    44,
+    46,
+    48
+  ],
+  "fixed_point_heading_state_inference": false,
+  "opaque_stack_lanes_invalidated": 12,
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "private_owner_fixture_sha256": "ea834e317e631c17924840679268c6e8ea3ef5437e0172da39c44c6186e5aa22",
+  "authored_fixture_sha256": "7a8c140d928f7deaa2e6ef43602c88d642f5a89c4ef9940746b6b126de769bc3",
+  "initializer_code_sha256": "e2adfce142b71528d16841edffcc224206bc08c3e6ed766cc10066eff9e0b86e",
+  "wrapper_code_sha256": "797440add4fa8dc82d56df44941cc57c3dbec51141654ec24126f126ae536ae1",
+  "hardware_tested": false,
+  "retail_parity": false,
+  "limits": [
+    "Only fresh08=0 actualdispatch1/class40/subtype5 initializer and wrapper halfword copies.",
+    "Later8010D7A4/8010C820 movement/animation callbacks remain held.",
+    "Global tokens are source identities only; later overlay table consumers remain separate.",
+    "PoseGTE timing/unused flags and12 unowned temporary stack lanes remain outside exactknown-field proof.",
+    "Owner work/model/texture outputs remain private."
+  ]
+}

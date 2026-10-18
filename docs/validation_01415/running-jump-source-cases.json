@@ -1,0 +1,49 @@
+{
+  "format": "running-jump-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "entry": "0x8003DC5C",
+  "cases": 672,
+  "field_offsets": [
+    "0x9",
+    "0xa",
+    "0xb",
+    "0xac",
+    "0x44",
+    "0x46",
+    "0x48",
+    "0x74",
+    "0x116",
+    "0x175"
+  ],
+  "fixture_sha256": "3cccf8ed379e35ec552694c6cb8484f79f48dfda40a5c8c965dae8034bcc4e33",
+  "profile": "action8 direction0, no modifier, high-jump flag0, contact1, request20, forward512",
+  "excluded_calls": [
+    "0x80041E90 motion integration",
+    "0x8001A008 sound"
+  ],
+  "unknown": [
+    "other direction rows",
+    "modifier action3 landing",
+    "complete source tick/contact ordering",
+    "hardware timing"
+  ],
+  "PHYSICS_1TO1": false,
+  "source_blocks": [
+    {
+      "start": "0x800406a8",
+      "end_exclusive": "0x80040710",
+      "sha256": "4e628b978346332602284ff316828b0c205023922c412008b7356d47939f0954"
+    },
+    {
+      "start": "0x8003dc5c",
+      "end_exclusive": "0x8003e068",
+      "sha256": "0d803213b42e758c62fa651bbef8cc875e21a8673794b2e2888276f6305e4a56"
+    },
+    {
+      "start": "0x8003e068",
+      "end_exclusive": "0x8003e224",
+      "sha256": "a9202129dec24f06b9e435bffb28634ce496a182b1bc05d997d61345662280c1"
+    }
+  ]
+}

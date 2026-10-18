@@ -1,0 +1,52 @@
+{
+  "host_tests": "104/104 PASS,4.33sec",
+  "native_build": "PASS",
+  "native_warnings": 0,
+  "compiled_files_match": 234,
+  "hardware_tested": false,
+  "emulator": "Azahar2126.0 Oldmodel/100%CPU/1xVulkan",
+  "emulator_result": "Title visible; two post-start captures black. Restart produced logical runtime/package/XA traces, sourceevent heldphase2. No newfade/phase5 visual acceptance.",
+  "metrics": {
+    "frame_before_log_us": {
+      "sample_min": 10308,
+      "sample_max": 81867
+    },
+    "update_us": {
+      "sample_min": 3,
+      "sample_max": 323
+    },
+    "render_us": {
+      "sample_min": 10131,
+      "sample_max": 16496
+    },
+    "draw_calls": {
+      "sample_min": 12,
+      "sample_max": 12
+    },
+    "triangles": {
+      "sample_min": 1478,
+      "sample_max": 1478
+    },
+    "owned_linear": {
+      "sample_min": 59520,
+      "sample_max": 59520
+    },
+    "owned_texture": {
+      "sample_min": 2883584,
+      "sample_max": 2883584
+    },
+    "malloc_live": {
+      "sample_min": 1787320,
+      "sample_max": 1787320
+    },
+    "linear_free": {
+      "sample_min": 28719616,
+      "sample_max": 28719616
+    },
+    "vram_free": {
+      "sample_min": 5523456,
+      "sample_max": 5523456
+    }
+  },
+  "limits": "Sparse emulator samples only. Region96MiB/heap66330624/linear33554432 are reservations, notliveusage. Stack compiler main95888B,phase5consumer136B,freshinit11008B; nottotalstackpeak. Hostphase5context26332B."
+}

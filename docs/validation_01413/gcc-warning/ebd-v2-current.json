@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
+    "-std=gnu++17",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Werror",
+    "-march=armv6k",
+    "-mtune=mpcore",
+    "-mfloat-abi=hard",
+    "-mtp=soft",
+    "-D__3DS__",
+    "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/include",
+    "-c",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/src/world/ebd_directory.cpp",
+    "-o",
+    "/private/tmp/gcc01413-ebd-v2.o"
+  ],
+  "exit_code": 0,
+  "source_sha256": "ea1900c93dba8851c11610e5c8d5471d7fae292ca382282602d663e3d241acae",
+  "passed": true,
+  "suppressions_used": false
+}

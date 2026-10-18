@@ -1,0 +1,11 @@
+{
+  "excluded_source_tree_files": [],
+  "outside_source_not_packaged": [
+    "owner-data",
+    "private cooked pack/SD layout",
+    "build outputs/caches",
+    "original saves",
+    "original retail binaries/assets/audio/video",
+    "screenshots and raw live captures (paths/evidence only)"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "excluded_source_tree_files": [],
+  "outside_source_not_packaged": [
+    "owner-data andretaildisc/executable/savefiles",
+    "privatecookedruntimepack/SDlayoutincludingL3XA",
+    "ownerDSPcomponent",
+    "buildoutputs/caches",
+    "retailtextures/models/audio/video",
+    "genuinescreenshotsandrawreferencecaptures(paths/metadataonly)"
+  ],
+  "guard": "OnlyreviewedUTF8text/sourceextensions;noNUL/symlinks/binaries/media/archives/cookedpayloads."
+}

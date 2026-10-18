@@ -1,0 +1,252 @@
+{
+  "parent": "0.0.14.12",
+  "version": "0.0.14.13",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified",
+      "sha256": "e4acce8e90eae5565e42918a4cb9cda37c68f73ff1119b7a9567127ad37eac51"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256": "b4384c6f20526893c257dc851d21732e90a9e65cf04ddf7016a7077914025c72"
+    },
+    {
+      "path": "docs/GCC_WARNING_FIX_01413.md",
+      "change": "added",
+      "sha256": "a0d6200eecf05c1b423e90525f63e4f5a6addba7ca15342887dbc9433b05e5f7"
+    },
+    {
+      "path": "docs/L3EB_FORMAT_01413.md",
+      "change": "added",
+      "sha256": "a97cdc511341e961af49e2b5d345883004a7c45a296069ab52b64bad6c4d162b"
+    },
+    {
+      "path": "docs/OBJECT_INITIALIZER_CHAIN_01413.md",
+      "change": "added",
+      "sha256": "b5d38c677b2a6c990cce70727f2a550c14a9a45e89db6d2b1a08f97e21ecc2df"
+    },
+    {
+      "path": "docs/PORTING_MAP_01413.md",
+      "change": "added",
+      "sha256": "ef132a350d6fe0a9e2ee90482fa47cd6a1db462beaad241126336d8ff48c2a12"
+    },
+    {
+      "path": "docs/REPORT_01413.md",
+      "change": "added",
+      "sha256": "c6a9079baf678d23ed0c2abe9b5ccbb8f9dbcae5215d452471cc905147d89a7a"
+    },
+    {
+      "path": "docs/RESUME_01413.md",
+      "change": "added",
+      "sha256": "776abaf24df7973f00e523b22646e447c08bdd6051c4e651b1d96b6d921b3a26"
+    },
+    {
+      "path": "docs/research_01413/object_initializer_chain_probe.py",
+      "change": "added",
+      "sha256": "5ef53c31db22248e710391829a73f2a4f020ee2a105e81f89ad9c92585cf8f64"
+    },
+    {
+      "path": "docs/validation_01413/build-result.json",
+      "change": "added",
+      "sha256": "bf6a9337bef59e6050f8cafce892ba6820d8c5eedcf92a12d24b7ee76b3c0195"
+    },
+    {
+      "path": "docs/validation_01413/capture-manifest.json",
+      "change": "added",
+      "sha256": "9eb2b6c6535e77fc73c0e1e28eb868301097f212c3e46ad017117a753ae767a3"
+    },
+    {
+      "path": "docs/validation_01413/ebd-owner-roundtrip.json",
+      "change": "added",
+      "sha256": "9ef325ce48afe440302b237cb77c0d1c6a7d6de1f8836407589caa86d1a2312e"
+    },
+    {
+      "path": "docs/validation_01413/ebd-resource-preservation-evidence.json",
+      "change": "added",
+      "sha256": "2b233cc6bc0d73e5ecf22817821381eac629b1ea92419566feb2246d0fdc3a39"
+    },
+    {
+      "path": "docs/validation_01413/ebd-upgrade.log",
+      "change": "added",
+      "sha256": "07efc04dd4557a81c2c38af6e9f3b3807d22b2f9c267f57e67b94d5abafaf474"
+    },
+    {
+      "path": "docs/validation_01413/emulator-launch.json",
+      "change": "added",
+      "sha256": "13bc6c774e166d0c93d203b07a7b62b17aa37db1f88512d510959edc2c0be1cb"
+    },
+    {
+      "path": "docs/validation_01413/emulator-memory.json",
+      "change": "added",
+      "sha256": "242e664d8585c882b811a2b162cdd6eeb2dec37fbe03cbe7ff5c155ba5477503"
+    },
+    {
+      "path": "docs/validation_01413/final-results.json",
+      "change": "added",
+      "sha256": "ad4d3dfbe83551402281e7115f777749fe791140862b051e6228cbe551125ba4"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/current-after.log",
+      "change": "added",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/ebd-v2-current.json",
+      "change": "added",
+      "sha256": "3a1baaef0b1464cafa9f5d24d0391b34b8869afe30bcfdd2d9cfb4adad0f9524"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/ebd-v2-current.log",
+      "change": "added",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/historical-before.log",
+      "change": "added",
+      "sha256": "2d50a8812c949744ec35a6ae7a3d0f469f671dc3cfe90cdc16e96964de7875c6"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/historical-type-limits-reconstruction.c",
+      "change": "added",
+      "sha256": "1ddc56a2e0bf746c6d87be534058552ea8c3d6443f1624da141fb93bb2a902bb"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/native-make-guard.json",
+      "change": "added",
+      "sha256": "b22413f0609a5f94b50283b580ff278dedce18eeea8d1e8a88e559ee684da479"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/native-make-guard.log",
+      "change": "added",
+      "sha256": "505d1024964a68661b5c8b4a127e1bc60a0da6f9fce29b5d9b26e731792fed81"
+    },
+    {
+      "path": "docs/validation_01413/gcc-warning/results.json",
+      "change": "added",
+      "sha256": "927eefd6a93bf95fe46337718381b30ef39ce6617c7ef955c93d95b54c42deda"
+    },
+    {
+      "path": "docs/validation_01413/handoff-validation.json",
+      "change": "added",
+      "sha256": "757be6c7262fd526c741db3ad5264b2d2ea26deebebd7796c13121ead9b2e90c"
+    },
+    {
+      "path": "docs/validation_01413/hardware_01413_3999740423737.csv",
+      "change": "added",
+      "sha256": "fd673b468fde61d36ff267554be4d232bf97dcae62c83dcf2be557f43e963446"
+    },
+    {
+      "path": "docs/validation_01413/host-build.log",
+      "change": "added",
+      "sha256": "acdb45c83eeea3d17ec469af69fd5cc1e2e87d04457c77c5316691d88f319d3f"
+    },
+    {
+      "path": "docs/validation_01413/host-configure.log",
+      "change": "added",
+      "sha256": "5a3ec913782736af021b05a54c574111525f1d6de49a8cac1149276b2603e945"
+    },
+    {
+      "path": "docs/validation_01413/host-tests.log",
+      "change": "added",
+      "sha256": "755e24dc66a4424164c52dcab187e494582688cdcf69c6a56aae48e789d06117"
+    },
+    {
+      "path": "docs/validation_01413/native-boot.log",
+      "change": "added",
+      "sha256": "984fb6d6abc60a4a9ff529c61cc279b1fe6fdf219eb9412741b08f6f2d1271e2"
+    },
+    {
+      "path": "docs/validation_01413/native-build.log",
+      "change": "added",
+      "sha256": "f28563a21d22df2f5e81ac1d53051abed31dc6a750c1fbc64fccf601a6ba4203"
+    },
+    {
+      "path": "docs/validation_01413/native-source-manifest.json",
+      "change": "added",
+      "sha256": "33d9735c492de55198af612fa9f669dc6dfb222237aed17eea7fad7c0ec8b572"
+    },
+    {
+      "path": "docs/validation_01413/object-initializer-chain.json",
+      "change": "added",
+      "sha256": "d291c351c46afb9c28c02d75d0cc23115d3bd5606c386007c5fb9534cc25b174"
+    },
+    {
+      "path": "docs/validation_01413/pack-validation.json",
+      "change": "added",
+      "sha256": "d41404907a2d09df73afe4fd7394b91e2a8a76669fcf59de30b134e61c214a68"
+    },
+    {
+      "path": "docs/validation_01413/runtime-session-v2.log",
+      "change": "added",
+      "sha256": "098f64ad0bb5b4f6167189894c6ae05d3244190d01f49b3fbffb61e534b0d73d"
+    },
+    {
+      "path": "include/legends3ds/ebd_directory.h",
+      "change": "modified",
+      "sha256": "e7e03e50f9d774559b8c4692d5a2920f5cba17773b3a558105dc1609e8322fc1"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified",
+      "sha256": "59d62375b8888a03e983e9c0c545352f5d6d0fbcec7f26d4b15eb43bf5401bfd"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified",
+      "sha256": "a24d1be3947c61a4ec2b56ba284f9963bf19e5d3cdad7dbc086df4532965afa4"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified",
+      "sha256": "01614ec290fca508fe8ee929dbc883d853557a6180781abf3295d4c53a07f749"
+    },
+    {
+      "path": "src/world/ebd_directory.cpp",
+      "change": "modified",
+      "sha256": "ea1900c93dba8851c11610e5c8d5471d7fae292ca382282602d663e3d241acae"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified",
+      "sha256": "ea1e4dd00958e66e3e15f62a8a56a1ef3a3ae7abc80e0ea62e8faeabf6832c12"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified",
+      "sha256": "6411bd236c11eb45a0c52c2821990ece1a6fbad9a5d1df195fac421973925f38"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified",
+      "sha256": "e9b03c6030551a0f2d2cb512ce7fd89bd8cbe96cfaad6a04c7c58601c4048a15"
+    },
+    {
+      "path": "tests/test_ebd_resources.cpp",
+      "change": "added",
+      "sha256": "670ff16bbcf3b66bc463f23cb5eefddbe800520c807b97595337773e1db527a5"
+    },
+    {
+      "path": "tools/build_tutorial_pack.py",
+      "change": "modified",
+      "sha256": "ed644acd4c852aa1d6f1592f22c839ea0cbe9a636987f0d5a0b86a0e86cada79"
+    },
+    {
+      "path": "tools/check_renderer_gate_gcc.py",
+      "change": "added",
+      "sha256": "e94b7614a0a1b79b1d5c3360c29c3fe1b58d2e49cfe4f290dd8130ee8ea35ebe"
+    },
+    {
+      "path": "tools/l3inspect_ebd.cpp",
+      "change": "modified",
+      "sha256": "7ed2b6b41dbc8c83292ba71dbd0b29233a2bf9e1413e55c092e51a5392cea6f7"
+    },
+    {
+      "path": "tools/l3runtime_session_probe.cpp",
+      "change": "modified",
+      "sha256": "0341f66af8f1123b237325e9e262913e2a262115aa5f9150745f3b1d524d9f91"
+    }
+  ],
+  "excluded_self_and_manifest": true
+}

@@ -1,0 +1,23 @@
+{
+  "version": "0.0.14.43",
+  "status": "CANDIDATE",
+  "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "enhanced_shader_sha256": "ce29518b567b3bfc3fd891a0d098a68de1aa7f186da2ce5cd888c86251178e25",
+  "prior_enhanced_shader_sha256": "7ddf62f20bc02fa2b2e9d1eb2e0b4c62338d758112d05594202eb1982cf94248",
+  "vertex_stride_bytes": 20,
+  "buffered_attribute_slots": [
+    "position3 -> v0",
+    "UV2 -> v2",
+    "fixed colour -> v1"
+  ],
+  "buffer_permutation": "0x10",
+  "fixed_colour_slot": 2,
+  "immediate_attribute_slots": [
+    "position -> v0",
+    "colour -> v1",
+    "UV -> v2"
+  ],
+  "root_cause_established": false,
+  "physical_01443_validation": "HARDWARE_PENDING",
+  "review": "Independent read-only review found no inconsistency between buffered and restored immediate layout."
+}

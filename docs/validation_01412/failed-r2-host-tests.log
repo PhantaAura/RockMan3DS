@@ -1,0 +1,58 @@
+ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r2/host --output-on-failure
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r2/host
+      Start  1: core
+ 1/23 Test  #1: core .............................   Passed    0.01 sec
+      Start  2: map_sharing
+ 2/23 Test  #2: map_sharing ......................   Passed    0.00 sec
+      Start  3: ps1_geometry
+ 3/23 Test  #3: ps1_geometry .....................   Passed    0.00 sec
+      Start  4: area_package
+ 4/23 Test  #4: area_package .....................   Passed    0.01 sec
+      Start  5: terrain_geometry_candidate
+ 5/23 Test  #5: terrain_geometry_candidate .......   Passed    0.00 sec
+      Start  6: map_cell_alignment
+ 6/23 Test  #6: map_cell_alignment ...............   Passed    0.00 sec
+      Start  7: area_placement
+ 7/23 Test  #7: area_placement ...................   Passed    0.00 sec
+      Start  8: positive_terrain
+ 8/23 Test  #8: positive_terrain .................   Passed    0.00 sec
+      Start  9: push2
+ 9/23 Test  #9: push2 ............................   Passed    0.00 sec
+      Start 10: integrity
+10/23 Test #10: integrity ........................   Passed    0.00 sec
+      Start 11: pipeline_python
+11/23 Test #11: pipeline_python ..................   Passed    0.22 sec
+      Start 12: cooked_area_python
+12/23 Test #12: cooked_area_python ...............   Passed    0.17 sec
+      Start 13: owner_data_intake_python
+13/23 Test #13: owner_data_intake_python .........   Passed    0.25 sec
+      Start 14: local_install_python
+14/23 Test #14: local_install_python .............   Passed    1.31 sec
+      Start 15: source_tools_python
+15/23 Test #15: source_tools_python ..............   Passed    0.22 sec
+      Start 16: negative_package
+16/23 Test #16: negative_package .................   Passed    0.00 sec
+      Start 17: negative_terrain
+17/23 Test #17: negative_terrain .................   Passed    0.00 sec
+      Start 18: negative_material
+18/23 Test #18: negative_material ................   Passed    0.00 sec
+      Start 19: material_vram
+19/23 Test #19: material_vram ....................   Passed    0.00 sec
+      Start 20: area_inspection
+20/23 Test #20: area_inspection ..................   Passed    0.00 sec
+      Start 21: frontend_view
+21/23 Test #21: frontend_view ....................Subprocess aborted***Exception:   0.03 sec
+Assertion failed: (right.visible&&right.x_pixels>center.x_pixels), function main, file test_frontend_view.cpp, line 30.
+
+      Start 22: mockup_ui
+22/23 Test #22: mockup_ui ........................   Passed    0.00 sec
+      Start 23: player_visual_storage
+23/23 Test #23: player_visual_storage ............   Passed    0.26 sec
+
+96% tests passed, 1 tests failed out of 23
+
+Total Test time (real) =   2.53 sec
+
+The following tests FAILED:
+	 21 - frontend_view (Subprocess aborted)
+Errors while running CTest

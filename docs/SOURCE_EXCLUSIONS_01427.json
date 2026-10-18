@@ -1,0 +1,14 @@
+{
+  "excluded": [
+    "Reproducible caches/__pycache__/.git/build_3ds",
+    "Generated host/native binaries and build output",
+    "ROM/CHD/BIN/CUE/executables/retail source data",
+    "Original or cooked commercial textures/models/audio/video/packages",
+    "DSP firmware and owner save data",
+    "Original screenshots retained separately at documented paths"
+  ],
+  "input_archives_modified": false,
+  "private_sd_layout": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/native-r2/sd_out",
+  "source_release": "Complete cumulative code/scripts/history/evidence/docs; UTF8 text allowlist enforced by tools/release_source.py.",
+  "synced_sources_modified": false
+}

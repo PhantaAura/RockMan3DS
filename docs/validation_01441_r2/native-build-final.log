@@ -1,0 +1,6 @@
+main.cpp
+linking Legends3DS_01441r2_WorldComesAlive.elf
+/opt/devkitpro/devkitARM/lib/gcc/arm-none-eabi/16.1.0/../../../../arm-none-eabi/bin/ld: cannot find hardware_test.o: Invalid argument
+collect2: error: ld returned 1 exit status
+make[1]: *** [/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/native-r1/native-source/platform/3ds/Legends3DS_01441r2_WorldComesAlive.elf] Error 1
+make: *** [all] Error 2

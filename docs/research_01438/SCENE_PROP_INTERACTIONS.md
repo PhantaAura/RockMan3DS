@@ -1,0 +1,15 @@
+# Cutscene prop interaction diagnosis
+
+User feedback: Mega Man's door lift and shard grab do not affect the visible props. This is important scene functionality and is the next priority. Research used the supplied unchanged overlay and current source. Door/shard labels are inferred from static positions and actions; they were not newly confirmed by live object labels. Reuse the existing imported resources; no replacement models are proposed.
+
+Door: eventwork+0x30 binds E0slot2, parameter03=2, resourcevariant2, initialposition(0,0,-488). Class40state1 at sequenceframe50 sets doorstate09=1/sub10=0. Native handler80113280 currently holds with NeedsCameraOwner. The original lift subtracts the unsigned animation-offset curve byte from signed actor(event+0x24) part7 Y at actor+442. The curve is selected by actor byte14/current sequence frame; the result is written to door halfword Y+58. NeedsCameraOwner is the existing hold label, not evidence that this controller requires a camera rewrite. The existing renderer reads that position, so the missing producer must be implemented rather than overriding rendering coordinates.
+
+Shard: eventwork+0x28 binds E0slot0, parameter03=0, initialposition(0,-404,3584). Class40state4/frame120 selects state09=1. Native handler80112D14 currently holds. Original attachment uses actorbone3 matrix at+672 and bone3XYZ+408/+410/+412, transforms offset(80,0,-320), applies quarterXrotation and scale. Verify which source pose lanes/curve owners are admitted before publishing.
+
+After grab, original writes modulation02808080. draw_source_scene_e0_uv currently skips02000000 unconditionally. The alpha path therefore needs original packet/material-mode validation and an independent renderer gate; otherwise a correct attached shard would disappear. Keep0143 fallback viable.
+
+Next milestone: original differential tests for lift and attachment with authored parentpose/curve inputs; native controller wiring using current known lanes and owner leases; separately validate shard alpha/material behavior; capture genuine original/native scene at matched phases. Do not hand-animate props, invent curves, hide duplicategeometry by guess, or call parity from visual similarity. Remaining source curve/RNG/camera owners stayunknown until proved.
+
+Public research checked [MML1x10](https://github.com/JoshuaDav10/MML1x10), which remains WIP and exposes rock_neo source plus overlays/linker metadata. It is reference material, not a complete replacement for this native project. Private static finding ledger: work/pass-20261013-worldalive-01438/scene-prop-interactions-r1/FINDINGS.md. No controller fix is included in0.0.14.38.
+
+Further bounded source anchors: door offset-curve pointers8011C9FC select8011C958/8011C998/8011C9D8; door logic includes RNGreturn80113238 and subtype3producer80113E10. A separate E0slot14/variant10 representation must be distinguished in the original constructor/alias map before attachment. These dependencies connect prop work to the missing original world/RNG consumers. No new oracle/controller implementation was performed for this diagnosis.

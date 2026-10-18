@@ -1,0 +1,55 @@
+# Changed files relative to6d/r1
+
+All cumulative prior files preserved. Source manifest regenerated.
+
+- MODIFIED: `CMakeLists.txt`
+- MODIFIED: `README.md`
+- ADDED: `docs/0147_BASELINE.json`
+- ADDED: `docs/DISTRIBUTION_AND_IMPORT_0147.md`
+- ADDED: `docs/HARDWARE_TEST_0147.md`
+- ADDED: `docs/PORTING_MAP_0147.md`
+- ADDED: `docs/REPORT_0147.md`
+- ADDED: `docs/RESUME_0147_20261001.md`
+- ADDED: `docs/SOURCE_ZIP_EXCLUSIONS_0147.md`
+- ADDED: `docs/validation_0147/area-package.log`
+- ADDED: `docs/validation_0147/area-runtime-probe.log`
+- ADDED: `docs/validation_0147/baseline-build.log`
+- ADDED: `docs/validation_0147/baseline-configure.log`
+- ADDED: `docs/validation_0147/baseline-result.json`
+- ADDED: `docs/validation_0147/baseline-tests.log`
+- ADDED: `docs/validation_0147/build-result.json`
+- ADDED: `docs/validation_0147/host-build.log`
+- ADDED: `docs/validation_0147/host-configure.log`
+- ADDED: `docs/validation_0147/host-tests.log`
+- ADDED: `docs/validation_0147/native-build.log`
+- ADDED: `docs/validation_0147/native-source-manifest.json`
+- ADDED: `docs/validation_0147/pack-validation.json`
+- ADDED: `docs/validation_0147/runtime-probe-summary.json`
+- ADDED: `docs/validation_0147/sanitizer-build.log`
+- ADDED: `docs/validation_0147/sanitizer-configure.log`
+- ADDED: `docs/validation_0147/sanitizer-result.json`
+- ADDED: `docs/validation_0147/sanitizer-tests.log`
+- ADDED: `docs/validation_0147/snapshot-equality.json`
+- ADDED: `include/legends3ds/area_package.h`
+- MODIFIED: `include/legends3ds/runtime_session.h`
+- MODIFIED: `platform/3ds/Makefile`
+- MODIFIED: `platform/3ds/source/hardware_test.cpp`
+- MODIFIED: `platform/3ds/source/hardware_test.h`
+- MODIFIED: `platform/3ds/source/main.cpp`
+- ADDED: `src/world/area_package.cpp`
+- MODIFIED: `src/world/runtime_session.cpp`
+- MODIFIED: `state/CURRENT_CHECKPOINT.json`
+- ADDED: `state/CURRENT_READINESS.json`
+- ADDED: `state/EVIDENCE_LEDGER.json`
+- ADDED: `state/PARENT_0146d_r1_CHECKPOINT_METADATA.json`
+- MODIFIED: `state/RUN_STATE.json`
+- ADDED: `tests/test_area_package.cpp`
+- ADDED: `tests/test_cooked_area.py`
+- MODIFIED: `tests/test_map_sharing.cpp`
+- MODIFIED: `tools/build_hardware_test.py`
+- ADDED: `tools/l3area_runtime_probe.cpp`
+- ADDED: `tools/package_cooked_area.py`
+- MODIFIED: `tools/release_source.py`
+- ADDED: `docs/CHANGED_FILES_0147.md`
+- ADDED: `docs/changed-files-0147.json`
+- REGENERATED: `SOURCE_MANIFEST.sha256`

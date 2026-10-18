@@ -1,0 +1,3 @@
+# World Comes Alive continuation01422
+
+Reuse the cumulative01421 native actor/runtime, source Action4 producer and safe0143 renderer. First testable milestone: recover actual stage subtype6 callback and connect only proved lifecycle/contact behavior, preserving explicit unknown hit consumers. In parallel audit existing normal event/message/area ownership and repair demonstrated implementation defects. Original gameplay input/global RNG chronology and physical hardware remain required evidence. No fabricated seed, retail semantics or completion claims. Keep owner payloads outside source releases.

@@ -1,0 +1,23 @@
+{
+  "changed_cooked_outputs": 42,
+  "compiled_source_files_match": 232,
+  "created_utc": "2026-10-11T01:34:55.755183+00:00",
+  "hardware": "HARDWARE_PENDING",
+  "host_tests": "100/100 PASS",
+  "independent_source_proof_equal": true,
+  "initial_failures": [
+    "Host build launched before configure completed; sequencing retry passed.",
+    "First native compile missed explicit <algorithm> for std::copy_n; include added, final build passed."
+  ],
+  "native_binary_sha256": "bde6d0ffd32d0dee6d27f4d6e6930f87d06969788bde8724f01e23eea2f64cbd",
+  "native_build": "PASS",
+  "new_test": "12 authored4/8bpp layouts +14 malformed cases",
+  "no_new_sanitizer_run": true,
+  "package_runtime_and_inspection_probes": "PASS",
+  "recook_commands": 54,
+  "warnings": {
+    "front-diagnostic-build.log": 0,
+    "host-build.log": 0,
+    "native-build.log": 0
+  }
+}

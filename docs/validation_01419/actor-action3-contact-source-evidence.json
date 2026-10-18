@@ -1,0 +1,49 @@
+{
+  "schema": "actor-action3-contact-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "authored_contact_cases": 1152,
+  "owner_stage_contact_cases": 24,
+  "sound_producer_cases": 12,
+  "instructions_executed": 2133900,
+  "authored_fixture_sha256": "73499c950ec779e748725f4de3f9283f2521c1d03931b0ddf11dd24d2a716ad8",
+  "sound_fixture_sha256": "9597397693417fd5f4995456eb80db6d56e08333b4d2ddb5ed667ce71a991b52",
+  "owner_stage_fixture_sha256": "f338a2534366e9abea520c629b091268e06151a77ae3c4e129f588090b76f148",
+  "source_block_hashes": [
+    {
+      "start": "0x80102b28",
+      "end_exclusive": "0x80102b44",
+      "sha256": "c522005dbfda26eb6842fb94aefb6b8f81c3d3051a24f08327f5e7b31208604a"
+    },
+    {
+      "start": "0x80102d68",
+      "end_exclusive": "0x80102dd0",
+      "sha256": "405d76c8119fe49cb4f58c259a8616fa72f422a02b774b3a861ba2fbbdbd7ff6"
+    },
+    {
+      "start": "0x80102e50",
+      "end_exclusive": "0x80102ea4",
+      "sha256": "d1966dc970990e8e35fe05f032f9afca029d0f6f2d5b73e94abdcb32b289b9e0"
+    }
+  ],
+  "sound_queue_writer": {
+    "entry": "0x8001a050",
+    "end_exclusive": "0x8001a0a8",
+    "sha256": "b61af4256155abb2535783a871f0087d2500bbc26aa8939cbd84a595801cb1d2",
+    "producer_argument": "a1=actor_work+0x14 before action motion",
+    "copied_payload": "two original32bitwords at a1+0 and a1+4",
+    "full_queue_case": "current pointer==800BE6D8 suppresses enqueue"
+  },
+  "external_premises": [
+    "Target80031198 result authored; original80031BEC executes.",
+    "Motion/GTE fixed delta authored or calculated from resident owner trig; original accumulator/rounding executes.",
+    "Synthetic or994-identity materialized stage state; original wall/floor wrappers execute.",
+    "Original176/180 producer and8001A050 queue writer execute; action2 later movement/contact excluded in sound-onlycases."
+  ],
+  "limits": [
+    "Contact preparation proves only admitted branches/families; source reducer owns floorstores/rollback.",
+    "No live encounter, whole AI, original audio playback or physicalhardware claim.",
+    "Ownerstage bounds/positions/trig remain outside sourcecheckpoint."
+  ]
+}

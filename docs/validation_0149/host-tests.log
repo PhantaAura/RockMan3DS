@@ -1,0 +1,32 @@
+ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/3f29cec1fe850827 --output-on-failure
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/cache/host/3f29cec1fe850827
+      Start  1: core
+ 1/13 Test  #1: core .............................   Passed    0.01 sec
+      Start  2: map_sharing
+ 2/13 Test  #2: map_sharing ......................   Passed    0.00 sec
+      Start  3: ps1_geometry
+ 3/13 Test  #3: ps1_geometry .....................   Passed    0.00 sec
+      Start  4: area_package
+ 4/13 Test  #4: area_package .....................   Passed    0.00 sec
+      Start  5: terrain_geometry_candidate
+ 5/13 Test  #5: terrain_geometry_candidate .......   Passed    0.00 sec
+      Start  6: map_cell_alignment
+ 6/13 Test  #6: map_cell_alignment ...............   Passed    0.00 sec
+      Start  7: push2
+ 7/13 Test  #7: push2 ............................   Passed    0.00 sec
+      Start  8: integrity
+ 8/13 Test  #8: integrity ........................   Passed    0.00 sec
+      Start  9: pipeline_python
+ 9/13 Test  #9: pipeline_python ..................   Passed    0.10 sec
+      Start 10: cooked_area_python
+10/13 Test #10: cooked_area_python ...............   Passed    0.10 sec
+      Start 11: owner_data_intake_python
+11/13 Test #11: owner_data_intake_python .........   Passed    0.16 sec
+      Start 12: local_install_python
+12/13 Test #12: local_install_python .............   Passed    0.76 sec
+      Start 13: source_tools_python
+13/13 Test #13: source_tools_python ..............   Passed    0.12 sec
+
+100% tests passed out of 13
+
+Total Test time (real) =   1.27 sec

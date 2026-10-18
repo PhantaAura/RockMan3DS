@@ -1,0 +1,19 @@
+{
+  "schema": "mml-source-hit-proxy-leases-01436/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "allocation_entry": "0x8003545C",
+  "release_entry": "0x800354E0",
+  "allocation_cases": 498,
+  "release_cases": 260,
+  "instructions_executed": 40643,
+  "helper_hooks": 0,
+  "fixture_sha256": "bf769dc7f6c131671663c1757cd886c6be919d959ca8c080b6a9963103519fa6",
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "limits": [
+    "Authored masks/owner identities, not a live Buster trace.",
+    "Lease producer alone does not establish muzzle, shot motion, HP or defeat.",
+    "Release retains owner table/target flags and uses original low5 shift index."
+  ]
+}

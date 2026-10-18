@@ -1,0 +1,20 @@
+{
+  "trace_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01422/rng-reference/live-r3/trace-checkpoint.jsonl",
+  "sha256": "a2e654a80612ab65308dfd1c79e4a3617829c84f134d6d84a5099d44d19b8485",
+  "rows": 824,
+  "kinds": {
+    "bios_rng_enter": 410,
+    "bios_rng_return": 410,
+    "class03_overlay_not_admitted": 2,
+    "game_entry": 1,
+    "observer_start": 1
+  },
+  "observer": "read-only; cached return listeners bounded32",
+  "previous_failure": "r2 table overflow with dynamic one-shot return callbacks; failed original trace preserved",
+  "new_capture_complete": false,
+  "live_enemy_rng_admitted": false,
+  "retail_parity": false,
+  "memory_cards_inserted": false,
+  "source_data_modified": false,
+  "limitation": "Current reference still title/intro. Authored12000-return observer lifecycle harness passed; a long original-game capture and input/callback chronology remain unproved."
+}

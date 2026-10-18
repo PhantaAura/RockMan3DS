@@ -1,0 +1,22 @@
+{
+  "schema": "class60-06-native-results/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "compiler": "Apple clang, C++17, Wall Wextra Werror",
+  "callback_cases": 2160,
+  "motion_cases": 192,
+  "primitive_cases": 9,
+  "contact_admitted": 660,
+  "contact_held": 108,
+  "contact_corrected": 240,
+  "contact_effect_copies": 120,
+  "contact_sound_writes": 240,
+  "registry_cases": 36,
+  "shadow_cases": 288,
+  "hot_loop_allocation_check_ticks": 640,
+  "result": "PASS",
+  "hardware": "HARDWARE_PENDING",
+  "limits": [
+    "Author scalar contexts; no live retail encounter or damaging-attack proof.",
+    "Effect128/131 callbacks, physical pair processing, shadow rasterizer and original GTE/fog remain unported."
+  ]
+}

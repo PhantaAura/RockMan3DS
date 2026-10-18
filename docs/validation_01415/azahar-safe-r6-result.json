@@ -1,0 +1,9 @@
+{
+  "build": "install-r6",
+  "renderer": "BASELINE_0143",
+  "boot_ready": true,
+  "actor_animation_enabled": false,
+  "native_hardware": false,
+  "screenshot": null,
+  "limit": "CUA screenshot attempt failed: Sky Computer Use service startup request failed. Boot/source gates verified in native log; no new fallback screenshot or complete replay acceptance claimed."
+}

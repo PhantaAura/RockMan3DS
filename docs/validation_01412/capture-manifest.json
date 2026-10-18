@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/azahar-01412-gameplay-r3/captures/title.png",
+    "device": "Azahar2126.0 Old-model configuration (not physical hardware)",
+    "build": "0.0.14.12",
+    "binary_sha256": "d4c5d88ab40424553b93c2d88534f74dbb0f843ec138f1f5da3c952989cd3416",
+    "scene": "Current native title/start screen",
+    "sha256": "e05966f2c8a51c388b73a180c062bf6e37aaac4082d0f4a2f5efda387f0579d2",
+    "valid_game_evidence": true,
+    "original_capture": true
+  },
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/azahar-01412-gameplay-r3/captures/replay_end_area1_obstructed.png",
+    "device": "Azahar2126.0 Old-model configuration (not physical hardware)",
+    "build": "0.0.14.12",
+    "binary_sha256": "d4c5d88ab40424553b93c2d88534f74dbb0f843ec138f1f5da3c952989cd3416",
+    "scene": "Diagnostic area1: real terrain occlusion failure, bottom map/HP/Buster/Lock",
+    "sha256": "b7ec295702e57e704eb36fc3da3c50312709d6c3afc2fccca883483cb61ad1e9",
+    "valid_game_evidence": true,
+    "original_capture": true
+  },
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/azahar-01412-gameplay-r3/captures/native_bottom_map_area1.png",
+    "device": "Azahar2126.0 Old-model configuration (not physical hardware)",
+    "build": "0.0.14.12",
+    "binary_sha256": "d4c5d88ab40424553b93c2d88534f74dbb0f843ec138f1f5da3c952989cd3416",
+    "scene": "Current native bottom-screen map/UI; top player view obstructed",
+    "sha256": "bd4d57c444af1b57402183acb3114f877441fb659e3f17a29b21389db5e1237e",
+    "valid_game_evidence": true,
+    "original_capture": true
+  },
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/azahar-01412-gameplay-r3/captures/movement.png",
+    "device": "Azahar2126.0 Old-model configuration (not physical hardware)",
+    "build": "0.0.14.12",
+    "binary_sha256": "d4c5d88ab40424553b93c2d88534f74dbb0f843ec138f1f5da3c952989cd3416",
+    "scene": "Playback completed dialog, excluded from gameplay evidence",
+    "sha256": "25a1602c00586f83e0d287b2fc9ed22e37d9606e18490c56c73c56d0ae07f485",
+    "valid_game_evidence": false,
+    "original_capture": true
+  }
+]

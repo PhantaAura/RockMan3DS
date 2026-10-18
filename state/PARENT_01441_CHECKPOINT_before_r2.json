@@ -1,0 +1,87 @@
+{
+  "PHYSICS_1TO1": false,
+  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.40_Source.zip",
+  "baseline_sha256": "427fe849595090087efb23cdeadc0b7053dbf903e2a7360858314a12546685fc",
+  "blockers": [
+    "Physical14.39/14.40topblack/mapbottom reported;14.40colour prompts did not appear. Neither hardwarecolour path nor oldSELECTfallback selection was confirmed.14.41physicaltest pending.",
+    "Original black-screen cause remains unknown. Automaticdiagnostic selection and newlyintroduced fallback-camera ordering are fixed; those do not establish a hardware rendering fix.",
+    "InheritedWCA blockers: whole-world RNG chronology, true playerBuster endpoint/firing ownership, complete enemy encounter/reaction/defeat, originaldisplayUVtemplate reset and natural progression remain incomplete. PHYSICS_1TO1=false."
+  ],
+  "branch": null,
+  "commit": null,
+  "compiled_source_hashes_match": true,
+  "created_utc": "2026-10-14T11:50:15.059252+00:00",
+  "current_emulator_validation": "Final binary: automatic CPU/GPU probes and explicit0143fallback visibly exercised in Old-modelAzahar2126.0",
+  "emulator": {
+    "build": "0.0.14.41",
+    "binary_sha256": "b1dfc9531a3dbc43aa73588ae7470d2869769d2e556d3fd4f173bcef55e56a82",
+    "emulator": "Azahar2126.0",
+    "is_new_3ds": false,
+    "cpu_percent": 100,
+    "physical_hardware": false,
+    "captures": [
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/azahar-01441-owner-r3/captures/_14.10.26_22.25.49.948.png",
+        "sha256": "79245558065bc0774dc3a5b449465a334bcfa17ac5458eec4e74e6b30733aef3",
+        "size": [
+          400,
+          480
+        ],
+        "scene": "CPU RGB bars / automatic test1",
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/azahar-01441-owner-r3/captures/_14.10.26_22.25.58.948.png",
+        "sha256": "1f2c3a3c1d74f3b8bbb3dd53ee540b455d3c22a06743e8387ffb14f2e1f9e65e",
+        "size": [
+          400,
+          480
+        ],
+        "scene": "GPU cyan clear / test2",
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/azahar-01441-owner-r3/captures/_14.10.26_22.28.16.606.png",
+        "sha256": "376caa405f677dd687c828e166a6a6b1340c1fa54cda8f5ef94286ed27dc4d7b",
+        "size": [
+          400,
+          480
+        ],
+        "scene": "X-selected0143fallback / full player and bottom map",
+        "edited": false
+      }
+    ],
+    "empty_sd_prior_iteration": "azahar-01441-probe-r1 used native-r2; both tests displayed with no game assets/config. Its captures are historical; final captures below use native-r3.",
+    "known_failed_iteration": "azahar-01441-owner-r2 retained UV camera after X; source ordering fixed and retested in final r3."
+  },
+  "evidence": [
+    "docs/validation_01441/HARDWARE_TEST.md",
+    "docs/validation_01441/GPU_AUDIT.md",
+    "docs/validation_01441/capture-validation.json",
+    "docs/validation_01441/TEST_COMMANDS.md"
+  ],
+  "git_repository": false,
+  "hardware_tested": false,
+  "host_tests": "138/138 PASS(41.79s)",
+  "native_build": "PASS; actual ARMv6K build",
+  "project_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.41_WorldComesAlive",
+  "source_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.41_Source.zip",
+  "source_release_excludes_retail_payloads": true,
+  "title": "World Comes Alive \u2014 automatic hardware display test",
+  "toolchain": "Freshly checked devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hard float",
+  "usage_reset_used": false,
+  "version": "0.0.14.41",
+  "world_comes_alive_finished": false,
+  "recovery_checkpoint": {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.40_Recovery_20261014_210844_Source.zip",
+    "sha256": "b22a016ff51c368813d835be025a5847a29d93e7f5d1e3375d45e38fb928adac",
+    "files": 2008,
+    "excluded": [],
+    "status": "IN_PROGRESS_RECOVERY"
+  },
+  "evidence_revision": null,
+  "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_DisplayTest_01441.3dsx",
+  "native_binary_sha256": "b1dfc9531a3dbc43aa73588ae7470d2869769d2e556d3fd4f173bcef55e56a82",
+  "sd_install_zip": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01441_DisplayTest_SD.zip",
+  "sd_install_sha256": "759fc3f43ad687f029843f232cfb5c6c1c44375314dc475a0e5602cfe6432d0c"
+}

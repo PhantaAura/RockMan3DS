@@ -1,0 +1,194 @@
+{
+  "files": [
+    {
+      "file": "CMakeLists.txt",
+      "change": "modified"
+    },
+    {
+      "file": "README.md",
+      "change": "modified"
+    },
+    {
+      "file": "SOURCE_MANIFEST.sha256",
+      "change": "modified"
+    },
+    {
+      "file": "build_mml3ds.sh",
+      "change": "added"
+    },
+    {
+      "file": "include/legends3ds/p2/mml_package_v2.h",
+      "change": "modified"
+    },
+    {
+      "file": "include/legends3ds/p2/mml_renderer_recovery.h",
+      "change": "modified"
+    },
+    {
+      "file": "include/legends3ds/p2/mml_runtime_diag_v2.h",
+      "change": "modified"
+    },
+    {
+      "file": "platform/3ds/source/main.cpp",
+      "change": "modified"
+    },
+    {
+      "file": "research/0146b/CHANGED_FILES.md",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/REPORT.md",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/animation_evidence.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/changed_files.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/early_area_corpus.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/evidence_ledger.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/executable_evidence.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/inherited_file_hashes.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/readiness.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/regression_corpus.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/replay_results.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/source_audit.json",
+      "change": "added"
+    },
+    {
+      "file": "research/0146b/validation.json",
+      "change": "added"
+    },
+    {
+      "file": "research/PACKAGE_AND_REPLAY_0146b.md",
+      "change": "added"
+    },
+    {
+      "file": "src/p2/mml_native_save_v2.c",
+      "change": "modified"
+    },
+    {
+      "file": "src/p2/mml_package_v2.c",
+      "change": "modified"
+    },
+    {
+      "file": "src/p2/mml_renderer_recovery.c",
+      "change": "modified"
+    },
+    {
+      "file": "src/p2/mml_runtime_diag_v2.c",
+      "change": "modified"
+    },
+    {
+      "file": "src/world/tile_transform.c",
+      "change": "modified"
+    },
+    {
+      "file": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified"
+    },
+    {
+      "file": "state/PARENT_0146a_CHECKPOINT.json",
+      "change": "added"
+    },
+    {
+      "file": "state/RUN_STATE.json",
+      "change": "added"
+    },
+    {
+      "file": "tests/p2/test_all.c",
+      "change": "modified"
+    },
+    {
+      "file": "tests/p2/test_integrity.c",
+      "change": "added"
+    },
+    {
+      "file": "tests/test_core.cpp",
+      "change": "modified"
+    },
+    {
+      "file": "tests/test_pipeline.py",
+      "change": "added"
+    },
+    {
+      "file": "tools/build_game_runtime_pack.py",
+      "change": "modified"
+    },
+    {
+      "file": "tools/build_mml3ds.py",
+      "change": "added"
+    },
+    {
+      "file": "tools/build_tutorial_pack.py",
+      "change": "modified"
+    },
+    {
+      "file": "tools/flight_qa.sh",
+      "change": "modified"
+    },
+    {
+      "file": "tools/l3animation_evidence.cpp",
+      "change": "added"
+    },
+    {
+      "file": "tools/l3area_validate.cpp",
+      "change": "added"
+    },
+    {
+      "file": "tools/l3replay.cpp",
+      "change": "added"
+    },
+    {
+      "file": "tools/mml_exe_research.py",
+      "change": "added"
+    },
+    {
+      "file": "tools/mml_pipeline.py",
+      "change": "added"
+    },
+    {
+      "file": "tools/mml_replay_suite.py",
+      "change": "added"
+    },
+    {
+      "file": "tools/p2/trace_compare.py",
+      "change": "modified"
+    },
+    {
+      "file": "tools/p2/verify_cumulative_tree.py",
+      "change": "modified"
+    },
+    {
+      "file": "tools/release_source.py",
+      "change": "added"
+    }
+  ],
+  "removed": [],
+  "inherited_files": 225
+}

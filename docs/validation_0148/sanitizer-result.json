@@ -1,0 +1,45 @@
+[
+  {
+    "argv": [
+      "cmake",
+      "-S",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.8_TerrainRepair",
+      "-B",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/build",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DCMAKE_C_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer",
+      "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer",
+      "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
+    ],
+    "exit_code": 0,
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/stage-0.log"
+  },
+  {
+    "argv": [
+      "cmake",
+      "--build",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/build",
+      "--parallel",
+      "4",
+      "--target",
+      "test_terrain_geometry_candidate",
+      "test_map_cell_alignment",
+      "test_map_sharing",
+      "test_area_package"
+    ],
+    "exit_code": 0,
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/stage-1.log"
+  },
+  {
+    "argv": [
+      "ctest",
+      "--test-dir",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/build",
+      "--output-on-failure",
+      "-R",
+      "^(terrain_geometry_candidate|map_cell_alignment|map_sharing|area_package)$"
+    ],
+    "exit_code": 8,
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/sanitizers-0148/stage-2.log"
+  }
+]

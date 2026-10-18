@@ -1,0 +1,30 @@
+L3MD v1 cooked
+parts=4 vertices=102 triangles=76 quads=31
+inferred_ps1_base=0x800F7800
+bytes=3272
+attachments=18 bytes=176
+area=0 materials=9 resolved=9 unresolved=0 resources=37 bytes=590520 known_negative_cells=8 unknown_negative_cells=0
+VRAM_COMPOSITION image_words_written=139264 image_words_total=147456 unwritten_image_words=8192 palette_words_written=144 palette_words_total=144 unwritten_pixels=ZERO_UNKNOWN
+player_materials=2 resolved=2 unresolved=0 resources=37 bytes=131264
+actor_materials=0 resolved=0 bytes=48 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN
+area=1 materials=12 resolved=12 unresolved=0 resources=42 bytes=787344 known_negative_cells=71 unknown_negative_cells=0
+VRAM_COMPOSITION image_words_written=177152 image_words_total=196608 unwritten_image_words=19456 palette_words_written=192 palette_words_total=192 unwritten_pixels=ZERO_UNKNOWN
+player_materials=2 resolved=2 unresolved=0 resources=42 bytes=131264
+word=0x3c80002b resolved=1 image_written=8192/16384 clut_written=16/16
+word=0x3cc00027 resolved=1 image_written=8192/16384 clut_written=16/16
+actor_materials=2 resolved=2 bytes=131264 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN
+area=2 materials=12 resolved=12 unresolved=0 resources=43 bytes=787344 known_negative_cells=14 unknown_negative_cells=0
+VRAM_COMPOSITION image_words_written=179200 image_words_total=196608 unwritten_image_words=17408 palette_words_written=192 palette_words_total=192 unwritten_pixels=ZERO_UNKNOWN
+player_materials=2 resolved=2 unresolved=0 resources=43 bytes=131264
+word=0x3c80002b resolved=0 image_written=0/16384 clut_written=0/16
+word=0x3cc00027 resolved=1 image_written=8192/16384 clut_written=16/16
+actor_materials=2 resolved=1 bytes=65696 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN
+area=3 materials=4 resolved=4 unresolved=0 resources=40 bytes=262480 known_negative_cells=16 unknown_negative_cells=0
+VRAM_COMPOSITION image_words_written=57344 image_words_total=65536 unwritten_image_words=8192 palette_words_written=64 palette_words_total=64 unwritten_pixels=ZERO_UNKNOWN
+player_materials=2 resolved=2 unresolved=0 resources=40 bytes=131264
+actor_materials=0 resolved=0 bytes=48 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN
+area=4 materials=2 resolved=2 unresolved=0 resources=43 bytes=131264 known_negative_cells=0 unknown_negative_cells=0
+VRAM_COMPOSITION image_words_written=32768 image_words_total=32768 unwritten_image_words=0 palette_words_written=32 palette_words_total=32 unwritten_pixels=ZERO_UNKNOWN
+player_materials=2 resolved=2 unresolved=0 resources=43 bytes=131264
+actor_materials=0 resolved=0 bytes=48 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN
+changed 1 existing outputs; new original fresh head, unchanged animations retained

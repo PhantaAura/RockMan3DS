@@ -1,0 +1,18 @@
+{
+  "schema": "class20-03-distance-source-cases/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "case_count": 675,
+  "fixture_sha256": "9928340cae9dc9b822cb801c790e00618cba74c13c612df10e31ca2a5679c711",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "source_owner": "0x8003606c",
+  "region_start": "0x800360f0",
+  "end_exclusive": "0x80036148",
+  "class20_pool": "0x8009f108",
+  "work_stride": 960,
+  "source_inputs": "signed16 raw X/Z; player slot0 first loop",
+  "hooks": [],
+  "limits": [
+    "Arithmetic store subregion only; synthetic authored coordinates.",
+    "Full generic update/callback ordering remains a separate parity gate."
+  ]
+}

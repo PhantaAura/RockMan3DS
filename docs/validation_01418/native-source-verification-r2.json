@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "source_hashes": 160,
+  "sha256": "0898e6d048abd5390beb8e4757583bc157b2026979e86d7c885183004344ec6b",
+  "bytes": 585152,
+  "warnings": 0,
+  "errors": 0,
+  "host_tests": "46/46 PASS",
+  "hardware": "HARDWARE_PENDING"
+}

@@ -1,0 +1,78 @@
+ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/install-r6/host --output-on-failure
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/install-r6/host
+      Start  1: core
+ 1/36 Test  #1: core .............................   Passed    0.01 sec
+      Start  2: map_sharing
+ 2/36 Test  #2: map_sharing ......................   Passed    0.00 sec
+      Start  3: ps1_geometry
+ 3/36 Test  #3: ps1_geometry .....................   Passed    0.00 sec
+      Start  4: area_package
+ 4/36 Test  #4: area_package .....................   Passed    0.03 sec
+      Start  5: terrain_geometry_candidate
+ 5/36 Test  #5: terrain_geometry_candidate .......   Passed    0.00 sec
+      Start  6: map_cell_alignment
+ 6/36 Test  #6: map_cell_alignment ...............   Passed    0.00 sec
+      Start  7: area_placement
+ 7/36 Test  #7: area_placement ...................   Passed    0.00 sec
+      Start  8: positive_terrain
+ 8/36 Test  #8: positive_terrain .................   Passed    0.00 sec
+      Start  9: push2
+ 9/36 Test  #9: push2 ............................   Passed    0.00 sec
+      Start 10: integrity
+10/36 Test #10: integrity ........................   Passed    0.00 sec
+      Start 11: pipeline_python
+11/36 Test #11: pipeline_python ..................   Passed    0.20 sec
+      Start 12: cooked_area_python
+12/36 Test #12: cooked_area_python ...............   Passed    0.27 sec
+      Start 13: owner_data_intake_python
+13/36 Test #13: owner_data_intake_python .........   Passed    0.25 sec
+      Start 14: local_install_python
+14/36 Test #14: local_install_python .............   Passed    1.39 sec
+      Start 15: source_tools_python
+15/36 Test #15: source_tools_python ..............   Passed    0.21 sec
+      Start 16: negative_package
+16/36 Test #16: negative_package .................   Passed    0.00 sec
+      Start 17: negative_terrain
+17/36 Test #17: negative_terrain .................   Passed    0.00 sec
+      Start 18: negative_material
+18/36 Test #18: negative_material ................   Passed    0.00 sec
+      Start 19: material_vram
+19/36 Test #19: material_vram ....................   Passed    0.01 sec
+      Start 20: area_inspection
+20/36 Test #20: area_inspection ..................   Passed    0.00 sec
+      Start 21: frontend_view
+21/36 Test #21: frontend_view ....................   Passed    0.00 sec
+      Start 22: mockup_ui
+22/36 Test #22: mockup_ui ........................   Passed    0.00 sec
+      Start 23: player_visual_storage
+23/36 Test #23: player_visual_storage ............   Passed    0.23 sec
+      Start 24: ebd_resources
+24/36 Test #24: ebd_resources ....................   Passed    0.00 sec
+      Start 25: ebd_sharing
+25/36 Test #25: ebd_sharing ......................   Passed    0.00 sec
+      Start 26: actor_resources
+26/36 Test #26: actor_resources ..................   Passed    0.01 sec
+      Start 27: parity_trace_python
+27/36 Test #27: parity_trace_python ..............   Passed    0.27 sec
+      Start 28: companion_ui
+28/36 Test #28: companion_ui .....................   Passed    0.01 sec
+      Start 29: runtime_contact
+29/36 Test #29: runtime_contact ..................   Passed    0.01 sec
+      Start 30: renderer_gcc_warning
+30/36 Test #30: renderer_gcc_warning .............   Passed    0.25 sec
+      Start 31: gameplay_clock
+31/36 Test #31: gameplay_clock ...................   Passed    0.00 sec
+      Start 32: running_jump_source
+32/36 Test #32: running_jump_source ..............   Passed    0.00 sec
+      Start 33: class20_03_behavior
+33/36 Test #33: class20_03_behavior ..............   Passed    0.01 sec
+      Start 34: actor_sequence
+34/36 Test #34: actor_sequence ...................   Passed    0.00 sec
+      Start 35: st00_spawn
+35/36 Test #35: st00_spawn .......................   Passed    0.00 sec
+      Start 36: runtime_spawns
+36/36 Test #36: runtime_spawns ...................   Passed    0.00 sec
+
+100% tests passed out of 36
+
+Total Test time (real) =   3.23 sec

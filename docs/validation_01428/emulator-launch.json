@@ -1,0 +1,21 @@
+{
+  "pid": 20560,
+  "argv": [
+    "/Applications/Azahar.app/Contents/MacOS/azahar",
+    "-w",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/native-r3/build/Legends3DS_01428_WorldComesAlive.3dsx"
+  ],
+  "binary_sha256": "7666ec8356fb4a0eebed1a9ef12a1b5db61793cb02c95cb017093654840b1bc1",
+  "build": "01428 source fade and phase5 constructor",
+  "hardware": false,
+  "model": "Old3DS",
+  "cpu_clock_percentage": 100,
+  "resolution_factor": 1,
+  "source_audio": true,
+  "source_event_boot": true,
+  "environment": {
+    "XDG_CONFIG_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/azahar-01428-r1/config",
+    "XDG_DATA_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/azahar-01428-r1/data",
+    "XDG_CACHE_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/azahar-01428-r1/cache"
+  }
+}

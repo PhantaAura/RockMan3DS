@@ -1,0 +1,168 @@
+{
+  "checkpoint": "0.0.7 event / EBD runtime bridge",
+  "host_build": {
+    "compiler": "GCC 14.2.0",
+    "warnings_as_errors": true,
+    "ctest": "1/1 PASS"
+  },
+  "st00_overlay": {
+    "sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+    "area_count": 5,
+    "object_counts": [
+      1,
+      16,
+      20,
+      11,
+      1
+    ],
+    "object_total": 49,
+    "aux_counts": [
+      0,
+      3,
+      2,
+      0,
+      0
+    ],
+    "aux_total": 5
+  },
+  "ebd_lookup": {
+    "common_lookup": "0x8002FA38",
+    "stage_wrapper": "0x8002F9C4",
+    "load_base": "0x8016C000",
+    "entry_bytes": 16,
+    "class_normalizer": "0x8002FE74",
+    "directory_counts": {
+      "ST00_00": 14,
+      "ST00_01_area1_2": 49,
+      "ST00_03": 40,
+      "ST00_04": 6
+    },
+    "payload_sha256": {
+      "ST00_00": "ea7239d21db9d06c26a70825588ad7981a980ce798f7352588c5865a0e001d15",
+      "ST00_01": "8c1dd36fbd7b5e3a48b1b45be0c232f39f8e6c9e19245f3f7de93b2905ba4ba1",
+      "ST00_03": "062390841dfdce3fb84f8c073ec1a0f8e3d29e4bcbcfb663286900dcf6a0d727",
+      "ST00_04": "b81eb4ee87efac077d33e71fc2a768ded076391ef1a00cd0d2422b3f579de406"
+    }
+  },
+  "stage_object_ebd_resolution": {
+    "class_subtype": {
+      "unique": 3,
+      "ambiguous": 32,
+      "common_or_no_local": 14
+    },
+    "raw_stage_byte3_variant": {
+      "unique": 28,
+      "none": 21,
+      "multi": 0
+    },
+    "ambiguous_still_dynamic": 6,
+    "still_dynamic_signature": {
+      "area": 2,
+      "class": "E0",
+      "subtype": "08",
+      "source_byte3": [
+        "61",
+        "81",
+        "C1",
+        "60",
+        "A0",
+        "E0"
+      ],
+      "local_variants": [
+        0,
+        1
+      ]
+    },
+    "ambiguous_narrowed_to_singleton_by_raw_byte3": 26,
+    "singleton_is_final_binding": false
+  },
+  "aux_selector": {
+    "handler": "0x80050C2C",
+    "contact_query": "0x800514FC",
+    "types_reconstructed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8
+    ],
+    "type_2_4_5_6_facing_window": "inclusive +/-0x200 in 12-bit turn space",
+    "type3_directional_range": "0x80050E74..0x80050F14",
+    "type3_live_object_work_halfwords": [
+      "+0x14",
+      "+0x18"
+    ],
+    "side_effects_named": false
+  },
+  "source_archive": {
+    "raw_ebd_included": false,
+    "game_assets_included": false
+  },
+  "3ds_build": {
+    "devkitpro_available_in_validation_environment": false,
+    "citro3d_compile_claimed": false,
+    "real_3dsx_produced": false
+  },
+  "stage_runtime": {
+    "pool_specs": {
+      "20": {
+        "capacity": 16,
+        "stride_bytes": "0x3C0"
+      },
+      "40": {
+        "capacity": 4,
+        "stride_bytes": "0x5A4"
+      },
+      "60": {
+        "capacity": 32,
+        "stride_bytes": "0x10C"
+      },
+      "80": {
+        "capacity": 64,
+        "banks": 2,
+        "slots_per_bank": 32,
+        "stride_bytes": "0x48"
+      },
+      "C0": {
+        "capacity": 16,
+        "stride_bytes": "0x24"
+      },
+      "E0": {
+        "capacity": 32,
+        "stride_bytes": "0x50"
+      }
+    },
+    "tutorial_class_histogram": {
+      "00": 3,
+      "20": 2,
+      "C0": 9,
+      "E0": 35
+    },
+    "tutorial_peak_pool_use": {
+      "20": "2/16",
+      "C0": "3/16",
+      "E0": "15/32"
+    },
+    "generic_work_mirrors_seeded": 46,
+    "class00_special_records": 3,
+    "aggregate_source_stride_bytes": 5044,
+    "fresh_allocation_policy": "original first-free order",
+    "runtime_area_instances": 49
+  },
+  "player_shot_gate": {
+    "disable_helper": "0x800423A0",
+    "enable_helper": "0x800423C8",
+    "compat_work_bytes": "0x5F4",
+    "disable_effects": [
+      "work[0x174]=0",
+      "work[0x177]=0",
+      "work[0x175]&=0xFE",
+      "work[0x104]=old work[0xAC]",
+      "work[0x100]=old work[0xA4]"
+    ],
+    "enable_effect": "work[0x175]|=1",
+    "projectile_logic_complete": false
+  }
+}

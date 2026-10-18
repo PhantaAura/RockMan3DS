@@ -1,0 +1,24 @@
+{
+  "schema": "mml-source-e0-variant-oracle/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "lookup_address": "0x80092EC4",
+  "lookup_sha256": "b106234165685d79392c926192d1b2f9e30125307abde6040747e401a35d0e87",
+  "cases": 184,
+  "original_instructions": 12940,
+  "original_call_targets": [
+    "0x8007bc68",
+    "0x80113ea4"
+  ],
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "fixture_sha256": "e9b50cfa81562d4a96e71a3f6a2e955291599495b23195fb02a2015fc32b91f4",
+  "limitations": [
+    "Authored immutable work vectors; not live retail main-loop chronology.",
+    "Missing camera/object/global/effect/UV/RNG owner branches remain atomic holds.",
+    "Public source contains native logic, hashes and tests only; raw source instructions/data stay private."
+  ],
+  "native_differential_result": "PASS",
+  "scope": "SOURCE_BACKED_PARTIAL; native branch fields match unchanged source oracle; no full retail chronology or hardware claim"
+}

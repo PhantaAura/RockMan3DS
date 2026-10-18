@@ -1,0 +1,478 @@
+{
+  "schema": "class20-03-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "enemy_role": "source-directed movement, damage/health and attack-child path; retail name unassigned",
+  "sources": {
+    "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+    "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+    "ebd_sha256": "8c1dd36fbd7b5e3a48b1b45be0c232f39f8e6c9e19245f3f7de93b2905ba4ba1",
+    "cooked_ebd_sha256": "28bdb4d9e9a7f32e5c5ec7f8cb8e346cfcc46dc69d0a0c4b54deaacb4e3ccd87"
+  },
+  "identity": {
+    "class": "0x20",
+    "subtype": 3,
+    "admitted_parameters3": [
+      0,
+      128,
+      160
+    ],
+    "dispatch4": 0,
+    "callback": "0x8010226c",
+    "initializer": "0x80102410",
+    "state1": "0x80102600",
+    "release_state": "0x80102864",
+    "resource_row": 0,
+    "null_variant": true,
+    "resource_offsets": [
+      "0x314",
+      "0x14a4",
+      "0x364c"
+    ],
+    "scale_Q12": [
+      512,
+      512,
+      512
+    ],
+    "shade": "UNKNOWN"
+  },
+  "spawn_path": {
+    "C0_subtype": 33,
+    "C0_callback": "0x80119be8",
+    "fixed_E0_slot": 31,
+    "allocator": "0x800317ac",
+    "E0_callback": "0x801116dc",
+    "state0": "0x80111718",
+    "state1": "0x80111810",
+    "state2": "0x80111cd0",
+    "area1_descriptor": "0x8011a40c",
+    "qualifier": 1,
+    "id": 2,
+    "x_grid_inclusive": [
+      -3,
+      1
+    ],
+    "z_grid_inclusive": [
+      -16,
+      -15
+    ],
+    "conditional_record_stride": 24,
+    "first_list": "0x8011a274",
+    "predicate_helper": "0x8001da58",
+    "predicate_admission": "helper result ==0",
+    "predicate_flags_base": "0x800be378",
+    "predicate_bit_order": "MSB first",
+    "qualifier_commit_work": "0x1c byte",
+    "id_commit_work": "0x1d byte"
+  },
+  "combat_fields": {
+    "health": "work+0x6e signed16",
+    "initial_health_copy": "work+0xb0",
+    "packet": "work+0x33c u32",
+    "damage_mask": "0x00ffffff",
+    "damage_flag_mask": "0x38000000",
+    "defeat_latch": "work+0x328 bit0x40",
+    "hit_consumer": "0x801041b0",
+    "player_position": "0x800b51c4",
+    "turn_toward_player_call": "0x80102a18 ->0x80031bec",
+    "attack_call": "0x801030ec ->0x80104078",
+    "attack_child": {
+      "class": "0x60",
+      "subtype": 6,
+      "allocator": "0x80031518"
+    },
+    "packet_lifecycle": "hit consumer retains packet; repeated delivery owner not ported"
+  },
+  "initial_hp_checks": [
+    {
+      "raw_stats_selector": 0,
+      "context_high_byte": 0,
+      "stats_table": "0x8008edc4",
+      "initial_hp": 64,
+      "initial_hp_copy_B0": 64,
+      "pose_request": 0,
+      "body_bounds_pointer": "0x8011bed4",
+      "hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "floor_and_matrix_effects_excluded": true
+    },
+    {
+      "raw_stats_selector": 2,
+      "context_high_byte": 0,
+      "stats_table": "0x8008f060",
+      "initial_hp": 128,
+      "initial_hp_copy_B0": 128,
+      "pose_request": 0,
+      "body_bounds_pointer": "0x8011bed4",
+      "hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "floor_and_matrix_effects_excluded": true
+    }
+  ],
+  "damage_checks": [
+    {
+      "hp_before": 128,
+      "packet": "0x8000010",
+      "hp_after": 112,
+      "defeat_latch": false,
+      "action_after": 6,
+      "packet_33C_retained": true,
+      "hooks": [
+        "0x8001a050"
+      ]
+    },
+    {
+      "hp_before": 3,
+      "packet": "0x8000004",
+      "hp_after": -1,
+      "defeat_latch": true,
+      "action_after": 8,
+      "packet_33C_retained": true,
+      "hooks": [
+        "0x8001a050"
+      ]
+    },
+    {
+      "hp_before": 3,
+      "packet": "0x8000003",
+      "hp_after": 0,
+      "defeat_latch": true,
+      "action_after": 8,
+      "packet_33C_retained": true,
+      "hooks": [
+        "0x8001a050"
+      ]
+    },
+    {
+      "hp_before": 128,
+      "packet": "0x10",
+      "hp_after": 128,
+      "defeat_latch": false,
+      "action_after": 0,
+      "packet_33C_retained": true,
+      "hooks": [
+        "0x8001a050"
+      ]
+    },
+    {
+      "hp_before": 128,
+      "packet": "0x20000010",
+      "hp_after": 112,
+      "defeat_latch": false,
+      "action_after": 8,
+      "packet_33C_retained": true,
+      "hooks": [
+        "0x8001a050"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "address": "0x8011a274",
+      "class": "0x20",
+      "subtype": 3,
+      "parameter3": 0,
+      "dispatch4": 0,
+      "origin": [
+        367,
+        -1,
+        -6946
+      ],
+      "heading": 1024,
+      "context_high_byte": 0,
+      "predicate": "0x63f",
+      "native_probe": {
+        "schema": "native-class20-03-resource-probe/1",
+        "status": "SOURCE_BACKED_PARTIAL",
+        "placement_diagnostic": true,
+        "natural_spawn_executed": false,
+        "initializer": "0x80102410",
+        "row": 0,
+        "parts": 5,
+        "draw_enabled_parts": 5,
+        "vertices": 89,
+        "triangles": 60,
+        "quads": 49,
+        "decoded_element_bytes": 3252,
+        "pose_request": 0,
+        "pose_record": 0,
+        "pose_frame": 0,
+        "pose_source_offset": 5452,
+        "pose_selected_by_retail_initializer": true,
+        "shade_verified": false,
+        "floor_bounds_status": "SOURCE_BACKED_PARTIAL",
+        "floor_bounds": [
+          -60,
+          60,
+          -60,
+          60,
+          -128,
+          0
+        ],
+        "floor_query_executed": true,
+        "floor_status": "UNKNOWN",
+        "floor_y": null,
+        "floor_status_code": 2,
+        "floor_candidate_cells": 4,
+        "floor_unsupported_primitives": 2,
+        "initial_hp": 64,
+        "world_bounds_min": [
+          311.381,
+          -172.651,
+          -7000.38
+        ],
+        "world_bounds_max": [
+          424.012,
+          0.339573,
+          -6887.62
+        ],
+        "actors_after_unload": 0,
+        "decoded_bytes_after_unload": 0
+      },
+      "native_stats_selector_is_explicit_synthetic_input": 0
+    },
+    {
+      "address": "0x8011a28c",
+      "class": "0x20",
+      "subtype": 3,
+      "parameter3": 128,
+      "dispatch4": 0,
+      "origin": [
+        -300,
+        -1,
+        -5654
+      ],
+      "heading": 512,
+      "context_high_byte": 0,
+      "predicate": "0x640",
+      "native_probe": {
+        "schema": "native-class20-03-resource-probe/1",
+        "status": "SOURCE_BACKED_PARTIAL",
+        "placement_diagnostic": true,
+        "natural_spawn_executed": false,
+        "initializer": "0x80102410",
+        "row": 0,
+        "parts": 5,
+        "draw_enabled_parts": 5,
+        "vertices": 89,
+        "triangles": 60,
+        "quads": 49,
+        "decoded_element_bytes": 3252,
+        "pose_request": 0,
+        "pose_record": 0,
+        "pose_frame": 0,
+        "pose_source_offset": 5452,
+        "pose_selected_by_retail_initializer": true,
+        "shade_verified": false,
+        "floor_bounds_status": "SOURCE_BACKED_PARTIAL",
+        "floor_bounds": [
+          -60,
+          60,
+          -60,
+          60,
+          -128,
+          0
+        ],
+        "floor_query_executed": true,
+        "floor_status": "UNKNOWN",
+        "floor_y": null,
+        "floor_status_code": 2,
+        "floor_candidate_cells": 4,
+        "floor_unsupported_primitives": 2,
+        "initial_hp": 64,
+        "world_bounds_min": [
+          -370.738,
+          -172.651,
+          -5723.93
+        ],
+        "world_bounds_max": [
+          -230.404,
+          0.339573,
+          -5583.55
+        ],
+        "actors_after_unload": 0,
+        "decoded_bytes_after_unload": 0
+      },
+      "native_stats_selector_is_explicit_synthetic_input": 0
+    },
+    {
+      "address": "0x8011a2a4",
+      "class": "0x20",
+      "subtype": 3,
+      "parameter3": 128,
+      "dispatch4": 0,
+      "origin": [
+        -200,
+        -1,
+        -5654
+      ],
+      "heading": 3584,
+      "context_high_byte": 0,
+      "predicate": "0x641",
+      "native_probe": {
+        "schema": "native-class20-03-resource-probe/1",
+        "status": "SOURCE_BACKED_PARTIAL",
+        "placement_diagnostic": true,
+        "natural_spawn_executed": false,
+        "initializer": "0x80102410",
+        "row": 0,
+        "parts": 5,
+        "draw_enabled_parts": 5,
+        "vertices": 89,
+        "triangles": 60,
+        "quads": 49,
+        "decoded_element_bytes": 3252,
+        "pose_request": 0,
+        "pose_record": 0,
+        "pose_frame": 0,
+        "pose_source_offset": 5452,
+        "pose_selected_by_retail_initializer": true,
+        "shade_verified": false,
+        "floor_bounds_status": "SOURCE_BACKED_PARTIAL",
+        "floor_bounds": [
+          -60,
+          60,
+          -60,
+          60,
+          -128,
+          0
+        ],
+        "floor_query_executed": true,
+        "floor_status": "UNKNOWN",
+        "floor_y": null,
+        "floor_status_code": 2,
+        "floor_candidate_cells": 4,
+        "floor_unsupported_primitives": 2,
+        "initial_hp": 64,
+        "world_bounds_min": [
+          -270.452,
+          -172.651,
+          -5724.74
+        ],
+        "world_bounds_max": [
+          -130.07,
+          0.339573,
+          -5584.4
+        ],
+        "actors_after_unload": 0,
+        "decoded_bytes_after_unload": 0
+      },
+      "native_stats_selector_is_explicit_synthetic_input": 0
+    }
+  ],
+  "floor_query_evidence": {
+    "bounds_address": "0x8011bed4",
+    "bounds_signed_x0_x1_z0_z1_y0_y1": [
+      -60,
+      60,
+      -60,
+      60,
+      -128,
+      0
+    ],
+    "bounds_sha256": "62de884fbddc639e9afbfddb9e73def0d7025aed21a74684c1a3581d6ca932e0",
+    "floor_call_site": "0x801025a8",
+    "floor_wrapper": "0x80048e6c",
+    "floor_core": "0x80048ea4",
+    "fresh_delta_xyz": [
+      0,
+      0,
+      0
+    ],
+    "passed_cases": 1944,
+    "floor_hits": 132,
+    "instructions_executed": 479570,
+    "codes": [
+      1,
+      3,
+      15
+    ],
+    "profiles": [
+      "class20/35 null bounds",
+      "class20/03 installed bounds"
+    ],
+    "hooks": [
+      "0x8004b1e0 returns one authored candidate cell index"
+    ],
+    "source_position_preserved": true,
+    "shared_slope_interval_evidence": "floor08-source-evidence.json (240 scalar cases)",
+    "limits": [
+      "Authored synthetic rectangles; no full retail tick parity.",
+      "Sloped floor intervals use separately verified shared helper; movement remains unported."
+    ]
+  },
+  "cooked_map_sha256": "3891ff3588e882f77a684461459e9379258285d0e7a58fd7fcfefeaaf61da333",
+  "code_regions": [
+    {
+      "image": "EXE",
+      "start": "0x80064718",
+      "end_exclusive": "0x80064794",
+      "sha256": "b3eecc07481c3b1c3ee1fb7693840d5a87a52d5ce00cba1bb0162f477d331634"
+    },
+    {
+      "image": "EXE",
+      "start": "0x8001da58",
+      "end_exclusive": "0x8001da9c",
+      "sha256": "0981eb54515c803835f641edadfe8b93c9c54f153145056ad5473ee686424eb7"
+    },
+    {
+      "image": "ST00",
+      "start": "0x8010226c",
+      "end_exclusive": "0x80102410",
+      "sha256": "52f1a2debc150d74281b87dd2cc90cdeebfea7ea1ee81379e7f0859ff6787437"
+    },
+    {
+      "image": "ST00",
+      "start": "0x80102410",
+      "end_exclusive": "0x80102600",
+      "sha256": "9089a710990c67007938e24826a4be95989f8666d1b1d943cc5f993ba1ec4b33"
+    },
+    {
+      "image": "ST00",
+      "start": "0x801029b4",
+      "end_exclusive": "0x80102b44",
+      "sha256": "a6209db2d00043748624726f7dc50b4b5d4bf46fdda3e669a5ad4d3ca62dc19b"
+    },
+    {
+      "image": "ST00",
+      "start": "0x80104078",
+      "end_exclusive": "0x801041b0",
+      "sha256": "e8361e1c0760a38af4eefbc0a3455cfab98c97c3aa80a4215e11be94786c7e44"
+    },
+    {
+      "image": "ST00",
+      "start": "0x801041b0",
+      "end_exclusive": "0x80104470",
+      "sha256": "68175ac3fe709b57e89f421827eed51836e0e92c425d70ecef3c60f7808b9012"
+    },
+    {
+      "image": "ST00",
+      "start": "0x80111cd0",
+      "end_exclusive": "0x8011216c",
+      "sha256": "d2144dcdb103dcd18172887883c7e4929288d96ca174a61f4dd9a47735754325"
+    },
+    {
+      "image": "EXE",
+      "start": "0x80048ea4",
+      "end_exclusive": "0x8004920c",
+      "sha256": "dd39bae524909db08687b80b283b3e8a0f7bf18084cd7c9ea81855a5a9adc95b"
+    },
+    {
+      "image": "EXE",
+      "start": "0x8004b3c0",
+      "end_exclusive": "0x8004b414",
+      "sha256": "b497b56f80763dfa50d9075db42b281979dd3d47e8e0152b6e5274928b60bfd2"
+    }
+  ],
+  "limits": [
+    "Native model probes use explicit synthetic stats selector0; no live selector is asserted.",
+    "Floor bounds and supported intervals are verified; actual map queries retain explicit unsupported-data results.",
+    "Shade/texture residency unknown; presentation is neutral diagnostic geometry.",
+    "Full AI, animation ticking, player/projectile delivery and defeat completion remain unported.",
+    "Initial C0/03 is a RGB555 palette timeline, not command/flag storage.",
+    "No original bytes, disassembly, function tables or assets serialized."
+  ]
+}

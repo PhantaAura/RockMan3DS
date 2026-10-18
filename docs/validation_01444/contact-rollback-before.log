@@ -1,0 +1,1 @@
+Assertion failed: (s.player_position().x==0&&s.player_position().z==0), function iteration_failure_consumes_source_rollback, file test_runtime_contact_01443_rollback.cpp, line 106.

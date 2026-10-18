@@ -1,0 +1,60 @@
+{
+  "checkpoint": "0.0.14.4",
+  "name": "First Faithful Character / Visual Pass",
+  "host_release_build": "PASS",
+  "ctest": {"passed": 1, "failed": 0},
+  "fresh_owner_tutorial_pack_files": 101,
+  "hardware_baseline_from_0143": {
+    "old_3ds_xl_boot": "PASS",
+    "st00_geometry_render": "PASS",
+    "player_mesh_render": "PASS",
+    "runtime_camera_loop": "PASS",
+    "bottom_map": "PASS",
+    "previous_stack_abort_after_256k_fix": "NOT OBSERVED"
+  },
+  "material_probe": {
+    "terrain_primitives": 15512,
+    "terrain_resolved": 14328,
+    "terrain_unresolved": 1184,
+    "areas": [
+      {"area": 0, "primitives": 1752, "resolved": 928, "unresolved": 824},
+      {"area": 1, "primitives": 854, "resolved": 494, "unresolved": 360},
+      {"area": 2, "primitives": 674, "resolved": 674, "unresolved": 0},
+      {"area": 3, "primitives": 120, "resolved": 120, "unresolved": 0},
+      {"area": 4, "primitives": 12112, "resolved": 12112, "unresolved": 0}
+    ],
+    "player_material_words": ["0x3C000005", "0x3E48000F"],
+    "player_all_five_areas_resolved": true,
+    "dynamic_terrain_cluts_still_unresolved": ["0x7C810016", "0x7C830016", "0x7CC20017"]
+  },
+  "animation_probe": {
+    "mapped_requests": 55,
+    "s_records": 833,
+    "zero_tick_records": 0,
+    "branches": 10,
+    "repeats": 45,
+    "required_request_0x0C": {
+      "s_action": 12,
+      "s_records": 32,
+      "m_action": 13,
+      "m_frames": 32,
+      "structural": "PASS"
+    }
+  },
+  "retail_code_bridges": [
+    "0x80041DDC animation request mutation",
+    "0x800320B8 S-action record seed",
+    "0x8003234C S-record countdown/control flow",
+    "0x800329D4 request-to-M-pose selection",
+    "ordinary motion sequence around 0x8003CBF8..0x8003CD34"
+  ],
+  "real_3ds_compile_0144": "NOT RUN - devkitARM/libctru/Citro3D unavailable in validation container",
+  "not_claimed": [
+    "hardware-valid Citro3D texture tiling/upload layout",
+    "three dynamic CLUT writes recovered",
+    "complete player animation state ownership",
+    "final 1:1 movement/physics parity",
+    "complete collision/jump/camera/lock-on behavior",
+    "tutorial-complete 0.14"
+  ]
+}

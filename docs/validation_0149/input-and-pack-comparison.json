@@ -1,0 +1,13 @@
+{
+  "full_profile_bytes": 423854149,
+  "full_profile_files": 247,
+  "mixed_input_zip_expected_rejection": {
+    "exit_code": 2,
+    "reason": "Exactly one supported loose extraction root required; split/disc-image archives unsupported.",
+    "staging_created": false
+  },
+  "new_cooked_outputs": 100,
+  "outputs_byte_identical_to_previous_local_pack": 100,
+  "profile_scope": "Fingerprints of supplied dataset; 13 inherited reference anchors passed, no independent master authentication or rights proof.",
+  "retail_executable_executed": false
+}

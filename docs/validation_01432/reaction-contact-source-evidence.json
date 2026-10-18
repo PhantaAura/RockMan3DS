@@ -1,0 +1,14 @@
+{
+  "schema": "mml-reaction-contact-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "case_count": 648,
+  "instructions_executed": 529301,
+  "fixture_sha256": "2dc02db9c2085272c32e0bb0d64a209c5e07ff241e00bb3aa3879a093293177e",
+  "retail_payload_exported": false,
+  "limits": [
+    "Authored GTE deltas and authored geometry only; original narrowing/motion/rounding/wall execute.",
+    "Native unsupported geometry and map boundaries remain held; no original floor helper is called by these reaction branches."
+  ]
+}

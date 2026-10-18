@@ -1,0 +1,321 @@
+cmake --build /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/install-r6/host --parallel 4
+[  1%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_cutscene_v2.c.o
+[  2%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_bottom_ui_v2.c.o
+[  2%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_combat_v2.c.o
+[  3%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/st00_source.cpp.o
+[  3%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_enemy_bridge_v2.c.o
+[  4%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_event_vm_v2.c.o
+[  4%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_h4_runtime.c.o
+[  4%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_loader_guard_v2.c.o
+[  5%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_native_save_v2.c.o
+[  5%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_package_v2.c.o
+[  6%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_player_material.c.o
+[  6%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_qol_v2.c.o
+[  7%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_renderer_recovery.c.o
+[  7%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_retail_anim_request.c.o
+[  7%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_retail_motion.c.o
+[  8%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_retail_save_v2.c.o
+[  8%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_runtime_diag_v2.c.o
+[  9%] Building C object CMakeFiles/mml3ds_push2.dir/src/p2/mml_world_v2.c.o
+[  9%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_spawn.cpp.o
+[ 10%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/st00_spawn.cpp.o
+[ 10%] Linking C static library libmml3ds_push2.a
+[ 10%] Built target mml3ds_push2
+[ 11%] Building C object CMakeFiles/test_push2.dir/tests/p2/test_all.c.o
+[ 11%] Linking C executable test_push2
+[ 11%] Built target test_push2
+[ 11%] Building C object CMakeFiles/test_integrity.dir/tests/p2/test_integrity.c.o
+[ 12%] Linking C executable test_integrity
+[ 12%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_runtime.cpp.o
+[ 12%] Built target test_integrity
+[ 13%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_catalog.cpp.o
+[ 13%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/resource_catalog.cpp.o
+[ 13%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/audio_catalog.cpp.o
+[ 14%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/stage_object_catalog.cpp.o
+[ 14%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/ebd_directory.cpp.o
+[ 15%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_resource.cpp.o
+[ 15%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_runtime.cpp.o
+[ 16%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/class20_03_behavior.cpp.o
+[ 16%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_sequence.cpp.o
+[ 16%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/ebd_dynamic_selector.cpp.o
+[ 17%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/tutorial_runtime.cpp.o
+[ 17%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/runtime_session.cpp.o
+[ 18%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/l3map.cpp.o
+[ 18%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/st00_render.cpp.o
+[ 18%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/area_package.cpp.o
+[ 19%] Building C object CMakeFiles/legends3ds_core.dir/src/world/tile_transform.c.o
+[ 19%] Building CXX object CMakeFiles/legends3ds_core.dir/src/model/pbd_model.cpp.o
+[ 20%] Building CXX object CMakeFiles/legends3ds_core.dir/src/model/player_composition.cpp.o
+[ 20%] Building CXX object CMakeFiles/legends3ds_core.dir/src/texture/ps1_texture.cpp.o
+[ 21%] Building CXX object CMakeFiles/legends3ds_core.dir/src/texture/material_resolver.cpp.o
+[ 21%] Building CXX object CMakeFiles/legends3ds_core.dir/src/texture/material_cache.cpp.o
+[ 21%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/terrain_geometry_candidate.cpp.o
+[ 22%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/area_placement.cpp.o
+[ 22%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/positive_terrain.cpp.o
+[ 23%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/negative_terrain.cpp.o
+[ 23%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/negative_materials.cpp.o
+[ 24%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/area_inspection.cpp.o
+[ 24%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/frontend_view.cpp.o
+[ 24%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/visual_bridge.cpp.o
+[ 25%] Building CXX object CMakeFiles/legends3ds_core.dir/src/render/ctr_texture_layout.cpp.o
+[ 25%] Building CXX object CMakeFiles/legends3ds_core.dir/src/animation/pbd_animation.cpp.o
+[ 26%] Building CXX object CMakeFiles/legends3ds_core.dir/src/animation/player_pose.cpp.o
+[ 26%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/mml_message.cpp.o
+[ 27%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/st00_flow.cpp.o
+[ 27%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/st00_event.cpp.o
+[ 27%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/save_state.cpp.o
+[ 28%] Building C object CMakeFiles/legends3ds_core.dir/src/input/classic_input.c.o
+[ 28%] Building C object CMakeFiles/legends3ds_core.dir/src/player/classic_motion.c.o
+[ 29%] Building C object CMakeFiles/legends3ds_core.dir/src/player/player_runtime.c.o
+[ 29%] Building CXX object CMakeFiles/legends3ds_core.dir/src/player/player_contact_runtime.cpp.o
+[ 29%] Building C object CMakeFiles/legends3ds_core.dir/src/player/player_collision.c.o
+[ 30%] Building CXX object CMakeFiles/legends3ds_core.dir/src/player/reference_tables.cpp.o
+[ 30%] Building C object CMakeFiles/legends3ds_core.dir/src/ui/qol_settings.c.o
+[ 31%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/dialogue_history.cpp.o
+[ 31%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/bottom_screen.cpp.o
+[ 32%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/bottom_map.cpp.o
+[ 32%] Building CXX object CMakeFiles/legends3ds_core.dir/src/ui/mockup_ui.cpp.o
+[ 32%] Linking CXX static library liblegends3ds_core.a
+[ 32%] Built target legends3ds_core
+[ 33%] Building CXX object CMakeFiles/l3inspect_map.dir/tools/l3inspect_map.cpp.o
+[ 33%] Building CXX object CMakeFiles/l3cook_pbd.dir/tools/l3cook_pbd.cpp.o
+[ 33%] Building CXX object CMakeFiles/l3inspect_model.dir/tools/l3inspect_model.cpp.o
+[ 33%] Building CXX object CMakeFiles/l3cook_st00.dir/tools/l3cook_st00.cpp.o
+[ 33%] Linking CXX executable l3inspect_map
+[ 34%] Linking CXX executable l3inspect_model
+[ 35%] Linking CXX executable l3cook_pbd
+[ 36%] Linking CXX executable l3cook_st00
+[ 36%] Built target l3inspect_map
+[ 36%] Built target l3inspect_model
+[ 36%] Built target l3cook_pbd
+[ 37%] Building CXX object CMakeFiles/l3cook_texture.dir/tools/l3cook_texture.cpp.o
+[ 37%] Building CXX object CMakeFiles/l3inspect_texture.dir/tools/l3inspect_texture.cpp.o
+[ 37%] Built target l3cook_st00
+[ 37%] Building CXX object CMakeFiles/l3cook_palette.dir/tools/l3cook_palette.cpp.o
+[ 37%] Building CXX object CMakeFiles/l3inspect_palette.dir/tools/l3inspect_palette.cpp.o
+[ 37%] Linking CXX executable l3inspect_texture
+[ 37%] Linking CXX executable l3inspect_palette
+[ 37%] Linking CXX executable l3cook_texture
+[ 37%] Built target l3inspect_texture
+[ 38%] Linking CXX executable l3cook_palette
+[ 38%] Built target l3inspect_palette
+[ 38%] Building CXX object CMakeFiles/l3cook_anim.dir/tools/l3cook_anim.cpp.o
+[ 38%] Built target l3cook_texture
+[ 38%] Building CXX object CMakeFiles/l3inspect_anim.dir/tools/l3inspect_anim.cpp.o
+[ 38%] Building CXX object CMakeFiles/l3cook_skeleton.dir/tools/l3cook_skeleton.cpp.o
+[ 38%] Built target l3cook_palette
+[ 38%] Building CXX object CMakeFiles/l3inspect_skeleton.dir/tools/l3inspect_skeleton.cpp.o
+[ 39%] Linking CXX executable l3inspect_anim
+[ 39%] Linking CXX executable l3cook_anim
+[ 40%] Linking CXX executable l3inspect_skeleton
+[ 41%] Linking CXX executable l3cook_skeleton
+[ 41%] Built target l3inspect_anim
+[ 41%] Built target l3cook_anim
+[ 41%] Built target l3inspect_skeleton
+[ 41%] Built target l3cook_skeleton
+[ 42%] Building CXX object CMakeFiles/l3cook_render.dir/tools/l3cook_render.cpp.o
+[ 43%] Building CXX object CMakeFiles/l3inspect_render.dir/tools/l3inspect_render.cpp.o
+[ 43%] Building CXX object CMakeFiles/l3cook_player_comp.dir/tools/l3cook_player_comp.cpp.o
+[ 44%] Building CXX object CMakeFiles/l3inspect_player_comp.dir/tools/l3inspect_player_comp.cpp.o
+[ 44%] Linking CXX executable l3inspect_render
+[ 44%] Linking CXX executable l3inspect_player_comp
+[ 44%] Built target l3inspect_render
+[ 44%] Built target l3inspect_player_comp
+[ 44%] Building CXX object CMakeFiles/l3scan_materials.dir/tools/l3scan_materials.cpp.o
+[ 45%] Building CXX object CMakeFiles/l3cook_material_cache.dir/tools/l3cook_material_cache.cpp.o
+[ 45%] Linking CXX executable l3cook_player_comp
+[ 45%] Linking CXX executable l3cook_render
+[ 45%] Built target l3cook_player_comp
+[ 45%] Built target l3cook_render
+[ 46%] Building CXX object CMakeFiles/l3inspect_material_cache.dir/tools/l3inspect_material_cache.cpp.o
+[ 47%] Building CXX object CMakeFiles/l3cook_player_material_cache.dir/tools/l3cook_player_material_cache.cpp.o
+[ 47%] Linking CXX executable l3inspect_material_cache
+[ 47%] Built target l3inspect_material_cache
+[ 47%] Building CXX object CMakeFiles/l3visual_probe.dir/tools/l3visual_probe.cpp.o
+[ 48%] Linking CXX executable l3scan_materials
+[ 48%] Built target l3scan_materials
+[ 49%] Building CXX object CMakeFiles/l3cook_msg.dir/tools/l3cook_msg.cpp.o
+[ 49%] Linking CXX executable l3cook_material_cache
+[ 49%] Linking CXX executable l3cook_player_material_cache
+[ 49%] Built target l3cook_material_cache
+[ 49%] Built target l3cook_player_material_cache
+[ 49%] Building CXX object CMakeFiles/l3inspect_msg.dir/tools/l3inspect_msg.cpp.o
+[ 49%] Building CXX object CMakeFiles/l3cook_st00_flow.dir/tools/l3cook_st00_flow.cpp.o
+[ 49%] Linking CXX executable l3visual_probe
+[ 49%] Linking CXX executable l3cook_msg
+[ 49%] Built target l3visual_probe
+[ 49%] Built target l3cook_msg
+[ 49%] Building CXX object CMakeFiles/l3inspect_st00_flow.dir/tools/l3inspect_st00_flow.cpp.o
+[ 50%] Building CXX object CMakeFiles/l3runtime_probe.dir/tools/l3runtime_probe.cpp.o
+[ 51%] Linking CXX executable l3inspect_msg
+[ 52%] Linking CXX executable l3cook_st00_flow
+[ 52%] Built target l3inspect_msg
+[ 52%] Built target l3cook_st00_flow
+[ 52%] Building CXX object CMakeFiles/l3runtime_pack_probe.dir/tools/l3runtime_pack_probe.cpp.o
+[ 52%] Building CXX object CMakeFiles/l3runtime_msg_probe.dir/tools/l3runtime_msg_probe.cpp.o
+[ 53%] Linking CXX executable l3inspect_st00_flow
+[ 53%] Built target l3inspect_st00_flow
+[ 54%] Building CXX object CMakeFiles/l3runtime_session_probe.dir/tools/l3runtime_session_probe.cpp.o
+[ 55%] Linking CXX executable l3runtime_msg_probe
+[ 55%] Linking CXX executable l3runtime_pack_probe
+[ 55%] Linking CXX executable l3runtime_probe
+[ 55%] Built target l3runtime_pack_probe
+[ 55%] Built target l3runtime_msg_probe
+[ 55%] Building CXX object CMakeFiles/l3inspect_stage_catalog.dir/tools/l3inspect_stage_catalog.cpp.o
+[ 55%] Building CXX object CMakeFiles/l3game_pack_probe.dir/tools/l3game_pack_probe.cpp.o
+[ 55%] Built target l3runtime_probe
+[ 55%] Building CXX object CMakeFiles/l3script_pack_probe.dir/tools/l3script_pack_probe.cpp.o
+[ 56%] Linking CXX executable l3inspect_stage_catalog
+[ 56%] Built target l3inspect_stage_catalog
+[ 57%] Building CXX object CMakeFiles/l3inspect_resource_catalog.dir/tools/l3inspect_resource_catalog.cpp.o
+[ 58%] Linking CXX executable l3game_pack_probe
+[ 59%] Linking CXX executable l3script_pack_probe
+[ 59%] Built target l3game_pack_probe
+[ 59%] Building CXX object CMakeFiles/l3inspect_audio_catalog.dir/tools/l3inspect_audio_catalog.cpp.o
+[ 59%] Built target l3script_pack_probe
+[ 59%] Building CXX object CMakeFiles/l3stage_object_pack_probe.dir/tools/l3stage_object_pack_probe.cpp.o
+[ 59%] Linking CXX executable l3runtime_session_probe
+[ 59%] Built target l3runtime_session_probe
+[ 60%] Building CXX object CMakeFiles/l3player_runtime_probe.dir/tools/l3player_runtime_probe.cpp.o
+[ 60%] Linking CXX executable l3inspect_resource_catalog
+[ 60%] Built target l3inspect_resource_catalog
+[ 60%] Linking CXX executable l3inspect_audio_catalog
+[ 60%] Building CXX object CMakeFiles/l3flight_render_probe.dir/tools/l3flight_render_probe.cpp.o
+[ 60%] Built target l3inspect_audio_catalog
+[ 61%] Building CXX object CMakeFiles/l3flight_material_probe.dir/tools/l3flight_material_probe.cpp.o
+[ 62%] Linking CXX executable l3stage_object_pack_probe
+[ 62%] Built target l3stage_object_pack_probe
+[ 63%] Building CXX object CMakeFiles/l3flight_animation_probe.dir/tools/l3flight_animation_probe.cpp.o
+[ 63%] Linking CXX executable l3player_runtime_probe
+[ 63%] Built target l3player_runtime_probe
+[ 64%] Linking CXX executable l3flight_render_probe
+[ 65%] Building CXX object CMakeFiles/l3cook_ebd.dir/tools/l3cook_ebd.cpp.o
+[ 65%] Built target l3flight_render_probe
+[ 66%] Building CXX object CMakeFiles/l3inspect_ebd.dir/tools/l3inspect_ebd.cpp.o
+[ 66%] Linking CXX executable l3flight_animation_probe
+[ 66%] Built target l3flight_animation_probe
+[ 66%] Linking CXX executable l3flight_material_probe
+[ 67%] Building CXX object CMakeFiles/test_core.dir/tests/test_core.cpp.o
+[ 67%] Built target l3flight_material_probe
+[ 68%] Building CXX object CMakeFiles/test_map_sharing.dir/tests/test_map_sharing.cpp.o
+[ 68%] Linking CXX executable l3cook_ebd
+[ 68%] Built target l3cook_ebd
+[ 68%] Building CXX object CMakeFiles/test_ps1_geometry.dir/tests/test_ps1_geometry.cpp.o
+[ 68%] Linking CXX executable l3inspect_ebd
+[ 68%] Built target l3inspect_ebd
+[ 68%] Building CXX object CMakeFiles/test_area_package.dir/tests/test_area_package.cpp.o
+[ 68%] Linking CXX executable test_ps1_geometry
+[ 68%] Built target test_ps1_geometry
+[ 68%] Building CXX object CMakeFiles/test_terrain_geometry_candidate.dir/tests/test_terrain_geometry_candidate.cpp.o
+[ 68%] Linking CXX executable test_map_sharing
+[ 68%] Built target test_map_sharing
+[ 68%] Building CXX object CMakeFiles/test_map_cell_alignment.dir/tests/test_map_cell_alignment.cpp.o
+[ 69%] Linking CXX executable test_terrain_geometry_candidate
+[ 69%] Built target test_terrain_geometry_candidate
+[ 70%] Building CXX object CMakeFiles/test_area_placement.dir/tests/test_area_placement.cpp.o
+[ 70%] Linking CXX executable test_core
+[ 70%] Linking CXX executable test_map_cell_alignment
+[ 70%] Built target test_core
+[ 70%] Building CXX object CMakeFiles/test_positive_terrain.dir/tests/test_positive_terrain.cpp.o
+[ 70%] Built target test_map_cell_alignment
+[ 70%] Building CXX object CMakeFiles/l3replay.dir/tools/l3replay.cpp.o
+[ 70%] Linking CXX executable test_area_placement
+[ 70%] Built target test_area_placement
+[ 70%] Building CXX object CMakeFiles/l3area_validate.dir/tools/l3area_validate.cpp.o
+[ 70%] Linking CXX executable test_area_package
+[ 70%] Built target test_area_package
+[ 70%] Building CXX object CMakeFiles/l3area_runtime_probe.dir/tools/l3area_runtime_probe.cpp.o
+[ 71%] Linking CXX executable test_positive_terrain
+[ 71%] Built target test_positive_terrain
+[ 72%] Building CXX object CMakeFiles/l3area_placement_probe.dir/tools/l3area_placement_probe.cpp.o
+[ 73%] Linking CXX executable l3replay
+[ 73%] Built target l3replay
+[ 74%] Linking CXX executable l3area_validate
+[ 74%] Building CXX object CMakeFiles/l3animation_evidence.dir/tools/l3animation_evidence.cpp.o
+[ 74%] Built target l3area_validate
+[ 75%] Building CXX object CMakeFiles/test_negative_package.dir/tests/test_negative_package.cpp.o
+[ 75%] Linking CXX executable l3area_placement_probe
+[ 76%] Linking CXX executable l3area_runtime_probe
+[ 76%] Built target l3area_placement_probe
+[ 76%] Built target l3area_runtime_probe
+[ 76%] Building CXX object CMakeFiles/test_negative_terrain.dir/tests/test_negative_terrain.cpp.o
+[ 77%] Building CXX object CMakeFiles/test_negative_material.dir/tests/test_negative_material.cpp.o
+[ 77%] Linking CXX executable l3animation_evidence
+[ 77%] Built target l3animation_evidence
+[ 78%] Building CXX object CMakeFiles/test_material_vram.dir/tests/test_material_vram.cpp.o
+[ 78%] Linking CXX executable test_negative_material
+[ 78%] Built target test_negative_material
+[ 78%] Building CXX object CMakeFiles/test_area_inspection.dir/tests/test_area_inspection.cpp.o
+[ 78%] Linking CXX executable test_negative_package
+[ 78%] Built target test_negative_package
+[ 78%] Building CXX object CMakeFiles/l3cook_negative_materials.dir/tools/l3cook_negative_materials.cpp.o
+[ 79%] Linking CXX executable test_negative_terrain
+[ 79%] Built target test_negative_terrain
+[ 80%] Building CXX object CMakeFiles/l3area_inspection_probe.dir/tools/l3area_inspection_probe.cpp.o
+[ 80%] Linking CXX executable test_material_vram
+[ 80%] Built target test_material_vram
+[ 80%] Building CXX object CMakeFiles/l3area_visibility_audit.dir/tools/l3area_visibility_audit.cpp.o
+[ 81%] Linking CXX executable test_area_inspection
+[ 82%] Linking CXX executable l3cook_negative_materials
+[ 82%] Built target test_area_inspection
+[ 82%] Built target l3cook_negative_materials
+[ 82%] Building CXX object CMakeFiles/test_frontend_view.dir/tests/test_frontend_view.cpp.o
+[ 82%] Building CXX object CMakeFiles/test_mockup_ui.dir/tests/test_mockup_ui.cpp.o
+[ 83%] Linking CXX executable test_frontend_view
+[ 83%] Built target test_frontend_view
+[ 83%] Building CXX object CMakeFiles/test_player_visual_storage.dir/tests/test_player_visual_storage.cpp.o
+[ 83%] Linking CXX executable l3area_inspection_probe
+[ 83%] Built target l3area_inspection_probe
+[ 84%] Building CXX object CMakeFiles/test_ebd_resources.dir/tests/test_ebd_resources.cpp.o
+[ 85%] Linking CXX executable l3area_visibility_audit
+[ 86%] Building CXX object CMakeFiles/test_mockup_ui.dir/platform/3ds/source/mockup_hud.cpp.o
+[ 86%] Built target l3area_visibility_audit
+[ 87%] Building CXX object CMakeFiles/test_ebd_sharing.dir/tests/test_ebd_sharing.cpp.o
+[ 87%] Linking CXX executable test_ebd_sharing
+[ 87%] Linking CXX executable test_ebd_resources
+[ 88%] Linking CXX executable test_player_visual_storage
+[ 88%] Built target test_ebd_sharing
+[ 89%] Building CXX object CMakeFiles/test_actor_resources.dir/tests/test_actor_resources.cpp.o
+[ 89%] Built target test_ebd_resources
+[ 89%] Built target test_player_visual_storage
+[ 90%] Building CXX object CMakeFiles/test_companion_ui.dir/tests/test_companion_ui.cpp.o
+[ 91%] Building CXX object CMakeFiles/test_runtime_contact.dir/tests/test_runtime_contact.cpp.o
+[ 91%] Linking CXX executable test_mockup_ui
+[ 91%] Built target test_mockup_ui
+[ 91%] Building CXX object CMakeFiles/test_companion_ui.dir/platform/3ds/source/mockup_hud.cpp.o
+[ 92%] Building CXX object CMakeFiles/l3probe_actor_resources.dir/tools/l3probe_actor_resources.cpp.o
+[ 92%] Linking CXX executable test_companion_ui
+[ 92%] Built target test_companion_ui
+[ 93%] Building CXX object CMakeFiles/l3probe_actor_class20_03.dir/tools/l3probe_actor_class20_03.cpp.o
+[ 93%] Linking CXX executable test_runtime_contact
+[ 93%] Built target test_runtime_contact
+[ 93%] Building CXX object CMakeFiles/test_gameplay_clock.dir/tests/test_gameplay_clock.cpp.o
+[ 93%] Linking CXX executable l3probe_actor_resources
+[ 93%] Linking CXX executable test_actor_resources
+[ 93%] Built target l3probe_actor_resources
+[ 93%] Built target test_actor_resources
+[ 94%] Building CXX object CMakeFiles/test_running_jump_source.dir/tests/test_running_jump_source.cpp.o
+[ 95%] Building CXX object CMakeFiles/test_class20_03_behavior.dir/tests/test_class20_03_behavior.cpp.o
+[ 95%] Linking CXX executable l3probe_actor_class20_03
+[ 95%] Built target l3probe_actor_class20_03
+[ 95%] Building CXX object CMakeFiles/test_actor_sequence.dir/tests/test_actor_sequence.cpp.o
+[ 95%] Linking CXX executable test_class20_03_behavior
+[ 96%] Linking CXX executable test_gameplay_clock
+[ 96%] Built target test_class20_03_behavior
+[ 96%] Built target test_gameplay_clock
+[ 96%] Building CXX object CMakeFiles/l3cook_st00_spawn.dir/tools/l3cook_st00_spawn.cpp.o
+[ 96%] Building CXX object CMakeFiles/test_st00_spawn.dir/tests/test_st00_spawn.cpp.o
+[ 96%] Linking CXX executable test_running_jump_source
+[ 96%] Built target test_running_jump_source
+[ 96%] Building CXX object CMakeFiles/test_runtime_spawns.dir/tests/test_runtime_spawns.cpp.o
+[ 97%] Linking CXX executable test_actor_sequence
+[ 97%] Built target test_actor_sequence
+[ 98%] Building CXX object CMakeFiles/l3runtime_spawn_probe.dir/tools/l3runtime_spawn_probe.cpp.o
+[ 98%] Linking CXX executable l3cook_st00_spawn
+[ 98%] Built target l3cook_st00_spawn
+[ 99%] Linking CXX executable test_st00_spawn
+[ 99%] Built target test_st00_spawn
+[100%] Linking CXX executable test_runtime_spawns
+[100%] Built target test_runtime_spawns
+[100%] Linking CXX executable l3runtime_spawn_probe
+[100%] Built target l3runtime_spawn_probe

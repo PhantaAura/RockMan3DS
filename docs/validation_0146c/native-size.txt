@@ -1,0 +1,2 @@
+   text	   data	    bss	    dec	    hex	filename
+ 355312	   7680	  19872	 382864	  5d790	/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/old3ds-test-20260924/validated-final/native-source/platform/3ds/Legends3DS_FlightProbe_0146.elf

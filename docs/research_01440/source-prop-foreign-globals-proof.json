@@ -1,0 +1,39 @@
+{
+  "schema": "mml-source-foreign-prop-globals/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "initial_loaded_words": {
+    "800988FC": 0,
+    "8009898C": 0
+  },
+  "capped_enqueuer_cases": 16,
+  "reset_slices": 3,
+  "unchanged_original_instructions": 238,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "capped_writer_limit": 256,
+  "unchecked_tutorial_writer": "80112648 in E0/subtype1 callback8011216C",
+  "selected_bound_premise": "Fresh supportedEXEload, all encountered occupiedE0 roster entries known and subtype1 excluded; unknown/presence permanentlyrevokes bound.",
+  "used_counter_known_zero_mask": "FFFFFE00",
+  "used_counter_exact_value_supplied": false,
+  "pending_after_selected_aux": "(0|08000000)&count0..256 =0",
+  "generic_E0_free": false,
+  "native_hardware_tested": false,
+  "retail_parity": false,
+  "limits": [
+    "Only supportedresidentEXE/tutorial codeprofile is audited; otheroverlays/warmrestore/untrackedwriters mustinvalidate ownership.",
+    "Cap preserves originalvalidrange; it doesnot normalize arbitrarypriorout-of-rangevalues.",
+    "Exactqueuecount and packetdraw remain unknown; this supplies onlyprovedbits and the resultingoriginalAND sideeffect.",
+    "Loadedwordzeros are originalsourceimage facts, not a forced scene snapshot or per-area reset.",
+    "No code, model, texture, ownerpayload, originalsave or newreferencecapture exported."
+  ],
+  "native_possible_counter_values_checked": 257,
+  "inherited_attachment_cases": 180,
+  "inherited_atomic_guards": 6156,
+  "callback_heap_allocations": 0,
+  "armv6k_warnings_as_errors_compile": true,
+  "attachment_stack_bytes": 304,
+  "prepare_stack_bytes": 24,
+  "commit_stack_bytes": 8
+}

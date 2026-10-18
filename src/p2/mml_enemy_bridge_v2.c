@@ -1,0 +1,3 @@
+
+#include "mml_enemy_bridge_v2.h"
+bool mml_enemy_from_world(const MMLWorldObject*o,int32_t hp,MMLEnemyRuntime*r){if(!o||!r||o->kind!=MML_OBJ_ENEMY||hp<=0)return false;r->gameplay_id=o->gameplay_id;r->hp=hp;r->alive=o->active;r->targetable=o->targetable;return true;}bool mml_enemy_apply_damage(MMLEnemyRuntime*e,int32_t d){if(!e||!e->alive||d<=0)return false;e->hp-=d;if(e->hp<=0){e->hp=0;e->alive=false;e->targetable=false;}return true;}bool mml_enemy_sync_world(const MMLEnemyRuntime*e,MMLWorld*w){if(!e||!w)return false;MMLWorldObject*o=mml_world_find(w,e->gameplay_id);if(!o||o->kind!=MML_OBJ_ENEMY)return false;o->active=e->alive;o->targetable=e->targetable;if(!e->alive)o->state=0xFFFFu;return true;}

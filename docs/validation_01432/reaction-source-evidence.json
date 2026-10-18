@@ -1,0 +1,144 @@
+{
+  "schema": "mml-class03-reaction-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "entries": [
+    "0x80103654",
+    "0x8010388C"
+  ],
+  "case_count": 6556,
+  "instructions_executed": 717682,
+  "sound222_cases": 2016,
+  "recovery_transitions": 336,
+  "fixture_sha256": "27fcd05abeafcd26bd08f0d429882638850beed7ba5ccc9231808a3d2e6d2d84",
+  "field_layout": [
+    [
+      9,
+      1,
+      false
+    ],
+    [
+      10,
+      1,
+      false
+    ],
+    [
+      11,
+      1,
+      false
+    ],
+    [
+      172,
+      1,
+      false
+    ],
+    [
+      808,
+      2,
+      false
+    ],
+    [
+      812,
+      2,
+      true
+    ],
+    [
+      816,
+      2,
+      true
+    ],
+    [
+      810,
+      2,
+      false
+    ],
+    [
+      110,
+      2,
+      true
+    ],
+    [
+      68,
+      2,
+      true
+    ],
+    [
+      70,
+      2,
+      true
+    ],
+    [
+      72,
+      2,
+      true
+    ],
+    [
+      868,
+      4,
+      false
+    ],
+    [
+      880,
+      4,
+      false
+    ],
+    [
+      86,
+      2,
+      false
+    ],
+    [
+      876,
+      2,
+      true
+    ],
+    [
+      20,
+      2,
+      true
+    ],
+    [
+      22,
+      2,
+      true
+    ],
+    [
+      24,
+      2,
+      true
+    ],
+    [
+      26,
+      2,
+      true
+    ],
+    [
+      28,
+      4,
+      true
+    ],
+    [
+      32,
+      4,
+      true
+    ],
+    [
+      36,
+      4,
+      true
+    ],
+    [
+      40,
+      4,
+      true
+    ]
+  ],
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "limits": [
+    "Timer table bytes and combat byte0B are authored premises, not exported owner values.",
+    "Motion and wall are authored store boundaries. Original turn helper and positional sound writer execute.",
+    "No native live packet clear, Buster/camera input, effect/defeat lifecycle or complete encounter claim."
+  ]
+}

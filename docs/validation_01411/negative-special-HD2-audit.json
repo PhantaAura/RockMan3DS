@@ -1,0 +1,759 @@
+{
+  "schema": "negative-special-HD2-audit/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "packages_with_HD2": 8,
+  "packages_with_special_cells": 4,
+  "special_cells_total": 2183,
+  "used_descriptors_all_bounds_valid": true,
+  "used_descriptors_all_already_collected": false,
+  "rows": [
+    {
+      "neutral_package": "PACKAGE_057",
+      "resource_sha256": "970fe7aa6e7491a70e7d559455c244e0020f1e403241c5cbe074f2cf8ced75bb",
+      "resource_bytes": 112,
+      "resource_load": "0x80139f00",
+      "resource_rows": 14,
+      "used_special_rows": [],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 0
+    },
+    {
+      "neutral_package": "PACKAGE_058",
+      "resource_sha256": "970fe7aa6e7491a70e7d559455c244e0020f1e403241c5cbe074f2cf8ced75bb",
+      "resource_bytes": 112,
+      "resource_load": "0x80139f00",
+      "resource_rows": 14,
+      "used_special_rows": [],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 0
+    },
+    {
+      "neutral_package": "PACKAGE_070",
+      "resource_sha256": "371213960403a38e291e7a943428878739da9455276b6e5f8d54a4c7637b8798",
+      "resource_bytes": 112,
+      "resource_load": "0x80139f00",
+      "resource_rows": 14,
+      "used_special_rows": [
+        {
+          "special_slot": 0,
+          "cells": 336,
+          "HD2_row_sha256": "e5e9a720e2408635ed3b8ddcc34fede29c11d88bcfbe364605f0cb648d2c61c0",
+          "descriptor_pointer": "0x801950e0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "c40a796403ba8b7357922c805ba0c4c00cd7d6b694aab9383150d0585cb1423d"
+        },
+        {
+          "special_slot": 1,
+          "cells": 34,
+          "HD2_row_sha256": "8dba5c4244d7aaea753808f890aae87e78a10c940380ff24dd9d202c1306dcbe",
+          "descriptor_pointer": "0x80195110",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "ccda5798bd2ff443d2002eddab9d4c26acfac5c2f2f7d2c9db4c2369cbb8e9c2"
+        },
+        {
+          "special_slot": 2,
+          "cells": 10,
+          "HD2_row_sha256": "2a1cb96de7f23976d3f563ebd381a8a6164cd4272996b461b92b4a38a1d4bd48",
+          "descriptor_pointer": "0x80195140",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "212617a99575fddb5012e341352c88634f51d9c3bf7f68e67f03116b5b83da03"
+        },
+        {
+          "special_slot": 3,
+          "cells": 168,
+          "HD2_row_sha256": "d7e4865f2a236dc1038dfd6ae8fe7fc93518d01a4dbc6e61d7ab6b3c312deea9",
+          "descriptor_pointer": "0x80195170",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "be9be35a174620d1422df34337d0afa28ca794841689c38e9a3ae228835d4fea"
+        },
+        {
+          "special_slot": 4,
+          "cells": 24,
+          "HD2_row_sha256": "3ab178a0700c29370c77de2748805d179269e8d69471c0ea3fa3b91282e860cb",
+          "descriptor_pointer": "0x801951a0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "ef8f69e8cace61ce0a671822c282e22efc9046c55876213cb54f13a54b3d8a52"
+        },
+        {
+          "special_slot": 5,
+          "cells": 16,
+          "HD2_row_sha256": "88e5a8a89f37d5f593f352f83c2c2abde77fc6e0868b891215402f961adc35f0",
+          "descriptor_pointer": "0x801951d0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            5,
+            1,
+            1,
+            5,
+            1,
+            1
+          ],
+          "descriptor_sha256": "99d7ef0b5689927c0398162a982fa153e903c4ff108065b2244102c7f176dd43"
+        },
+        {
+          "special_slot": 7,
+          "cells": 2,
+          "HD2_row_sha256": "2ee1c8a1ce1252b05c8be06a36065280fb71a0b8eff2870f428f80dfae74bace",
+          "descriptor_pointer": "0x80195230",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            3,
+            1,
+            1,
+            3,
+            1,
+            1
+          ],
+          "descriptor_sha256": "a48538c9e65d685325cb5d42f89952c0a864f63ba17dca01c33a710e06b15b4e"
+        },
+        {
+          "special_slot": 8,
+          "cells": 10,
+          "HD2_row_sha256": "1859e38bb297a2501d7d832223c76acbf253cdd650f0cc6c865e030b77809bf2",
+          "descriptor_pointer": "0x80195260",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "d2c23832a6db2dbbe56453ce30f0c035aaabe680375f3766a9d5170861530a3d"
+        },
+        {
+          "special_slot": 9,
+          "cells": 6,
+          "HD2_row_sha256": "306c5ede39d3c2737e75cc753ac5dc5e2c96dc85188c84720d7801a156620978",
+          "descriptor_pointer": "0x80195290",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "adec10f8f2542152dd228c89461e7acfc5b7d1bc50f67b9e1c09697200a817a5"
+        },
+        {
+          "special_slot": 11,
+          "cells": 8,
+          "HD2_row_sha256": "e600088b0b027435460759f4718e82d2f7ecbebdce0de0c70306b8b9f52ff7ff",
+          "descriptor_pointer": "0x801952f0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            3,
+            1,
+            1,
+            3,
+            1,
+            1
+          ],
+          "descriptor_sha256": "26bcc6b45dd4aab620513b202f6e71d587d50972cf93b9a8a5fb03ef849881d9"
+        },
+        {
+          "special_slot": 12,
+          "cells": 34,
+          "HD2_row_sha256": "9338605f41075dcc60544fffc826fe440271848d5eb1240b5f9472ed7df5b953",
+          "descriptor_pointer": "0x80195320",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "descriptor_sha256": "40efc3db86909674dba7b0fbcc65dcafb948e38e48eed53e480136d98e4e0d35"
+        }
+      ],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 648
+    },
+    {
+      "neutral_package": "PACKAGE_085",
+      "resource_sha256": "97e46f93fbec1a6d22e8a972b4d1ef248347b8e2fa72d948a5bc038611a667b8",
+      "resource_bytes": 112,
+      "resource_load": "0x80139f00",
+      "resource_rows": 14,
+      "used_special_rows": [
+        {
+          "special_slot": 0,
+          "cells": 640,
+          "HD2_row_sha256": "46c057d70141c2e8c7ed45fee8e2e4a8796a25ae7a3be4068d63a17b1f72b36f",
+          "descriptor_pointer": "0x801955c0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "0e209216494bdcf7b06c99a8bba7d3a497a848c1b90f9211eb9d012498b88a06"
+        },
+        {
+          "special_slot": 1,
+          "cells": 78,
+          "HD2_row_sha256": "e0b1123fb46f2b88970bdeda112164b5358135688bce69a14e090bf4e0b5d364",
+          "descriptor_pointer": "0x801955f0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "f3b7236d78150084454ce0892f9e251fb12e0c4a651a06be0cb9e1b6bfa4782e"
+        },
+        {
+          "special_slot": 2,
+          "cells": 14,
+          "HD2_row_sha256": "959836e7fa39cc592108152ed457522d7a1c2b62a5f67cc40a097661ce69241e",
+          "descriptor_pointer": "0x80195620",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "640a1033d194a770719b1df6bd0a7a6dff0fd4e0498fd1aa63663664194a0ee0"
+        },
+        {
+          "special_slot": 3,
+          "cells": 86,
+          "HD2_row_sha256": "fb7492e6f34e345f7c715aa81548db5f47250c5b6bc7d08808f32394e58c7444",
+          "descriptor_pointer": "0x80195650",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "0fbe57df771d5a622fae7e91cff9d556ff96181347967030719c0edfd42e51d1"
+        },
+        {
+          "special_slot": 4,
+          "cells": 32,
+          "HD2_row_sha256": "5231c47073cfedfeb55eb9d3d38210be412da4275786da30b677b53b8b563b70",
+          "descriptor_pointer": "0x80195680",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "995019e1642e47dc31d10343dfac5bc08683b8593984bd5981f0300efaebfcb7"
+        },
+        {
+          "special_slot": 5,
+          "cells": 4,
+          "HD2_row_sha256": "cbdb88278b76231883a2d942b7eb5fba915735ad2796d6c08cdf03d2c2a9af07",
+          "descriptor_pointer": "0x801956b0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            5,
+            1,
+            1,
+            5,
+            1,
+            1
+          ],
+          "descriptor_sha256": "ae07eb50e8f6b28ebdc7c7a8e752c6f2104c183411cded069ea23a3bc8cfb059"
+        },
+        {
+          "special_slot": 7,
+          "cells": 2,
+          "HD2_row_sha256": "56affd627b3a99f3f33138f64d1926eb12fb44d2566b6afed72727d86bfad591",
+          "descriptor_pointer": "0x80195710",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            3,
+            1,
+            1,
+            3,
+            1,
+            1
+          ],
+          "descriptor_sha256": "7230106acf1880b71d03adb5e60a84c40ce2060816cd956c0fab241e7ceb0e46"
+        },
+        {
+          "special_slot": 9,
+          "cells": 4,
+          "HD2_row_sha256": "9ca7b42752c2a2a834ce58ee7ea1bc4d4ba2c0773c27bcbd3cd0ec6484a4d105",
+          "descriptor_pointer": "0x80195770",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "c03adcf4720fdf658f820b8f5745bea58d74c80cc36f2ed34043b7ee2f2870a9"
+        },
+        {
+          "special_slot": 10,
+          "cells": 2,
+          "HD2_row_sha256": "752c1c53a97fdebef7b4ecbc3490091eaac6ed3058ff237140ef7f351f4b768e",
+          "descriptor_pointer": "0x801957a0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "265d66425188756a6dcaa6b8164e9239add14572b531ad3d0d032875f5ebe371"
+        },
+        {
+          "special_slot": 12,
+          "cells": 12,
+          "HD2_row_sha256": "7f465aed35a37292ff17ecbfeebd7fcafc432ac5c1ba8a7a602108932487dc6f",
+          "descriptor_pointer": "0x80195800",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "descriptor_sha256": "1743d0f8e8b96470fb4ce7afdb4fe2adb9580fb3fc4f0dcf2ffafa69fbc37a61"
+        }
+      ],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 874
+    },
+    {
+      "neutral_package": "PACKAGE_101",
+      "resource_sha256": "1d27ed423677d87fd84a65cc8fcce1d0cf2eb97e97bafd4a993b57b85ab44b19",
+      "resource_bytes": 112,
+      "resource_load": "0x80139f00",
+      "resource_rows": 14,
+      "used_special_rows": [
+        {
+          "special_slot": 0,
+          "cells": 207,
+          "HD2_row_sha256": "e2d8db19f986a2378c83ebfa0684f64f80c177df20092bbf2e4fe0dba4fa0ab8",
+          "descriptor_pointer": "0x80195a70",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "020a47abb477b5859a7133adc70f8b75e2bf9bb4d4010efe352af89ab6982992"
+        },
+        {
+          "special_slot": 1,
+          "cells": 23,
+          "HD2_row_sha256": "a495770b53627c4be692cf0af2dafd37a43a48295dd11b682e41a0c0c38e4da5",
+          "descriptor_pointer": "0x80195aa0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "43fde214a69565ca3c42bfdf216c2d37832937b71abcfbe039569cfd14c43582"
+        },
+        {
+          "special_slot": 2,
+          "cells": 7,
+          "HD2_row_sha256": "27dea23658b698a3d081012b8a11804da47816219041c8e7b63090392c6bdee1",
+          "descriptor_pointer": "0x80195ad0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "192ab7efca6c0a4f941fd7b31b31a07dab192a393386b480cea9a675a34172eb"
+        },
+        {
+          "special_slot": 3,
+          "cells": 21,
+          "HD2_row_sha256": "96443660cc7f3ce79e13623fefa481817f9ff0e4262361cad7ad34fb2a5c5de8",
+          "descriptor_pointer": "0x80195b00",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "8398be3f33fe81642e0e57cfa26bffeab55ac16e5044e5e8c9599813c96c757c"
+        },
+        {
+          "special_slot": 4,
+          "cells": 10,
+          "HD2_row_sha256": "7bb81e29abf25208cdd9fad2b5aa1f57d93030d8629bad6d6640500c47258b17",
+          "descriptor_pointer": "0x80195b30",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "0c30de0dfd1e68ef0b0d4c7d0813a0bc3f3bd5ae3d0c1f9853041107ab97e9c2"
+        },
+        {
+          "special_slot": 9,
+          "cells": 1,
+          "HD2_row_sha256": "b0cf8b0c81fe581a8501536a3dd77f562dda22711a629c5f7f6d7c17c0b0b813",
+          "descriptor_pointer": "0x80195c20",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "0d05b1f540056fd77fd5aeda6c752fa3b9e00386e59248f44054145acc65a20a"
+        },
+        {
+          "special_slot": 11,
+          "cells": 4,
+          "HD2_row_sha256": "398dc0d5f3c0850fe00b58ca3eb56a50e674911495daa6904f649bfc04d31a86",
+          "descriptor_pointer": "0x80195c80",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            3,
+            1,
+            1,
+            3,
+            1,
+            1
+          ],
+          "descriptor_sha256": "868a4c5aea8d084f4a77ed08e1805dbc2b3261d12df71328264a2539b7912913"
+        }
+      ],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 273
+    },
+    {
+      "neutral_package": "PACKAGE_144",
+      "resource_sha256": "10e1dcf2f5edef5ba765778d843be5fca40da788a0b924b1ac6972f2b7d93fe1",
+      "resource_bytes": 24,
+      "resource_load": "0x80139f00",
+      "resource_rows": 3,
+      "used_special_rows": [],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 0
+    },
+    {
+      "neutral_package": "PACKAGE_145",
+      "resource_sha256": "10e1dcf2f5edef5ba765778d843be5fca40da788a0b924b1ac6972f2b7d93fe1",
+      "resource_bytes": 24,
+      "resource_load": "0x80139f00",
+      "resource_rows": 3,
+      "used_special_rows": [],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 0
+    },
+    {
+      "neutral_package": "PACKAGE_182",
+      "resource_sha256": "547d033b166702da5f38e17a0af0645c5019e99c3b0ff36726f2eb6214c2a6dc",
+      "resource_bytes": 112,
+      "resource_load": "0x80139f00",
+      "resource_rows": 14,
+      "used_special_rows": [
+        {
+          "special_slot": 0,
+          "cells": 229,
+          "HD2_row_sha256": "5e3feee5f74a70f52db26029b52a5039d93043ca4fd26fbd50b878e30234e67f",
+          "descriptor_pointer": "0x801969a0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "8ae44f2b834592c7f4d0bda16d29137d3e551de7e32c302de5cb9b1c6da172d5"
+        },
+        {
+          "special_slot": 1,
+          "cells": 21,
+          "HD2_row_sha256": "22780c9fb1109f4766a804bb93dfd05379d176b6693e885f37136a2cf94db4e2",
+          "descriptor_pointer": "0x801969d0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "50c16a0d1ff49d8d9186eb442a49cdf4b79a98065dab97bc4c15bd8d4436bb61"
+        },
+        {
+          "special_slot": 2,
+          "cells": 5,
+          "HD2_row_sha256": "f390acfe79984edb085d3d68c5e2f3df2e3b937475ea0a2f105a5fb03ba826ef",
+          "descriptor_pointer": "0x80196a00",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "be33e729f976f9243b7870e80d05c332d8f6bb515856319f321cf7bc128453dd"
+        },
+        {
+          "special_slot": 3,
+          "cells": 82,
+          "HD2_row_sha256": "27736088ebc4926e161656da96484f5b643c0f3197733d4a434ad5682673960e",
+          "descriptor_pointer": "0x80196a30",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "65680ff847fefb0e5e6abe2749fb2d474e564706db661ce6c10cf7241dd7a5c4"
+        },
+        {
+          "special_slot": 4,
+          "cells": 12,
+          "HD2_row_sha256": "5cbe047500792ac9bef5e0b77d82f25d7f3cee4f6ac2afb3d7871e5b5bf74300",
+          "descriptor_pointer": "0x80196a60",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            4,
+            1,
+            1,
+            4,
+            1,
+            1
+          ],
+          "descriptor_sha256": "e45d8878a8c2d16753881a7ed3170dac202958262ac46db8c2a481f76206c6af"
+        },
+        {
+          "special_slot": 5,
+          "cells": 8,
+          "HD2_row_sha256": "9b49c6fc92d0992718fb7a94cb7e899fc11157338702c3d585c0c5a275459f8c",
+          "descriptor_pointer": "0x80196a90",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            5,
+            1,
+            1,
+            5,
+            1,
+            1
+          ],
+          "descriptor_sha256": "f5f6b2f5b67a3da5f4bd1b3ff00edf629e145b16ba0d3defa940fab0ffb7ac11"
+        },
+        {
+          "special_slot": 7,
+          "cells": 1,
+          "HD2_row_sha256": "488604a7ca0f796581be291550d5026e3678381390f5e354144298c9cfa5740c",
+          "descriptor_pointer": "0x80196af0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            3,
+            1,
+            1,
+            3,
+            1,
+            1
+          ],
+          "descriptor_sha256": "91023c930b3a26802768842e324c4ab5679f8ea334936bbbd0c68548ad200027"
+        },
+        {
+          "special_slot": 8,
+          "cells": 5,
+          "HD2_row_sha256": "e3debc502d3e668c82fabd070dcee1c5fc49df9f0ab3f4d80eb8e10134e779ef",
+          "descriptor_pointer": "0x80196b20",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "0b3fece6c7a9116b107459ecba43c2ef8612513e0c9d14578b216d4f9169893f"
+        },
+        {
+          "special_slot": 9,
+          "cells": 3,
+          "HD2_row_sha256": "65eae59fa7fb1983ba559c1fdc5b836160769804fec9c52c61a4da0180d1695b",
+          "descriptor_pointer": "0x80196b50",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            2,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "descriptor_sha256": "ce11f80e20f201ba80187516ebbb9285246c7dafaae91516916b862da07e243b"
+        },
+        {
+          "special_slot": 11,
+          "cells": 2,
+          "HD2_row_sha256": "398f44fa76db6e91ef04e7bfbed3e126c18c635b0fc8f3c6e3f9c6ffcdbf399d",
+          "descriptor_pointer": "0x80196bb0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            3,
+            1,
+            1,
+            3,
+            1,
+            1
+          ],
+          "descriptor_sha256": "4abb93aac4497b5ed1beaac781966e0626ac4078936b902fbc123242bde84cb0"
+        },
+        {
+          "special_slot": 12,
+          "cells": 20,
+          "HD2_row_sha256": "17847b6609d82743f22e74137ee2508c7248733c5cf6b3976f8de5a1bcc6adc5",
+          "descriptor_pointer": "0x80196be0",
+          "descriptor_in_legacy_refs": false,
+          "valid_descriptor_and_stream_bounds": true,
+          "slot_primitive_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "descriptor_sha256": "ce79a4adf3c529ab66a679660f9e184ad1ded1c6487e9c7232b184d41eb0ca5c"
+        }
+      ],
+      "legacy_HED_IDX_pointer_overlap": 0,
+      "special_cell_count": 388
+    }
+  ],
+  "semantics": "Original bit7-set draw looks up HD2 row pointer at resource base+4+((packed<<1)&0xf8); selector=(packed>>2)&31; records are8bytes. No tag semantics inferred."
+}

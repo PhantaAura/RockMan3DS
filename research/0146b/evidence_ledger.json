@@ -1,0 +1,73 @@
+{
+  "format": "mml-evidence-ledger/1",
+  "PHYSICS_1TO1": false,
+  "entries": [
+    {
+      "symbol": "ROCK_NEO entry",
+      "address": "0x80068000",
+      "status": "MATCHES_MEASURED_FIELDS",
+      "evidence": [
+        "PS-X EXE header +0x10; supported USA hash"
+      ],
+      "untested": [
+        "hardware execution"
+      ]
+    },
+    {
+      "address": "0x800980ac",
+      "symbol": "save_filename_pointer_table",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "file_offset": 559276
+    },
+    {
+      "address": "0x80098110",
+      "symbol": "save_filename_DASH00",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "file_offset": 559376,
+      "expected_filename_match": true
+    },
+    {
+      "symbol": "function_candidates",
+      "status": "CANDIDATE",
+      "evidence": [
+        "executable_evidence.json"
+      ],
+      "notes": "319 entry-rooted candidates plus source anchors; no new function semantics claimed"
+    },
+    {
+      "symbol": "animation_mappings",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "evidence": [
+        "animation_evidence.json"
+      ],
+      "notes": "Structural records, semantic names unknown"
+    },
+    {
+      "symbol": "event_opcodes",
+      "status": "UNKNOWN",
+      "evidence": [],
+      "notes": "No raw opcode meanings invented"
+    },
+    {
+      "symbol": "physics_constants",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "evidence": [
+        "inherited_file_hashes.json",
+        "include/legends3ds/player_runtime.h"
+      ],
+      "notes": "Inherited measured helpers preserved; complete physics remains false"
+    },
+    {
+      "symbol": "save_payload_fields",
+      "status": "UNKNOWN",
+      "evidence": [],
+      "notes": "No original validated save supplied"
+    },
+    {
+      "symbol": "camera_data",
+      "status": "UNKNOWN",
+      "evidence": [],
+      "notes": "No verified replacement for inherited candidate behavior"
+    }
+  ]
+}

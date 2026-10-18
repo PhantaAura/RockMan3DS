@@ -1,0 +1,11 @@
+{
+  "compiled_source_hashes_match": 230,
+  "warnings": {
+    "host-build.log": 0,
+    "native-build.log": 0
+  },
+  "actual_ARM_build": true,
+  "binary_sha256": "0142638f404ecace2fae3abbde5879b2f439165ed45720a8d16ea5214a941b1e",
+  "new_emulator_exercise": true,
+  "hardware_tested": false
+}

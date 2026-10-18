@@ -1,0 +1,42 @@
+{
+  "build": "0.0.14.41",
+  "binary_sha256": "b1dfc9531a3dbc43aa73588ae7470d2869769d2e556d3fd4f173bcef55e56a82",
+  "emulator": "Azahar2126.0",
+  "is_new_3ds": false,
+  "cpu_percent": 100,
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/azahar-01441-owner-r3/captures/_14.10.26_22.25.49.948.png",
+      "sha256": "79245558065bc0774dc3a5b449465a334bcfa17ac5458eec4e74e6b30733aef3",
+      "size": [
+        400,
+        480
+      ],
+      "scene": "CPU RGB bars / automatic test1",
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/azahar-01441-owner-r3/captures/_14.10.26_22.25.58.948.png",
+      "sha256": "1f2c3a3c1d74f3b8bbb3dd53ee540b455d3c22a06743e8387ffb14f2e1f9e65e",
+      "size": [
+        400,
+        480
+      ],
+      "scene": "GPU cyan clear / test2",
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/azahar-01441-owner-r3/captures/_14.10.26_22.28.16.606.png",
+      "sha256": "376caa405f677dd687c828e166a6a6b1340c1fa54cda8f5ef94286ed27dc4d7b",
+      "size": [
+        400,
+        480
+      ],
+      "scene": "X-selected0143fallback / full player and bottom map",
+      "edited": false
+    }
+  ],
+  "empty_sd_prior_iteration": "azahar-01441-probe-r1 used native-r2; both tests displayed with no game assets/config. Its captures are historical; final captures below use native-r3.",
+  "known_failed_iteration": "azahar-01441-owner-r2 retained UV camera after X; source ordering fixed and retested in final r3."
+}

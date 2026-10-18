@@ -1,0 +1,42 @@
+{
+  "schema": "mml-source-effects-01423/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "cases": {
+    "allocator": 65,
+    "callback131": 1624,
+    "callback128": 120,
+    "release": 64
+  },
+  "pool_boot": {
+    "all_nonclass_bytes_zero": true,
+    "class_bytes_match": true,
+    "allocation_masks": [
+      0,
+      0
+    ],
+    "pending_masks": [
+      0,
+      0
+    ],
+    "original_instructions": 3985
+  },
+  "original_instructions": 113071,
+  "source_labels": {
+    "pool_boot": "8002E924..8002E97C",
+    "allocator": "80031618",
+    "pending_release": "80031988",
+    "release_consumer": "80031B84..80031BB0",
+    "common_dispatch": "800173B4",
+    "callback128": "80043F34",
+    "callback131": "80044C58",
+    "primitive_dispatch": "80029B10"
+  },
+  "limits": [
+    "Authored contexts are not live retail observations.",
+    "128 floor and resource wrapper are explicit authored boundaries; actual audio writes execute.",
+    "128 later geometry/proxy/rotation consumers remain held.",
+    "Projection/fog/material/native rendering not proved by scalar callbacks.",
+    "No retail instructions, descriptors, table or assets exported."
+  ]
+}

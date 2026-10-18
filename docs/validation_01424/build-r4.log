@@ -1,0 +1,300 @@
+[  5%] Built target mml3ds_push2
+[  5%] Built target test_push2
+[  5%] Built target test_integrity
+[  6%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_command.cpp.o
+[  7%] Building CXX object CMakeFiles/legends3ds_core.dir/src/flow/source_event_command_package.cpp.o
+[  7%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/child_runtime.cpp.o
+[  7%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/source_player_proxy.cpp.o
+[  7%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/actor_runtime.cpp.o
+[  7%] Building CXX object CMakeFiles/legends3ds_core.dir/src/world/runtime_session.cpp.o
+[  7%] Linking CXX static library liblegends3ds_core.a
+[ 28%] Built target legends3ds_core
+[ 28%] Linking CXX executable l3inspect_map
+[ 28%] Linking CXX executable l3cook_st00
+[ 28%] Linking CXX executable l3inspect_model
+[ 28%] Linking CXX executable l3cook_pbd
+[ 28%] Built target l3cook_st00
+[ 29%] Built target l3inspect_model
+[ 30%] Built target l3inspect_map
+[ 30%] Built target l3cook_pbd
+[ 31%] Linking CXX executable l3inspect_texture
+[ 31%] Linking CXX executable l3inspect_palette
+[ 31%] Linking CXX executable l3cook_palette
+[ 32%] Linking CXX executable l3cook_texture
+[ 33%] Built target l3inspect_palette
+[ 33%] Built target l3inspect_texture
+[ 34%] Built target l3cook_palette
+[ 34%] Built target l3cook_texture
+[ 34%] Linking CXX executable l3inspect_anim
+[ 34%] Linking CXX executable l3cook_anim
+[ 35%] Linking CXX executable l3cook_skeleton
+[ 35%] Linking CXX executable l3inspect_skeleton
+[ 35%] Built target l3inspect_anim
+[ 36%] Built target l3cook_anim
+[ 36%] Built target l3cook_skeleton
+[ 36%] Built target l3inspect_skeleton
+[ 36%] Linking CXX executable l3cook_render
+[ 36%] Linking CXX executable l3cook_player_comp
+[ 36%] Linking CXX executable l3inspect_render
+[ 37%] Linking CXX executable l3inspect_player_comp
+[ 37%] Built target l3cook_render
+[ 38%] Built target l3cook_player_comp
+[ 38%] Built target l3inspect_render
+[ 38%] Built target l3inspect_player_comp
+[ 38%] Linking CXX executable l3scan_materials
+[ 38%] Linking CXX executable l3cook_material_cache
+[ 38%] Linking CXX executable l3inspect_material_cache
+[ 39%] Linking CXX executable l3cook_player_material_cache
+[ 40%] Built target l3scan_materials
+[ 40%] Built target l3cook_material_cache
+[ 40%] Built target l3inspect_material_cache
+[ 40%] Built target l3cook_player_material_cache
+[ 40%] Linking CXX executable l3cook_actor_material_cache
+[ 41%] Linking CXX executable l3visual_probe
+[ 41%] Linking CXX executable l3cook_msg
+[ 41%] Linking CXX executable l3inspect_msg
+[ 41%] Built target l3cook_actor_material_cache
+[ 42%] Built target l3cook_msg
+[ 42%] Built target l3visual_probe
+[ 42%] Built target l3inspect_msg
+[ 43%] Linking CXX executable l3cook_st00_flow
+[ 44%] Linking CXX executable l3inspect_st00_flow
+[ 44%] Linking CXX executable l3runtime_probe
+[ 44%] Linking CXX executable l3runtime_pack_probe
+[ 44%] Built target l3cook_st00_flow
+[ 44%] Built target l3inspect_st00_flow
+[ 44%] Built target l3runtime_probe
+[ 45%] Built target l3runtime_pack_probe
+[ 45%] Linking CXX executable l3runtime_msg_probe
+[ 46%] Building CXX object CMakeFiles/l3runtime_session_probe.dir/tools/l3runtime_session_probe.cpp.o
+[ 46%] Linking CXX executable l3inspect_stage_catalog
+[ 46%] Linking CXX executable l3game_pack_probe
+[ 46%] Built target l3runtime_msg_probe
+[ 46%] Built target l3inspect_stage_catalog
+[ 47%] Built target l3game_pack_probe
+[ 47%] Linking CXX executable l3script_pack_probe
+[ 48%] Linking CXX executable l3inspect_resource_catalog
+[ 48%] Linking CXX executable l3inspect_audio_catalog
+[ 48%] Built target l3script_pack_probe
+[ 48%] Built target l3inspect_resource_catalog
+[ 49%] Built target l3inspect_audio_catalog
+[ 49%] Linking CXX executable l3stage_object_pack_probe
+[ 49%] Linking CXX executable l3player_runtime_probe
+[ 49%] Linking CXX executable l3flight_render_probe
+[ 50%] Built target l3stage_object_pack_probe
+[ 50%] Built target l3player_runtime_probe
+[ 50%] Built target l3flight_render_probe
+[ 51%] Linking CXX executable l3flight_material_probe
+[ 51%] Linking CXX executable l3flight_animation_probe
+[ 51%] Linking CXX executable l3cook_ebd
+[ 51%] Built target l3flight_material_probe
+[ 51%] Built target l3flight_animation_probe
+[ 51%] Built target l3cook_ebd
+[ 51%] Linking CXX executable l3inspect_ebd
+[ 51%] Building CXX object CMakeFiles/test_core.dir/tests/test_core.cpp.o
+[ 51%] Linking CXX executable l3cook_map_init
+[ 51%] Built target l3inspect_ebd
+[ 51%] Linking CXX executable test_map_initialization
+[ 52%] Built target l3cook_map_init
+[ 52%] Building CXX object CMakeFiles/test_map_sharing.dir/tests/test_map_sharing.cpp.o
+[ 52%] Built target test_map_initialization
+[ 52%] Linking CXX executable test_ps1_geometry
+[ 53%] Built target test_ps1_geometry
+[ 53%] Building CXX object CMakeFiles/test_area_package.dir/tests/test_area_package.cpp.o
+[ 53%] Linking CXX executable l3runtime_session_probe
+[ 53%] Built target l3runtime_session_probe
+[ 54%] Linking CXX executable test_terrain_geometry_candidate
+[ 54%] Built target test_terrain_geometry_candidate
+[ 54%] Linking CXX executable test_map_cell_alignment
+[ 55%] Built target test_map_cell_alignment
+[ 55%] Linking CXX executable test_area_placement
+[ 55%] Built target test_area_placement
+[ 55%] Linking CXX executable test_map_sharing
+[ 55%] Linking CXX executable test_positive_terrain
+[ 55%] Built target test_map_sharing
+[ 55%] Built target test_positive_terrain
+[ 56%] Building CXX object CMakeFiles/l3replay.dir/tools/l3replay.cpp.o
+[ 56%] Linking CXX executable l3area_validate
+[ 56%] Built target l3area_validate
+[ 56%] Building CXX object CMakeFiles/l3area_runtime_probe.dir/tools/l3area_runtime_probe.cpp.o
+[ 57%] Linking CXX executable test_core
+[ 57%] Built target test_core
+[ 57%] Linking CXX executable l3area_placement_probe
+[ 57%] Built target l3area_placement_probe
+[ 57%] Linking CXX executable l3animation_evidence
+[ 58%] Linking CXX executable test_area_package
+[ 58%] Built target l3animation_evidence
+[ 59%] Linking CXX executable test_negative_package
+[ 59%] Built target test_area_package
+[ 59%] Linking CXX executable test_negative_terrain
+[ 59%] Built target test_negative_package
+[ 60%] Linking CXX executable l3area_runtime_probe
+[ 60%] Linking CXX executable test_negative_material
+[ 60%] Built target test_negative_terrain
+[ 60%] Built target l3area_runtime_probe
+[ 60%] Built target test_negative_material
+[ 60%] Linking CXX executable test_material_vram
+[ 60%] Linking CXX executable test_area_inspection
+[ 60%] Linking CXX executable l3cook_negative_materials
+[ 61%] Built target test_material_vram
+[ 61%] Built target test_area_inspection
+[ 61%] Built target l3cook_negative_materials
+[ 62%] Linking CXX executable l3area_inspection_probe
+[ 62%] Linking CXX executable test_frontend_view
+[ 63%] Linking CXX executable l3area_visibility_audit
+[ 63%] Built target l3area_inspection_probe
+[ 63%] Built target l3area_visibility_audit
+[ 63%] Built target test_frontend_view
+[ 63%] Linking CXX executable l3replay
+[ 64%] Linking CXX executable test_mockup_ui
+[ 64%] Linking CXX executable test_ebd_resources
+[ 64%] Linking CXX executable test_player_visual_storage
+[ 64%] Built target test_mockup_ui
+[ 64%] Built target l3replay
+[ 64%] Built target test_ebd_resources
+[ 65%] Built target test_player_visual_storage
+[ 66%] Linking CXX executable test_ebd_sharing
+[ 66%] Linking CXX executable test_actor_resources
+[ 66%] Linking CXX executable test_actor_materials
+[ 66%] Linking CXX executable test_companion_ui
+[ 66%] Built target test_ebd_sharing
+[ 66%] Built target test_actor_resources
+[ 67%] Built target test_actor_materials
+[ 67%] Building CXX object CMakeFiles/test_runtime_contact.dir/tests/test_runtime_contact.cpp.o
+[ 68%] Built target test_companion_ui
+[ 68%] Linking CXX executable l3probe_actor_resources
+[ 69%] Linking CXX executable l3probe_actor_class20_03
+[ 69%] Building CXX object CMakeFiles/test_gameplay_clock.dir/tests/test_gameplay_clock.cpp.o
+[ 69%] Built target l3probe_actor_resources
+[ 69%] Built target l3probe_actor_class20_03
+[ 69%] Building CXX object CMakeFiles/test_running_jump_source.dir/tests/test_running_jump_source.cpp.o
+[ 70%] Linking CXX executable test_class20_03_behavior
+[ 70%] Built target test_class20_03_behavior
+[ 71%] Linking CXX executable test_source_angle
+[ 71%] Built target test_source_angle
+[ 71%] Linking CXX executable test_actor_sequence
+[ 72%] Built target test_actor_sequence
+[ 72%] Linking CXX executable l3cook_st00_spawn
+[ 72%] Built target l3cook_st00_spawn
+[ 72%] Linking CXX executable test_st00_spawn
+[ 73%] Built target test_st00_spawn
+[ 73%] Building CXX object CMakeFiles/test_runtime_spawns.dir/tests/test_runtime_spawns.cpp.o
+[ 74%] Linking CXX executable test_gameplay_clock
+[ 74%] Built target test_gameplay_clock
+[ 74%] Linking CXX executable test_running_jump_source
+[ 74%] Building CXX object CMakeFiles/l3runtime_spawn_probe.dir/tools/l3runtime_spawn_probe.cpp.o
+[ 74%] Built target test_running_jump_source
+[ 75%] Building CXX object CMakeFiles/test_map_initialization_package.dir/tests/test_map_initialization_package.cpp.o
+[ 75%] Linking CXX executable test_runtime_contact
+[ 75%] Built target test_runtime_contact
+[ 75%] Building CXX object CMakeFiles/test_runtime_transactions.dir/tests/test_runtime_transactions.cpp.o
+[ 75%] Linking CXX executable test_runtime_spawns
+[ 75%] Built target test_runtime_spawns
+[ 75%] Linking CXX executable test_actor_floor_init
+[ 75%] Linking CXX executable l3runtime_spawn_probe
+[ 75%] Built target test_actor_floor_init
+[ 75%] Built target l3runtime_spawn_probe
+[ 75%] Linking CXX executable l3actor_animation_bank_probe
+[ 76%] Linking CXX executable l3test_actor_animation_bank
+[ 76%] Built target l3actor_animation_bank_probe
+[ 76%] Built target l3test_actor_animation_bank
+[ 76%] Linking CXX executable l3test_actor_behavior_runtime
+[ 76%] Linking CXX executable l3test_class20_03_callback
+[ 76%] Linking CXX executable test_map_initialization_package
+[ 76%] Built target l3test_actor_behavior_runtime
+[ 76%] Built target l3test_class20_03_callback
+[ 76%] Built target test_map_initialization_package
+[ 77%] Linking CXX executable l3test_actor_contact
+[ 78%] Linking CXX executable l3actor_behavior_runtime_probe
+[ 78%] Linking CXX executable test_actor_detection
+[ 78%] Built target l3test_actor_contact
+[ 78%] Built target l3actor_behavior_runtime_probe
+[ 78%] Built target test_actor_detection
+[ 78%] Linking CXX executable test_actor_detection_profile
+[ 78%] Linking CXX executable test_class20_03_action3
+[ 79%] Linking CXX executable test_actor_detection_math
+[ 80%] Built target test_actor_detection_profile
+[ 80%] Built target test_class20_03_action3
+[ 80%] Linking CXX executable test_actor_detection_segment
+[ 80%] Built target test_actor_detection_math
+[ 80%] Linking CXX executable test_source_audio_queue
+[ 80%] Linking CXX executable test_actor_detection_preparation
+[ 80%] Built target test_actor_detection_segment
+[ 80%] Built target test_source_audio_queue
+[ 80%] Linking CXX executable test_actor_action3_contact
+[ 80%] Built target test_actor_detection_preparation
+[ 81%] Linking CXX executable test_source_combat_profile
+[ 81%] Built target test_actor_action3_contact
+[ 82%] Building CXX object CMakeFiles/test_runtime_source_context.dir/tests/test_runtime_source_context.cpp.o
+[ 82%] Built target test_source_combat_profile
+[ 83%] Linking CXX executable test_actor_source_transaction
+[ 83%] Linking CXX executable test_class20_03_action9
+[ 83%] Built target test_actor_source_transaction
+[ 83%] Built target test_class20_03_action9
+[ 84%] Linking CXX executable test_actor_action9_contact
+[ 84%] Linking CXX executable test_actor_detection_segment_extended
+[ 84%] Built target test_actor_action9_contact
+[ 85%] Built target test_actor_detection_segment_extended
+[ 85%] Linking CXX executable test_actor_action9_runtime
+[ 85%] Linking CXX executable test_retail_rng_tape
+[ 86%] Linking CXX executable test_runtime_transactions
+[ 86%] Built target test_actor_action9_runtime
+[ 87%] Built target test_retail_rng_tape
+[ 87%] Built target test_runtime_transactions
+[ 88%] Linking CXX executable test_class20_03_action4
+[ 88%] Linking CXX executable test_actor_action4_runtime
+[ 89%] Linking CXX executable test_actor_action4_contact
+[ 89%] Built target test_class20_03_action4
+[ 89%] Built target test_actor_action4_runtime
+[ 89%] Built target test_actor_action4_contact
+[ 89%] Linking CXX executable test_source_profile_class60_06
+[ 89%] Linking CXX executable test_class60_06
+[ 89%] Linking CXX executable test_class20_03_hit
+[ 90%] Built target test_class60_06
+[ 91%] Built target test_source_profile_class60_06
+[ 91%] Built target test_class20_03_hit
+[ 91%] Linking CXX executable test_source_event_pipeline
+[ 91%] Linking CXX executable test_source_hit_proxy
+[ 91%] Linking CXX executable test_class60_06_contact
+[ 92%] Built target test_source_hit_proxy
+[ 92%] Built target test_source_event_pipeline
+[ 92%] Built target test_class60_06_contact
+[ 92%] Linking CXX executable test_source_actor_consumers
+[ 92%] Building CXX object CMakeFiles/test_runtime_source_events.dir/tests/test_runtime_source_events.cpp.o
+[ 92%] Linking CXX executable test_source_rng_service
+[ 92%] Built target test_source_actor_consumers
+[ 92%] Built target test_source_rng_service
+[ 92%] Linking CXX executable test_source_event_consumer
+[ 92%] Building CXX object CMakeFiles/test_child_runtime.dir/tests/test_child_runtime.cpp.o
+[ 93%] Built target test_source_event_consumer
+[ 93%] Building CXX object CMakeFiles/test_actor_child_delivery.dir/tests/test_actor_child_delivery.cpp.o
+[ 93%] Linking CXX executable test_runtime_source_context
+[ 93%] Built target test_runtime_source_context
+[ 93%] Linking CXX executable test_source_event_package
+[ 93%] Built target test_source_event_package
+[ 93%] Linking CXX executable test_actor_pose_proxy
+[ 93%] Built target test_actor_pose_proxy
+[ 93%] Linking CXX executable test_source_effects
+[ 94%] Linking CXX executable test_child_runtime
+[ 94%] Built target test_source_effects
+[ 94%] Built target test_child_runtime
+[ 94%] Linking CXX executable test_source_event_phase2
+[ 95%] Linking CXX executable test_actor_child_delivery
+[ 95%] Linking CXX executable test_actor_pose_proxy_runtime
+[ 96%] Built target test_source_event_phase2
+[ 97%] Linking CXX executable test_runtime_source_events
+[ 97%] Built target test_actor_child_delivery
+[ 97%] Building CXX object CMakeFiles/test_source_event_command.dir/tests/test_source_event_command.cpp.o
+[ 98%] Built target test_actor_pose_proxy_runtime
+[ 98%] Building CXX object CMakeFiles/test_source_event_command_package.dir/tests/test_source_event_command_package.cpp.o
+[ 98%] Built target test_runtime_source_events
+[ 98%] Building CXX object CMakeFiles/test_source_player_proxy.dir/tests/test_source_player_proxy.cpp.o
+[ 99%] Building CXX object CMakeFiles/test_runtime_command_lease.dir/tests/test_runtime_command_lease.cpp.o
+[ 99%] Linking CXX executable test_source_event_command_package
+[ 99%] Built target test_source_event_command_package
+[ 99%] Linking CXX executable test_source_player_proxy
+[ 99%] Built target test_source_player_proxy
+[100%] Linking CXX executable test_source_event_command
+[100%] Built target test_source_event_command
+[100%] Linking CXX executable test_runtime_command_lease
+[100%] Built target test_runtime_command_lease

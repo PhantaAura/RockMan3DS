@@ -1,0 +1,19 @@
+{
+  "emulator_only": true,
+  "samples": 33,
+  "last": {
+    "frame": 1320,
+    "owned_linear": 59520,
+    "owned_texture": 4980736,
+    "malloc_live": 2086592,
+    "draw_calls": 12,
+    "triangles": 1478
+  },
+  "physical_performance": "UNKNOWN",
+  "not_measured": [
+    "physical frame pacing",
+    "physical GPU command usage",
+    "actual black-screen cause",
+    "live retail parity"
+  ]
+}

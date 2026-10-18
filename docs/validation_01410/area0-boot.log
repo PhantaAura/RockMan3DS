@@ -1,0 +1,12 @@
+Legends3DS 0.0.14.10 boot log
+stage=1 label=gfx + bottom console renderer=0 linear_owned=0 tex_bytes=0 tex_count=0
+stage=1 label=renderer gate selected renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=package map/render; exact local sidecars renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=2 label=citro3d renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=3 label=uv shader renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=map/render/ref/flow/messages/ebd bound renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=7 label=player model/composition/animation/skeleton renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=6 label=terrain texture upload renderer=8 linear_owned=58560 tex_bytes=1310720 tex_count=5
+stage=5 label=POSITIVE IDX XYZ terrain resources built renderer=8 linear_owned=58560 tex_bytes=1835008 tex_count=7
+stage=8 label=first frame completed renderer=8 linear_owned=58560 tex_bytes=1835008 tex_count=7
+stage=9 label=runtime ready renderer=8 linear_owned=58560 tex_bytes=1835008 tex_count=7

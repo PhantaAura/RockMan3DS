@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-05",
+  "purpose": "Research original engine before new implementation",
+  "sources": [
+    {
+      "id": "mml1_decomp",
+      "revision": "964bad3096a2d7a4a3d6cc65678d8440b2ea9cb1",
+      "url": "https://github.com/ChrisNonyminus/mml1/tree/964bad3096a2d7a4a3d6cc65678d8440b2ea9cb1",
+      "scope": "PS1 USA main executable research navigation; WIP not shiftable; no code copied",
+      "owner_exe_sha1": "ffc08fd2b6113e84dc0e75ba63a4feaca0eb1d46"
+    },
+    {
+      "id": "mml1_viewer",
+      "revision": "b2078b2601fbf1f627710fcd9435cca71933f0df",
+      "url": "https://gitlab.com/megamanlegends/mml1/-/tree/b2078b2601fbf1f627710fcd9435cca71933f0df",
+      "scope": "MML1 save-state asset viewer; independent format corroboration, not gameplay proof"
+    },
+    {
+      "id": "mml1_psx_tools",
+      "revision": "c4a66ae0b56dd27935ccb3eb5ecc73e6c52cd4df",
+      "url": "https://gitlab.com/megamanlegends/mml1-psx/-/tree/c4a66ae0b56dd27935ccb3eb5ecc73e6c52cd4df",
+      "scope": "MML1 archive/tool inventories; texture identity candidate only"
+    },
+    {
+      "id": "redux_breakpoints",
+      "url": "https://pcsx-redux.consoledev.net/Lua/breakpoints/",
+      "scope": "Official debugger interpreter-only write observation API"
+    },
+    {
+      "id": "mml2_scope_warning",
+      "url": "https://format.dashgl.com/mml2/",
+      "scope": "MML2, not proof of MML1 formats/behavior"
+    }
+  ],
+  "no_external_code_or_assets_imported": true,
+  "status": "SOURCE_BACKED_PARTIAL"
+}

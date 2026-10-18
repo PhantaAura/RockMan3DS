@@ -1,0 +1,52 @@
+{
+  "schema": "mml-source-player-proxy-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "author_cases": 2018,
+  "original_cpu_instructions": 613210,
+  "modeled_rtps_commands": 15620,
+  "live_retail_parity": false,
+  "hardware_pending": true,
+  "host_warning_policy": [
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "host_sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "author_fixture_test_passed": true,
+  "allocation_free_full_24_owner_ticks": 4096,
+  "heap_allocations_in_measured_ticks": 0,
+  "arm_compile_command": [
+    "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
+    "-std=gnu++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-march=armv6k",
+    "-mtune=mpcore",
+    "-mfloat-abi=hard",
+    "-O2",
+    "-fstack-usage",
+    "-Iinclude",
+    "-c",
+    "src/world/source_player_proxy.cpp",
+    "-o",
+    "/private/tmp/mml-source-player-proxy-arm-01424.o"
+  ],
+  "arm_compile_exit_code": 0,
+  "exclusive_arm_stack_bytes": {
+    "source_gte_unr_divide": 16,
+    "rtps_body": 456,
+    "rtps_wrapper": 16,
+    "source_player_consume_leases_80035508": 496
+  },
+  "nested_stack_peak_measured": false,
+  "limitations": [
+    "Hardware GTE arithmetic is a documented restricted model in authored fixtures. Independent original emulator capture must be reported separately.",
+    "Original matrix/projection/control ownership is not replaced by native floating-point camera.",
+    "Buster spawning, screen target selection and gameplay damage are downstream owners.",
+    "Internal44-bit MAC overflow holds atomically instead of guessing."
+  ]
+}

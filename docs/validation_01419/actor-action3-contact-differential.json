@@ -1,0 +1,30 @@
+{
+  "schema": "actor-action3-contact-native-differential/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "result": "PASS",
+  "authored_cases": 1152,
+  "supported_authored_cases": 832,
+  "held_authored_cases": 320,
+  "nonzero_wall_corrections": 208,
+  "owner_stage_cases": 24,
+  "supported_owner_stage_cases": 24,
+  "held_owner_stage_cases": 0,
+  "pointed_sound_producer_callee_cases": 12,
+  "allocation_free_preparations": 640,
+  "compiler_flags": [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "fixture_sha256": "73499c950ec779e748725f4de3f9283f2521c1d03931b0ddf11dd24d2a716ad8",
+  "pointed_sound_fixture_sha256": "9597397693417fd5f4995456eb80db6d56e08333b4d2ddb5ed667ce71a991b52",
+  "retail_parity": false,
+  "hardware_verified": false,
+  "limitations": [
+    "OriginalGTErotation delta and targetangle independentlysupplied premises; original turn/accumulator/contact/floor execute.",
+    "Ownerstage usesowner originaltrig throughreference.l3ref but no liveencounter or wholecallback proof.",
+    "Floor stores/rollback remainreducerowned.",
+    "Originalaudio assets/decoder/playback notproved byqueueproducer."
+  ]
+}

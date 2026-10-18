@@ -1,0 +1,396 @@
+{
+  "schema": "actor-resource-consumer-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "ebd_sha256": "8c1dd36fbd7b5e3a48b1b45be0c232f39f8e6c9e19245f3f7de93b2905ba4ba1",
+  "copy_helper": {
+    "address": "0x80017684",
+    "count_unit": "u32 words",
+    "prior_01413_24_byte_claim_corrected_to": 96
+  },
+  "row": 3,
+  "resource_offsets": [
+    27316,
+    29220,
+    29992
+  ],
+  "draw_count": 2,
+  "mesh_tiers": [
+    {
+      "tier": 0,
+      "parts": [
+        {
+          "draw_slot": 0,
+          "mesh_index": 0,
+          "parent": -1,
+          "rotation_translation_index": 0,
+          "material_word": "0x3c80002b",
+          "source_part_byte3": 0,
+          "vertices": 24,
+          "triangles": 0,
+          "quads": 22
+        },
+        {
+          "draw_slot": 1,
+          "mesh_index": 1,
+          "parent": 0,
+          "rotation_translation_index": 1,
+          "material_word": "0x3c80002b",
+          "source_part_byte3": 1,
+          "vertices": 28,
+          "triangles": 4,
+          "quads": 24
+        }
+      ],
+      "vertices": 52,
+      "triangles": 4,
+      "quads": 46
+    },
+    {
+      "tier": 1,
+      "parts": [
+        {
+          "draw_slot": 0,
+          "mesh_index": 0,
+          "parent": -1,
+          "rotation_translation_index": 0,
+          "material_word": "0x3c80002b",
+          "source_part_byte3": 0,
+          "vertices": 8,
+          "triangles": 0,
+          "quads": 6
+        },
+        {
+          "draw_slot": 1,
+          "mesh_index": 1,
+          "parent": 0,
+          "rotation_translation_index": 1,
+          "material_word": "0x3c80002b",
+          "source_part_byte3": 1,
+          "vertices": 8,
+          "triangles": 0,
+          "quads": 6
+        }
+      ],
+      "vertices": 16,
+      "triangles": 0,
+      "quads": 12
+    },
+    {
+      "tier": 2,
+      "parts": [
+        {
+          "draw_slot": 0,
+          "mesh_index": 0,
+          "parent": -1,
+          "rotation_translation_index": 0,
+          "material_word": "0x3c80002b",
+          "source_part_byte3": 0,
+          "vertices": 8,
+          "triangles": 0,
+          "quads": 6
+        },
+        {
+          "draw_slot": 1,
+          "mesh_index": 1,
+          "parent": 0,
+          "rotation_translation_index": 1,
+          "material_word": "0x3c80002b",
+          "source_part_byte3": 1,
+          "vertices": 8,
+          "triangles": 0,
+          "quads": 6
+        }
+      ],
+      "vertices": 16,
+      "triangles": 0,
+      "quads": 12
+    }
+  ],
+  "bounded_windows": [
+    {
+      "kind": "work-descriptor-copy",
+      "offset": 27332,
+      "bytes": 96,
+      "sha256": "ccee0a1ae45f6d751966ee778611536f614a6e9a35f32ee4da6991b6b9e6541c"
+    },
+    {
+      "kind": "quads",
+      "tier": 0,
+      "part": 0,
+      "offset": 27500,
+      "bytes": 264,
+      "sha256": "63d00229fb1f783f0126ddf582c59a7d064d6f013296c4899a940c53cfe8bf6d"
+    },
+    {
+      "kind": "vertices",
+      "tier": 0,
+      "part": 0,
+      "offset": 28100,
+      "bytes": 192,
+      "sha256": "cc10a82f316674aa10b37fc66d69d42ee09358c8658ac4a5c18bffbbac4168f1"
+    },
+    {
+      "kind": "vertex-consumer",
+      "tier": 0,
+      "part": 0,
+      "offset": 28100,
+      "bytes": 192,
+      "sha256": "cc10a82f316674aa10b37fc66d69d42ee09358c8658ac4a5c18bffbbac4168f1"
+    },
+    {
+      "kind": "triangles",
+      "tier": 0,
+      "part": 1,
+      "offset": 27764,
+      "bytes": 48,
+      "sha256": "0034cd2100a3f640828c04607d0868831aed2ed34d841cf05b80d512b2fde83a"
+    },
+    {
+      "kind": "quads",
+      "tier": 0,
+      "part": 1,
+      "offset": 27812,
+      "bytes": 288,
+      "sha256": "1186ae69e418a1058ad8699b37a10d193114d12e3d083ff7d6ea8bd9a0e7c576"
+    },
+    {
+      "kind": "vertices",
+      "tier": 0,
+      "part": 1,
+      "offset": 28292,
+      "bytes": 224,
+      "sha256": "600bf17df94af9de7197f6d73961292eee9a80b7a1bc18f8242ee7553fbcfc3f"
+    },
+    {
+      "kind": "vertex-consumer",
+      "tier": 0,
+      "part": 1,
+      "offset": 28292,
+      "bytes": 240,
+      "sha256": "cee12ac862fafa3fd6adfb78dcc2fd4ce5607ee6e0017a49414b4393a9a4e21b"
+    },
+    {
+      "kind": "quads",
+      "tier": 1,
+      "part": 0,
+      "offset": 28576,
+      "bytes": 72,
+      "sha256": "1d4d3f45677ef4758586f178b49c1aab5227a9115f7de9b0c61be36962398cfc"
+    },
+    {
+      "kind": "vertices",
+      "tier": 1,
+      "part": 0,
+      "offset": 28720,
+      "bytes": 64,
+      "sha256": "bc692ba3026858f14ecb2c93b8e419f8aea6fc256721fd354915005fe3655e78"
+    },
+    {
+      "kind": "vertex-consumer",
+      "tier": 1,
+      "part": 0,
+      "offset": 28720,
+      "bytes": 72,
+      "sha256": "4d2dfe5ef96923b097f1fb895e8247632c1c0c513c2bd30f79bac3b785d38d6b"
+    },
+    {
+      "kind": "quads",
+      "tier": 1,
+      "part": 1,
+      "offset": 28648,
+      "bytes": 72,
+      "sha256": "43b213010e021bd2a683b1b318699c1ef3f3d70a08ba81a5c82f119be5a92f5f"
+    },
+    {
+      "kind": "vertices",
+      "tier": 1,
+      "part": 1,
+      "offset": 28784,
+      "bytes": 64,
+      "sha256": "375863365c49f3da6b0d4c819d84173c10ae3d889b8579f7c552af53f5ab00e4"
+    },
+    {
+      "kind": "vertex-consumer",
+      "tier": 1,
+      "part": 1,
+      "offset": 28784,
+      "bytes": 72,
+      "sha256": "4074305c285ef2eb73f73182969d4805a902736a978acce7ab441951abc0eb94"
+    },
+    {
+      "kind": "quads",
+      "tier": 2,
+      "part": 0,
+      "offset": 28908,
+      "bytes": 72,
+      "sha256": "e70fddce10bdf353fb6d7a429370c99e60e645fe7c2413e7a7c460ac714dfcd4"
+    },
+    {
+      "kind": "vertices",
+      "tier": 2,
+      "part": 0,
+      "offset": 29052,
+      "bytes": 64,
+      "sha256": "bc692ba3026858f14ecb2c93b8e419f8aea6fc256721fd354915005fe3655e78"
+    },
+    {
+      "kind": "vertex-consumer",
+      "tier": 2,
+      "part": 0,
+      "offset": 29052,
+      "bytes": 72,
+      "sha256": "4d2dfe5ef96923b097f1fb895e8247632c1c0c513c2bd30f79bac3b785d38d6b"
+    },
+    {
+      "kind": "quads",
+      "tier": 2,
+      "part": 1,
+      "offset": 28980,
+      "bytes": 72,
+      "sha256": "43b213010e021bd2a683b1b318699c1ef3f3d70a08ba81a5c82f119be5a92f5f"
+    },
+    {
+      "kind": "vertices",
+      "tier": 2,
+      "part": 1,
+      "offset": 29116,
+      "bytes": 64,
+      "sha256": "375863365c49f3da6b0d4c819d84173c10ae3d889b8579f7c552af53f5ab00e4"
+    },
+    {
+      "kind": "vertex-consumer",
+      "tier": 2,
+      "part": 1,
+      "offset": 29116,
+      "bytes": 72,
+      "sha256": "0d5ae197f9dbf2aa2b530c5fa21bd1b4f6096c6566d5355ab6e4e6373f6995e9"
+    }
+  ],
+  "pose_cases": [
+    {
+      "request": 0,
+      "record": 0,
+      "frame_index": 0,
+      "sequence_offset": 30004,
+      "sequence_bytes": 8,
+      "sequence_sha256": "1894660c3d47d57d40aa5a6f91a397a2b230906808d9bc1ef8e7d2aadaa88f11",
+      "pose_offset": 29256,
+      "pose_bytes": 128,
+      "pose_sha256": "c53e5e10c0d893ce6d97e38339c6220f8d91e4caff8d43012659b6ea18086953",
+      "retail_state_selection_verified": false
+    },
+    {
+      "request": 2,
+      "record": 16,
+      "frame_index": 16,
+      "sequence_offset": 30292,
+      "sequence_bytes": 8,
+      "sequence_sha256": "b3aa2b07b65ee34031ef4041db5af5af0b9e19d1aa95167ea8ba0c869216aa76",
+      "pose_offset": 29976,
+      "pose_bytes": 128,
+      "pose_sha256": "7ceee2d007f99d7fb39b533e25565f8b98594d7d48313f259c2c153b868ae270",
+      "retail_state_selection_verified": false
+    }
+  ],
+  "synthetic_unpack": {
+    "synthetic_channels": 75,
+    "matched_fields": 75,
+    "steps": 496,
+    "first_three_signed12": true,
+    "input_window_bytes": 128,
+    "decoded_bits": 900,
+    "decoded_vectors": 25,
+    "rotation_vectors": 24,
+    "destination_window_bytes": 198,
+    "method": "bounded original arithmetic on authored synthetic bytes"
+  },
+  "initializer_profile": {
+    "source_address": "0x80106974",
+    "admitted_selectors": {
+      "class": "0x20",
+      "subtype": "0x35",
+      "parameter3": 0,
+      "dispatch4": 0
+    },
+    "ebd_lookup": "0x8002F9C4; null variant selects first class/subtype match",
+    "scale_q12": [
+      512,
+      512,
+      512
+    ],
+    "shade_rgb555": "0x4210",
+    "pre_gte_shade_rgb8": [
+      128,
+      128,
+      128
+    ],
+    "floor_wrapper": "0x80048E6C",
+    "fresh_floor_query_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "fresh_floor_query_bounds_reason": "work+0x78 remains null until after floor call; 0x8004B3C0 null branch clears six bounds",
+    "fresh_floor_query_delta_y": 0,
+    "sha256": "74e661cb52cf8d485f4fe14374c36c376521b9f1c0f81a492745a8d820a5cfa9"
+  },
+  "code_region_hashes": [
+    {
+      "start": "0x80017684",
+      "end_exclusive": "0x800176a4",
+      "sha256": "4d8fc913fdef65822a8bb87b0d6cb067008a68c3a2c3d2540a066f945c2be8e4"
+    },
+    {
+      "start": "0x80028de0",
+      "end_exclusive": "0x80028f90",
+      "sha256": "fbf65f48e48fbfd665fc4e18f9881f808ebe05766af31adc16534e42eed12700"
+    },
+    {
+      "start": "0x8002831c",
+      "end_exclusive": "0x800289a0",
+      "sha256": "f5615bf03a7ef43bc2b42671c2741613faf90f16abcee2f5ff5ae0ac5af3f95d"
+    },
+    {
+      "start": "0x800289a0",
+      "end_exclusive": "0x80028de0",
+      "sha256": "ffa223bdd03d40307bbfc11ed9284cc92a068a6bddb3d08c79b2656ee092b633"
+    },
+    {
+      "start": "0x800322a8",
+      "end_exclusive": "0x80032304",
+      "sha256": "cdcf384a01adf75050031049ecb86bf0667b5ea56dd4d72eec6a45ad72888f53"
+    },
+    {
+      "start": "0x8003346c",
+      "end_exclusive": "0x800334c4",
+      "sha256": "ed2c6206c71aefd57605902d7ef9c91dbe8da422a216893c6737a24c13a7fa6d"
+    },
+    {
+      "start": "0x80033598",
+      "end_exclusive": "0x80033a28",
+      "sha256": "718429375878e2f2616fd87cc53cb37df7483d9a500eb9c24e643e704a99e34b"
+    },
+    {
+      "start": "0x80033a28",
+      "end_exclusive": "0x80033d80",
+      "sha256": "1a33f1f1836eabd8b323aee146134fe1177c8f0e75dfac1d9dddb81840e95355"
+    },
+    {
+      "start": "0x8007b5a8",
+      "end_exclusive": "0x8007b834",
+      "sha256": "acc25faa56212e867a89850e2b80a775a8be7ca6aedc54a6f61e1149bf43aa2c"
+    }
+  ],
+  "limits": [
+    "static consumer proof; no actor gameplay execution",
+    "initial pose choice depends on progression flag/record fields not wired yet",
+    "source identity, AI, damage, audio and animation-request timing unassigned",
+    "native float matrices do not reproduce PS1 integer/GTE rounding"
+  ],
+  "payload_policy": "derived counts, addresses, window sizes and hashes only"
+}

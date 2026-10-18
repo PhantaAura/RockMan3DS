@@ -1,0 +1,1179 @@
+{
+  "created_utc": "2026-09-24T21:18:16.142159+00:00",
+  "scope": "Read-only existing cooked tutorial pack; no raw commercial data, extraction or cooker execution. Self-consistency only, not independent retail accuracy verification.",
+  "pack": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial",
+  "manifest_sha256": "58d4b63e82ef33001f67222cfbfc86a0f772d7117d37ff69bcf104403dbd783a",
+  "manifest_declared_source": "user-owned Mega Man Legends USA DAT directory",
+  "manifest_entries": 100,
+  "hashes_pass": 100,
+  "unlisted_files": [
+    "legends3ds/tutorial/manifest.json"
+  ],
+  "files": [
+    {
+      "path": "legends3ds/tutorial/ebd/area_00.l3ebd",
+      "exists": true,
+      "expected_bytes": 256,
+      "actual_bytes": 256,
+      "expected_sha256": "f8b3f171ffc478938366131a40fe2eadfc5837297f3c181ad5580d5cf9194c5f",
+      "actual_sha256": "f8b3f171ffc478938366131a40fe2eadfc5837297f3c181ad5580d5cf9194c5f",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/ebd/area_01.l3ebd",
+      "exists": true,
+      "expected_bytes": 816,
+      "actual_bytes": 816,
+      "expected_sha256": "e2dea55535aa8b706350f89b9b7ceab65c62d2476af102aa95c6d8511cd6a961",
+      "actual_sha256": "e2dea55535aa8b706350f89b9b7ceab65c62d2476af102aa95c6d8511cd6a961",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/ebd/area_02.l3ebd",
+      "exists": true,
+      "expected_bytes": 816,
+      "actual_bytes": 816,
+      "expected_sha256": "e2dea55535aa8b706350f89b9b7ceab65c62d2476af102aa95c6d8511cd6a961",
+      "actual_sha256": "e2dea55535aa8b706350f89b9b7ceab65c62d2476af102aa95c6d8511cd6a961",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/ebd/area_03.l3ebd",
+      "exists": true,
+      "expected_bytes": 672,
+      "actual_bytes": 672,
+      "expected_sha256": "aae186293ed65bc09f2912d70ff6b258666c458d616afa12bb722f0aea94a51f",
+      "actual_sha256": "aae186293ed65bc09f2912d70ff6b258666c458d616afa12bb722f0aea94a51f",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/ebd/area_04.l3ebd",
+      "exists": true,
+      "expected_bytes": 128,
+      "actual_bytes": 128,
+      "expected_sha256": "c52f42e0262661d5e8ea344ed0f5ea2dcf148af67b28d0eb7866fb6acece9a63",
+      "actual_sha256": "c52f42e0262661d5e8ea344ed0f5ea2dcf148af67b28d0eb7866fb6acece9a63",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/INIT_DAT__OBJ__COMM__PL0000.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "188ea2bbef24de5050a6a57594aeacb4639266327c03bd52737e85d6c444051e",
+      "actual_sha256": "188ea2bbef24de5050a6a57594aeacb4639266327c03bd52737e85d6c444051e",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/INIT_DAT__OBJ__COMM__PL0001.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "cf1b3722dad5c16e2e284e75f17a0aaa2d86c533fb4acf60b843f205c2ef7d49",
+      "actual_sha256": "cf1b3722dad5c16e2e284e75f17a0aaa2d86c533fb4acf60b843f205c2ef7d49",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/INIT_DAT__OBJ__FACE__PL00B00.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "4d6313afa4c19d3a242e72a0a0a35b977ddc1ccc90544263e825b8ffcfb45595",
+      "actual_sha256": "4d6313afa4c19d3a242e72a0a0a35b977ddc1ccc90544263e825b8ffcfb45595",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_00__OBJ__COMM__PL0000.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "bd2bbcf2ceeee59c3a42327fff4450d9cc83f1d9499a486b3c527e2a94777cac",
+      "actual_sha256": "bd2bbcf2ceeee59c3a42327fff4450d9cc83f1d9499a486b3c527e2a94777cac",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_00__OBJ__COMM__PL0001.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "cf1b3722dad5c16e2e284e75f17a0aaa2d86c533fb4acf60b843f205c2ef7d49",
+      "actual_sha256": "cf1b3722dad5c16e2e284e75f17a0aaa2d86c533fb4acf60b843f205c2ef7d49",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_00__OBJ__FACE__PL00B01.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "7a8cb9f68f757cdb5d2dac527e009292b0a22e2b04bd461ed085aa642503fb9d",
+      "actual_sha256": "7a8cb9f68f757cdb5d2dac527e009292b0a22e2b04bd461ed085aa642503fb9d",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__OBJ__COMM__PL0000N.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "bc583a068a2474d72db967d23777e014378da9348621c12294fecd2fce737332",
+      "actual_sha256": "bc583a068a2474d72db967d23777e014378da9348621c12294fecd2fce737332",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__OBJ__COMM__PL0001N.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "2cce6fa10d72a0e8cc0e4d5aff4584f29cd89faec7832b3e7eac8a49da8dc249",
+      "actual_sha256": "2cce6fa10d72a0e8cc0e4d5aff4584f29cd89faec7832b3e7eac8a49da8dc249",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__OBJ__FACE__PL00B00N.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "ba58b588a5899e4e0b7a7487f34f80a176130f435b09f5f944a8e59397dbc2d7",
+      "actual_sha256": "ba58b588a5899e4e0b7a7487f34f80a176130f435b09f5f944a8e59397dbc2d7",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__OBJ__ST00__AR01__EM0300.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "f702e0d448f6161215cfcbf520045e73632d3262f330719bcdc6bc46f535288b",
+      "actual_sha256": "f702e0d448f6161215cfcbf520045e73632d3262f330719bcdc6bc46f535288b",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__OBJ__ST00__AR01__EM0400.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "144a5abf0b7b6b6d1fec79aa9505cbc5c4828c376210c1b5fd1c220f96c49daa",
+      "actual_sha256": "144a5abf0b7b6b6d1fec79aa9505cbc5c4828c376210c1b5fd1c220f96c49daa",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__OBJ__ST00__AR01__EM3500.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "a1d2110d89b371affdc224c2c58086c3041ddddbd894dbc724087372df85e3dc",
+      "actual_sha256": "a1d2110d89b371affdc224c2c58086c3041ddddbd894dbc724087372df85e3dc",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__SCR__st00__tcc600.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "68954fab9cb8559634b16e9fb98a3a78310b08d0e54c754d0e689380b5db3f88",
+      "actual_sha256": "68954fab9cb8559634b16e9fb98a3a78310b08d0e54c754d0e689380b5db3f88",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_01__SCR__st00__tcc601.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "5a3abc0d873ed58b0170d8505f5591fa10464479ddd7bd918ab038197466980a",
+      "actual_sha256": "5a3abc0d873ed58b0170d8505f5591fa10464479ddd7bd918ab038197466980a",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__OBJ__COMM__PL0000N.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "bc583a068a2474d72db967d23777e014378da9348621c12294fecd2fce737332",
+      "actual_sha256": "bc583a068a2474d72db967d23777e014378da9348621c12294fecd2fce737332",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__OBJ__COMM__PL0001N.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "2cce6fa10d72a0e8cc0e4d5aff4584f29cd89faec7832b3e7eac8a49da8dc249",
+      "actual_sha256": "2cce6fa10d72a0e8cc0e4d5aff4584f29cd89faec7832b3e7eac8a49da8dc249",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__OBJ__FACE__PL00B00N.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "b7a6bac0e31229c21a40179b2981708e1f137290902ebd9d5b773a419900b614",
+      "actual_sha256": "b7a6bac0e31229c21a40179b2981708e1f137290902ebd9d5b773a419900b614",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__OBJ__ST00__AR01__BATTERY.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "ee253372860b2fdf02207d7fe1e9747ddd300daf7d2ee4aeb5edfe470682260d",
+      "actual_sha256": "ee253372860b2fdf02207d7fe1e9747ddd300daf7d2ee4aeb5edfe470682260d",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__OBJ__ST00__AR01__BS0400.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "a1e80246dbea0ab37e4f7f22b9f99168c822308bb97750fcdf120b0b62945719",
+      "actual_sha256": "a1e80246dbea0ab37e4f7f22b9f99168c822308bb97750fcdf120b0b62945719",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__OBJ__ST00__AR01__EM0300.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "f702e0d448f6161215cfcbf520045e73632d3262f330719bcdc6bc46f535288b",
+      "actual_sha256": "f702e0d448f6161215cfcbf520045e73632d3262f330719bcdc6bc46f535288b",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__OBJ__ST00__AR01__KONTE.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 8512,
+      "actual_bytes": 8512,
+      "expected_sha256": "ead47f225a44b8b1b78c56f57d23c9f7adde136d9008abbaebd95c2bd29c7403",
+      "actual_sha256": "ead47f225a44b8b1b78c56f57d23c9f7adde136d9008abbaebd95c2bd29c7403",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__SCR__st00__tcc630.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "dee573677643a9d2ec9f53bad06cb1ff715d16975a51ebee0af7b511c77f4f9c",
+      "actual_sha256": "dee573677643a9d2ec9f53bad06cb1ff715d16975a51ebee0af7b511c77f4f9c",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_02__SCR__st00__tcc631.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "f77ae3b64b1059638c5c5e441d7d8152b624b59e845b4f75460b0d213344f403",
+      "actual_sha256": "f77ae3b64b1059638c5c5e441d7d8152b624b59e845b4f75460b0d213344f403",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_03__OBJ__COMM__PL0000N.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "bc583a068a2474d72db967d23777e014378da9348621c12294fecd2fce737332",
+      "actual_sha256": "bc583a068a2474d72db967d23777e014378da9348621c12294fecd2fce737332",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_03__OBJ__COMM__PL0001N.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "2cce6fa10d72a0e8cc0e4d5aff4584f29cd89faec7832b3e7eac8a49da8dc249",
+      "actual_sha256": "2cce6fa10d72a0e8cc0e4d5aff4584f29cd89faec7832b3e7eac8a49da8dc249",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_03__OBJ__FACE__PL00B00N.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "ba58b588a5899e4e0b7a7487f34f80a176130f435b09f5f944a8e59397dbc2d7",
+      "actual_sha256": "ba58b588a5899e4e0b7a7487f34f80a176130f435b09f5f944a8e59397dbc2d7",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_03__OBJ__ST00__AR01__BS0200x.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "1cbd9ac79f965bfe9cef1c36535c8722fcf379967a61d2d6ebe516ea50056456",
+      "actual_sha256": "1cbd9ac79f965bfe9cef1c36535c8722fcf379967a61d2d6ebe516ea50056456",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_03__SCR__st00__tcca10.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "fec3b153632f9630c064a382430f0f5a8576d1872fda1fe74dd4b677a19cdc38",
+      "actual_sha256": "fec3b153632f9630c064a382430f0f5a8576d1872fda1fe74dd4b677a19cdc38",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_03__SCR__st00__tcca11.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "02195014651d336bd1e337f3930dfc55492610e8506d0ffc91df19126102a21d",
+      "actual_sha256": "02195014651d336bd1e337f3930dfc55492610e8506d0ffc91df19126102a21d",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__BG__CHAR__ST00BG00.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 32896,
+      "actual_bytes": 32896,
+      "expected_sha256": "4fb92e2ccda108c7a2a959dee25dcb618082e6d4d74c31647b5c4040d0761dbb",
+      "actual_sha256": "4fb92e2ccda108c7a2a959dee25dcb618082e6d4d74c31647b5c4040d0761dbb",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__OBJ__COMM__PL0000.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "bd2bbcf2ceeee59c3a42327fff4450d9cc83f1d9499a486b3c527e2a94777cac",
+      "actual_sha256": "bd2bbcf2ceeee59c3a42327fff4450d9cc83f1d9499a486b3c527e2a94777cac",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__OBJ__COMM__PL0001.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "cf1b3722dad5c16e2e284e75f17a0aaa2d86c533fb4acf60b843f205c2ef7d49",
+      "actual_sha256": "cf1b3722dad5c16e2e284e75f17a0aaa2d86c533fb4acf60b843f205c2ef7d49",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__OBJ__FACE__PL00B02.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "44f094a9d0f2ba56ed882690552e6c90b2be5f41bac7a3d37ac6ac204ea4d45b",
+      "actual_sha256": "44f094a9d0f2ba56ed882690552e6c90b2be5f41bac7a3d37ac6ac204ea4d45b",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__OBJ__ST00__AR04__BS0200Z.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "deed4782d02cb35b13274c995eb2be2a58a2384812f375e012dcede85ce753df",
+      "actual_sha256": "deed4782d02cb35b13274c995eb2be2a58a2384812f375e012dcede85ce753df",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__OBJ__ST00__AR04__EM0A00.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "0b5c0fb809fc58799257212e45c7202c64f380be097967ebaa268db7cad91d0e",
+      "actual_sha256": "0b5c0fb809fc58799257212e45c7202c64f380be097967ebaa268db7cad91d0e",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__OBJ__ST00__AR04__EM1D00.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "73758eeefec61bef53fc06a7b27e7db4f3076456b153d421070cba45685696c0",
+      "actual_sha256": "73758eeefec61bef53fc06a7b27e7db4f3076456b153d421070cba45685696c0",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__SCR__st00__op00.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "ca514af9efa7ef3b14df6077bc579c1abb3cef4e4c766879cb6b839699feba52",
+      "actual_sha256": "ca514af9efa7ef3b14df6077bc579c1abb3cef4e4c766879cb6b839699feba52",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00_04__SCR__st00__op02.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 8512,
+      "actual_bytes": 8512,
+      "expected_sha256": "ad493ce56976dc4ded72a24b706663cbbae23d4851ff8dfe3907d5b169c167b1",
+      "actual_sha256": "ad493ce56976dc4ded72a24b706663cbbae23d4851ff8dfe3907d5b169c167b1",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__OBJ__COMM__DKOUKA01.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "772692c9332a18a55f7f07af2486aed11f18804bbb16094ebade112a9ea34406",
+      "actual_sha256": "772692c9332a18a55f7f07af2486aed11f18804bbb16094ebade112a9ea34406",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU500.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "b9b3118d97fa5dff5c65beebc34bdd0682bef466cfbe6dc093199ed3924bf2e9",
+      "actual_sha256": "b9b3118d97fa5dff5c65beebc34bdd0682bef466cfbe6dc093199ed3924bf2e9",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU510.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "21c85da4402043002f2167662d43e3f8978978c689624c07553a85c2cb79ad40",
+      "actual_sha256": "21c85da4402043002f2167662d43e3f8978978c689624c07553a85c2cb79ad40",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU520.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "84bc7ed9baee0fa1a934d7bb49ddf64b669fcc4c48f5f86d830bc06585cf7b48",
+      "actual_sha256": "84bc7ed9baee0fa1a934d7bb49ddf64b669fcc4c48f5f86d830bc06585cf7b48",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU600.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 16704,
+      "actual_bytes": 16704,
+      "expected_sha256": "9338dbab27e13d741b0e71c0832f52d17f99a3cf914726086de5730338c9e522",
+      "actual_sha256": "9338dbab27e13d741b0e71c0832f52d17f99a3cf914726086de5730338c9e522",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU610.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 10560,
+      "actual_bytes": 10560,
+      "expected_sha256": "8450271b1011721dc1b7e80d0bf94d2ea4e00e1030f9d90624f8688058784365",
+      "actual_sha256": "8450271b1011721dc1b7e80d0bf94d2ea4e00e1030f9d90624f8688058784365",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU620.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 8512,
+      "actual_bytes": 8512,
+      "expected_sha256": "aef8570c6a05a6f835a6154b7f654a0320af9e79441b7860242fa9918f532a3d",
+      "actual_sha256": "aef8570c6a05a6f835a6154b7f654a0320af9e79441b7860242fa9918f532a3d",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU630.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "ace00af093dc44ffb95acd98245b98e0454da9556aaa6a12b204049a370819c1",
+      "actual_sha256": "ace00af093dc44ffb95acd98245b98e0454da9556aaa6a12b204049a370819c1",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU640.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 4416,
+      "actual_bytes": 4416,
+      "expected_sha256": "e7ab7938a453ea810eca634e5a1d6b12ca8d21b985282737e593e3b6695650d5",
+      "actual_sha256": "e7ab7938a453ea810eca634e5a1d6b12ca8d21b985282737e593e3b6695650d5",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU700.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "72835bb50557f5db75e44ba7d5a41c62d823d4ea02e9566aeb6770c9ad018387",
+      "actual_sha256": "72835bb50557f5db75e44ba7d5a41c62d823d4ea02e9566aeb6770c9ad018387",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU710.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 8512,
+      "actual_bytes": 8512,
+      "expected_sha256": "a2292d0543758d166fb6eb924300882a39a2bd3287a9be6900ecf8a9a20e8e98",
+      "actual_sha256": "a2292d0543758d166fb6eb924300882a39a2bd3287a9be6900ecf8a9a20e8e98",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU720.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "29c411f2c06a525b27813f0d239d0a1d6adb12aee56a39c5fa7fb0c25bd43260",
+      "actual_sha256": "29c411f2c06a525b27813f0d239d0a1d6adb12aee56a39c5fa7fb0c25bd43260",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU800.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "7998284f58b5b740bed6ec1391ebb770108b696cb6cadb45ee8b9176c3a83b3e",
+      "actual_sha256": "7998284f58b5b740bed6ec1391ebb770108b696cb6cadb45ee8b9176c3a83b3e",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU810.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "5fa66a80386b277d3180c2ac509a8790065e4c7bdfd6604b220713318381bf8e",
+      "actual_sha256": "5fa66a80386b277d3180c2ac509a8790065e4c7bdfd6604b220713318381bf8e",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU820.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "b27b10fb95701de57448b35e9e9176ae3e77e7bcf8cdcfea4a3756264b745371",
+      "actual_sha256": "b27b10fb95701de57448b35e9e9176ae3e77e7bcf8cdcfea4a3756264b745371",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU830.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "62b3c995a26491e283961d493b682b5bd311b3f1a95b1251e0e5f89a71de9aa7",
+      "actual_sha256": "62b3c995a26491e283961d493b682b5bd311b3f1a95b1251e0e5f89a71de9aa7",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU840.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "54fca8884d7ec14e72b70efac72a904538dc7bb02c2be56af8cb95f0c1065c24",
+      "actual_sha256": "54fca8884d7ec14e72b70efac72a904538dc7bb02c2be56af8cb95f0c1065c24",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU900.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 4416,
+      "actual_bytes": 4416,
+      "expected_sha256": "7eabacd0cd3c81b69368696632a8420455c1cb49f775fddbbeb8eb954253216e",
+      "actual_sha256": "7eabacd0cd3c81b69368696632a8420455c1cb49f775fddbbeb8eb954253216e",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU910.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 4416,
+      "actual_bytes": 4416,
+      "expected_sha256": "8ff1cfb3af541aeb77d897cc96515a63ce63c375a2893ee38f50847c25645ad3",
+      "actual_sha256": "8ff1cfb3af541aeb77d897cc96515a63ce63c375a2893ee38f50847c25645ad3",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU920.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 8512,
+      "actual_bytes": 8512,
+      "expected_sha256": "f74478ae6db47c6869bcc8696b1c5d9350dfb1a836be7d8d5553249505fbd148",
+      "actual_sha256": "f74478ae6db47c6869bcc8696b1c5d9350dfb1a836be7d8d5553249505fbd148",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOU930.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 4416,
+      "actual_bytes": 4416,
+      "expected_sha256": "5ba0444e519d26a1572024fc5651a6e96af9d8c362551123b0d9e26b16f8abcf",
+      "actual_sha256": "5ba0444e519d26a1572024fc5651a6e96af9d8c362551123b0d9e26b16f8abcf",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOUa00.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "b8caadfb5436d892d8bd9a39cbe9183a585a00bb73ebc7fe1fc734982e66a240",
+      "actual_sha256": "b8caadfb5436d892d8bd9a39cbe9183a585a00bb73ebc7fe1fc734982e66a240",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__TOUa10.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 304,
+      "actual_bytes": 304,
+      "expected_sha256": "3079563a8e73c8c0646f8c163edd2a8e28c5523b9e070bab9ecd92df3d4d0932",
+      "actual_sha256": "3079563a8e73c8c0646f8c163edd2a8e28c5523b9e070bab9ecd92df3d4d0932",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tcc100.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "83cc583d622b44cd82b77b7e72cfe3b909117ebe693d8f2c7fd5f242566c9a25",
+      "actual_sha256": "83cc583d622b44cd82b77b7e72cfe3b909117ebe693d8f2c7fd5f242566c9a25",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tcc300.TIM.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "986b0f4dea63156b8ff0d0fff3ffa3b7e0407b0c95cb03daecc6096e6596154a",
+      "actual_sha256": "986b0f4dea63156b8ff0d0fff3ffa3b7e0407b0c95cb03daecc6096e6596154a",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tcc500.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "a972eb643ac0f77f3054d0202444759d94f8edc0dc677181e7e7b1042216ccce",
+      "actual_sha256": "a972eb643ac0f77f3054d0202444759d94f8edc0dc677181e7e7b1042216ccce",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tcc501.CLT.l3pal",
+      "exists": true,
+      "expected_bytes": 80,
+      "actual_bytes": 80,
+      "expected_sha256": "81c73990de293aef07756b744ca5882149598143716b20a3fa29ee8241660900",
+      "actual_sha256": "81c73990de293aef07756b744ca5882149598143716b20a3fa29ee8241660900",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tou100.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 32992,
+      "actual_bytes": 32992,
+      "expected_sha256": "900b4f50e5145f4c1cf32c114fa85af9df2b1b26a0b4d2453649684d411e47d1",
+      "actual_sha256": "900b4f50e5145f4c1cf32c114fa85af9df2b1b26a0b4d2453649684d411e47d1",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tou200.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33088,
+      "actual_bytes": 33088,
+      "expected_sha256": "83a2b6c32cbb839c5755ec0688a809c86ba3ce21d8d2c11230cee551ef4c3a6c",
+      "actual_sha256": "83a2b6c32cbb839c5755ec0688a809c86ba3ce21d8d2c11230cee551ef4c3a6c",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tou300.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 33056,
+      "actual_bytes": 33056,
+      "expected_sha256": "46e4635cd04946e9dea43ee11630e65084e3605173ada841aae03bdc4cb030c1",
+      "actual_sha256": "46e4635cd04946e9dea43ee11630e65084e3605173ada841aae03bdc4cb030c1",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/indexed/ST00__SCR__st00__tou400.TIM.l3tex",
+      "exists": true,
+      "expected_bytes": 32928,
+      "actual_bytes": 32928,
+      "expected_sha256": "4f94b9d512532f16e629cfcfcb2fad45edb5ec9fe58b32aba759dfccebc43654",
+      "actual_sha256": "4f94b9d512532f16e629cfcfcb2fad45edb5ec9fe58b32aba759dfccebc43654",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/area_00.l3mc",
+      "exists": true,
+      "expected_bytes": 328208,
+      "actual_bytes": 328208,
+      "expected_sha256": "4bf7cf02eff8ea87edb4497767ff68e83b79bcb52bfc8a35f84c8dced8908356",
+      "actual_sha256": "4bf7cf02eff8ea87edb4497767ff68e83b79bcb52bfc8a35f84c8dced8908356",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/area_01.l3mc",
+      "exists": true,
+      "expected_bytes": 590560,
+      "actual_bytes": 590560,
+      "expected_sha256": "b0793edca7258ee14ec433bdc4410757b3d6941e86a67a5930df5cb30b5d1b58",
+      "actual_sha256": "b0793edca7258ee14ec433bdc4410757b3d6941e86a67a5930df5cb30b5d1b58",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/area_02.l3mc",
+      "exists": true,
+      "expected_bytes": 656128,
+      "actual_bytes": 656128,
+      "expected_sha256": "e5994f6809465689a4cf09498ccbbe951a545e932bd3d7e8968eaf11f3e23b56",
+      "actual_sha256": "e5994f6809465689a4cf09498ccbbe951a545e932bd3d7e8968eaf11f3e23b56",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/area_03.l3mc",
+      "exists": true,
+      "expected_bytes": 196872,
+      "actual_bytes": 196872,
+      "expected_sha256": "1f4fda0c77ff1d83c132e2f54b33e8c7533f7c233c1d44e52d88b241f6246322",
+      "actual_sha256": "1f4fda0c77ff1d83c132e2f54b33e8c7533f7c233c1d44e52d88b241f6246322",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/area_04.l3mc",
+      "exists": true,
+      "expected_bytes": 131264,
+      "actual_bytes": 131264,
+      "expected_sha256": "36ff63a42d7553f0913916b44438a9c9d1906c35f9b9cd6af2ba0af9fd1b3d3a",
+      "actual_sha256": "36ff63a42d7553f0913916b44438a9c9d1906c35f9b9cd6af2ba0af9fd1b3d3a",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/player_area_00.l3mc",
+      "exists": true,
+      "expected_bytes": 131264,
+      "actual_bytes": 131264,
+      "expected_sha256": "bfe6fd2bac2c60b5ecabd29916926719880519d78cc523346cb700f54c8d1802",
+      "actual_sha256": "bfe6fd2bac2c60b5ecabd29916926719880519d78cc523346cb700f54c8d1802",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/player_area_01.l3mc",
+      "exists": true,
+      "expected_bytes": 131264,
+      "actual_bytes": 131264,
+      "expected_sha256": "a7a60221ca0e089bd7a59d483589b7d254538b5725b95737cb78fe128cdaf921",
+      "actual_sha256": "a7a60221ca0e089bd7a59d483589b7d254538b5725b95737cb78fe128cdaf921",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/player_area_02.l3mc",
+      "exists": true,
+      "expected_bytes": 131264,
+      "actual_bytes": 131264,
+      "expected_sha256": "78f8ec219572b98fbd2ccdeb89c08c23d8e8266e057ce5fe8fe74905bc377620",
+      "actual_sha256": "78f8ec219572b98fbd2ccdeb89c08c23d8e8266e057ce5fe8fe74905bc377620",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/player_area_03.l3mc",
+      "exists": true,
+      "expected_bytes": 131264,
+      "actual_bytes": 131264,
+      "expected_sha256": "bcecbb718700a95e9f3b9e0fecad4b0f0dc999c57e1cd923b42970b2bea611ad",
+      "actual_sha256": "bcecbb718700a95e9f3b9e0fecad4b0f0dc999c57e1cd923b42970b2bea611ad",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/materials/player_area_04.l3mc",
+      "exists": true,
+      "expected_bytes": 131264,
+      "actual_bytes": 131264,
+      "expected_sha256": "63fafd38cbdab2fae7d6f275fb69d6bc2b692fc5f7a06e8bb11bc81a8c322e41",
+      "actual_sha256": "63fafd38cbdab2fae7d6f275fb69d6bc2b692fc5f7a06e8bb11bc81a8c322e41",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/messages/st00_01.l3msg",
+      "exists": true,
+      "expected_bytes": 9614,
+      "actual_bytes": 9614,
+      "expected_sha256": "e72af2177765ba9a8f4be9049614efa8ad6d0eeb89dae2196e5a7fc82bf720ed",
+      "actual_sha256": "e72af2177765ba9a8f4be9049614efa8ad6d0eeb89dae2196e5a7fc82bf720ed",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/messages/st00_02.l3msg",
+      "exists": true,
+      "expected_bytes": 19079,
+      "actual_bytes": 19079,
+      "expected_sha256": "69422d047542859d062258e003e2bdf147c5b190426eefe7d4d24743067af22c",
+      "actual_sha256": "69422d047542859d062258e003e2bdf147c5b190426eefe7d4d24743067af22c",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/body.l3model",
+      "exists": true,
+      "expected_bytes": 2888,
+      "actual_bytes": 2888,
+      "expected_sha256": "8e2d285dde3a94607f4b67fe4456de3c7c017f3b4a65a07f7b74c0df6053d75a",
+      "actual_sha256": "8e2d285dde3a94607f4b67fe4456de3c7c017f3b4a65a07f7b74c0df6053d75a",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/feet.l3model",
+      "exists": true,
+      "expected_bytes": 928,
+      "actual_bytes": 928,
+      "expected_sha256": "8589711b9b956133482957240051449b9aee8d0581930a3f1596d3fbd2075dbd",
+      "actual_sha256": "8589711b9b956133482957240051449b9aee8d0581930a3f1596d3fbd2075dbd",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/head.l3model",
+      "exists": true,
+      "expected_bytes": 3472,
+      "actual_bytes": 3472,
+      "expected_sha256": "501e9cd71f748dfcc3d647850ddef2d3ac6e674f4e486c6ecf3e0447a68e43ed",
+      "actual_sha256": "501e9cd71f748dfcc3d647850ddef2d3ac6e674f4e486c6ecf3e0447a68e43ed",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/left.l3anim",
+      "exists": true,
+      "expected_bytes": 1432,
+      "actual_bytes": 1432,
+      "expected_sha256": "915f4e6641e178acef923e6df74abdf53847a0b390f51e1a48d85faf6c712a50",
+      "actual_sha256": "915f4e6641e178acef923e6df74abdf53847a0b390f51e1a48d85faf6c712a50",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/left.l3model",
+      "exists": true,
+      "expected_bytes": 1632,
+      "actual_bytes": 1632,
+      "expected_sha256": "eaba92638ce420e823cca6fdcff7dc0a2af451cebeb7bc88b0c70b2fe8aaaec6",
+      "actual_sha256": "eaba92638ce420e823cca6fdcff7dc0a2af451cebeb7bc88b0c70b2fe8aaaec6",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/main.l3anim",
+      "exists": true,
+      "expected_bytes": 69576,
+      "actual_bytes": 69576,
+      "expected_sha256": "e0ab6305a7e24610e10af2797cc835a36ed7a29e5cf9ef6dd7ce9cc71b3ad69f",
+      "actual_sha256": "e0ab6305a7e24610e10af2797cc835a36ed7a29e5cf9ef6dd7ce9cc71b3ad69f",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/main.l3skel",
+      "exists": true,
+      "expected_bytes": 228,
+      "actual_bytes": 228,
+      "expected_sha256": "ec92dc9fa98b6075b2856b25cb440b8d0fef5574ec55a1aec7f89d040abe82b7",
+      "actual_sha256": "ec92dc9fa98b6075b2856b25cb440b8d0fef5574ec55a1aec7f89d040abe82b7",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/player.l3pc",
+      "exists": true,
+      "expected_bytes": 176,
+      "actual_bytes": 176,
+      "expected_sha256": "f348b5fd18194b9f60fa0b5a1672f9683ce0563e572b8c61743b51f8dcf084e2",
+      "actual_sha256": "f348b5fd18194b9f60fa0b5a1672f9683ce0563e572b8c61743b51f8dcf084e2",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/right.l3anim",
+      "exists": true,
+      "expected_bytes": 1432,
+      "actual_bytes": 1432,
+      "expected_sha256": "eb7ab3aeb64608c9ff10d6ed3bf0b1a3632b24d1fda363eecca818c33131bc4e",
+      "actual_sha256": "eb7ab3aeb64608c9ff10d6ed3bf0b1a3632b24d1fda363eecca818c33131bc4e",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/player/right.l3model",
+      "exists": true,
+      "expected_bytes": 1632,
+      "actual_bytes": 1632,
+      "expected_sha256": "23e1492bb4b2e452f263521a6b2811c8cafc5f93a94e9c5648ef8b868859051b",
+      "actual_sha256": "23e1492bb4b2e452f263521a6b2811c8cafc5f93a94e9c5648ef8b868859051b",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/reference.l3ref",
+      "exists": true,
+      "expected_bytes": 16416,
+      "actual_bytes": 16416,
+      "expected_sha256": "25b43f2161f7c57ce2110a6250e7c28271cd7b7de7a238886a4d3d2bb78ca0b0",
+      "actual_sha256": "25b43f2161f7c57ce2110a6250e7c28271cd7b7de7a238886a4d3d2bb78ca0b0",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/st00.l3flow",
+      "exists": true,
+      "expected_bytes": 1580,
+      "actual_bytes": 1580,
+      "expected_sha256": "4cb48b1ade145f09a37b67e10c4e43600f8eac95913e9b4b1fbe318f0ad19cfa",
+      "actual_sha256": "4cb48b1ade145f09a37b67e10c4e43600f8eac95913e9b4b1fbe318f0ad19cfa",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/st00.l3map",
+      "exists": true,
+      "expected_bytes": 30446,
+      "actual_bytes": 30446,
+      "expected_sha256": "94c703b1d6dcf1690afcf8dc1e738c124936919cb33f302b0796941378c72545",
+      "actual_sha256": "94c703b1d6dcf1690afcf8dc1e738c124936919cb33f302b0796941378c72545",
+      "pass": true
+    },
+    {
+      "path": "legends3ds/tutorial/st00.l3render",
+      "exists": true,
+      "expected_bytes": 78360,
+      "actual_bytes": 78360,
+      "expected_sha256": "f25348fc2fa9743210c205c148c43f650d95dd247ffb7a95723152c68ca99faa",
+      "actual_sha256": "f25348fc2fa9743210c205c148c43f650d95dd247ffb7a95723152c68ca99faa",
+      "pass": true
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3flight_material_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial"
+      ],
+      "returncode": 0,
+      "stdout": "area=0 primitives=1752 resolved=928 unresolved=824\narea=1 primitives=854 resolved=494 unresolved=360\narea=2 primitives=674 resolved=674 unresolved=0\narea=3 primitives=120 resolved=120 unresolved=0\narea=4 primitives=12112 resolved=12112 unresolved=0\nterrain_total=15512 resolved=14328 unresolved=1184\nplayer_materials=2 all_areas_resolved=YES\n",
+      "stderr": "",
+      "executable_sha256": "aa4b2b9c9de16ea5f45e0ed940d35e0338c4098ccf2c90663cb76c92aa5fc2a8"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3flight_render_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial"
+      ],
+      "returncode": 0,
+      "stdout": "area=0 positive=40 mid_primitives=1752\narea=1 positive=130 mid_primitives=854\narea=2 positive=202 mid_primitives=674\narea=3 positive=24 mid_primitives=120\narea=4 positive=2496 mid_primitives=12112\nflight_render_probe=PASS total_mid_primitives=15512 triangle_vertices=93072\n",
+      "stderr": "",
+      "executable_sha256": "75669d390f11e67b9950cbadf74b48f0adeba04d9853b1016f8b0459142ede05"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3runtime_session_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial"
+      ],
+      "returncode": 0,
+      "stdout": "areas=5 mapped=5 moved=5 ui_commands=65 dialogue_audio_requests=1 save_area=4 save_bytes=322\n",
+      "stderr": "",
+      "executable_sha256": "591a9075639c5aa7e73682eaaa4a996080ac8b457c69b27f910978f7aa1b8fb8"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3flight_animation_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/player/main.l3anim",
+        "0x0c"
+      ],
+      "returncode": 0,
+      "stdout": "request=0x00 S_records=60 M_action=1 M_frames=31 structural=PASS\nrequest=0x01 S_records=16 M_action=2 M_frames=16 structural=PASS\nrequest=0x04 S_records=5 M_action=5 M_frames=5 structural=PASS\nrequest=0x05 S_records=5 M_action=6 M_frames=5 structural=PASS\nrequest=0x06 S_records=4 M_action=7 M_frames=4 structural=PASS\nrequest=0x07 S_records=5 M_action=8 M_frames=5 structural=PASS\nrequest=0x08 S_records=4 M_action=9 M_frames=4 structural=PASS\nrequest=0x09 S_records=5 M_action=10 M_frames=5 structural=PASS\nrequest=0x0a S_records=5 M_action=11 M_frames=5 structural=PASS\nrequest=0x0c S_records=32 M_action=13 M_frames=32 structural=PASS\nrequest=0x0d S_records=28 M_action=14 M_frames=28 structural=PASS\nrequest=0x0e S_records=24 M_action=15 M_frames=24 structural=PASS\nrequest=0x0f S_records=24 M_action=16 M_frames=24 structural=PASS\nrequest=0x10 S_records=3 M_action=17 M_frames=3 structural=PASS\nrequest=0x11 S_records=18 M_action=18 M_frames=18 structural=PASS\nrequest=0x12 S_records=18 M_action=19 M_frames=18 structural=PASS\nrequest=0x13 S_records=3 M_action=20 M_frames=3 structural=PASS\nrequest=0x14 S_records=18 M_action=21 M_frames=18 structural=PASS\nrequest=0x15 S_records=18 M_action=22 M_frames=18 structural=PASS\nrequest=0x16 S_records=3 M_action=23 M_frames=3 structural=PASS\nrequest=0x17 S_records=6 M_action=24 M_frames=6 structural=PASS\nrequest=0x18 S_records=3 M_action=25 M_frames=3 structural=PASS\nrequest=0x19 S_records=3 M_action=26 M_frames=3 structural=PASS\nrequest=0x1a S_records=9 M_action=27 M_frames=9 structural=PASS\nrequest=0x1b S_records=8 M_action=28 M_frames=8 structural=PASS\nrequest=0x1c S_records=8 M_action=29 M_frames=8 structural=PASS\nrequest=0x1d S_records=5 M_action=30 M_frames=5 structural=PASS\nrequest=0x1e S_records=58 M_action=31 M_frames=30 structural=PASS\nrequest=0x1f S_records=20 M_action=32 M_frames=20 structural=PASS\nrequest=0x20 S_records=12 M_action=33 M_frames=14 structural=PASS\nrequest=0x21 S_records=14 M_action=34 M_frames=14 structural=PASS\nrequest=0x22 S_records=32 M_action=35 M_frames=32 structural=PASS\nrequest=0x23 S_records=10 M_action=36 M_frames=10 structural=PASS\nrequest=0x24 S_records=17 M_action=37 M_frames=17 structural=PASS\nrequest=0x25 S_records=21 M_action=38 M_frames=21 structural=PASS\nrequest=0x26 S_records=32 M_action=39 M_frames=32 structural=PASS\nrequest=0x27 S_records=10 M_action=40 M_frames=10 structural=PASS\nrequest=0x29 S_records=21 M_action=42 M_frames=21 structural=PASS\nrequest=0x2a S_records=5 M_action=43 M_frames=5 structural=PASS\nrequest=0x2b S_records=5 M_action=44 M_frames=5 structural=PASS\nrequest=0x2c S_records=5 M_action=45 M_frames=5 structural=PASS\nrequest=0x2d S_records=7 M_action=46 M_frames=7 structural=PASS\nrequest=0x30 S_records=10 M_action=49 M_frames=10 structural=PASS\nrequest=0x31 S_records=10 M_action=50 M_frames=10 structural=PASS\nrequest=0x32 S_records=20 M_action=51 M_frames=20 structural=PASS\nrequest=0x33 S_records=32 M_action=52 M_frames=32 structural=PASS\nrequest=0x34 S_records=32 M_action=53 M_frames=32 structural=PASS\nrequest=0x35 S_records=30 M_action=54 M_frames=30 structural=PASS\nrequest=0x36 S_records=36 M_action=55 M_frames=19 structural=PASS\nrequest=0x38 S_records=20 M_action=57 M_frames=20 structural=PASS\nrequest=0x39 S_records=4 M_action=58 M_frames=4 structural=PASS\nrequest=0x3a S_records=13 M_action=59 M_frames=13 structural=PASS\nrequest=0x3b S_records=9 M_action=60 M_frames=9 structural=PASS\nrequest=0x3c S_records=4 M_action=61 M_frames=4 structural=PASS\nrequest=0x3d S_records=4 M_action=62 M_frames=4 structural=PASS\nmapped_requests=55 S_records=833 zero_tick_records=0 branches=10 repeats=45 crc=PASS\n",
+      "stderr": "",
+      "executable_sha256": "919dff007435c316c4ccf6f40ec4959ad7f8c645eff457bddf645cef084ba6b6"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/area_00.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=8 resolved=5 unresolved=3 page=256x256 bytes=328208\nunresolved=0x7c810016\nunresolved=0x7c830016\nunresolved=0x7cc20017\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/area_01.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=10 resolved=9 unresolved=1 page=256x256 bytes=590560\nunresolved=0x7cc20017\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/area_02.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=10 resolved=10 unresolved=0 page=256x256 bytes=656128\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/area_03.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=3 resolved=3 unresolved=0 page=256x256 bytes=196872\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/area_04.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=2 resolved=2 unresolved=0 page=256x256 bytes=131264\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/player_area_00.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=2 resolved=2 unresolved=0 page=256x256 bytes=131264\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/player_area_01.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=2 resolved=2 unresolved=0 page=256x256 bytes=131264\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/player_area_02.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=2 resolved=2 unresolved=0 page=256x256 bytes=131264\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/player_area_03.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=2 resolved=2 unresolved=0 page=256x256 bytes=131264\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/materials/player_area_04.l3mc"
+      ],
+      "returncode": 0,
+      "stdout": "L3MC v1 materials=2 resolved=2 unresolved=0 page=256x256 bytes=131264\n",
+      "stderr": "",
+      "executable_sha256": "5d21150f6f795f67f3c7e487b153c163b8fad9ce01303868224d7f1a4769653f"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_anim",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/player/left.l3anim"
+      ],
+      "returncode": 0,
+      "stdout": "L3AN v1 slots=32 populated=1 frame_tables=1 special_m=0 s_records=15 frames=15 channels/frame=40 bytes=1432 crc=PASS\n",
+      "stderr": "",
+      "executable_sha256": "ae2d658fdca0f15c06df9a2fc8975fe4dbd5775111c8f50789e6426e4c2b0cf3"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_anim",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/player/main.l3anim"
+      ],
+      "returncode": 0,
+      "stdout": "L3AN v1 slots=64 populated=61 frame_tables=55 special_m=1 s_records=833 frames=761 channels/frame=40 bytes=69576 crc=PASS\n",
+      "stderr": "",
+      "executable_sha256": "ae2d658fdca0f15c06df9a2fc8975fe4dbd5775111c8f50789e6426e4c2b0cf3"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3inspect_anim",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/player/right.l3anim"
+      ],
+      "returncode": 0,
+      "stdout": "L3AN v1 slots=32 populated=1 frame_tables=1 special_m=0 s_records=15 frames=15 channels/frame=40 bytes=1432 crc=PASS\n",
+      "stderr": "",
+      "executable_sha256": "ae2d658fdca0f15c06df9a2fc8975fe4dbd5775111c8f50789e6426e4c2b0cf3"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3runtime_pack_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/st00.l3flow",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/ebd/area_00.l3ebd",
+        "0"
+      ],
+      "returncode": 0,
+      "stdout": "area=0 objects=1 aux=0 ebd_rows=14 work_slots=1 ebd_unique=0 ebd_narrowed=0 ebd_ambiguous=0 ebd_none=1\n",
+      "stderr": "",
+      "executable_sha256": "458004396a05c70ed749adeca10f229f0b95712a74612244bea23e62c7648a89"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3runtime_pack_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/st00.l3flow",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/ebd/area_01.l3ebd",
+        "1"
+      ],
+      "returncode": 0,
+      "stdout": "area=1 objects=16 aux=3 ebd_rows=49 work_slots=15 ebd_unique=1 ebd_narrowed=10 ebd_ambiguous=0 ebd_none=5\n",
+      "stderr": "",
+      "executable_sha256": "458004396a05c70ed749adeca10f229f0b95712a74612244bea23e62c7648a89"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3runtime_pack_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/st00.l3flow",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/ebd/area_02.l3ebd",
+        "2"
+      ],
+      "returncode": 0,
+      "stdout": "area=2 objects=20 aux=2 ebd_rows=49 work_slots=19 ebd_unique=2 ebd_narrowed=8 ebd_ambiguous=6 ebd_none=4\n",
+      "stderr": "",
+      "executable_sha256": "458004396a05c70ed749adeca10f229f0b95712a74612244bea23e62c7648a89"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3runtime_pack_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/st00.l3flow",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/ebd/area_03.l3ebd",
+        "3"
+      ],
+      "returncode": 0,
+      "stdout": "area=3 objects=11 aux=0 ebd_rows=40 work_slots=10 ebd_unique=0 ebd_narrowed=8 ebd_ambiguous=0 ebd_none=3\n",
+      "stderr": "",
+      "executable_sha256": "458004396a05c70ed749adeca10f229f0b95712a74612244bea23e62c7648a89"
+    },
+    {
+      "command": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/host/l3runtime_pack_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/st00.l3flow",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/ebd/area_04.l3ebd",
+        "4"
+      ],
+      "returncode": 0,
+      "stdout": "area=4 objects=1 aux=0 ebd_rows=6 work_slots=1 ebd_unique=0 ebd_narrowed=0 ebd_ambiguous=0 ebd_none=1\n",
+      "stderr": "",
+      "executable_sha256": "458004396a05c70ed749adeca10f229f0b95712a74612244bea23e62c7648a89"
+    }
+  ],
+  "findings": {
+    "integrity": "All 100 manifest outputs match recorded SHA-256 and byte lengths; only manifest.json is unlisted (expected). Manifest source label is self-declared, not independent provenance or rights evidence.",
+    "commands": "22 existing read-only reader/probe invocations returned 0; full commands, executable hashes, stdout and stderr are recorded below.",
+    "material_gaps": {
+      "area_00": {
+        "unresolved_words": [
+          "0x7c810016",
+          "0x7c830016",
+          "0x7cc20017"
+        ],
+        "unresolved_primitives": 824,
+        "total_primitives": 1752
+      },
+      "area_01": {
+        "unresolved_words": [
+          "0x7cc20017"
+        ],
+        "unresolved_primitives": 360,
+        "total_primitives": 854
+      },
+      "all_areas": {
+        "unresolved_primitives": 1184,
+        "total_primitives": 15512
+      },
+      "player_materials": 2,
+      "player_all_5_areas_resolved": true
+    },
+    "animation": "Main animation CRC and 55 S-to-M mappings are structurally valid, including movement request 0x0c; 833 records, 10 branch records and 45 repeats fit stored bounds. Main metadata: 64 slots, 61 populated, 55 frame tables, one special M entry (the known skeleton anchor is not a normal pose table). Left and right animation CRCs pass. These checks do not replay all track transitions or independently verify original timing, pose transforms, state ownership or retail visual accuracy.",
+    "runtime": "Five areas load, transition and move one tick in the host session probe. UI model creates 65 commands; save serializes to 322 bytes; one dialogue audio request is queued. This does not exercise hardware controls, SD persistence, sound playback, enemy combat, complete collisions, or natural progression. EBD bindings across 49 records: 3 unique, 26 narrowed, 6 ambiguous, 14 with no local candidate. These unresolved bindings are not automatically corrupt files, but do block claiming complete object semantics.",
+    "accuracy_verdict": "Suitable as an internally consistent, incomplete local tutorial test pack. Not verified as a faithful retail conversion. Do not describe it as complete or accurate original-game behavior.",
+    "not_done": "No raw owner data or commercial executable/disc inspected; no extraction or cooker executed; no game assets written or changed; no retail reference run or image comparison; no gameplay/emulator/hardware verification performed by this audit."
+  }
+}

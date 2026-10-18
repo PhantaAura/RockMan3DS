@@ -1,0 +1,64 @@
+{
+  "schema": "idx-map-initialization-owner-comparison/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "original_region": [
+    "0x8003a3b4",
+    "0x8003a460"
+  ],
+  "original_region_sha256": "8621b8400fd85d7fe90617d2c64d9ae4db18c9b6758effd53a08b5228486ef2a",
+  "original_instructions_executed": 1543539,
+  "original_write_count": 994,
+  "native_comparison": {
+    "all_original_idx_flags_matched": true,
+    "xyz_descriptor_preserved": true,
+    "idx_records_compared": 995,
+    "write_count": 994,
+    "decoded_bytes": 9996,
+    "flags_crc32": 1058436262
+  },
+  "cooked_files": {
+    "map": {
+      "bytes": 30490,
+      "sha256": "3891ff3588e882f77a684461459e9379258285d0e7a58fd7fcfefeaaf61da333",
+      "full_crc32": 1639600125
+    },
+    "render": {
+      "bytes": 78692,
+      "sha256": "8b65bd54dd6cfb28059c73684879fd6f3e77eec1270d1669883a51b9dca9d4cc",
+      "full_crc32": 3709876327
+    },
+    "init": {
+      "bytes": 15952,
+      "sha256": "d84f875e120fb5260a8687b68a9c11141973aa8d8fa1484a5eb5fa647ed227e5",
+      "full_crc32": 162733914
+    }
+  },
+  "owner_resource_hashes": [
+    {
+      "load": "0x8015c000",
+      "bytes": 11940,
+      "sha256": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e"
+    },
+    {
+      "load": "0x80164000",
+      "bytes": 8554,
+      "sha256": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e"
+    },
+    {
+      "load": "0x80194000",
+      "bytes": 61296,
+      "sha256": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e"
+    },
+    {
+      "load": "0x8013a000",
+      "bytes": 936,
+      "sha256": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+    }
+  ],
+  "limits": [
+    "Original static owner ST00 materialization premises; live load timing is separate.",
+    "Stage0 startup only; later stage variants and resumed mutation are not reconstructed.",
+    "Original resource/instruction bytes and expected flag arrays are not retained."
+  ]
+}

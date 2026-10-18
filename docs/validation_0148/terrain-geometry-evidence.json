@@ -1,0 +1,89 @@
+{
+  "baseline_cross_gather_xz": {
+    "both": 117,
+    "degenerate": 15,
+    "fan_only": 682,
+    "hull_vertices_2": 15,
+    "hull_vertices_3": 1761,
+    "hull_vertices_4": 717,
+    "neither": 1184,
+    "strip_only": 495
+  },
+  "candidate_consecutive_xyz": {
+    "axis_aligned_rectangles": 1642,
+    "both": 66,
+    "constant_x": 829,
+    "constant_y": 717,
+    "constant_z": 643,
+    "coplanar": 2493,
+    "first_triangle_nonzero": 2493,
+    "hull_vertices_3": 170,
+    "hull_vertices_4": 2323,
+    "neither": 2,
+    "strip_only": 2425,
+    "unique_vertices_3": 90,
+    "unique_vertices_4": 2403
+  },
+  "candidate_prefix_high_byte_coverage": {
+    "0": {
+      "both": 66,
+      "strip_only": 1579
+    },
+    "1": {
+      "strip_only": 6
+    },
+    "128": {
+      "neither": 1,
+      "strip_only": 295
+    },
+    "132": {
+      "strip_only": 178
+    },
+    "160": {
+      "neither": 1
+    },
+    "164": {
+      "strip_only": 53
+    },
+    "196": {
+      "strip_only": 71
+    },
+    "228": {
+      "strip_only": 4
+    },
+    "32": {
+      "strip_only": 140
+    },
+    "36": {
+      "strip_only": 32
+    },
+    "38": {
+      "strip_only": 32
+    },
+    "4": {
+      "strip_only": 21
+    },
+    "64": {
+      "strip_only": 14
+    }
+  },
+  "input_bytes": 78360,
+  "input_sha256": "f25348fc2fa9743210c205c148c43f650d95dd247ffb7a95723152c68ca99faa",
+  "limitations": [
+    "No executable semantics were recovered or verified in this pass.",
+    "Coplanarity and hull coverage are structural measurements, not original-game parity.",
+    "Neither-coverage records remain submitted in original order; no hull replacement.",
+    "Global height/scale conventions and gameplay floor contact need runtime comparison."
+  ],
+  "runtime_vertex_order": [
+    0,
+    1,
+    2,
+    1,
+    3,
+    2
+  ],
+  "status": "CANDIDATE",
+  "stored_primitive_count": 2493,
+  "uv_vertex_association": "original indices retained"
+}

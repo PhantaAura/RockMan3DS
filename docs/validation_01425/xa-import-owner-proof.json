@@ -1,0 +1,300 @@
+{
+  "schema": "mml-xa-import/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_request": "0x20000003",
+  "stream_id": 245,
+  "source_file_lba": 91731,
+  "source_file_sectors": 55760,
+  "start_lba": 91731,
+  "end_lba_exclusive": 107315,
+  "physical_sectors": 15584,
+  "filter_file": 1,
+  "filter_channel": 3,
+  "coding": "0x01",
+  "sample_rate": 37800,
+  "channels": 2,
+  "xa_sample_bits": 4,
+  "pcm_sample_bits": 16,
+  "pcm_byte_order": "little",
+  "frames_per_selected_sector": 2016,
+  "selected_sectors": 1948,
+  "total_frames": 3927168,
+  "duration_seconds": 103.89333333333333,
+  "first_selected_lba": 91734,
+  "last_selected_lba": 107310,
+  "interleave_stride": 8,
+  "selected_eof_lbas": [
+    107310
+  ],
+  "duplicate_subheader_eof_exceptions": [
+    {
+      "lba": 96548,
+      "first": "0101e401",
+      "second": "01816401"
+    },
+    {
+      "lba": 98249,
+      "first": "0106e401",
+      "second": "01866401"
+    },
+    {
+      "lba": 98744,
+      "first": "0105e401",
+      "second": "01856401"
+    },
+    {
+      "lba": 103388,
+      "first": "0101e401",
+      "second": "01816401"
+    },
+    {
+      "lba": 105444,
+      "first": "0101e401",
+      "second": "01816401"
+    },
+    {
+      "lba": 105837,
+      "first": "0102e401",
+      "second": "01826401"
+    },
+    {
+      "lba": 105921,
+      "first": "0106e401",
+      "second": "01866401"
+    },
+    {
+      "lba": 105984,
+      "first": "0105e401",
+      "second": "01856401"
+    },
+    {
+      "lba": 107310,
+      "first": "0103e401",
+      "second": "01836401"
+    }
+  ],
+  "all_other_duplicate_subheaders_match": true,
+  "sound_parameter_duplicates_match": true,
+  "audio_padding20_zero": true,
+  "audio_edc_zero_omitted": true,
+  "edc_validated": false,
+  "sector_header24_sha256": "a148e0e5de5030e13774cb7c91e336713381edf407fc92bee8cb8c54917e281e",
+  "sector_header24_crc32": "a392a22d",
+  "raw_full2352_span_sha256": "34ed3aa39e9da1837cf4793a72c7462d26de0e37ea8c38dd04f54e9bd18fc9d6",
+  "raw_full2352_span_crc32": "cfb49e4b",
+  "bin_sha256": "b544b9f09f8d2fca435c433069da8726ec06eca5f131bd1599598f0d6f1ed908",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "pcm_sha256": "f9484896e8c31ccb86dd4b69deea7201f0eab89f3dc43312bb2341adbd9dd0d6",
+  "pcm_crc32": "0fac97e8",
+  "index_crc32": "29145f6a",
+  "package_sha256": "ed93324cd6c9dcba3b88e7d825a3c627725f02897c65e957c4d9e40085c52bcd",
+  "package_bytes": 15755680,
+  "package_header_bytes": 256,
+  "package_index_entry_bytes": 24,
+  "package_header_crc32": "e4549880",
+  "combinations": [
+    {
+      "file": 1,
+      "channel": 0,
+      "submode": "0x0",
+      "coding": "0x0",
+      "count": 8
+    },
+    {
+      "file": 1,
+      "channel": 0,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1948
+    },
+    {
+      "file": 1,
+      "channel": 1,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1942
+    },
+    {
+      "file": 1,
+      "channel": 1,
+      "submode": "0xe4",
+      "coding": "0x1",
+      "count": 3
+    },
+    {
+      "file": 1,
+      "channel": 2,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1946
+    },
+    {
+      "file": 1,
+      "channel": 2,
+      "submode": "0xe4",
+      "coding": "0x1",
+      "count": 1
+    },
+    {
+      "file": 1,
+      "channel": 3,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1947
+    },
+    {
+      "file": 1,
+      "channel": 3,
+      "submode": "0xe4",
+      "coding": "0x1",
+      "count": 1
+    },
+    {
+      "file": 1,
+      "channel": 4,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1948
+    },
+    {
+      "file": 1,
+      "channel": 5,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1944
+    },
+    {
+      "file": 1,
+      "channel": 5,
+      "submode": "0xe4",
+      "coding": "0x1",
+      "count": 2
+    },
+    {
+      "file": 1,
+      "channel": 6,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1944
+    },
+    {
+      "file": 1,
+      "channel": 6,
+      "submode": "0xe4",
+      "coding": "0x1",
+      "count": 2
+    },
+    {
+      "file": 1,
+      "channel": 7,
+      "submode": "0x64",
+      "coding": "0x1",
+      "count": 1948
+    }
+  ],
+  "parameter_counts": {
+    "01": 6,
+    "02": 128,
+    "03": 218,
+    "04": 129,
+    "05": 26,
+    "06": 8,
+    "0b": 3,
+    "0c": 3409,
+    "11": 11,
+    "12": 403,
+    "13": 1726,
+    "14": 3062,
+    "15": 2780,
+    "16": 1553,
+    "17": 536,
+    "18": 133,
+    "19": 56,
+    "1a": 12,
+    "1b": 40,
+    "1c": 146,
+    "22": 301,
+    "23": 5860,
+    "24": 20672,
+    "25": 46955,
+    "26": 51187,
+    "27": 31249,
+    "28": 28296,
+    "29": 30588,
+    "2a": 28742,
+    "2b": 14768,
+    "2c": 2718,
+    "31": 3,
+    "32": 102,
+    "33": 667,
+    "34": 1253,
+    "35": 1304,
+    "36": 1020,
+    "37": 308,
+    "38": 110,
+    "39": 21,
+    "3a": 2,
+    "3b": 1
+  },
+  "final_predictor_history": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      0
+    ]
+  ],
+  "initial_predictor_history": [
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      0
+    ]
+  ],
+  "decoder_rounding": "nearest integer, ties toward positive infinity (+32)//64",
+  "retail_seek_history_parity": false,
+  "retail_cd_decoder_parity": false,
+  "hardware_tested": false,
+  "owner_payload_release_permitted": false,
+  "working_set": "one full source sector, one PCM sector, bounded <=4096-entry index",
+  "primary_codec_reference": "https://www.icdia.co.uk/docs/cdi_may94_r2.pdf",
+  "unsupported": [
+    "mono",
+    "18900Hz",
+    "8-bit XA",
+    "emphasis",
+    "reserved coding",
+    "other disc profiles",
+    "arbitrary duplicate-subheader corruption",
+    "PS1 44100Hz interpolation",
+    "retail prior-session predictor history"
+  ],
+  "disc_profile": {
+    "bin_bytes": 524601840,
+    "bin_sha256": "b544b9f09f8d2fca435c433069da8726ec06eca5f131bd1599598f0d6f1ed908",
+    "cue_sha256": "1dbbf21248bef522dfe8acb565d291226ab1405088b7c9328f5c04fcec5370eb",
+    "track1_end_lba": 207145,
+    "sector_bytes": 2352,
+    "index1_frames": 0
+  },
+  "independent_decode_comparison": {
+    "tool": "FFmpeg",
+    "available": false,
+    "performed": false,
+    "reason": "No existing FFmpeg executable in PATH or standard local prefixes; no new dependencies installed."
+  },
+  "authored_validation": {
+    "tests": 14,
+    "passed": 13,
+    "skipped": 1,
+    "failed": 0,
+    "rational_oracle_groups": 52,
+    "rational_oracle_sample_values": 11648,
+    "source_fixtures_contain_owner_payload": false
+  }
+}

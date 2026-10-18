@@ -1,0 +1,116 @@
+{
+  "device": "Azahar2126.0 Oldmodel",
+  "binary_sha256": "0898e6d048abd5390beb8e4757583bc157b2026979e86d7c885183004344ec6b",
+  "build": "0.0.14.18",
+  "settings": {
+    "emulator": "Azahar2126.0",
+    "old_model": true,
+    "cpu_clock_percentage": 100,
+    "resolution_factor": 1,
+    "actor_state_fields": true,
+    "input_replay": "work/pass-20261004-worldalive/replays/worldalive-ground-jump-01415.ctm",
+    "hardware_tested": false,
+    "retail_parity": false
+  },
+  "physical_hardware_tested": false,
+  "visual_fidelity_accepted": false,
+  "capture_blocker": "CUA reports Mac locked; user unlock requested; no new screenshots captured",
+  "captures": [],
+  "csv_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01418/azahar-01418-r2/sdmc/3ds/Legends3DS/hardware_01418_4000086009955.csv",
+  "csv_sha256": "def4fb1e6cb3063ac563d19f9883e298b3ef05997fa9791c207d53edf6e389ff",
+  "boot_log_sha256": "8dd5783b69e8b1d383ac082aacb8631443e9b382727bc29fa67e15d036b66203",
+  "sample_rows": 40,
+  "unique_positions": 13,
+  "observed_player_actions": [
+    "0",
+    "2",
+    "4",
+    "7",
+    "8"
+  ],
+  "observed_grounded": [
+    "-1",
+    "0",
+    "1"
+  ],
+  "observed_areas": [
+    "1",
+    "2"
+  ],
+  "actor_action2_queries": [
+    "# actor_action2_query,source_index=16,status=1,wall_status=1,wall_result=0,floor_status=1,floor_word=-1,input_ready=1,after_x=364,after_y=-1,after_z=-6946,active_actor_modified=false,admission=AUTHORED_ACTION2,retail_parity=false",
+    "# actor_action2_query,source_index=17,status=1,wall_status=1,wall_result=0,floor_status=1,floor_word=-1,input_ready=1,after_x=-302,after_y=-1,after_z=-5656,active_actor_modified=false,admission=AUTHORED_ACTION2,retail_parity=false",
+    "# actor_action2_query,source_index=18,status=1,wall_status=1,wall_result=0,floor_status=1,floor_word=-1,input_ready=1,after_x=-198,after_y=-1,after_z=-5656,active_actor_modified=false,admission=AUTHORED_ACTION2,retail_parity=false"
+  ],
+  "actor_state_rows": 123,
+  "actor_status_counts": {
+    "4": 123
+  },
+  "actor_request_banks_native": "one shared7-request bank41566 decoded bank elements; total actor decoded44618; allocator/livepose/CPU/GPU totals excluded",
+  "sample_ranges": {
+    "update_us": {
+      "min": 2,
+      "max": 60585
+    },
+    "frame_before_log_us": {
+      "min": 9787,
+      "max": 2244095
+    },
+    "interval_us": {
+      "min": 0,
+      "max": 90595
+    },
+    "draw_calls": {
+      "min": 15,
+      "max": 18
+    },
+    "triangles": {
+      "min": 1710,
+      "max": 2185
+    },
+    "owned_linear": {
+      "min": 71640,
+      "max": 82560
+    },
+    "owned_texture": {
+      "min": 3932160,
+      "max": 4194304
+    },
+    "malloc_live": {
+      "min": 1886712,
+      "max": 1935424
+    },
+    "linear_free": {
+      "min": 27412992,
+      "max": 27664128
+    },
+    "vram_free": {
+      "min": 5523456,
+      "max": 5523456
+    }
+  },
+  "transition_events": [
+    "# area_event=transition_before,area=1,elapsed_us=0,package_bytes=701943,decoded_estimate=810596,load_peak_estimate=1898932,malloc_live=1935424,linear_free=27412992,vram_free=5523456",
+    "# area_event=transition_after,area=2,elapsed_us=2222722,package_bytes=701943,decoded_estimate=810596,load_peak_estimate=1898932,malloc_live=1891320,linear_free=27664128,vram_free=5523456"
+  ],
+  "limitations": [
+    "Authored replay, not retail parity",
+    "Sparse emulated samples are not physical timing/memory peaks",
+    "Near-player class03 actors hold NeedsDetection; fullAI false",
+    "Diagnostic area change is not normal event progression",
+    "Observed 96MiB application memory layout/reservations require physical Old3DS loader validation."
+  ],
+  "observed_memory_configuration": {
+    "new3ds": 0,
+    "memory_layout": 2,
+    "app_region_bytes": 100663296,
+    "app_region_mib": 96,
+    "heap_reserved": 66502656,
+    "linear_reserved": 33554432,
+    "stack_reserved": 262144,
+    "physical_old_3ds_loader_configuration_verified": false,
+    "limit": "Old-model HLE configuration is not physical Old 3DS memory-mode or loader validation; sampled memory is not total process or peak usage."
+  },
+  "csv_snapshot": "docs/validation_01418/azahar-hardware-r2.csv",
+  "boot_snapshot": "docs/validation_01418/azahar-boot-r2.log"
+}

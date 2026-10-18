@@ -1,0 +1,22 @@
+{
+  "schema": "mml-source-event-camera-timeline/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "camera_cases": 64,
+  "camera_original_instructions": 32336,
+  "timeline_cases": 64,
+  "timeline_original_instructions": 2412,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "fixture_sha256": {
+    "source-event-camera.tsv": "cc7aa9868b957f90b5e22b22720bd0ebd5c776c627e8ba0fc408346f945c0c70",
+    "source-event-timeline.tsv": "2bc5216f64307ffe00cf2e1ba625496401fd1b10ecac0bc14deef4818b59f5f7"
+  },
+  "retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Authored programs and owners are differential tests, not live retail scene traces.",
+    "GTE control transfers are interpreted; no hardware GPU/camera cadence parity.",
+    "Original caller, color tail, completion predicate, later callback and actual camera application remain separate owners."
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "current-native-emulator-evidence/1",
+  "build": "0.0.14.16",
+  "emulator": "Azahar2126.0",
+  "settings": {
+    "new_3ds": false,
+    "cpu_percent": 100,
+    "resolution": 1
+  },
+  "evidence": "Synthetic HID replay + explicit diagnostic spawn; not physicalhardware or retailtrajectory parity",
+  "boot_ready": true,
+  "optional_actor_texture_pages_by_area": {
+    "1": 2,
+    "2": 1
+  },
+  "source_angle_query_rows": 54,
+  "source_actor_count": 3,
+  "samples": 56,
+  "areas": [
+    1,
+    2
+  ],
+  "grounded_statuses": [
+    -1
+  ],
+  "contact_statuses": [
+    0,
+    2
+  ],
+  "bounds": {
+    "malloc_live": [
+      1886680,
+      1893640
+    ],
+    "owned_texture": [
+      3932160,
+      4194304
+    ],
+    "owned_linear": [
+      71640,
+      82560
+    ],
+    "frame_before_log_us": [
+      9324,
+      2210676
+    ],
+    "update_us": [
+      2,
+      60084
+    ],
+    "render_us": [
+      9261,
+      17008
+    ],
+    "draw_calls": [
+      15,
+      18
+    ],
+    "triangles": [
+      1710,
+      2184
+    ]
+  },
+  "limits": [
+    "SparseHLEtiming notworstcase hardwareFPS",
+    "Originalactorbrightness/alpha/visibleenemyfidelity unaccepted",
+    "Player terrain/camera occlusion persists afterdiagnostictransition",
+    "FullAI/HP/lock-on/eventprogressionunbound"
+  ]
+}

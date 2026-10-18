@@ -1,0 +1,448 @@
+{
+  "emulator": "Azahar2126.0",
+  "old_model_setting": true,
+  "hardware_tested": false,
+  "limits": [
+    "sparse emulator samples do not establish device pacing",
+    "96MiB Dev1 emulated application region does not establish actual Old3DS budget",
+    "area4 geometry admitted but terrain absent in default view",
+    "area0 textured walls/player visible; floors incomplete"
+  ],
+  "runs": {
+    "azahar-baseline0149": {
+      "telemetry": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-baseline0149/sdmc/3ds/Legends3DS/hardware_0149_3999740423737.csv",
+      "header": [
+        "# build=0.0.14.9,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66682880,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=XYZ_STRIP,evidence=CANDIDATE,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "geometry_events": [
+        "# geometry_event,area=0,decode=XYZ_STRIP,evidence=CANDIDATE,primitives=1752,min_y=0,max_y=960",
+        "# geometry_event,area=1,decode=XYZ_STRIP,evidence=CANDIDATE,primitives=854,min_y=0,max_y=768"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=401134,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0",
+        "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=823936,linear_free=29634048,vram_free=5523456",
+        "# area_event=transition_after,area=1,elapsed_us=692271,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091360,linear_free=28692992,vram_free=5523456"
+      ],
+      "areas": {
+        "0": {
+          "samples": 41,
+          "ranges": {
+            "owned_linear": [
+              210240,
+              210240
+            ],
+            "owned_texture": [
+              1835008,
+              1835008
+            ],
+            "malloc_live": [
+              823848,
+              823936
+            ],
+            "linear_free": [
+              29634048,
+              29634048
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              8863,
+              83464
+            ],
+            "update_us": [
+              2,
+              6
+            ],
+            "render_us": [
+              8852,
+              16706
+            ],
+            "draw_calls": [
+              11,
+              11
+            ],
+            "triangles": [
+              4020,
+              4021
+            ]
+          }
+        },
+        "1": {
+          "samples": 56,
+          "ranges": {
+            "owned_linear": [
+              102480,
+              102480
+            ],
+            "owned_texture": [
+              2883584,
+              2883584
+            ],
+            "malloc_live": [
+              1091360,
+              1091360
+            ],
+            "linear_free": [
+              28692992,
+              28692992
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              8854,
+              702007
+            ],
+            "update_us": [
+              2,
+              3
+            ],
+            "render_us": [
+              8844,
+              16707
+            ],
+            "draw_calls": [
+              13,
+              13
+            ],
+            "triangles": [
+              2224,
+              2225
+            ]
+          }
+        }
+      },
+      "screenshots": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-baseline0149/captures/_02.10.26_19.12.53.08.png"
+      ]
+    },
+    "azahar-01410-areas": {
+      "telemetry": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-areas/sdmc/3ds/Legends3DS/hardware_01410_3999740409747.csv",
+      "header": [
+        "# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "geometry_events": [
+        "# geometry_event,area=0,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=488,min_y=-960,max_y=0",
+        "# geometry_event,area=1,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=526,min_y=-768,max_y=0",
+        "# geometry_event,area=2,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=674,min_y=-1152,max_y=0",
+        "# geometry_event,area=3,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=120,min_y=-1152,max_y=-384",
+        "# geometry_event,area=4,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=3028,min_y=-7872,max_y=0"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=419284,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0",
+        "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=823848,linear_free=29785344,vram_free=5523456",
+        "# area_event=transition_after,area=1,elapsed_us=706612,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091280,linear_free=28732288,vram_free=5523456",
+        "# area_event=transition_before,area=1,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091280,linear_free=28732288,vram_free=5523456",
+        "# area_event=transition_after,area=2,elapsed_us=758731,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1159848,linear_free=28452352,vram_free=5523456",
+        "# area_event=transition_before,area=2,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1159848,linear_free=28452352,vram_free=5523456",
+        "# area_event=transition_after,area=3,elapsed_us=356704,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=697424,linear_free=30354304,vram_free=5523456",
+        "# area_event=transition_before,area=3,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=697424,linear_free=30354304,vram_free=5523456",
+        "# area_event=transition_after,area=4,elapsed_us=338985,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=630552,linear_free=30267520,vram_free=5523456"
+      ],
+      "areas": {
+        "0": {
+          "samples": 6,
+          "ranges": {
+            "owned_linear": [
+              58560,
+              58560
+            ],
+            "owned_texture": [
+              1835008,
+              1835008
+            ],
+            "malloc_live": [
+              823848,
+              823848
+            ],
+            "linear_free": [
+              29785344,
+              29785344
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              13189,
+              83464
+            ],
+            "update_us": [
+              2,
+              2
+            ],
+            "render_us": [
+              13174,
+              16696
+            ],
+            "draw_calls": [
+              11,
+              11
+            ],
+            "triangles": [
+              1492,
+              1492
+            ]
+          }
+        },
+        "1": {
+          "samples": 3,
+          "ranges": {
+            "owned_linear": [
+              63120,
+              63120
+            ],
+            "owned_texture": [
+              2883584,
+              2883584
+            ],
+            "malloc_live": [
+              1091280,
+              1091280
+            ],
+            "linear_free": [
+              28732288,
+              28732288
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              16547,
+              718721
+            ],
+            "update_us": [
+              2,
+              2
+            ],
+            "render_us": [
+              11924,
+              16696
+            ],
+            "draw_calls": [
+              13,
+              13
+            ],
+            "triangles": [
+              1568,
+              1568
+            ]
+          }
+        },
+        "2": {
+          "samples": 3,
+          "ranges": {
+            "owned_linear": [
+              80880,
+              80880
+            ],
+            "owned_texture": [
+              3145728,
+              3145728
+            ],
+            "malloc_live": [
+              1159848,
+              1159848
+            ],
+            "linear_free": [
+              28452352,
+              28452352
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              24420,
+              768828
+            ],
+            "update_us": [
+              2,
+              2
+            ],
+            "render_us": [
+              9917,
+              16700
+            ],
+            "draw_calls": [
+              13,
+              13
+            ],
+            "triangles": [
+              1864,
+              1864
+            ]
+          }
+        },
+        "3": {
+          "samples": 3,
+          "ranges": {
+            "owned_linear": [
+              14400,
+              14400
+            ],
+            "owned_texture": [
+              1310720,
+              1310720
+            ],
+            "malloc_live": [
+              697424,
+              697424
+            ],
+            "linear_free": [
+              30354304,
+              30354304
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              16549,
+              367590
+            ],
+            "update_us": [
+              2,
+              2
+            ],
+            "render_us": [
+              10706,
+              16700
+            ],
+            "draw_calls": [
+              6,
+              6
+            ],
+            "triangles": [
+              756,
+              756
+            ]
+          }
+        },
+        "4": {
+          "samples": 12,
+          "ranges": {
+            "owned_linear": [
+              363360,
+              363360
+            ],
+            "owned_texture": [
+              1048576,
+              1048576
+            ],
+            "malloc_live": [
+              630552,
+              630552
+            ],
+            "linear_free": [
+              30267520,
+              30267520
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              16547,
+              350969
+            ],
+            "update_us": [
+              2,
+              2
+            ],
+            "render_us": [
+              11805,
+              16700
+            ],
+            "draw_calls": [
+              5,
+              5
+            ],
+            "triangles": [
+              6572,
+              6572
+            ]
+          }
+        }
+      },
+      "screenshots": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-areas/captures/_02.10.26_19.19.11.525.png"
+      ]
+    },
+    "azahar-01410-area0": {
+      "telemetry": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-area0/sdmc/3ds/Legends3DS/hardware_01410_3999740413742.csv",
+      "header": [
+        "# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "geometry_events": [
+        "# geometry_event,area=0,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=488,min_y=-960,max_y=0"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=417847,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0"
+      ],
+      "areas": {
+        "0": {
+          "samples": 49,
+          "ranges": {
+            "owned_linear": [
+              58560,
+              58560
+            ],
+            "owned_texture": [
+              1835008,
+              1835008
+            ],
+            "malloc_live": [
+              823848,
+              823848
+            ],
+            "linear_free": [
+              29785344,
+              29785344
+            ],
+            "vram_free": [
+              5523456,
+              5523456
+            ],
+            "frame_before_log_us": [
+              13189,
+              83464
+            ],
+            "update_us": [
+              2,
+              2
+            ],
+            "render_us": [
+              13174,
+              16696
+            ],
+            "draw_calls": [
+              11,
+              11
+            ],
+            "triangles": [
+              1492,
+              1492
+            ]
+          }
+        }
+      },
+      "screenshots": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-area0/captures/_02.10.26_19.24.17.292.png"
+      ]
+    }
+  }
+}

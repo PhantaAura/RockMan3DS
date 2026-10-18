@@ -1,0 +1,75 @@
+{
+  "build": "0.0.14.25",
+  "binary_revision": "r3",
+  "binary_sha256": "0e8d5c171a6bb25fab7aa35375cdb9b27d50f240dc2985981576d184ee666700",
+  "telemetry_header_wrong_in_r3": "0.0.14.24; fixed in r4; binary and logs belong to this exact hash",
+  "emulator": "Azahar2126.0",
+  "model_new3ds": 0,
+  "renderer": "BASELINE_0143",
+  "hardware_tested": false,
+  "audio_initialization_result": "0xD880A7FA",
+  "audio_playback_observed": false,
+  "native_transport_receipts": 0,
+  "source_event_held_phase": 3,
+  "committed_diagnostic_transition_audio_invalidation_observed": true,
+  "sample_rows": 30,
+  "areas": [
+    0,
+    1
+  ],
+  "screenshots": [
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r1/screenshots/baseline0143-native-01425.png"
+  ],
+  "metrics_scope": "Sparse emulated timings; not hardware benchmark or worst-case proof.",
+  "frame_before_log_us": {
+    "min": 10400,
+    "median": 16711.0,
+    "max": 98533
+  },
+  "interval_us": {
+    "min": 0,
+    "median": 16713.0,
+    "max": 98815
+  },
+  "update_us": {
+    "min": 2,
+    "median": 30.0,
+    "max": 320
+  },
+  "render_us": {
+    "min": 10225,
+    "median": 16459.0,
+    "max": 16679
+  },
+  "draw_calls": {
+    "min": 3,
+    "median": 3.0,
+    "max": 3
+  },
+  "triangles": {
+    "min": 2224,
+    "median": 4020.0,
+    "max": 4021
+  },
+  "owned_linear": {
+    "min": 61488,
+    "median": 126144.0,
+    "max": 126144
+  },
+  "owned_texture": {
+    "min": 0,
+    "median": 0.0,
+    "max": 0
+  },
+  "malloc_live": {
+    "min": 960400,
+    "median": 960400.0,
+    "max": 966848
+  },
+  "snapshot_sha256": {
+    "boot_01425.log": "d503109ac076022176bf94ffe0500ea736a01b04fbc694f224f2aa31150180ea",
+    "settings-verification.json": "54dd4d57fcf9dd8b5a21d4b86679177a6e82ccebb02e708b78a363c741750068",
+    "launch.json": "a3f1ff5158f58931a16a7fcd1c2a82f91f164f3f2035b25c50956938cd7b79f6",
+    "hardware_01425_4000086010072.csv": "0ca81b836b3a8765fc67fedbe63907824aa24f6278b5f1f0f571be4b2542d195"
+  }
+}

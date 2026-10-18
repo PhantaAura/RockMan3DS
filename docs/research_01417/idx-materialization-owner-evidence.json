@@ -1,0 +1,90 @@
+{
+  "schema": "idx-materialization-source-probe/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "routine": "0x8003a3b4",
+  "executed_region": [
+    "0x8003a3b4",
+    "0x8003a460"
+  ],
+  "executed_region_sha256": "8621b8400fd85d7fe90617d2c64d9ae4db18c9b6758effd53a08b5228486ef2a",
+  "writer_pc": "0x8003a434",
+  "identity_limit": 2048,
+  "hed_search_limit": 512,
+  "stages": [
+    {
+      "container": "ST00.BIN",
+      "idx_count": 995,
+      "hed_count_before_null": 116,
+      "admitted_identity_count": 994,
+      "write_count": 994,
+      "instructions_executed": 1543539,
+      "initial_raw6_distribution": {
+        "1": 994
+      },
+      "unchanged_identity_indices": [
+        0
+      ],
+      "all_xyz_descriptor_fields_preserved": true,
+      "all_original_writes_match_derived_scalar_rule": true,
+      "resources": {
+        "idx": {
+          "load": "0x8015c000",
+          "bytes": 11940,
+          "sha256": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e"
+        },
+        "mdt": {
+          "load": "0x80164000",
+          "bytes": 8554,
+          "sha256": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e"
+        },
+        "stg": {
+          "load": "0x80194000",
+          "bytes": 61296,
+          "sha256": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e"
+        },
+        "hed": {
+          "load": "0x8013a000",
+          "bytes": 936,
+          "sha256": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+        }
+      },
+      "captured_reference_identities": [
+        {
+          "index": 78,
+          "hed_match_slot": 32,
+          "static_raw6": 0,
+          "initial_raw6": 1,
+          "descriptor_pointer": "0x80194630",
+          "header_pointer": "0x80195bf8"
+        },
+        {
+          "index": 94,
+          "hed_match_slot": 40,
+          "static_raw6": 0,
+          "initial_raw6": 1,
+          "descriptor_pointer": "0x801947b0",
+          "header_pointer": "0x80195dfc"
+        },
+        {
+          "index": 123,
+          "hed_match_slot": 31,
+          "static_raw6": 0,
+          "initial_raw6": 1,
+          "descriptor_pointer": "0x80194600",
+          "header_pointer": "0x80195bb0"
+        }
+      ]
+    }
+  ],
+  "synthetic_case_count": 0,
+  "synthetic_cases": [],
+  "all_scalar_checks_passed": true,
+  "limits": [
+    "Original integer region with explicit static owner resource premises; not live trace timing.",
+    "Later variant routine0x8003AD14 remains a separate0/100/200 mutation route.",
+    "No native initialization, contact fallback, source asset modification or running emulator write.",
+    "Only ST00 owner canonical quartet measured here; other stages and resumed-state mutation remain unmeasured.",
+    "Cooked L3RG retains byte2/byte3 of descriptor primary-near render header; cooked L3MP drops HED admission."
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "emulator": "Azahar2126.0",
+  "new3ds": false,
+  "cpu_percent": 100,
+  "resolution": 1,
+  "binary_sha256": "a689f20e2d26c6152806c67db260fe10f3c57e2e67cc39203102be7eca6bf771",
+  "input": "authored HID replay, not retail parity",
+  "capture": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive-01417/azahar-01417-r1/captures/native-current-top-bottom.png",
+  "capture_sha256": "37d0af58fa117a358aff1fba02a6f0d4bca543769a179428a2fd6439599a9d11",
+  "metrics": {
+    "samples": 40,
+    "positions": 11,
+    "states": [
+      [
+        "0",
+        "0",
+        "-1",
+        "0"
+      ],
+      [
+        "0",
+        "0",
+        "1",
+        "1"
+      ],
+      [
+        "0",
+        "1",
+        "-1",
+        "0"
+      ],
+      [
+        "0",
+        "1",
+        "1",
+        "1"
+      ],
+      [
+        "2",
+        "2",
+        "1",
+        "1"
+      ],
+      [
+        "4",
+        "1",
+        "1",
+        "1"
+      ],
+      [
+        "7",
+        "0",
+        "1",
+        "1"
+      ],
+      [
+        "7",
+        "1",
+        "1",
+        "1"
+      ],
+      [
+        "7",
+        "2",
+        "0",
+        "1"
+      ],
+      [
+        "7",
+        "3",
+        "0",
+        "1"
+      ],
+      [
+        "7",
+        "5",
+        "0",
+        "1"
+      ],
+      [
+        "8",
+        "0",
+        "1",
+        "1"
+      ],
+      [
+        "8",
+        "2",
+        "0",
+        "1"
+      ],
+      [
+        "8",
+        "5",
+        "0",
+        "1"
+      ],
+      [
+        "8",
+        "6",
+        "1",
+        "1"
+      ],
+      [
+        "8",
+        "7",
+        "1",
+        "1"
+      ]
+    ],
+    "malloc_live": {
+      "min": 1886712,
+      "max": 1893720
+    },
+    "owned_texture": {
+      "min": 3932160,
+      "max": 4194304
+    },
+    "owned_linear": {
+      "min": 71640,
+      "max": 82560
+    },
+    "draw_calls": {
+      "min": 15,
+      "max": 18
+    },
+    "triangles": {
+      "min": 1710,
+      "max": 2185
+    },
+    "update_us": {
+      "min": 2,
+      "max": 60069
+    },
+    "render_us": {
+      "min": 9538,
+      "max": 25849
+    },
+    "frame_before_log_us": {
+      "min": 9790,
+      "max": 2227383
+    }
+  },
+  "hardware_tested": false
+}

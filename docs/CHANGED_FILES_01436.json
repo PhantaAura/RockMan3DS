@@ -1,0 +1,270 @@
+{
+  "baseline": "0.0.14.35",
+  "version": "0.0.14.36",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified"
+    },
+    {
+      "path": "MODLOG_01436.md",
+      "change": "added"
+    },
+    {
+      "path": "README.md",
+      "change": "modified"
+    },
+    {
+      "path": "RESUME_01436.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/PHASE5_EFFECT131.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/RNG_NEXT_BLOCKER.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/SOURCE_BUSTER_SPAWN.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/SOURCE_SCENE_ACTOR40_STATES.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/SOURCE_SCENE_ACTOR40_TAIL.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/WORLD_COMES_ALIVE_01436.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/effect131-source-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source-buster-spawn-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source-hit-lease-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source-scene-actor40-state-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source-scene-actor40-tail-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source_buster_spawn_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source_effect_phase5_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source_hit_proxy_lease_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source_scene_actor40_state_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01436/source_scene_actor40_tail_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01436/build-result.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01436/compiled-source-manifest.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01436/compiled-source-verification.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01436/emulator-observation.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01436/host-tests.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01436/native-build.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01436/toolchain.txt",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/actor_animation_bank.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/actor_resource.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/child_runtime.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/runtime_session.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_effects.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_event_phase5.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_hit_proxy.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_scene_actor40.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_scene_actor40_pose.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_scene_actor40_tail.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/source_scene_actor40_update.h",
+      "change": "added"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/checkpoint_version.h",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/flow/source_event_phase5.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/actor_animation_bank.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/actor_resource.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/child_runtime.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/runtime_session.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/source_effects.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/source_hit_proxy.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/source_scene_actor40.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/source_scene_actor40_pose.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/source_scene_actor40_tail.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/source_scene_actor40_update.cpp",
+      "change": "added"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/PARENT_01435_CHECKPOINT.json",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/source-scene-actor40-tail-mirrors-01436.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/source_buster_spawn_01436.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/source_effects_01436/callback-known-lanes.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/source_hit_proxy_leases_01436.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_child_runtime.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_source_effects.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_source_hit_proxy.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_source_scene_actor40.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_source_scene_actor40_tail.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_source_scene_actor40_update.cpp",
+      "change": "added"
+    }
+  ]
+}

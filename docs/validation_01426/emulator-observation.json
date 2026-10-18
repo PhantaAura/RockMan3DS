@@ -1,0 +1,160 @@
+{
+  "schema": "native-01426-observation/1",
+  "emulator": "Azahar2126.0",
+  "binary_sha256": "943db29d8b45b0b4063aa6150396a12d24a3e62078e5520e20e3d9e6f023d9f3",
+  "model_query": "# build=0.0.14.26,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66342912,linear_reserved=33554432,stack_reserved=262144",
+  "hardware_tested": false,
+  "retail_parity": false,
+  "areas": [
+    0,
+    1
+  ],
+  "samples": 95,
+  "max_frame_counter": 4680,
+  "positions": 6,
+  "head_resource": "source fresh HEAD01/PL00H01P.PBD",
+  "source_event_phase5": [
+    {
+      "frame": "68",
+      "area": "0",
+      "status": "0",
+      "committed": "1",
+      "event": "1",
+      "phase": "5",
+      "consumer": "00000000"
+    },
+    {
+      "frame": "69",
+      "area": "0",
+      "status": "12",
+      "committed": "0",
+      "event": "1",
+      "phase": "5",
+      "consumer": "80100efc"
+    }
+  ],
+  "fade_startup": [
+    {
+      "frame": "68",
+      "status": "6",
+      "committed": "1",
+      "phase": "5",
+      "pending_scheduler": "1",
+      "callback": "80017e94",
+      "presentation_complete": "false"
+    }
+  ],
+  "held_consumer": "80100efc",
+  "actual_command_pop_frames": [
+    13
+  ],
+  "playback_observed": true,
+  "maximum_completed_audio_frames": 3927168,
+  "max_read_us": 2312,
+  "max_underruns": 0,
+  "max_dropped_dsp_frames": 0,
+  "audio_unload": [
+    {
+      "linear": "0",
+      "index": "0",
+      "reason": "committed_diagnostic_area_replacement",
+      "natural_transition": "false"
+    }
+  ],
+  "median_sampled_frame_us": 16341,
+  "max_sampled_frame_us": 2062706,
+  "range_draw_calls": [
+    12,
+    18
+  ],
+  "range_triangles": [
+    1478,
+    2154
+  ],
+  "peak_owned_linear": 71640,
+  "peak_owned_texture": 3670016,
+  "peak_sampled_malloc_live": 1937304,
+  "max_projectiles": 1,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r2/screenshots/camera-wall-existing-bug-native01426.png",
+      "sha256": "9b7b66a8b1c00c4ee2b8275ed41bf4746b4c063bf50c61af02bfe56816b2ece8",
+      "build": "01426native-r4",
+      "emulator": "Azahar2126.0 Oldmodel",
+      "scene": "area0 camera inside wall (known bug)"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r2/screenshots/fresh-head-area0-native01426.png",
+      "sha256": "cb055c24aa7d7d31792356ab163ff9016b2f9b0bee208518145dda27ed50957c",
+      "build": "01426native-r4",
+      "emulator": "Azahar2126.0 Oldmodel",
+      "scene": "area0/player and bottom map"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r2/screenshots/movement-area0-native01426.png",
+      "sha256": "9d2469777e3d58cbf1643005ba6a00762e5b61f84ce3982397bed3623629d95a",
+      "build": "01426native-r4",
+      "emulator": "Azahar2126.0 Oldmodel",
+      "scene": "area0/player and bottom map"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r4/screenshots/safe0143-area0-native01426.png",
+      "sha256": "2e8cd0e3d0da1b1cb6297a077a086d1d89138ed25c426e50b57802725973b24d",
+      "build": "01426native-r4",
+      "emulator": "Azahar2126.0 Oldmodel",
+      "scene": "area0 safe0143/player and bottom map"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r4/screenshots/safe0143-movement-native01426.png",
+      "sha256": "d2acf7203f37bb20d660693438d6534d1dd3e62c9ea090dd26dfcff8d5b89f7f",
+      "build": "01426native-r4",
+      "emulator": "Azahar2126.0 Oldmodel",
+      "scene": "area0 safe0143/player movement and bottom map"
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r4/screenshots/start-menu-native01426-safe.png",
+      "sha256": "0a12f4e9ea91ea6bb7a668bae5dc3a853ef6abbb10ac380a09fd289f145b22ed",
+      "build": "01426native-r4",
+      "emulator": "Azahar2126.0 Oldmodel",
+      "scene": "final corrected version/start menu"
+    }
+  ],
+  "limitations": [
+    "Sparse emulated samples do not measure hardware performance/latency or full SDK memory/stack peaks.",
+    "Fade startup advancesphase5 with unconsumed scheduler intent; no fade presentation/completion.",
+    "SELECT area0to1 is diagnostic; naturaltransition unproven.",
+    "Manualinput exercise; no fresh retail parity trace."
+  ],
+  "safe0143": {
+    "emulator": "Azahar2126.0",
+    "build": "01426native-r4",
+    "binary_sha256": "943db29d8b45b0b4063aa6150396a12d24a3e62078e5520e20e3d9e6f023d9f3",
+    "old_model": true,
+    "hardware_tested": false,
+    "renderer_flags_file": "0",
+    "resolved_renderer_boot_value": 8,
+    "decode": "LEGACY_FLAT",
+    "source_event_boot": false,
+    "source_xa_audio": false,
+    "input": "manual CUA-held A and Up; F4 resumed paused emulation; no recorded movie executed",
+    "samples": 25,
+    "unique_positions": 4,
+    "movement_observed": true,
+    "first_position": [
+      "-768",
+      "0",
+      "-2816"
+    ],
+    "last_position": [
+      "-768",
+      "0",
+      "-4416"
+    ],
+    "owned_linear_bytes": 126144,
+    "owned_texture_bytes": 0,
+    "scope": "Boot and movement regression only; inherited flat diagnostic geometry remains inaccurate."
+  },
+  "manual_input_only": true,
+  "recorded_movie_executed": false,
+  "note_unused_movie_hash": "Launch metadata retained an earlier movie hash; CLI had no -p/movie argument, so it is not replay evidence."
+}

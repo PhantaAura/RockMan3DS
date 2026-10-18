@@ -1,0 +1,175 @@
+{
+  "format": "bounded-player-locomotion-retail-comparison/1",
+  "status": "BOUNDED_SCALAR_WINDOW_MATCH",
+  "PHYSICS_1TO1": false,
+  "retail_trace_sha256": "ae86497771466969ac188e0bf1c1976eca85352e446d8d9838a9aca9635ebf3a",
+  "native_replay_sha256": "2baf9ed10a110171f96c8be56fa80f2ea3198c0ae9ea6e366b94e0c559540066",
+  "input_sha256": "4859e5c7113536c0fa79e576b7a509888178b2ac4bb962d528503d8a5bc87a78",
+  "diagnostic_seed_sha256": "fec7a3efc1ab1eb70e94f2c7c31a9e789e592fe80e6d2b586ae4ead25867e69a",
+  "replay_binary_sha256": "f5f02bf1777996f90c9e82616d4138b30b1ee0c4f7152fa6a90cc8b7e8f539e9",
+  "cooked_map_sha256": "3891ff3588e882f77a684461459e9379258285d0e7a58fd7fcfefeaaf61da333",
+  "cooked_reference_sha256": "25b43f2161f7c57ce2110a6250e7c28271cd7b7de7a238886a4d3d2bb78ca0b0",
+  "cooked_animation_sha256": "e0ab6305a7e24610e10af2797cc835a36ed7a29e5cf9ef6dd7ce9cc71b3ad69f",
+  "source_hashes": {
+    "src/world/runtime_session.cpp": "6e8e4cf0ecae6e8f46cff7bfe97c1d5cf6ddef1c49e5e397a10d2f542e3011da",
+    "include/legends3ds/runtime_animation.h": "1561bf709fd0ad3f881f68ca090ca844ef4133deffcc7a4f5d85ffdc05b42710",
+    "tools/l3replay.cpp": "8d17e71eba38ef8381c21754b1cd5e3bbb6bbcdbcfe7f077bc07bb1fa1c503b4"
+  },
+  "checked_player_updates": 25,
+  "checked_scalar_field_groups": 10,
+  "field_comparisons": {
+    "position": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "fixed_position": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "velocity_work": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "heading": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "state": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "animation_request": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "animation_frame": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "animation_control_raw": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "contact_state_raw": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    },
+    "work_0b_raw": {
+      "checked_player_updates": 25,
+      "mismatch_indices": []
+    }
+  },
+  "seeded_initial_position": [
+    2822,
+    -1,
+    -4833
+  ],
+  "candidate_native_area": 1,
+  "map_area_admission": [
+    {
+      "area": 0,
+      "start_grid": [
+        61,
+        55
+      ],
+      "extent_cells": [
+        11,
+        18
+      ],
+      "contains_entire_window": false
+    },
+    {
+      "area": 1,
+      "start_grid": [
+        53,
+        38
+      ],
+      "extent_cells": [
+        22,
+        22
+      ],
+      "contains_entire_window": true,
+      "observed_containing_cell_indices": [
+        566,
+        522
+      ],
+      "observed_packed_cell_values": [
+        -24564,
+        -24568
+      ]
+    },
+    {
+      "area": 2,
+      "start_grid": [
+        48,
+        73
+      ],
+      "extent_cells": [
+        31,
+        25
+      ],
+      "contains_entire_window": false
+    },
+    {
+      "area": 3,
+      "start_grid": [
+        60,
+        57
+      ],
+      "extent_cells": [
+        7,
+        14
+      ],
+      "contains_entire_window": false
+    },
+    {
+      "area": 4,
+      "start_grid": [
+        40,
+        37
+      ],
+      "extent_cells": [
+        50,
+        54
+      ],
+      "contains_entire_window": true,
+      "observed_containing_cell_indices": [
+        2434,
+        2334
+      ],
+      "observed_packed_cell_values": [
+        577,
+        553
+      ]
+    }
+  ],
+  "candidate_geometry_observations": {
+    "area1": {
+      "contact_status": "SOURCE_BACKED_PARTIAL",
+      "floor_y": -1,
+      "grounded": true,
+      "player_updates": 25
+    },
+    "area4": {
+      "contact_status": "UNKNOWN_NO_DATA",
+      "floor_y": null,
+      "grounded": null,
+      "player_updates": 25
+    }
+  },
+  "area_binding_status": "AMBIGUOUS_EXTENTS; retail active map area ID was not captured; area1 is a diagnostic candidate only",
+  "excluded_fields": [
+    "camera: captured retail eye used an actor mirror",
+    "native grounded/floor booleans: retail trace has only raw contact state",
+    "retail active map area identity",
+    "HP/combat/dialogue/progression"
+  ],
+  "limits": [
+    "First25 held-forward updates only; remaining95 tutorial/script-controlled samples excluded",
+    "Retail-derived scalar seed initializes the bounded diagnostic window, not the normal boot/progression path",
+    "Area1 source-backed packed floor agrees with observed Y=-1; this does not identify retail active area",
+    "Reverse/release/turn branches were source-probed; no measured retail-vs-native trace for those branches",
+    "Imported original S records drive transitions; no animation timing constants were invented",
+    "Unsupported contact codes, slopes, deep overlap, running jump, wider combat/camera/script owners remain unproved"
+  ]
+}

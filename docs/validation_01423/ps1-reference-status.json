@@ -1,0 +1,33 @@
+{
+  "rng-reference": {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/reference-observation-r1/rng-reference.jsonl",
+    "sha256": "b0222b91c7602b148ebf98e522658494dc66df9af2fb7a01851bef89d301a389",
+    "rows": 5705,
+    "kinds": {
+      "bios_rng_enter": 2851,
+      "bios_rng_return": 2850,
+      "class03_overlay_not_admitted": 1,
+      "game_entry": 1,
+      "observer_guard_failure": 1,
+      "observer_start": 1
+    }
+  },
+  "input-reference": {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/reference-observation-r1/input-reference.jsonl",
+    "sha256": "638429af2e6d53a1d14e3c6a42e890b5b1f7391f5543be89cacbec189a30aed3",
+    "rows": 15006,
+    "kinds": {
+      "input_observer_start": 1,
+      "source_update_input": 15005
+    }
+  },
+  "memory_cards_inserted": false,
+  "observer_read_only": true,
+  "source_data_modified": false,
+  "live_class03_rng_admitted": false,
+  "retail_parity": false,
+  "rng_capture_status": "UNKNOWN",
+  "rng_limit": "Return-listener capacity guard reached; only the completed prefix is available. No class03 sample admitted.",
+  "original_event_observation": "ST00 source event phases1..7 and player handoff observed, but raw phase3 completion field was not captured. This does not justify asserting fresh native completion.",
+  "emulator_failure": "Original reference ended in an unknown-exception dialog. Cause not established; do not attribute it to the observer guard."
+}

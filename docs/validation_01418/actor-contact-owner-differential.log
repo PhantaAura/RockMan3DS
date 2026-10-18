@@ -1,0 +1,3 @@
+source wrapper cases=176, supported core cases=2190, corrections=642, excluded core cases=546, supported floor cases=2268
+source stage wall/floor cases=18
+PASS: actor contact source subset and transactional wrapper; whole encounter parity unclaimed

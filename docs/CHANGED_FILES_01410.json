@@ -1,0 +1,273 @@
+{
+  "parent_version": "0.0.14.9",
+  "version": "0.0.14.10",
+  "parent_zip_sha256": "d8387cfcebddc304ab8f759292a2de029dde90032a960bccd924bf27676fc830",
+  "changed_files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified",
+      "sha256": "265b7f238138255fa942be3b9a0996367aba2acc66baccf49562c69633603f1d"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256": "74efd44546276f78316857c18eaa9aeb04f38e7b553836e65971d135b134abef"
+    },
+    {
+      "path": "docs/PORTING_MAP_01410.md",
+      "change": "added",
+      "sha256": "d1c527a77f573e565f7cfe719457d3cf85dc9b1ed7206c5baf9eef2161c2aecc"
+    },
+    {
+      "path": "docs/REPORT_01410.md",
+      "change": "added",
+      "sha256": "0e2b163faf9cf5ea1197009e69dfa5cd3751d8c8ca7016784b933121d4d11335"
+    },
+    {
+      "path": "docs/RESUME_01410.md",
+      "change": "added",
+      "sha256": "1da7b64ad32040a00995a3731fa3af89f102a7e9fc25334ad00ecf466798af95"
+    },
+    {
+      "path": "docs/RESUME_01410_RECOVERY.md",
+      "change": "added",
+      "sha256": "475585eababf6d597c98811cd6a12a1ba0233fca074c6f579eb4ca8bd48568ab"
+    },
+    {
+      "path": "docs/SCREENSHOTS_01410.md",
+      "change": "added",
+      "sha256": "e3cb3a93e30aeff5673c56cba453262e6992fcffd241928e12a3cc2e466139bc"
+    },
+    {
+      "path": "docs/validation_01410/area0-boot.log",
+      "change": "added",
+      "sha256": "50e864e76be596c23f60e62a06fa0ac729d3949fa356b977d7f2af8b0863e201"
+    },
+    {
+      "path": "docs/validation_01410/area0-telemetry.csv",
+      "change": "added",
+      "sha256": "a7d5c73e883790fc2d48df908eeeae46466189e7913ec2a38752212f82dc213e"
+    },
+    {
+      "path": "docs/validation_01410/areas-boot.log",
+      "change": "added",
+      "sha256": "e7b39d276a453503a8aa0863adaf8a24d056b289eace38ea403593f19bc44b53"
+    },
+    {
+      "path": "docs/validation_01410/areas-telemetry.csv",
+      "change": "added",
+      "sha256": "cc40be452126bcf6f3dc5ae485dfc4dff5065f1cc3465d8c3181a82d01e42073"
+    },
+    {
+      "path": "docs/validation_01410/baseline-result.json",
+      "change": "added",
+      "sha256": "37a108e54bfb7f997d15cf8ec1bb90c3875b0cff667b6ccb730db593ad345e0f"
+    },
+    {
+      "path": "docs/validation_01410/buffered-terrain-diagnostic.json",
+      "change": "added",
+      "sha256": "700d0d46a86d59f591b5ef70640050338f2f3a2b6bdc2fa51cf3f96a3c1a0b36"
+    },
+    {
+      "path": "docs/validation_01410/build-result.json",
+      "change": "added",
+      "sha256": "da2570e79bd921ed87b37572f2815c59d99a38f6e5a2808509650061ce977cd9"
+    },
+    {
+      "path": "docs/validation_01410/controls-boot.log",
+      "change": "added",
+      "sha256": "9927c0c4f05d21e0fca707c22c915b2685be84c43a05d8b3cc84a45632ae4fb8"
+    },
+    {
+      "path": "docs/validation_01410/controls-process-cleanup.json",
+      "change": "added",
+      "sha256": "bc2a4bd151be2e682e4ddd52a1394f77e649b2da3044effee26fd9e1c2e43b97"
+    },
+    {
+      "path": "docs/validation_01410/controls-telemetry.csv",
+      "change": "added",
+      "sha256": "a4243d69352c29a953fd2e11798bae644a8008dd79d78d3d550877ca92c0bf10"
+    },
+    {
+      "path": "docs/validation_01410/cumulative-verification.json",
+      "change": "added",
+      "sha256": "8975d5666d3790938ee1dfaad6ce027b561a6d9cce66588e24f002c146b74506"
+    },
+    {
+      "path": "docs/validation_01410/emulator-evidence.json",
+      "change": "added",
+      "sha256": "a95e43feba3baf9630515f2488b40bb47e1ff3d2c772da6a76ce175c74c80a13"
+    },
+    {
+      "path": "docs/validation_01410/emulator-runs-partial.json",
+      "change": "added",
+      "sha256": "6c7ecd27de931fc16e14c9d9b8c66ada24e5b3e7a702a1144757f34f41f53373"
+    },
+    {
+      "path": "docs/validation_01410/final-review.json",
+      "change": "added",
+      "sha256": "e9a02536fdfc27b1d9f8d6af1859c96e3451eed604c55ba58c9e4ff7f10169c3"
+    },
+    {
+      "path": "docs/validation_01410/host-build.log",
+      "change": "added",
+      "sha256": "06e8557ce5518b3995ca5877a7972643d4522194908bad71e0184deb73781f1c"
+    },
+    {
+      "path": "docs/validation_01410/host-configure.log",
+      "change": "added",
+      "sha256": "cc5d5ca4073544617b67d8433598d509815e87a16e96de71da55aede9805cc75"
+    },
+    {
+      "path": "docs/validation_01410/host-tests.log",
+      "change": "added",
+      "sha256": "1b03eded31ebf795dcc9e3ec2277b6cab9136975eb9f4643e0581322b485c877"
+    },
+    {
+      "path": "docs/validation_01410/native-build.log",
+      "change": "added",
+      "sha256": "0c153d92a96835574babe3b16b6cd74a0e2bbfa8aca19ba5cd72d23a76d0ae18"
+    },
+    {
+      "path": "docs/validation_01410/native-source-manifest.json",
+      "change": "added",
+      "sha256": "e627395f92b1d3c1cf9a5a09b297730f65a45a93e9e7e858829a6c2a7ca7ab47"
+    },
+    {
+      "path": "docs/validation_01410/placement-count-probe.json",
+      "change": "added",
+      "sha256": "0b01d1857ea211eb40edc85f311624aaaf88b0e0e0a16df9e53c5761060ac1b7"
+    },
+    {
+      "path": "docs/validation_01410/placement-source-evidence.json",
+      "change": "added",
+      "sha256": "e6241ed0db177bd112edf01a4614538225101d2ec20b3b4c1f52fa5d210968d0"
+    },
+    {
+      "path": "docs/validation_01410/positive-helper-result.json",
+      "change": "added",
+      "sha256": "71e50e5c1f923bd0753592932e1168409bd34b812816fd0d29e584e841e2a728"
+    },
+    {
+      "path": "docs/validation_01410/positive-placement-probe.json",
+      "change": "added",
+      "sha256": "94ebf98b3b38fbe878f6f1703464c8fa9cdc826db577c4b19554e059350f3f75"
+    },
+    {
+      "path": "docs/validation_01410/safe0143-r1-boot.log",
+      "change": "added",
+      "sha256": "a31e40d0c0046c434bd15219fa7624cb9c2067a7f3b4e4fa62ffb312804b355e"
+    },
+    {
+      "path": "docs/validation_01410/safe0143-r1-telemetry.csv",
+      "change": "added",
+      "sha256": "b213c081558ae54dec84e5304064bcfa310dcbaeb378b9d44d51b4973d929f65"
+    },
+    {
+      "path": "docs/validation_01410/source-verification.json",
+      "change": "added",
+      "sha256": "a4c52fcc2a8822189d39f7ec0d059baaad8fa3453a95934ac4b3e1747c773686"
+    },
+    {
+      "path": "docs/validation_01410/texturesoff-boot.log",
+      "change": "added",
+      "sha256": "1c48d64d3d27579a60bb7d66908d31d39a96d5de457503fbc81271805df10979"
+    },
+    {
+      "path": "docs/validation_01410/texturesoff-telemetry.csv",
+      "change": "added",
+      "sha256": "33f480b29c05d20affac204b3ce5ea7b2de8b167a02f2139c53237a92f6a5698"
+    },
+    {
+      "path": "docs/validation_01410/verified-placement-probe.json",
+      "change": "added",
+      "sha256": "3093c1b94417af7ec46996b0f2a5baedf3a9caacdc08bd85ce54e74e23a2b91e"
+    },
+    {
+      "path": "include/legends3ds/render/area_placement.h",
+      "change": "added",
+      "sha256": "a81564ad6e668bed9d4525b200057dd9c598684e3ffc437642fee4752be16f28"
+    },
+    {
+      "path": "include/legends3ds/render/positive_terrain.h",
+      "change": "added",
+      "sha256": "1251498c5251849fbd55f17983817bce2952b69305a295358098bbf3993293fc"
+    },
+    {
+      "path": "include/legends3ds/st00_render.h",
+      "change": "modified",
+      "sha256": "8626e87f6f430a83a25fa0a9a96af853c73922a5bb4ce3d45b5e62c7a79ede56"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified",
+      "sha256": "4c37f5a1764298c1cf90e1327f40b9b57c60f6e7d02d6cd4e0a084fc0c209e1f"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified",
+      "sha256": "197d7216bd7958dc74eae0aa4ef8dde2b6c86d8d75d071b47667a30ce18eeada"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified",
+      "sha256": "b8c6df2233797a66350a1d0369142de9a20340bb028ba09299b982161212ae1d"
+    },
+    {
+      "path": "src/render/area_placement.cpp",
+      "change": "added",
+      "sha256": "8552226f0a2246e1ca6ad74ce442bfe37882e3f04162f6b3b5e0170d1652dbf3"
+    },
+    {
+      "path": "src/render/positive_terrain.cpp",
+      "change": "added",
+      "sha256": "1d2c7a4de2d1ded53821e7cc9cbde685bc48a6151bd383e7e4a782d88f78f032"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified",
+      "sha256": "7146e7b77f555692f66d62029c38127a3e6d50b59914ce361c3a29cb70a97ff3"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified",
+      "sha256": "b01db66743895c8ac45e60b0864935148fcedf483b6e75b8ecee3d679b9a4c13"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified",
+      "sha256": "59998fb82b6be98c9f694b43ba124bdc78496d759259ea7bebdc7672687174e0"
+    },
+    {
+      "path": "tests/test_area_placement.cpp",
+      "change": "added",
+      "sha256": "8028f0dd80e6dcf93b538b4a34de105a27be0974cd2c2453762da9dfcf13e9d2"
+    },
+    {
+      "path": "tests/test_positive_terrain.cpp",
+      "change": "added",
+      "sha256": "317a96ce6c8abbd405d10282e3867281e95d262b03171e2fb0395ef8d4c2c883"
+    },
+    {
+      "path": "tools/build_mml3ds.py",
+      "change": "modified",
+      "sha256": "ea1dd328ad36d0b26eb92c82072ff305c68f48b8fc0e7fb9f6fa38570e45b2e8"
+    },
+    {
+      "path": "tools/l3area_placement_probe.cpp",
+      "change": "added",
+      "sha256": "ea95032e58803a235332c16e0a1c1c6df11f38ce5c2a88db6d4756ba270caeef"
+    },
+    {
+      "path": "tools/terrain_placement_evidence.py",
+      "change": "added",
+      "sha256": "c5818fbf9499b92aaa3e83ed5a53552a459c4681e0064d7b6945902f33a5e9b6"
+    }
+  ],
+  "removed_files": [],
+  "generated_ledgers": [
+    "SOURCE_MANIFEST.sha256",
+    "docs/CHANGED_FILES_01410.json"
+  ],
+  "notes": "No source files discarded; inputs/synced references and earlier checkpoints preserved."
+}

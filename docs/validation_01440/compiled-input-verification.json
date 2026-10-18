@@ -1,0 +1,7 @@
+{
+  "inputs": 279,
+  "mismatch": [],
+  "binary_sha256": "9e0d417109353d648635f222ef18b48ba242914f351512ac5abb619a8a263a83",
+  "hardware_result_01439": "USER_REPORTED_FAIL_TOP_BLACK_INCLUDING_FALLBACK",
+  "hardware_result_01440": "HARDWARE_PENDING"
+}

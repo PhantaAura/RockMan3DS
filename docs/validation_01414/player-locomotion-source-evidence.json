@@ -1,0 +1,101 @@
+{
+  "format": "player-locomotion-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "PHYSICS_1TO1": false,
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "source_scalar_checks": {
+    "initialization_cases_passed": 16,
+    "animation_gate_cases_passed": 6,
+    "release_cases_passed": 6,
+    "ordinary_forward_predicate_cases_passed": 6,
+    "run_and_idle_turn_cases_passed": 63,
+    "excluded_calls": [
+      "0x80041E90 position integration",
+      "0x8001A008 sound",
+      "0x80040B68 firing prerequisites",
+      "0x800406DC running jump owner",
+      "0x80041044 interaction prerequisite"
+    ],
+    "limits": [
+      "scalar blocks with explicit return-only hooks, not a complete retail tick",
+      "reverse release was source-probed only; wider deceleration owner remains unproved",
+      "no collision, camera, scripted owner, combat or progression parity claim"
+    ]
+  },
+  "actual_retail_forward_window": {
+    "trace_sha256": "ae86497771466969ac188e0bf1c1976eca85352e446d8d9838a9aca9635ebf3a",
+    "sample_phase": "0x8003CB18_before_epilogue",
+    "checked_initial_state": [
+      1,
+      0,
+      1
+    ],
+    "checked_player_updates": 25,
+    "observed_forward_velocity_work": 512,
+    "observed_delta_z_world_units_per_update": -32,
+    "observed_vsyncs_per_player_update": 2,
+    "startup_request": 4,
+    "sustained_request": 1,
+    "sustained_request_first_update_index": 5,
+    "remaining_samples_excluded": 95,
+    "exclusion_reason": "tutorial event removes input; wider scripted owner remains unported",
+    "status": "MEASURED_RETAIL_WINDOW_ONLY; native comparison is a separate artifact"
+  },
+  "source_blocks": [
+    {
+      "id": "idle_action",
+      "start": "0x8003cb20",
+      "end_exclusive": "0x8003cbf8",
+      "sha256": "aeb2f2a7914864a308b0d4ea143df7d3abf15e6624fd44c7911ce977e3c9dbff"
+    },
+    {
+      "id": "slow_action1",
+      "start": "0x8003cbf8",
+      "end_exclusive": "0x8003cd4c",
+      "sha256": "63fa32e2c6710669069748029614d4e17f810b4ae6930ce5cf80720018bb4415"
+    },
+    {
+      "id": "ordinary_action2",
+      "start": "0x8003cd4c",
+      "end_exclusive": "0x8003d124",
+      "sha256": "c6e6c96264995237343793709c15707e76f04163a364bdd3beecb82939aafab9"
+    },
+    {
+      "id": "directional_setup",
+      "start": "0x8003d124",
+      "end_exclusive": "0x8003d1e0",
+      "sha256": "6fa07f69820eede8ddeb1fd1ff8ee419964df73036a5bf8cbbf5df3f9473792a"
+    },
+    {
+      "id": "idle_turn_action4",
+      "start": "0x8003d6dc",
+      "end_exclusive": "0x8003d7d4",
+      "sha256": "33b32534ea4eb075d5618f8a8c8f2dcd25feb9b47cdd6701735fb1ace422934f"
+    },
+    {
+      "id": "action2_predicate",
+      "start": "0x8003f97c",
+      "end_exclusive": "0x8003fda8",
+      "sha256": "28140355367c594271702dc61e3694b4b73b6339ec4e335b92d6d3ae64ef3a0f"
+    },
+    {
+      "id": "ordinary_selectors",
+      "start": "0x80040380",
+      "end_exclusive": "0x80040574",
+      "sha256": "90533664f6d171e047eeba66c61e82aadb5c1af070efd4db4a6ad385bceee596"
+    },
+    {
+      "id": "idle_turn_selector",
+      "start": "0x800405f4",
+      "end_exclusive": "0x80040630",
+      "sha256": "5ce84fc4fcab74d6cf0e19310f880d52eb1b280dcde45220351a85a46b189a2c"
+    },
+    {
+      "id": "direction_yaw_integration_wrapper",
+      "start": "0x80041e90",
+      "end_exclusive": "0x80041ef4",
+      "sha256": "abc5e1afd360da6f01b5b2fc81e28722518b23e556bd6188308f83f07f234b6f"
+    }
+  ],
+  "payload_policy": "scalar facts, addresses, hashes and counts only; no executable bytes or instruction listings"
+}

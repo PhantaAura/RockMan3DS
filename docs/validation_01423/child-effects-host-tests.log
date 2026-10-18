@@ -1,0 +1,3 @@
+1024 allocation-free shared child ticks; transaction rollback/producer/pair/capacity guards PASS
+original80048E6C floor wrapper admitted=246 held=42
+PASS bounded class60 child transaction owner

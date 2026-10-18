@@ -1,0 +1,46 @@
+# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144
+# terrain_decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false
+# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.
+frame,area,held,pressed,x,y,z,heading,projectiles,frame_before_log_us,interval_us,update_us,render_us,draw_calls,triangles,owned_linear,owned_texture,malloc_live,malloc_arena_free,linear_free,vram_free
+# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0
+# area_event=package_loaded,area=0,elapsed_us=419284,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0
+# geometry_event,area=0,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=488,min_y=-960,max_y=0
+1,0,0,0,-768,0,-2816,0,0,83464,0,2,13306,11,1492,58560,1835008,823848,232920,29785344,5523456
+2,0,0,0,-768,0,-2816,0,0,13189,83623,2,13174,11,1492,58560,1835008,823848,232920,29785344,5523456
+3,0,0,0,-768,0,-2816,0,0,16552,13351,2,16536,11,1492,58560,1835008,823848,232920,29785344,5523456
+4,0,0,0,-768,0,-2816,0,0,16552,16713,2,16536,11,1492,58560,1835008,823848,232920,29785344,5523456
+5,0,0,0,-768,0,-2816,0,0,16552,16713,2,16536,11,1492,58560,1835008,823848,232920,29785344,5523456
+120,0,0,0,-768,0,-2816,0,0,24552,16713,2,16696,11,1492,58560,1835008,823848,232920,29785344,5523456
+# area_event=transition_before,area=0,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=823848,linear_free=29785344,vram_free=5523456
+# geometry_event,area=1,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=526,min_y=-768,max_y=0
+# area_event=transition_after,area=1,elapsed_us=706612,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091280,linear_free=28732288,vram_free=5523456
+200,1,4,4,-256,0,-12544,0,0,718721,8872,2,11924,13,1568,63120,2883584,1091280,751920,28732288,5523456
+201,1,0,0,-256,0,-12544,0,0,16547,718886,2,16532,13,1568,63120,2883584,1091280,751920,28732288,5523456
+240,1,0,0,-256,0,-12544,0,0,24571,16713,2,16696,13,1568,63120,2883584,1091280,751920,28732288,5523456
+# area_event=transition_before,area=1,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091280,linear_free=28732288,vram_free=5523456
+# geometry_event,area=2,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=674,min_y=-1152,max_y=0
+# area_event=transition_after,area=2,elapsed_us=758731,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1159848,linear_free=28452352,vram_free=5523456
+293,2,4,4,-256,0,5376,0,0,768828,16713,2,9917,13,1864,80880,3145728,1159848,834904,28452352,5523456
+294,2,0,0,-256,0,5376,0,0,24420,768993,2,16538,13,1864,80880,3145728,1159848,834904,28452352,5523456
+360,2,0,0,-256,0,5376,0,0,24582,16713,2,16700,13,1864,80880,3145728,1159848,834904,28452352,5523456
+# area_event=transition_before,area=2,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1159848,linear_free=28452352,vram_free=5523456
+# geometry_event,area=3,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=120,min_y=-1152,max_y=-384
+# area_event=transition_after,area=3,elapsed_us=356704,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=697424,linear_free=30354304,vram_free=5523456
+382,3,4,4,-256,-384,-2816,0,0,367590,16713,2,10706,6,756,14400,1310720,697424,314288,30354304,5523456
+383,3,0,0,-256,-384,-2816,0,0,16549,367754,2,16539,6,756,14400,1310720,697424,314288,30354304,5523456
+480,3,0,0,-256,-384,-2816,0,0,24557,16713,2,16700,6,756,14400,1310720,697424,314288,30354304,5523456
+# area_event=transition_before,area=3,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=697424,linear_free=30354304,vram_free=5523456
+# geometry_event,area=4,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=3028,min_y=-7872,max_y=0
+# area_event=transition_after,area=4,elapsed_us=338985,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=630552,linear_free=30267520,vram_free=5523456
+496,4,4,4,-11520,0,-13056,0,0,350969,16713,2,11805,5,6572,363360,1048576,630552,250088,30267520,5523456
+497,4,0,0,-11520,0,-13056,0,0,16547,351135,2,16536,5,6572,363360,1048576,630552,250088,30267520,5523456
+600,4,0,0,-11520,0,-13056,0,0,24672,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+720,4,0,0,-11520,0,-13056,0,0,24672,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+840,4,0,0,-11520,0,-13056,0,0,24672,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+960,4,0,0,-11520,0,-13056,0,0,24672,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+1080,4,0,0,-11520,0,-13056,0,0,24674,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+1200,4,0,0,-11520,0,-13056,0,0,24674,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+1320,4,0,0,-11520,0,-13056,0,0,24674,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+1440,4,0,0,-11520,0,-13056,0,0,24674,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+1560,4,0,0,-11520,0,-13056,0,0,24674,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456
+1680,4,0,0,-11520,0,-13056,0,0,24674,16713,2,16700,5,6572,363360,1048576,630552,250088,30267520,5523456

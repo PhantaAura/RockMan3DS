@@ -1,0 +1,18 @@
+ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/host --output-on-failure
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20260930/validated-d-r1/host
+    Start 1: core
+1/6 Test #1: core .............................   Passed    0.04 sec
+    Start 2: map_sharing
+2/6 Test #2: map_sharing ......................   Passed    0.01 sec
+    Start 3: ps1_geometry
+3/6 Test #3: ps1_geometry .....................   Passed    0.01 sec
+    Start 4: push2
+4/6 Test #4: push2 ............................   Passed    0.01 sec
+    Start 5: integrity
+5/6 Test #5: integrity ........................   Passed    0.02 sec
+    Start 6: pipeline_python
+6/6 Test #6: pipeline_python ..................   Passed    0.99 sec
+
+100% tests passed out of 6
+
+Total Test time (real) =   1.12 sec

@@ -1,0 +1,106 @@
+{
+  "format": "player-head-audit/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "checkpoint": "0.0.14.26",
+  "owner_executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "read_only_owner_inputs": true,
+  "retail_payloads_written": false,
+  "current_native_head": "player/head.l3model",
+  "owner_meshes": [
+    {
+      "container": "HEAD00.BIN",
+      "resource": "PL00H00P.PBD",
+      "source_sha256": "352e84ba9402c705553255c7296a00ff012f4cf8c66196ce206cf62e647f7e43",
+      "bytes": 9852,
+      "load_address": "0x800F7800",
+      "parts": 4,
+      "part_ids": [
+        1,
+        15,
+        16,
+        17
+      ],
+      "vertices": 112,
+      "triangles": 46,
+      "quads": 61,
+      "primitive_codes": [
+        37,
+        45
+      ],
+      "rgb": [
+        128,
+        128,
+        128
+      ],
+      "material_face_counts": {
+        "0x3C000005": 80,
+        "0x3E48000F": 27
+      },
+      "variant_semantics": "UNKNOWN"
+    },
+    {
+      "container": "HEAD01.BIN",
+      "resource": "PL00H01P.PBD",
+      "source_sha256": "6852fa2944634ecc582cf454e8595647287b9ed454747b89de95d2d99a452a04",
+      "bytes": 9460,
+      "load_address": "0x800F7800",
+      "parts": 4,
+      "part_ids": [
+        1,
+        15,
+        16,
+        17
+      ],
+      "vertices": 102,
+      "triangles": 76,
+      "quads": 31,
+      "primitive_codes": [
+        37,
+        45
+      ],
+      "rgb": [
+        128,
+        128,
+        128
+      ],
+      "material_face_counts": {
+        "0x3E48000F": 107
+      },
+      "variant_semantics": "UNKNOWN"
+    }
+  ],
+  "head_face_semitransparency_bit_set": false,
+  "tutorial_selected_head": "PL00H01P.PBD for the explicitly fresh player initialization branch",
+  "reference_tutorial_hair_observation": "Root visually checked retained original PS1 tutorial captures; brown hair/no helmet. This does not identify the loaded PBD by itself.",
+  "selector_trace": {
+    "filename_array_base": "0x80083870",
+    "filename_strings": [
+      "0x80083F30:HEAD00.BIN",
+      "0x80083F70:HEAD01.BIN"
+    ],
+    "head_file_ids": {
+      "HEAD00.BIN": 27,
+      "HEAD01.BIN": 28
+    },
+    "filename_origin_verified": "The first three slots are LOGO.EXE, ROCK_NEO.EXE, SYSTEM.CNF. Named file lengths from ID3 through32 match corresponding supplied owner containers; head lengths both14336 bytes.",
+    "rejected_initial_mapping": "Treating first DAT filename as fileID0 shifted directory IDs by3 and failed length checks; it was rejected and corrected.",
+    "resumed_or_gear_selection": "UNKNOWN"
+  },
+  "actionable": "Use hash-guarded source_player_head.select_fresh_player_head for the explicitly fresh tutorial pack and its corresponding ordered material upload. Root also corrects native opaque primitive alpha. Existing pre-fix packs and original resources must be preserved.",
+  "retail_visual_parity": "UNKNOWN",
+  "fresh_selection_proof": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "selector_byte": "Player_work+0x16A",
+    "fresh_store": "0x8003BF58",
+    "loader": "0x8001F5E4",
+    "table": "0x80089200",
+    "file_id": 28,
+    "container": "HEAD01.BIN",
+    "unchanged_instruction_cases": 264,
+    "unchanged_instructions_executed": 4476,
+    "external_loader_executed": false
+  },
+  "inherited_cooker_head": "PL00H00P.PBD",
+  "source_selected_fresh_head": "PL00H01P.PBD",
+  "runtime_dynamic_head_selector_implemented": false
+}

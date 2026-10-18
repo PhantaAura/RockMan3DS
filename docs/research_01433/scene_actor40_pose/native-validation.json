@@ -1,0 +1,24 @@
+{
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_cases": 9,
+  "part_banks_compared": 162,
+  "atomic_guards": 2322,
+  "hot_allocations": 0,
+  "work08_acknowledged": false,
+  "opaque_stack_lanes_invalidated": 12,
+  "hardware_tested": false,
+  "retail_parity": false,
+  "focused_address_undefined_sanitizers": "PASSED_NEW_CODE_LINKED_READ_ONLY_FROZEN_CORE",
+  "authored_cases": 36,
+  "authored_guards": 252,
+  "arm_object": {
+    "compiler": "devkitARM16.1.0",
+    "flags": "ARMv6k VFP hardfloat O2 Wall Wextra Werror",
+    "text_bytes": 5444,
+    "data_bytes": 0,
+    "bss_bytes": 0,
+    "producer_stack_bytes": 1352,
+    "commit_stack_bytes": 760,
+    "presentation_stack_bytes": 72
+  }
+}

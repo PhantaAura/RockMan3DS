@@ -1,0 +1,179 @@
+{
+  "project": "MML3DS",
+  "push": 2,
+  "cumulative_hours": "1-10",
+  "lineage": "0.0.14.3 -> H1 -> H2 -> H3 -> H4 -> H5 -> H6 -> H7 -> H8 -> H9 -> H10",
+  "hours": {
+    "1": {
+      "subsystems": [
+        "renderer recovery",
+        "boot diagnostics",
+        "player material/PS1 VRAM address foundation"
+      ],
+      "status": "included"
+    },
+    "2": {
+      "subsystems": [
+        "generalized content graph",
+        "package v2"
+      ],
+      "status": "included"
+    },
+    "3": {
+      "subsystems": [
+        "movement integrators",
+        "trace comparator"
+      ],
+      "status": "included"
+    },
+    "4": {
+      "subsystems": [
+        "collision",
+        "camera ownership",
+        "lock-on"
+      ],
+      "status": "included"
+    },
+    "5": {
+      "subsystems": [
+        "animation request",
+        "Buster/combat runtime"
+      ],
+      "status": "included"
+    },
+    "6": {
+      "subsystems": [
+        "objects",
+        "event VM",
+        "messages",
+        "transitions",
+        "enemy bridge"
+      ],
+      "status": "included"
+    },
+    "7": {
+      "subsystems": [
+        "cutscene",
+        "acting",
+        "expressions",
+        "audio cue bridge"
+      ],
+      "status": "included"
+    },
+    "8": {
+      "subsystems": [
+        "retail save integrity",
+        "native atomic save"
+      ],
+      "status": "included"
+    },
+    "9": {
+      "subsystems": [
+        "3DS diagnostics",
+        "bottom UI",
+        "transactional loader",
+        "QoL gate"
+      ],
+      "status": "included"
+    },
+    "10": {
+      "subsystems": [
+        "integration control",
+        "parity/readiness",
+        "hardware test plan",
+        "cumulative verifier"
+      ],
+      "status": "included"
+    }
+  },
+  "provenance_note": "Original per-hour worktrees were not all retained. This cumulative tree reimplements missing source from recorded hour reports and preserves surviving Hour-10 control files under legacy_hour10/.",
+  "owner_payload_included": false,
+  "files_by_hour": {
+    "1": [
+      "include/mml_renderer_recovery.h",
+      "src/mml_renderer_recovery.c",
+      "include/mml_player_material.h",
+      "src/mml_player_material.c",
+      "tools/mml_player_packet_scan.py",
+      "reports/HOUR_01.md"
+    ],
+    "2": [
+      "include/mml_package_v2.h",
+      "src/mml_package_v2.c",
+      "tools/mml_content_graph_v2.py",
+      "schema/content_graph_v2.schema.json",
+      "reports/HOUR_02.md"
+    ],
+    "3": [
+      "include/mml_retail_motion.h",
+      "src/mml_retail_motion.c",
+      "tools/trace_compare.py",
+      "reports/HOUR_03.md"
+    ],
+    "4": [
+      "include/mml_h4_runtime.h",
+      "src/mml_h4_runtime.c",
+      "reports/HOUR_04.md"
+    ],
+    "5": [
+      "include/mml_retail_anim_request.h",
+      "src/mml_retail_anim_request.c",
+      "include/mml_combat_v2.h",
+      "src/mml_combat_v2.c",
+      "reports/HOUR_05.md"
+    ],
+    "6": [
+      "include/mml_world_v2.h",
+      "src/mml_world_v2.c",
+      "include/mml_event_vm_v2.h",
+      "src/mml_event_vm_v2.c",
+      "include/mml_enemy_bridge_v2.h",
+      "src/mml_enemy_bridge_v2.c",
+      "reports/HOUR_06.md"
+    ],
+    "7": [
+      "include/mml_cutscene_v2.h",
+      "src/mml_cutscene_v2.c",
+      "tools/h7_owner_evidence.py",
+      "reports/HOUR_07.md"
+    ],
+    "8": [
+      "include/mml_retail_save_v2.h",
+      "src/mml_retail_save_v2.c",
+      "include/mml_native_save_v2.h",
+      "src/mml_native_save_v2.c",
+      "reports/HOUR_08.md"
+    ],
+    "9": [
+      "include/mml_runtime_diag_v2.h",
+      "src/mml_runtime_diag_v2.c",
+      "include/mml_bottom_ui_v2.h",
+      "src/mml_bottom_ui_v2.c",
+      "include/mml_loader_guard_v2.h",
+      "src/mml_loader_guard_v2.c",
+      "include/mml_qol_v2.h",
+      "src/mml_qol_v2.c",
+      "reports/HOUR_09.md"
+    ],
+    "10": [
+      "tools/verify_cumulative_tree.py",
+      "state/CURRENT_CHECKPOINT.json",
+      "HOUR_MANIFEST.json",
+      "reports/HOUR_10.md",
+      "reports/PARITY_READINESS.md",
+      "reports/OLD3DS_EXACT_TEST.md",
+      "legacy_hour10/tools/verify_and_merge_stack.py",
+      "legacy_hour10/tools/build_env_preflight.py",
+      "legacy_hour10/tests/test_stack_control.py",
+      "legacy_hour10/state/EXPECTED_STACK.json",
+      "legacy_hour10/state/RUN_STATE.json"
+    ]
+  },
+  "shared_cumulative_tests": [
+    "tests/test_all.c",
+    "tests/test_python_tools.py",
+    "tests/run_all.py",
+    "Makefile",
+    "SOURCE_MANIFEST.sha256"
+  ]
+}

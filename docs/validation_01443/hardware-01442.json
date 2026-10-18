@@ -1,0 +1,41 @@
+{
+  "photos": [
+    {
+      "observation": "animation_timeout",
+      "original": "/tmp/codex-remote-attachments/01a0a7a1-700e-7fa3-9db6-3d9a5e58f20c/DFDF05DA-CE9F-4574-88F4-02443D24BBEA/1-Photo-1.jpg",
+      "retained": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/hardware_01442/animation_timeout.jpg",
+      "sha256": "e08e7e2d97cf06d976b5fa349e0cb77b8f116ad5df99c76e3869876fc7d0361d",
+      "device": "User’s original Old 3DS XL",
+      "build": "0.0.14.42",
+      "evidence": "User photo, no timing/controls measurement"
+    },
+    {
+      "observation": "safe_rendering",
+      "original": "/tmp/codex-remote-attachments/01a0a7a1-700e-7fa3-9db6-3d9a5e58f20c/E86C58FC-BB95-45B9-8DCC-C6E4C029B55A/1-Photo-1.jpg",
+      "retained": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/hardware_01442/safe_rendering.jpg",
+      "sha256": "75574e91eccb176dd46776258898128459e74faeb4b1f95b714e7da69efed4ed",
+      "device": "User’s original Old 3DS XL",
+      "build": "0.0.14.42",
+      "evidence": "User photo, no timing/controls measurement"
+    },
+    {
+      "observation": "batching_no_textures_timeout",
+      "original": "/tmp/codex-remote-attachments/01a0a7a1-700e-7fa3-9db6-3d9a5e58f20c/C6452E4A-6F4D-4DA4-AD2E-051FD0377446/1-Photo-1.jpg",
+      "retained": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/hardware_01442/batching_no_textures_timeout.jpg",
+      "sha256": "1eb747387de8aaf5de005f2b0355f9fcfcc63c909ad9fe6c43d79e9ff8a6091d",
+      "device": "User’s original Old 3DS XL",
+      "build": "0.0.14.42",
+      "evidence": "User photo, no timing/controls measurement"
+    }
+  ],
+  "established": [
+    "01442 shader-free clear displays cyan.",
+    "The 0143 path displays the player, terrain and bottom UI on the user’s Old 3DS XL.",
+    "ANIMATION and BATCHING / TEX OFF both report a GPU queue timeout."
+  ],
+  "unknown": [
+    "Exact offending GPU command.",
+    "Movement, performance and retail parity on hardware.",
+    "Whether the 01443 candidate resolves the timeout."
+  ]
+}

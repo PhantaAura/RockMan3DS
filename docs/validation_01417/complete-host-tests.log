@@ -1,0 +1,89 @@
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive-01417/baseline
+      Start  1: map_initialization
+ 1/42 Test  #1: map_initialization ...............   Passed    0.20 sec
+      Start  2: core
+ 2/42 Test  #2: core .............................   Passed    0.13 sec
+      Start  3: map_sharing
+ 3/42 Test  #3: map_sharing ......................   Passed    0.03 sec
+      Start  4: ps1_geometry
+ 4/42 Test  #4: ps1_geometry .....................   Passed    0.03 sec
+      Start  5: area_package
+ 5/42 Test  #5: area_package .....................   Passed    0.46 sec
+      Start  6: terrain_geometry_candidate
+ 6/42 Test  #6: terrain_geometry_candidate .......   Passed    0.07 sec
+      Start  7: map_cell_alignment
+ 7/42 Test  #7: map_cell_alignment ...............   Passed    0.01 sec
+      Start  8: area_placement
+ 8/42 Test  #8: area_placement ...................   Passed    0.01 sec
+      Start  9: positive_terrain
+ 9/42 Test  #9: positive_terrain .................   Passed    0.01 sec
+      Start 10: push2
+10/42 Test #10: push2 ............................   Passed    0.03 sec
+      Start 11: integrity
+11/42 Test #11: integrity ........................   Passed    0.02 sec
+      Start 12: pipeline_python
+12/42 Test #12: pipeline_python ..................   Passed    2.34 sec
+      Start 13: cooked_area_python
+13/42 Test #13: cooked_area_python ...............   Passed    2.33 sec
+      Start 14: owner_data_intake_python
+14/42 Test #14: owner_data_intake_python .........   Passed    2.64 sec
+      Start 15: local_install_python
+15/42 Test #15: local_install_python .............   Passed   13.59 sec
+      Start 16: source_tools_python
+16/42 Test #16: source_tools_python ..............   Passed    3.47 sec
+      Start 17: negative_package
+17/42 Test #17: negative_package .................   Passed    0.09 sec
+      Start 18: negative_terrain
+18/42 Test #18: negative_terrain .................   Passed    0.02 sec
+      Start 19: negative_material
+19/42 Test #19: negative_material ................   Passed    0.04 sec
+      Start 20: material_vram
+20/42 Test #20: material_vram ....................   Passed    0.05 sec
+      Start 21: area_inspection
+21/42 Test #21: area_inspection ..................   Passed    0.10 sec
+      Start 22: frontend_view
+22/42 Test #22: frontend_view ....................   Passed    0.01 sec
+      Start 23: mockup_ui
+23/42 Test #23: mockup_ui ........................   Passed    0.02 sec
+      Start 24: player_visual_storage
+24/42 Test #24: player_visual_storage ............   Passed    0.05 sec
+      Start 25: ebd_resources
+25/42 Test #25: ebd_resources ....................   Passed    0.02 sec
+      Start 26: ebd_sharing
+26/42 Test #26: ebd_sharing ......................   Passed    0.01 sec
+      Start 27: actor_resources
+27/42 Test #27: actor_resources ..................   Passed    0.04 sec
+      Start 28: actor_materials
+28/42 Test #28: actor_materials ..................   Passed    0.03 sec
+      Start 29: parity_trace_python
+29/42 Test #29: parity_trace_python ..............   Passed    3.58 sec
+      Start 30: companion_ui
+30/42 Test #30: companion_ui .....................   Passed    0.07 sec
+      Start 31: runtime_contact
+31/42 Test #31: runtime_contact ..................   Passed    0.11 sec
+      Start 32: renderer_gcc_warning
+32/42 Test #32: renderer_gcc_warning .............   Passed    2.95 sec
+      Start 33: gameplay_clock
+33/42 Test #33: gameplay_clock ...................   Passed    0.04 sec
+      Start 34: running_jump_source
+34/42 Test #34: running_jump_source ..............   Passed    0.03 sec
+      Start 35: class20_03_behavior
+35/42 Test #35: class20_03_behavior ..............   Passed    0.04 sec
+      Start 36: source_angle
+36/42 Test #36: source_angle .....................   Passed    0.05 sec
+      Start 37: actor_sequence
+37/42 Test #37: actor_sequence ...................   Passed    0.10 sec
+      Start 38: st00_spawn
+38/42 Test #38: st00_spawn .......................   Passed    0.01 sec
+      Start 39: runtime_spawns
+39/42 Test #39: runtime_spawns ...................   Passed    0.03 sec
+      Start 40: map_initialization_package
+40/42 Test #40: map_initialization_package .......   Passed    0.03 sec
+      Start 41: runtime_transactions
+41/42 Test #41: runtime_transactions .............   Passed    0.12 sec
+      Start 42: actor_floor_init
+42/42 Test #42: actor_floor_init .................   Passed    0.05 sec
+
+100% tests passed out of 42
+
+Total Test time (real) =  33.41 sec

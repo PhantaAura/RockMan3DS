@@ -1,0 +1,41 @@
+# build=0.0.14.26,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66342912,linear_reserved=33554432,stack_reserved=262144
+# terrain_decode=LEGACY_FLAT,evidence=UNKNOWN,PHYSICS_1TO1=false
+# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage.
+frame,area,held,pressed,x,y,z,heading,projectiles,frame_before_log_us,interval_us,update_us,render_us,bottom_ui_us,draw_calls,triangles,owned_linear,owned_texture,malloc_live,malloc_arena_free,linear_free,vram_free,action,phase,animation,animation_pose,vertical_velocity,grounded,contact_status,psx_held,psx_pressed
+# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35792,linear_free=31941632,vram_free=0
+# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=748240,linear_free=31941632,vram_free=0
+# actor_event,area=0,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# geometry_event,area=0,decode=LEGACY_FLAT,evidence=UNKNOWN,primitives=1752,min_y=0,max_y=0
+# gameplay_clock,updates=0,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+0,0,0,0,-768,0,-2816,0,0,89614,0,46,11957,6147,3,3990,126144,0,960240,751888,31553280,5523456,0,0,0,0,0,-1,0,0,0
+# source_event,frame=1,area=0,status=1,committed=0,event=0,phase=0,consumer=00000000
+2,0,0,0,-768,0,-2816,0,0,11857,89794,67,5632,6147,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+3,0,0,0,-768,0,-2816,0,0,10402,12039,14,10358,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+3,0,0,0,-768,0,-2816,0,0,16533,10582,3,16501,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+3,0,0,0,-768,0,-2816,0,0,16534,16712,3,16502,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+4,0,0,0,-768,0,-2816,0,0,16534,16713,14,16491,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+4,0,0,0,-768,0,-2816,0,0,16532,16715,3,16500,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+5,0,0,0,-768,0,-2816,0,0,16534,16711,14,16491,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+5,0,0,0,-768,0,-2816,0,0,16532,16715,3,16500,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+# gameplay_clock,updates=120,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+120,0,0,0,-768,0,-2816,0,0,16711,16713,58,16624,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+120,0,0,0,-768,0,-2816,0,0,16531,16893,3,16499,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+# gameplay_clock,updates=240,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+240,0,0,0,-768,0,-2816,0,0,16711,16713,58,16624,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+240,0,0,0,-768,0,-2816,0,0,16531,16893,3,16499,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+# gameplay_clock,updates=360,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+360,0,0,0,-768,0,-2816,0,0,16711,16713,58,16624,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+360,0,0,0,-768,0,-2816,0,0,16530,16893,3,16499,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+454,0,1073741824,1073741824,-768,0,-2816,0,0,16711,16713,3,16679,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,2,0,0
+455,0,1073741824,0,-768,0,-2848,0,0,16516,16907,15,16472,18,3,3990,126144,0,960240,751888,31553280,5523456,2,2,4,0,0,-1,2,16,16
+# gameplay_clock,updates=480,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+480,0,1073741824,0,-768,0,-3648,0,0,10581,16713,52,10501,18,3,3990,126144,0,960240,751888,31553280,5523456,2,2,4,0,0,-1,0,16,0
+480,0,1073741824,0,-768,0,-3648,0,0,16522,10772,3,16490,18,3,3990,126144,0,960240,751888,31553280,5523456,2,2,4,0,0,-1,0,16,0
+504,0,0,0,-768,0,-4416,0,0,16711,16713,3,16679,18,3,3990,126144,0,960240,751888,31553280,5523456,2,2,4,0,0,-1,0,16,0
+505,0,0,0,-768,0,-4416,0,0,16532,16892,7,16496,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,0,0,0
+# gameplay_clock,updates=600,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+600,0,0,0,-768,0,-4416,0,0,16711,16713,51,16631,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,0,0,0
+600,0,0,0,-768,0,-4416,0,0,16530,16893,3,16499,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,0,0,0
+# gameplay_clock,updates=720,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+720,0,0,0,-768,0,-4416,0,0,16711,16713,51,16631,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,0,0,0
+720,0,0,0,-768,0,-4416,0,0,16530,16893,3,16499,18,3,3990,126144,0,960240,751888,31553280,5523456,0,1,0,0,0,-1,0,0,0

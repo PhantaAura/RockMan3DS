@@ -1,0 +1,901 @@
+{
+  "schema": "mml-source-event-command2-pause-boundary/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "totals": {
+    "cases": 36,
+    "original_instructions": 646240,
+    "actual_callback_cases": 24,
+    "original_mix_calls": 9144,
+    "queue_pops": 28
+  },
+  "source_entry": "8001B858",
+  "callback_index": 1,
+  "ordered_prefix": [
+    "127mix127..1",
+    "half800AD142|8000",
+    "8001CB7C:127mix127..1",
+    "clear8009896C",
+    "half800AD142|8000",
+    "callback80092000=0",
+    "callback80091FFC=8001CC08",
+    "8001D254(command9,null,response80098A98)"
+  ],
+  "prefix_direct_calls": [
+    {
+      "site": "0x8001b674",
+      "target": "0x8001d394"
+    },
+    {
+      "site": "0x8001b69c",
+      "target": "0x8001cb7c"
+    },
+    {
+      "site": "0x8001cb8c",
+      "target": "0x8001d394"
+    },
+    {
+      "site": "0x8001cbb8",
+      "target": "0x80077a24"
+    },
+    {
+      "site": "0x8001cbc8",
+      "target": "0x80077a0c"
+    },
+    {
+      "site": "0x8001cbdc",
+      "target": "0x8001d254"
+    },
+    {
+      "site": "0x8001d3fc",
+      "target": "0x80077de4"
+    },
+    {
+      "site": "0x80077dec",
+      "target": "0x80078efc"
+    }
+  ],
+  "ramp_wait_or_vsync_calls": 0,
+  "authored_boundary": {
+    "stop_before": "8001D254",
+    "resume_at": "8001CBE4",
+    "transport_body_executed": false,
+    "response_bytes": 8,
+    "callback_codes": [
+      null,
+      2,
+      3
+    ]
+  },
+  "cases": [
+    {
+      "ready_before": 0,
+      "authored_callback_code": null,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        0,
+        31
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": null,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        0,
+        31
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": null,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        0,
+        31
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": null,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        0,
+        31
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 2,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 2,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 2,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 2,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 3,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        31
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 3,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        31
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 3,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        31
+      ]
+    },
+    {
+      "ready_before": 0,
+      "authored_callback_code": 3,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 1,
+      "ready_after": 0,
+      "queue_pop": false,
+      "special_after": 73,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        31
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": null,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        0,
+        68
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": null,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        0,
+        152
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": null,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        0,
+        68
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": null,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        0,
+        152
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 2,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 2,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 2,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 2,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 3,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 3,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 3,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 1,
+      "authored_callback_code": 3,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": null,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        0,
+        68
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": null,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        0,
+        152
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": null,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        0,
+        68
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": null,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 17,
+      "callback_after": "0x8001cc08",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        0,
+        152
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 2,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 2,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 2,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 2,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 1,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 0,
+      "byte800988c0_after": 0,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 3,
+      "stereo": 0,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 3,
+      "stereo": 0,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        8790,
+        8796,
+        28,
+        152
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 3,
+      "stereo": 1,
+      "queue_count_before": 1,
+      "current_index_before": 0,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        68
+      ]
+    },
+    {
+      "ready_before": 255,
+      "authored_callback_code": 3,
+      "stereo": 1,
+      "queue_count_before": 7,
+      "current_index_before": 2,
+      "phase_after": 0,
+      "ready_after": 255,
+      "queue_pop": true,
+      "special_after": 1,
+      "mode_after": 1,
+      "status_after": 0,
+      "error_after": 8,
+      "byte800988c0_after": 128,
+      "callback_after": "0x0",
+      "slice_instruction_counts": [
+        9044,
+        9050,
+        28,
+        152
+      ]
+    }
+  ],
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "regions": [
+    {
+      "start": "0x8001b644",
+      "end_exclusive": "0x8001b6fc",
+      "sha256": "fccaea7cea1ee77f027fe528b150b1c2683f2078115f63724fcaaf09c4138361"
+    },
+    {
+      "start": "0x8001b858",
+      "end_exclusive": "0x8001b89c",
+      "sha256": "741dbb2c1edfff24ce2ba8d300ff357b7afc45b03e95f8aed16866781d22d8c8"
+    },
+    {
+      "start": "0x8001cb7c",
+      "end_exclusive": "0x8001cc7c",
+      "sha256": "83de3aebf99e5d3125242cf1892c3d5d5cc4c2516c2a760f79f6ae557f1c977e"
+    },
+    {
+      "start": "0x80077a0c",
+      "end_exclusive": "0x80077a3c",
+      "sha256": "63e428df24d884413a47d9450a81b8e3604883eaeabc0005b8db94d442693658"
+    },
+    {
+      "start": "0x80077de4",
+      "end_exclusive": "0x80077dfc",
+      "sha256": "03bd0b0f38f3712c0d5eed161b4c48044e00578e7d4625698fc468001ef4ca29"
+    }
+  ],
+  "limits": [
+    "Author-selected response and callback chronology; no original CD driver execution.",
+    "Split source execution resets only the interpreter instruction counter between bounded slices.",
+    "Actual callback executes separately with parent registers restored at the explicit transport boundary.",
+    "No retail timeline, audible fade, frame duration or hardware parity is established."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false
+}

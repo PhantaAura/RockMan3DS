@@ -1,0 +1,11 @@
+{
+  "pid": 23921,
+  "expected_command": "/Applications/Azahar.app/Contents/MacOS/azahar -w -p /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/candidate-controls-delayed.ctm /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/build/Legends3DS.3dsx",
+  "observed_command": "/Applications/Azahar.app/Contents/MacOS/azahar -w -p /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/replays/candidate-controls-delayed.ctm /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/install-final/build/Legends3DS.3dsx",
+  "reason": "Mac locked; finish isolated test after preserving telemetry",
+  "signals": [
+    "SIGTERM",
+    "SIGKILL"
+  ],
+  "process_absent_after_cleanup": true
+}

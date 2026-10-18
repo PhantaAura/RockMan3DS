@@ -1,0 +1,92 @@
+{
+  "area_package": {
+    "bytes": 109672,
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/local-data/boot.mmlpkg",
+    "scope": "Existing cooked map/render envelope; local only. Other package bindings remain unsupported.",
+    "sha256": "1410d57686b2b2a1559bcef07911c1f2f2f72e23ad3e7bc7f2d5209050148124"
+  },
+  "commands": [
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.8_TerrainRepair",
+        "-B",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/host",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/logs/host-configure.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/host",
+        "--parallel",
+        "4"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/logs/host-build.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/host",
+        "--output-on-failure"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/logs/host-tests.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.8_TerrainRepair/tools/package_cooked_area.py",
+        "--map",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/tutorial-pack/legends3ds/tutorial/st00.l3map",
+        "--render",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/tutorial-pack/legends3ds/tutorial/st00.l3render",
+        "--state-id",
+        "local:verified-tutorial-pair",
+        "--out",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/local-data/boot.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/logs/area-package.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/host/l3area_runtime_probe",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/local-data/boot.mmlpkg"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/logs/area-runtime-probe.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/native-source/platform/3ds",
+        "-j4"
+      ],
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/logs/native-build.log",
+      "returncode": 0
+    }
+  ],
+  "cookers_or_extractors_invoked": false,
+  "created_utc": "2026-10-01T21:17:36.058389+00:00",
+  "hardware": "PENDING",
+  "host_tests": "PASS",
+  "native_binary_bytes": 407224,
+  "native_binary_path": "build/Legends3DS_0148_TerrainRepair.3dsx",
+  "native_binary_sha256": "6bfdec806febd9aa6c6a0421efdd93215716fa8ee5044aeb3bb756bf808c12bc",
+  "native_build": "PASS",
+  "pack": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/tutorial-pack/legends3ds/tutorial",
+  "pack_manifest_sha256": "58d4b63e82ef33001f67222cfbfc86a0f772d7117d37ff69bcf104403dbd783a",
+  "packaging_existing_cooked_payloads": true,
+  "sd_binary_path": "sd_out/3ds/Legends3DS/Legends3DS_0148_TerrainRepair.3dsx",
+  "sd_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148-final/sd_out",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.8_TerrainRepair",
+  "status": "PASS"
+}

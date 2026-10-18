@@ -1,0 +1,32 @@
+[
+  {
+    "function": "draw_player_0143",
+    "sha256": "8192d1a073f09d3eb6b4d7c60ae4d7d19c48acf364a7df364edbb7f332989df9",
+    "unchanged": true
+  },
+  {
+    "function": "draw_terrain",
+    "sha256": "1c707c8f98539b6eee93a9ce2be40aae6ed4f390dc97a9cfc279078d05b0deca",
+    "unchanged": true
+  },
+  {
+    "function": "configure_terrain_attributes_0143",
+    "sha256": "0521f6960af5db0cb818eb86fcab948a51a9ef7004b660bce5251cb5fb20dd6f",
+    "unchanged": true
+  },
+  {
+    "function": "send_immediate_0143",
+    "sha256": "21d7372741d9e636640d83bb00091c3279679bb01322a92168ad7d7d459cf5a4",
+    "unchanged": true
+  },
+  {
+    "file": "platform/3ds/source/vshader0143.v.pica",
+    "sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+    "unchanged": true
+  },
+  {
+    "file": "platform/3ds/source/vshader_uv.v.pica",
+    "sha256": "7ddf62f20bc02fa2b2e9d1eb2e0b4c62338d758112d05594202eb1982cf94248",
+    "unchanged": true
+  }
+]

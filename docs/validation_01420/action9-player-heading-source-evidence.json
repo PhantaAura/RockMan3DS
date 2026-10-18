@@ -1,0 +1,371 @@
+{
+  "schema": "mml-action9-player-heading-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "player_entry": "8003BE40",
+  "player_body": "8003BE6C",
+  "original_player_work_base": "800B51B0",
+  "heading_offset": "56",
+  "action9_unsigned_heading_address": "800B5206",
+  "pointer_prefix_checks": 1,
+  "turn_and_action9_propagation_cases": 48,
+  "instructions_executed": 2983,
+  "native_field_owner": "RuntimeSession::compat_player().bytes[0x56..0x57], written by original-derived player turn and spawn/transition stores.",
+  "masking": "Action9 reads unsigned full16bits. Use raw little-endian compat halfword, not camera heading or a masked accessor.",
+  "cases": [
+    {
+      "authored_initial_player_heading": 0,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4092,
+      "action9_unsigned_difference": 61444
+    },
+    {
+      "authored_initial_player_heading": 0,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4092,
+      "action9_unsigned_difference": 3
+    },
+    {
+      "authored_initial_player_heading": 0,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4092,
+      "action9_unsigned_difference": 61443
+    },
+    {
+      "authored_initial_player_heading": 0,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4,
+      "action9_unsigned_difference": 65532
+    },
+    {
+      "authored_initial_player_heading": 0,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4,
+      "action9_unsigned_difference": 4091
+    },
+    {
+      "authored_initial_player_heading": 0,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4,
+      "action9_unsigned_difference": 65531
+    },
+    {
+      "authored_initial_player_heading": 1,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4093,
+      "action9_unsigned_difference": 61443
+    },
+    {
+      "authored_initial_player_heading": 1,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4093,
+      "action9_unsigned_difference": 2
+    },
+    {
+      "authored_initial_player_heading": 1,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4093,
+      "action9_unsigned_difference": 61442
+    },
+    {
+      "authored_initial_player_heading": 1,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 5,
+      "action9_unsigned_difference": 65531
+    },
+    {
+      "authored_initial_player_heading": 1,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 5,
+      "action9_unsigned_difference": 4090
+    },
+    {
+      "authored_initial_player_heading": 1,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 5,
+      "action9_unsigned_difference": 65530
+    },
+    {
+      "authored_initial_player_heading": 2047,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 2043,
+      "action9_unsigned_difference": 63493
+    },
+    {
+      "authored_initial_player_heading": 2047,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 2043,
+      "action9_unsigned_difference": 2052
+    },
+    {
+      "authored_initial_player_heading": 2047,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 2043,
+      "action9_unsigned_difference": 63492
+    },
+    {
+      "authored_initial_player_heading": 2047,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 2051,
+      "action9_unsigned_difference": 63485
+    },
+    {
+      "authored_initial_player_heading": 2047,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 2051,
+      "action9_unsigned_difference": 2044
+    },
+    {
+      "authored_initial_player_heading": 2047,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 2051,
+      "action9_unsigned_difference": 63484
+    },
+    {
+      "authored_initial_player_heading": 2048,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 2044,
+      "action9_unsigned_difference": 63492
+    },
+    {
+      "authored_initial_player_heading": 2048,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 2044,
+      "action9_unsigned_difference": 2051
+    },
+    {
+      "authored_initial_player_heading": 2048,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 2044,
+      "action9_unsigned_difference": 63491
+    },
+    {
+      "authored_initial_player_heading": 2048,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 2052,
+      "action9_unsigned_difference": 63484
+    },
+    {
+      "authored_initial_player_heading": 2048,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 2052,
+      "action9_unsigned_difference": 2043
+    },
+    {
+      "authored_initial_player_heading": 2048,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 2052,
+      "action9_unsigned_difference": 63483
+    },
+    {
+      "authored_initial_player_heading": 4095,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 61445
+    },
+    {
+      "authored_initial_player_heading": 4095,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 4
+    },
+    {
+      "authored_initial_player_heading": 4095,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 61444
+    },
+    {
+      "authored_initial_player_heading": 4095,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 65533
+    },
+    {
+      "authored_initial_player_heading": 4095,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 4092
+    },
+    {
+      "authored_initial_player_heading": 4095,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 65532
+    },
+    {
+      "authored_initial_player_heading": 32767,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 61445
+    },
+    {
+      "authored_initial_player_heading": 32767,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 4
+    },
+    {
+      "authored_initial_player_heading": 32767,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 61444
+    },
+    {
+      "authored_initial_player_heading": 32767,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 65533
+    },
+    {
+      "authored_initial_player_heading": 32767,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 4092
+    },
+    {
+      "authored_initial_player_heading": 32767,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 65532
+    },
+    {
+      "authored_initial_player_heading": 32768,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4092,
+      "action9_unsigned_difference": 61444
+    },
+    {
+      "authored_initial_player_heading": 32768,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4092,
+      "action9_unsigned_difference": 3
+    },
+    {
+      "authored_initial_player_heading": 32768,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4092,
+      "action9_unsigned_difference": 61443
+    },
+    {
+      "authored_initial_player_heading": 32768,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4,
+      "action9_unsigned_difference": 65532
+    },
+    {
+      "authored_initial_player_heading": 32768,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4,
+      "action9_unsigned_difference": 4091
+    },
+    {
+      "authored_initial_player_heading": 32768,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4,
+      "action9_unsigned_difference": 65531
+    },
+    {
+      "authored_initial_player_heading": 65535,
+      "held": 0,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 61445
+    },
+    {
+      "authored_initial_player_heading": 65535,
+      "held": 0,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 4
+    },
+    {
+      "authored_initial_player_heading": 65535,
+      "held": 0,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 4091,
+      "action9_unsigned_difference": 61444
+    },
+    {
+      "authored_initial_player_heading": 65535,
+      "held": 2,
+      "authored_player_to_actor_angle": 0,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 65533
+    },
+    {
+      "authored_initial_player_heading": 65535,
+      "held": 2,
+      "authored_player_to_actor_angle": 4095,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 4092
+    },
+    {
+      "authored_initial_player_heading": 65535,
+      "held": 2,
+      "authored_player_to_actor_angle": 65535,
+      "source_updated_player_heading": 3,
+      "action9_unsigned_difference": 65532
+    }
+  ],
+  "regions": [
+    {
+      "start": "0x8003be40",
+      "end_exclusive": "0x8003be6c",
+      "sha256": "268602e74d515888c1de643ab4b5b6c18bbe98cc24a71bd3568a68ec3dd88d4a"
+    },
+    {
+      "start": "0x80042154",
+      "end_exclusive": "0x80042238",
+      "sha256": "c70c2e3a666b752b2990ff4f4561d5a92b5dd2151b83577851af7e3af4c19626"
+    }
+  ],
+  "external_premises": [
+    "Work/input values and action9 angle results are authored.",
+    "Source player entry pointer, original turn helper and original action9 body execute.",
+    "Full player callback, whole encounter and live parity are not claimed."
+  ]
+}

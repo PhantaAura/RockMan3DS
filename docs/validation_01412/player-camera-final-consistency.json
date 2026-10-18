@@ -1,0 +1,104 @@
+{
+  "format": "player-camera-final-consistency/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "checkpoint": "0.0.14.12",
+  "scope": "read-only current source integration and evidence consistency; native final build/capture belongs to root validation",
+  "checks": {
+    "UV_actor_helper_integrated": true,
+    "local_player_scale": 0.125,
+    "actor_world_translation_unscaled": true,
+    "source_Y_rotation_sign_integrated": true,
+    "raw_work_0116_subtraction_integrated": true,
+    "UV_pose_storage_and_material_word_lifetime_integrated": true,
+    "default_camera_constants_match_source_and_canonical_live_snapshot": true,
+    "native_camera_defaults": {
+      "focal_pixels": 384,
+      "horizontal_distance": 0.998046875,
+      "eye_height": 0.365234375,
+      "target_height": 0.29296875
+    },
+    "canonical_reference_hashes_still_match": true,
+    "legacy_draw_functions_unchanged_from_01411": {
+      "draw_player_0143": true,
+      "draw_projectiles_0143": true
+    },
+    "legacy_view_constants": {
+      "vertical_fov_degrees": 62,
+      "follow_distance": 5.2,
+      "eye_height": 3,
+      "target_height": 1.1
+    },
+    "boot_log_distinguishes_source_baseline_candidate_override_and_legacy": true,
+    "projectile_proxy_labeled_CANDIDATE": true,
+    "physical_hardware_claim_not_verified": true
+  },
+  "presentation": {
+    "native_top_viewport": [
+      400,
+      240
+    ],
+    "original_reference_viewport": [
+      320,
+      240
+    ],
+    "viewport_adaptation": "vertical focal scale retained; wider native horizontal field of view; no full-frame image parity claim",
+    "player_geometry": "actual owner-cooked five-component retail model",
+    "projectile": {
+      "status": "CANDIDATE",
+      "geometry": "untextured triangle proxy",
+      "original_effect_binding": "UNKNOWN"
+    },
+    "original_top_HUD": {
+      "status": "UNKNOWN",
+      "implemented": false
+    },
+    "bottom_HUD": "separate mockup-inspired runtime UI"
+  },
+  "validated_host_checks": {
+    "format": "player-visual-storage-check/1",
+    "synthetic_frames_checked": 128,
+    "host_posed_primitive_bytes": 68,
+    "actor_transform_cases_checked": 98,
+    "actor_world_translation_unscaled": true,
+    "actor_local_render_scale": 0.125,
+    "pose_equivalence": true,
+    "material_order_equivalence": true,
+    "hot_pose_heap_allocations": 0,
+    "malformed_input_preserves_output": true,
+    "owner_pack": {
+      "status": "SOURCE_BACKED_PARTIAL",
+      "components": 5,
+      "attachments": 18,
+      "primitives": 316,
+      "triangles": 116,
+      "quads": 200,
+      "vertex_references": 1148,
+      "distinct_material_words": 2,
+      "resolved_area_material_bindings": 10,
+      "frame_table_actions_checked": 55,
+      "pose_frames_checked": 761,
+      "pose_equivalence": true,
+      "material_order_equivalence": true,
+      "hot_pose_heap_allocations": 0,
+      "retail_visual_parity": "UNKNOWN"
+    }
+  },
+  "bounded_original_source_check_counts": {
+    "translation": 256,
+    "Y_rotation": 9,
+    "Q12_scale": 27,
+    "camera_eye": 54,
+    "total": 346
+  },
+  "limits": {
+    "retail_pixel_parity": "UNKNOWN",
+    "full_camera_behavior": "UNKNOWN",
+    "float_vs_PS1_fixed_point_rounding": "UNKNOWN",
+    "raw_work_0116_semantics": "UNKNOWN",
+    "complete_animation_cadence_and_arm_blending": "UNKNOWN",
+    "projectile_effect_binding": "UNKNOWN",
+    "physics_1to1": false,
+    "physical_Old3DS_screen_frame_pacing_memory_acceptance": "HARDWARE_PENDING"
+  },
+  "owner_payloads_included": false
+}

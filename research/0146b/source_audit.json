@@ -1,0 +1,23 @@
+{
+  "inherited_file_count": 225,
+  "baseline_tests": "2/2 PASS before edits",
+  "lineage": "0143 compatibility foundation with selective 0145 features and H1-H10 bridge; older archives not supplied independently",
+  "0146a_fixes": "Existing C11/C++17 build, staged render recovery, SD boot log and stack reserve retained",
+  "modules": {
+    "foundation": "platform/3ds/source/main.cpp and vshader0143.v.pica",
+    "integration": "src/p2 (separate host bridge library)",
+    "texture": "src/texture + src/render/ctr_texture_layout.cpp",
+    "model": "src/model",
+    "animation": "src/animation + src/player/player_runtime.c",
+    "movement": "src/player and src/world/runtime_session.cpp",
+    "import": "tools/build_* and l3cook_*",
+    "formats": "include/legends3ds/l3map.h and cooker headers",
+    "tests": "tests/test_core.cpp and tests/p2/test_all.c"
+  },
+  "critical_limits": [
+    "frontend still uses developer SELECT for area cycling",
+    "frontend camera constants are candidate",
+    "generalized object roles and EBD semantics unknown"
+  ],
+  "preserved": "All 225 inherited files retained; no fallback shader change"
+}

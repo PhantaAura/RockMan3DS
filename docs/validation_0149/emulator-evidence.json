@@ -1,0 +1,23 @@
+{
+  "binary_sha256": "8408e616234bf14083f35e0539e58e8c2ce2a343545c68eebb97bb94953ca046",
+  "blocker": "Computer-use tool reports Mac locked and unable to unlock; Azahar starts with isolated storage but no current boot/telemetry log was obtained. Cannot inspect UI or capture.",
+  "current_runtime_exercised": false,
+  "emulator": "Azahar2126.0",
+  "first_sandbox_launch": {
+    "exit_code": 134,
+    "failure": "macOS pasteboard/hiservices GUI connection blocked"
+  },
+  "physical_hardware_tested": false,
+  "raw_run_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-local-import/azahar-0149",
+  "retail_parity_tested": false,
+  "screenshots": [],
+  "settings": {
+    "cpu_clock_percentage": 100,
+    "is_new_3ds": false,
+    "isolated_sd_config_data_nand": true,
+    "resolution_factor": 1
+  },
+  "status": "HARDWARE_PENDING",
+  "test_process_cleanup": "Only the task-created process was stopped; normal shutdown stalled, then it was force-stopped. No current game execution evidence obtained.",
+  "unsandboxed_retry": "Installed Azahar process launched; runtime outcome unverified"
+}

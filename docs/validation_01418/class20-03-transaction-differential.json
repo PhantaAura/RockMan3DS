@@ -1,0 +1,26 @@
+{
+  "schema": "class20-03-native-transaction-check/1",
+  "status": "PASS",
+  "compile_flags": [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "original_differential_cases": 2309,
+  "source_fields_per_case": 65,
+  "original_instructions_executed": 289285,
+  "prepared_action2_contexts": 961,
+  "guard_checks": "atomic missing input/consumer/floor/cue/motion, unknown health/profile, source-used subset, admitted/rejected detection boundary, defeat hold, consecutive packet finalization, action2 rollback and sound order",
+  "compatibility_cases": {
+    "action_selector": 2018,
+    "distance": 675
+  },
+  "source_sha256": {
+    "include/legends3ds/class20_03_behavior.h": "bea02e3b6e345d06b249b74771077afd164c814ac87e0f26ea3ecb90fde5dbd2",
+    "src/world/class20_03_behavior.cpp": "67d92043106690c49b1fd53cd4277a0e3d107218da4e8a3d711b672a7958ac06",
+    "tests/test_class20_03_callback.cpp": "fe69d5e03bd7f2345716c824964c26d7bd33b76f339fcc5c7f7ec5797b7eac82",
+    "docs/research_01418/class20_03_transaction_source_probe.py": "c7c67f83527eed50936cb87e9918471a8d720e28aedd6167fd27d57197c60571",
+    "docs/research_01418/CLASS20_03_TRANSACTION.md": "3693641a1f7acacda74a348022eb4672974c03a49fc57268e74fb5bea2b7385f"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "stage": "measured-view",
+  "build_sha256": "9af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02",
+  "settings": {
+    "azahar": "2126.0",
+    "new_3ds": false,
+    "cpu_percent": 100,
+    "resolution": 1
+  },
+  "hardware_tested": false,
+  "synthetic_input": true,
+  "ranges": {
+    "frame_before_log_us": {
+      "min": 9621,
+      "max": 90408
+    },
+    "update_us": {
+      "min": 3,
+      "max": 63
+    },
+    "render_us": {
+      "min": 6320,
+      "max": 16621
+    },
+    "bottom_ui_us": {
+      "min": 18,
+      "max": 6942
+    },
+    "draw_calls": {
+      "min": 15,
+      "max": 15
+    },
+    "triangles": {
+      "min": 1710,
+      "max": 1710
+    },
+    "owned_linear": {
+      "min": 71640,
+      "max": 71640
+    },
+    "owned_texture": {
+      "min": 3670016,
+      "max": 3670016
+    },
+    "malloc_live": {
+      "min": 1880480,
+      "max": 1880480
+    },
+    "linear_free": {
+      "min": 27937280,
+      "max": 27937280
+    },
+    "vram_free": {
+      "min": 5523456,
+      "max": 5523456
+    }
+  },
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-measured-view/captures/player-reference-position-original.png",
+      "sha256": "54d39bb401cfba314f5758bd73c5e0b6cb21aed7a6d206779f3d46fe78c4e1ff",
+      "scene": "measured-view",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.14",
+      "build_sha256": "9af8cefdbcf647a008fb4afa0f10c78acf9db0780fea752a9ea79c51e1c04b02",
+      "original_capture": true,
+      "hardware_evidence": false,
+      "diagnostic_placement": true
+    }
+  ],
+  "csv_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-gameplay/azahar-01414-measured-view/sdmc/3ds/Legends3DS/hardware_01414_4000042806739.csv",
+  "samples": 53,
+  "events": [
+    "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35792,linear_free=31941632,vram_free=0",
+    "# area_event=package_loaded,area=0,elapsed_us=1321169,package_bytes=684250,decoded_estimate=804748,load_peak_estimate=1898804,malloc_live=743792,linear_free=31941632,vram_free=0",
+    "# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE",
+    "# gameplay_clock,updates=0,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=120,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=240,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=360,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=480,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=600,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=720,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=840,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=960,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1080,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1200,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1320,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1440,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1560,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1680,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1800,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=1920,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=2040,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=2160,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=2280,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=2400,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=2520,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING",
+    "# gameplay_clock,updates=2640,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING"
+  ],
+  "movement_observations": {
+    "positions": [
+      [
+        2822,
+        -1,
+        -4833
+      ]
+    ],
+    "headings": [
+      0
+    ],
+    "held_values": [
+      0
+    ]
+  }
+}

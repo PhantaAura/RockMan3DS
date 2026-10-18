@@ -1,0 +1,212 @@
+{
+  "changed_files": [
+    {
+      "change": "MODIFIED",
+      "path": "CMakeLists.txt",
+      "sha256": "d4d9fcc022e0c003f9c3939c7a1e629cc9eafed8662618a8acdde4aaf95a207d"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "README.md",
+      "sha256": "ebca6ac2ad97edbba5f88afd604271dbabe45719b94974a9daaf5a373faf654a"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/LOCAL_DATA_INSTALLER_0149.md",
+      "sha256": "f4dd3db9fa7fac9c0f69d61c0d0999198db66f6a39277bf0274e74f3f0fa9756"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/PORTING_MAP_0149.md",
+      "sha256": "40f09e1ea0202690a81ee062ac81e558697e04bd4c317e75e8b79596b79ccf29"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/REPORT_0149.md",
+      "sha256": "231a62b66e592fee88f8fc9757be3c4228265c77f9091ff8128778731fbace79"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/RESUME_0149_20261002.md",
+      "sha256": "71c9c0bc519bca53eb4602e81686c0770e2626eab2e9f4815da07b7d3d03a5f4"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/animation-evidence.json",
+      "sha256": "7d1c410832ff70140a316705d870f1d1c895f5f330541f749bcdd5e8e5fece77"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/area-runtime-probe.json",
+      "sha256": "6929d55e345193d4bbf84f1b3d19143685f9967bec92ae94e03dcbcc2e1cb003"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/baseline-host-tests.log",
+      "sha256": "14710c752fa911b2b009382243bb6dad33c956e778e684c5f53dc78241ab62f4"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/build-result.json",
+      "sha256": "b28751c106398b8fc1602ee446366cc946360df006c4627f4c9f36a96a4d41f8"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/cache-and-snapshot-verification.json",
+      "sha256": "1576bf170142ba0b9958930866fa22672c0e6dd1edf6077077eaa144fc5a5ad0"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/cumulative-verification.json",
+      "sha256": "091b2d4e303173a9aee662acac667fccdeb34926eff57aeed25a45e5766d6aac"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/emulator-evidence.json",
+      "sha256": "c47b194ec1aaa914d92504ddd3736f0e5f3691d3f474b510bf858f958f7f341a"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/host-build.log",
+      "sha256": "547f74941a2a45fb7acd34d2df1d66c96f5c37beb0278b5a8f591bc7d71ae78f"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/host-configure.log",
+      "sha256": "031f8d3d419dd2da52066d2e867916b01869ce418d4f4d95b024c3ad1bab198c"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/host-tests.log",
+      "sha256": "4d5a723090ef40868d0103f033decfdba4b7aa7e2c51c61ed4174d192d2fecff"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/input-and-pack-comparison.json",
+      "sha256": "848125fb8122c2ff3cd3b250ec9bb8cc455f9bcb256c962967425f47b8358a07"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/input-validation.json",
+      "sha256": "71037d7b19b5dece56807112b95b56499034fb6a4eb68ac07a9575ad54db43b1"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/native-build.log",
+      "sha256": "25e53d8146632d1c205ca5deb8d8d24ad2b84c46546aa3fb5326d9e7d4908f96"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/native-source-manifest.json",
+      "sha256": "495daab33f44dbea0a72a2756ec239028af3091a09a661ce0a51711401060405"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/repeat-build-result.json",
+      "sha256": "9f2685a243ce647570fa9fae706d0193024e5cffb5af109262a2c3bf9b5e39e5"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/source-verification.json",
+      "sha256": "1bead5dad28ef06497e6114768338d23d46828aa6f513673c63f52c843a49434"
+    },
+    {
+      "change": "ADDED",
+      "path": "docs/validation_0149/toolchain.json",
+      "sha256": "534e21535ef1165cc785fc22b092b665da2d1d9712a427f8d38d143e208783ff"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "platform/3ds/Makefile",
+      "sha256": "950086060e80a66d5945f8e9dedd6314016efe5054cd671bfe64cafe5109ce36"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "sha256": "3022782ff3890f31955d34574b865572494d7f9f09d23cf666f77476d7aa7224"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "platform/3ds/source/main.cpp",
+      "sha256": "bc9199d550cbd8447e291f83ff04dbd1cd62caf1edd2f5c304e85982490da7c8"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "sha256": "4743decaae63dd23a287945d0197dd166a7f74d0ed28c1ec6b4466d9ed4603c7"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "state/CURRENT_READINESS.json",
+      "sha256": "50e2ff49f98789255d58a016e4ddfaa8c7e97bfdc553d2670c321880144c3f91"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "state/EVIDENCE_LEDGER.json",
+      "sha256": "28abf652d06f537e7550e68c5b88c7c09aee428e015b6cb9f1e860d39197110a"
+    },
+    {
+      "change": "ADDED",
+      "path": "state/OWNER_DATA_PROFILE_USA.json",
+      "sha256": "f7f062d523e8ec9cdba263e366b9b40de70b95101bfda88b339fb60d11a61a7b"
+    },
+    {
+      "change": "ADDED",
+      "path": "tests/test_local_install.py",
+      "sha256": "1fa6c5a0dfbd221beb6375f8648eb48d9b24ff13a075f914a85860f873e5ae02"
+    },
+    {
+      "change": "ADDED",
+      "path": "tests/test_owner_data_intake.py",
+      "sha256": "4cf9f1835c37234cbeeeefda678e45ded63b383d3a36105c783690fd1f9f52d7"
+    },
+    {
+      "change": "ADDED",
+      "path": "tests/test_source_tools.py",
+      "sha256": "89056d34d4ca45b6c11936178a80ff963d1c7c78ad674542a4c586fa2f6a7456"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "tools/build_hardware_test.py",
+      "sha256": "a74b74457ccc8664c82e4afc192c7c2294c68b06b5d802a59b0d2b13fb04524b"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "tools/build_mml3ds.py",
+      "sha256": "a1e9ee97fb6a42c6eec53c0a62c9ed8c08129f9d1f8a651c04771ee54632f1c1"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "tools/build_tutorial_pack.py",
+      "sha256": "e762937ac3625c3214bcfb451ecee2b97db3e7384d08300121e813283ab0a37d"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "tools/mml_pipeline.py",
+      "sha256": "a1a9a77c6b58cc6323bf9b275bebfb67de67800c5366c1fc48eb8ad55673fd41"
+    },
+    {
+      "change": "ADDED",
+      "path": "tools/owner_data_intake.py",
+      "sha256": "1ee8fe9b3e8b9d9df9a06a1a281d9438402ae7bbc2824f81735b1910850d6566"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "tools/release_source.py",
+      "sha256": "fe88408244882408002d384464cdf3b06f8fd5340fa41c5457e2ca9b630dd5f5"
+    },
+    {
+      "change": "MODIFIED",
+      "path": "tools/verify_0146_source.py",
+      "sha256": "6490d537497b4774bdc0dd3f5a14e07e3e146a4e793a6bc2920fa509c5da15fe"
+    }
+  ],
+  "deleted_files": [],
+  "generated_identity_exclusions": [
+    "SOURCE_MANIFEST.sha256",
+    "docs/CHANGED_FILES_0149.json"
+  ],
+  "git_repository": false,
+  "parent": "0.0.14.8",
+  "version": "0.0.14.9"
+}

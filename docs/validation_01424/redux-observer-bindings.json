@@ -1,0 +1,18 @@
+{
+  "schema": "mml-redux-observer-binding-test/1",
+  "status": "PASS_INSTALLED_API",
+  "raw_cp2_words_read": 64,
+  "retained_return_capacity_checked": 128,
+  "range_listeners_tested": 0,
+  "leaf_listeners_tested": 131,
+  "listeners_removed": 131,
+  "no_game_loaded": true,
+  "real_emulator_state_mutated": false,
+  "callback_execution_proved": false,
+  "retail_parity": false,
+  "runtime": "installed PCSX-Redux LuaJIT 2.1.1785598229",
+  "exit_code": 0,
+  "command_file": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01424/lua-observer-harness-r7/argv.json",
+  "stdout": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01424/lua-observer-harness-r7/stdout.log",
+  "harness_source_sha256": "1a08ece6b9531fb0d16128ffae1c75d382435ed2aff64a04dc5be973d7ddf263"
+}

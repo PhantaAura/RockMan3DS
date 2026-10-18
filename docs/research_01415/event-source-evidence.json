@@ -1,0 +1,127 @@
+{
+  "schema": "worldalive-event-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "correction": {
+    "supersedes": [
+      "docs/validation_01413/object-initializer-chain.json:first_imported_record.selected_script",
+      "docs/validation_01413/object-initializer-chain.json:first_imported_record.command_base"
+    ],
+    "record": "area0 classC0/subtype03",
+    "consumer": "0x80119398",
+    "role": "RGB555 palette timeline",
+    "storage": "0x800AD168 color halfword buffer",
+    "fields": "four-byte palette u16 index/duration/signed control records",
+    "proof": "0x80119580 interpolates R/G/B five-bit channels in sixteen halfwords, sets bit15",
+    "runtime_audit": "No C0/03 inferred-command execution is wired; p2 event VM is an independent synthetic instruction API"
+  },
+  "checks": {
+    "source_spatial_gate_cases": 105,
+    "source_palette_interpolation_cases": 5,
+    "source_flag_get_cases": 16,
+    "conditional_transition_branch_cases": 1
+  },
+  "controller": {
+    "static_record": "area1 C0/subtype0x21 index5",
+    "callback": "0x80119BE8",
+    "fixed_allocator": "0x800317AC explicit E0 slot allocator",
+    "created_class": "E0",
+    "created_subtype": 0,
+    "area_descriptor_table": "0x8011A46C",
+    "gate": "0x80111810",
+    "creator": "0x80111CD0",
+    "phase_order": "state1 selects work+18, writes state2; state2 creates on next dispatcher tick",
+    "predicate": "u32 record+20; 0x8001DA58 true skips allocation",
+    "commit": "state2 stores qualifier lowbyte towork+1C, id lowbyte towork+1D, state1 towork+08",
+    "cleanup_scope": "source tracks only its conditional allocations in pairs at0x801224EC; original group switching/removed-object flag side effects are distinct from other static actors",
+    "allocation_order": "try slot31 then descend on failure; slot31 only on fresh available pool"
+  },
+  "actual_event_path": {
+    "poll": "0x8001D990",
+    "per_stage_poll_table": "0x80088FA8",
+    "ST00_poll": "0x80100598",
+    "ST00_flag_table": "0x8011ADF8",
+    "initial_cutscene_trigger": {
+      "flag": 1540,
+      "event_id": 1
+    },
+    "event_initialize": "0x8001DDE4",
+    "handler_table": "0x80089024",
+    "event1_handler": "0x801010C4",
+    "event1_state_table": "0x80100018",
+    "per_actor_command_interpreter": "0x8001EC0C (highbyte opcode)",
+    "phase_timing_consumer": "0x8001F070 (eight-byte records)",
+    "state7_transition_if_busy_zero": {
+      "target_stage": 0,
+      "target_area": 1,
+      "position": [
+        2822,
+        -1,
+        -4833
+      ],
+      "yaw": 0,
+      "transition_status": 2,
+      "clear_flag": 1540,
+      "event_active": false
+    },
+    "message_queue": "0x80063BC8 -> 0x80063C30 -> 0x80053A08; source message payload0x80153000",
+    "limits": [
+      "No complete event1 cutscene or message sequence execution asserted",
+      "Final transition branch tested under completion premise, with update/cleanup hooks",
+      "No C0 event-to-message-to-transition chain is fabricated; C0/03 is palette behavior",
+      "Undecoded commands remain UNKNOWN; EBD is a resource directory, not interpreter storage"
+    ]
+  },
+  "code_regions": [
+    {
+      "id": "palette_timeline",
+      "start": "0x80119398",
+      "end_exclusive": "0x80119800",
+      "sha256": "22ee858ddb59836715e13f4cc0c8aba6665d26bb02110eb478b3b0b7ac0c6a24"
+    },
+    {
+      "id": "C0_21_controller_seed",
+      "start": "0x80119be8",
+      "end_exclusive": "0x80119c68",
+      "sha256": "e3187f01eacc4cd4b2e76791d3795a592b5322aea0d13dfc4535fcce2ad5eac9"
+    },
+    {
+      "id": "E0_spatial_gate",
+      "start": "0x80111810",
+      "end_exclusive": "0x80111cd0",
+      "sha256": "4473ae74cc84786e970a69549cd47251319707f337a8e7c3698ae456f1ff84b9"
+    },
+    {
+      "id": "E0_creator",
+      "start": "0x80111cd0",
+      "end_exclusive": "0x80112148",
+      "sha256": "7e423a3ccba10be481b866106d3fd24d67954be572f1e5bb376d2a5f9efa315d"
+    },
+    {
+      "id": "story_flag_get",
+      "start": "0x8001da58",
+      "end_exclusive": "0x8001da8c",
+      "sha256": "4fecb311c2932aa916e7a04d9cd9ed59f678197b7b2531f69b5f25fc603f86cc"
+    },
+    {
+      "id": "event_poll",
+      "start": "0x80100598",
+      "end_exclusive": "0x80100614",
+      "sha256": "3451d08317afe1857bd44637d7b73baa0527a414935166148468af6ea8161677"
+    },
+    {
+      "id": "event1_handler",
+      "start": "0x801010c4",
+      "end_exclusive": "0x80101364",
+      "sha256": "f5bf9de99cbf1949c485a7f0e4a475e427897fa64709986c08d3d25c4bf4f16e"
+    },
+    {
+      "id": "actor_command_interpreter",
+      "start": "0x8001ec0c",
+      "end_exclusive": "0x8001f070",
+      "sha256": "39b5a4d18c9c851732ff07f164a98b90d70060bec60c360a158091e141abe316"
+    }
+  ],
+  "payload_policy": "Scalar behavior, selected addresses and hashes only; no owner bytes or original tables"
+}

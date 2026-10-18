@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "emulator": "Azahar2126.0",
+  "new_3ds": false,
+  "build": "0.0.14.16",
+  "renderer_feature_mask": 0,
+  "shader": "0143",
+  "shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "stage_selector_log": 8,
+  "stage_selector_limit": "Inherited stage selector logs the requestedstage8; effective featuremask0 and0143shader/zerotextures prove actual safe path.",
+  "actor_texture_file_requested": true,
+  "actor_textures_effective": false,
+  "angle_package_present": false,
+  "runtime_ready": true,
+  "textures": 0,
+  "capture": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/azahar-01416-safe-r1/captures/native-0143-safe-top-bottom.png",
+  "scope": "Native boot/render fallback; faithfulgameplay/physicalhardware notclaimed"
+}

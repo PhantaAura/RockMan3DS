@@ -1,0 +1,22 @@
+{
+  "schema": "mml-source-fade-startup-probe/1",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "authored_cases": 517,
+  "phase_increment_before_helper_cases": 517,
+  "busy_noop_cases": 5,
+  "gpu_type_domain": 256,
+  "executed_original_instructions": 126709,
+  "maximum_case_steps": 247,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "retail_parity": false,
+  "stop_before": "80012E10(slot2,callback80017E94)",
+  "fixture_sha256": "2df96d7cebbdf8db9d17ad5591c38abcf6a9aa259af791946938412b8074588d",
+  "source_block_sha256": "ef68fea4cb06b1645977123a63f321db816f4e1cd04b9a187643b86a20e5b73f",
+  "source_handler_sha256": "7c7bb91417020c56529d6859983816d1ad22f698d0718187419e26033f472643",
+  "limits": [
+    "Authored state is not a live retail trace.",
+    "BIOS thread SP/GP/handle, yielding, fade presentation and completion remain unbound."
+  ]
+}

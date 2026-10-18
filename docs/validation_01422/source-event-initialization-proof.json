@@ -1,0 +1,48 @@
+{
+  "schema": "mml-source-event-initialization/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "original_instruction_cases": 58,
+  "original_instructions_executed": 6810,
+  "checks": {
+    "fresh_flag_bank": 16,
+    "scene_reset_retained_tail": 24,
+    "area_event_prefix": 18
+  },
+  "accepted_cases_helper_hooks": [],
+  "fixture_sha256": "a10dfdb3b56ef5d18610431ed32c5bc8c113c59b13255eac8f8f68d15c189375",
+  "regions": [
+    {
+      "start": "0x8001d8c0",
+      "end_exclusive": "0x8001d974",
+      "sha256": "c156e92e192e4081ada07de4ea7b02c20de788b0a5ddd5e71327fe451f21f499"
+    },
+    {
+      "start": "0x80067e18",
+      "end_exclusive": "0x80067e6c",
+      "sha256": "66f2959df0dac8b7ce293ff24c5e0213dc78a8feaa90f52d771f9bc5adceb619"
+    },
+    {
+      "start": "0x80100460",
+      "end_exclusive": "0x801004f0",
+      "sha256": "618d44a89352cb7a9cd932514fbf67393c0e69e701c1c895cdea1d577e6168c1"
+    }
+  ],
+  "initialization_scope": [
+    "Fresh8001D8C0 resets256bytes then bank-resident word defaults and flag1216.",
+    "Original8001D928 resets only eventwork00..03, not its168byte whole buffer.",
+    "ST00 area0 sets1540 through the original flag setter; native follows this explicit lifecycle branch.",
+    "ST00 area1/2 player presentation flags are supported in this prefix only."
+  ],
+  "limits": [
+    "All before-work/flag/player bytes are authored synthetic inputs.",
+    "Boot BSS state, whole NewGame callback and source-relative tick ordering remain unproved.",
+    "The area initializer render/object/camera/audio consumers outside the accepted prefix are excluded.",
+    "Busy80098A72 initial value is not inferred; no complete event or natural transition claimed.",
+    "No retail code/table/assets/save payload exported."
+  ],
+  "retail_parity": false,
+  "live_gameplay": false,
+  "hardware_tested": false
+}

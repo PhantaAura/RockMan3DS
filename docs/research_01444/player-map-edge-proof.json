@@ -1,0 +1,697 @@
+{
+  "schema": "mml-player-map-edge/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "PHYSICS_1TO1": false,
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "resources_sha256": {
+    "idx": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e",
+    "mdt": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e",
+    "stg": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+    "hed": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+  },
+  "existing_pack_sha256": {
+    "st00.l3map": "3891ff3588e882f77a684461459e9379258285d0e7a58fd7fcfefeaaf61da333",
+    "st00.l3init": "d84f875e120fb5260a8687b68a9c11141973aa8d8fa1484a5eb5fa647ed227e5"
+  },
+  "area_index": 0,
+  "bounds": [
+    -32,
+    32,
+    -32,
+    32,
+    -160,
+    0
+  ],
+  "materialized_identity_count": 994,
+  "startup_seeds_match_existing_pack": true,
+  "idx14_owner_binding": {
+    "descriptor_index": 5,
+    "source_alternate_equals_default": true,
+    "cooked_contact_list_index": 4,
+    "materialized_raw6": 1,
+    "group_count": 1,
+    "primitive_code_counts": {
+      "0x3": 1
+    }
+  },
+  "source_regions": [
+    {
+      "start": "0x8004b414",
+      "end_exclusive": "0x8004b5cc",
+      "sha256": "38649df1888a219a879eddef9b711ee31ca6c54249f9aca0d7efa95ee2623973"
+    },
+    {
+      "start": "0x8004b6ac",
+      "end_exclusive": "0x8004bc34",
+      "sha256": "9d402aed734654ef4e2371219fcc4e801a0b1106e1e5f465c367d7282f21c5cb"
+    },
+    {
+      "start": "0x80048e6c",
+      "end_exclusive": "0x8004920c",
+      "sha256": "02debe52dc66099b54c61bb9097409907cb6f1e86a4b48f5431d31efcff86020"
+    }
+  ],
+  "cases": [
+    {
+      "id": "west_inside",
+      "input_xyz": [
+        -390,
+        -1,
+        1761
+      ],
+      "prior_xyz": [
+        -365,
+        -1,
+        1761
+      ],
+      "input_state74": 0,
+      "object_class": 0,
+      "wall_result": 0,
+      "wall_output": {
+        "raw": [
+          -390,
+          -1,
+          1761,
+          0
+        ],
+        "fixed": [
+          -25559040,
+          -65536,
+          115408896,
+          0
+        ],
+        "velocity": [
+          321,
+          -654,
+          987
+        ],
+        "state74": 0
+      },
+      "floor_result": -1,
+      "gather_before_positive_dedup": [
+        {
+          "cell_index": 134,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 133,
+          "packed_cell": 0
+        },
+        {
+          "cell_index": 123,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 122,
+          "packed_cell": 0
+        }
+      ],
+      "positive_identities_after_dedup": [
+        14
+      ],
+      "wall_original_instructions": 723,
+      "floor_original_instructions": 872,
+      "wall_direct_calls": [
+        {
+          "site": "0x8004b42c",
+          "target": "0x8004b3c0"
+        },
+        {
+          "site": "0x8004b438",
+          "target": "0x8002fe74"
+        },
+        {
+          "site": "0x8004b458",
+          "target": "0x8004b6ac"
+        },
+        {
+          "site": "0x8004b800",
+          "target": "0x8004b1e0"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b33c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b88c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004bad8",
+          "target": "0x8004bdc8"
+        }
+      ],
+      "helper_hooks": 0,
+      "instruction_patches": 0
+    },
+    {
+      "id": "west_trace_escape",
+      "input_xyz": [
+        -449,
+        -1,
+        1761
+      ],
+      "prior_xyz": [
+        -424,
+        -1,
+        1761
+      ],
+      "input_state74": 0,
+      "object_class": 0,
+      "wall_result": 0,
+      "wall_output": {
+        "raw": [
+          -449,
+          -1,
+          1761,
+          0
+        ],
+        "fixed": [
+          -29425664,
+          -65536,
+          115408896,
+          0
+        ],
+        "velocity": [
+          321,
+          -654,
+          987
+        ],
+        "state74": 0
+      },
+      "floor_result": 32767,
+      "gather_before_positive_dedup": [
+        {
+          "cell_index": 134,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 133,
+          "packed_cell": 0
+        },
+        {
+          "cell_index": 123,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 122,
+          "packed_cell": 0
+        }
+      ],
+      "positive_identities_after_dedup": [
+        14
+      ],
+      "wall_original_instructions": 595,
+      "floor_original_instructions": 490,
+      "wall_direct_calls": [
+        {
+          "site": "0x8004b42c",
+          "target": "0x8004b3c0"
+        },
+        {
+          "site": "0x8004b438",
+          "target": "0x8002fe74"
+        },
+        {
+          "site": "0x8004b458",
+          "target": "0x8004b6ac"
+        },
+        {
+          "site": "0x8004b800",
+          "target": "0x8004b1e0"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b33c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b88c",
+          "target": "0x80048cec"
+        }
+      ],
+      "helper_hooks": 0,
+      "instruction_patches": 0
+    },
+    {
+      "id": "west_next_sample",
+      "input_xyz": [
+        -479,
+        -1,
+        1746
+      ],
+      "prior_xyz": [
+        -449,
+        -1,
+        1761
+      ],
+      "input_state74": 0,
+      "object_class": 0,
+      "wall_result": 0,
+      "wall_output": {
+        "raw": [
+          -479,
+          -1,
+          1746,
+          0
+        ],
+        "fixed": [
+          -31391744,
+          -65536,
+          114425856,
+          0
+        ],
+        "velocity": [
+          321,
+          -654,
+          987
+        ],
+        "state74": 0
+      },
+      "floor_result": 32767,
+      "gather_before_positive_dedup": [
+        {
+          "cell_index": 134,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 133,
+          "packed_cell": 0
+        },
+        {
+          "cell_index": 123,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 122,
+          "packed_cell": 0
+        }
+      ],
+      "positive_identities_after_dedup": [
+        14
+      ],
+      "wall_original_instructions": 595,
+      "floor_original_instructions": 490,
+      "wall_direct_calls": [
+        {
+          "site": "0x8004b42c",
+          "target": "0x8004b3c0"
+        },
+        {
+          "site": "0x8004b438",
+          "target": "0x8002fe74"
+        },
+        {
+          "site": "0x8004b458",
+          "target": "0x8004b6ac"
+        },
+        {
+          "site": "0x8004b800",
+          "target": "0x8004b1e0"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b33c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b88c",
+          "target": "0x80048cec"
+        }
+      ],
+      "helper_hooks": 0,
+      "instruction_patches": 0
+    },
+    {
+      "id": "west_outside_below_floor",
+      "input_xyz": [
+        -449,
+        2,
+        1761
+      ],
+      "prior_xyz": [
+        -424,
+        -1,
+        1761
+      ],
+      "input_state74": 0,
+      "object_class": 0,
+      "wall_result": 0,
+      "wall_output": {
+        "raw": [
+          -449,
+          2,
+          1761,
+          0
+        ],
+        "fixed": [
+          -29425664,
+          131072,
+          115408896,
+          0
+        ],
+        "velocity": [
+          321,
+          -654,
+          987
+        ],
+        "state74": 0
+      },
+      "floor_result": 32767,
+      "gather_before_positive_dedup": [
+        {
+          "cell_index": 134,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 133,
+          "packed_cell": 0
+        },
+        {
+          "cell_index": 123,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 122,
+          "packed_cell": 0
+        }
+      ],
+      "positive_identities_after_dedup": [
+        14
+      ],
+      "wall_original_instructions": 595,
+      "floor_original_instructions": 490,
+      "wall_direct_calls": [
+        {
+          "site": "0x8004b42c",
+          "target": "0x8004b3c0"
+        },
+        {
+          "site": "0x8004b438",
+          "target": "0x8002fe74"
+        },
+        {
+          "site": "0x8004b458",
+          "target": "0x8004b6ac"
+        },
+        {
+          "site": "0x8004b800",
+          "target": "0x8004b1e0"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b33c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b88c",
+          "target": "0x80048cec"
+        }
+      ],
+      "helper_hooks": 0,
+      "instruction_patches": 0
+    },
+    {
+      "id": "east_inside",
+      "input_xyz": [
+        390,
+        -1,
+        1761
+      ],
+      "prior_xyz": [
+        365,
+        -1,
+        1761
+      ],
+      "input_state74": 0,
+      "object_class": 0,
+      "wall_result": 0,
+      "wall_output": {
+        "raw": [
+          390,
+          -1,
+          1761,
+          0
+        ],
+        "fixed": [
+          25559040,
+          -65536,
+          115408896,
+          0
+        ],
+        "velocity": [
+          321,
+          -654,
+          987
+        ],
+        "state74": 0
+      },
+      "floor_result": -1,
+      "gather_before_positive_dedup": [
+        {
+          "cell_index": 135,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 136,
+          "packed_cell": 0
+        },
+        {
+          "cell_index": 124,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 125,
+          "packed_cell": 0
+        }
+      ],
+      "positive_identities_after_dedup": [
+        14
+      ],
+      "wall_original_instructions": 723,
+      "floor_original_instructions": 871,
+      "wall_direct_calls": [
+        {
+          "site": "0x8004b42c",
+          "target": "0x8004b3c0"
+        },
+        {
+          "site": "0x8004b438",
+          "target": "0x8002fe74"
+        },
+        {
+          "site": "0x8004b458",
+          "target": "0x8004b6ac"
+        },
+        {
+          "site": "0x8004b800",
+          "target": "0x8004b1e0"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b33c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b88c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004bad8",
+          "target": "0x8004bdc8"
+        }
+      ],
+      "helper_hooks": 0,
+      "instruction_patches": 0
+    },
+    {
+      "id": "east_outside",
+      "input_xyz": [
+        449,
+        -1,
+        1761
+      ],
+      "prior_xyz": [
+        424,
+        -1,
+        1761
+      ],
+      "input_state74": 0,
+      "object_class": 0,
+      "wall_result": 0,
+      "wall_output": {
+        "raw": [
+          449,
+          -1,
+          1761,
+          0
+        ],
+        "fixed": [
+          29425664,
+          -65536,
+          115408896,
+          0
+        ],
+        "velocity": [
+          321,
+          -654,
+          987
+        ],
+        "state74": 0
+      },
+      "floor_result": 32767,
+      "gather_before_positive_dedup": [
+        {
+          "cell_index": 135,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 136,
+          "packed_cell": 0
+        },
+        {
+          "cell_index": 124,
+          "packed_cell": 14
+        },
+        {
+          "cell_index": 125,
+          "packed_cell": 0
+        }
+      ],
+      "positive_identities_after_dedup": [
+        14
+      ],
+      "wall_original_instructions": 598,
+      "floor_original_instructions": 493,
+      "wall_direct_calls": [
+        {
+          "site": "0x8004b42c",
+          "target": "0x8004b3c0"
+        },
+        {
+          "site": "0x8004b438",
+          "target": "0x8002fe74"
+        },
+        {
+          "site": "0x8004b458",
+          "target": "0x8004b6ac"
+        },
+        {
+          "site": "0x8004b800",
+          "target": "0x8004b1e0"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b33c",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b300",
+          "target": "0x80048cec"
+        },
+        {
+          "site": "0x8004b88c",
+          "target": "0x80048cec"
+        }
+      ],
+      "helper_hooks": 0,
+      "instruction_patches": 0
+    }
+  ],
+  "finding": "Original map wrapper supplies no horizontal correction at the sampled west escape; outside-floor query returns32767.",
+  "fall_kill_recovery_caller": "UNKNOWN",
+  "limits": [
+    "Authored bounded query poses, not a live original controller trace.",
+    "Complete player movement, adhesion ordering, physical registry pairs, stage transitions and recovery are not executed.",
+    "This proves no map wall at these query poses; it does not prove that original full gameplay permits this escape.",
+    "Separate floor-order repair does not establish a wall or recovery fix.",
+    "No asset, source table, geometry array or instruction payload is exported; no existing pack is modified."
+  ]
+}

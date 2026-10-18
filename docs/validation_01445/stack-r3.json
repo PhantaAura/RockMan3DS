@@ -1,0 +1,48 @@
+{
+  "compiler_per_function": [
+    {
+      "unit": "runtime_session.su",
+      "function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/native-r3/native-source/platform/3ds/../../src/world/runtime_session.cpp:50:17:l3::RuntimeSession& l3::RuntimeSession::operator=(const l3::RuntimeSession&)",
+      "bytes": 71056,
+      "classification": "static"
+    },
+    {
+      "unit": "source_prop_lift.su",
+      "function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/native-r3/native-source/platform/3ds/../../src/world/source_prop_lift.cpp:188:22:l3::SourcePropLiftResult l3::consume_source_prop_lift_candidate(SourceEventPhase5Context&, const SourceEventWork&, uint32_t, const SourcePropLiftInputs&, const SourcePropLiftCandidateRng&)",
+      "bytes": 9376,
+      "classification": "static"
+    },
+    {
+      "unit": "source_effect34.su",
+      "function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/native-r3/native-source/platform/3ds/../../src/world/source_effect34.cpp:163:22:l3::SourceEffect34Result l3::tick_source_effect34_candidate_rng(SourceEventPhase5Context&, uint32_t, uint32_t, const SourceEffect34Inputs&, SourceRngService&, const SourceRngUpdateContext&)",
+      "bytes": 19216,
+      "classification": "static"
+    },
+    {
+      "unit": "main.su",
+      "function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/native-r3/native-source/platform/3ds/source/main.cpp:1677:5:int main()",
+      "bytes": 124192,
+      "classification": "static"
+    },
+    {
+      "unit": "source_event_random_effect.su",
+      "function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/native-r3/native-source/platform/3ds/../../src/flow/source_event_random_effect.cpp:103:31:l3::SourceEventRandomEffectResult l3::consume_source_event_random_effect_candidate(const SourceEventWork&, SourceEventPhase5Context&, const SourceEventCandidateRng&)",
+      "bytes": 9320,
+      "classification": "static"
+    },
+    {
+      "unit": "source_effect2.su",
+      "function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/native-r3/native-source/platform/3ds/../../src/world/source_effect2.cpp:122:21:l3::SourceEffect2Result l3::tick_source_effect2_candidate_rng(SourceEventPhase5Context&, uint32_t, const SourceEffect2Inputs&, SourceRngService&, const SourceRngUpdateContext&)",
+      "bytes": 9360,
+      "classification": "static"
+    },
+    {
+      "unit": "source_rng_service.su",
+      "function": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/native-r3/native-source/platform/3ds/../../src/world/source_rng_service.cpp:209:17:l3::SourceRngStatus l3::load_l3source_rng_profile(const uint8_t*, size_t, SourceRngProfile&)",
+      "bytes": 272,
+      "classification": "static"
+    }
+  ],
+  "physical_high_water": "UNKNOWN",
+  "reserved_stack": 262144
+}

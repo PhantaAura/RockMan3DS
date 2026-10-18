@@ -1,0 +1,111 @@
+{
+  "format": "actor-material-integration-validation/1",
+  "scope": "local targeted cooking and focused host validation; native/hardware pending",
+  "old_pack_unchanged": true,
+  "previous_outputs": 102,
+  "new_optional_outputs": 5,
+  "manifest_sha256": "307aa94d98e7ea7cfd0c7bbc0e87ee376559cbd9dbb67ee266711c0324752d64",
+  "commands": [
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/host-actor-material/l3cook_actor_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/ebd/area_00.l3ebd",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/materials/actor_area_00.l3mc",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/INIT_DAT.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/HEAD00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00R.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00L.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/LEG00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00_00.BIN"
+      ],
+      "returncode": 0,
+      "output": "actor_materials=0 resolved=0 bytes=48 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN\n"
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/host-actor-material/l3cook_actor_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/ebd/area_01.l3ebd",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/materials/actor_area_01.l3mc",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/INIT_DAT.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/HEAD00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00R.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00L.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/LEG00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00_01.BIN"
+      ],
+      "returncode": 0,
+      "output": "word=0x3c80002b resolved=1 image_written=8192/16384 clut_written=16/16\nword=0x3cc00027 resolved=1 image_written=8192/16384 clut_written=16/16\nactor_materials=2 resolved=2 bytes=131264 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN\n"
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/host-actor-material/l3cook_actor_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/ebd/area_02.l3ebd",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/materials/actor_area_02.l3mc",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/INIT_DAT.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/HEAD00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00R.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00L.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/LEG00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00_02.BIN"
+      ],
+      "returncode": 0,
+      "output": "word=0x3c80002b resolved=0 image_written=0/16384 clut_written=0/16\nword=0x3cc00027 resolved=1 image_written=8192/16384 clut_written=16/16\nactor_materials=2 resolved=1 bytes=65696 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN\n"
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/host-actor-material/l3cook_actor_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/ebd/area_03.l3ebd",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/materials/actor_area_03.l3mc",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/INIT_DAT.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/HEAD00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00R.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00L.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/LEG00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00_03.BIN"
+      ],
+      "returncode": 0,
+      "output": "actor_materials=0 resolved=0 bytes=48 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN\n"
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/host-actor-material/l3cook_actor_material_cache",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/ebd/area_04.l3ebd",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/pack-actor-materials/materials/actor_area_04.l3mc",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/INIT_DAT.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/HEAD00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00R.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ARM00L.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/LEG00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00.BIN",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT/ST00_04.BIN"
+      ],
+      "returncode": 0,
+      "output": "actor_materials=0 resolved=0 bytes=48 shade=UNKNOWN upload_order=INHERITED_SOURCE_BACKED_PARTIAL retail_vram_comparison=UNKNOWN\n"
+    }
+  ],
+  "tests": [
+    {
+      "command": "ctest --test-dir ../pass-20261005-worldalive/host-actor-material -R ^actor_materials$ --output-on-failure",
+      "result": "1/1 PASS"
+    },
+    {
+      "command": "python3 -B tests/test_source_tools.py",
+      "result": "14/14 PASS"
+    }
+  ],
+  "resolved_pages_by_area": [
+    0,
+    2,
+    1,
+    0,
+    0
+  ],
+  "shade": "UNKNOWN",
+  "native_build": "Actual current ARMv6K PASS; see docs/validation_01416/build-result.json",
+  "owner_payload_in_source": false,
+  "emulator": "Actor pages2/1 uploaded forareas1/2 inAzaharOldmodel; corrupted optionalcache rejectsCRC andruntime stillready. Originalshade/alpha/visibleenemytexturefidelity notaccepted."
+}

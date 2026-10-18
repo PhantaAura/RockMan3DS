@@ -1,0 +1,33 @@
+{
+  "checkpoint": "0.0.13",
+  "name": "Player-Facing Bottom Map Bridge",
+  "host_release_build": "PASS",
+  "warnings_as_errors": true,
+  "ctest": {"passed": 1, "failed": 0},
+  "new_runtime_bridges": [
+    "BottomMapModel generated directly from L3MP area cells",
+    "player grid marker through recovered runtime_map_find_cell addressing",
+    "deterministic fixed-grid minimap sampler",
+    "3DS lower-screen gameplay-shell presentation without developer telemetry"
+  ],
+  "minimap_semantics": {
+    "positive_cell": "geometry",
+    "negative_cell": "special/unknown preserved distinctly",
+    "zero_cell": "empty",
+    "invented_door_or_secret_semantics": false
+  },
+  "source_archive_game_assets": 0,
+  "source_archive_cooked_game_assets": 0,
+  "real_3ds_compile": "NOT RUN - devkitARM/libctru/Citro3D unavailable in validation container",
+  "not_claimed": [
+    "complete collision/contact response",
+    "complete grounding/action-state machine",
+    "exact Buster/lock-on ownership",
+    "per-frame tutorial EBD/enemy behavior",
+    "cutscene/event choreography",
+    "AUDIO-to-XA routing/decoding/playback",
+    "final textured/material renderer",
+    "tutorial-complete 0.1",
+    "compiled 3DSX"
+  ]
+}

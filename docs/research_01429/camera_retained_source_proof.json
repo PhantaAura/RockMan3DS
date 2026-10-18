@@ -1,0 +1,83 @@
+{
+  "schema": "mml-camera-retained-cold-owner/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "clear_source_block_sha256": "dc4e0dec0bce5d4a529ebdf0a732ed39f4681e1f2c41bf097191a47b09fde930",
+  "clear_entry": "80068000",
+  "clear_stop_before": "80068024",
+  "clear_low": "0x80098158",
+  "clear_end_exclusive": "0x800c5688",
+  "source_camera_work": "800BC738",
+  "camera_work_bytes": 188,
+  "proved_retained_vector_offsets": [
+    "68",
+    "6C",
+    "70"
+  ],
+  "proved_zero_velocity_offsets": [
+    "78",
+    "7C",
+    "80"
+  ],
+  "cold_clear_cases": [
+    {
+      "seed": 0,
+      "original_instructions": 232064,
+      "whole_range_zero": true,
+      "guard_words_preserved": true
+    },
+    {
+      "seed": 1,
+      "original_instructions": 232064,
+      "whole_range_zero": true,
+      "guard_words_preserved": true
+    },
+    {
+      "seed": 2,
+      "original_instructions": 232064,
+      "whole_range_zero": true,
+      "guard_words_preserved": true
+    },
+    {
+      "seed": 3,
+      "original_instructions": 232064,
+      "whole_range_zero": true,
+      "guard_words_preserved": true
+    }
+  ],
+  "cold_clear_original_instructions": 928256,
+  "fresh_controller_prefix_cases": 24,
+  "fresh_controller_prefix_original_instructions": 8808,
+  "fresh_prefix_preserves_retained_scene_camera": true,
+  "fresh_prefix_source_block_sha256": "fe0d542c9202938e4a72eb82ae5c97145395210f371ef7ce37109e9965775089",
+  "cold_boot_then_supported_owner_constructor": {
+    "cold_instructions": 232064,
+    "prefix_instructions": 367,
+    "constructor_instructions": 7560,
+    "retained_vector_zero": true,
+    "velocity_vector_zero": true,
+    "phase": 6
+  },
+  "first_source_callback_prefix": {
+    "entry": "8010102C",
+    "callback": "80100738",
+    "authored_counter": 0,
+    "authored_input": 0,
+    "original_instructions": 53,
+    "retained_vector_zero": true,
+    "velocity_vector_zero": true
+  },
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "original_payloads_exported": false,
+  "instrumentation_step_limit": 1000000,
+  "limits": [
+    "Cold executable bootstrap establishes explicit initial ownership, not a warm area/save/captured-state fallback.",
+    "The controller initializer prefix preserves existing scene camera; it cannot independently justify zeros.",
+    "Complete renderer camera update/GTE calls beyond80038860 are not ported by this proof.",
+    "This does not prove complete intro timeline, camera command execution, scene completion or hardware behavior."
+  ]
+}

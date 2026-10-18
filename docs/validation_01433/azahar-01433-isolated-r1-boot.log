@@ -1,0 +1,43 @@
+Legends3DS 0.0.14.32 boot log
+stage=1 label=gfx + bottom console renderer=0 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=RETAIL_ACTOR_ANIMATION=0 owner_only=1 request=0 subtype=03 sequence=SOURCE_BACKED_PARTIAL cadence=CANDIDATE pause_ownership=UNKNOWN allocation_first_tick=UNKNOWN renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=ACTOR_STATE_FIELDS=0 full_AI=false renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=SOURCE_LOOP_REPLAY=1 recorded_OpenBIOS_boundary_only retail_chronology=false renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=SOURCE_SCENE_TEXTURES=1 initial_batch_only live_palette=UNKNOWN renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=SOURCE_SCENE_CAMERA=1 radial_subset clipping=CANDIDATE renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=SOURCE_SCENE_E0=1 bounded_original_updates chronology=CANDIDATE Near_LOD=FRONTEND_DIAGNOSTIC texture=UNKNOWN renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=SOURCE_ACTOR_PROXY=0 source pose/proxy owner admission held renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=SOURCE_EVENT_BOOT=1 fresh_ST00_subset_only full_NewGame_fade_cutscene=UNKNOWN renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=ACTOR_RNG_CANDIDATE=0 original RNG ownership remains held renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=ACTOR_TEXTURES=0 owner_only=1 material=SOURCE_BACKED_PARTIAL shade=UNKNOWN modulation=WHITE_UNLIT_DIAGNOSTIC alpha=UNKNOWN renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+view_evidence=SOURCE_BACKED_PARTIAL view_profile=retail_baseline fov_vertical_deg=34.708 follow=0.998 eye_height=0.365 target_height=0.293 world_scale=0.001953125 aspect=1.666666627 viewport=400x240 near=0.050 far=180.000 player_scale_q12=512 projection_reference_h=384 projectile_presentation=CANDIDATE_PROXY_TRIANGLE top_ps1_hud_binding=UNKNOWN
+stage=1 label=renderer gate selected renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=map initialization profile=1 writes=994 temporary=25996; absent=UNKNOWN renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=package map/render; exact local sidecars renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=2 label=citro3d renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=3 label=uv shader renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=actor_detection.l3dp renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=actor_normalization.l3nr renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=actor_detection_bounds.l3db renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=actor_combat.l3cb renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=class60_06.l3c6 renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_event.l3ep renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_event_command.l3ec renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_fade.l3fd renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_event_phase5.l3p5 renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_event_phase6.l3p6 renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_scene_view.l3sv renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=actor_reactions.l3r7 renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_event_phase2.l3eq renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=hit_proxy_rules.l3pr renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=source_rng.l3rg renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=actor angle query data CRC valid; full AI/lock-on unbound renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=package runtime table/list/EBD bound renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=conditional source spawn catalog bound renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=map/render/ref/flow/messages/ebd bound renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=4 label=EBD retained source bytes=567232 payload areas=5 class20 actor resource subset bound renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=7 label=player model/composition/animation/skeleton renderer=8 linear_owned=0 tex_bytes=0 tex_count=0
+stage=6 label=terrain texture upload renderer=8 linear_owned=59520 tex_bytes=2359296 tex_count=9
+stage=5 label=IDX + GRID XYZ terrain resources built renderer=8 linear_owned=59520 tex_bytes=4980736 tex_count=19
+stage=8 label=first frame completed renderer=8 linear_owned=59520 tex_bytes=4980736 tex_count=19
+stage=9 label=runtime ready renderer=8 linear_owned=59520 tex_bytes=4980736 tex_count=19

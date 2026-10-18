@@ -1,0 +1,79 @@
+{
+  "schema": "actor-resource-integration-review/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "actor_initializer": "0x80106974",
+  "scope": "class20 subtype35 parameter0 dispatch0; resource/pose presentation only",
+  "native_probe_sha256": "f6c2e56faee459e35c21d3f0234b74e833fda543975246506986abf85ccfc742",
+  "source_probe_sha256": "2255e167aabfb716b9e9451842d737353e203a0af6cf853ff16d6efe2f3d9c31",
+  "native_scalar_results": {
+    "area": 2,
+    "source_indices": [
+      18,
+      19
+    ],
+    "parts": 2,
+    "vertices": 52,
+    "triangles": 4,
+    "quads": 46,
+    "near_draw_triangle_equivalents": 96,
+    "near_expanded_draw_vertices": 288,
+    "shared_resources": 1,
+    "decoded_element_bytes": 1600,
+    "raw_scale_q12": [
+      512,
+      512,
+      512
+    ],
+    "scale_float": 0.125,
+    "headings_angle12": [
+      0,
+      2048
+    ],
+    "packed_pose_bytes": 128,
+    "unpacked_channels": 75,
+    "rotation_vectors": 24
+  },
+  "material_binding": {
+    "source_material_word": "0x3c80002b",
+    "effective_material_word": "0x3c80002b",
+    "pre_gte_rgb8": [
+      128,
+      128,
+      128
+    ],
+    "area_02_cache_sha256": "add736450a04abfe3eaa3ba0302e70b004f92909545548a6e7acf9d12f05d127",
+    "area_02_cache_material_count": 12,
+    "exact_material_present": false,
+    "texture_residency_status": "UNKNOWN"
+  },
+  "floor_queries": [
+    {
+      "status": "UNKNOWN",
+      "status_code": 2,
+      "candidate_cells": 3,
+      "unsupported_primitives": 1,
+      "raw_y": null
+    },
+    {
+      "status": "UNKNOWN",
+      "status_code": 2,
+      "candidate_cells": 3,
+      "unsupported_primitives": 1,
+      "raw_y": null
+    }
+  ],
+  "verification": {
+    "actor_resources_test": "passed",
+    "original_unpack_synthetic_fields_matched": 75,
+    "no_allocations_in_240_matrix_and_floor_calls": true,
+    "pose_bind_failure_preserves_old_pose": true,
+    "unload_releases_resources": true,
+    "actor_resources_sanitizer": "AddressSanitizer and UndefinedBehaviorSanitizer passed"
+  },
+  "limits": [
+    "floor subset encounters one untranslated family/slope at each actor; no floor bound",
+    "initial pose request is diagnostic; progression flag selection and sequence timing unresolved",
+    "final GTE shading, texture upload state, PS1 integer rounding and actor gameplay unresolved"
+  ],
+  "payload_policy": "scalar counts, derived bounds, source addresses and hashes; no mesh/pose/texture/code bytes"
+}

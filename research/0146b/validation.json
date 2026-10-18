@@ -1,0 +1,104 @@
+{
+  "source_profile_verified": true,
+  "build": {
+    "PHYSICS_1TO1": false,
+    "content": {
+      "cache_hits": 339,
+      "cache_misses": 0,
+      "edges": 3916,
+      "geometry_families": 31,
+      "nodes": 4115,
+      "packages": 205,
+      "packages_with_errors": 0
+    },
+    "hardware": "HARDWARE_PENDING",
+    "host_tests": "PASS",
+    "native_binary_sha256": "9c01317b97c61854c746e47dfcd5206e6641472a634b847d3ac94b0c701be73b",
+    "native_build": "PASS",
+    "repeatable_replays": 9,
+    "tutorial_cache_hit": false
+  },
+  "commands": [
+    {
+      "command": "cmake -S . -B ../full-build/host -DCMAKE_BUILD_TYPE=Release; cmake --build ../full-build/host -j4",
+      "result": "PASS"
+    },
+    {
+      "command": "ctest --test-dir ../full-build/host --output-on-failure",
+      "result": "Test project <WORK>/full-build/host\n    Start 1: core\n1/4 Test #1: core .............................   Passed    0.00 sec\n    Start 2: push2\n2/4 Test #2: push2 ............................   Passed    0.00 sec\n    Start 3: integrity\n3/4 Test #3: integrity ........................   Passed    0.00 sec\n    Start 4: pipeline_python\n4/4 Test #4: pipeline_python ..................   Passed    0.11 sec\n\n100% tests passed out of 4\n\nTotal Test time (real) =   0.12 sec\n"
+    },
+    {
+      "command": "UBSAN_OPTIONS=halt_on_error=1 ASAN_OPTIONS=halt_on_error=1 ctest --test-dir ../sanitizer-build --output-on-failure",
+      "result": "Test project <WORK>/sanitizer-build\n    Start 1: core\n1/4 Test #1: core .............................   Passed    0.43 sec\n    Start 2: push2\n2/4 Test #2: push2 ............................   Passed    0.05 sec\n    Start 3: integrity\n3/4 Test #3: integrity ........................   Passed    0.05 sec\n    Start 4: pipeline_python\n4/4 Test #4: pipeline_python ..................   Passed    0.14 sec\n\n100% tests passed out of 4\n\nTotal Test time (real) =   0.67 sec\n"
+    },
+    {
+      "command": "MML_HOST_BUILD_DIR=../host-build bash tools/flight_qa.sh ../../owner-data/extracted/CDDATA/DAT",
+      "result": "FLIGHT QA: PASS"
+    },
+    {
+      "command": "python3 tools/mml_pipeline.py ../../owner-data/extracted/CDDATA/DAT ../full-build/host ../full-build/content",
+      "result": {
+        "cache_hits": 339,
+        "cache_misses": 0,
+        "edges": 3916,
+        "geometry_families": 31,
+        "nodes": 4115,
+        "packages": 205,
+        "packages_with_errors": 0
+      }
+    },
+    {
+      "command": "l3area_validate on each generated .mmlpkg",
+      "result": "205/205 PASS"
+    },
+    {
+      "command": "python3 tools/mml_replay_suite.py ../full-build/host ../full-build/tutorial/legends3ds/tutorial ../full-build/replays",
+      "result": "9 repeatability and 9 presentation isolation comparisons PASS"
+    },
+    {
+      "command": "./build_mml3ds.sh ../../owner-data/extracted --out ../full-build",
+      "result": "PASS, native 3DSX built"
+    },
+    {
+      "command": "python3 tools/verify_0146_source.py",
+      "result": {
+        "errors": [],
+        "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+        "owner_payload_hits": [],
+        "status": "PASS",
+        "uv_shader_sha256": "7ddf62f20bc02fa2b2e9d1eb2e0b4c62338d758112d05594202eb1982cf94248"
+      }
+    },
+    {
+      "command": "python3 tools/p2/verify_cumulative_tree.py .",
+      "result": {
+        "complete": true,
+        "hours_present": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "missing": {},
+        "prohibited_payloads": []
+      }
+    }
+  ],
+  "probes": {
+    "l3game_pack_probe": "packages=37 maps=37 renders=37 areas=203 cells=135572 descriptors=3891 contact_primitives=10569 contact_dispatch_supported=10569 contact_dispatch_unsupported=0 render_records=9999 render_streams=16478 render_primitives=104789\n",
+    "l3script_pack_probe": "ebd_files=136 ebd_rows=4620 msg_files=129 msg_blocks=17594 msg_tokens=721779 runtime_events=739373 audio_events=1475 script_events=57931\n",
+    "l3stage_object_pack_probe": "files=30 tables=34 lists=207 objects=649 pool_allocatable=459\n",
+    "l3inspect_audio_catalog": "sources=39 xa=38 str=1 aligned_2048=39 routing_proven=0\n"
+  },
+  "material_probe": "area=0 primitives=1752 resolved=928 unresolved=824\narea=1 primitives=854 resolved=494 unresolved=360\narea=2 primitives=674 resolved=674 unresolved=0\narea=3 primitives=120 resolved=120 unresolved=0\narea=4 primitives=12112 resolved=12112 unresolved=0\nterrain_total=15512 resolved=14328 unresolved=1184\nplayer_materials=2 all_areas_resolved=YES\n",
+  "animation_probe": "request=0x00 S_records=60 M_action=1 M_frames=31 structural=PASS\nrequest=0x01 S_records=16 M_action=2 M_frames=16 structural=PASS\nrequest=0x04 S_records=5 M_action=5 M_frames=5 structural=PASS\nrequest=0x05 S_records=5 M_action=6 M_frames=5 structural=PASS\nrequest=0x06 S_records=4 M_action=7 M_frames=4 structural=PASS\nrequest=0x07 S_records=5 M_action=8 M_frames=5 structural=PASS\nrequest=0x08 S_records=4 M_action=9 M_frames=4 structural=PASS\nrequest=0x09 S_records=5 M_action=10 M_frames=5 structural=PASS\nrequest=0x0a S_records=5 M_action=11 M_frames=5 structural=PASS\nrequest=0x0c S_records=32 M_action=13 M_frames=32 structural=PASS\nrequest=0x0d S_records=28 M_action=14 M_frames=28 structural=PASS\nrequest=0x0e S_records=24 M_action=15 M_frames=24 structural=PASS\nrequest=0x0f S_records=24 M_action=16 M_frames=24 structural=PASS\nrequest=0x10 S_records=3 M_action=17 M_frames=3 structural=PASS\nrequest=0x11 S_records=18 M_action=18 M_frames=18 structural=PASS\nrequest=0x12 S_records=18 M_action=19 M_frames=18 structural=PASS\nrequest=0x13 S_records=3 M_action=20 M_frames=3 structural=PASS\nrequest=0x14 S_records=18 M_action=21 M_frames=18 structural=PASS\nrequest=0x15 S_records=18 M_action=22 M_frames=18 structural=PASS\nrequest=0x16 S_records=3 M_action=23 M_frames=3 structural=PASS\nrequest=0x17 S_records=6 M_action=24 M_frames=6 structural=PASS\nrequest=0x18 S_records=3 M_action=25 M_frames=3 structural=PASS\nrequest=0x19 S_records=3 M_action=26 M_frames=3 structural=PASS\nrequest=0x1a S_records=9 M_action=27 M_frames=9 structural=PASS\nrequest=0x1b S_records=8 M_action=28 M_frames=8 structural=PASS\nrequest=0x1c S_records=8 M_action=29 M_frames=8 structural=PASS\nrequest=0x1d S_records=5 M_action=30 M_frames=5 structural=PASS\nrequest=0x1e S_records=58 M_action=31 M_frames=30 structural=PASS\nrequest=0x1f S_records=20 M_action=32 M_frames=20 structural=PASS\nrequest=0x20 S_records=12 M_action=33 M_frames=14 structural=PASS\nrequest=0x21 S_records=14 M_action=34 M_frames=14 structural=PASS\nrequest=0x22 S_records=32 M_action=35 M_frames=32 structural=PASS\nrequest=0x23 S_records=10 M_action=36 M_frames=10 structural=PASS\nrequest=0x24 S_records=17 M_action=37 M_frames=17 structural=PASS\nrequest=0x25 S_records=21 M_action=38 M_frames=21 structural=PASS\nrequest=0x26 S_records=32 M_action=39 M_frames=32 structural=PASS\nrequest=0x27 S_records=10 M_action=40 M_frames=10 structural=PASS\nrequest=0x29 S_records=21 M_action=42 M_frames=21 structural=PASS\nrequest=0x2a S_records=5 M_action=43 M_frames=5 structural=PASS\nrequest=0x2b S_records=5 M_action=44 M_frames=5 structural=PASS\nrequest=0x2c S_records=5 M_action=45 M_frames=5 structural=PASS\nrequest=0x2d S_records=7 M_action=46 M_frames=7 structural=PASS\nrequest=0x30 S_records=10 M_action=49 M_frames=10 structural=PASS\nrequest=0x31 S_records=10 M_action=50 M_frames=10 structural=PASS\nrequest=0x32 S_records=20 M_action=51 M_frames=20 structural=PASS\nrequest=0x33 S_records=32 M_action=52 M_frames=32 structural=PASS\nrequest=0x34 S_records=32 M_action=53 M_frames=32 structural=PASS\nrequest=0x35 S_records=30 M_action=54 M_frames=30 structural=PASS\nrequest=0x36 S_records=36 M_action=55 M_frames=19 structural=PASS\nrequest=0x38 S_records=20 M_action=57 M_frames=20 structural=PASS\nrequest=0x39 S_records=4 M_action=58 M_frames=4 structural=PASS\nrequest=0x3a S_records=13 M_action=59 M_frames=13 structural=PASS\nrequest=0x3b S_records=9 M_action=60 M_frames=9 structural=PASS\nrequest=0x3c S_records=4 M_action=61 M_frames=4 structural=PASS\nrequest=0x3d S_records=4 M_action=62 M_frames=4 structural=PASS\nmapped_requests=55 S_records=833 zero_tick_records=0 branches=10 repeats=45 crc=PASS\n",
+  "sanitizer_fix": "src/world/tile_transform.c now uses defined unsigned shifts; test_core checks negative coordinates",
+  "hardware_status": "HARDWARE_PENDING",
+  "complete_retail_gameplay": false
+}

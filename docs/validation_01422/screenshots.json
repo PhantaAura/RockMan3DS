@@ -1,0 +1,14 @@
+[
+  {
+    "device": "Azahar2126.0 Old3DS model",
+    "build": "0.0.14.22 r5",
+    "scene": "tutorial diagnostic gameplay",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01422/captures/azahar-old3ds-01422-r5-gameplay.png"
+  },
+  {
+    "device": "Azahar2126.0 Old3DS model",
+    "build": "0.0.14.22 r5",
+    "scene": "area1 actor overlap/camera clipping after replay completion; paused",
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01422/captures/azahar-old3ds-01422-r5-actor-overlap-bug.png"
+  }
+]

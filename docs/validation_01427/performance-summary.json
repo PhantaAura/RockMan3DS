@@ -1,0 +1,76 @@
+{
+  "app_region_reserved_bytes": 100663296,
+  "bottom_ui_us": {
+    "max": 6147,
+    "median": 18,
+    "min": 18
+  },
+  "draw_calls": {
+    "max": 12,
+    "median": 12,
+    "min": 12
+  },
+  "environment": "Azahar 2126.0 original model, 100% CPU, 1x Vulkan; production 01427 binary",
+  "frame_counter_clamps_at": 3000,
+  "interval_us": {
+    "max": 89799,
+    "median": 16713,
+    "min": 0
+  },
+  "limit": "Sparse emulator samples; not total memory, physical Old3DS performance, load-time peak or worst-case evidence.",
+  "linear_free": {
+    "max": 28735744,
+    "median": 28735744,
+    "min": 28735744
+  },
+  "malloc_live": {
+    "max": 1683016,
+    "median": 1683016,
+    "min": 1683016
+  },
+  "movement_positions": [
+    [
+      "0",
+      "0",
+      "512"
+    ],
+    [
+      "0",
+      "-1",
+      "1472"
+    ]
+  ],
+  "owned_linear": {
+    "max": 59520,
+    "median": 59520,
+    "min": 59520
+  },
+  "owned_texture": {
+    "max": 2883584,
+    "median": 2883584,
+    "min": 2883584
+  },
+  "render_us": {
+    "max": 16678,
+    "median": 16493,
+    "min": 6806
+  },
+  "safe0143_owned_linear_bytes": 126144,
+  "safe0143_owned_texture_bytes": 0,
+  "samples": 75,
+  "triangles": {
+    "max": 1478,
+    "median": 1478,
+    "min": 1478
+  },
+  "update_us": {
+    "max": 80,
+    "median": 20,
+    "min": 3
+  },
+  "vram_free": {
+    "max": 5523456,
+    "median": 5523456,
+    "min": 5523456
+  }
+}

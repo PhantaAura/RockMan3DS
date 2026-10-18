@@ -1,0 +1,28 @@
+{
+  "build": "0.0.14.11",
+  "emulator": "Azahar2126.0",
+  "new_3ds": false,
+  "cpu_percent": 100,
+  "resolution": 1,
+  "homebrew_application_region_bytes": 100663296,
+  "hardware": "HARDWARE_PENDING",
+  "tests": {
+    "title": "captured",
+    "baseline_areas": "0..4 nativegeometrycounts496/597/688/136/3028 match host",
+    "controls": "nativepositions/headings/projectile/transition observed; retailparitynotestablished",
+    "safe0143": "bootandlegacydecode captured",
+    "broader_package": "emptyarea0skipped; nativearea1 renders492primitive records; texture/gameplaybindingsUNKNOWN",
+    "textures_off": "not separately exercised this build"
+  },
+  "visual_fidelity_accepted": false,
+  "issues": [
+    "area4diagnosticviewobstructed",
+    "remainingterrain/playerpresentation defects",
+    "noobjectpresentationbinding",
+    "nativecontactsolverunbound",
+    "naturalprogressionincomplete"
+  ],
+  "captures": 6,
+  "native_unload_acceptance": "hostownership unload37/37 PASS; native gracefulunload not established by emulator UI shutdown",
+  "source_zip_excludes_game_data": true
+}

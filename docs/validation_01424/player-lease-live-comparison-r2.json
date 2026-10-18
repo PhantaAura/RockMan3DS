@@ -1,0 +1,33 @@
+{
+  "schema": "mml-original-player-lease-comparison/1",
+  "status": "MATCHES_MEASURED_FIELDS",
+  "reference_sha256": "b4cc68390214c44c6bc70db0468abec11e8d422541e825807f00840e96d45dec",
+  "completed_pairs": 323,
+  "whole_trace_accepted": true,
+  "normal_budget_complete": false,
+  "problems": [],
+  "retail_parity": false,
+  "source_function": "0x80035508",
+  "checker_invoked": true,
+  "checker_command": [
+    "/private/tmp/mml-player-proxy-01424-r3-asan",
+    "--reference",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01424/player-lease-live-comparison-r2/original-player-lease.tsv"
+  ],
+  "checker_returncode": 0,
+  "normalized_fixture_sha256": "41ac554cb43eaf13cb2aaa5e104c3562d92ebf6d3cd8e94c9f95ed38c36d2754",
+  "native_result": {
+    "schema": "mml-source-player-lease-native-comparison/1",
+    "cases": 323,
+    "matched": 323,
+    "held": 0,
+    "projections": 0,
+    "retail_parity": false,
+    "status": "MATCHES_MEASURED_FIELDS"
+  },
+  "limits": [
+    "Actual original-emulator323call prefix;high24lease mask is0 in every admittedcall.",
+    "All64rawregisters match finalnativeadapter, underASan/UBSan. SourceRTPS arithmetic was not independentlyexercised.",
+    "No complete retail chronology or gameplayparity claim."
+  ]
+}

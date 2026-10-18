@@ -1,0 +1,230 @@
+{
+  "parent": "0.0.14.16",
+  "current": "0.0.14.17",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified"
+    },
+    {
+      "path": "PORTING_MAP_01417.md",
+      "change": "added"
+    },
+    {
+      "path": "README.md",
+      "change": "modified"
+    },
+    {
+      "path": "docs/REPORT_01417.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/RESUME_01417.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/RESUME_01417_RECOVERY.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/SCREENSHOTS_01417.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/CLASS20_03_CALLBACK_BOUNDARY.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/CLASS20_03_FLOOR_INIT.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/IDX_MATERIALIZATION_WRITER_AUDIT.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/MAP_INITIALIZATION_FORMAT.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/actor_floor_initialization_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/class20_03_callback_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/class20_03_packet_lifecycle_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx-map-initialization-owner-comparison.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx-materialization-owner-evidence.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx-materialization-source-cases.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx-tutorial-variant-guard.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx_map_initialization_owner_compare.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx_map_initialization_owner_probe.cpp",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx_materialization_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01417/idx_tutorial_variant_guard_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/baseline-tests.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/complete-host-tests.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/emulator-evidence.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/native-boot.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/native-build-result.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/native-build.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/package-runtime-probe.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/source-tools-tests-fixed.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01417/wrapper-tests-fixed.log",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/area_package.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/map_initialization.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/runtime_session.h",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/actor_runtime.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/area_package.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/map_initialization.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/runtime_session.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_actor_floor_init.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_cooked_area.py",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_map_initialization.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_map_initialization_package.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_runtime_transactions.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_source_tools.py",
+      "change": "modified"
+    },
+    {
+      "path": "tools/build_hardware_test.py",
+      "change": "modified"
+    },
+    {
+      "path": "tools/build_mml3ds.py",
+      "change": "modified"
+    },
+    {
+      "path": "tools/build_tutorial_pack.py",
+      "change": "modified"
+    },
+    {
+      "path": "tools/l3area_runtime_probe.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tools/l3cook_map_init.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tools/package_cooked_area.py",
+      "change": "modified"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_archive_sha256": "494eaaa7fb0951397932e0991b436e5c83d313ee69de4aaa39f485ecb4e764cd",
+  "source_files_copied": 787,
+  "crc": "PASS",
+  "parent_manifest_verified": 786,
+  "inherited_host": "36/36 PASS Release warnings fatal",
+  "commands": [
+    "cmake -S work/Legends3DS_0.0.14.16_WorldComesAliveIntegration -B work/pass-20261005-worldalive/baseline -DCMAKE_BUILD_TYPE=Release",
+    "cmake --build work/pass-20261005-worldalive/baseline --parallel 4",
+    "ctest --test-dir work/pass-20261005-worldalive/baseline --output-on-failure"
+  ],
+  "native_current": "PENDING",
+  "hardware": "HARDWARE_PENDING"
+}

@@ -1,0 +1,43 @@
+[
+  {
+    "argv": [
+      "cmake",
+      "-S",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.7_AreaRuntime",
+      "-B",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001/sanitized/host",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DCMAKE_C_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer",
+      "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer",
+      "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
+    ],
+    "returncode": 0,
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001/sanitized/configure.log"
+  },
+  {
+    "argv": [
+      "cmake",
+      "--build",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001/sanitized/host",
+      "--target",
+      "test_area_package",
+      "test_map_sharing",
+      "--parallel",
+      "2"
+    ],
+    "returncode": 0,
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001/sanitized/build.log"
+  },
+  {
+    "argv": [
+      "ctest",
+      "--test-dir",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001/sanitized/host",
+      "-R",
+      "^(area_package|map_sharing)$",
+      "--output-on-failure"
+    ],
+    "returncode": 0,
+    "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001/sanitized/tests.log"
+  }
+]

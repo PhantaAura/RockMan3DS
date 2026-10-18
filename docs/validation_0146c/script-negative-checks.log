@@ -1,0 +1,11 @@
+UTC: 2026-09-26T00:41:21.552797+00:00
+Script: /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6c_HardwareTest/tools/build_hardware_test.py
+Script SHA-256: ec9d13745a1be1caae0c493fb8870f1f112d50823a5e513d91f91d68e1de8e4b
+All test inputs below are temporary synthetic data.
+PASS: path traversal rejected
+PASS: incorrect byte size rejected
+PASS: incorrect hash rejected
+PASS: unsupported raw extension rejected
+PASS: duplicate manifest entry rejected
+PASS: nonempty output rejected with status 1; preexisting file unchanged
+6/6 negative checks passed. No cooker/extractor/native/host command executed by these negative checks.

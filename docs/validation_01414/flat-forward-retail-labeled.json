@@ -1,0 +1,1537 @@
+{
+  "format": "mml-gameplay-trace/1",
+  "metadata": {
+    "game_profile": {
+      "id": "USA_MML_ROCK_NEO_verified_profile",
+      "sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0"
+    },
+    "scenario": "FLAT_ACCEL_FIRST25",
+    "initial_state_id": "fec7a3efc1ab1eb70e94f2c7c31a9e789e592fe80e6d2b586ae4ead25867e69a",
+    "timing": {
+      "clock": "player_update_index",
+      "rate_num": 30,
+      "rate_den": 1,
+      "sample_phase": "player_motion_contact_complete_before_animation_advance"
+    },
+    "coordinate_profile": "PS1_raw_short_and_signed16_16_Y_down",
+    "control_profile": "USA_profile0_work11C",
+    "capture_fields": [
+      "position",
+      "fixed_position",
+      "velocity_work",
+      "heading",
+      "state",
+      "animation_request",
+      "animation_frame",
+      "animation_control_raw",
+      "contact_state_raw",
+      "work_0b_raw",
+      "grounded"
+    ],
+    "field_units": {
+      "position": "PS1_world_units_Y_down",
+      "fixed_position": "signed_16_16_world_units_Y_down",
+      "velocity_work": "raw_work_value",
+      "heading": "angle12",
+      "state": "raw_work_value",
+      "animation_request": "raw_work_value",
+      "animation_frame": "raw_work_value",
+      "animation_control_raw": "raw_work_value",
+      "contact_state_raw": "raw_work_value",
+      "work_0b_raw": "raw_work_value",
+      "grounded": "boolean"
+    },
+    "limits": [
+      "nominal rate30: actual wall-clock parity unverified",
+      "retail active area ID unknown; native area1 is diagnostic candidate",
+      "tutorial removes input after sample24; excluded",
+      "camera sample800a39c0 was actor position mirror and is excluded",
+      "portable host replay is not a hardware measurement"
+    ],
+    "producer": {
+      "name": "PCSX-Redux interpreter+OpenBIOS",
+      "version": "f78f8ef8 dev290",
+      "artifact_sha256": "4a1333a3ab2abbd3269352a5fc201175bcba86c32bfaeb04bd5af4de54623523",
+      "settings_sha256": "1cf73711a1656d6788dc04aad38106acb13a538c67baefe2c9a4306569bc1875"
+    },
+    "source_kind": "retail_reference",
+    "input_sha256": "e3ed94327b2f368805f95590cd9f14c975b7d057ddfe24902e8cde02b45f65f2"
+  },
+  "frames": [
+    {
+      "frame": 0,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -4865
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -318832640
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        2
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 4,
+      "animation_frame": 0,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -4833
+        ]
+      },
+      "guest_vsync": 1846,
+      "guest_cycles": 7676395057,
+      "grounded": null
+    },
+    {
+      "frame": 1,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -4897
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -320929792
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        2
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 4,
+      "animation_frame": 0,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -4865
+        ]
+      },
+      "guest_vsync": 1848,
+      "guest_cycles": 7677521325,
+      "grounded": null
+    },
+    {
+      "frame": 2,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -4929
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -323026944
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        2
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 4,
+      "animation_frame": 1,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -4897
+        ]
+      },
+      "guest_vsync": 1850,
+      "guest_cycles": 7678650077,
+      "grounded": null
+    },
+    {
+      "frame": 3,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -4961
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -325124096
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        2
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        2,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 4,
+      "animation_frame": 2,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -4929
+        ]
+      },
+      "guest_vsync": 1852,
+      "guest_cycles": 7679780287,
+      "grounded": null
+    },
+    {
+      "frame": 4,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -4993
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -327221248
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        2
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        3,
+        1,
+        1,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 4,
+      "animation_frame": 3,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -4961
+        ]
+      },
+      "guest_vsync": 1854,
+      "guest_cycles": 7680907664,
+      "grounded": null
+    },
+    {
+      "frame": 5,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5025
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -329318400
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        0,
+        1,
+        0,
+        -1
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 0,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -4993
+        ]
+      },
+      "guest_vsync": 1856,
+      "guest_cycles": 7682036641,
+      "grounded": null
+    },
+    {
+      "frame": 6,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5057
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -331415552
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 0,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5025
+        ]
+      },
+      "guest_vsync": 1858,
+      "guest_cycles": 7683165298,
+      "grounded": null
+    },
+    {
+      "frame": 7,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5089
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -333512704
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 1,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5057
+        ]
+      },
+      "guest_vsync": 1860,
+      "guest_cycles": 7684294134,
+      "grounded": null
+    },
+    {
+      "frame": 8,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5121
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -335609856
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        2,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 2,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5089
+        ]
+      },
+      "guest_vsync": 1862,
+      "guest_cycles": 7685422835,
+      "grounded": null
+    },
+    {
+      "frame": 9,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5153
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -337707008
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        3,
+        1,
+        128,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 3,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5121
+        ]
+      },
+      "guest_vsync": 1864,
+      "guest_cycles": 7686555142,
+      "grounded": null
+    },
+    {
+      "frame": 10,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5185
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -339804160
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        4,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 4,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5153
+        ]
+      },
+      "guest_vsync": 1866,
+      "guest_cycles": 7687680282,
+      "grounded": null
+    },
+    {
+      "frame": 11,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5217
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -341901312
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        5,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 5,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5185
+        ]
+      },
+      "guest_vsync": 1868,
+      "guest_cycles": 7688809079,
+      "grounded": null
+    },
+    {
+      "frame": 12,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5249
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -343998464
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        6,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 6,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5217
+        ]
+      },
+      "guest_vsync": 1870,
+      "guest_cycles": 7689937871,
+      "grounded": null
+    },
+    {
+      "frame": 13,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5281
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -346095616
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        7,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 7,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5249
+        ]
+      },
+      "guest_vsync": 1872,
+      "guest_cycles": 7691066705,
+      "grounded": null
+    },
+    {
+      "frame": 14,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5313
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -348192768
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        8,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 8,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5281
+        ]
+      },
+      "guest_vsync": 1874,
+      "guest_cycles": 7692196889,
+      "grounded": null
+    },
+    {
+      "frame": 15,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5345
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -350289920
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        9,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 9,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5313
+        ]
+      },
+      "guest_vsync": 1876,
+      "guest_cycles": 7693327683,
+      "grounded": null
+    },
+    {
+      "frame": 16,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5377
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -352387072
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        10,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 10,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5345
+        ]
+      },
+      "guest_vsync": 1878,
+      "guest_cycles": 7694453293,
+      "grounded": null
+    },
+    {
+      "frame": 17,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5409
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -354484224
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        11,
+        1,
+        128,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 11,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5377
+        ]
+      },
+      "guest_vsync": 1880,
+      "guest_cycles": 7695582391,
+      "grounded": null
+    },
+    {
+      "frame": 18,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5441
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -356581376
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        12,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 12,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5409
+        ]
+      },
+      "guest_vsync": 1882,
+      "guest_cycles": 7696711237,
+      "grounded": null
+    },
+    {
+      "frame": 19,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5473
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -358678528
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        13,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 13,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5441
+        ]
+      },
+      "guest_vsync": 1884,
+      "guest_cycles": 7697839994,
+      "grounded": null
+    },
+    {
+      "frame": 20,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5505
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -360775680
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        14,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 14,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5473
+        ]
+      },
+      "guest_vsync": 1886,
+      "guest_cycles": 7698970338,
+      "grounded": null
+    },
+    {
+      "frame": 21,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5537
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -362872832
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        15,
+        1,
+        0,
+        -128
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 15,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5505
+        ]
+      },
+      "guest_vsync": 1888,
+      "guest_cycles": 7700099346,
+      "grounded": null
+    },
+    {
+      "frame": 22,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5569
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -364969984
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 0,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5537
+        ]
+      },
+      "guest_vsync": 1890,
+      "guest_cycles": 7701226355,
+      "grounded": null
+    },
+    {
+      "frame": 23,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5601
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -367067136
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 1,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5569
+        ]
+      },
+      "guest_vsync": 1892,
+      "guest_cycles": 7702355145,
+      "grounded": null
+    },
+    {
+      "frame": 24,
+      "input": {
+        "held_psx_mask": 16,
+        "fire_pressed": false,
+        "lock_held": false,
+        "advance_dialogue": false,
+        "lock_pressed": false,
+        "pause_pressed": false,
+        "skip_held": false
+      },
+      "position": [
+        2822,
+        -1,
+        -5633
+      ],
+      "fixed_position": [
+        184942592,
+        -65536,
+        -369164288
+      ],
+      "velocity_work": [
+        512,
+        0,
+        0
+      ],
+      "heading": 0,
+      "state": [
+        1,
+        2,
+        4
+      ],
+      "contact_state_raw": 0,
+      "work_0b_raw": 0,
+      "animation_control_raw": [
+        2,
+        1,
+        0,
+        0
+      ],
+      "vertical_velocity": 0,
+      "animation_request": 1,
+      "animation_frame": 2,
+      "camera": {
+        "eye": [
+          2822,
+          -1,
+          -4833
+        ],
+        "look_at": [
+          2822,
+          -151,
+          -5601
+        ]
+      },
+      "guest_vsync": 1894,
+      "guest_cycles": 7703485896,
+      "grounded": null
+    }
+  ]
+}

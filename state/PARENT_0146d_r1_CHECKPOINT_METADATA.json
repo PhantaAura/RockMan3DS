@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "claims": {
+      "all_requested_phases_complete": false,
+      "first_tron_complete": false,
+      "physics_1to1": false
+    },
+    "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+    "feature_gates": {
+      "ALL_TERRAIN_TEXTURES": 8,
+      "ALPHA": 32,
+      "BASELINE_0143": 0,
+      "MATERIAL_BATCHING": 2,
+      "ONE_TERRAIN_TEXTURE": 4,
+      "PLAYER_TEXTURES": 16,
+      "RETAIL_ANIMATION": 64,
+      "UV_SHADER": 1
+    },
+    "hardware": "HARDWARE_PENDING",
+    "host_test_groups": [
+      "core",
+      "push2",
+      "integrity",
+      "pipeline_python"
+    ],
+    "inherited_hashes": "research/0146b/inherited_file_hashes.json",
+    "parent_archive_sha256": "0c900492a73d9baa9fdfebbc5c51f3d2c33ffa076328ebecc7139959a53870b4",
+    "parent_version": "0.0.14.6a",
+    "project": "Mega Man Legends 3DS",
+    "readiness": "research/0146b/readiness.json",
+    "status": "SOURCE_BACKED_PARTIAL",
+    "validation": {
+      "PHYSICS_1TO1": false,
+      "content": {
+        "cache_hits": 339,
+        "cache_misses": 0,
+        "edges": 3916,
+        "geometry_families": 31,
+        "nodes": 4115,
+        "packages": 205,
+        "packages_with_errors": 0
+      },
+      "hardware": "HARDWARE_PENDING",
+      "host_tests": "PASS",
+      "native_binary_sha256": "9c01317b97c61854c746e47dfcd5206e6641472a634b847d3ac94b0c701be73b",
+      "native_build": "PASS",
+      "repeatable_replays": 9,
+      "tutorial_cache_hit": false
+    },
+    "version": "0.0.14.6b"
+  },
+  "note": "Historical inherited metadata remained at6b in the6d/r1 tree; preserved as received, not asserted current."
+}

@@ -1,0 +1,16 @@
+{
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.21_WorldComesAlive",
+  "parent_source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.20_WorldComesAlive",
+  "parent_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.20_Source_r1.zip",
+  "parent_sha256": "579994e81a68e0040c1eb8f44e310d1e570ed610d5c9ce543c6ed184e8a630b9",
+  "parent_manifest_files": 1081,
+  "parent_manifest": "PASS",
+  "zip_CRC": "PASS",
+  "git": {
+    "repository": false,
+    "branch": null,
+    "commit": null
+  },
+  "source_changes_before_audit": false,
+  "synced_sources_read_only": true
+}

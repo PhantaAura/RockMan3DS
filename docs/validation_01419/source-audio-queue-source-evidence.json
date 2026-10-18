@@ -1,0 +1,27 @@
+{
+  "schema": "source-audio-queue-proof/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "producer_cases": 360,
+  "reset_cases": 25,
+  "initializer_pointer_verified": true,
+  "source_capacity": 24,
+  "source_record_bytes": 20,
+  "instructions_executed": 6441,
+  "fixture_sha256": "6dc26f9e296e16245bef62784432b04ea9477c7ac0a54ec640753fe50e859066",
+  "retail_parity": false,
+  "audible_playback_proved": false,
+  "no_original_payload_exported": true,
+  "source": {
+    "initialization": "0x80019E14",
+    "scalar_producer": "0x8001A008",
+    "pointed_producer": "0x8001A050",
+    "reset": "0x8001A1D0"
+  },
+  "limits": [
+    "Authored raw slot bytes and scalar/pointer premises.",
+    "Only source-used bytes0/2..11 are written; bytes1/12..19 retained.",
+    "Consumer table/sample lookup/driver and actualsound playback unported.",
+    "Clear occurs after consumer dispatch in source; native diagnostic draining must be labelled."
+  ]
+}

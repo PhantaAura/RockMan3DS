@@ -1,0 +1,156 @@
+{
+  "runs": [
+    {
+      "profile": "on",
+      "profile_configuration": {
+        "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01432/azahar-01432-on-r1",
+        "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01432/native-r3/build/Legends3DS_01432_WorldComesAlive.3dsx",
+        "binary_sha256": "d44514c4975a06dd2a473e95efeecd45c473876f988cac25fedfb7b68c3316ca",
+        "source_event_boot": true,
+        "source_audio": true,
+        "old_3ds": true,
+        "hardware_tested": false,
+        "source_scene_actor40": true,
+        "source_scene_camera": true,
+        "source_scene_e0": true,
+        "source_scene_textures": true
+      },
+      "emulator": "Azahar2126.0",
+      "build": "0.0.14.32",
+      "boot_ready": true,
+      "boot_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01432/azahar-01432-on-r1/sdmc/3ds/Legends3DS/boot_01432.log",
+      "trace_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01432/azahar-01432-on-r1/sdmc/3ds/Legends3DS/hardware_01432_4000738788044.csv",
+      "trace_sha256": "c58e7e393dbfd39f8e928954bdf089cdee56bb4e61bd8d33fc784d53917a6a57",
+      "old_model_confirmed": true,
+      "sample_ranges": {
+        "frame": {
+          "min": 0,
+          "max": 2400
+        },
+        "x": {
+          "min": 0,
+          "max": 0
+        },
+        "y": {
+          "min": -1,
+          "max": 0
+        },
+        "z": {
+          "min": 512,
+          "max": 800
+        },
+        "heading": {
+          "min": 2048,
+          "max": 2048
+        },
+        "projectiles": {
+          "min": 0,
+          "max": 0
+        },
+        "frame_before_log_us": {
+          "min": 10350,
+          "max": 89657
+        },
+        "update_us": {
+          "min": 3,
+          "max": 698
+        },
+        "render_us": {
+          "min": 6412,
+          "max": 16711
+        },
+        "draw_calls": {
+          "min": 12,
+          "max": 45
+        },
+        "triangles": {
+          "min": 1478,
+          "max": 2410
+        },
+        "owned_linear": {
+          "min": 59520,
+          "max": 59520
+        },
+        "owned_texture": {
+          "min": 4456448,
+          "max": 4456448
+        },
+        "malloc_live": {
+          "min": 1805920,
+          "max": 1805920
+        },
+        "linear_free": {
+          "min": 27146752,
+          "max": 27146752
+        },
+        "vram_free": {
+          "min": 5523456,
+          "max": 5523456
+        }
+      },
+      "diagnostics": {
+        "source_actor40_cache": {
+          "first": "# source_actor40_cache,parts=18,mesh_bytes=9492,cap=262144,request=0,dispatch=8010D824,initializer_prefix=8010C930,full_initializer=false",
+          "last": "# source_actor40_cache,parts=18,mesh_bytes=9492,cap=262144,request=0,dispatch=8010D824,initializer_prefix=8010C930,full_initializer=false",
+          "records": 1
+        },
+        "source_actor40_prefix": {
+          "first": "# source_actor40_prefix,frame=69,status=0,committed=1,request=0,work08_ack=false,chronology=CANDIDATE",
+          "last": "# source_actor40_prefix,frame=69,status=0,committed=1,request=0,work08_ack=false,chronology=CANDIDATE",
+          "records": 1
+        },
+        "source_actor40_draw": {
+          "first": "# source_actor40_draw,frame=120,parts=18,pose=REQUEST0_RECORD0,shade=UNKNOWN,float_pose=CANDIDATE,retail_parity=false",
+          "last": "# source_actor40_draw,frame=2460,parts=18,pose=REQUEST0_RECORD0,shade=UNKNOWN,float_pose=CANDIDATE,retail_parity=false",
+          "records": 78
+        },
+        "source_pad_decoder": {
+          "first": "# source_pad_decoder,frame=60,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false",
+          "last": "# source_pad_decoder,frame=2460,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false",
+          "records": 41
+        },
+        "source_scene_view": {
+          "first": "# source_scene_view,frame=0,status=5,bound=0,missing_camera_offset=65535,focal_pixels=0.0,source_window=320x240,frontend=400x240,clip=CANDIDATE,unsupported=FRONTEND_DIAGNOSTIC,parity=false",
+          "last": "# source_scene_view,frame=2460,status=0,bound=1,missing_camera_offset=65535,focal_pixels=384.0,source_window=320x240,frontend=400x240,clip=CANDIDATE,unsupported=FRONTEND_DIAGNOSTIC,parity=false",
+          "records": 85
+        },
+        "source_scene_materials": {
+          "first": "# source_scene_materials,resolved_pages=6,held=1,gpu_bytes=1572864,initial_upload_only=true,live_palette=UNKNOWN",
+          "last": "# source_scene_materials,resolved_pages=6,held=1,gpu_bytes=1572864,initial_upload_only=true,live_palette=UNKNOWN",
+          "records": 1
+        },
+        "source_scene_E0_update": {
+          "first": "# source_scene_E0_update,frame=60,status=1,initialized=0,updated=0,held=0,chronology=CANDIDATE,later_behavior=SOURCE_BACKED_PARTIAL",
+          "last": "# source_scene_E0_update,frame=2460,status=9,initialized=0,updated=11,held=4,chronology=CANDIDATE,later_behavior=SOURCE_BACKED_PARTIAL",
+          "records": 42
+        },
+        "source_scene_callback": {
+          "first": "# source_scene_callback,frame=70,status=28,committed=1,callback=80100738,awaiting_camera=0,awaiting_timeline=0,awaiting_caller=1,next_consumer=80100614,scene_complete=false",
+          "last": "# source_scene_callback,frame=2460,status=3,committed=0,callback=00000000,awaiting_camera=0,awaiting_timeline=0,awaiting_caller=0,next_consumer=8010102c,scene_complete=false",
+          "records": 2337
+        },
+        "source_scene_E0_draw": {
+          "first": "# source_scene_E0_draw,frame=0,instances=0,LOD=FRONTEND_NEAR_DIAGNOSTIC,texture=INITIAL_BATCH_DIAGNOSTIC,source_camera_bound=0,retail_parity=false",
+          "last": "# source_scene_E0_draw,frame=2460,instances=14,LOD=FRONTEND_NEAR_DIAGNOSTIC,texture=INITIAL_BATCH_DIAGNOSTIC,source_camera_bound=1,retail_parity=false",
+          "records": 81
+        }
+      },
+      "captures": [
+        {
+          "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01432/azahar-01432-on-r1/captures/01432_scene_actor_test.png",
+          "sha256": "b7ba4757ff3a7abd90cd55ed0f72981785c695e3b4ed5a7ba103667d1ca9913c",
+          "original": true,
+          "device": "Azahar2126.0 Old-model configuration",
+          "build": "0.0.14.32",
+          "scene": "Tutorialarea0 on configuration"
+        }
+      ],
+      "hardware_tested": false,
+      "retail_parity": false,
+      "limitations": "18realpart draw submissions and actualoverlayinitializerprefix verified in trace; actor visibility/pose correctness not established from capture. Fullinitializer/work08 unacknowledged, scene blocked on optionalscratchcounter; floatpose/shade/texture chronology notretailparity."
+    }
+  ],
+  "hardware_tested": false,
+  "retail_parity": false,
+  "limits": "Sparse emulator samples include synchronization; cannot prove physical Old3DS performance/peak memory/stack or original full scene/encounter/progression. Only scene-on was exercised in01432; off/safe captures are inherited01431, not new01432 evidence."
+}

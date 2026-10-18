@@ -1,0 +1,14 @@
+#0.0.14.33 resume
+
+Exact project:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.33_WorldComesAlive_r1
+No Git repository/branch/commit; continued frozen01432ZIP. No synced sources/original archive edits.
+
+Completed: source integer firstpose18parts, two initial actor materialpages, optionalstrict176B recordedcounterprofile, actual constructor receipt admission, sourceactor sweep/countertail diagnostic chronology, actor-onlyproof filter/labelledinspectionview. Sourceonly original-camera capture now visibly shows importedface/hair/body. Unknown fullwork08/wrapper/animation remain unknown.
+
+Tests:123/123 PASS; currentcore originalprobe9cases/162banks/2322guards/0alloc PASS; ASan/UBSan/ARMpose checks PASS. Native-r4 PASS:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01433_WorldComesAlive_r1.3dsx; SHA4b2ad7babab8fdcc1b94cfbf4a59fccbcca990cfc0d036a29295c52f90799bd9. Source snapshot258 current hashes match. Exactcommands/logs docs/validation_01433/build-result.json and sourceproofs research_01433. SD:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01433/native-r5/sd_out. Owner-localpack:/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261012-worldalive-01433/pack-runtime-r2,128manifestoutputs (126old unchanged+131328Bactor snapshot+176Bloop). SourceZIP excludes all payloads.
+
+Build:python3 -B tools/build_hardware_test.py --pack EXISTING_PRIVATE_PACK --out NEW_BUILD_PATH --host-build NEW_HOST_PATH. Strictoptional cook recipes in PASS_REPORT. Do not overwrite earlier checkpoints. No resetused.
+
+Next concrete step: actual scene now reaches NeedsRandomOwner35 atcallback80100D6C→8007FE50. Capture original read-only RNG owner/order at this boundary in PCSX-Redux; no guessed native seed. Complete class40 wrapper8010D824 primary/previous player stores and full800322A8/update/work08/animation lifecycle from source. Snapshot4133 only selected OpenBIOSconstructor; never use as universal native boot/RNG seed. No original player-fixed16.16 stores should be invented from wrapperhalfwords. Source actor origin80/0/-544; animatedroot80/-90/-544; nativelegacy+512 is a distinctdraw. Later fullcombat/events/messages/transitions/unload/load/physics/hardware remain pending; World Comes Alive incomplete.
+
+Captures/build hashes/profilelimits in emulator-results.json. Source-camera isolatednative-r3 and finalnative-r4 inspection/0143safe separately labelled. Normalmovement/fire native-r2. Mixednative-r2 captures do not independentlyprove sourceactor visibility. Pausedr1black images retained/notaccepted. Macunlocked forcaptures; alltestapps closed. Video URLreceived14.33 metadataonly; notwatched; followUSER_VIDEO_REFERENCE note within firstTronboundary.

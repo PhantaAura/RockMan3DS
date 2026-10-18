@@ -1,0 +1,447 @@
+{
+  "areas": [
+    {
+      "area": 0,
+      "cell_counts": {
+        "negative": 8,
+        "positive": 40,
+        "zero": 150
+      },
+      "current_occurrence_primitive_count": 1752,
+      "distinct_positive_idx_references": 18,
+      "hypothetical_unique_reference_primitive_count": 488,
+      "occurrences_per_idx_histogram": {
+        "1": 10,
+        "2": 1,
+        "4": 7
+      },
+      "reference_cell_rectangles": [
+        {
+          "count": 10,
+          "height_cells": 1,
+          "occurrences": 1,
+          "width_cells": 1
+        },
+        {
+          "count": 1,
+          "height_cells": 1,
+          "occurrences": 2,
+          "width_cells": 2
+        },
+        {
+          "count": 7,
+          "height_cells": 2,
+          "occurrences": 4,
+          "width_cells": 2
+        }
+      ],
+      "relative_grid_center_minus_idx_offsets": [
+        {
+          "count": 7,
+          "dx": -256,
+          "dz": -256
+        },
+        {
+          "count": 1,
+          "dx": -256,
+          "dz": 0
+        },
+        {
+          "count": 7,
+          "dx": -256,
+          "dz": 256
+        },
+        {
+          "count": 10,
+          "dx": 0,
+          "dz": 0
+        },
+        {
+          "count": 7,
+          "dx": 256,
+          "dz": -256
+        },
+        {
+          "count": 1,
+          "dx": 256,
+          "dz": 0
+        },
+        {
+          "count": 7,
+          "dx": 256,
+          "dz": 256
+        }
+      ]
+    },
+    {
+      "area": 1,
+      "cell_counts": {
+        "negative": 71,
+        "positive": 130,
+        "zero": 283
+      },
+      "current_occurrence_primitive_count": 854,
+      "distinct_positive_idx_references": 126,
+      "hypothetical_unique_reference_primitive_count": 526,
+      "occurrences_per_idx_histogram": {
+        "1": 124,
+        "2": 1,
+        "4": 1
+      },
+      "reference_cell_rectangles": [
+        {
+          "count": 124,
+          "height_cells": 1,
+          "occurrences": 1,
+          "width_cells": 1
+        },
+        {
+          "count": 1,
+          "height_cells": 1,
+          "occurrences": 2,
+          "width_cells": 2
+        },
+        {
+          "count": 1,
+          "height_cells": 2,
+          "occurrences": 4,
+          "width_cells": 2
+        }
+      ],
+      "relative_grid_center_minus_idx_offsets": [
+        {
+          "count": 1,
+          "dx": -256,
+          "dz": -256
+        },
+        {
+          "count": 1,
+          "dx": -256,
+          "dz": 0
+        },
+        {
+          "count": 1,
+          "dx": -256,
+          "dz": 256
+        },
+        {
+          "count": 124,
+          "dx": 0,
+          "dz": 0
+        },
+        {
+          "count": 1,
+          "dx": 256,
+          "dz": -256
+        },
+        {
+          "count": 1,
+          "dx": 256,
+          "dz": 0
+        },
+        {
+          "count": 1,
+          "dx": 256,
+          "dz": 256
+        }
+      ]
+    },
+    {
+      "area": 2,
+      "cell_counts": {
+        "negative": 14,
+        "positive": 202,
+        "zero": 559
+      },
+      "current_occurrence_primitive_count": 674,
+      "distinct_positive_idx_references": 202,
+      "hypothetical_unique_reference_primitive_count": 674,
+      "occurrences_per_idx_histogram": {
+        "1": 202
+      },
+      "reference_cell_rectangles": [
+        {
+          "count": 202,
+          "height_cells": 1,
+          "occurrences": 1,
+          "width_cells": 1
+        }
+      ],
+      "relative_grid_center_minus_idx_offsets": [
+        {
+          "count": 202,
+          "dx": 0,
+          "dz": 0
+        }
+      ]
+    },
+    {
+      "area": 3,
+      "cell_counts": {
+        "negative": 16,
+        "positive": 24,
+        "zero": 58
+      },
+      "current_occurrence_primitive_count": 120,
+      "distinct_positive_idx_references": 24,
+      "hypothetical_unique_reference_primitive_count": 120,
+      "occurrences_per_idx_histogram": {
+        "1": 24
+      },
+      "reference_cell_rectangles": [
+        {
+          "count": 24,
+          "height_cells": 1,
+          "occurrences": 1,
+          "width_cells": 1
+        }
+      ],
+      "relative_grid_center_minus_idx_offsets": [
+        {
+          "count": 24,
+          "dx": 0,
+          "dz": 0
+        }
+      ]
+    },
+    {
+      "area": 4,
+      "cell_counts": {
+        "positive": 2496,
+        "zero": 204
+      },
+      "current_occurrence_primitive_count": 12112,
+      "distinct_positive_idx_references": 624,
+      "hypothetical_unique_reference_primitive_count": 3028,
+      "occurrences_per_idx_histogram": {
+        "4": 624
+      },
+      "reference_cell_rectangles": [
+        {
+          "count": 624,
+          "height_cells": 2,
+          "occurrences": 4,
+          "width_cells": 2
+        }
+      ],
+      "relative_grid_center_minus_idx_offsets": [
+        {
+          "count": 624,
+          "dx": -256,
+          "dz": -256
+        },
+        {
+          "count": 624,
+          "dx": -256,
+          "dz": 256
+        },
+        {
+          "count": 624,
+          "dx": 256,
+          "dz": -256
+        },
+        {
+          "count": 624,
+          "dx": 256,
+          "dz": 256
+        }
+      ]
+    }
+  ],
+  "changes_applied": false,
+  "contact_bound_margin_comparison": {
+    "extra_0_max_bound_delta_le_1": 66,
+    "extra_0_max_bound_delta_le_8": 66,
+    "extra_1_max_bound_delta_le_1": 0,
+    "extra_1_max_bound_delta_le_8": 0,
+    "extra_2_max_bound_delta_le_1": 0,
+    "extra_2_max_bound_delta_le_8": 0,
+    "extra_3_max_bound_delta_le_1": 0,
+    "extra_3_max_bound_delta_le_8": 0
+  },
+  "contact_render_pairs": {
+    "contact_render_pairs": 199
+  },
+  "contact_to_render_span_ratios": [
+    {
+      "axis": "x",
+      "count": 2,
+      "ratio": "257/128"
+    },
+    {
+      "axis": "x",
+      "count": 115,
+      "ratio": "257/256"
+    },
+    {
+      "axis": "x",
+      "count": 8,
+      "ratio": "321/256"
+    },
+    {
+      "axis": "x",
+      "count": 4,
+      "ratio": "329/320"
+    },
+    {
+      "axis": "x",
+      "count": 2,
+      "ratio": "337/320"
+    },
+    {
+      "axis": "x",
+      "count": 4,
+      "ratio": "385/256"
+    },
+    {
+      "axis": "x",
+      "count": 4,
+      "ratio": "385/384"
+    },
+    {
+      "axis": "x",
+      "count": 5,
+      "ratio": "401/384"
+    },
+    {
+      "axis": "x",
+      "count": 7,
+      "ratio": "513/512"
+    },
+    {
+      "axis": "x",
+      "count": 2,
+      "ratio": "69/64"
+    },
+    {
+      "axis": "z",
+      "count": 2,
+      "ratio": "257/128"
+    },
+    {
+      "axis": "z",
+      "count": 119,
+      "ratio": "257/256"
+    },
+    {
+      "axis": "z",
+      "count": 16,
+      "ratio": "321/256"
+    },
+    {
+      "axis": "z",
+      "count": 2,
+      "ratio": "385/256"
+    },
+    {
+      "axis": "z",
+      "count": 4,
+      "ratio": "465/472"
+    },
+    {
+      "axis": "z",
+      "count": 7,
+      "ratio": "513/512"
+    },
+    {
+      "axis": "z",
+      "count": 2,
+      "ratio": "521/512"
+    },
+    {
+      "axis": "z",
+      "count": 7,
+      "ratio": "529/512"
+    }
+  ],
+  "current_global_extra_shift": 0,
+  "findings": [
+    "No supported global scale increase: extra shift0 already matches many contact footprints within one unit per bound.",
+    "Positive reference identity is reused across adjacent grid cells. Current renderer emits each occurrence at a grid center and rotates by reference-index low bits.",
+    "IDX X/Z coordinates match the center of each repeated reference cell rectangle. This is strong placement evidence but the intended renderer semantics remain unverified.",
+    "Current contact-group helper adds grid center and applies no index-low-bit rotation. The supplied terrain helper applies that rotation; their placement conventions differ.",
+    "Negative cells are omitted by the runtime terrain frontend. Their renderer/material semantics are not supplied by the current cooked package.",
+    "Inherited executable anchors0x80021834,0x80021c3c,0x800221e0,0x8002246c are CANDIDATE. A register/argument trace or fuller authorized source notes are required to verify placement, rotation and global scale."
+  ],
+  "idx_metadata": {
+    "raw6_zero_rows": 995,
+    "rows": 995,
+    "x_low2_zero_rows": 995,
+    "z_low2_zero_rows": 995
+  },
+  "input_sha256": {
+    "map": "94c703b1d6dcf1690afcf8dc1e738c124936919cb33f302b0796941378c72545",
+    "render": "f25348fc2fa9743210c205c148c43f650d95dd247ffb7a95723152c68ca99faa"
+  },
+  "lod_bound_comparison": {
+    "mid_vs_far_identical_xyz_bounds": 116,
+    "mid_vs_far_pairs": 116,
+    "mid_vs_near_identical_xyz_bounds": 114,
+    "mid_vs_near_pairs": 116
+  },
+  "mid_descriptor_xz_spans": [
+    {
+      "count": 26,
+      "span_x": 0,
+      "span_z": 512
+    },
+    {
+      "count": 1,
+      "span_x": 256,
+      "span_z": 512
+    },
+    {
+      "count": 22,
+      "span_x": 512,
+      "span_z": 0
+    },
+    {
+      "count": 1,
+      "span_x": 512,
+      "span_z": 256
+    },
+    {
+      "count": 50,
+      "span_x": 512,
+      "span_z": 512
+    },
+    {
+      "count": 2,
+      "span_x": 640,
+      "span_z": 944
+    },
+    {
+      "count": 2,
+      "span_x": 640,
+      "span_z": 1024
+    },
+    {
+      "count": 2,
+      "span_x": 768,
+      "span_z": 512
+    },
+    {
+      "count": 3,
+      "span_x": 768,
+      "span_z": 1024
+    },
+    {
+      "count": 7,
+      "span_x": 1024,
+      "span_z": 1024
+    }
+  ],
+  "payload_policy": "Aggregate spans and relative offsets only; no vertex payloads or original absolute coordinates.",
+  "source_semantics_unverified": true,
+  "status": "SOURCE_BACKED_PARTIAL",
+  "stored_primitive_base_shift_counts": {
+    "3": 648,
+    "4": 1297,
+    "5": 548
+  },
+  "stream_base_shift_counts": {
+    "3": 16,
+    "4": 281,
+    "5": 10
+  }
+}

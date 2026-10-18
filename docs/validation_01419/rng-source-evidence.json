@@ -1,0 +1,403 @@
+{
+  "schema": "mml-bios-rng-ownership/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "trampoline_region_sha256": "db6da1122438031261cce8eaabe41b8050249f6a6fe2133f8447ea15eba6cffa",
+  "callback_prelude_region_sha256": "654a54110dc33aca02f2e8eaa9d2d3d4fc92b860f77e51d4fad1ce67a53bf326",
+  "rand_trampoline": [
+    {
+      "a0_argument_before": 0,
+      "a0_argument_after": 0,
+      "function_id_t1": 47,
+      "gateway_t2": 160,
+      "caller_ra_after": 30576,
+      "original_instructions_executed": 3
+    },
+    {
+      "a0_argument_before": 1,
+      "a0_argument_after": 1,
+      "function_id_t1": 47,
+      "gateway_t2": 160,
+      "caller_ra_after": 30576,
+      "original_instructions_executed": 3
+    },
+    {
+      "a0_argument_before": 324508639,
+      "a0_argument_after": 324508639,
+      "function_id_t1": 47,
+      "gateway_t2": 160,
+      "caller_ra_after": 30576,
+      "original_instructions_executed": 3
+    },
+    {
+      "a0_argument_before": 4294967295,
+      "a0_argument_after": 4294967295,
+      "function_id_t1": 47,
+      "gateway_t2": 160,
+      "caller_ra_after": 30576,
+      "original_instructions_executed": 3
+    }
+  ],
+  "callback_preludes": [
+    {
+      "state08": 0,
+      "authored_gateway_return": 0,
+      "sample32A_after": 0,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 0,
+      "authored_gateway_return": 1,
+      "sample32A_after": 1,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 0,
+      "authored_gateway_return": 32767,
+      "sample32A_after": 32767,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 0,
+      "authored_gateway_return": 32768,
+      "sample32A_after": 32768,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 0,
+      "authored_gateway_return": 4294967295,
+      "sample32A_after": 65535,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 1,
+      "authored_gateway_return": 0,
+      "sample32A_after": 0,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 1,
+      "authored_gateway_return": 1,
+      "sample32A_after": 1,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 1,
+      "authored_gateway_return": 32767,
+      "sample32A_after": 32767,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 1,
+      "authored_gateway_return": 32768,
+      "sample32A_after": 32768,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 1,
+      "authored_gateway_return": 4294967295,
+      "sample32A_after": 65535,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 2,
+      "authored_gateway_return": 0,
+      "sample32A_after": 0,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 2,
+      "authored_gateway_return": 1,
+      "sample32A_after": 1,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 2,
+      "authored_gateway_return": 32767,
+      "sample32A_after": 32767,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 2,
+      "authored_gateway_return": 32768,
+      "sample32A_after": 32768,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 2,
+      "authored_gateway_return": 4294967295,
+      "sample32A_after": 65535,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 255,
+      "authored_gateway_return": 0,
+      "sample32A_after": 0,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 255,
+      "authored_gateway_return": 1,
+      "sample32A_after": 1,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 255,
+      "authored_gateway_return": 32767,
+      "sample32A_after": 32767,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 255,
+      "authored_gateway_return": 32768,
+      "sample32A_after": 32768,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    },
+    {
+      "state08": 255,
+      "authored_gateway_return": 4294967295,
+      "sample32A_after": 65535,
+      "gateway_calls": 1,
+      "function_id_t1": 47,
+      "request_snapshot_AD": 7,
+      "work15E_after": 16912,
+      "probe_instructions_executed": 50
+    }
+  ],
+  "ordered_gateway_authored_cases": [
+    {
+      "authored_callback_ordinal": 1,
+      "work": "0x1000",
+      "state08": 0,
+      "authored_gateway_return": 4294906420,
+      "sample32A_after": 4660,
+      "shared_gateway_count": 1
+    },
+    {
+      "authored_callback_ordinal": 2,
+      "work": "0x2000",
+      "state08": 1,
+      "authored_gateway_return": 35243,
+      "sample32A_after": 35243,
+      "shared_gateway_count": 2
+    },
+    {
+      "authored_callback_ordinal": 3,
+      "work": "0x1000",
+      "state08": 2,
+      "authored_gateway_return": 22136,
+      "sample32A_after": 22136,
+      "shared_gateway_count": 3
+    }
+  ],
+  "static_scans": [
+    {
+      "image": "exe",
+      "bytes": 823296,
+      "rand_direct_call_candidates": [
+        "0x800379f8",
+        "0x80037ae0",
+        "0x800407cc",
+        "0x800419b0",
+        "0x80044b48",
+        "0x8004512c",
+        "0x8004540c",
+        "0x80045440",
+        "0x800456e4",
+        "0x80045b08",
+        "0x80045d4c",
+        "0x80045d98",
+        "0x80045e84",
+        "0x80045f3c",
+        "0x80046478",
+        "0x800468e4",
+        "0x80046ba4",
+        "0x80046be8",
+        "0x80046c28",
+        "0x80046dd0",
+        "0x80046e10",
+        "0x80047e44",
+        "0x80047e5c",
+        "0x80047f88",
+        "0x80047f98",
+        "0x80047fec",
+        "0x80048008",
+        "0x80048148",
+        "0x80057430",
+        "0x80065398",
+        "0x800653a0",
+        "0x800653b8",
+        "0x800653c0",
+        "0x800653d8",
+        "0x800653e0",
+        "0x800653f8",
+        "0x80065400",
+        "0x80065418",
+        "0x80065420",
+        "0x80065438",
+        "0x80065440"
+      ],
+      "direct_A0_candidates": [],
+      "function30_load_candidates": [
+        "0x80044350",
+        "0x8004d9a4",
+        "0x8004db30",
+        "0x8004e114"
+      ],
+      "srand_trampoline_shape_candidates": []
+    },
+    {
+      "image": "tutorial_overlay",
+      "bytes": 141056,
+      "rand_direct_call_candidates": [
+        "0x80100dcc",
+        "0x80100de4",
+        "0x80100dfc",
+        "0x80100e38",
+        "0x80100e50",
+        "0x80100e68",
+        "0x801022f0",
+        "0x801048e8",
+        "0x80106370",
+        "0x8010776c",
+        "0x8010a710",
+        "0x801103e0",
+        "0x80113230",
+        "0x801133dc",
+        "0x80113674",
+        "0x80113ad0",
+        "0x80113cc0",
+        "0x80113cec",
+        "0x80113d04",
+        "0x80113d24",
+        "0x80113d8c",
+        "0x80113db8",
+        "0x80113e4c",
+        "0x80114018",
+        "0x801161a0",
+        "0x8011623c",
+        "0x80116870",
+        "0x80116934",
+        "0x80116988",
+        "0x80116c10",
+        "0x80116c24",
+        "0x80116c40",
+        "0x80116c60",
+        "0x80116cd4",
+        "0x80116f58",
+        "0x80116f90",
+        "0x80116fdc",
+        "0x801173bc",
+        "0x80117400",
+        "0x801177ac",
+        "0x801177c8",
+        "0x801177e0",
+        "0x801177fc",
+        "0x8011780c",
+        "0x80117898",
+        "0x801178ac",
+        "0x80117f00",
+        "0x80117f08",
+        "0x801186b4",
+        "0x801186e0",
+        "0x801186f4",
+        "0x80118708"
+      ],
+      "direct_A0_candidates": [],
+      "function30_load_candidates": [],
+      "srand_trampoline_shape_candidates": []
+    }
+  ],
+  "probe_instructions_executed": 1162,
+  "BIOS_algorithm_exercised": false,
+  "game_seed_proved": false,
+  "shared_consumer_lifecycle_proved": false,
+  "retail_parity": false,
+  "hooks": [
+    "Only A0 BIOS gateway replaced with authored scalar-return instrumentation.",
+    "Original callback stops immediately after sample32A store; state dispatch excluded."
+  ],
+  "limits": [
+    "Static aligned scan may include data or miss indirect calls/runtime patches.",
+    "Other overlays, BIOS boot, warm restart and save restoration are not covered.",
+    "No seed, original BIOS state, retail consumer chronology or pause cadence is supplied.",
+    "No original code, tables, instruction listings, BIOS payload or assets are serialized."
+  ]
+}

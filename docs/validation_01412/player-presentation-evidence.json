@@ -1,0 +1,306 @@
+{
+  "format": "player-presentation-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "checkpoint": "0.0.14.12",
+  "owner_payloads_included": false,
+  "owner_executable": {
+    "sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+    "status": "MATCHES_MEASURED_FIELDS"
+  },
+  "component_mapping": {
+    "status": "MATCHES_MEASURED_FIELDS",
+    "renderer_anchor": "0x8002786C",
+    "pointer_table": "0x800898EC",
+    "count_table": "0x80089928",
+    "transform_table": "0x80089938",
+    "component_counts": [
+      6,
+      4,
+      3,
+      3,
+      2
+    ],
+    "transforms": [
+      0,
+      8,
+      9,
+      10,
+      12,
+      13,
+      1,
+      1,
+      1,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      14
+    ],
+    "loaded_composition_matches": true,
+    "static_head_part_ids": [
+      15,
+      16,
+      17
+    ],
+    "static_head_transform": 1,
+    "geometry_role": "actual owner-cooked five-component player model"
+  },
+  "pose_structure": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "root": "animated signed root translation",
+    "child": "authored action-0 local translation",
+    "composition": "parent * (T * R)",
+    "axis_order": "X * Y * Z",
+    "parents": [
+      -1,
+      0,
+      0,
+      2,
+      3,
+      0,
+      5,
+      6,
+      0,
+      8,
+      9,
+      10,
+      0,
+      12,
+      13
+    ],
+    "inherited_source_evidence": [
+      "research/tutorial_flow_005.md",
+      "research/tutorial_runtime_006.md",
+      "docs/GROUNDING_AUDIT_0148.md"
+    ],
+    "new_transform_correction_justified": true,
+    "first_regular_pose_bounds": {
+      "min": [
+        -342.995,
+        -1189.24,
+        -224.857
+      ],
+      "max": [
+        342.995,
+        -0.476532,
+        192.674
+      ],
+      "coordinate_stage": "unscaled animation hierarchy, before final actor render scale"
+    },
+    "bounds_precision": "inherited runtime probe printed precision",
+    "constant_player_y_offset_added": false,
+    "native_world_units_per_source_unit": 0.001953125
+  },
+  "storage_validation": {
+    "status": "MATCHES_MEASURED_FIELDS",
+    "reference": "frozen pre-01412 pose algorithm in tests/test_player_visual_storage.cpp",
+    "host_checks": {
+      "format": "player-visual-storage-check/1",
+      "synthetic_frames_checked": 128,
+      "host_posed_primitive_bytes": 68,
+      "actor_transform_cases_checked": 98,
+      "actor_world_translation_unscaled": true,
+      "actor_local_render_scale": 0.125,
+      "pose_equivalence": true,
+      "material_order_equivalence": true,
+      "hot_pose_heap_allocations": 0,
+      "malformed_input_preserves_output": true,
+      "owner_pack": {
+        "status": "SOURCE_BACKED_PARTIAL",
+        "components": 5,
+        "attachments": 18,
+        "primitives": 316,
+        "triangles": 116,
+        "quads": 200,
+        "vertex_references": 1148,
+        "distinct_material_words": 2,
+        "resolved_area_material_bindings": 10,
+        "frame_table_actions_checked": 55,
+        "pose_frames_checked": 761,
+        "pose_equivalence": true,
+        "material_order_equivalence": true,
+        "hot_pose_heap_allocations": 0,
+        "retail_visual_parity": "UNKNOWN"
+      }
+    },
+    "sanitizers": {
+      "status": "MATCHES_MEASURED_FIELDS",
+      "address_and_undefined": true,
+      "exit_code": 0,
+      "scope": "test and modified visual bridge instrumented; inherited core library not rebuilt with sanitizers"
+    },
+    "pose_record_bytes_host": 68,
+    "previous_frame_temporary_requested_bytes": 22752,
+    "native_frame_pacing_acceptance": "HARDWARE_PENDING"
+  },
+  "blockers": [
+    {
+      "id": "RETAIL_PLAYER_FACING",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "missing_evidence": "full fixed-point pose/world rendering, state-dependent raw extra yaw and matched original/native pose comparison",
+      "verified": "source Y rotation sign and baseline final scale; original live root scale and raw yaw0/extra0"
+    },
+    {
+      "id": "COMPLETE_ANIMATION_UPDATE_CADENCE",
+      "status": "UNKNOWN",
+      "observed_native_rule": "pbd_main_body_track_tick only when compat player byte +0x09 == 1",
+      "proven_partial": "main-family S request -> M request+1 sequence",
+      "missing_evidence": "idle and state-dependent retail update cadence plus arm-bank blending"
+    },
+    {
+      "id": "RETAIL_PLAYER_GPU_PARITY",
+      "status": "UNKNOWN",
+      "missing_evidence": "matched original/native texture placement, dynamic palette and semitransparent draw comparison"
+    },
+    {
+      "id": "PROJECTILE_EFFECT_BINDING",
+      "status": "UNKNOWN",
+      "current_state_fields": [
+        "position",
+        "velocity",
+        "lifetime",
+        "radius",
+        "damage"
+      ],
+      "missing_fields": [
+        "source model/effect identity",
+        "material",
+        "frame selection",
+        "render-entry mapping"
+      ],
+      "retained_resource_candidate": "DKOUKA01.TIM exists in owner-local indexed pack; name is not effect binding evidence"
+    },
+    {
+      "id": "TRIANGLE_PROJECTILE_PROXY",
+      "status": "CANDIDATE",
+      "source": "platform/3ds/source/main.cpp:draw_projectiles_0143/draw_projectiles_uv",
+      "observed": "one untextured hand-authored triangle per active projectile",
+      "replacement": "preserve diagnostic fallback until original loader/initializer/render packet chain is proven"
+    },
+    {
+      "id": "PLAYER_CONTACT_RESPONSE",
+      "status": "UNKNOWN",
+      "missing_evidence": "normal native movement does not invoke floor/contact solver"
+    },
+    {
+      "id": "PHYSICAL_OLD3DS_PLAYER_PRESENTATION",
+      "status": "HARDWARE_PENDING",
+      "missing_evidence": "physical Old 3DS screen capture, frame pacing and memory measurements"
+    },
+    {
+      "id": "ORIGINAL_TOP_HUD",
+      "status": "UNKNOWN",
+      "implemented": false,
+      "observed_source": "native top draw path submits terrain, player and projectiles; no original HP/Buster HUD draw",
+      "separate_bottom_presentation": "mockup-inspired HUD with runtime data",
+      "missing_evidence": "source-backed original HP/Buster HUD resource and render binding, plus native implementation"
+    }
+  ],
+  "checked_owner_inputs": [
+    {
+      "path": "player/body.l3model",
+      "bytes": 2888,
+      "sha256": "8e2d285dde3a94607f4b67fe4456de3c7c017f3b4a65a07f7b74c0df6053d75a"
+    },
+    {
+      "path": "player/head.l3model",
+      "bytes": 3472,
+      "sha256": "501e9cd71f748dfcc3d647850ddef2d3ac6e674f4e486c6ecf3e0447a68e43ed"
+    },
+    {
+      "path": "player/right.l3model",
+      "bytes": 1632,
+      "sha256": "23e1492bb4b2e452f263521a6b2811c8cafc5f93a94e9c5648ef8b868859051b"
+    },
+    {
+      "path": "player/left.l3model",
+      "bytes": 1632,
+      "sha256": "eaba92638ce420e823cca6fdcff7dc0a2af451cebeb7bc88b0c70b2fe8aaaec6"
+    },
+    {
+      "path": "player/feet.l3model",
+      "bytes": 928,
+      "sha256": "8589711b9b956133482957240051449b9aee8d0581930a3f1596d3fbd2075dbd"
+    },
+    {
+      "path": "player/player.l3pc",
+      "bytes": 176,
+      "sha256": "f348b5fd18194b9f60fa0b5a1672f9683ce0563e572b8c61743b51f8dcf084e2"
+    },
+    {
+      "path": "player/main.l3anim",
+      "bytes": 69576,
+      "sha256": "e0ab6305a7e24610e10af2797cc835a36ed7a29e5cf9ef6dd7ce9cc71b3ad69f"
+    },
+    {
+      "path": "player/main.l3skel",
+      "bytes": 228,
+      "sha256": "ec92dc9fa98b6075b2856b25cb440b8d0fef5574ec55a1aec7f89d040abe82b7"
+    },
+    {
+      "path": "materials/player_area_00.l3mc",
+      "bytes": 131264,
+      "sha256": "bfe6fd2bac2c60b5ecabd29916926719880519d78cc523346cb700f54c8d1802"
+    },
+    {
+      "path": "materials/player_area_01.l3mc",
+      "bytes": 131264,
+      "sha256": "bcecbb718700a95e9f3b9e0fecad4b0f0dc999c57e1cd923b42970b2bea611ad"
+    },
+    {
+      "path": "materials/player_area_02.l3mc",
+      "bytes": 131264,
+      "sha256": "78f8ec219572b98fbd2ccdeb89c08c23d8e8266e057ce5fe8fe74905bc377620"
+    },
+    {
+      "path": "materials/player_area_03.l3mc",
+      "bytes": 131264,
+      "sha256": "bcecbb718700a95e9f3b9e0fecad4b0f0dc999c57e1cd923b42970b2bea611ad"
+    },
+    {
+      "path": "materials/player_area_04.l3mc",
+      "bytes": 131264,
+      "sha256": "b9c7d52ad9326739e6ec06214bf33f0673cf8c4905a4c64774d96b900be39812"
+    }
+  ],
+  "changed_source_files": [
+    "include/legends3ds/visual_bridge.h",
+    "src/render/visual_bridge.cpp",
+    "tests/test_player_visual_storage.cpp"
+  ],
+  "integration_instructions": "docs/PLAYER_STORAGE_INTEGRATION_01412.md",
+  "read_only_owner_pack_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/sd_out/3ds/Legends3DS/data/legends3ds/tutorial",
+  "final_actor_render_transform": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "source_evidence": "camera-player-transform-source-evidence.json",
+    "live_evidence": "camera-player-transform-live-evidence.json",
+    "helper": "build_player_actor_render_matrix",
+    "local_render_scale": 0.125,
+    "world_actor_translation_unscaled": true,
+    "Y_rotation_sign": {
+      "m02": "+sinY",
+      "m20": "-sinY"
+    },
+    "root_angle": "(raw work+0x56 - raw work+0x116) & 0xfff",
+    "old_uv_contradictions": [
+      "missing final local 1/8 scale",
+      "inverse actor Y rotation sign"
+    ],
+    "limits": [
+      "source coefficient and translation arithmetic rounding not reproduced",
+      "raw work+0x116 gameplay semantics UNKNOWN",
+      "full dynamic scale/shift and complete rendering UNKNOWN"
+    ],
+    "float_first_regular_pose_height_source_units": 148.5954335,
+    "float_first_regular_pose_height_native_units": 0.2902254560546875
+  },
+  "audit_docs": [
+    "docs/PLAYER_PRESENTATION_AUDIT_01412.md",
+    "docs/CAMERA_PLAYER_TRANSFORM_AUDIT_01412.md"
+  ],
+  "final_consistency_evidence": "player-camera-final-consistency.json"
+}

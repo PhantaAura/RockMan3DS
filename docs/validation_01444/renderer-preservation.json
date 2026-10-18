@@ -1,0 +1,9 @@
+{
+  "status": "SOURCE_BACKED_PARTIAL",
+  "enhanced_shader_sha256": "ce29518b567b3bfc3fd891a0d098a68de1aa7f186da2ce5cd888c86251178e25",
+  "safe_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "same_as_01443": true,
+  "vertex_layout_changed_in_01444": false,
+  "physical_01443": "User observed textured player and room, then fell off map.",
+  "physical_01444": "HARDWARE_PENDING"
+}

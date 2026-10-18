@@ -1,0 +1,16 @@
+{
+  "host": {
+    "cmake": "4.4.2",
+    "compiler": "AppleClang 21.0.0.21000101",
+    "python": "3.9.6"
+  },
+  "host_warnings_found": false,
+  "native": {
+    "Citro3D": "1.7.1-2",
+    "arch": "ARMv6K/mpcore, Old 3DS baseline",
+    "compiler": "GCC 16.1.0",
+    "devkitARM": "r68-1",
+    "libctru": "2.7.0-1"
+  },
+  "native_warnings_found": false
+}

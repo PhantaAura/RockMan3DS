@@ -1,0 +1,22 @@
+{
+  "schema": "mml-source-scene-view-native-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "fixture_cases": 384,
+  "unchanged_original_instructions": 288451,
+  "projection_startup_original_instructions": 14,
+  "hot_loop_frames": 4096,
+  "hot_loop_allocations": 0,
+  "host_warning_errors": "PASS",
+  "asan_ubsan": "PASS",
+  "cooker_tests": 4,
+  "actual_armv6k_warning_errors": "PASS",
+  "actual_arm_compiler": "devkitARM r68-1 GCC16.1.0",
+  "producer_stack_bytes_compiler": 456,
+  "full_native_link": "PARENT_INTEGRATION_PENDING",
+  "emulator": "PARENT_INTEGRATION_PENDING",
+  "hardware_tested": false,
+  "retail_parity": false,
+  "private_cook_bytes": 2126,
+  "private_cook_sha256": "f581c26311ffef3efaa83ded137912c507815a6fc4fc1bf36c301aecfb7314da",
+  "initial_offset_error": "First author attempt used camera+A8; original differential failed and correct original camera+98 offset passed. Failed private oracle retained; published fixture from accepted r2."
+}

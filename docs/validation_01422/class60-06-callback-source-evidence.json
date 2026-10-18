@@ -1,0 +1,72 @@
+{
+  "schema": "mml-class60-06-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "callback_cases": 2160,
+  "motion_cases": 192,
+  "primitive_cases": 9,
+  "pool_init": {
+    "allocation_bitmap": 0,
+    "pending_release_bitmap": 0,
+    "class_bytes": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127
+    ],
+    "all_nonclass_bytes_zero": true,
+    "instructions": 6701
+  },
+  "original_instructions": 723289,
+  "consumers": {
+    "callback": "8010F354",
+    "state_entries": [
+      "8010F47C",
+      "8010F674",
+      "8010F8E8",
+      "8010F9F4",
+      "8010FC88"
+    ],
+    "motion": "80110070",
+    "contact": "8010FDD4",
+    "proxy": "800341BC",
+    "registry": "80051BAC",
+    "shadow": "8002C8CC",
+    "primitive_renderer": "80029C18"
+  },
+  "limits": [
+    "Callback contact result/writes,trig,floor andeffectallocation are authored boundaries; nativecontact separatelyprobed.",
+    "Actual source proxy/registry/shadow, fixedconversion, scalar lifecycle,motion,effectinitializer andpoolboot execute.",
+    "Primitive proof admitsintegercorners andUVpacking withauthorcamspacecenter; GTEprojection/fog areexcluded.",
+    "No live retailchronology, authoredphysicsorhardwareparityclaim."
+  ]
+}

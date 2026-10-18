@@ -1,0 +1,151 @@
+{
+  "format": "camera-player-transform-source-probe/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "GP": "0x80097864",
+  "player_scale_address": "0x80097cfc",
+  "initial_player_scale_Q12": 512,
+  "local_player_scale": 0.125,
+  "source_integer_checks": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "translation_cases_passed": 256,
+    "Y_rotation_cases_passed": 9,
+    "Q12_scale_cases_passed": 27,
+    "camera_eye_cases_passed": 54,
+    "limits": [
+      "bounded integer blocks with synthetic inputs",
+      "no original GTE or complete pose-chain execution",
+      "native float rounding remains distinct from source fixed point"
+    ]
+  },
+  "camera_fields": {
+    "base": "0x800a3958",
+    "radial_distance_s32": "0x800a3964",
+    "yaw_s32": "0x800a3968",
+    "pitch_s32": "0x800a396c",
+    "target_s32x3": "0x800a39a0",
+    "computed_eye_s32x3": "0x800a39f0",
+    "render_rotation_s16x3": "0x800a3a10",
+    "previous_computed_eye_s32x3": "0x800a3a00",
+    "global_shift_u8": "0x1f800074",
+    "scratch_eye_s16x3": "0x1f800028",
+    "render_camera_matrix": "0x1f800008"
+  },
+  "camera_initialization": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "radial_distance": 512,
+    "yaw": 0,
+    "pitch": 48,
+    "target_y_offset": 150,
+    "limits": "these are source initialization values, not every scripted/state-dependent camera"
+  },
+  "baseline_trig_and_rounding": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "packed_matrix_trig48": [
+      301,
+      4084
+    ],
+    "scalar_camera_sin48": 301,
+    "scalar_camera_cos48": 4085,
+    "camera_yaw2048_sin_cos": [
+      0,
+      -4096
+    ],
+    "source_eye_relative_to_actor_yaw0": [
+      0,
+      -187,
+      511
+    ],
+    "source_target_relative_to_actor_yaw0": [
+      0,
+      -150,
+      0
+    ],
+    "native_baseline_horizontal_distance": 0.998046875,
+    "native_baseline_eye_height": 0.365234375,
+    "native_baseline_target_height": 0.29296875,
+    "rounding_note": "arithmetic (-512*4085)>>12 is -511; negated eye component is +511. Positive component truncates to510."
+  },
+  "ordinary_follow_camera": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "update_anchor": "0x80038fa4",
+    "player_work_base": "0x800b51b0",
+    "target": "actor XYZ with source Y reduced by state+0x5c",
+    "camera_yaw": "raw actor work+0x56 plus 2048 plus optional state yaw term",
+    "eye_formula": "target - distance * [sin(camera_yaw)*cos(pitch), sin(pitch), cos(camera_yaw)*cos(pitch)]",
+    "fixed_point": "Q12 intermediate arithmetic shifts; stored unscaled eye narrowed to signed16",
+    "native_Y_inversion": "behind +sin(actor yaw)/+cos(actor yaw); eye height=(target offset + distance*sin(pitch))/512"
+  },
+  "source_blocks": [
+    {
+      "id": "render_translation",
+      "start": "0x800332ac",
+      "end_exclusive": "0x80033318",
+      "sha256": "a37e2575ba0586235dd0b36436f4a2e558f266f9e3ac5a388d6ff660fae4c8c4"
+    },
+    {
+      "id": "Q12_scale",
+      "start": "0x8007ade8",
+      "end_exclusive": "0x8007af0c",
+      "sha256": "6fa6bca1ebd36af6824a61f942ef870aa8600ab2b0d0bbc86ffa868c85a85629"
+    },
+    {
+      "id": "Y_rotation",
+      "start": "0x8007b5a8",
+      "end_exclusive": "0x8007b834",
+      "sha256": "acc25faa56212e867a89850e2b80a775a8be7ca6aedc54a6f61e1149bf43aa2c"
+    },
+    {
+      "id": "camera_core",
+      "start": "0x80037fb4",
+      "end_exclusive": "0x80038324",
+      "sha256": "a94e80e6d3fa105fc82f7538de6ae229e0aee0a943464390a8c20c395a00759d"
+    },
+    {
+      "id": "camera_init",
+      "start": "0x80038648",
+      "end_exclusive": "0x80038894",
+      "sha256": "aa8590e87c48cf94cf17ea930a450c9f6fd2cf7f9a227284fc2e3261f962c841"
+    },
+    {
+      "id": "actor_root_yaw",
+      "start": "0x80032648",
+      "end_exclusive": "0x80032664",
+      "sha256": "8ccbb37a564fed0e5f8965fff363a82db3af26a2ef0d77a78d1bb4b8e4699d37"
+    },
+    {
+      "id": "source_GP_init",
+      "start": "0x80068080",
+      "end_exclusive": "0x80068088",
+      "sha256": "d0297d1f7e07515db73a8419cd1c445a13da0d7f3bafd94ace8199406fd521e7"
+    }
+  ],
+  "findings": [
+    {
+      "id": "PLAYER_RENDER_TRANSLATION_REDUCTION",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "formula": "(unscaled_world_translation + 7*scaled_actor_position + 4) arithmetic_shift_right 3"
+    },
+    {
+      "id": "PLAYER_RENDER_MATRIX_SCALE",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "formula": "coefficient * (512 << global_shift) arithmetic_shift_right 12"
+    },
+    {
+      "id": "PLAYER_ROOT_YAW",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "formula": "raw actor work+0x56 minus raw work+0x116; m02=+sinY, m20=-sinY"
+    },
+    {
+      "id": "EXTRA_YAW_FIELD_SEMANTICS",
+      "status": "UNKNOWN",
+      "field": "raw actor work+0x116"
+    },
+    {
+      "id": "CAMERA_COMPLETE_BEHAVIOR",
+      "status": "UNKNOWN",
+      "missing": "live state-dependent camera ownership, interpolation, obstruction and scripted transitions"
+    }
+  ],
+  "payload_policy": "no owner payloads or instruction listings emitted"
+}

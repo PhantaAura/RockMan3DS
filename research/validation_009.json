@@ -1,0 +1,39 @@
+{
+  "checkpoint": "0.0.9",
+  "name": "Dynamic EBD Selector Evidence Bridge",
+  "source_policy": "disc/extraction first; memory is not evidence",
+  "reference": {
+    "edition": "Mega Man Legends USA",
+    "rock_neo_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+    "chd_bytes": 217298243,
+    "chd_sha256": "573c1fa958db9a84a5f57b2894bf7f7b71e51f77df70dac1cd34a5a3b66d1f94",
+    "dat_files": 205,
+    "xa_files": 38,
+    "str_files": 1
+  },
+  "selector": {
+    "dispatcher": "0x80047318",
+    "initializer": "0x80047354",
+    "common_ebd_lookup": "0x8002F9C4 -> 0x8002FA38",
+    "bit_80_selector": 0,
+    "bit_20_selector": 2,
+    "bit_20_helper_param3": [5, 6],
+    "low_nibble_selectors": [4, 5, 6],
+    "runtime_probe_rule": "(probe_value - work_3a) < 30 ? 0 : 1",
+    "tutorial_dynamic_param3": [97, 129, 193, 96, 160, 224],
+    "tutorial_conditional_results": [2, 0, 0, 2, 0, 0],
+    "handler_ownership_proven": false
+  },
+  "build": {
+    "host_release": "PASS",
+    "warnings_as_errors": true,
+    "ctest": "1/1 PASS",
+    "fresh_tutorial_pack_files": 85,
+    "cooked_data_hash_differences_vs_0_0_8": 0
+  },
+  "distribution": {
+    "capcom_assets_in_source_archive": false,
+    "generated_psx_elf_in_source_archive": false,
+    "cooked_game_data_in_source_archive": false
+  }
+}

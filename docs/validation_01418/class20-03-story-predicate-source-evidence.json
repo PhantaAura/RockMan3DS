@@ -1,0 +1,407 @@
+{
+  "schema": "class20-03-story-predicate-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "helper_cases": 8200,
+  "caller_cases": 4096,
+  "instructions_executed": 297064,
+  "hooks": [],
+  "helper": {
+    "argument": "unsigned flag ID in a0",
+    "bank": "0x800be378",
+    "read": "u8[bank + (id >> 3)]",
+    "mask": "0x80 >> (id & 7)",
+    "result": "0 or1; true exactly when selected bit set"
+  },
+  "caller": {
+    "entry": "0x80102884",
+    "phase": 2,
+    "parameter_mask": "0x20",
+    "argument_source": "unsigned halfword work+0x362",
+    "true": "action3; complete halfword0A clear",
+    "false": "action0 phase2 retained; unrelated packet/distance ignored",
+    "always": "flags328 mask0x20 set; timer32C/work330 unchanged"
+  },
+  "native_mapping": {
+    "semantic_ids": "0..2047",
+    "getter": "RuntimeSession::story_flag(id)",
+    "physical_packing": "native LSB-first is neutral; retain semantic ID",
+    "outside_domain": "leave predicate unknown; helper has no source bound"
+  },
+  "selected_authored_examples": [
+    {
+      "id": 0,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 0,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 0,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 128,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 0,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 127,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 0,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 255,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 0,
+      "source_mask": 64,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 64,
+      "source_mask": 64,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 191,
+      "source_mask": 64,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 255,
+      "source_mask": 64,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 7,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 0,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 7,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 1,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 7,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 254,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 7,
+      "flag_byte_address": "0x800be378",
+      "authored_flag_byte": 255,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 8,
+      "flag_byte_address": "0x800be379",
+      "authored_flag_byte": 0,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 8,
+      "flag_byte_address": "0x800be379",
+      "authored_flag_byte": 128,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 8,
+      "flag_byte_address": "0x800be379",
+      "authored_flag_byte": 127,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 8,
+      "flag_byte_address": "0x800be379",
+      "authored_flag_byte": 255,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1547,
+      "flag_byte_address": "0x800be439",
+      "authored_flag_byte": 0,
+      "source_mask": 16,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1547,
+      "flag_byte_address": "0x800be439",
+      "authored_flag_byte": 16,
+      "source_mask": 16,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1547,
+      "flag_byte_address": "0x800be439",
+      "authored_flag_byte": 239,
+      "source_mask": 16,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1547,
+      "flag_byte_address": "0x800be439",
+      "authored_flag_byte": 255,
+      "source_mask": 16,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1599,
+      "flag_byte_address": "0x800be43f",
+      "authored_flag_byte": 0,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1599,
+      "flag_byte_address": "0x800be43f",
+      "authored_flag_byte": 1,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1599,
+      "flag_byte_address": "0x800be43f",
+      "authored_flag_byte": 254,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1599,
+      "flag_byte_address": "0x800be43f",
+      "authored_flag_byte": 255,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1600,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 0,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1600,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 128,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1600,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 127,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1600,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 255,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1601,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 0,
+      "source_mask": 64,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1601,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 64,
+      "source_mask": 64,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 1601,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 191,
+      "source_mask": 64,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 1601,
+      "flag_byte_address": "0x800be440",
+      "authored_flag_byte": 255,
+      "source_mask": 64,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 2047,
+      "flag_byte_address": "0x800be477",
+      "authored_flag_byte": 0,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 2047,
+      "flag_byte_address": "0x800be477",
+      "authored_flag_byte": 1,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 2047,
+      "flag_byte_address": "0x800be477",
+      "authored_flag_byte": 254,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": true
+    },
+    {
+      "id": 2047,
+      "flag_byte_address": "0x800be477",
+      "authored_flag_byte": 255,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": true
+    },
+    {
+      "id": 2048,
+      "flag_byte_address": "0x800be478",
+      "authored_flag_byte": 0,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": false
+    },
+    {
+      "id": 2048,
+      "flag_byte_address": "0x800be478",
+      "authored_flag_byte": 128,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": false
+    },
+    {
+      "id": 2048,
+      "flag_byte_address": "0x800be478",
+      "authored_flag_byte": 127,
+      "source_mask": 128,
+      "result": 0,
+      "native_domain": false
+    },
+    {
+      "id": 2048,
+      "flag_byte_address": "0x800be478",
+      "authored_flag_byte": 255,
+      "source_mask": 128,
+      "result": 1,
+      "native_domain": false
+    },
+    {
+      "id": 65535,
+      "flag_byte_address": "0x800c0377",
+      "authored_flag_byte": 0,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": false
+    },
+    {
+      "id": 65535,
+      "flag_byte_address": "0x800c0377",
+      "authored_flag_byte": 1,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": false
+    },
+    {
+      "id": 65535,
+      "flag_byte_address": "0x800c0377",
+      "authored_flag_byte": 254,
+      "source_mask": 1,
+      "result": 0,
+      "native_domain": false
+    },
+    {
+      "id": 65535,
+      "flag_byte_address": "0x800c0377",
+      "authored_flag_byte": 255,
+      "source_mask": 1,
+      "result": 1,
+      "native_domain": false
+    }
+  ],
+  "regions": [
+    {
+      "image": "EXE",
+      "start": "0x8001da58",
+      "end_exclusive": "0x8001da8c",
+      "sha256": "4fecb311c2932aa916e7a04d9cd9ed59f678197b7b2531f69b5f25fc603f86cc"
+    },
+    {
+      "image": "ST00",
+      "start": "0x80102884",
+      "end_exclusive": "0x801029b4",
+      "sha256": "10c52c35d7b23cce781b2a9acf0a3b74c7dedbb1e4d04a406d0928eeab2021f9"
+    }
+  ],
+  "limits": [
+    "All work/global flag bytes are explicit synthetic memory premises.",
+    "No flag creation/event progression, allocation clock or live encounter is proved.",
+    "Native getter mapping is semantic layout equivalence, not a retail save-byte copy.",
+    "Source helper reads beyond native bank for IDs>=2048; native false is not admissible there.",
+    "No original bytes, code listing, tables, assets or retail flag state exported."
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "checkpoint": "Integrated Roadmap Sweep WIP",
+  "source_reference": "Mega Man Legends USA user-owned extraction",
+  "host_build": "PASS warnings-as-errors",
+  "ctest": "1/1 PASS",
+  "tutorial_pack_files": 91,
+  "tutorial_runtime_areas": 5,
+  "world": {
+    "packages": 37,
+    "maps": 37,
+    "renders": 37,
+    "areas": 203,
+    "cells": 135572,
+    "descriptors": 3891,
+    "contact_primitives": 10569,
+    "contact_dispatch_supported": 10569,
+    "contact_dispatch_unsupported": 0,
+    "render_records": 9999,
+    "render_streams": 16478,
+    "render_primitives": 104789
+  },
+  "script": {
+    "ebd_files": 136,
+    "ebd_rows": 4620,
+    "msg_files": 129,
+    "msg_blocks": 17594,
+    "msg_tokens": 721779,
+    "runtime_events": 739373,
+    "audio_events": 1475,
+    "script_events": 57931
+  },
+  "stage_objects": {
+    "files": 30,
+    "tables": 34,
+    "lists": 207,
+    "objects": 649,
+    "pool_allocatable": 459
+  },
+  "audio": {
+    "xa": 38,
+    "str": 1,
+    "aligned_2048": 39,
+    "routing_proven": false
+  },
+  "hardware_3ds_build": "NOT TESTED: devkitPro/libctru/Citro3D unavailable in validation environment",
+  "capcom_assets_in_source_archive": 0
+}

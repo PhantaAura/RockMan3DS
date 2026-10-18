@@ -1,0 +1,31 @@
+{
+  "schema": "actor-detection-preparation-source-proof/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "counts": {
+    "authored": 1548,
+    "owner_stage": 90,
+    "phase0": 546,
+    "phase1": 546,
+    "phase2": 546,
+    "original_query0": 478,
+    "original_query1": 434
+  },
+  "instructions_executed": 1215572,
+  "restricted_gte_commands": 4524,
+  "materialized_idx_identities": 994,
+  "authored_fixture_sha256": "4f449299d9ace59826122127d5ffd6d3acb090486cc8003880c760d9f9dfc3ee",
+  "owner_fixture_sha256": "82b903ec3469d8b6ab120a4c8951eab7ce34ca44438478f42e60326eab977883",
+  "no_original_payload_exported": true,
+  "retail_parity": false,
+  "return_only_hooks": [
+    "8001A008 sound request intent excluded; no normalization/interpolation/contact hooks"
+  ],
+  "limits": [
+    "Authored fixture uses synthetic profile/trig/lookup/geometry scalars.",
+    "Owner-stage fixture/reference inputs remain owner-local and are not source release payloads.",
+    "Native unknown contact families/arithmetic trap domains hold rather than claim a matching result.",
+    "Sound/notification publication and full actor callback/retail replay remain external."
+  ]
+}

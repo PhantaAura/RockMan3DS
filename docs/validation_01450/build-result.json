@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "created_utc": "2026-10-18T14:46:40.562217+00:00",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.41_WorldComesAlive",
+  "baseline_version": "0.0.14.49",
+  "checkpoint_version": "0.0.14.50",
+  "git_repository": false,
+  "branch": null,
+  "commit": null,
+  "host_configure": "PASS",
+  "host_build": "PASS",
+  "host_tests": "143/143 PASS, 5.15 seconds",
+  "focused_child_runtime": "PASS: normal80 allocation -> callback -> segment -> packet 0x28000008 -> class20/03 20 to 12 HP -> effect84 -> deferred release; no heap allocation",
+  "native_build": "PASS",
+  "native_target": "ARMv6K/mpcore hardfloat",
+  "warnings": 0,
+  "errors": 0,
+  "toolchain": "devkitARM r68-1 / GCC 16.1.0 / libctru 2.7.0-1 / Citro3D 1.7.1-2",
+  "native_binary_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01450_WorldComesAlive.3dsx",
+  "native_binary_bytes": 915232,
+  "native_binary_sha256": "f22380ea51e4ad4e66350cb1d8c0b598cfbf1f4ee294ab9da0cb8872fba337fb",
+  "smdh_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01450_WorldComesAlive.smdh",
+  "smdh_sha256": "a0b20490b4f540a4ff46afa034bfd5ffdca1fb3a4a4d50ee158c1bde737fc21a",
+  "logs": {
+    "host_tests": "docs/validation_01450/host-tests.log",
+    "focused_child_runtime": "docs/validation_01450/child-runtime-focused.log",
+    "native_build": "docs/validation_01450/native-build.log"
+  },
+  "emulator": "NOT_RUN",
+  "physical_old_3ds": "HARDWARE_PENDING",
+  "retail_parity": false,
+  "source_release_excludes_retail_payloads": true
+}

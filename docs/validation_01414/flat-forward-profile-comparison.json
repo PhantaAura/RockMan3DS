@@ -1,0 +1,281 @@
+{
+  "format": "mml-trace-comparison/1",
+  "comparison_kind": "retail_measurement",
+  "retail_comparison": true,
+  "PHYSICS_1TO1": false,
+  "status": "MATCHES_MEASURED_FIELDS",
+  "exact": true,
+  "observed_scalar_samples": 525,
+  "first_divergence": null,
+  "field_errors": {
+    "position[0]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "position[1]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "position[2]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "fixed_position[0]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "fixed_position[1]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "fixed_position[2]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "velocity_work[0]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "velocity_work[1]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "velocity_work[2]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "heading": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "state[0]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "state[1]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "state[2]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "animation_request": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "animation_frame": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "animation_control_raw[0]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "animation_control_raw[1]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "animation_control_raw[2]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "animation_control_raw[3]": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "contact_state_raw": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    },
+    "work_0b_raw": {
+      "max_abs_error": 0,
+      "samples": 25,
+      "mean_abs_error": 0.0
+    }
+  },
+  "field_coverage": {
+    "position[0]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "position[1]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "position[2]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "fixed_position[0]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "fixed_position[1]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "fixed_position[2]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "velocity_work[0]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "velocity_work[1]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "velocity_work[2]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "heading": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "state[0]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "state[1]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "state[2]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "animation_request": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "animation_frame": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "animation_control_raw[0]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "animation_control_raw[1]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "animation_control_raw[2]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "animation_control_raw[3]": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "contact_state_raw": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "work_0b_raw": {
+      "observed_samples": 25,
+      "unavailable_reference_samples": 0,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "MATCHES_MEASURED_FIELDS"
+    },
+    "grounded": {
+      "observed_samples": 0,
+      "unavailable_reference_samples": 25,
+      "unavailable_candidate_samples": 0,
+      "mismatch_samples": 0,
+      "status": "UNKNOWN"
+    }
+  },
+  "mismatch_counts": {},
+  "reference_frames": 25,
+  "candidate_frames": 25,
+  "limitations": [
+    "Matching captured fields does not establish whole-game or whole-physics 1:1 parity.",
+    "Unknown/null reference fields are excluded from matching claims.",
+    "Metadata records provenance; the importer does not authenticate an emulator run."
+  ]
+}

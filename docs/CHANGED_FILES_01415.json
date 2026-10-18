@@ -1,0 +1,673 @@
+{
+  "parent": "0.0.14.14_GameplayParity",
+  "checkpoint": "0.0.14.15",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified",
+      "sha256": "17f56cf46c7ead52e41cd15d298da0dc28a2d023f12a3594ebb54acf3a8b64b0"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256": "fd26321f56306554c231716df66fe9ea61db4d504a40612ce49c050c339d1f65"
+    },
+    {
+      "path": "docs/ACTOR_CLASS20_03_01415.md",
+      "change": "added",
+      "sha256": "e720e7f2afe2f62a59c2815b432c25c0a2f9b6ee2f888a2ea01dbe83b7378a10"
+    },
+    {
+      "path": "docs/ACTOR_SEQUENCE_01415.md",
+      "change": "added",
+      "sha256": "34fce1954835046a0d8ad60c5c692e7a03fce1b28a5cc12e883abe60c904d444"
+    },
+    {
+      "path": "docs/CLASS20_03_BEHAVIOR_01415.md",
+      "change": "added",
+      "sha256": "920736e2ad25127703d67935f29b712467283a799b7827886b018d454cdd271c"
+    },
+    {
+      "path": "docs/FLOOR_CONTACT_01415.md",
+      "change": "added",
+      "sha256": "b5a57cf7fd7befadb91ad3e7f1053cfdd4ed28eea8cbf75a110c4d6842da0468"
+    },
+    {
+      "path": "docs/PORTING_MAP_01415.md",
+      "change": "added",
+      "sha256": "ccf52c228d96f19a6c530c114488ff64742efde28a7d5b42ca5897dc28dd3243"
+    },
+    {
+      "path": "docs/REPORT_01415.md",
+      "change": "added",
+      "sha256": "4ab2635a831f2b93c29f1604579bde79e4559615fe1bacc359d22dc30ec35f49"
+    },
+    {
+      "path": "docs/RESUME_01415.md",
+      "change": "added",
+      "sha256": "5821d706735d58150c5d81a060053a429dcb698b768f8136e70f49f6be1d6798"
+    },
+    {
+      "path": "docs/WORLDALIVE_AREA_TRANSITIONS_01415.md",
+      "change": "added",
+      "sha256": "961830f6856f6f3b2c374a4bc75ac44df56b29bbf325ceaeaf5f8dcf018aacdd"
+    },
+    {
+      "path": "docs/research_01415/CLASS20_03_FLOOR_EVIDENCE.md",
+      "change": "added",
+      "sha256": "caf86604e1fa91c6844260ccd136e19808beb9f0a0c93d197e9feec7f769bc29"
+    },
+    {
+      "path": "docs/research_01415/CLASS20_03_REQUEST0_CACHE.md",
+      "change": "added",
+      "sha256": "87b734f0c4d3aafe5329901be1b4b77df84ba83f8104524ba0400a98a56d65bb"
+    },
+    {
+      "path": "docs/research_01415/EVENT_AND_SPAWN_EVIDENCE.md",
+      "change": "added",
+      "sha256": "5007c9015f8c4746feae377afe9ab81f4d84e07a2822ec013e819536d0ef544a"
+    },
+    {
+      "path": "docs/research_01415/REDUX_CONTACT_REFERENCE.md",
+      "change": "added",
+      "sha256": "1262b232049a3961bb72c0d6d19374439b4e702e2c7568e436b39b3a166c2676"
+    },
+    {
+      "path": "docs/research_01415/actor_sequence_source_probe.py",
+      "change": "added",
+      "sha256": "fb0e4483e1c81aed1d4a2f54ecd252ca647f8be5b9024011079e485769199233"
+    },
+    {
+      "path": "docs/research_01415/class20_03_behavior_source_probe.py",
+      "change": "added",
+      "sha256": "092e3c7617e8ac08e9cb1ff4805cc571acd453b4bcd805eeb31eb7849b1fb3a6"
+    },
+    {
+      "path": "docs/research_01415/class20_03_evidence_probe.py",
+      "change": "added",
+      "sha256": "27acd48007658a0379072c89d8e2a5c1ee405f4e79391907ae36f697672b3ed9"
+    },
+    {
+      "path": "docs/research_01415/class20_03_request0_cache_probe.cpp",
+      "change": "added",
+      "sha256": "928a8b1156aaa22a16026dba4495901b1587a05530643c962735ee6431375153"
+    },
+    {
+      "path": "docs/research_01415/event-source-evidence.json",
+      "change": "added",
+      "sha256": "0206868a8f9a9634c78ff929b6215b1828dfc30acc873bd92c0aa00cfc1f9882"
+    },
+    {
+      "path": "docs/research_01415/event_source_probe.py",
+      "change": "added",
+      "sha256": "605c72f113c1f3123e322cce062e49289f14df39d89d82f7ff26c98eb83df254"
+    },
+    {
+      "path": "docs/research_01415/floor08_source_probe.py",
+      "change": "added",
+      "sha256": "dadde0e10906398289a9661a5d889c363c6166f0b29aed44ec168281cdf87d6d"
+    },
+    {
+      "path": "docs/research_01415/redux_contact_observer.lua",
+      "change": "added",
+      "sha256": "22c0601d1620938b865b08f2db9009a3a57db4984f70c34bd562e49bc2205443"
+    },
+    {
+      "path": "docs/research_01415/redux_live_contact_snapshot.py",
+      "change": "added",
+      "sha256": "de27d55b0076759ece1b03a47962e001f864dab13fa84c8ec7e6d81acf7ab485"
+    },
+    {
+      "path": "docs/research_01415/running_jump_source_probe.py",
+      "change": "added",
+      "sha256": "a4d38f00b59b0183591afb83ee8bf388f0d7ea688625cafce22dbc48e347e7de"
+    },
+    {
+      "path": "docs/research_01415/spawn-owner-roundtrip.json",
+      "change": "added",
+      "sha256": "d40bc527b3610647d8ca39ff146355eb0620cdbc2d4cddccb25e1bc569ee5780"
+    },
+    {
+      "path": "docs/research_01415/tutorial_actor_identity_probe.py",
+      "change": "added",
+      "sha256": "79bffefc76ffbe393535c007f85de2c024477951a570ae5cca7a705a4571f0e3"
+    },
+    {
+      "path": "docs/validation_01415/SCREENSHOTS.json",
+      "change": "added",
+      "sha256": "dfd5931df93c5bdc9d9f26b45a5ba46e6d9371b9b2f11e7edf6c0e911f8eb519"
+    },
+    {
+      "path": "docs/validation_01415/actor-sequence-source-cases.tsv",
+      "change": "added",
+      "sha256": "ee13ae5e060bea6cbe296f2663beabb9e6fc6f13e435dc2d47d3e97644b1c047"
+    },
+    {
+      "path": "docs/validation_01415/actor-sequence-source-evidence.json",
+      "change": "added",
+      "sha256": "1938991c3e946e41114fa7227b489966acff186388f41ad7a754b0cb1f321880"
+    },
+    {
+      "path": "docs/validation_01415/area-inspection-probe.log",
+      "change": "added",
+      "sha256": "c1ec16f95b0926d5d05face03c32703d2d2e4971d3d99e7976ade28fc6f8b0ff"
+    },
+    {
+      "path": "docs/validation_01415/area-package.log",
+      "change": "added",
+      "sha256": "787bb5f065d5ec4b1fbd4c31f9b82adf3ed3732b4fb419bec9948ce7032a5ef2"
+    },
+    {
+      "path": "docs/validation_01415/area-runtime-probe.log",
+      "change": "added",
+      "sha256": "68d97067dc054a96ea3b84e77074d16e74fa3b3ac5041f12e0d50385786621be"
+    },
+    {
+      "path": "docs/validation_01415/azahar-animation-r6-boot_01415.log",
+      "change": "added",
+      "sha256": "21ac9b79b5b236644ce741dc1e81eb40f0fe663b388a968c52a157f251958a36"
+    },
+    {
+      "path": "docs/validation_01415/azahar-animation-r6-launch.json",
+      "change": "added",
+      "sha256": "36139cfed7e8884c657b3f438aacb765ed1a7aff9432c66b2ea5f279837c4980"
+    },
+    {
+      "path": "docs/validation_01415/azahar-animation-r6-summary.json",
+      "change": "added",
+      "sha256": "7da130fd3c94101f8142f09adc48d9bab935cc97fd299b59f49bb776474d4044"
+    },
+    {
+      "path": "docs/validation_01415/azahar-animation-r6.csv",
+      "change": "added",
+      "sha256": "3ff42c1c85da569e5b387f262e875161c8fdd0b42a00c9be8852fd6418e10dc1"
+    },
+    {
+      "path": "docs/validation_01415/azahar-capture-r4-launch.json",
+      "change": "added",
+      "sha256": "5c0ee7c39fefa1b7ad4e034208826044439ab613165e6bf42800c0ecca8dd25c"
+    },
+    {
+      "path": "docs/validation_01415/azahar-capture-r4-replay.json",
+      "change": "added",
+      "sha256": "f530f47cec22c3a7f3a483a4aea9fb7ce4e1039a96f21d65ef5af5bd992072ef"
+    },
+    {
+      "path": "docs/validation_01415/azahar-capture-r4-summary.json",
+      "change": "added",
+      "sha256": "593594dc477c195c564339261138726d7815947f0cf1ca90639bf042b7b39ee0"
+    },
+    {
+      "path": "docs/validation_01415/azahar-capture-r4.csv",
+      "change": "added",
+      "sha256": "20b7a8e4d4d3fb2fc4d63e297779974fa2776614b57266e8e0dac5691931e584"
+    },
+    {
+      "path": "docs/validation_01415/azahar-gameplay-r4-boot.log",
+      "change": "added",
+      "sha256": "d548fc76728e64c6b82ee821b96b4abec0a080466133e4104813c51c2be23ce3"
+    },
+    {
+      "path": "docs/validation_01415/azahar-gameplay-r4-launch.json",
+      "change": "added",
+      "sha256": "12681977ef309d445adf5b17392b60066e2dcbfd3a33694081bf881e38a51bea"
+    },
+    {
+      "path": "docs/validation_01415/azahar-gameplay-r4-replay.json",
+      "change": "added",
+      "sha256": "46ab93c059cbe2bbed55bef8fb560606d3bd417c5b9b422165a3198f0c90dbeb"
+    },
+    {
+      "path": "docs/validation_01415/azahar-gameplay-r4-summary.json",
+      "change": "added",
+      "sha256": "5f9c28c3a38884a0280455a037c71ee938ac36f83cf338937273441a6bf798a0"
+    },
+    {
+      "path": "docs/validation_01415/azahar-gameplay-r4.csv",
+      "change": "added",
+      "sha256": "dac72c5d3392851be68beab5e7bf135f1ab79677eaca6b9da06ae4284cdf5add"
+    },
+    {
+      "path": "docs/validation_01415/azahar-safe-r6-boot_01415.log",
+      "change": "added",
+      "sha256": "2e32b14b875fdbe908f55c251e6b7d7ff650aad37e635c2c70f41fbcb4c1f07f"
+    },
+    {
+      "path": "docs/validation_01415/azahar-safe-r6-launch.json",
+      "change": "added",
+      "sha256": "1fc1d6d4873af4023f5f6523bcf64196b055b5fd6b0d757ab57a5b20973c7e4d"
+    },
+    {
+      "path": "docs/validation_01415/azahar-safe-r6-result.json",
+      "change": "added",
+      "sha256": "181f1036a278d6dc0252058e64355d55b53e6f2c86e414261bf67e4e715b0490"
+    },
+    {
+      "path": "docs/validation_01415/azahar-visible-r4-boot_01415.log",
+      "change": "added",
+      "sha256": "d548fc76728e64c6b82ee821b96b4abec0a080466133e4104813c51c2be23ce3"
+    },
+    {
+      "path": "docs/validation_01415/azahar-visible-r4-launch.json",
+      "change": "added",
+      "sha256": "f16d4c1de9599a053941784d13f45297b182fe78a643797280bd1cf4bab16ff7"
+    },
+    {
+      "path": "docs/validation_01415/azahar-visible-r4.csv",
+      "change": "added",
+      "sha256": "95c24a1c938e239b9805964c17570ddc31dbe4414408e8c3cfd335d225e7a8c7"
+    },
+    {
+      "path": "docs/validation_01415/build-result.json",
+      "change": "added",
+      "sha256": "9380869474878668dd5427cb2af9ebe5d24045b9973465700443480c8d99fd34"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-action-source-cases.tsv",
+      "change": "added",
+      "sha256": "7feaafcb6897204f4ec57af1a30230c65efcecba894e8dce1ece8628c9105b4a"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-action-source-evidence.json",
+      "change": "added",
+      "sha256": "9af29659344da4246bce7fc989ff3034eb0e1e733058e8c0288905c0fd4d5453"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-distance-source-cases.tsv",
+      "change": "added",
+      "sha256": "9928340cae9dc9b822cb801c790e00618cba74c13c612df10e31ca2a5679c711"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-distance-source-evidence.json",
+      "change": "added",
+      "sha256": "184f99caba912268b3106dcb84a65b291e0d9d8efcd7dee58448c7a9eebb251c"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-floor-source-evidence.json",
+      "change": "added",
+      "sha256": "cee5f13d25309d6720520de997c7fcd04ce474bd32c6b2b388ca0780358a2920"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-native-checks.json",
+      "change": "added",
+      "sha256": "9666212f3e841125d66ec956f7e7271f02ea3bf2a0b73f8c01fe6285fc95a1a3"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-owner-floor.json",
+      "change": "added",
+      "sha256": "07f25d2bd0501a727938a2153f8877c71642ffa1ee5ae52914e3ad13dd643a17"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-request0-cache.json",
+      "change": "added",
+      "sha256": "3a5a0bcb2359abf783092d4e8d7248b393fb06cf9142e3899d3047ce66ba0c5f"
+    },
+    {
+      "path": "docs/validation_01415/class20-03-source-evidence.json",
+      "change": "added",
+      "sha256": "588b32578d7f0d0678d0a5fe103eff2c9d58dbd2787e88129e396514d49bd2d0"
+    },
+    {
+      "path": "docs/validation_01415/floor08-source-cases.tsv",
+      "change": "added",
+      "sha256": "626341024529a4d2a25dc8d09947473df88082b9f410fabe98bdca7e9cc8c328"
+    },
+    {
+      "path": "docs/validation_01415/floor08-source-evidence.json",
+      "change": "added",
+      "sha256": "036dd7db977cfec3c2674a4fc2ab6fd78b9459d1ed4981ed2cd62ab63f567df6"
+    },
+    {
+      "path": "docs/validation_01415/host-build.log",
+      "change": "added",
+      "sha256": "b87d7b2f5686c53bb52660c4fa71dc2dcd16172ca4604c0ab2f8be043521f526"
+    },
+    {
+      "path": "docs/validation_01415/host-configure.log",
+      "change": "added",
+      "sha256": "fcd8c464a6ab6f836d7f11f314a8221c6d3aa48041143dc8dd4024e632685549"
+    },
+    {
+      "path": "docs/validation_01415/host-tests.log",
+      "change": "added",
+      "sha256": "7951fcfb8a8aa2643c379a22d8fb3bb10d7bd82fd77e4d2f0969592c1348bbac"
+    },
+    {
+      "path": "docs/validation_01415/native-build.log",
+      "change": "added",
+      "sha256": "c844fdf6bebfff44dc9494a1364c7f11fc6ae0def7c811d2fe9075fddaeeddd1"
+    },
+    {
+      "path": "docs/validation_01415/native-snapshot-verification.json",
+      "change": "added",
+      "sha256": "52f67284b34241c9f5c2584cd7c68a6a87fd7c5c36654a2c65d6e3df2a2826a8"
+    },
+    {
+      "path": "docs/validation_01415/native-source-manifest.json",
+      "change": "added",
+      "sha256": "610c96c2a873f7a856e42fcf48ef115f11c581f9ce179fbcb776f94ac6e9f151"
+    },
+    {
+      "path": "docs/validation_01415/pack-validation.json",
+      "change": "added",
+      "sha256": "0c4012c07f9a5f1dcccd5b9913458a8ad2d0ac28cba357c36d6e6fb65a6e8dc4"
+    },
+    {
+      "path": "docs/validation_01415/redux-contact-reference-result.json",
+      "change": "added",
+      "sha256": "b79c00e2a3b381c0d4fadd9c476e744e48d8af6fba99177eddd71c00d9928be0"
+    },
+    {
+      "path": "docs/validation_01415/redux-intro-live-profile.json",
+      "change": "added",
+      "sha256": "734f809c94dcb6e54c580b8f46a391a1e19d37eb5dd1702a6546785a09031bff"
+    },
+    {
+      "path": "docs/validation_01415/redux-keyboard-source-audit.json",
+      "change": "added",
+      "sha256": "b5b282a1c9eb23f30d0c967bb33d327bfff6c862a0510ad1445d99136a76f795"
+    },
+    {
+      "path": "docs/validation_01415/redux-tutorial-controller-proof.json",
+      "change": "added",
+      "sha256": "1baf9522589138d9d8476f3a98ccaef3149d21b98cb6e3c334ee13ac910b75d9"
+    },
+    {
+      "path": "docs/validation_01415/redux-tutorial-live-profile.json",
+      "change": "added",
+      "sha256": "61ab84ffc9aa6b751ab3f4d649ac8c1beb67ce2716cb97ba8fb5a29a78fe6e3c"
+    },
+    {
+      "path": "docs/validation_01415/renderer-gcc-warning/current-after.log",
+      "change": "added",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/validation_01415/renderer-gcc-warning/historical-before.log",
+      "change": "added",
+      "sha256": "416f13554c6a2d7d483079f429de01d184e6409cf2e120436c432e8141c57f81"
+    },
+    {
+      "path": "docs/validation_01415/renderer-gcc-warning/results.json",
+      "change": "added",
+      "sha256": "a1bbd83ecb3a1f7dd774c80fce111a21673e4b58237d63559580050b90fb9adf"
+    },
+    {
+      "path": "docs/validation_01415/running-jump-source-cases.json",
+      "change": "added",
+      "sha256": "61783e3651102447774b234c99a9ff7a4be528c643c8fd3ea643cbc49b5b2859"
+    },
+    {
+      "path": "docs/validation_01415/running-jump-source-cases.tsv",
+      "change": "added",
+      "sha256": "3cccf8ed379e35ec552694c6cb8484f79f48dfda40a5c8c965dae8034bcc4e33"
+    },
+    {
+      "path": "docs/validation_01415/runtime-spawn-final.log",
+      "change": "added",
+      "sha256": "225a0ed8e14ac81c9a6f068c57958a6428672d0113f2440708d898317541ee0c"
+    },
+    {
+      "path": "docs/validation_01415/runtime-spawn-owner.log",
+      "change": "added",
+      "sha256": "eb5033005c421e28d0c58b3d79f964bbd8fdff176fb13df3a8698ace33279400"
+    },
+    {
+      "path": "docs/validation_01415/selected-contact-admission-audit.json",
+      "change": "added",
+      "sha256": "fec8aa38c3d4a2f8cf97d069715517db8fd47cf25f3bcd847e52009e10ab3ff4"
+    },
+    {
+      "path": "docs/validation_01415/serializer-gcc/ebd_directory.log",
+      "change": "added",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/validation_01415/serializer-gcc/mml_message.log",
+      "change": "added",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/validation_01415/serializer-gcc/negative_materials.log",
+      "change": "added",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/validation_01415/serializer-gcc/results.json",
+      "change": "added",
+      "sha256": "29ff7d9deca047ba3cf057571e84f25dcb219869981f77d503429d6525bfcea0"
+    },
+    {
+      "path": "docs/validation_01415/serializer-gcc/save_state.log",
+      "change": "added",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/validation_01415/tutorial-actor-identity.json",
+      "change": "added",
+      "sha256": "9044e4ec14167160ff6a9b3ad4a13e0df36137659aac8f83dc9995b889d7e706"
+    },
+    {
+      "path": "include/legends3ds/actor_resource.h",
+      "change": "modified",
+      "sha256": "a5e30680b528f20c53fbd6b3a356def0bf59f8a251cd8eee3c4d24b423662bcd"
+    },
+    {
+      "path": "include/legends3ds/actor_runtime.h",
+      "change": "modified",
+      "sha256": "7b05234ade74b6cf828a6d87cf86a43d7266d2c654aeba2b25a4fe77c1527859"
+    },
+    {
+      "path": "include/legends3ds/actor_sequence.h",
+      "change": "added",
+      "sha256": "c187666e127317c41676e047916935b938202f403f803f87d37aac73a2e4547b"
+    },
+    {
+      "path": "include/legends3ds/area_package.h",
+      "change": "modified",
+      "sha256": "dbd28dda3360fb2a71bc40de7529856fd8f743894bd4fd27f9a8dcfc7809abfc"
+    },
+    {
+      "path": "include/legends3ds/class20_03_behavior.h",
+      "change": "added",
+      "sha256": "d42208efa9fd45269174861eec60c5a9f5b0e1b66ad3e851810c945979dc2b96"
+    },
+    {
+      "path": "include/legends3ds/player_contact_runtime.h",
+      "change": "modified",
+      "sha256": "dcd911a3d6db80aff5e51b055d3d799d30ced7aeec0eda3ec878e9babacfca82"
+    },
+    {
+      "path": "include/legends3ds/runtime_session.h",
+      "change": "modified",
+      "sha256": "d1defc80ef0f33b444724c015f143a0dec8cf26f320516239590f078f41c0e57"
+    },
+    {
+      "path": "include/legends3ds/st00_spawn.h",
+      "change": "added",
+      "sha256": "6e3c87de8c9ffc55ad9960dc380ed9183592de6b5a74c2063afbc80d78221f9d"
+    },
+    {
+      "path": "include/legends3ds/tutorial_runtime.h",
+      "change": "modified",
+      "sha256": "8dce202d5645e8d0eb792d645bf3cd8efb6f310ab7612cb12720ef2888bae366"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified",
+      "sha256": "9722538e122f9beb6511d2c73d700a41c6d041f4f793bd4cac6715065c7e3fd2"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified",
+      "sha256": "5c0fda336825cbf73318a7c6112daf7bff5b3b597911bed668b8912522c87f1d"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified",
+      "sha256": "38a7fb43c520ffea6f2cacd989a3537624ea539c336e0196873127bc6f46fe56"
+    },
+    {
+      "path": "src/player/player_contact_runtime.cpp",
+      "change": "modified",
+      "sha256": "940a09ca160419c48de025ca21b71865d76e5ca4d356d18b9bc701d2af8bd98c"
+    },
+    {
+      "path": "src/world/actor_resource.cpp",
+      "change": "modified",
+      "sha256": "dad98858d256c6ae029d7a1639be90f3ba8311195d4146c686e1c1a0582a4150"
+    },
+    {
+      "path": "src/world/actor_runtime.cpp",
+      "change": "modified",
+      "sha256": "aab9eb6cbbc104bf0ed7ffb27eac4a3454befd73182de79b02d5632bcd2457bd"
+    },
+    {
+      "path": "src/world/actor_sequence.cpp",
+      "change": "added",
+      "sha256": "5814b4b1ec30d531779a3cc732d4413b9ab658160ac89aae30d94b5127e6b58d"
+    },
+    {
+      "path": "src/world/area_package.cpp",
+      "change": "modified",
+      "sha256": "4831d00a3a149e4567f2867469c0f0ba114bb4a37484f1167a0aca788b0080b9"
+    },
+    {
+      "path": "src/world/class20_03_behavior.cpp",
+      "change": "added",
+      "sha256": "b953f76fc02e5a990341a2d4a5d90cab041d9f566b24be3d84b4f9c13ce169f1"
+    },
+    {
+      "path": "src/world/runtime_session.cpp",
+      "change": "modified",
+      "sha256": "2e286dab553b5b20e687f34f6f71823a27a741a395ba73aa5940e25291ed0d4b"
+    },
+    {
+      "path": "src/world/st00_spawn.cpp",
+      "change": "added",
+      "sha256": "44769cf1712973950ffd4c66f72935ab037e170520ddcf5bc15b460a66f56372"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified",
+      "sha256": "c69a560b3405a8c02be4636b66c997cf23dccbde3392bab7ec88f0f3d9aaa2da"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified",
+      "sha256": "b0eda4cc4126f092b60ae27ad336c06084f7c18a1af659e22ac634d281928952"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified",
+      "sha256": "58209084383e70cb5e0735c6896074791e5a8f15b45e0b71b7f6cb5ad479c02b"
+    },
+    {
+      "path": "state/RUN_STATE.json",
+      "change": "modified",
+      "sha256": "b4e388cc08edaac5929ef0b98164f9409d3e17889a687ff5b65349548ddb4a73"
+    },
+    {
+      "path": "tests/test_actor_resources.cpp",
+      "change": "modified",
+      "sha256": "42a444c595272b772c37b8858ec744208fb85e500dd0417e3f371899dae74227"
+    },
+    {
+      "path": "tests/test_actor_sequence.cpp",
+      "change": "added",
+      "sha256": "b72a205c5c6faf815cc2914aa6f4cec0adf9a510a313c71e6d835abec51247dd"
+    },
+    {
+      "path": "tests/test_area_package.cpp",
+      "change": "modified",
+      "sha256": "8e92c1989fac3c010977de1f1bfc6d888b30a9e0bd3383de9590730567c70dfa"
+    },
+    {
+      "path": "tests/test_class20_03_behavior.cpp",
+      "change": "added",
+      "sha256": "268f364110ca73fd69c9d49f5b42a8913a07100fa0d6c4d9abfdd46520998a3d"
+    },
+    {
+      "path": "tests/test_cooked_area.py",
+      "change": "modified",
+      "sha256": "9bb8e456dcc0e578efd2776fc7732425c539e84efd9e1691bffb4766c269e506"
+    },
+    {
+      "path": "tests/test_local_install.py",
+      "change": "modified",
+      "sha256": "28fbb01b8ec0bb0e12ef9eba511f2cdbfb4f9b6aeb92dd279d91fd130f7b48ae"
+    },
+    {
+      "path": "tests/test_running_jump_source.cpp",
+      "change": "added",
+      "sha256": "170040178453bd1e7c386a82e6826647a2186b5bab8f1ed103991e6c9cd67978"
+    },
+    {
+      "path": "tests/test_runtime_contact.cpp",
+      "change": "modified",
+      "sha256": "bbd35771c0aeaf9058f5f4b59d367460fc71b4e5b993ac2a5539976901416b55"
+    },
+    {
+      "path": "tests/test_runtime_spawns.cpp",
+      "change": "added",
+      "sha256": "3280021c00539c05674423c801d01c7a466a8e846ffbbf83471381230f89e92c"
+    },
+    {
+      "path": "tests/test_source_tools.py",
+      "change": "modified",
+      "sha256": "0cefcb069e8b179495541df7ebb029546bb021cff285365bff03e6c66cedb3c4"
+    },
+    {
+      "path": "tests/test_st00_spawn.cpp",
+      "change": "added",
+      "sha256": "2b8006b9f75a8a15ac2b6f3879ad1d3266f91a1e0f2dc234c1c494a1baa186d3"
+    },
+    {
+      "path": "tools/build_hardware_test.py",
+      "change": "modified",
+      "sha256": "25791504ec6700ddff7a09c38234ff20cd660eac77278219ed68955c1cafe3ff"
+    },
+    {
+      "path": "tools/build_tutorial_pack.py",
+      "change": "modified",
+      "sha256": "81c1a5fb30f3ab8a598b1ef2b301020af28565f88a316f640634feafebc87b2d"
+    },
+    {
+      "path": "tools/l3area_runtime_probe.cpp",
+      "change": "modified",
+      "sha256": "ce8d81491b2b9f0fd71d2275bbbd1d9dac298247984fb82c19b34150d5128938"
+    },
+    {
+      "path": "tools/l3area_validate.cpp",
+      "change": "modified",
+      "sha256": "c1c608d3e8d6323b8f9ed00a893ce0d5a2bdcb1e1efb293e5ae00b5161ddf478"
+    },
+    {
+      "path": "tools/l3cook_st00_spawn.cpp",
+      "change": "added",
+      "sha256": "baa27832651f44cff36e9055a3dbb7d2c399a7943d38ab177dafd3f84d4ffc00"
+    },
+    {
+      "path": "tools/l3probe_actor_class20_03.cpp",
+      "change": "added",
+      "sha256": "c827b4b7038fd7758828b7170f4c527a0d9c2e5bfb7780d38692447737c8acf0"
+    },
+    {
+      "path": "tools/l3runtime_spawn_probe.cpp",
+      "change": "added",
+      "sha256": "110b73c00a4bcc0d8b5012ca383fa61fedbf5c78c22573952b5564c0cce63eda"
+    },
+    {
+      "path": "tools/package_cooked_area.py",
+      "change": "modified",
+      "sha256": "ff3e3dff95c04bf7f8d031c5bf3da1ab1e7b493029a6048b6cfe68436adc660b"
+    },
+    {
+      "path": "tools/release_source.py",
+      "change": "modified",
+      "sha256": "1472bc07abe9bad51ec21b705c9798421ee43fd2078a835004e9d3f09b9236d0"
+    }
+  ],
+  "removed": [],
+  "excluded_self_and_manifest": true
+}

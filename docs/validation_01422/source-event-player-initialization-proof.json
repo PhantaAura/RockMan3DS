@@ -1,0 +1,21 @@
+{
+  "schema": "mml-source-event-player-initializer/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "cases": 16,
+  "original_instructions_executed": 160,
+  "accepted_cases_helper_hooks": [],
+  "fixture_sha256": "d8ddde1eba3814e0473e76b3668acaa9f08bcb848e4f03b42dda72ef3220dd36",
+  "source_owner": "Player initializer8003BE6C always reaches8003BEE8 before fresh/continued branch8003BF38.",
+  "prefix_region": {
+    "start": "0x8003BEE8",
+    "end_exclusive": "0x8003BF10",
+    "sha256": "934147bcc3d75ce8fc829a20734a33c3992631d66c792a344d83e53e1f4491d4"
+  },
+  "limits": [
+    "Only source player zero-store prefix is admitted; native must explicitly invoke it during player initialization.",
+    "Remaining player work, later pose/render/control helpers and whole NewGame ordering are not acknowledged."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false
+}

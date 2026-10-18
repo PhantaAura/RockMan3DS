@@ -1,0 +1,26 @@
+{
+  "schema": "mml-source-event-command-outer/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "cases": 32,
+  "authored_cd_response_boundaries": 48,
+  "original_instructions_executed": 156588,
+  "helper_hooks": [],
+  "cd_driver_executed": false,
+  "fixture_sha256": "39e6f5f32bae473d3289c60cdb3e7add9d4487bee19f84589f7ed19d8414f5fc",
+  "region": {
+    "start": "0x8001C95C",
+    "end_exclusive": "0x8001CAAC",
+    "sha256": "9e95a9cba73a31430c74b4a17dc65abae5599fae9b114571d8ba93eb4f784782"
+  },
+  "source_status_writer": "8001C9E8 copies command1 response[0] to80098AB8 before command17 physical-location and type4 dispatch",
+  "limits": [
+    "Command1 and17 responses are authored at explicit transport boundaries; no driver receipt chronology/parity claim.",
+    "Only the no-error and before-end branch is completed; reset/CdInit/end-loop/pause are native holds.",
+    "No instruction, retail tables, model, texture, audio, video, save or cooked owner payload exported."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false,
+  "PHYSICS_1TO1": false
+}

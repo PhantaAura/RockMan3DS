@@ -1,0 +1,4 @@
+src/world/source_player_proxy.cpp:34:15:uint32_t l3::source_gte_unr_divide(uint16_t, uint16_t, bool&)	16	static
+src/world/source_player_proxy.cpp:53:27:0(SourceGteRtpsState&)	456	static
+src/world/source_player_proxy.cpp:53:27:l3::SourceGteProjectionResult l3::source_gte_rtps_0180001(SourceGteRtpsState&)	16	static
+src/world/source_player_proxy.cpp:101:25:l3::SourcePlayerLeaseResult l3::source_player_consume_leases_80035508(SourceGteRtpsState&, const SourcePlayerLeaseInputs&)	496	static

@@ -1,0 +1,49 @@
+{
+  "areas": [
+    {
+      "cells": 198,
+      "index": 0,
+      "map_probe": true,
+      "positive_cells": 40,
+      "probe_contact_groups": 1,
+      "render_primitives": 1752
+    },
+    {
+      "cells": 484,
+      "index": 1,
+      "map_probe": true,
+      "positive_cells": 130,
+      "probe_contact_groups": 1,
+      "render_primitives": 854
+    },
+    {
+      "cells": 775,
+      "index": 2,
+      "map_probe": true,
+      "positive_cells": 202,
+      "probe_contact_groups": 0,
+      "render_primitives": 674
+    },
+    {
+      "cells": 98,
+      "index": 3,
+      "map_probe": true,
+      "positive_cells": 24,
+      "probe_contact_groups": 0,
+      "render_primitives": 120
+    },
+    {
+      "cells": 2700,
+      "index": 4,
+      "map_probe": true,
+      "positive_cells": 2496,
+      "probe_contact_groups": 0,
+      "render_primitives": 12112
+    }
+  ],
+  "decoded_estimate": 184804,
+  "load_peak_estimate": 353452,
+  "package_bytes": 109672,
+  "skipped_sections": 1,
+  "status": "PASS"
+}

@@ -1,0 +1,9 @@
+# Terrain repair integration map — 0.0.14.8
+
+Continue the exact0.0.14.7 source/checkpoint; no Git branch/commit exists. Reuse MML2/L3MP/L3RG readers and the local supplied cooked pack, existing RuntimeSession and contact helpers, tile rotation/scaling, source-backed player/model/animation helpers, native Citro3D paths and renderer gates. The0143 shader and original terrain expansion remain the baseline.
+
+Change the proven half-cell map-query/spawn misalignment. Add a separately gated XYZ/strip terrain recovery for enhanced rendering, based on all12 bytes retained in L3RG. The candidate maps consecutive triples to XYZ and keeps UVs associated with their vertex; aggregate coplanarity and topology evidence must accompany it. This has CANDIDATE status; retail semantics/1:1 are not established by better screenshots. No cooked payload change or new extraction/cooking is required.
+
+Unknown/blockers: retail decoder/control-flow verification; two non-conforming stored records; exact material/CLUT state for three missing entries; full floor/slope/wall solver, retail camera/physics/parity and physical Old3DS behavior. Current idle feet are already approximately aligned to their cell height, so no arbitrary player/model Y offset or physics constant is justified. Normal progression/events/enemies/audio remain outside this visual repair milestone.
+
+Small testable milestone: fix shared tile-center/containment semantics and show connected, non-flattened candidate terrain in areas0/1 through the SAME package/native runtime, with native build, portable regression checks and fresh Old-model Azahar captures. Compare full textured, textures-off and0143 fallback gates. Record primitive/vertex/draw counts and native memory diagnostics; direct3DSX96MiB emulator results do not establish standard64MiB hardware acceptance.

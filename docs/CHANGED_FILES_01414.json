@@ -1,0 +1,475 @@
+{
+  "parent": "0.0.14.13",
+  "current": "0.0.14.14",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "kind": "modified"
+    },
+    {
+      "path": "README.md",
+      "kind": "modified"
+    },
+    {
+      "path": "docs/CHANGED_FILES_01414.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/CHANGED_FILES_01414_RECOVERY.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/PORTING_MAP_01414.md",
+      "kind": "added"
+    },
+    {
+      "path": "docs/REPORT_01414.md",
+      "kind": "added"
+    },
+    {
+      "path": "docs/RESUME_01414.md",
+      "kind": "added"
+    },
+    {
+      "path": "docs/RESUME_01414_RECOVERY.md",
+      "kind": "added"
+    },
+    {
+      "path": "docs/research_01414/actor_resource_consumer_probe.py",
+      "kind": "added"
+    },
+    {
+      "path": "docs/research_01414/player_contact_source_probe.py",
+      "kind": "added"
+    },
+    {
+      "path": "docs/research_01414/player_locomotion_source_probe.py",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/SCREENSHOTS.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/actor-inspection-boot.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/actor-inspection-emulator-summary.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/actor-inspection-hardware-emulator.csv",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/actor-resource-consumer-evidence.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/actor-resource-integration-evidence.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/actor-resource-integration-review.md",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/actor-resource-native-probe.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/area-inspection-probe.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/area-package.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/area-runtime-probe.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/areas-boot.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/areas-emulator-summary.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/areas-hardware-emulator.csv",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/build-result.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/flat-forward-25-input.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/flat-forward-area1-candidate-native.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/flat-forward-bounded-comparison.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/flat-forward-diagnostic-seed.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/flat-forward-native-labeled.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/flat-forward-profile-comparison.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/flat-forward-retail-labeled.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/host-build.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/host-configure.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/host-tests.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/measured-view-boot.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/measured-view-emulator-summary.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/measured-view-hardware-emulator.csv",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/movement-boot.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/movement-emulator-summary.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/movement-hardware-emulator.csv",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/native-build.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/player-contact-source-evidence.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/player-locomotion-source-evidence.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/safe0143-boot.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/safe0143-emulator-summary.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/safe0143-hardware-emulator.csv",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/title-r2-boot.log",
+      "kind": "added"
+    },
+    {
+      "path": "docs/validation_01414/title-r2-emulator-summary.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/TRACE_COMPARISON.md",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/AIR_CONTROL.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/BRAKE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/CONTROL_SCENARIOS.json",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/FIRE_MOVE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/FLAT_ACCEL.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/IDLE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/JUMP.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/JUMP_HOLD.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/KNOCKBACK.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/LAND.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/LEDGE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/LOCK_MOVE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/RELEASE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/REVERSE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/SLOPE_DOWN.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/SLOPE_UP.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/STEP.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/TURN_180.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/TURN_45.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/TURN_90.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/TURN_REVERSE.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "docs_01414/control-corpus/WALL.tsv",
+      "kind": "added"
+    },
+    {
+      "path": "include/legends3ds/actor_resource.h",
+      "kind": "added"
+    },
+    {
+      "path": "include/legends3ds/actor_runtime.h",
+      "kind": "added"
+    },
+    {
+      "path": "include/legends3ds/area_package.h",
+      "kind": "modified"
+    },
+    {
+      "path": "include/legends3ds/ebd_directory.h",
+      "kind": "modified"
+    },
+    {
+      "path": "include/legends3ds/gameplay_clock.h",
+      "kind": "added"
+    },
+    {
+      "path": "include/legends3ds/mockup_ui.h",
+      "kind": "modified"
+    },
+    {
+      "path": "include/legends3ds/player_contact_runtime.h",
+      "kind": "added"
+    },
+    {
+      "path": "include/legends3ds/runtime_animation.h",
+      "kind": "added"
+    },
+    {
+      "path": "include/legends3ds/runtime_session.h",
+      "kind": "modified"
+    },
+    {
+      "path": "include/legends3ds/shared_byte_payload.h",
+      "kind": "added"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "kind": "modified"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.h",
+      "kind": "modified"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "platform/3ds/source/mockup_hud.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "platform/3ds/source/mockup_hud.h",
+      "kind": "modified"
+    },
+    {
+      "path": "src/player/player_contact_runtime.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "src/ui/mockup_ui.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "src/world/actor_resource.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "src/world/actor_runtime.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "src/world/area_package.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "src/world/runtime_session.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "kind": "modified"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "kind": "modified"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "kind": "modified"
+    },
+    {
+      "path": "tests/test_actor_resources.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "tests/test_area_package.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "tests/test_companion_ui.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "tests/test_cooked_area.py",
+      "kind": "modified"
+    },
+    {
+      "path": "tests/test_core.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "tests/test_ebd_sharing.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "tests/test_gameplay_clock.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "tests/test_parity_trace.py",
+      "kind": "added"
+    },
+    {
+      "path": "tests/test_runtime_contact.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "tools/build_hardware_test.py",
+      "kind": "modified"
+    },
+    {
+      "path": "tools/l3area_runtime_probe.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "tools/l3area_validate.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "tools/l3probe_actor_resources.cpp",
+      "kind": "added"
+    },
+    {
+      "path": "tools/l3replay.cpp",
+      "kind": "modified"
+    },
+    {
+      "path": "tools/mml_control_corpus.py",
+      "kind": "added"
+    },
+    {
+      "path": "tools/mml_trace_io.py",
+      "kind": "added"
+    },
+    {
+      "path": "tools/p2/trace_compare.py",
+      "kind": "modified"
+    },
+    {
+      "path": "tools/package_cooked_area.py",
+      "kind": "modified"
+    },
+    {
+      "path": "tools/release_source.py",
+      "kind": "modified"
+    }
+  ],
+  "removed": []
+}

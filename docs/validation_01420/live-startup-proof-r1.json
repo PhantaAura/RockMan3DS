@@ -1,0 +1,49 @@
+{
+  "schema": "mml-openbios-rng-live-startup-observation/1",
+  "status": "MATCHES_MEASURED_FIELDS",
+  "timestamp_utc": "2026-10-07T14:05:06.524605+00:00",
+  "bios_sha256": "713ea2aed58606282b3ff5e91d77f8c5892ea36f5adcd279d2c7dd26604a625d",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "owner_overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "observer_exercised": true,
+  "live_ROM_identity_guard_passed": true,
+  "live_EXE_entry_identity_guard_passed": true,
+  "observer_installation_seed32": 0,
+  "game_entry_observations": [
+    {
+      "kind": "game_entry",
+      "vsync": 1062,
+      "game_entry_count": 1,
+      "rand_ordinal": 0,
+      "seed32": 0,
+      "source_identity_matches": true
+    }
+  ],
+  "actual_rand_returns_captured": 0,
+  "actual_class03_samples_captured": 0,
+  "guard_failures": 0,
+  "reference_status_snapshot": {
+    "schema": "mml-rng-observer-status/1",
+    "rows": 2,
+    "rand_ordinal": 0,
+    "vsync": 4185,
+    "game_entries": 1,
+    "finished": false,
+    "pending_return": false,
+    "retail_parity": false
+  },
+  "frozen_trace_snapshot_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/rng-reference/live-r2/trace-startup-snapshot-r1.jsonl",
+  "frozen_trace_sha256": "4f360933d2952d3ffa0525a5620c0d741e9f520a0e9b3b828b4506c5b84950f1",
+  "game_seed_for_retail_bios_proved": false,
+  "native_shared_consumer_lifecycle_proved": false,
+  "retail_parity": false,
+  "raw_ram_retained": false,
+  "save_accessed": false,
+  "gameplay_changed_by_observer": false,
+  "limits": [
+    "This is the root-launched installed OpenBIOS reference case.",
+    "No random-return or enemy encounter sample had occurred at the snapshot.",
+    "Zero at this game entry does not establish a retail BIOS default or native scheduling parity.",
+    "Root owns emulator execution/input; this agent made read-only scalar observations."
+  ]
+}

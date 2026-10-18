@@ -1,0 +1,9 @@
+{
+  "errors": [],
+  "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "native_target": "Legends3DS_01444_WorldComesAlive",
+  "owner_payload_hits": [],
+  "status": "PASS",
+  "symlinks": [],
+  "uv_shader_sha256": "ce29518b567b3bfc3fd891a0d098a68de1aa7f186da2ce5cd888c86251178e25"
+}

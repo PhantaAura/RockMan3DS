@@ -1,0 +1,83 @@
+{
+  "schema": "mml-scene-e0-native-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "native_compatible_logic": true,
+  "hardware_status": "HARDWARE_PENDING",
+  "chronology_status": "CANDIDATE",
+  "commands": [
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.31_WorldComesAlive",
+        "-B",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01431/e0-host",
+        "-DCMAKE_BUILD_TYPE=Debug"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01431/e0-host",
+        "--target",
+        "test_scene_e0",
+        "-j4"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01431/e0-host/test_scene_e0"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01431/e0-host/test_scene_e0",
+        "--behavior-fixture",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01431/e0-behavior/behavior-owner.tsv",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/pack-runtime-r2/reference.l3ref"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01431/e0-host/test_scene_e0",
+        "--owner-sequence",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/pack-runtime-r2/source_event_phase5.l3p5",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/pack-runtime-r2/ebd/area_00.l3ebd",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/pack-runtime-r2/reference.l3ref",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01431/e0-behavior/owner-sequence.tsv"
+      ],
+      "returncode": 0
+    }
+  ],
+  "warnings_as_errors": "inherited core -Wall -Wextra -Wpedantic -Werror",
+  "test_results": {
+    "host-authored.log": "typed E0 geometry/LOD/dedup; 15 callbacks; 8 atomic guards; 5 draw guards; 9 malformed resources; memory/profile/replacement; 4096 allocation-free holds PASS\nauthored RuntimeSession E0 diagnostic chronology: one callback, inactive/repeated holds, EBD mutation, profile reset, rejected/accepted transition PASS\nE0 variant authored spin/link, 12 atomic dependency guards, 4096 expired owner holds PASS",
+    "host-differential.log": "184 unchanged original E0 state1 source differential cases PASS",
+    "host-owner-sequence.log": "100 unchanged original E0 sweeps / 1500 full selected owner records / allocation-free updates PASS"
+  },
+  "changed_file_sha256": {
+    "include/legends3ds/scene_e0.h": "f5dda88f3fc78c49632379631530f8c35ae04920052eb490f9c0855e5cf6cfd3",
+    "src/world/scene_e0.cpp": "5fe53605c7e38adfb4415e3db6759a2a57a5c596720077201018844a3993a07a",
+    "tests/test_scene_e0.cpp": "123eb73e4cb25608b16dfa04107bc4ac3fb9a102c86e6d73e8b3794c41b903b7"
+  },
+  "reused": [
+    "SceneE0Resources admission/weak owner lease/decoded mesh cache",
+    "SourceEventPhase5Pool80-byte slots",
+    "SourceEventWork constructor pointer table",
+    "ReferenceTables exact80092EC4 owner lookup"
+  ],
+  "hold_boundaries": [
+    "No live main/event/fade chronology claim",
+    "Script camera source owners forvariant0selectors1..3",
+    "1F800002producer opaque; optional source-ownedhalfrequired",
+    "RNG/effect child owners",
+    "Per-source UV payloadmutation andotherdrawdispatch",
+    "Linked global selector writes",
+    "Spawnedeffectresourceownership outsideexisting15constructorrecords"
+  ]
+}

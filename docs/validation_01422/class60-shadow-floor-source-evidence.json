@@ -1,0 +1,21 @@
+{
+  "schema": "class60-shadow-floor-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "wrapper": "80048E6C",
+  "floor_query": "80048EA4",
+  "authored_cases": 288,
+  "original_instructions": 211434,
+  "all_arguments_match": true,
+  "all_work_bytes_unchanged": true,
+  "proxy_global_initializer": "80033EBC",
+  "proxy_startup_mask_80098798": 255,
+  "proxy_startup_count_800988e0": 0,
+  "proxy_initialization_instructions": 18,
+  "limits": [
+    "Native null bounds only; nonzero bounds tokens held.",
+    "Native80048EA4 still holds unproved slope/unknown visits and Y deltas outside its admitted range.",
+    "No shadow rasterizer, GTE/fog or hardware parity claim."
+  ]
+}

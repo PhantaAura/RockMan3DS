@@ -1,0 +1,37 @@
+{
+  "schema": "class20-03-action3-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_entry": "0x80102c9c",
+  "code_region_end_exclusive": "0x80102fc0",
+  "code_region_sha256": "c62ba1ac8e2b9176eb6a7734e0403c92da8e645d7de734d235fd0cbc9b1b49ac",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "total_cases": 1626,
+  "case_counts": {
+    "timer_entry": 72,
+    "sound_delay": 216,
+    "motion": 1260,
+    "release_tail": 72,
+    "unsupported_phase_noop": 6
+  },
+  "state_fields": 67,
+  "instructions_executed": 168111,
+  "fixture_sha256": "fec50121634c9af7f47cb28cb3fd70aa8164cbf7283cd8b4eb3046386d0169db",
+  "external_premises": [
+    "Authored selected combat-record byteA; selected record0 fixture context only.",
+    "Explicit target angle; original80031BEC executes.",
+    "Authored three-lane motion delta, wall return and floor result; original fixed accumulator/raw conversion executes.",
+    "Sound engine excluded; instrumented intent180 captured.",
+    "Pool release bitmap excluded; authored work00 clear models only its proved scalar store."
+  ],
+  "limits": [
+    "Standalone action body, not detection/hit/common tail/whole AI.",
+    "Forward768 is sourced at80102E6C; motion fixture delta is an external premise, not a faithful motion measurement.",
+    "Release requires real native allocation/lifetime owner before runtime commit.",
+    "Authored fixtures are not live retail parity.",
+    "No owner payload, original instruction listing or table bytes exported."
+  ],
+  "prepared_motion_cases": 450,
+  "sound_intent_cases": 108,
+  "release_intent_cases": 48
+}

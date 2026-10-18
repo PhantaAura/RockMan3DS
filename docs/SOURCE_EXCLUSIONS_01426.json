@@ -1,0 +1,20 @@
+{
+  "version": "0.0.14.26",
+  "release": "complete cumulative code-only source",
+  "original_inputs_unchanged": true,
+  "included": [
+    "Source C/C++/headers/PICA,build and cooker scripts,authored test fixtures",
+    "Project/CMake/Makefiles,full inherited documentation and machine-readable research/evidence",
+    "Textual native stack-usage evidence (.su),validation logs and manifests"
+  ],
+  "excluded": [
+    "ROM/CHD/BIN/CUE/ISO/retail executables includingROCK_NEO.EXE/SLUS",
+    "Capcom texture/model/animation/audio/video payloads and retail save data",
+    "All owner-derived cooked packages/profiles/material caches (.l3*,.mmlpkg) and private SD layout",
+    "Owner DSP firmware",
+    "Generated .3dsx/.elf/.smdh/object/build_3ds output; actual native binary is separate",
+    "Reproducible __pycache__ and .git directories",
+    "Original PNG screenshots remain at listed capture paths outside this code-only source ZIP"
+  ],
+  "guard": "tools/release_source.py:symlink/extension/NUL/UTF-8 checks,forbidden names and cooked/build suffix rejection; release review still necessary for arbitrary textual additions."
+}

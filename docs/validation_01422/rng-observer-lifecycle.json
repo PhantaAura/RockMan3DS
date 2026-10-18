@@ -1,0 +1,20 @@
+{
+  "schema": "mml-rng-observer-authored-harness/1",
+  "status": "PASS_AUTHORED_LIFECYCLE",
+  "longrun_returns": 12000,
+  "longrun_return_listeners": 9,
+  "longrun_total_registrations": 12,
+  "longrun_peak_active": 12,
+  "capacity_complete_returns": 32,
+  "capacity_return_listeners": 32,
+  "capacity_status": "UNKNOWN",
+  "capacity_whole_trace_accepted": false,
+  "close_active_listeners": 0,
+  "synthetic_guards": true,
+  "real_owner_files_used": false,
+  "real_emulator_state_mutated": false,
+  "retail_parity": false,
+  "runtime": "installed PCSX-Redux LuaJIT runtime",
+  "command_file": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01422/lua-observer-harness-r1/argv.json",
+  "stdout": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01422/lua-observer-harness-r1/stdout.log"
+}

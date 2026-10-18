@@ -1,0 +1,41 @@
+{
+  "pid": 90417,
+  "argv": [
+    "/Applications/Azahar.app/Contents/MacOS/azahar",
+    "-w",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/native-r4/build/Legends3DS_01426_WorldComesAlive.3dsx"
+  ],
+  "binary_sha256": "943db29d8b45b0b4063aa6150396a12d24a3e62078e5520e20e3d9e6f023d9f3",
+  "movie_sha256": "b9a7e7cba7cc5ead90c148c02759b220d68a1543ede3050b53a934f9d1f85a0e",
+  "settings": {
+    "emulator": "Azahar2126.0",
+    "old_model": true,
+    "cpu_clock_percentage": 100,
+    "resolution_factor": 1,
+    "hardware_tested": false,
+    "retail_parity": false,
+    "build": "0.0.14.26",
+    "binary_revision": "r4",
+    "actor_rng_candidate": false,
+    "source_event_boot": true,
+    "source_xa_audio": true,
+    "source_actor_proxy": false,
+    "renderer_flags": "7f",
+    "renderer": "ENHANCED",
+    "isolated_storage": true,
+    "actor_state_fields": true,
+    "dsp_component": {
+      "owner_path": "/Users/emeraldhunter/Downloads/3ds backups/3ds/dspfirm.cdc",
+      "bytes": 49756,
+      "sha256": "8e213f3e71d2e3e45d1169bac6465a70eabeb22b303f1fa6d7679370ffad0f54",
+      "included_in_source_release": false
+    },
+    "source_fade": "TYPE2_STARTUP_PENDING_SCHEDULER",
+    "head": "SOURCE_FRESH_HEAD01"
+  },
+  "environment": {
+    "XDG_CONFIG_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r2/config",
+    "XDG_DATA_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r2/data",
+    "XDG_CACHE_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/azahar-01426-r2/cache"
+  }
+}

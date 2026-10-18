@@ -1,0 +1,184 @@
+{
+  "format": "L3-FIRST-ENEMY-MATERIAL-AUDIT-1",
+  "ebd_row": 0,
+  "parts": [
+    {
+      "draw_slot": 0,
+      "source_part_offset": 932,
+      "raw_material_word": 1019215911,
+      "decoder_material_word": 1019215911,
+      "triangles": 12,
+      "quads": 25,
+      "face_binding_mismatches": 0,
+      "uv_bounds": [
+        0,
+        0,
+        255,
+        128
+      ]
+    },
+    {
+      "draw_slot": 1,
+      "source_part_offset": 952,
+      "raw_material_word": 1019215911,
+      "decoder_material_word": 1019215911,
+      "triangles": 12,
+      "quads": 6,
+      "face_binding_mismatches": 0,
+      "uv_bounds": [
+        89,
+        0,
+        255,
+        57
+      ]
+    },
+    {
+      "draw_slot": 2,
+      "source_part_offset": 972,
+      "raw_material_word": 1019215911,
+      "decoder_material_word": 1019215911,
+      "triangles": 12,
+      "quads": 6,
+      "face_binding_mismatches": 0,
+      "uv_bounds": [
+        89,
+        0,
+        255,
+        57
+      ]
+    },
+    {
+      "draw_slot": 3,
+      "source_part_offset": 992,
+      "raw_material_word": 1019215911,
+      "decoder_material_word": 1019215911,
+      "triangles": 12,
+      "quads": 6,
+      "face_binding_mismatches": 0,
+      "uv_bounds": [
+        89,
+        0,
+        255,
+        58
+      ]
+    },
+    {
+      "draw_slot": 4,
+      "source_part_offset": 1012,
+      "raw_material_word": 1019215911,
+      "decoder_material_word": 1019215911,
+      "triangles": 12,
+      "quads": 6,
+      "face_binding_mismatches": 0,
+      "uv_bounds": [
+        90,
+        0,
+        255,
+        56
+      ]
+    }
+  ],
+  "upload_order_source": "inherited build_tutorial_pack.py; live retail order not separately measured",
+  "containers": [
+    {
+      "name": "INIT_DAT.BIN",
+      "resource_count": 3
+    },
+    {
+      "name": "HEAD00.BIN",
+      "resource_count": 0
+    },
+    {
+      "name": "ARM00R.BIN",
+      "resource_count": 0
+    },
+    {
+      "name": "ARM00L.BIN",
+      "resource_count": 0
+    },
+    {
+      "name": "LEG00.BIN",
+      "resource_count": 0
+    },
+    {
+      "name": "ST00.BIN",
+      "resource_count": 31
+    },
+    {
+      "name": "ST00_01.BIN",
+      "resource_count": 8
+    }
+  ],
+  "materials": [
+    {
+      "word": 1019215911,
+      "tpage": 39,
+      "bpp": 4,
+      "abr": 1,
+      "image_x_words": 448,
+      "image_y": 0,
+      "clut_raw": 15552,
+      "clut_x": 0,
+      "clut_y": 243,
+      "terrain_cache_present": false,
+      "player_cache_present": false,
+      "candidate_resolved": true,
+      "image_words_written": 8192,
+      "image_words_total": 16384,
+      "palette_words_written": 16,
+      "palette_words_total": 16,
+      "legacy_image_resource_index": 37,
+      "legacy_palette_resource_index": 37,
+      "legacy_palette_row": 0,
+      "matching_texture_headers": [
+        {
+          "path": "ST00_01.BIN/../OBJ/ST00/AR01/EM0300.TIM",
+          "existing_cooked_equal_owner_decoded": true,
+          "upload_index": 37,
+          "header_offset": 159744,
+          "width_pixels": 256,
+          "height": 128,
+          "clut_x": 0,
+          "clut_y": 243,
+          "palette_entries": 16,
+          "palette_rows": 8,
+          "row_banked": true,
+          "resolved_row": 0
+        }
+      ]
+    }
+  ],
+  "payload_written": false,
+  "runtime_edited": false,
+  "shade": "UNKNOWN",
+  "identities": [
+    {
+      "container": "ST00_01.BIN",
+      "internal": "..\\OBJ\\ST00\\AR01\\EM0300.TIM",
+      "header_offset": 159744,
+      "owner_container_sha256": "f7283379a49d028623fd129f938c6a318e3c1338a62d4d9b585198748fd24779",
+      "sector_parser_payload_sha256": "70459835c18d2bad8cc54fb7a4ec218b0629a1f7f6739e9288364230fbc3bbcf",
+      "cooked_sha256": "f702e0d448f6161215cfcbf520045e73632d3262f330719bcdc6bc46f535288b",
+      "cooked_bytes": 16704
+    },
+    {
+      "container": "ST00_02.BIN",
+      "internal": "..\\OBJ\\ST00\\AR01\\EM0300.TIM",
+      "header_offset": 126976,
+      "owner_container_sha256": "1fb567b6f86c1654ca9ae153ceba9e62b4501794d607b1844086591772774421",
+      "sector_parser_payload_sha256": "60241f63704c4dc4b6ac3fffdce45b60c19a283c2cfe40d0366f65520469e970",
+      "cooked_sha256": "f702e0d448f6161215cfcbf520045e73632d3262f330719bcdc6bc46f535288b",
+      "cooked_bytes": 16704
+    }
+  ],
+  "source_ebd_sha256": "28bdb4d9e9a7f32e5c5ec7f8cb8e346cfcc46dc69d0a0c4b54deaacb4e3ccd87",
+  "material_hex": [
+    "0x3cc00027"
+  ],
+  "command": [
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261005-worldalive/first_enemy_material_probe",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/pack-spawn",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/owner-data/extracted/CDDATA/DAT"
+  ],
+  "result": "PASS bounded read-only probe; candidate cache only; no live VRAM comparison"
+}

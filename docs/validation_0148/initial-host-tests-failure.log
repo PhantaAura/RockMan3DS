@@ -1,0 +1,32 @@
+ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148/host --output-on-failure
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261001-terrain/validated-0148/host
+      Start  1: core
+ 1/10 Test  #1: core .............................Subprocess aborted***Exception:   0.03 sec
+Assertion failed: (minimap.player_in_area && minimap.player_x == 1 && minimap.player_z == 1), function main, file test_core.cpp, line 746.
+
+      Start  2: map_sharing
+ 2/10 Test  #2: map_sharing ......................   Passed    0.00 sec
+      Start  3: ps1_geometry
+ 3/10 Test  #3: ps1_geometry .....................   Passed    0.00 sec
+      Start  4: area_package
+ 4/10 Test  #4: area_package .....................   Passed    0.00 sec
+      Start  5: terrain_geometry_candidate
+ 5/10 Test  #5: terrain_geometry_candidate .......   Passed    0.00 sec
+      Start  6: map_cell_alignment
+ 6/10 Test  #6: map_cell_alignment ...............   Passed    0.00 sec
+      Start  7: push2
+ 7/10 Test  #7: push2 ............................   Passed    0.00 sec
+      Start  8: integrity
+ 8/10 Test  #8: integrity ........................   Passed    0.00 sec
+      Start  9: pipeline_python
+ 9/10 Test  #9: pipeline_python ..................   Passed    0.15 sec
+      Start 10: cooked_area_python
+10/10 Test #10: cooked_area_python ...............   Passed    0.10 sec
+
+90% tests passed, 1 tests failed out of 10
+
+Total Test time (real) =   0.30 sec
+
+The following tests FAILED:
+	  1 - core (Subprocess aborted)
+Errors while running CTest

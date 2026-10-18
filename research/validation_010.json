@@ -1,0 +1,102 @@
+{
+  "checkpoint": "0.0.10",
+  "name": "Native Runtime Bootstrap / Dialogue Bridge",
+  "source_policy": "exact user disc/extraction/CHD first; direct executable/data reconstruction second; public RE cross-check third; perceptual video validation fourth; memory is navigation only",
+  "reference": {
+    "edition": "Mega Man Legends USA",
+    "rock_neo_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+    "chd_bytes": 217298243,
+    "chd_sha256": "573c1fa958db9a84a5f57b2894bf7f7b71e51f77df70dac1cd34a5a3b66d1f94",
+    "dat_files": 205,
+    "xa_files": 38,
+    "str_files": 1
+  },
+  "runtime_pack": {
+    "fresh_files": 90,
+    "preexisting_nonmanifest_files_compared_vs_0_0_9": 84,
+    "preexisting_sha256_differences_vs_0_0_9": 0,
+    "l3ebd_rows": [
+      14,
+      49,
+      49,
+      40,
+      6
+    ],
+    "l3sf_areas": 5,
+    "objects": [
+      1,
+      16,
+      20,
+      11,
+      1
+    ],
+    "aux_records": [
+      0,
+      3,
+      2,
+      0,
+      0
+    ],
+    "work_slots": [
+      1,
+      15,
+      19,
+      10,
+      1
+    ],
+    "runtime_bootstrap_all_areas": "PASS"
+  },
+  "message_runtime": {
+    "st00_01": {
+      "blocks": 15,
+      "glyph": 930,
+      "newline": 41,
+      "audio": 21,
+      "wait": 16,
+      "next": 13,
+      "end": 12,
+      "selection": 4,
+      "multi": 2,
+      "other_control": 88,
+      "unknown": 6
+    },
+    "st00_02": {
+      "blocks": 21,
+      "glyph": 1902,
+      "newline": 80,
+      "audio": 28,
+      "wait": 33,
+      "next": 41,
+      "end": 13,
+      "selection": 10,
+      "multi": 5,
+      "other_control": 151,
+      "unknown": 15
+    },
+    "runtime_cursor": "PASS",
+    "unknown_controls_preserved": true
+  },
+  "player_exact_routines": [
+    "0x80041F54 directional accumulator",
+    "0x80042154 turn accumulator",
+    "0x80041EF4 directional pair wrapper",
+    "0x80042044 turn pair wrapper",
+    "0x8004324C player state predicate",
+    "0x80042528 class-83 helper seed"
+  ],
+  "build": {
+    "host_release": "PASS",
+    "warnings_as_errors": true,
+    "ctest": "1/1 PASS"
+  },
+  "three_ds": {
+    "devkitpro_libctru_citro3d_available": false,
+    "hardware_build_claimed": false
+  },
+  "distribution": {
+    "capcom_assets_in_source_archive": false,
+    "cooked_game_data_in_source_archive": false,
+    "original_disc_executable_audio_in_source_archive": false,
+    "generated_psx_elf_or_disassembly_in_source_archive": false
+  }
+}

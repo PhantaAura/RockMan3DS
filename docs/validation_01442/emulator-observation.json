@@ -1,0 +1,197 @@
+{
+  "version": "0.0.14.42",
+  "binary_sha256": "fd10ea30d61bbea16f5257b896e9ca0d4a810fd6bbb9822198be9b8b69f6af91",
+  "emulator": "Azahar2126.0",
+  "is_new_3ds": false,
+  "cpu_percent": 100,
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.30.02.171.png",
+      "sha256": "2c08a8cd33d07a56eb00919c0b622b506ccb09ce1bf3ce7f798abcc3a35747ca",
+      "scene": "CPU RGB diagnostic",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.30.07.43.png",
+      "sha256": "2d53f28b9d7e02518e19bd020ad435b1d1c2fb838ebed194461adc732fb26375",
+      "scene": "GPU cyan clear-only diagnostic",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.30.45.77.png",
+      "sha256": "376caa405f677dd687c828e166a6a6b1340c1fa54cda8f5ef94286ed27dc4d7b",
+      "scene": "X:0143 safe renderer, player/terrain/bottom map",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.31.56.952.png",
+      "sha256": "63784daa4aa950c7e637f75e0456132238f2fa668b3a2ca23b8479575e1f19eb",
+      "scene": "A:enhanced textured player/terrain, area0",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.32.36.346.png",
+      "sha256": "857ac1b2ec2216032c11a2b0d970c4c9d6836b30fe9188d68e3861af301e23b1",
+      "scene": "Movement/jump/projectile exercise in area0",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.33.04.884.png",
+      "sha256": "e0c4ac66956c4e9c672cc7a9018a4c09aa3adde2556cd301cf7c61fb616aef02",
+      "scene": "Diagnostic area1 replacement, camera clipping/occlusion possible",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    }
+  ],
+  "traces": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/native-r2/sd_out/3ds/Legends3DS/hardware_01442_4001041798262.csv",
+      "sha256": "e9ec2986d11736fb980996aca483bbee73416e23763fb45f55eab9679b512185",
+      "samples": 22,
+      "areas": [
+        "0"
+      ],
+      "metric_ranges": {
+        "draw_calls": [
+          2,
+          2
+        ],
+        "triangles": [
+          3990,
+          3990
+        ],
+        "owned_linear": [
+          126144,
+          126144
+        ],
+        "owned_texture": [
+          0,
+          0
+        ],
+        "malloc_live": [
+          960264,
+          960264
+        ],
+        "linear_free": [
+          31553280,
+          31553280
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          0
+        ],
+        "projectiles": [
+          0,
+          0
+        ]
+      },
+      "actor_packet_clear_receipts": 0,
+      "sampled_contact_packets": [],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456"
+      ],
+      "gpu_timeouts": []
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/native-r2/sd_out/3ds/Legends3DS/hardware_01442_4001041869298.csv",
+      "sha256": "6edd3299db90a498e820ab6c53f8b128d74df4a32ec3cfe19467785e7d959c40",
+      "samples": 62,
+      "areas": [
+        "0",
+        "1"
+      ],
+      "metric_ranges": {
+        "draw_calls": [
+          11,
+          17
+        ],
+        "triangles": [
+          1478,
+          2154
+        ],
+        "owned_linear": [
+          59520,
+          71640
+        ],
+        "owned_texture": [
+          2883584,
+          3670016
+        ],
+        "malloc_live": [
+          1683056,
+          1937456
+        ],
+        "linear_free": [
+          27937280,
+          28735744
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          -448,
+          432
+        ],
+        "projectiles": [
+          0,
+          1
+        ]
+      },
+      "actor_packet_clear_receipts": 1500,
+      "sampled_contact_packets": [
+        "00000000",
+        "04000000"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1378671,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456",
+        "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1683104,linear_free=28735744,vram_free=5523456",
+        "# area_event=transition_after,area=1,elapsed_us=2048356,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1886640,linear_free=27937280,vram_free=5523456",
+        "# area_event=conditional_spawn,area=1,elapsed_us=41498,package_bytes=0,decoded_estimate=0,load_peak_estimate=3,malloc_live=1886640,linear_free=27937280,vram_free=5523456",
+        "# area_event=conditional_spawn,area=1,elapsed_us=43208,package_bytes=46308,decoded_estimate=3,load_peak_estimate=4,malloc_live=1937456,linear_free=27937280,vram_free=5523456",
+        "# area_event=unload_before,area=1,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1937456,linear_free=27937280,vram_free=5523456",
+        "# area_event=gpu_unloaded,area=1,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=395512,linear_free=31941632,vram_free=6291456",
+        "# area_event=cpu_scope_unloaded,area=1,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35840,linear_free=31941632,vram_free=6291456"
+      ],
+      "gpu_timeouts": []
+    }
+  ],
+  "tested": "Final binary:CPU/GPU display tests,0143,enhanced rendering,movement,jump/fall,projectile drawing,diagnostic area0\u21921 resource replacement,normal shutdown.",
+  "limits": [
+    "Emulator compatibility/performance does not prove physical Old3DS GPU behavior or speed.",
+    "Area change used the developer selector, not natural progression or package-to-package retail transition.",
+    "Native04000000 no-damage actor contact receipts are not genuine Buster damage. RNG candidate and fresh proxy diagnostic gates explicitly enabled.",
+    "Intermittent bottom partial/black presentation seen in emulator UI, also present before this pass; hardware behavior unverified.",
+    "Area1 diagnostic spawn can leave camera occluded by geometry."
+  ]
+}

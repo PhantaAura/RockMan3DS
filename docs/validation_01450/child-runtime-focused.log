@@ -1,0 +1,7 @@
+1024 allocation-free shared child ticks; transaction rollback/producer/pair/capacity guards PASS
+24-slot lease producer -> owned BC/C0 -> original GTE consumer; release/reuse PASS
+real Buster producer -> lease -> owned Buster BC/C0 -> original GTE consumer PASS
+normal80 spawn -> callback -> segment -> enemy packet -> 8HP -> effect84/release PASS
+original80048E6C floor wrapper admitted=246 held=42
+258 original80035724 allocation/lease/counter/whole-record differentials PASS
+PASS bounded class60 child transaction owner

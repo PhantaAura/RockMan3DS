@@ -1,0 +1,213 @@
+{
+  "version": "0.0.14.45",
+  "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+  "emulator": "Azahar 2126.0",
+  "is_new_3ds": false,
+  "cpu_clock_percentage": 100,
+  "renderer": "Vulkan, resolution factor 1",
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/azahar-candidate45-r3/captures/_16.10.26_23.21.58.32.png",
+      "sha256": "f5233e6d78c0516d78414c9770512d5735709021dc882cb02ebee70318cc9d61",
+      "device": "Azahar 2126.0, Old model",
+      "build": "0.0.14.45",
+      "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+      "mode": "candidate",
+      "scope": "CANDIDATE RNG + recorded constructor clock",
+      "original_capture": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/azahar-candidate45-r3/captures/_16.10.26_23.24.33.295.png",
+      "sha256": "f5233e6d78c0516d78414c9770512d5735709021dc882cb02ebee70318cc9d61",
+      "device": "Azahar 2126.0, Old model",
+      "build": "0.0.14.45",
+      "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+      "mode": "candidate",
+      "scope": "CANDIDATE RNG + recorded constructor clock",
+      "original_capture": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/azahar-candidate45-r3/captures/_16.10.26_23.24.48.544.png",
+      "sha256": "f08b69913c2ac4f67fa97346030383f4f7b81bc0f975102311b300629926a471",
+      "device": "Azahar 2126.0, Old model",
+      "build": "0.0.14.45",
+      "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+      "mode": "candidate",
+      "scope": "CANDIDATE RNG + recorded constructor clock",
+      "original_capture": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/azahar-candidate45-r3/captures/_16.10.26_23.25.21.19.png",
+      "sha256": "33f85f750798506de751b40272e13648f97506a322b67d2abe70ed596ae5bd28",
+      "device": "Azahar 2126.0, Old model",
+      "build": "0.0.14.45",
+      "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+      "mode": "candidate",
+      "scope": "CANDIDATE RNG + recorded constructor clock",
+      "original_capture": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/azahar-normal45-r3/captures/_16.10.26_23.27.00.841.png",
+      "sha256": "3b4a942f38dec5a87318837a667151042a2aead50287da44b51e970a962c608d",
+      "device": "Azahar 2126.0, Old model",
+      "build": "0.0.14.45",
+      "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+      "mode": "normal",
+      "scope": "Research gates off",
+      "original_capture": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/azahar-normal45-r3/captures/_16.10.26_23.27.14.431.png",
+      "sha256": "8640c13cbfcb36e1dbb0a74e65724e47d7dfa571c757eaea04197e537cdbdb66",
+      "device": "Azahar 2126.0, Old model",
+      "build": "0.0.14.45",
+      "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+      "mode": "normal",
+      "scope": "Research gates off",
+      "original_capture": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/azahar-safe45-r3/captures/_16.10.26_23.27.57.783.png",
+      "sha256": "52d47972afa34f88f8243cdda08c330bfa8228e61782d6442581e36e686f5a88",
+      "device": "Azahar 2126.0, Old model",
+      "build": "0.0.14.45",
+      "binary_sha256": "ee85a5adf899824b2f4f9cab2237ec4cfc1d01ff262156a9b55c5b621a95fbde",
+      "mode": "safe",
+      "scope": "Research gates off",
+      "original_capture": true
+    }
+  ],
+  "traces": {
+    "candidate": {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/candidate-r3-evidence/hardware_01445_4001181593158.csv",
+      "sha256": "e05b2c4d07c81cc7e8503f83f145fc803d8c6a42a2e5519cf308467244b5d348",
+      "rows": 184,
+      "last_sampled_frame": 9840,
+      "normal_unload_package_bytes": 0,
+      "boot_log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/candidate-r3-evidence/boot.log",
+      "evidence_scope": "CANDIDATE RNG + recorded constructor clock",
+      "transition": {
+        "from": 0,
+        "to": 1,
+        "source_handoff": true,
+        "frame": 3088,
+        "developer_room_skip": false,
+        "head_uv_reset_frame": 3082,
+        "head_uv_records": 10,
+        "native_mix_calls": 254,
+        "native_pause_frame": 3085,
+        "load_elapsed_us": 1780435,
+        "package_bytes_before_and_after": 701943,
+        "scope": "Area resources replaced within the same multi-area package; not a different generalized package file."
+      },
+      "destination": {
+        "sampled_positions": [
+          [
+            2822,
+            -1,
+            -4833
+          ],
+          [
+            2822,
+            -1,
+            -4801
+          ],
+          [
+            2822,
+            -1,
+            -4641
+          ],
+          [
+            2841,
+            -1,
+            -4667
+          ],
+          [
+            2937,
+            -1,
+            -4795
+          ],
+          [
+            3110,
+            -1,
+            -5025
+          ],
+          [
+            3167,
+            -1,
+            -5087
+          ],
+          [
+            3551,
+            -1,
+            -5087
+          ]
+        ],
+        "movement_input_exercised": true,
+        "camera_obstructed": true,
+        "complete_progression": false
+      },
+      "sampled_memory": {
+        "malloc_live": {
+          "min": 2281440,
+          "max": 2283328
+        },
+        "linear_free": {
+          "min": 27937280,
+          "max": 27937280
+        },
+        "vram_free": {
+          "min": 5523456,
+          "max": 5523456
+        },
+        "owned_texture": {
+          "min": 3670016,
+          "max": 3670016
+        },
+        "owned_linear": {
+          "min": 71640,
+          "max": 71640
+        },
+        "draw_calls": {
+          "min": 14,
+          "max": 14
+        },
+        "triangles": {
+          "min": 1680,
+          "max": 1680
+        }
+      }
+    },
+    "normal": {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/normal-r3-evidence/hardware.csv",
+      "sha256": "fd78cc32ac04fcece2e188087618177b1f7f9e9ea392aecc76480fda482adf36",
+      "rows": 27,
+      "last_sampled_frame": 600,
+      "normal_unload_package_bytes": 0,
+      "boot_log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/normal-r3-evidence/boot.log",
+      "evidence_scope": "Research gates off"
+    },
+    "safe": {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/safe-r3-evidence/hardware.csv",
+      "sha256": "51fa2c2032ea4b8837fdad6527fd04532c4c5fa276a7dc10e2b9db871f7d501e",
+      "rows": 10,
+      "last_sampled_frame": 480,
+      "normal_unload_package_bytes": 0,
+      "boot_log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261016-worldalive-01445/safe-r3-evidence/boot.log",
+      "evidence_scope": "Research gates off"
+    }
+  },
+  "normal_unload_all_three_runs": true,
+  "owned_test_processes_exited": true,
+  "limits": [
+    "Candidate intro also uses the previously measured constructor-clock snapshot. This is not fresh boot, live retail RNG chronology or retail parity.",
+    "Strict recorded RNG mode keeps its original context guards; it is never filled from generated candidate values.",
+    "Destination Area 1 accepted movement and sampled grounded contact, but the view was obstructed by a nearby wall. Complete camera/spawn presentation is unverified.",
+    "Post-transition research cleanup logs report unavailable outgoing source pools. These occur after the successful replacement and do not prove a stuck transition.",
+    "Normal enhanced mode visibly rendered the imported textured player/room and accepted movement, jump and firing input. Exact jump/fall/land trajectory remains unproved.",
+    "Safe mode visibly rendered the preserved untextured player/terrain subset. This is a renderer regression check, not complete safe-path gameplay validation.",
+    "All counters are sparse emulator observations. Physical frame pacing, loading, audio quality and peak RAM/VRAM/stack require actual hardware.",
+    "No new live PS1 trace was collected this pass. Existing source-backed scalar routines, cooked resources and prior measured profiles were reused."
+  ]
+}

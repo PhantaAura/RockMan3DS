@@ -1,0 +1,389 @@
+{
+  "format": "mml-type1-sector-source-proof/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "resource_header_dispatch": "0x8001bd98",
+  "image_stage_dispatch": "0x8001c350",
+  "load_image_boundary": "0x8007D2F0",
+  "resume_site": "0x8001C3AC",
+  "instructions_replaced": 0,
+  "helper_hooks": [],
+  "authored_cases": 6,
+  "original_instructions_executed": 1601,
+  "cases": [
+    {
+      "width_words": 32,
+      "height": 32,
+      "uploads": [
+        {
+          "sector": 1,
+          "destination_rect_words": [
+            320,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 2048
+        }
+      ]
+    },
+    {
+      "width_words": 64,
+      "height": 32,
+      "uploads": [
+        {
+          "sector": 1,
+          "destination_rect_words": [
+            320,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 2048
+        },
+        {
+          "sector": 2,
+          "destination_rect_words": [
+            352,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 4096
+        }
+      ]
+    },
+    {
+      "width_words": 32,
+      "height": 64,
+      "uploads": [
+        {
+          "sector": 1,
+          "destination_rect_words": [
+            320,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 2048
+        },
+        {
+          "sector": 2,
+          "destination_rect_words": [
+            320,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 4096
+        }
+      ]
+    },
+    {
+      "width_words": 64,
+      "height": 64,
+      "uploads": [
+        {
+          "sector": 1,
+          "destination_rect_words": [
+            320,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 2048
+        },
+        {
+          "sector": 2,
+          "destination_rect_words": [
+            352,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 4096
+        },
+        {
+          "sector": 3,
+          "destination_rect_words": [
+            320,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 6144
+        },
+        {
+          "sector": 4,
+          "destination_rect_words": [
+            352,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 8192
+        }
+      ]
+    },
+    {
+      "width_words": 64,
+      "height": 256,
+      "uploads": [
+        {
+          "sector": 1,
+          "destination_rect_words": [
+            320,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 2048
+        },
+        {
+          "sector": 2,
+          "destination_rect_words": [
+            352,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 4096
+        },
+        {
+          "sector": 3,
+          "destination_rect_words": [
+            320,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 6144
+        },
+        {
+          "sector": 4,
+          "destination_rect_words": [
+            352,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 8192
+        },
+        {
+          "sector": 5,
+          "destination_rect_words": [
+            320,
+            64,
+            32,
+            32
+          ],
+          "source_buffer_offset": 10240
+        },
+        {
+          "sector": 6,
+          "destination_rect_words": [
+            352,
+            64,
+            32,
+            32
+          ],
+          "source_buffer_offset": 12288
+        },
+        {
+          "sector": 7,
+          "destination_rect_words": [
+            320,
+            96,
+            32,
+            32
+          ],
+          "source_buffer_offset": 14336
+        },
+        {
+          "sector": 8,
+          "destination_rect_words": [
+            352,
+            96,
+            32,
+            32
+          ],
+          "source_buffer_offset": 16384
+        },
+        {
+          "sector": 9,
+          "destination_rect_words": [
+            320,
+            128,
+            32,
+            32
+          ],
+          "source_buffer_offset": 18432
+        },
+        {
+          "sector": 10,
+          "destination_rect_words": [
+            352,
+            128,
+            32,
+            32
+          ],
+          "source_buffer_offset": 20480
+        },
+        {
+          "sector": 11,
+          "destination_rect_words": [
+            320,
+            160,
+            32,
+            32
+          ],
+          "source_buffer_offset": 22528
+        },
+        {
+          "sector": 12,
+          "destination_rect_words": [
+            352,
+            160,
+            32,
+            32
+          ],
+          "source_buffer_offset": 24576
+        },
+        {
+          "sector": 13,
+          "destination_rect_words": [
+            320,
+            192,
+            32,
+            32
+          ],
+          "source_buffer_offset": 26624
+        },
+        {
+          "sector": 14,
+          "destination_rect_words": [
+            352,
+            192,
+            32,
+            32
+          ],
+          "source_buffer_offset": 28672
+        },
+        {
+          "sector": 15,
+          "destination_rect_words": [
+            320,
+            224,
+            32,
+            32
+          ],
+          "source_buffer_offset": 30720
+        },
+        {
+          "sector": 16,
+          "destination_rect_words": [
+            352,
+            224,
+            32,
+            32
+          ],
+          "source_buffer_offset": 32768
+        }
+      ]
+    },
+    {
+      "width_words": 128,
+      "height": 64,
+      "uploads": [
+        {
+          "sector": 1,
+          "destination_rect_words": [
+            320,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 2048
+        },
+        {
+          "sector": 2,
+          "destination_rect_words": [
+            352,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 4096
+        },
+        {
+          "sector": 3,
+          "destination_rect_words": [
+            384,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 6144
+        },
+        {
+          "sector": 4,
+          "destination_rect_words": [
+            416,
+            0,
+            32,
+            32
+          ],
+          "source_buffer_offset": 8192
+        },
+        {
+          "sector": 5,
+          "destination_rect_words": [
+            320,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 10240
+        },
+        {
+          "sector": 6,
+          "destination_rect_words": [
+            352,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 12288
+        },
+        {
+          "sector": 7,
+          "destination_rect_words": [
+            384,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 14336
+        },
+        {
+          "sector": 8,
+          "destination_rect_words": [
+            416,
+            32,
+            32,
+            32
+          ],
+          "source_buffer_offset": 16384
+        }
+      ]
+    }
+  ],
+  "payload_layout": "2048B sectors;32VRAMwords*32rows;X tiles beforeY tiles",
+  "limits": [
+    "Authored loader work/header/sector counters, not live retail chronology.",
+    "Original no-CLUT-copy branch isolates image layout; palette behavior is not retested.",
+    "GPU LoadImage boundary is observed, not executed or emulated.",
+    "No owner instruction/asset bytes, retail save data or cooked payload are written.",
+    "No full renderer/material/animation/hardware parity claim."
+  ]
+}

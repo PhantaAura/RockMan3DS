@@ -1,0 +1,150 @@
+{
+  "schema": "mml-source-stream-directory/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "inspection": "ISO9660 directory records and64 sector headers only; no XA/audio payload read, extracted or exported.",
+  "disc_bytes": 524601840,
+  "selected": [
+    {
+      "name": "XA37S00E.XA",
+      "lba": 91731,
+      "directory_bytes": 114196480,
+      "directory": false,
+      "xa_attributes": 9557,
+      "xa_file_number": 1,
+      "source_id": 245,
+      "source_record_address": "0x8008384c",
+      "source_sector": 91731,
+      "source_bytes": 130255360,
+      "source_tag": "0x1640001",
+      "source_size_matches_directory": false,
+      "extracted_bytes": 114196480,
+      "form2_2336_sectors": 55760,
+      "form2_size_aligned": true,
+      "2048_projection_matches_extracted": true
+    },
+    {
+      "name": "XA37S01E.XA",
+      "lba": 147491,
+      "directory_bytes": 121864192,
+      "directory": false,
+      "xa_attributes": 9557,
+      "xa_file_number": 1,
+      "source_id": 246,
+      "source_record_address": "0x80083858",
+      "source_sector": 147491,
+      "source_bytes": 139001344,
+      "source_tag": "0x1640001",
+      "source_size_matches_directory": false,
+      "extracted_bytes": 121864192,
+      "form2_2336_sectors": 59504,
+      "form2_size_aligned": true,
+      "2048_projection_matches_extracted": true
+    }
+  ],
+  "command": {
+    "source_request": "20000003",
+    "packet_type": 4,
+    "id": 245,
+    "raw_offset_word": "03000000",
+    "end_word": "00003CE0",
+    "start_sector": 91731,
+    "end_sector": 107315,
+    "span_sectors": 15584,
+    "source_filter_file": 1,
+    "source_filter_channel": 3,
+    "evidence": "Source8001B9BC..8001BA20 usespacket_byte11&1F and24bitmaskedstart/end; identityfromphase2cooklookup."
+  },
+  "native_audio_audit": {
+    "catalog_sources": 39,
+    "routing_proven": false,
+    "cooked_pcm_found": false,
+    "ndsp_consumer_found": false
+  },
+  "limits": [
+    "Disc identity verifiedbydirectory recordLBA/size againstsupportedEXE, notwhole-disc hash.",
+    "Extracted XA2048 views cannot be treated ascomplete2352/2336 XAsector records; subheadersandfinalaudio bytes are not retained inthatprojection.",
+    "No selectedstream audio has been decoded/played; no semanticlabel or nativebackend statusclaim."
+  ],
+  "hardware_tested": false,
+  "retail_parity": false,
+  "sector_header_audit": {
+    "scope": "Only24-byte headers of64 selectedsectors read; no audio payload read.",
+    "headers": 64,
+    "combinations": [
+      {
+        "file": 1,
+        "channel": 0,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      },
+      {
+        "file": 1,
+        "channel": 1,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      },
+      {
+        "file": 1,
+        "channel": 2,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      },
+      {
+        "file": 1,
+        "channel": 3,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      },
+      {
+        "file": 1,
+        "channel": 4,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      },
+      {
+        "file": 1,
+        "channel": 5,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      },
+      {
+        "file": 1,
+        "channel": 6,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      },
+      {
+        "file": 1,
+        "channel": 7,
+        "submode": "0x64",
+        "coding": "0x1",
+        "count": 8
+      }
+    ],
+    "source_filter_matches": 8,
+    "source_filter_relative_sectors": [
+      3,
+      11,
+      19,
+      27,
+      35,
+      43,
+      51,
+      59
+    ],
+    "audio_bit04_all_filtered": true,
+    "form2_bit20_all_filtered": true,
+    "duplicate_subheaders_match": true,
+    "coding_semantics": "Raw coding01; channels2/sample_rate37800 mapping verified againstprimary FFmpeg psxstr.c. No decoder/playback test performed."
+  },
+  "disc_profile": "Owner-providedUSA MODE2/2352 CUE, firsttrackindex00:00:00",
+  "primary_codec_reference": "https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/psxstr.c"
+}

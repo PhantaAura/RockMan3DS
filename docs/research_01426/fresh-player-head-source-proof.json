@@ -1,0 +1,87 @@
+{
+  "format": "fresh-player-head-source-proof/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "selection": {
+    "selector": 0,
+    "file_id": 28,
+    "container": "HEAD01.BIN",
+    "internal": "..\\PLBIN\\PL00H01P.PBD",
+    "resource": "PL00H01P.PBD",
+    "load": 2148497408,
+    "resource_sha256": "6852fa2944634ecc582cf454e8595647287b9ed454747b89de95d2d99a452a04",
+    "container_sha256": "c7d3f10d701990cfc5eed58187ea8baa3a2c717311f4199cb88624e72a3b270f",
+    "provenance": {
+      "status": "SOURCE_BACKED_PARTIAL",
+      "fresh_only": true,
+      "executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+      "store": "0x8003bf58",
+      "loader": "0x8001F5E4",
+      "selector_byte": "Player_work+0x16A",
+      "head_table": "0x80089200",
+      "file_id": 28,
+      "filename_record": "0x80083f70",
+      "directory_record": "0x80082e20",
+      "original_path": "E:\\PSX\\ROCK_NEO\\CDDATA\\DAT\\HEAD01.BIN",
+      "lba": 1781,
+      "directory_bytes": 14336,
+      "resumed_or_gear_selection": "UNKNOWN"
+    }
+  },
+  "fresh_initial_values_checked": 256,
+  "loader_cases": [
+    {
+      "selector": 0,
+      "cached": -1,
+      "selected_file_id": 28,
+      "requests_load": true
+    },
+    {
+      "selector": 0,
+      "cached": 0,
+      "selected_file_id": 28,
+      "requests_load": true
+    },
+    {
+      "selector": 0,
+      "cached": 27,
+      "selected_file_id": 28,
+      "requests_load": true
+    },
+    {
+      "selector": 0,
+      "cached": 28,
+      "selected_file_id": 28,
+      "requests_load": false
+    },
+    {
+      "selector": 1,
+      "cached": -1,
+      "selected_file_id": 27,
+      "requests_load": true
+    },
+    {
+      "selector": 1,
+      "cached": 0,
+      "selected_file_id": 27,
+      "requests_load": true
+    },
+    {
+      "selector": 1,
+      "cached": 27,
+      "selected_file_id": 27,
+      "requests_load": false
+    },
+    {
+      "selector": 1,
+      "cached": 28,
+      "selected_file_id": 27,
+      "requests_load": true
+    }
+  ],
+  "original_instructions_executed": 4476,
+  "original_instructions_replaced": false,
+  "external_asset_call_executed": false,
+  "retail_payload_written": false,
+  "resumed_gear_runtime_implemented": false,
+  "hardware_or_full_visual_parity": "UNKNOWN"
+}

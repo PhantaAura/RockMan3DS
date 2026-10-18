@@ -1,0 +1,70 @@
+{
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/azahar-01415-visible-r4/captures/player-grounded-top-bottom.png",
+      "sha256": "2ee64ea3bc7c8d8eed8aab258d5250c40f11a4bbd87e245ca04cb460e6cc428f",
+      "device": "Azahar2126.0 Old-model HLE",
+      "build": "0.0.14.15 install-r4",
+      "binary_sha256": "b14b890e8892b7df62a950391f895c7ca57b86bb39ea66ed165119747e2ec5c3",
+      "scene": "r4 area1 supported diagnostic grounded position352,-1,-8128 heading0; imported player visible; original top HUD still unbound",
+      "original_capture": true,
+      "hardware": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/azahar-01415-capture-r4/captures/grounded-scene-top-bottom.png",
+      "sha256": "e88ba24e1118d6a1bb21135da59e172129a5b742a3e15f14f3d96630a166d35a",
+      "device": "Azahar2126.0 Old-model HLE",
+      "build": "0.0.14.15 install-r4",
+      "binary_sha256": "b14b890e8892b7df62a950391f895c7ca57b86bb39ea66ed165119747e2ec5c3",
+      "scene": "r4 same diagnostic position heading2048; terrain occludes player; failure evidence",
+      "original_capture": true,
+      "hardware": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/azahar-01415-gameplay-r4/captures/after-diagnostic-transition.png",
+      "sha256": "48d9f1671d902279424a97e60a380b09edbdcfb831255cf4a6588dca6c131193",
+      "device": "Azahar2126.0 Old-model HLE",
+      "build": "0.0.14.15 install-r4",
+      "binary_sha256": "b14b890e8892b7df62a950391f895c7ca57b86bb39ea66ed165119747e2ec5c3",
+      "scene": "r4 area2 after SELECT diagnostic switch; bottom map; camera occlusion persists",
+      "original_capture": true,
+      "hardware": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/azahar-01415-animation-r6/captures/native-request0-top-bottom.png",
+      "sha256": "29c143a402f872caf5c2bf97f967c044a66b6af0a287752643dc6a460b5be171",
+      "device": "Azahar2126.0 Old-model HLE",
+      "build": "0.0.14.15 install-r6",
+      "binary_sha256": "eba03c7de31ee4e2b8294457bc325e0a12370dcb38ad4406f1088880783a56cb",
+      "scene": "r6 area1 diagnostic enemynear: imported player visible and both screens; actual actor cache initialized but no clear enemy closeup",
+      "original_capture": true,
+      "hardware": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/azahar-01415-animation-r6/captures/native-after-diagnostic-transition.png",
+      "sha256": "1f91f4fd0ee91fd77f683e362365f199aab7a7c2becd2957ab1e9285fa0b829e",
+      "device": "Azahar2126.0 Old-model HLE",
+      "build": "0.0.14.15 install-r6",
+      "binary_sha256": "eba03c7de31ee4e2b8294457bc325e0a12370dcb38ad4406f1088880783a56cb",
+      "scene": "r6 area2 after SELECT; camera occlusion persists; failure evidence",
+      "original_capture": true,
+      "hardware": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/ps1-contact-reference/captures/user-tutorial-original.png",
+      "sha256": "47a91a4e0ffe0b6562cd337e9c3d1fb5c07971aede30850dd22e43f980ec8f20",
+      "device": "PCSX-Redux f78f8ef8 interpreter/OpenBIOS0b0359a7",
+      "build": "Original owner PS1 reference, NOT native3DS",
+      "scene": "User-started original tutorial reference; no native parity claim",
+      "original_capture": true,
+      "hardware": false
+    }
+  ],
+  "policy": "Original local PNGs excluded from code-only source ZIP; metadata only",
+  "missing": [
+    "No physicalOld3DS capture",
+    "No original PS1 top HUD implementation",
+    "No clear imported enemy close-up",
+    "No airborne still capture yet"
+  ]
+}

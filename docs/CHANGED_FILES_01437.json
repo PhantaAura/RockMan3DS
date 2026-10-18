@@ -1,0 +1,11 @@
+{
+  "baseline": "0.0.14.36",
+  "version": "0.0.14.37",
+  "code": [
+    "platform/3ds/source/main.cpp",
+    "platform/3ds/source/checkpoint_version.h",
+    "platform/3ds/Makefile"
+  ],
+  "scope": "Read-only first held RNG context stamp before cleanup/tail; live actor identity, rawfixed/halfword/state knowledge, masks and occupiedslots. No gameplaysemantics modified.",
+  "tests": "Inherited131PASS; actualnative-r2compilePASS; emulatorpending"
+}

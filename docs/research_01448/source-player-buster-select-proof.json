@@ -1,0 +1,164 @@
+{
+  "schema": "mml-source-player-buster-select-01448/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "source_function": "0x80034EB8",
+  "cases": [
+    {
+      "points": [
+        [
+          0,
+          0,
+          500
+        ]
+      ],
+      "shapes": [
+        0
+      ],
+      "flags": [
+        0
+      ],
+      "has_target": 1,
+      "selected": 0,
+      "lane": 0,
+      "steps": 288,
+      "gte_commands": 2
+    },
+    {
+      "points": [
+        [
+          20,
+          0,
+          500
+        ],
+        [
+          0,
+          0,
+          500
+        ]
+      ],
+      "shapes": [
+        0,
+        0
+      ],
+      "flags": [
+        0,
+        0
+      ],
+      "has_target": 1,
+      "selected": 1,
+      "lane": 0,
+      "steps": 447,
+      "gte_commands": 3
+    },
+    {
+      "points": [
+        [
+          100,
+          0,
+          500
+        ]
+      ],
+      "shapes": [
+        0
+      ],
+      "flags": [
+        0
+      ],
+      "has_target": 0,
+      "selected": -1,
+      "lane": 0,
+      "steps": 230,
+      "gte_commands": 2
+    },
+    {
+      "points": [
+        [
+          0,
+          0,
+          120
+        ]
+      ],
+      "shapes": [
+        0
+      ],
+      "flags": [
+        0
+      ],
+      "has_target": 0,
+      "selected": -1,
+      "lane": 0,
+      "steps": 194,
+      "gte_commands": 2
+    },
+    {
+      "points": [
+        [
+          0,
+          0,
+          500
+        ]
+      ],
+      "shapes": [
+        0
+      ],
+      "flags": [
+        128
+      ],
+      "has_target": 0,
+      "selected": -1,
+      "lane": 0,
+      "steps": 176,
+      "gte_commands": 1
+    },
+    {
+      "points": [
+        [
+          -10,
+          0,
+          500
+        ],
+        [
+          10,
+          0,
+          500
+        ]
+      ],
+      "shapes": [
+        512,
+        512
+      ],
+      "flags": [
+        0,
+        0
+      ],
+      "has_target": 1,
+      "selected": 1,
+      "lane": 0,
+      "steps": 313,
+      "gte_commands": 2
+    }
+  ],
+  "instructions_executed": 1648,
+  "gte_commands": 12,
+  "return_only_hooks": [
+    "0x80035508"
+  ],
+  "argument_capture_hooks": [
+    "0x80035724"
+  ],
+  "source_instructions_modified": false,
+  "retail_payload_exported": false,
+  "proved": [
+    "bit20 broad window admission",
+    "closest-to-screen-center selection",
+    "depth gate",
+    "target flag80 rejection",
+    "composite row advancement"
+  ],
+  "limits": [
+    "Synthetic player/proxy/GTE contexts, not a live retail trace.",
+    "The private owner table at8008994C is neither copied nor exported; bit10 authored-window parity remains pending.",
+    "Projectile callback, cadence, motion, damage and encounter completion remain outside this probe."
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "schema": "negative-default-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "container_sha256": "3f46c6bac9261ee1def37bddd8a91377343e5ee1235391b2ed3a18f2cbcc8dc0",
+  "selection_probe": {
+    "method": "Bounded original selection blocks, every negative 16-bit word, synthetic special pointer table, branch delay slots honored",
+    "status": "SOURCE_BACKED_PARTIAL",
+    "cases_passed": 65536,
+    "blocks": [
+      {
+        "start": "0x800219bc",
+        "end_exclusive": "0x800219ec",
+        "block_sha256": "da4a4a797a0444778275403e26f9891079c7151695d0eb46ac79c6764fbbb001",
+        "negative_word_cases_passed": 32768
+      },
+      {
+        "start": "0x80022270",
+        "end_exclusive": "0x800222a0",
+        "block_sha256": "04b9f5ebf33b36821c758e30fdb6e01ed0eb1c2edd33c1c701a9884c621a6351",
+        "negative_word_cases_passed": 32768
+      }
+    ],
+    "limitation": "Descriptor selection only; synthetic special pointers do not establish actual table population or retail parity."
+  },
+  "measurements": {
+    "resources": {
+      "IDX": {
+        "sha256": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e",
+        "bytes": 11940,
+        "load_address": "0x8015c000"
+      },
+      "MDT": {
+        "sha256": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e",
+        "bytes": 8554,
+        "load_address": "0x80164000"
+      },
+      "STG": {
+        "sha256": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+        "bytes": 61296,
+        "load_address": "0x80194000"
+      },
+      "HED": {
+        "sha256": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66",
+        "bytes": 936,
+        "load_address": "0x8013a000"
+      }
+    },
+    "default_descriptor_address": "0x80194000",
+    "default_descriptor_sha256": "9c445bd3eb18d87ad563f5ef164e8ecc9aba24510fc27e2dd34c4c0db7a45623",
+    "default_descriptor_in_inherited_HED_IDX_references": false,
+    "default_render_slots": [
+      {
+        "descriptor_slot": 0,
+        "record_address": "0x801955f0",
+        "record_sha256": "e8cdaaada9b4e52881c07a73f1661ddfc85f52259d652aed59900a496266f920",
+        "material_count": 1,
+        "stream_count": 1,
+        "primitive_count": 8
+      },
+      {
+        "descriptor_slot": 1,
+        "record_address": "0x80195600",
+        "record_sha256": "6b66fd757f1924cca0b23ebf1e810d2b82ea667f81c7cdff24c5a9a45144b8b2",
+        "material_count": 1,
+        "stream_count": 1,
+        "primitive_count": 1
+      },
+      {
+        "descriptor_slot": 2,
+        "record_address": "0x80195600",
+        "record_sha256": "6b66fd757f1924cca0b23ebf1e810d2b82ea667f81c7cdff24c5a9a45144b8b2",
+        "material_count": 1,
+        "stream_count": 1,
+        "primitive_count": 1
+      },
+      {
+        "descriptor_slot": 3,
+        "record_address": "0x801955f0",
+        "record_sha256": "e8cdaaada9b4e52881c07a73f1661ddfc85f52259d652aed59900a496266f920",
+        "material_count": 1,
+        "stream_count": 1,
+        "primitive_count": 8
+      },
+      {
+        "descriptor_slot": 4,
+        "record_address": "0x80195600",
+        "record_sha256": "6b66fd757f1924cca0b23ebf1e810d2b82ea667f81c7cdff24c5a9a45144b8b2",
+        "material_count": 1,
+        "stream_count": 1,
+        "primitive_count": 1
+      },
+      {
+        "descriptor_slot": 5,
+        "record_address": "0x80195600",
+        "record_sha256": "6b66fd757f1924cca0b23ebf1e810d2b82ea667f81c7cdff24c5a9a45144b8b2",
+        "material_count": 1,
+        "stream_count": 1,
+        "primitive_count": 1
+      }
+    ],
+    "areas": [
+      {
+        "neutral_area": "AREA_0",
+        "negative_cells": 8,
+        "default_negative_cells": 8,
+        "special_negative_cells": 0,
+        "quarter_turn_counts": {
+          "0": 3,
+          "2": 5
+        }
+      },
+      {
+        "neutral_area": "AREA_1",
+        "negative_cells": 71,
+        "default_negative_cells": 71,
+        "special_negative_cells": 0,
+        "quarter_turn_counts": {
+          "0": 54,
+          "3": 17
+        }
+      },
+      {
+        "neutral_area": "AREA_2",
+        "negative_cells": 14,
+        "default_negative_cells": 14,
+        "special_negative_cells": 0,
+        "quarter_turn_counts": {
+          "0": 11,
+          "1": 3
+        }
+      },
+      {
+        "neutral_area": "AREA_3",
+        "negative_cells": 16,
+        "default_negative_cells": 16,
+        "special_negative_cells": 0,
+        "quarter_turn_counts": {
+          "0": 16
+        }
+      },
+      {
+        "neutral_area": "AREA_4",
+        "negative_cells": 0,
+        "default_negative_cells": 0,
+        "special_negative_cells": 0,
+        "quarter_turn_counts": {}
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "DEFAULT_NEGATIVE_STG_BINDING",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "meaning": "For negative cells with packed bit7 clear, both inspected source paths select the STG load base directly. This descriptor is absent from HED/IDX reference collection. Slots0..2 select its primary near/mid/far render records."
+    },
+    {
+      "id": "DEFAULT_STG_OWNER_DATA_ORIGIN",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "meaning": "The supplied container type0 STG resource header loads its payload at0x80194000. The first48 payload bytes form the selected descriptor, and all its render pointers and streams are within that same supplied STG payload. No executable geometry is substituted."
+    }
+  ],
+  "unknowns": [
+    "Actual special bit7 pointer-table population and lifetime",
+    "Full retail visibility, alpha and subdivision behavior",
+    "Physical Old3DS rendering parity"
+  ],
+  "payload_policy": "Only hashes, addresses, semantics and aggregate counts; no game byte payloads or disassembly."
+}

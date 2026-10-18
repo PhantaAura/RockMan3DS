@@ -1,0 +1,96 @@
+# source_fade_callback,frame=3075,status=11,committed=1,ack=0,running=1,iterations=27,terminated=0,presentation=11,grayscale=128,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_command_service,frame=3076,status=2,committed=1,popped=0,phase=0,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=34,transport_receipts=2,source_request=00000000,missing=00000000,native_transport=NATIVE_XA_PLAYBACK_CANDIDATE
+# source_fade_callback,frame=3076,status=11,committed=1,ack=0,running=1,iterations=28,terminated=0,presentation=11,grayscale=144,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_command_service,frame=3077,status=10,committed=0,popped=0,phase=0,pending_CD=1,param_count=0,params=0:0:0:0,CD_status_raw=34,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=NATIVE_XA_PLAYBACK_CANDIDATE
+# source_fade_callback,frame=3077,status=11,committed=1,ack=0,running=1,iterations=29,terminated=0,presentation=11,grayscale=160,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_fade_callback,frame=3077,status=11,committed=1,ack=0,running=1,iterations=30,terminated=0,presentation=11,grayscale=176,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_fade_callback,frame=3077,status=11,committed=1,ack=0,running=1,iterations=31,terminated=0,presentation=11,grayscale=192,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_fade_callback,frame=3078,status=11,committed=1,ack=0,running=1,iterations=32,terminated=0,presentation=11,grayscale=208,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_command_service,frame=3079,status=2,committed=1,popped=0,phase=0,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=34,transport_receipts=2,source_request=00000000,missing=00000000,native_transport=NATIVE_XA_PLAYBACK_CANDIDATE
+# source_fade_callback,frame=3079,status=11,committed=1,ack=0,running=1,iterations=33,terminated=0,presentation=11,grayscale=224,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_fade_callback,frame=3079,status=11,committed=1,ack=0,running=1,iterations=34,terminated=0,presentation=11,grayscale=240,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_fade_callback,frame=3079,status=11,committed=1,ack=0,running=1,iterations=35,terminated=0,presentation=11,grayscale=255,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_command_service,frame=3080,status=10,committed=0,popped=0,phase=0,pending_CD=1,param_count=0,params=0:0:0:0,CD_status_raw=34,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=NATIVE_XA_PLAYBACK_CANDIDATE
+# source_fade_callback,frame=3080,status=11,committed=1,ack=0,running=1,iterations=36,terminated=0,presentation=11,grayscale=255,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_fade_callback,frame=3081,status=11,committed=1,ack=0,running=1,iterations=37,terminated=0,presentation=11,grayscale=255,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_command_service,frame=3082,status=2,committed=1,popped=0,phase=0,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=34,transport_receipts=2,source_request=00000000,missing=00000000,native_transport=NATIVE_XA_PLAYBACK_CANDIDATE
+# source_fade_callback,frame=3082,status=12,committed=1,ack=0,running=0,iterations=38,terminated=1,presentation=11,grayscale=255,native_scheduler_pass=true,cadence=SOURCE_BACKED_PARTIAL
+# source_head_uv_handoff,frame=3083,reset=1,admitted=1,records=10,generation=1,next_original_tick=true,scene_complete=false
+# source_event,frame=3083,area=0,status=12,committed=1,event=1,phase=7,consumer=8002d004
+# source_scene_callback,frame=3083,status=42,committed=1,callback=80100ecc,awaiting_camera=0,awaiting_timeline=0,awaiting_caller=1,next_consumer=8002d004,scene_complete=false
+# source_scene_camera,frame=3083,fog_controls_known=1,dqa=fffffcab,dqb=01400000,source_shift_known=1,source_shift=0,renderer_binding_record=source_scene_view
+# source_scene_progress,frame=3083,event_clock_known=1,event_clock=55,timeline_known=1,timeline=8011b368,counter_owner_known=1,counter=7147,needs_counter=0,sparse_sample=true
+# source_command_service,frame=3083,status=10,committed=0,popped=0,phase=0,pending_CD=1,param_count=0,params=0:0:0:0,CD_status_raw=34,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=NATIVE_XA_PLAYBACK_CANDIDATE
+# source_event,frame=3084,area=0,status=0,committed=1,event=1,phase=7,consumer=00000000
+# source_scene_callback,frame=3084,status=29,committed=1,callback=80100ecc,awaiting_camera=0,awaiting_timeline=0,awaiting_caller=0,next_consumer=00000000,scene_complete=false
+# source_scene_camera,frame=3084,fog_controls_known=1,dqa=fffffcab,dqb=01400000,source_shift_known=1,source_shift=0,renderer_binding_record=source_scene_view
+# source_scene_progress,frame=3084,event_clock_known=1,event_clock=55,timeline_known=1,timeline=8011b368,counter_owner_known=1,counter=7148,needs_counter=0,sparse_sample=true
+3085,0,0,0,0,0,-3190,2048,0,14612,17888,111,14453,18,44,2318,59520,4980736,2191120,139504,26622464,5523456,0,1,0,30,0,-1,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0,0
+# source_native_mix_prefix,frame=3085,applied=254,count=254,digest=48622e70bcb474db,pause_allowed=1
+# source_native_pause,frame=3085,requested=true,backend_paused=1,prefix_count=254,receipt_deferred_until_observation=true
+# source_command_service,frame=3087,status=0,committed=1,popped=1,phase=0,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=0,transport_receipts=3,source_request=00000000,missing=00000000,native_transport=NATIVE_XA_PLAYBACK_CANDIDATE
+# area_event=source_transition_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=2191120,linear_free=26622464,vram_free=5523456
+# source_xa_unload,linear=0,index=0,source_handoff=1,reason=committed_area_replacement,retail_overlap_verified=false
+# area_event=outgoing_scene_released,area=1,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1886568,linear_free=27937280,vram_free=5523456
+# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# geometry_event,area=1,decode=IDX_AND_GRID_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=597,min_y=-768,max_y=0
+# area_event=source_transition_after,area=1,elapsed_us=1797689,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1886632,linear_free=27937280,vram_free=5523456
+3087,1,0,0,2822,-1,-4833,0,0,1814020,16829,3,9082,7006,14,1680,71640,3670016,1886632,1357400,27937280,5523456,0,1,0,30,0,-1,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0,0
+# source_event,frame=3088,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# area_event=conditional_spawn,area=1,elapsed_us=357,package_bytes=0,decoded_estimate=0,load_peak_estimate=3,malloc_live=1886632,linear_free=27937280,vram_free=5523456
+3088,1,0,0,2822,-1,-4833,0,0,10720,23080,605,10083,18,14,1680,71640,3670016,1886632,1357400,27937280,5523456,0,1,0,30,0,1,1,0,0,1,-1,566,-1,0,4,2,2,0,1,0,0,0
+# actor_event,area=1,instances=0,unique_resources=0,decoded_element_bytes=0,source_poses=0,floor_bound=0,initializer_selected_poses=0,texture=UNKNOWN,progression_pose_selection=UNKNOWN,placement=CANDIDATE
+# area_event=conditional_spawn,area=1,elapsed_us=623,package_bytes=0,decoded_estimate=0,load_peak_estimate=4,malloc_live=1888520,linear_free=27937280,vram_free=5523456
+# source_pad_decoder,frame=3120,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=3120,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=3120,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=3120,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=3120,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=3120,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=3120,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+3120,1,0,0,2822,-1,-4833,0,0,17573,16150,357,17184,18,14,1680,71640,3670016,1888520,1355512,27937280,5523456,0,1,0,0,0,1,1,0,0,1,-1,566,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=3120,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+3120,1,0,0,2822,-1,-4833,0,0,16214,17961,3,16179,18,14,1680,71640,3670016,1888520,1355512,27937280,5523456,0,1,0,0,0,1,1,0,0,1,-1,566,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=3180,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=3180,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=3180,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=3180,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=3180,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=3180,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=3180,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=3240,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=3240,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=3240,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=3240,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=3240,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=3240,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=3240,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+3240,1,0,0,2822,-1,-4833,0,0,16568,17156,357,16180,18,14,1680,71640,3670016,1888520,1355512,27937280,5523456,0,1,0,15,0,1,1,0,0,1,-1,566,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=3240,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+3240,1,0,0,2822,-1,-4833,0,0,16214,16957,3,16179,18,14,1680,71640,3670016,1888520,1355512,27937280,5523456,0,1,0,15,0,1,1,0,0,1,-1,566,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=3300,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=3300,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=3300,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=3300,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=3300,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=3300,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=3300,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=3360,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=3360,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=3360,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=3360,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# gameplay_clock,updates=3360,pending=0,discarded_us=0,nominal_hz=30,hardware_rate=HARDWARE_PENDING
+# top_gpu_submission,frame=3360,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=3360,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+3360,1,0,0,2822,-1,-4833,0,0,16568,17156,356,16180,18,14,1680,71640,3670016,1888520,1355512,27937280,5523456,0,1,0,30,0,1,1,0,0,1,-1,566,-1,0,4,2,2,0,1,0,0,0
+# top_gpu_submission,frame=3360,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+3360,1,0,0,2822,-1,-4833,0,0,16215,16957,3,16179,18,14,1680,71640,3670016,1888520,1355512,27937280,5523456,0,1,0,30,0,1,1,0,0,1,-1,566,-1,0,4,2,2,0,1,0,0,0
+# source_pad_decoder,frame=3420,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false
+# source_loop_replay,frame=3420,status=2,admitted=0,counter_known=0,counter=0,recorded_boundary=true,retail_chronology=false
+# source_event,frame=3420,area=1,status=0,committed=0,event=1,phase=7,consumer=00000000
+# source_command_service,frame=3420,status=4,committed=0,popped=0,phase=-1,pending_CD=0,param_count=0,params=0:0:0:0,CD_status_raw=-1,transport_receipts=0,source_request=00000000,missing=00000000,native_transport=UNBOUND
+# top_gpu_submission,frame=3420,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_xa_playback,frame=3420,ready=0,playing=0,started=0,failed=0,played_frames=0,sector=0,linear=0,index=0,underruns=0,max_read_us=2375,dropped_dsp_frames=0,position_basis=COMPLETED_BUFFERS,retail_parity=false,reason=disabled
+# top_gpu_submission,frame=3420,command_fraction=0.28809,command_capacity_bytes=262144,renderer=8,source=completed_submission,physical_parity=false
+# source_pad_decoder,frame=3480,status=0,committed=1,predicate_pressed=0,decoder=80012298,native_digital_adapter=CANDIDATE,scratch_seed=false

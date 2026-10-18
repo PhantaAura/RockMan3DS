@@ -1,0 +1,17 @@
+{
+  "command": [
+    "make",
+    "-n",
+    "-f",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/platform/3ds/Makefile",
+    "mml_renderer_recovery.o",
+    "DEVKITARM=/opt/devkitpro/devkitARM",
+    "DEVKITPRO=/opt/devkitpro",
+    "VPATH=/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/src/p2",
+    "INCLUDE=-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/include/legends3ds/p2"
+  ],
+  "exit_code": 0,
+  "warning_guard_in_compile_command": true,
+  "dry_run_only": true,
+  "output": "echo mml_renderer_recovery.c\ntrue add arm-none-eabi-gcc \"  -g -Wall -Wextra -O2 -mword-relocations -ffunction-sections -fdata-sections -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft -I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/include/legends3ds/p2 -D__3DS__ -Werror -c /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/src/p2/mml_renderer_recovery.c -o mml_renderer_recovery.o\" /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/src/p2/mml_renderer_recovery.c\narm-none-eabi-gcc -MMD -MP -MF /mml_renderer_recovery.d   -g -Wall -Wextra -O2 -mword-relocations -ffunction-sections -fdata-sections -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft -I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/include/legends3ds/p2 -D__3DS__ -Werror -c /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.13_ObjectResources/src/p2/mml_renderer_recovery.c -o mml_renderer_recovery.o \n"
+}

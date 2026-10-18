@@ -1,0 +1,186 @@
+{
+  "version": "0.0.14.38",
+  "baseline": "0.0.14.37",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified"
+    },
+    {
+      "path": "README.md",
+      "change": "modified"
+    },
+    {
+      "path": "RESUME_01438.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/CHANGED_FILES_01438.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/FIRST_RNG_BOUNDARY.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/SCENE_PROP_INTERACTIONS.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/SOURCE_EFFECT2.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/SOURCE_EFFECTS34.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/SOURCE_EFFECT_DISPATCH.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/WORLD_COMES_ALIVE_01438.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/dispatch-caller-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/source-effect-dispatch-validation.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/source-effect2-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/source-effects34-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/source_effect2_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/source_effect34_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01438/source_effect_dispatch_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01437/emulator-first-boundary.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01438/build-result.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01438/compiled-source-manifest.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01438/compiled-source-verification.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01438/emulator-observation.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01438/host-tests.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01438/native-build.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01438/pack-validation.json",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/runtime_session.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_effect2.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/source_effect34.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/source_effect_dispatch.h",
+      "change": "added"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/checkpoint_version.h",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/runtime_session.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/source_effect2.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/source_effect34.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/source_effect_dispatch.cpp",
+      "change": "added"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified"
+    },
+    {
+      "path": "tests/fixtures/source_effect2_01438/callback-authored.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_source_effect2.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_source_effect34.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_source_effect_dispatch.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tools/build_hardware_test.py",
+      "change": "modified"
+    },
+    {
+      "path": "tools/cook_source_effect_dispatch.py",
+      "change": "added"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "class20-03-native-validation/1",
+  "build": "host-baseline targets test_actor_resources and l3probe_actor_class20_03 passed",
+  "focused_ctest": {
+    "name": "actor_resources",
+    "passed": true,
+    "exit_code": 0
+  },
+  "source_evidence_probe": {
+    "passed": true,
+    "hp_profiles": 2,
+    "hit_consumer_cases": 5,
+    "source_instances": 3,
+    "floor_rectangle_cases": 1944,
+    "shared_slope_interval_cases": 240,
+    "owner_map_floor_queries": 3,
+    "owner_map_floor_queries_with_height": 0
+  },
+  "runtime_scope": {
+    "profile": "class20/03 parameter0/128/160 dispatch0",
+    "initial_pose_auto_bound": true,
+    "hp_requires_explicit_inputs": true,
+    "floor": "Verified explicit initializer bounds; rectangle, negative-cell and shared codes8..11 floor intervals; missing contact data remains Unsupported",
+    "shade": "UNKNOWN",
+    "full_combat_or_encounter_completion": false
+  },
+  "file_sha256": {
+    "include/legends3ds/actor_runtime.h": "23db885a3e783445883ef65cc652737d486cac1ed4d5a919091c2ec2d6cca7b8",
+    "src/world/actor_runtime.cpp": "9f582912dfe5547ae06dd9126416db92ceb3ea9053f95a2104e7bb4711eb65b3",
+    "tests/test_actor_resources.cpp": "0727a9e66e5ee6d2b090eeee8071dd64b873dbf52049f29023a7d137c7e1cc9a",
+    "tools/l3probe_actor_class20_03.cpp": "c827b4b7038fd7758828b7170f4c527a0d9c2e5bfb7780d38692447737c8acf0",
+    "docs/research_01415/tutorial_actor_identity_probe.py": "79bffefc76ffbe393535c007f85de2c024477951a570ae5cca7a705a4571f0e3",
+    "docs/research_01415/class20_03_evidence_probe.py": "27acd48007658a0379072c89d8e2a5c1ee405f4e79391907ae36f697672b3ed9"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "PHYSICS_1TO1": false,
+  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.41_Source_r2.zip",
+  "baseline_sha256": "79561eb8ba1f71c1d34e35c8f6837a0315288c0f8a1300b1df023576e9b9bf4f",
+  "blockers": [
+    "Prior01441physical RGB/cyan pass; Xworld stayscyan. User has nottested01441r2 or01442. Initialphysicalcause UNKNOWN; GPU resource lifetime hazardfixedinsource, physicalacceptancepending.",
+    "Whole-world RNG chronology, genuine player Buster spawn/hit ownership, complete enemy damage/reaction/defeat and natural event\u2192message\u2192transition progression remain incomplete.",
+    "Shadow request producer is connected; shadow rasterization is not implemented. Cold/fresh owner admission and diagnostic RNG/mask are not warm retail chronology.",
+    "Area1 developer spawn camera clipping and intermittent emulator bottom presentation remain unverified risks."
+  ],
+  "branch": null,
+  "commit": null,
+  "compiled_source_hashes_match": true,
+  "created_utc": "2026-10-15T12:35:48.829209+00:00",
+  "current_emulator_validation": "Final binary exercised in Old-model Azahar2126.0;see validation_01442/emulator-observation.json",
+  "emulator": {
+    "evidence": "docs/validation_01442/emulator-observation.json",
+    "captures": [
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.30.02.171.png",
+        "sha256": "2c08a8cd33d07a56eb00919c0b622b506ccb09ce1bf3ce7f798abcc3a35747ca",
+        "scene": "CPU RGB diagnostic",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.30.07.43.png",
+        "sha256": "2d53f28b9d7e02518e19bd020ad435b1d1c2fb838ebed194461adc732fb26375",
+        "scene": "GPU cyan clear-only diagnostic",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.30.45.77.png",
+        "sha256": "376caa405f677dd687c828e166a6a6b1340c1fa54cda8f5ef94286ed27dc4d7b",
+        "scene": "X:0143 safe renderer, player/terrain/bottom map",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.31.56.952.png",
+        "sha256": "63784daa4aa950c7e637f75e0456132238f2fa668b3a2ca23b8479575e1f19eb",
+        "scene": "A:enhanced textured player/terrain, area0",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.32.36.346.png",
+        "sha256": "857ac1b2ec2216032c11a2b0d970c4c9d6836b30fe9188d68e3861af301e23b1",
+        "scene": "Movement/jump/projectile exercise in area0",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01442/azahar-01442-final/captures/_15.10.26_08.33.04.884.png",
+        "sha256": "e0c4ac66956c4e9c672cc7a9018a4c09aa3adde2556cd301cf7c61fb616aef02",
+        "scene": "Diagnostic area1 replacement, camera clipping/occlusion possible",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      }
+    ]
+  },
+  "evidence": [
+    "docs/validation_01442/FINAL_REPORT.md",
+    "docs/validation_01442/build-result.json",
+    "docs/validation_01442/emulator-observation.json",
+    "docs/research_01442/actor-tail-evidence.json"
+  ],
+  "git_repository": false,
+  "hardware_tested": false,
+  "host_tests": "139/139 PASS;final3.17s",
+  "native_build": "PASS",
+  "project_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.41_WorldComesAlive",
+  "source_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.42_Source_r1.zip",
+  "source_release_excludes_retail_payloads": true,
+  "title": "World Comes Alive \u2014 GPU ownership and actor contact continuation",
+  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hard float",
+  "usage_reset_used": false,
+  "version": "0.0.14.42",
+  "world_comes_alive_finished": false,
+  "recovery_checkpoint": {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.42_Recovery_20261015_122855_Source.zip",
+    "sha256": "151bd6d960f88617f01aedcaffc52c04751bcdb7d5614ab84f48e37aa9404564"
+  },
+  "evidence_revision": "01442",
+  "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01442_WorldComesAlive.3dsx",
+  "native_binary_sha256": "fd10ea30d61bbea16f5257b896e9ca0d4a810fd6bbb9822198be9b8b69f6af91",
+  "sd_install_zip": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01442_WorldComesAlive_SD.zip",
+  "sd_install_sha256": "120ea1ee5e3be5d78c994ccda4d996d360cfb44ba43f29ca206352fdc6975cfc",
+  "documentation_revision": "r1; native binary unchanged"
+}

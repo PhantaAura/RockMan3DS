@@ -1,0 +1,18 @@
+{
+  "schema": "mml-child-contact-consumers/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "contact_cases": 768,
+  "contact_nonzero_source_results": 264,
+  "registry_cases": 36,
+  "shadow_cases": 288,
+  "original_instructions": 730006,
+  "limits": [
+    "Authored geometry executes original8004B414/8004B6AC/8010FDD4/reflection/audio writes. Native unknown geometry remains held.",
+    "Effect allocation premise authored; original effect131 primitive copy executes; its later callback not proved.",
+    "Registry append only; pair contact80051BE4 not covered. Native128 capacity is an explicit safety budget.",
+    "Shadow scalar floor receipt authored; original recordpack executes. Neither shadow rasterizer nor GTE/fog proved.",
+    "No live retail chronology or hardware parity claim."
+  ]
+}

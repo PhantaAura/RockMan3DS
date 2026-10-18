@@ -1,0 +1,85 @@
+{
+  "areas": {
+    "samples": 70,
+    "areas": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "unique_positions": 5,
+    "unique_headings": 5,
+    "max_projectiles": 0,
+    "owned_linear_range": [
+      16320,
+      363360
+    ],
+    "owned_texture_range": [
+      1048576,
+      3670016
+    ],
+    "malloc_live_range": [
+      632464,
+      1293104
+    ],
+    "sampled_frame_us_range": [
+      8686,
+      927157
+    ],
+    "warning": "sparse emulator timings include synchronization; no hardware acceptance or worstcase claim"
+  },
+  "area0": {
+    "samples": 90,
+    "areas": [
+      0
+    ],
+    "unique_positions": 1,
+    "unique_headings": 1,
+    "max_projectiles": 0,
+    "owned_linear_range": [
+      59520,
+      59520
+    ],
+    "owned_texture_range": [
+      2883584,
+      2883584
+    ],
+    "malloc_live_range": [
+      1088216,
+      1088216
+    ],
+    "sampled_frame_us_range": [
+      8872,
+      83464
+    ],
+    "warning": "sparse emulator timings include synchronization; no hardware acceptance or worstcase claim"
+  },
+  "controls": {
+    "samples": 62,
+    "areas": [
+      0,
+      1
+    ],
+    "unique_positions": 12,
+    "unique_headings": 7,
+    "max_projectiles": 1,
+    "owned_linear_range": [
+      59520,
+      71640
+    ],
+    "owned_texture_range": [
+      2883584,
+      3670016
+    ],
+    "malloc_live_range": [
+      1088216,
+      1290216
+    ],
+    "sampled_frame_us_range": [
+      8874,
+      902585
+    ],
+    "warning": "sparse emulator timings include synchronization; no hardware acceptance or worstcase claim"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "schema": "mml01419-emulator-observation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "emulator": "Azahar2126.0",
+  "build": "0.0.14.19",
+  "binary_sha256": "00575a2b63f86585cebfa46fc65c5c99ecc9d6f7df2187050ad6436916739cf0",
+  "old_model": true,
+  "cpu_clock_percentage": 100,
+  "resolution_factor": 1,
+  "hardware_tested": false,
+  "retail_parity": false,
+  "replay_frames": 2185,
+  "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01419/azahar-01419-r2/sdmc/3ds/Legends3DS/hardware_01419_4000086009955.csv",
+  "logged_render_rows": 44,
+  "logged_actor_rows": 3,
+  "sampled_actor_context": [
+    "# actor_source_context,frame=600,source_index=16,detector_status=1,preparation_status=6,detector_phase=1,detector_countdown=30,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=0,last_audio_queued=0,last_audio_drops=0,audio_playback=false",
+    "# actor_source_context,frame=600,source_index=17,detector_status=1,preparation_status=6,detector_phase=1,detector_countdown=28,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=0,last_audio_queued=0,last_audio_drops=0,audio_playback=false",
+    "# actor_source_context,frame=600,source_index=18,detector_status=1,preparation_status=6,detector_phase=1,detector_countdown=28,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=0,last_audio_queued=0,last_audio_drops=0,audio_playback=false"
+  ],
+  "area_events": [
+    "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35792,linear_free=31941632,vram_free=0",
+    "# area_event=package_loaded,area=0,elapsed_us=1387241,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=748240,linear_free=31941632,vram_free=0",
+    "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1683184,linear_free=28735744,vram_free=5523456",
+    "# area_event=transition_after,area=1,elapsed_us=2310097,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1886840,linear_free=27412992,vram_free=5523456",
+    "# area_event=conditional_spawn,area=1,elapsed_us=29857,package_bytes=0,decoded_estimate=0,load_peak_estimate=3,malloc_live=1886840,linear_free=27412992,vram_free=5523456",
+    "# area_event=conditional_spawn,area=1,elapsed_us=37297,package_bytes=46308,decoded_estimate=3,load_peak_estimate=4,malloc_live=1937384,linear_free=27412992,vram_free=5523456"
+  ],
+  "memory_region_contract": [
+    "# build=0.0.14.19,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66482176,linear_reserved=33554432,stack_reserved=262144"
+  ],
+  "telemetry_ranges": {
+    "update_us": {
+      "min": 2,
+      "max": 137,
+      "median": 14.5
+    },
+    "render_us": {
+      "min": 10351,
+      "max": 16678,
+      "median": 16624.0
+    },
+    "draw_calls": {
+      "min": 12,
+      "max": 18,
+      "median": 12.0
+    },
+    "triangles": {
+      "min": 1508,
+      "max": 2184,
+      "median": 1508.0
+    },
+    "owned_linear": {
+      "min": 59520,
+      "max": 71640,
+      "median": 59520.0
+    },
+    "owned_texture": {
+      "min": 2883584,
+      "max": 4194304,
+      "median": 2883584.0
+    },
+    "malloc_live": {
+      "min": 1683136,
+      "max": 1937384,
+      "median": 1683136.0
+    },
+    "linear_free": {
+      "min": 27412992,
+      "max": 28735744,
+      "median": 28735744.0
+    },
+    "vram_free": {
+      "min": 5523456,
+      "max": 5523456,
+      "median": 5523456.0
+    }
+  },
+  "performance_limit": "Emulated values only; replay GUI included turbo/paused states. No physical frame-time guarantee. 96MiB application memory mode requires device validation.",
+  "observed_blocker": "Detector phase1 prepared status6 SegmentUnsupported; original unsupported geometry held. Full enemy encounter not exercised.",
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01419/azahar-01419-r2/captures/Azahar2126_OldModel_01419_area1_replay_end_obstructed.png",
+      "sha256": "6e202fb225aa2ff7986dfe482c7a276ddc165a58271e1661a989ffdf5a14e354",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.19",
+      "scene": "area1 replay end obstructed",
+      "original_capture": true
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261006-worldalive-01419/azahar-01419-r2/captures/Azahar2126_OldModel_01419_replay_gameplay.png",
+      "sha256": "ea80273a40db693d5216bede7ac08fa104d3aaad59bf1a76b9ab52198bec2d4e",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.19",
+      "scene": "area0 gameplay, player and bottom companion visible",
+      "original_capture": true
+    }
+  ]
+}

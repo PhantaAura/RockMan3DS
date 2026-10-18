@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/azahar-01413-retained-ebd/captures/native_01413_scene.png",
+    "original_capture": true,
+    "device": "Azahar2126.0 Old-model; physical device untested",
+    "build": "0.0.14.13",
+    "binary_sha256": "06f5c8fc62721d192421f2a341510098c2ce58bf5b98c85b4f280220e7cff658",
+    "scene": "Native diagnostic area1 render; existing top visibility failure, bottom UI visible",
+    "valid_gameplay_capture": true,
+    "sha256": "ad3d208caf11ef087d0b9a61f5c5a92e18357bdb4765e6c56bd046e2e21135fe"
+  },
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-objects/azahar-01413-retained-ebd/captures/native_01413.png",
+    "original_capture": true,
+    "device": "Azahar2126.0 Old-model; physical device untested",
+    "build": "0.0.14.13",
+    "binary_sha256": "06f5c8fc62721d192421f2a341510098c2ce58bf5b98c85b4f280220e7cff658",
+    "scene": "Playback completion dialog; excluded from gameplay proof",
+    "valid_gameplay_capture": false,
+    "sha256": "0c42ebc52331b0a45dc3c6e218e440ea7b60aae4fa1b19f780abe41bcc03da4f"
+  }
+]

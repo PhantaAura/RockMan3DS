@@ -1,0 +1,24 @@
+{
+  "schema": "mml-native-fade-startup-proof/1",
+  "authored_differential_cases": 517,
+  "allocation_free_updates": 4096,
+  "ndebug_always_on_guards": true,
+  "ubsan_passed": true,
+  "retail_parity": false,
+  "pending_scheduler_consumed": false,
+  "source_release_files": {
+    "include/legends3ds/source_fade.h": "02dcb99ffba19b8c836579fb172f8fb068fc117198b4cd1e5e3631b79647b3b1",
+    "src/flow/source_fade.cpp": "955862a4233a2dd48fd5c704d8c69866f177b500044d38c39df2a80a34e8d43a",
+    "include/legends3ds/source_event_pipeline.h": "7d814ff0e332949f2bc1bd0ce74d3374b0cf874605bf72b5fe8f5dcc3257a5e5",
+    "src/flow/source_event_pipeline.cpp": "f274a32922f62a30e5f48a14c2f0e27ca828b7feda741f06ed3d449e28890c0d",
+    "tests/test_source_fade.cpp": "70d0cd2cd1683c4d34c7dcc22f853a36d4785b1bdcc96d1aea9b505b7556de8b",
+    "tests/fixtures/source_fade_startup_01426.tsv": "2df96d7cebbdf8db9d17ad5591c38abcf6a9aa259af791946938412b8074588d",
+    "tools/cook_source_fade.py": "81ff9e49a0f14b2c0b3df546e1e82d1d0cb86782fdeb551beb46ff5b4f4e7b8b",
+    "docs/research_01426/source_fade_startup_probe.py": "6e646e1e1f4ce770721e26bf651af281e3aeff789da11b1d2e60290d4a0545a0",
+    "docs/research_01426/SOURCE_FADE_STARTUP.md": "af9d745be58f195d6700e85e00c17344310706202ac84e4c4bfa505edb207d2e"
+  },
+  "tests": [
+    "-std=c++17 -O2 -DNDEBUG -Wall -Wextra -Werror",
+    "-std=c++17 -O1 -g -DNDEBUG -Wall -Wextra -Werror -fsanitize=undefined -fno-sanitize-recover=all"
+  ]
+}

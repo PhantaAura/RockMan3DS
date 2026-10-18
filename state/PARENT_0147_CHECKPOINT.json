@@ -1,0 +1,37 @@
+{
+  "asset_policy": "No raw commercial data opened/cooked/extracted; existing authorized cooked tutorial pack used locally only; all retail/cooked payloads excluded from source ZIP.",
+  "claims": {
+    "all_requested_phases_complete": false,
+    "emulator_current_build_exercised": false,
+    "first_tron_complete": false,
+    "hardware_tested": false,
+    "physics_1to1": false,
+    "website_implemented": false
+  },
+  "evidence_ledger": "state/EVIDENCE_LEDGER.json",
+  "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "git": {
+    "branch": null,
+    "commit": null,
+    "repository": false
+  },
+  "historical_baseline": "0.0.14.6c",
+  "parent_archive_sha256": "85c4b518fc1fafb0f10048b516c33fcbebbf28f92dca56b4dee8f2f3aff04b71",
+  "parent_version": "0.0.14.6d-r1",
+  "project": "Mega Man Legends 3DS",
+  "readiness": "state/CURRENT_READINESS.json",
+  "scope": "Generalized geometry/contact package to same native runtime; explicit memory/lifetime admission; local cooked-only packaging.",
+  "source_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.7_AreaRuntime",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "validation": {
+    "emulator_blocker": "Mac locked; CUA could not unlock",
+    "host_tests": "PASS 8/8",
+    "native_binary_bytes": 403236,
+    "native_binary_sha256": "82328aa1b9934ca21335712b020f7f81cce1f2fabac8566b4786f29e84fdd34d",
+    "native_build": "PASS",
+    "runtime": "HARDWARE_PENDING",
+    "sanitizers": "PASS 2/2"
+  },
+  "validation_logs": "docs/validation_0147",
+  "version": "0.0.14.7"
+}

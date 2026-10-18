@@ -1,0 +1,88 @@
+{
+  "checkpoint": "Legends3DS Tutorial Core 0.0.3 - Big 3 Visuals",
+  "asset_policy": {
+    "copyrighted_game_assets_bundled": false,
+    "validation_file_contains_only_derived_statistics": true
+  },
+  "host_validation": {
+    "cmake_warnings_as_errors": "PASS",
+    "ctest": "PASS",
+    "tests_passed": 1,
+    "tests_failed": 0
+  },
+  "textures": {
+    "l3tx_version": 1,
+    "verified_samples": [
+      {"class": "player", "width": 256, "height": 256, "bpp": 4, "palette_rows": 8, "crc": "PASS"},
+      {"class": "stage_player_variant", "width": 256, "height": 256, "bpp": 4, "palette_rows": 8, "crc": "PASS"},
+      {"class": "title", "width": 256, "height": 256, "bpp": 8, "palette_rows": 1, "crc": "PASS"}
+    ],
+    "l3pl_version": 1,
+    "verified_type9_palette_patch": {"bpp": 4, "palette_rows": 8, "crc": "PASS"},
+    "tutorial_relevant_resource_scan": {
+      "valid_type1_textures": 39,
+      "valid_type9_palette_patches": 21,
+      "render_material_references": 393,
+      "image_and_palette_resolved_references": 381,
+      "unresolved_palette_references": 12,
+      "unresolved_unique_materials": 4
+    }
+  },
+  "animation": {
+    "l3an_version": 1,
+    "packed_frame_bytes": 60,
+    "channels_per_frame": 40,
+    "bits_per_channel": 12,
+    "main": {
+      "action_slots": 64,
+      "populated_actions": 61,
+      "frame_table_actions": 55,
+      "special_m_actions": 1,
+      "s_records": 833,
+      "regular_frames": 761,
+      "crc": "PASS"
+    },
+    "right_arm": {"action_slots": 32, "populated_actions": 1, "regular_frames": 15, "crc": "PASS"},
+    "left_arm": {"action_slots": 32, "populated_actions": 1, "regular_frames": 15, "crc": "PASS"},
+    "main_pose_mapping": {
+      "root_translation_channels": 3,
+      "transformed_parts": 15,
+      "measured_regular_frames": 761,
+      "frames_with_channels_38_39_zero": 761
+    }
+  },
+  "skeleton": {
+    "l3sk_version": 1,
+    "transformed_parts": 15,
+    "non_root_parent_edges": 14,
+    "cooked_bytes": 228,
+    "crc": "PASS",
+    "unresolved_static_head_subparts": 3
+  },
+  "render": {
+    "l3rg_version": 2,
+    "descriptors": 116,
+    "records": 319,
+    "unique_streams": 307,
+    "stream_references": 422,
+    "material_words": 393,
+    "unique_primitives": 2493,
+    "cooked_bytes": 78360,
+    "crc": "PASS",
+    "compressed_coordinate_gather": "PROVEN_FROM_EXECUTABLE",
+    "quarter_turn_transform": "PROVEN_FROM_EXECUTABLE"
+  },
+  "map_render_bridge": {
+    "positive_cells": 2892,
+    "descriptor_mapped_positive_cells": 2892,
+    "positive_cells_with_render_variant": 2892,
+    "all_sides_validation_primitive_instances": 96096,
+    "note": "All-sides expansion is a validation stress test and is not claimed to equal the runtime draw selection."
+  },
+  "known_visual_blockers": [
+    "ST00 runtime descriptor-side/variant selection semantics",
+    "12 material references with unresolved palette source in the identified tutorial loaded set",
+    "attachment/transform behavior of static head subparts 15..17",
+    "Citro3D runtime integration and Old 3DS hardware validation"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "arm_compiler": {
+    "command": [
+      "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "arm-none-eabi-g++ (devkitARM) 16.1.0\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "stderr": ""
+  },
+  "packages": {
+    "command": [
+      "/usr/local/bin/dkp-pacman",
+      "-Q",
+      "devkitARM",
+      "libctru",
+      "citro3d"
+    ],
+    "returncode": 0,
+    "stdout": "devkitARM r68-1\nlibctru 2.7.0-1\ncitro3d 1.7.1-2\n",
+    "stderr": ""
+  }
+}

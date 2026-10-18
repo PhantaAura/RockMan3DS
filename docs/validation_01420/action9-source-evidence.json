@@ -1,0 +1,59 @@
+{
+  "schema": "mml-class03-action9-native-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "reducer_cases": 2496,
+  "authored_contact_cases": 288,
+  "owner_contact_cases": 24,
+  "instructions_executed": 926476,
+  "fixtures": {
+    "action9-authored.tsv": {
+      "sha256": "caf215ffe45cbcec63b0853ce84ea3b941b40636477b937d6a194ff99571d739",
+      "rows": 2496
+    },
+    "action9-contact-authored.tsv": {
+      "sha256": "32694073cbf6bf93308f6982b5900d3cbadf5fc53a581f0e5cbb90a7c8c6ce3f",
+      "rows": 288
+    },
+    "action9-contact-owner.tsv": {
+      "sha256": "57ddde18b2138affd89d7532d0a5d7cc1b4d841a897c4cb75ae4d82392605810",
+      "rows": 24
+    }
+  },
+  "source_regions": [
+    {
+      "start": "0x80103b58",
+      "end_exclusive": "0x80103df8",
+      "sha256": "811e37614df171f536ce668aa371353edfc0870d6c0fbb7bcfa6a1a028f71f60"
+    },
+    {
+      "start": "0x8002fea4",
+      "end_exclusive": "0x8002ff34",
+      "sha256": "55222b26ae4e6421ce073df742becc305263b0443cb7ca6f1057260669c28600"
+    }
+  ],
+  "motion_call_arguments": [
+    52,
+    0,
+    0
+  ],
+  "distinct_angle_argument_orders": {
+    "first": [
+      "player800B51C4",
+      "actorwork14"
+    ],
+    "turn": [
+      "actorwork14",
+      "player800B51C4"
+    ]
+  },
+  "sound_position": "Original176 producer/8001A050 queue writer copy post-wall raw14..1B before floor stores or full-lane rollback.",
+  "external_premises": [
+    "Reducer differential uses authored motion/wall/floor hooks and distinct authored angle results. Original turn, body and sound queue writer execute.",
+    "Contact differential hooks only angle and80030058 fixed/GTE delta; original8002FEA4 accumulator/raw conversion, wall/floor, turn and sound queue writer execute.",
+    "GTE delta is authored from declared trig or private resident owner trig. No live runtime or retail parity claim."
+  ],
+  "retail_parity": false,
+  "hardware_tested": false
+}

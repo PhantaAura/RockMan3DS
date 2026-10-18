@@ -1,0 +1,713 @@
+{
+  "build": "0.0.14.10",
+  "binary_sha256": "7a4d4d426aa89a9649d4903df6ab1f2851f55fe83b466513dd5cc48ea642ec7e",
+  "emulator": "Azahar2126.0",
+  "settings": {
+    "new_3ds": false,
+    "cpu_percent": 100,
+    "resolution_factor": 1,
+    "isolated_storage": true
+  },
+  "hardware_tested": false,
+  "original_screenshots": [
+    {
+      "build": "0.0.14.10",
+      "device": "Azahar2126.0 Old-model setting, not physical hardware",
+      "scene": "area 4 after all five areas loaded; terrain absent in default diagnostic view",
+      "original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-areas/captures/_02.10.26_19.19.11.525.png",
+      "capture": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01410_Azahar_20261002_001/areas-01.png",
+      "sha256": "33162a2826ebfd21b48aac98a7e6c497b47636e2873a95ae8d0b610ac969f5c1",
+      "edited": false
+    },
+    {
+      "build": "0.0.14.10",
+      "device": "Azahar2126.0 Old-model setting, not physical hardware",
+      "scene": "area 0: player and textured positive terrain, missing floors",
+      "original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-area0/captures/_02.10.26_19.24.17.292.png",
+      "capture": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01410_Azahar_20261002_001/area0-01.png",
+      "sha256": "6ea2d649128eceb521b55072baadf61218c25b3ea868f74e1fdfbda487552b72",
+      "edited": false
+    },
+    {
+      "build": "0.0.14.10",
+      "device": "Azahar2126.0 Old-model setting, not physical hardware",
+      "scene": "area 0: preserved 0143 fallback",
+      "original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-safe0143-r1/captures/_02.10.26_19.29.11.326.png",
+      "capture": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01410_Azahar_20261002_001/safe0143-r1-01.png",
+      "sha256": "eb139ed0d09643eacb2b276c1b8b6206cf3a0d58011bad3215da9f8e3ba6c4a6",
+      "edited": false
+    },
+    {
+      "build": "0.0.14.10",
+      "device": "Azahar2126.0 Old-model setting, not physical hardware",
+      "scene": "area 0: enhanced placement with textures disabled",
+      "original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-texturesoff/captures/_02.10.26_19.32.33.035.png",
+      "capture": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01410_Azahar_20261002_001/texturesoff-01.png",
+      "sha256": "7b9167f2c13b31cc9a6f5e074a6388812ad50b4e6236d92c3d66f7a38ce572d8",
+      "edited": false
+    }
+  ],
+  "pending_captures": [
+    "title/start",
+    "during movement or firing"
+  ],
+  "controls_completion_ui_verified": false,
+  "runs": {
+    "areas": {
+      "header": [
+        "# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "telemetry_original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-areas/sdmc/3ds/Legends3DS/hardware_01410_3999740409747.csv",
+      "geometry_events": [
+        "# geometry_event,area=0,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=488,min_y=-960,max_y=0",
+        "# geometry_event,area=1,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=526,min_y=-768,max_y=0",
+        "# geometry_event,area=2,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=674,min_y=-1152,max_y=0",
+        "# geometry_event,area=3,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=120,min_y=-1152,max_y=-384",
+        "# geometry_event,area=4,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=3028,min_y=-7872,max_y=0"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=419284,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0",
+        "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=823848,linear_free=29785344,vram_free=5523456",
+        "# area_event=transition_after,area=1,elapsed_us=706612,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091280,linear_free=28732288,vram_free=5523456",
+        "# area_event=transition_before,area=1,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091280,linear_free=28732288,vram_free=5523456",
+        "# area_event=transition_after,area=2,elapsed_us=758731,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1159848,linear_free=28452352,vram_free=5523456",
+        "# area_event=transition_before,area=2,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1159848,linear_free=28452352,vram_free=5523456",
+        "# area_event=transition_after,area=3,elapsed_us=356704,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=697424,linear_free=30354304,vram_free=5523456",
+        "# area_event=transition_before,area=3,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=697424,linear_free=30354304,vram_free=5523456",
+        "# area_event=transition_after,area=4,elapsed_us=338985,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=630552,linear_free=30267520,vram_free=5523456"
+      ],
+      "samples": 27,
+      "sampled_areas": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "distinct_positions": 5,
+      "distinct_headings": [
+        0
+      ],
+      "peak_active_projectiles": 0,
+      "pressed_masks": [
+        0,
+        4
+      ],
+      "completion_ui_verified": true,
+      "area_sample_ranges": {
+        "0": {
+          "owned_linear": [
+            58560,
+            58560
+          ],
+          "owned_texture": [
+            1835008,
+            1835008
+          ],
+          "malloc_live": [
+            823848,
+            823848
+          ],
+          "malloc_arena_free": [
+            232920,
+            232920
+          ],
+          "linear_free": [
+            29785344,
+            29785344
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            13189,
+            83464
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            13174,
+            16696
+          ],
+          "draw_calls": [
+            11,
+            11
+          ],
+          "triangles": [
+            1492,
+            1492
+          ]
+        },
+        "1": {
+          "owned_linear": [
+            63120,
+            63120
+          ],
+          "owned_texture": [
+            2883584,
+            2883584
+          ],
+          "malloc_live": [
+            1091280,
+            1091280
+          ],
+          "malloc_arena_free": [
+            751920,
+            751920
+          ],
+          "linear_free": [
+            28732288,
+            28732288
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            16547,
+            718721
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            11924,
+            16696
+          ],
+          "draw_calls": [
+            13,
+            13
+          ],
+          "triangles": [
+            1568,
+            1568
+          ]
+        },
+        "2": {
+          "owned_linear": [
+            80880,
+            80880
+          ],
+          "owned_texture": [
+            3145728,
+            3145728
+          ],
+          "malloc_live": [
+            1159848,
+            1159848
+          ],
+          "malloc_arena_free": [
+            834904,
+            834904
+          ],
+          "linear_free": [
+            28452352,
+            28452352
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            24420,
+            768828
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            9917,
+            16700
+          ],
+          "draw_calls": [
+            13,
+            13
+          ],
+          "triangles": [
+            1864,
+            1864
+          ]
+        },
+        "3": {
+          "owned_linear": [
+            14400,
+            14400
+          ],
+          "owned_texture": [
+            1310720,
+            1310720
+          ],
+          "malloc_live": [
+            697424,
+            697424
+          ],
+          "malloc_arena_free": [
+            314288,
+            314288
+          ],
+          "linear_free": [
+            30354304,
+            30354304
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            16549,
+            367590
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            10706,
+            16700
+          ],
+          "draw_calls": [
+            6,
+            6
+          ],
+          "triangles": [
+            756,
+            756
+          ]
+        },
+        "4": {
+          "owned_linear": [
+            363360,
+            363360
+          ],
+          "owned_texture": [
+            1048576,
+            1048576
+          ],
+          "malloc_live": [
+            630552,
+            630552
+          ],
+          "malloc_arena_free": [
+            250088,
+            250088
+          ],
+          "linear_free": [
+            30267520,
+            30267520
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            16547,
+            350969
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            11805,
+            16700
+          ],
+          "draw_calls": [
+            5,
+            5
+          ],
+          "triangles": [
+            6572,
+            6572
+          ]
+        }
+      }
+    },
+    "area0": {
+      "header": [
+        "# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "telemetry_original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-area0/sdmc/3ds/Legends3DS/hardware_01410_3999740413742.csv",
+      "geometry_events": [
+        "# geometry_event,area=0,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=488,min_y=-960,max_y=0"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=417847,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0"
+      ],
+      "samples": 49,
+      "sampled_areas": [
+        0
+      ],
+      "distinct_positions": 1,
+      "distinct_headings": [
+        0
+      ],
+      "peak_active_projectiles": 0,
+      "pressed_masks": [
+        0,
+        1
+      ],
+      "completion_ui_verified": true,
+      "area_sample_ranges": {
+        "0": {
+          "owned_linear": [
+            58560,
+            58560
+          ],
+          "owned_texture": [
+            1835008,
+            1835008
+          ],
+          "malloc_live": [
+            823848,
+            823848
+          ],
+          "malloc_arena_free": [
+            232920,
+            232920
+          ],
+          "linear_free": [
+            29785344,
+            29785344
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            13189,
+            83464
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            13174,
+            16696
+          ],
+          "draw_calls": [
+            11,
+            11
+          ],
+          "triangles": [
+            1492,
+            1492
+          ]
+        }
+      }
+    },
+    "safe0143-r1": {
+      "header": [
+        "# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=LEGACY_FLAT,evidence=UNKNOWN,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "telemetry_original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-safe0143-r1/sdmc/3ds/Legends3DS/hardware_01410_3999740405736.csv",
+      "geometry_events": [
+        "# geometry_event,area=0,decode=LEGACY_FLAT,evidence=UNKNOWN,primitives=1752,min_y=0,max_y=0"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=423675,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0"
+      ],
+      "samples": 29,
+      "sampled_areas": [
+        0
+      ],
+      "distinct_positions": 1,
+      "distinct_headings": [
+        0
+      ],
+      "peak_active_projectiles": 0,
+      "pressed_masks": [
+        0,
+        1
+      ],
+      "completion_ui_verified": true,
+      "area_sample_ranges": {
+        "0": {
+          "owned_linear": [
+            126144,
+            126144
+          ],
+          "owned_texture": [
+            0,
+            0
+          ],
+          "malloc_live": [
+            363632,
+            363632
+          ],
+          "malloc_arena_free": [
+            33680,
+            33680
+          ],
+          "linear_free": [
+            31553280,
+            31553280
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            8882,
+            83465
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            8866,
+            16696
+          ],
+          "draw_calls": [
+            3,
+            3
+          ],
+          "triangles": [
+            4020,
+            4020
+          ]
+        }
+      }
+    },
+    "texturesoff": {
+      "header": [
+        "# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "telemetry_original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-texturesoff/sdmc/3ds/Legends3DS/hardware_01410_3999740405736.csv",
+      "geometry_events": [
+        "# geometry_event,area=0,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=488,min_y=-960,max_y=0"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=425991,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0"
+      ],
+      "samples": 30,
+      "sampled_areas": [
+        0
+      ],
+      "distinct_positions": 1,
+      "distinct_headings": [
+        0
+      ],
+      "peak_active_projectiles": 0,
+      "pressed_masks": [
+        0,
+        1
+      ],
+      "completion_ui_verified": true,
+      "area_sample_ranges": {
+        "0": {
+          "owned_linear": [
+            58560,
+            58560
+          ],
+          "owned_texture": [
+            0,
+            0
+          ],
+          "malloc_live": [
+            364104,
+            364104
+          ],
+          "malloc_arena_free": [
+            37304,
+            37304
+          ],
+          "linear_free": [
+            31620352,
+            31620352
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            8862,
+            83464
+          ],
+          "update_us": [
+            2,
+            2
+          ],
+          "render_us": [
+            8846,
+            16696
+          ],
+          "draw_calls": [
+            11,
+            11
+          ],
+          "triangles": [
+            1492,
+            1492
+          ]
+        }
+      }
+    },
+    "controls": {
+      "header": [
+        "# build=0.0.14.10,model_query_rc=0,new3ds=0,memory_layout=2,app_region_bytes=100663296,heap_reserved=66678784,linear_reserved=33554432,stack_reserved=262144",
+        "# terrain_decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,PHYSICS_1TO1=false",
+        "# CPU timing: frame_before_log_us excludes this write/flush; interval_us includes the previous frame's logging. Sparse samples cannot establish worst-case pacing. Render includes synchronization; region reservation is not live malloc usage."
+      ],
+      "telemetry_original": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-placement/azahar-01410-controls/sdmc/3ds/Legends3DS/hardware_01410_3999740423737.csv",
+      "geometry_events": [
+        "# geometry_event,area=0,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=488,min_y=-960,max_y=0",
+        "# geometry_event,area=1,decode=POSITIVE_IDX_XYZ,evidence=SOURCE_BACKED_PARTIAL,primitives=526,min_y=-768,max_y=0"
+      ],
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35592,linear_free=31941632,vram_free=0",
+        "# area_event=package_loaded,area=0,elapsed_us=417847,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=156120,linear_free=31941632,vram_free=0",
+        "# area_event=transition_before,area=0,elapsed_us=0,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=823936,linear_free=29785344,vram_free=5523456",
+        "# area_event=transition_after,area=1,elapsed_us=706610,package_bytes=120774,decoded_estimate=172008,load_peak_estimate=340656,malloc_live=1091368,linear_free=28732288,vram_free=5523456"
+      ],
+      "samples": 50,
+      "sampled_areas": [
+        0,
+        1
+      ],
+      "distinct_positions": 11,
+      "distinct_headings": [
+        0,
+        352,
+        368,
+        608,
+        3648,
+        3840,
+        4080
+      ],
+      "peak_active_projectiles": 1,
+      "pressed_masks": [
+        0,
+        1,
+        4,
+        256,
+        512,
+        2048,
+        1073741824
+      ],
+      "completion_ui_verified": false,
+      "area_sample_ranges": {
+        "0": {
+          "owned_linear": [
+            58560,
+            58560
+          ],
+          "owned_texture": [
+            1835008,
+            1835008
+          ],
+          "malloc_live": [
+            823848,
+            823936
+          ],
+          "malloc_arena_free": [
+            232832,
+            232920
+          ],
+          "linear_free": [
+            29785344,
+            29785344
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            8872,
+            83464
+          ],
+          "update_us": [
+            2,
+            6
+          ],
+          "render_us": [
+            8856,
+            16706
+          ],
+          "draw_calls": [
+            11,
+            11
+          ],
+          "triangles": [
+            1492,
+            1493
+          ]
+        },
+        "1": {
+          "owned_linear": [
+            63120,
+            63120
+          ],
+          "owned_texture": [
+            2883584,
+            2883584
+          ],
+          "malloc_live": [
+            1091368,
+            1091368
+          ],
+          "malloc_arena_free": [
+            751832,
+            751832
+          ],
+          "linear_free": [
+            28732288,
+            28732288
+          ],
+          "vram_free": [
+            5523456,
+            5523456
+          ],
+          "frame_before_log_us": [
+            8849,
+            718721
+          ],
+          "update_us": [
+            2,
+            3
+          ],
+          "render_us": [
+            8832,
+            16701
+          ],
+          "draw_calls": [
+            13,
+            13
+          ],
+          "triangles": [
+            1568,
+            1569
+          ]
+        }
+      },
+      "process_absent_after_cleanup": true
+    }
+  },
+  "limitations": [
+    "area4 default spawn/camera view lacks terrain despite expected geometry counts",
+    "negative-cell floors unbound",
+    "Dev1 96MiB emulated application region does not prove physical Old3DS budget",
+    "sparse timing affected by synchronization/logging and GUI pause",
+    "Mac locked during remaining captures; no images fabricated"
+  ],
+  "failed_attempt": "Detached fallback launcher ended before testing; attached safe0143-r1 is verified.",
+  "controls_process_cleanup": "docs/validation_01410/controls-process-cleanup.json"
+}

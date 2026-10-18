@@ -1,0 +1,3 @@
+original/native actor pose collision cases 576
+original/native class03 outer proxy cases 864
+authored pose→proxy→pair→hit→tail chain; 4096 hot ticks allocate nothing

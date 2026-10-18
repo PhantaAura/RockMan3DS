@@ -1,0 +1,291 @@
+{
+  "parent": "0.0.14.20",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified"
+    },
+    {
+      "path": "README.md",
+      "change": "modified"
+    },
+    {
+      "path": "SOURCE_MANIFEST.sha256",
+      "change": "modified"
+    },
+    {
+      "path": "docs/CHANGED_FILES_01421.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/PORTING_MAP_01421.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/REPORT_01421.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/RESUME_01421.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/SCREENSHOTS_01421.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01420/validate_rng_reference_trace.py",
+      "change": "modified"
+    },
+    {
+      "path": "docs/research_01421/CLASS20_03_ACTION4.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/CLASS60_DISPATCH_CORRECTION.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/DECOMP_ASSESSMENT_01421.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/RESEARCH.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/RNG_CHRONOLOGY_BOUNDARY.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/SOURCE_COMBAT_BYTE_C.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/actor-action4-contact-source-evidence.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/actor_action4_contact_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/class20_03_action4_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/combat_byte_c_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01421/rng_callback_chronology_source_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/action4-child-source-evidence.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/action4-native-differential.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/actor-action4-contact-source-evidence.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/actor-animation-request-audit.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/area-inspection-probe.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/area-runtime-probe.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/baseline-audit.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/combat-byte-c-source-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/compiled-source-manifest.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/host-build.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/host-configure.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/host-tests.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/native-build-r3.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/native-build.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/native-observation.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/pack-update.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/ps1-reference-status.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/rng-admission-tests-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01421/rng-callback-chronology-source-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/actor_action4_contact.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/actor_runtime.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/class20_03_action4.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/class20_03_behavior.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/retail_rng_tape.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/source_combat_profile.h",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.h",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/actor_action4_contact.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/actor_runtime.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/class20_03_action4.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/class20_03_behavior.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/retail_rng_tape.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/source_combat_profile.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified"
+    },
+    {
+      "path": "tests/fixtures/actor_action4_contact_01421.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/class20_03_action4_01421.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/class60_child_pool_01421.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/class60_child_release_01421.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_actor_action4_contact.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_actor_action4_runtime.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_class20_03_action4.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_class20_03_callback.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_cook_actor_combat.py",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_retail_rng_tape.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_rng_reference.py",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_source_combat_profile.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tools/cook_actor_combat.py",
+      "change": "modified"
+    }
+  ],
+  "deleted_files": [],
+  "excluded_reproducible_caches": []
+}

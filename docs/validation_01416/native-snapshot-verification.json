@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "native_source_hashes": 154,
+  "all_match_current_source": true,
+  "native_warnings": 0,
+  "native_errors": 0,
+  "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "scope": "Actual ARMv6K source snapshot/binary; no physical hardware claim",
+  "fallback_shader_unchanged": true
+}

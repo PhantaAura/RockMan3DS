@@ -1,0 +1,1802 @@
+[
+  {
+    "frame": 0,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -4865
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      2
+    ],
+    "animation_request": 4,
+    "animation_frame": 0,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -318832640
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4097
+      ],
+      "look_at": [
+        2822,
+        79,
+        -4865
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 1,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -4897
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      2
+    ],
+    "animation_request": 4,
+    "animation_frame": 0,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -320929792
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4129
+      ],
+      "look_at": [
+        2822,
+        79,
+        -4897
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 2,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -4929
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      2
+    ],
+    "animation_request": 4,
+    "animation_frame": 1,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      1,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -323026944
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4161
+      ],
+      "look_at": [
+        2822,
+        79,
+        -4929
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 3,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -4961
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      2
+    ],
+    "animation_request": 4,
+    "animation_frame": 2,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      2,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -325124096
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4193
+      ],
+      "look_at": [
+        2822,
+        79,
+        -4961
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 4,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -4993
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      2
+    ],
+    "animation_request": 4,
+    "animation_frame": 3,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      3,
+      1,
+      1,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -327221248
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4225
+      ],
+      "look_at": [
+        2822,
+        79,
+        -4993
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 5,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5025
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 0,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      0,
+      1,
+      0,
+      -1
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -329318400
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4257
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5025
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 6,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5057
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 0,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -331415552
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4289
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5057
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 7,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5089
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 1,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      1,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -333512704
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4321
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5089
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 8,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5121
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 2,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      2,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -335609856
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4353
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5121
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 9,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5153
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 3,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      3,
+      1,
+      128,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -337707008
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4385
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5153
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 10,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5185
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 4,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      4,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -339804160
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4417
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5185
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 11,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5217
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 5,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      5,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -341901312
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4449
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5217
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 12,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5249
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 6,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      6,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -343998464
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4481
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5249
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 13,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5281
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 7,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      7,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -346095616
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4513
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5281
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 14,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5313
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 8,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      8,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -348192768
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4545
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5313
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 15,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5345
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 9,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      9,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -350289920
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4577
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5345
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 16,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5377
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 10,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      10,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -352387072
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4609
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5377
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 17,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5409
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 11,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      11,
+      1,
+      128,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -354484224
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4641
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5409
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 18,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5441
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 12,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      12,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -356581376
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4673
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5441
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 19,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5473
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 13,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      13,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -358678528
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4705
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5473
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 20,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5505
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 14,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      14,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -360775680
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4737
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5505
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 21,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5537
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 15,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      15,
+      1,
+      0,
+      -128
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -362872832
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4769
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5537
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 22,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5569
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 0,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -364969984
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4801
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5569
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 23,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5601
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 1,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      1,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -367067136
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4833
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5601
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  },
+  {
+    "frame": 24,
+    "input": [
+      16,
+      0,
+      0,
+      0
+    ],
+    "position": [
+      2822,
+      -1,
+      -5633
+    ],
+    "position_delta": [
+      0,
+      0,
+      -32
+    ],
+    "velocity_work": [
+      512,
+      0,
+      0
+    ],
+    "heading": 0,
+    "state": [
+      1,
+      2,
+      4
+    ],
+    "animation_request": 1,
+    "animation_frame": 2,
+    "vertical_velocity": 0,
+    "grounded": true,
+    "floor_y": -1,
+    "contact_status": 1,
+    "contact_state_raw": 0,
+    "work_0b_raw": 0,
+    "animation_control_raw": [
+      2,
+      1,
+      0,
+      0
+    ],
+    "fixed_position": [
+      184942592,
+      -65536,
+      -369164288
+    ],
+    "map_in_area": true,
+    "contact_groups": 0,
+    "camera": {
+      "owner": 0,
+      "eye": [
+        2822,
+        319,
+        -4865
+      ],
+      "look_at": [
+        2822,
+        79,
+        -5633
+      ]
+    },
+    "lock_target": null,
+    "buster_enabled": true,
+    "hp": 100,
+    "projectiles": [],
+    "event_state": {
+      "dialogue_active": false,
+      "script_wait": false
+    }
+  }
+]

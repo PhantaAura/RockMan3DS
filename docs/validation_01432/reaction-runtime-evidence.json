@@ -1,0 +1,27 @@
+{
+  "schema": "mml-combat-runtime-01432/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "pass": "siblingpass-20261011-worldalive-01432",
+  "build": "isolated host C++17 -Wall -Wextra -Wpedantic -Werror",
+  "source_action_cases": 6556,
+  "source_motion_wall_cases": 648,
+  "admitted_motion_wall": 608,
+  "held_motion_wall": 40,
+  "corrected_motion_wall": 36,
+  "original_instructions_executed": 1246983,
+  "runtime_checks": [
+    "Exact source pool+33C identity and atomic packet/flags/point/word alias staging.",
+    "Tick automatically stages pending bound proxy target without HP writes.",
+    "Pending target or behavior packet blocks separate proxy finalization and remains intact.",
+    "Read-only post-hit preparation selects original reaction action/heading before contact.",
+    "Zero-packet reaction receipts commit velocity/state74/table with behavior/animation/audio.",
+    "Wrong identity/conflicting pending packet/stale receipt leave body work held.",
+    "1024 native recovery ticks allocate zero times."
+  ],
+  "neighboring_regressions": "8/8 CTest checks passed",
+  "limits": [
+    "Nonzero hit body commit remains held until complete effect/callback/packet-clear owners are admitted.",
+    "Record+0B and relative hit origin8011BF08 remain explicit inputs on their source branches.",
+    "No complete Buster-to-enemy defeat, hardware encounter or retail parity claim."
+  ]
+}

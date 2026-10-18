@@ -1,0 +1,13 @@
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441/native-r1/host
+    Start  78: source_rng_service
+1/4 Test  #78: source_rng_service ...............   Passed    0.26 sec
+    Start 105: source_event_phase6
+2/4 Test #105: source_event_phase6 ..............   Passed    0.01 sec
+    Start 112: scene_e0
+3/4 Test #112: scene_e0 .........................   Passed    0.01 sec
+    Start 136: source_prop_lift
+4/4 Test #136: source_prop_lift .................   Passed    0.02 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =   0.30 sec

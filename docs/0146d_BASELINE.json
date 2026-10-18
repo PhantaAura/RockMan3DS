@@ -1,0 +1,12 @@
+{
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6c_HardwareTest",
+  "next_source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6d_SceneTest",
+  "branch": null,
+  "commit": null,
+  "uncommitted": "not applicable; archive-based project",
+  "native_snapshot_file_count": 113,
+  "differences_from_compiled_r2": [],
+  "binary_sha256": "5f7ac1075d81b26211a4e920ca794d9171753cdd9a49391eef23b939d6128654",
+  "r2_compile_and_host_tests": "PASS; gameplay comparison pending",
+  "temporary_emulator_keys_restored": true
+}

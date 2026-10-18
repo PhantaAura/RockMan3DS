@@ -1,0 +1,6 @@
+EBD rows=14 -> 114072 bytes
+EBD rows=49 -> 118184 bytes
+EBD rows=49 -> 118184 bytes
+EBD rows=40 -> 102488 bytes
+EBD rows=6 -> 117032 bytes
+Owner five EBD v2 exact-byte roundtrips PASS;567232B retained; session probe PASS

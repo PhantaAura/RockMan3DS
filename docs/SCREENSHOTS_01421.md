@@ -1,0 +1,3 @@
+# 01421 capture status
+
+No new screenshot file is currently available. Computer-use service timed out earlier, then a fresh inventory explicitly reported the Mac locked. Native Old-model Azahar CSV/boot logs are genuine execution evidence but do not prove visual fidelity. No old image or desktop render is presented as this build. Parent captures remain unchanged at historical paths. Physical Old3DS captures unavailable because no hardware test occurred. Capture title/start, gameplay/player, imported actors/UI and top/bottom layout after GUI access returns; label build/binary revision/device/scene/path.

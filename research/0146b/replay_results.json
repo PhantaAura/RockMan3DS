@@ -1,0 +1,139 @@
+{
+  "PHYSICS_1TO1": false,
+  "scope": "existing RuntimeSession tick; turn labels are input scenarios, not measured angles",
+  "limitations": [
+    "grounded unavailable; animation uses the same bridge as the 3DS frontend",
+    "no retail golden traces",
+    "lock scenario has no registered retail target",
+    "combat uses inherited integration defaults"
+  ],
+  "scenarios": [
+    {
+      "scenario": "FLAT_ACCEL",
+      "frames": 90,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "RELEASE_COAST",
+      "frames": 90,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "BRAKE",
+      "frames": 60,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "REVERSE",
+      "frames": 90,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "TURN_45",
+      "frames": 8,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "TURN_90",
+      "frames": 16,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "TURN_180",
+      "frames": 32,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "FIRE_WHILE_MOVING",
+      "frames": 60,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "LOCK_MOVEMENT",
+      "frames": 60,
+      "repeatable": true,
+      "animation_isolation": true,
+      "status": "CANDIDATE",
+      "retail_comparison": false
+    },
+    {
+      "scenario": "JUMP_TAP",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "JUMP_HOLD",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "JUMP_APEX",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "LAND",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "AIR_CONTROL",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "SLOPE_UP",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "SLOPE_DOWN",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "LEDGE",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "STEP",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "WALL",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    },
+    {
+      "scenario": "KNOCKBACK",
+      "status": "UNKNOWN",
+      "reason": "full retail solver/state dispatch not connected"
+    }
+  ]
+}

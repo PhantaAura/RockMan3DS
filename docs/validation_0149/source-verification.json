@@ -1,0 +1,9 @@
+{
+  "errors": [],
+  "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+  "native_target": "Legends3DS_0149_LocalImporter",
+  "owner_payload_hits": [],
+  "status": "PASS",
+  "symlinks": [],
+  "uv_shader_sha256": "7ddf62f20bc02fa2b2e9d1eb2e0b4c62338d758112d05594202eb1982cf94248"
+}

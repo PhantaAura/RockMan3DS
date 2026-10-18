@@ -1,0 +1,86 @@
+{
+  "schema": "mml-emulator-validation/01438",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "emulator": "Azahar2126.0",
+  "is_new_3ds": false,
+  "cpu_clock_percentage": 100,
+  "hardware_tested": false,
+  "PHYSICS_1TO1": false,
+  "scene_complete": false,
+  "binary_sha256": "c9967f98bccefdbf965434c2908317d2c6dd274bdfe0b94ffc0ad9c2a732540e",
+  "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261013-worldalive-01438/azahar-01438-effects-r1",
+  "trace_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261013-worldalive-01438/azahar-01438-effects-r1/sdmc/3ds/Legends3DS/hardware_01438_4000917173029.csv",
+  "trace_sha256": "a4edea1967da1cf90e11efd64b2385a88bfe33f40a4a2d04641df8306e885237",
+  "profile_admission": [
+    "# source_lower80_profile,format=L3E2,bytes=384,admitted=1,table_owner=EXPLICIT_OVERLAY_LEASE,rng_owner=UNKNOWN"
+  ],
+  "children_allocated": 3,
+  "releases_marked": 4,
+  "rng_consumed": 0,
+  "first_rng_context": [],
+  "first_boundary_lines": [
+    "# source_scene_rng_first_mismatch,frame=2609,generation=6,cursor=0,scratch_known=1,scratch=9336,expected_scratch=9336,boundary=AFTER_EVENT_BEFORE_CLEANUP_AND_TAIL,stores=0,cursor_advanced=false",
+    "# source_scene_rng_first_identity,frame=2609,live=800c3580,live_known=f,expected=800c3580",
+    "# source_scene_rng_first_actor,frame=2609,identity=800c3580,half_xyz=0/0/-574,half_known=3f,fixed_xyz=00000000/00000000/fdc18006,fixed_known=fff,state08=1,state09=12,sub10=1,requestAC=31,sequenceA4=26,countdownA5=1,field_known=1/1/1/1/1/1",
+    "# source_scene_rng_first_pool,frame=2609,allocation=00000000/00000000,allocation_known=1/1,pending=00000000/00000000,pending_known=1/1,expected=e0000000/00000000"
+  ],
+  "last_memory_sample": {
+    "frame": "8520",
+    "area": "0",
+    "held": "0",
+    "pressed": "0",
+    "x": "0",
+    "y": "0",
+    "z": "-1462",
+    "heading": "2048",
+    "projectiles": "0",
+    "frame_before_log_us": "16310",
+    "interval_us": "17297",
+    "update_us": "3",
+    "render_us": "16181",
+    "bottom_ui_us": "18",
+    "draw_calls": "41",
+    "triangles": "1814",
+    "owned_linear": "59520",
+    "owned_texture": "4980736",
+    "malloc_live": "2190896",
+    "malloc_arena_free": "152016",
+    "linear_free": "26622464",
+    "vram_free": "5523456",
+    "action": "0",
+    "phase": "0",
+    "animation": "0",
+    "animation_pose": "0",
+    "vertical_velocity": "0",
+    "grounded": "-1",
+    "contact_status": "0",
+    "psx_held": "0",
+    "psx_pressed": "0"
+  },
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261013-worldalive-01438/azahar-01438-effects-r1/captures/_13.10.26_21.53.22.012.png",
+      "sha256": "820c9f07677b0dca0ff67d988fc02824599e944896cd6cf6661ea1583d659f30",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.38 native-r1",
+      "scene": "Imported source scene with prototype bottom UI; later capture is after strict RNG hold",
+      "hardware_tested": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261013-worldalive-01438/azahar-01438-effects-r1/captures/_13.10.26_21.57.56.322.png",
+      "sha256": "7e004b632485c711c6206bc84820565e36378e76d3955567252d51e487545818",
+      "device": "Azahar2126.0 Old-model",
+      "build": "0.0.14.38 native-r1",
+      "scene": "Imported source scene with prototype bottom UI; later capture is after strict RNG hold",
+      "hardware_tested": false
+    }
+  ],
+  "test_closed": "CUAquitconfirmedAppquit",
+  "limits": [
+    "Three original scalar child records and parent/child release exercised; not effect rendering acceptance.",
+    "Missing real RNG receipts hold; other E0/lower consumers remain unported.",
+    "First actor/timer match persists; new pool00000000 differs recordedE0000000.",
+    "User reports missing door lift and anchored shard; scene prop binding is next priority, not fixed here.",
+    "Old-model emulator samples cannot establish physical speed or peak memory."
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "mml-reaction-profile/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "tables": [
+    "0x8011BEE0",
+    "0x8011BEEC",
+    "0x8011BEF8"
+  ],
+  "table_bytes": 12,
+  "package_sha256": "753842a7287b48bcc9c4768b7e9ed893f4b5841158d1c3f27add634a209dd1a7",
+  "values_exported_in_report": false,
+  "limits": [
+    "Owner-local tables only. No Buster input, live packet producer, defeat lifecycle or full combat claim."
+  ]
+}

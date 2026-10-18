@@ -1,0 +1,262 @@
+{
+  "parent": "0.0.14.11",
+  "current": "0.0.14.12",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified",
+      "sha256": "00e16b8559db04e194581e5d1c284fe08637890b8bd0cd01ab458bede3a951b6"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "sha256": "3af932e016fdce9b44641574d186c410efdb2436a27f91c465676d51a11cf202"
+    },
+    {
+      "path": "docs/CAMERA_PLAYER_TRANSFORM_AUDIT_01412.md",
+      "change": "added",
+      "sha256": "657cfdffd10a94a9362e175885f9f0cca81b8ffabfa757d30eb73c9e018ab0bd"
+    },
+    {
+      "path": "docs/PLAYER_PRESENTATION_AUDIT_01412.md",
+      "change": "added",
+      "sha256": "53b27ea25d96585029a316d1ede0063f9998180576ad286beefa2e12b680fd57"
+    },
+    {
+      "path": "docs/PLAYER_STORAGE_INTEGRATION_01412.md",
+      "change": "added",
+      "sha256": "b387d6073e66b0995d899489a4be4f502a40b99fde293092182bc48355ec8dda"
+    },
+    {
+      "path": "docs/PORTING_MAP_01412.md",
+      "change": "added",
+      "sha256": "01d6e311655350b933cb6ed4fd9a2ae6ff1936a6776ad3a773c8c87e8d4505e7"
+    },
+    {
+      "path": "docs/PS1_REFERENCE_01412.md",
+      "change": "added",
+      "sha256": "70fcc18fb2f7ab24cbf336fad66c34b23e57563221d709ef9e74243e22aa6387"
+    },
+    {
+      "path": "docs/REPORT_01412.md",
+      "change": "added",
+      "sha256": "e46ace0a7e987d45504094b20132a6be495f5e3b04be4aa3faab9fdbad2125b5"
+    },
+    {
+      "path": "docs/RESUME_01412.md",
+      "change": "added",
+      "sha256": "bb3ebafe3d39f42a1e4cb9102ea8b21e5919eea3f3ff674c7a8e4a728ad35f50"
+    },
+    {
+      "path": "docs/RESUME_01412_RECOVERY.md",
+      "change": "added",
+      "sha256": "d2264cdf7966688ef6bb0196066e42279d8d08994b9c35f52a3f4f5d8bac8976"
+    },
+    {
+      "path": "docs/research_01412/camera_player_transform_probe.py",
+      "change": "added",
+      "sha256": "c1819e7f2ccbab4e122b2c36ec597845d764b8f884256f0ac4e82991f2a58c70"
+    },
+    {
+      "path": "docs/validation_01412/area-inspection-probe.log",
+      "change": "added",
+      "sha256": "6c08f43a6149a6f391fe601b76a5e35c404123f4b94ab95ad769e0bdb336f8cd"
+    },
+    {
+      "path": "docs/validation_01412/area-runtime-probe.log",
+      "change": "added",
+      "sha256": "816faafaf930048801c60a80fa5ec14c7d136207ea2b14109c40569f83c06dd1"
+    },
+    {
+      "path": "docs/validation_01412/build-result.json",
+      "change": "added",
+      "sha256": "09361385fc0bd6f67c2727cc14468519419437b4c7befcc273584f96c82f57d6"
+    },
+    {
+      "path": "docs/validation_01412/camera-player-transform-live-evidence.json",
+      "change": "added",
+      "sha256": "3dc411c8becfde85e88e0c766eb71c43ad6139a478db45cb7787a56718dccb7a"
+    },
+    {
+      "path": "docs/validation_01412/camera-player-transform-source-evidence.json",
+      "change": "added",
+      "sha256": "32fb28e3d24acb3db7cb0b356b78c45bbc47318b9ce597d61b60860ae2aa7c44"
+    },
+    {
+      "path": "docs/validation_01412/capture-manifest.json",
+      "change": "added",
+      "sha256": "54adf08ba6dd8777747590b42b64305a71ecf4f2d86907ae3c07cc443721dc55"
+    },
+    {
+      "path": "docs/validation_01412/emulated-performance.json",
+      "change": "added",
+      "sha256": "1c733ae0ae382b6bc3623c8c6545419c9ff3b9cc3b61467c3323949835cfb31f"
+    },
+    {
+      "path": "docs/validation_01412/emulator-launch.json",
+      "change": "added",
+      "sha256": "8be6ab33300d16e48a71d9c41faec5f5b5c7b48d9e045b9ed8d42fae10e320c3"
+    },
+    {
+      "path": "docs/validation_01412/failed-r2-host-tests.log",
+      "change": "added",
+      "sha256": "47d1544b98b9b956660155a2cc6a03c5f6b36b07e55a88ff8f39c7d60b07bf14"
+    },
+    {
+      "path": "docs/validation_01412/final-results.json",
+      "change": "added",
+      "sha256": "eda4cba51edbfb70b3ede51af43a968472fb48eefd1a0e21e1f082d7282a41f7"
+    },
+    {
+      "path": "docs/validation_01412/focused-sanitizer-commands.json",
+      "change": "added",
+      "sha256": "969f65b948aa7b6f9ef4da0cce3f887f6e9ff93f36b2144a11996bf1262abd9e"
+    },
+    {
+      "path": "docs/validation_01412/hardware_01412_3999740423737.csv",
+      "change": "added",
+      "sha256": "0ddfc030d7bd3a07da41ab1b60d179dc2b299a0e7720234b4de29188a3167611"
+    },
+    {
+      "path": "docs/validation_01412/host-tests.log",
+      "change": "added",
+      "sha256": "22a6f76a1be3ed5dd233b6197ce3b941feef500fad5a5b08c750f6f2156f6498"
+    },
+    {
+      "path": "docs/validation_01412/native-boot.log",
+      "change": "added",
+      "sha256": "7cdd04e8a9cbdc7ba332b403ca4b60341573838f0c2902b81f1c2e2533968bd5"
+    },
+    {
+      "path": "docs/validation_01412/native-build.log",
+      "change": "added",
+      "sha256": "4574164c845fcbd4b0c9432190519d1826c12fe64b082f5059454be1e381c440"
+    },
+    {
+      "path": "docs/validation_01412/native-source-manifest.json",
+      "change": "added",
+      "sha256": "eddeedbbd60163120a240aca7744a52d0896d0b82a346c8686832af1dc23d7fa"
+    },
+    {
+      "path": "docs/validation_01412/pack-validation.json",
+      "change": "added",
+      "sha256": "03f7b671af533beeb3dc6bd372f7c242f860622a2ff9ed448ffe66751ee83433"
+    },
+    {
+      "path": "docs/validation_01412/player-camera-final-consistency.json",
+      "change": "added",
+      "sha256": "e0c21320df9543e174ecf58974816af670edda599091402f1c18fe1e204aa7ff"
+    },
+    {
+      "path": "docs/validation_01412/player-presentation-evidence.json",
+      "change": "added",
+      "sha256": "d0c1a1308dc11a0005c66feba3723d77b7b47ac2fed77799b13dfd57e575c8e6"
+    },
+    {
+      "path": "docs/validation_01412/player-storage-check.json",
+      "change": "added",
+      "sha256": "ebd094225b29ad97d97edbc940a406f04fd84634dd35a783787b20a4096b3e6d"
+    },
+    {
+      "path": "include/legends3ds/mockup_ui.h",
+      "change": "added",
+      "sha256": "cd7cd5216f7d0aaa4fa52a336540efbe0f1a3e487506d8ec749b657231ef4a33"
+    },
+    {
+      "path": "include/legends3ds/p2/mml_runtime_diag_v2.h",
+      "change": "modified",
+      "sha256": "52ca703e88a8a83787f4dff89997090d133419d3dde40d371257beab52d3d870"
+    },
+    {
+      "path": "include/legends3ds/render/area_inspection.h",
+      "change": "modified",
+      "sha256": "861b5f3bfcec882a9579642e3c4beff2df82d04a3447ebcff3acbef9bfdcb0ed"
+    },
+    {
+      "path": "include/legends3ds/render/frontend_view.h",
+      "change": "added",
+      "sha256": "8f0e9d14b93cda9ee9853fbb299b19f8589dfb07eb2fa4b32073fef90f64d1c4"
+    },
+    {
+      "path": "include/legends3ds/visual_bridge.h",
+      "change": "modified",
+      "sha256": "87685443ead76ca8f40ebae810d0a8cacf1ee256f297fb70606d26b25db247d7"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified",
+      "sha256": "e364ead23977f3b2ccf71232a722c85815677d379f9b488762967e801c7ec319"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified",
+      "sha256": "b2848d34a832a294f61a1257048a62dc97b602223ebee77d3fc6289c85733f4b"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified",
+      "sha256": "02faa82468126a61f105f7d97f70c5f58ae0ab6f9b58cbee640468291c5bd794"
+    },
+    {
+      "path": "platform/3ds/source/mockup_hud.cpp",
+      "change": "added",
+      "sha256": "59976b7ffabfbc26c6251524171d42cc6eb945106d15714f563261f4648b0334"
+    },
+    {
+      "path": "platform/3ds/source/mockup_hud.h",
+      "change": "added",
+      "sha256": "e3d5d490346d1bb3ae35d39e2c262afb2de611d668e93af05ac09ffd50f0f85a"
+    },
+    {
+      "path": "src/render/area_inspection.cpp",
+      "change": "modified",
+      "sha256": "9ad8770f9a51eebeb24a8b913a4969635a2fb6b1f395ff98d5fe87ab14b2b462"
+    },
+    {
+      "path": "src/render/frontend_view.cpp",
+      "change": "added",
+      "sha256": "ad691098a59ebcb0751b2dbd238c6d0627ef72406d91adddec65ef23b36d8f19"
+    },
+    {
+      "path": "src/render/visual_bridge.cpp",
+      "change": "modified",
+      "sha256": "b80768859b1588baa8ce991a57c60a9b8be73d73bb82772361495cc4d19737d1"
+    },
+    {
+      "path": "src/ui/mockup_ui.cpp",
+      "change": "added",
+      "sha256": "ad7fc97029d7a46b8f766ebb4fba4de1de06c40937ef4831a9da42b76b96eabd"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified",
+      "sha256": "44f3258436b361d98ec4e98684f26f08eba357f213dfffbbeda2f40936f488cd"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified",
+      "sha256": "8a3ee114ce79b55d325ab6fb6060aa5310e0e52d82a0845cc3e8832004776ad5"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified",
+      "sha256": "99ee871390fae8bd60db6e2c29bc75980b6bdfbb5b94224435490da9dbb77a99"
+    },
+    {
+      "path": "tests/test_frontend_view.cpp",
+      "change": "added",
+      "sha256": "4a2133b96fb236ac31834d1911862eb923a2b4282c49f1d90868f63a0d847fdd"
+    },
+    {
+      "path": "tests/test_mockup_ui.cpp",
+      "change": "added",
+      "sha256": "c90b903688bcd2a0bd4edb307704bf1e491b38c427d821642fce992f2f223fc9"
+    },
+    {
+      "path": "tests/test_player_visual_storage.cpp",
+      "change": "added",
+      "sha256": "1c66ac28bfbd19162fccf88eda60ba5edf8d97d938682d6d6b40128be79755c6"
+    }
+  ],
+  "excluded_self_and_manifest": true
+}

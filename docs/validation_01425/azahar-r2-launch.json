@@ -1,0 +1,35 @@
+{
+  "pid": 74120,
+  "argv": [
+    "/Applications/Azahar.app/Contents/MacOS/azahar",
+    "-w",
+    "-p",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/replays/worldalive-ground-jump-01415.ctm",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/integrated-native-r4/build/Legends3DS_01425_WorldComesAlive.3dsx"
+  ],
+  "binary_sha256": "0142638f404ecace2fae3abbde5879b2f439165ed45720a8d16ea5214a941b1e",
+  "movie_sha256": "b9a7e7cba7cc5ead90c148c02759b220d68a1543ede3050b53a934f9d1f85a0e",
+  "settings": {
+    "emulator": "Azahar2126.0",
+    "old_model": true,
+    "cpu_clock_percentage": 100,
+    "resolution_factor": 1,
+    "hardware_tested": false,
+    "retail_parity": false,
+    "build": "0.0.14.25",
+    "binary_revision": "r4",
+    "actor_rng_candidate": false,
+    "source_event_boot": true,
+    "source_xa_audio": false,
+    "source_actor_proxy": false,
+    "renderer_flags": "7f",
+    "renderer": "ENHANCED",
+    "isolated_storage": true,
+    "actor_state_fields": true
+  },
+  "isolated_environment": {
+    "XDG_CONFIG_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r2/config",
+    "XDG_DATA_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r2/data",
+    "XDG_CACHE_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/azahar-01425-r2/cache"
+  }
+}

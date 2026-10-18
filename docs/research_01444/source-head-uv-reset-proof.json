@@ -1,0 +1,41 @@
+{
+  "schema": "mml-source-head-uv-reset/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_helper": "8002D004",
+  "copy_helper": "8002D0D0",
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "head_resource_sha256": "6852fa2944634ecc582cf454e8595647287b9ed454747b89de95d2d99a452a04",
+  "existing_cooked_head_sha256": "6678935c20ec1715b3a6a9584ca7bf3eb8b82eb838009d2aab901291b92cae30",
+  "selected_parts": [
+    {
+      "part_index": 2,
+      "part_id": 16,
+      "triangles": 0,
+      "quads": 6
+    },
+    {
+      "part_index": 3,
+      "part_id": 17,
+      "triangles": 2,
+      "quads": 2
+    }
+  ],
+  "original_stores_checked": 76,
+  "original_instructions": 587,
+  "authored_cases": 81,
+  "authored_changed_words": 2268,
+  "authored_instructions": 24219,
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "cooked_uv_clut_tpage_match_original_baseline": true,
+  "fresh_head_baseline_matches_original_templates": true,
+  "asset_payloads_written": false,
+  "new_extraction_or_cooking": false,
+  "retail_parity": false,
+  "physical_hardware_tested": false,
+  "limits": [
+    "Only the zero/zero expression reset used by event1 handoff is admitted.",
+    "Native restore copies represented UV/CLUT/tpage fields, not PS1 packet padding or OT words.",
+    "Live expression scheduling, transition loading and source RNG chronology remain separate owners."
+  ]
+}

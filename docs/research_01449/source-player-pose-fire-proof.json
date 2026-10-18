@@ -1,0 +1,93 @@
+{
+  "format": "source-player-pose-fire-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "decompiler_export_sha256": "41e27c71cbb928a3143dcd77d6e8377663aac1a37a02f203d14b8c22c1c9afbc",
+  "source_blocks": {
+    "pose_driver_800325d4": {
+      "start": "0x800325d4",
+      "end_exclusive": "0x800329d4",
+      "bytes": 1024,
+      "sha256": "f9c5f62cd4e37a1fa6837d197d662d33f53cdb993e596de5b5f4ca00deac030f"
+    },
+    "pose_part_800331a0": {
+      "start": "0x800331a0",
+      "end_exclusive": "0x800333a0",
+      "bytes": 512,
+      "sha256": "1b6b9f217ecf7af89da4df046d0c026e6ade5100b1520bb16df4213a1a0362d5"
+    },
+    "buster_spawn_80035724": {
+      "start": "0x80035724",
+      "end_exclusive": "0x800358f0",
+      "bytes": 460,
+      "sha256": "72b161bf85005dac29c4d66dfca2f739798d571d23a22ef4a4f98a64a6aa13b3"
+    },
+    "buster_counter_init_80037534": {
+      "start": "0x80037534",
+      "end_exclusive": "0x80037594",
+      "bytes": 96,
+      "sha256": "3c88a61008ab3f75d50c4e50282427d891835dfd18f065605924f34c52fa1815"
+    },
+    "fire_state_80040e9c": {
+      "start": "0x80040e9c",
+      "end_exclusive": "0x80040fa8",
+      "bytes": 268,
+      "sha256": "18af415a4feed897f4b622a533d5ecb799a684eaeee66b24a245901f50052e85"
+    }
+  },
+  "pose_position_layout": {
+    "base_offset": "0x3A8",
+    "stride_bytes": 8,
+    "part_count": 15,
+    "buster_muzzle_part4": "0x3C8",
+    "buster_muzzle_part7": "0x3E0"
+  },
+  "fire_scalar_cases": [
+    {
+      "action": 0,
+      "flag_174": 134,
+      "changed_offsets": [
+        "0x174"
+      ],
+      "instruction_steps": 23
+    },
+    {
+      "action": 1,
+      "flag_174": 130,
+      "changed_offsets": [
+        "0x174"
+      ],
+      "instruction_steps": 23
+    },
+    {
+      "action": 2,
+      "flag_174": 69,
+      "changed_offsets": [
+        "0x174"
+      ],
+      "instruction_steps": 23
+    },
+    {
+      "action": 3,
+      "flag_174": 65,
+      "changed_offsets": [
+        "0x174"
+      ],
+      "instruction_steps": 23
+    }
+  ],
+  "selection_profile": {
+    "selection_count": 16,
+    "row_address": "0x80089A84",
+    "row_stride": 12,
+    "subtype_byte_address": "row+7 / 0x80089A8B+selection*12",
+    "counter_pointer_table": "0x80089EAC",
+    "tuple_sha256": "24a3fee29e7ee3bb50ef1155fb82a84c62a6fbc9608a94cdca081f042e3c01a3"
+  },
+  "limitations": [
+    "alternate eight-part limb pose bank selected by work+0x106 remains undecoded",
+    "fire helper returns 0x800423DC/0x80042458 remain explicit receipts",
+    "no projectile callback, camera projection, damage, or hardware parity claim"
+  ],
+  "payload_policy": "hashes, addresses, scalar results and aggregate identities only; no executable or decompiler text copied"
+}

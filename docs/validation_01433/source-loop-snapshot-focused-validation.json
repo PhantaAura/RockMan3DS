@@ -1,0 +1,34 @@
+{
+  "schema": "mml-source-loop-snapshot-focused-validation/1",
+  "status": "PASS",
+  "host_compile": "C++17 -Wall -Wextra -Werror",
+  "host_test": "source_loop_snapshot passed",
+  "python_test_methods": 8,
+  "python_status": "PASS",
+  "arm_compile": "GCC16.1 ARMv6K -Wall -Wextra -Werror PASS",
+  "arm_stack_bytes": {
+    "load": 200,
+    "encode": 216,
+    "admission": 24
+  },
+  "private_actual_cook": "recorded-loop-r2/source_loop_snapshot.l3ls",
+  "private_actual_native_decode": "PASS",
+  "private_package_bytes": 176,
+  "private_package_sha256": "f32ce63fdf7264a8ecdab327b7b4d8c64d75177c133e0ccade5fca44d25b73dc",
+  "source_hashes": {
+    "include/legends3ds/source_loop_snapshot.h": "f676ed7efe68a8dbb9475e2f18a16e89dab80bee41d206005d46cf934601897e",
+    "src/flow/source_loop_snapshot.cpp": "6b3cad3ef71af69e7cbacc7287233713e52bc71900b4eeb890297c449e7ef5bc",
+    "tools/cook_source_loop_snapshot.py": "848016d9d228bd7459567437c5e7924e2a0f78bd8c8e4af23f0ddb518c47546c",
+    "tests/test_source_loop_snapshot.cpp": "83d806c6c37cf8218eea92222a4726c3ac09c546615cf2a29c8eb334e535831d",
+    "tests/test_source_loop_snapshot_cook.py": "b9c05d77ce19529539ea86c3caa2937c8f8b7862acaebee5684e8bade5f477e5",
+    "docs/research_01433/SOURCE_LOOP_SNAPSHOT.md": "046be62abc5ff40364e900fdbf32c110b66fb5fda0e33aa0f83775b2cdd717dd",
+    "docs/research_01433/source_loop_snapshot/MODLOG.md": "459b58da1e34a560e814fe49e3c58a32080925c229161827e01cba997ddf6d23"
+  },
+  "original_instructions_executed": 0,
+  "original_instruction_hooks": 0,
+  "original_instruction_patches": 0,
+  "owner_local_payload_in_source": false,
+  "default_enabled": false,
+  "retail_parity": false,
+  "hardware_tested": false
+}

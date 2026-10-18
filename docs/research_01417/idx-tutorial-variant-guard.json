@@ -1,0 +1,79 @@
+{
+  "schema": "idx-tutorial-variant-guard/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "source_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "source_ranges": [
+    {
+      "start": "0x8003ad14",
+      "end_exclusive": "0x8003ad7c",
+      "sha256": "04d38c959804fcb6c7532b2df5d4e5c0c606340ef49e382909e48e19c8908d6a"
+    },
+    {
+      "start": "0x8003b5b4",
+      "end_exclusive": "0x8003b5f4",
+      "sha256": "3f6a692db51c9a0559bc671169f06e58613c060b0507fbe42d97dfe7f9166235"
+    },
+    {
+      "start": "0x8003b888",
+      "end_exclusive": "0x8003b8b0",
+      "sha256": "eadc094dc07c9f3d2baaf2df69252b1c3b3a9ea224bb71375b7e88ddad67725e"
+    },
+    {
+      "start": "0x80089f04",
+      "end_exclusive": "0x80089f05",
+      "sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+    }
+  ],
+  "cases": [
+    {
+      "raw_flag_800C1B74": 0,
+      "raw_stage_800C1B60": 0,
+      "source_group_signed": -1,
+      "raw6_after": [
+        1,
+        1,
+        1
+      ],
+      "instructions_executed": 24
+    },
+    {
+      "raw_flag_800C1B74": 1,
+      "raw_stage_800C1B60": 0,
+      "source_group_signed": -1,
+      "raw6_after": [
+        1,
+        1,
+        1
+      ],
+      "instructions_executed": 52
+    },
+    {
+      "raw_flag_800C1B74": 256,
+      "raw_stage_800C1B60": 0,
+      "source_group_signed": -1,
+      "raw6_after": [
+        1,
+        1,
+        1
+      ],
+      "instructions_executed": 52
+    },
+    {
+      "raw_flag_800C1B74": 65535,
+      "raw_stage_800C1B60": 0,
+      "source_group_signed": -1,
+      "raw6_after": [
+        1,
+        1,
+        1
+      ],
+      "instructions_executed": 52
+    }
+  ],
+  "all_scalar_checks_passed": true,
+  "conclusion": "Original stage0 guard returns before0/100/200 IDX variant tail; optional prior helper also returns for stage0.",
+  "limits": [
+    "Synthetic stage/flag premises in original integer source, not original live load timing.",
+    "Stages5/6 and later mutation routes remain separate from stage0 initialization."
+  ]
+}

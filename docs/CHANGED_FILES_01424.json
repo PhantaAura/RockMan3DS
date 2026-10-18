@@ -1,0 +1,338 @@
+[
+  {
+    "path": "CMakeLists.txt",
+    "change": "modified"
+  },
+  {
+    "path": "README.md",
+    "change": "modified"
+  },
+  {
+    "path": "RESUME_01424.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/PASS_REPORT_01424.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/PORTING_MAP_01424.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/SOURCE_EXCLUSIONS_01424.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01420/redux_rng_reference_observer.lua",
+    "change": "modified"
+  },
+  {
+    "path": "docs/research_01422/redux_input_update_observer.lua",
+    "change": "modified"
+  },
+  {
+    "path": "docs/research_01424/REFERENCE_OBSERVER.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01424/SOURCE_EVENT_COMMAND.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01424/SOURCE_PLAYER_LEASE_GTE.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01424/player_proxy_gte_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01424/redux_player_lease_observer.lua",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01424/source_event_command_outer_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01424/source_event_command_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/area-inspection-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/area-package.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/area-runtime-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/arm-stack-source-event-command.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/baseline-configure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/baseline-frozen-01423-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/build-r4.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/build-result.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/compiled-source-manifest.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/host-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/host-configure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/native-build-verification.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/native-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-arm-stack-usage.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-asan-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-live-comparison-r1.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-live-comparison-r2.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-native-validation.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-observer-lifecycle.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-observer-lifecycle.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/player-lease-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/redux-observer-bindings.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/redux-observer-bindings.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/rng-observer-lifecycle.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/rng-observer-lifecycle.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/rng-reference-regressions.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/rng-reference-regressions.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-event-command-asan-ubsan-r1.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-event-command-asan-ubsan-r2.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-event-command-empty-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-event-command-outer-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-event-command-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-event-command-strict-host-r4.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-event-command-test-results.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01424/source-stream245-directory-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/child_runtime.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/runtime_session.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/source_event_command.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_event_command_package.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_player_proxy.h",
+    "change": "added"
+  },
+  {
+    "path": "platform/3ds/Makefile",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/main.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/flow/source_event_command.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/flow/source_event_command_package.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/child_runtime.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/runtime_session.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/source_player_proxy.cpp",
+    "change": "added"
+  },
+  {
+    "path": "state/CURRENT_CHECKPOINT.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/CURRENT_READINESS.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/EVIDENCE_LEDGER.json",
+    "change": "modified"
+  },
+  {
+    "path": "tests/fixtures/source_event_command_01424.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_command_outer_01424.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_player_lease_01424.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_cook_source_event_command.py",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_player_lease_observer_lifecycle.lua",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_player_lease_reference.py",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_redux_observer_bindings.lua",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_rng_observer_lifecycle.lua",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_runtime_command_lease.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_event_command.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_event_command_package.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_player_proxy.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tools/build_hardware_test.py",
+    "change": "modified"
+  },
+  {
+    "path": "tools/compare_player_lease_reference.py",
+    "change": "added"
+  },
+  {
+    "path": "tools/cook_source_event_command.py",
+    "change": "added"
+  },
+  {
+    "path": "SOURCE_MANIFEST.sha256",
+    "change": "modified"
+  },
+  {
+    "path": "docs/CHANGED_FILES_01424.json",
+    "change": "added"
+  }
+]

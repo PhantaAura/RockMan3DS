@@ -1,0 +1,338 @@
+[
+  {
+    "path": "CMakeLists.txt",
+    "change": "modified"
+  },
+  {
+    "path": "README.md",
+    "change": "modified"
+  },
+  {
+    "path": "RESUME_01425.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/PASS_REPORT_01425.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/PORTING_MAP_01425.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/SOURCE_EXCLUSIONS_01425.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01425/NATIVE_XA_RUNTIME.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01425/REFERENCE_01425.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01425/SOURCE_CAMERA_PRODUCER.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01425/XA_IMPORT.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01425/source_camera_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/area-inspection-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/area-package.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/area-runtime-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r1-analysis.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r1-boot_01425.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r1-hardware_01425_4000086010072.csv",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r1-launch.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r1-settings-verification.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r2-analysis.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r2-boot_01425.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r2-hardware_01425_4000086010088.csv",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r2-launch.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r2-settings-verification.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r3-analysis.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r3-boot_01425.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r3-hardware_01425_4000086010088.csv",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r3-launch.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/azahar-r3-settings-verification.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/baseline-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/build-result.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/camera-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/host-build-r1-failure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/host-build-r2-failure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/host-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/host-configure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/host-tests-r1.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/native-build-verification.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/native-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/native-camera-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/native-source-manifest.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/original-player-lease-host-replay.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/original-player-lease-native-cli.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/original-player-lease-native-comparison.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/original-reference-observation-r1.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/original-reference-observation-r2.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/original-reference-preflight.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/sanitizer-command-0.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/sanitizer-command-1.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/sanitizer-command-2.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/sanitizer-result.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/transition-test-r2-setup-failure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/xa-import-authored-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/xa-import-owner-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01425/xa-owner-reader.log",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/runtime_session.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/source_camera.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/xa_stream.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/xa_transport.h",
+    "change": "added"
+  },
+  {
+    "path": "platform/3ds/Makefile",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/main.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/native_xa_audio.cpp",
+    "change": "added"
+  },
+  {
+    "path": "platform/3ds/source/native_xa_audio.h",
+    "change": "added"
+  },
+  {
+    "path": "src/flow/source_event_command.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/runtime_session.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/source_camera.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/xa_stream.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/xa_transport.cpp",
+    "change": "added"
+  },
+  {
+    "path": "state/CURRENT_CHECKPOINT.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/CURRENT_READINESS.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/EVIDENCE_LEDGER.json",
+    "change": "modified"
+  },
+  {
+    "path": "tests/fixtures/source_camera_direct_01425.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_projection_control_01425.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_cook_xa_stream.py",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_runtime_command_lease.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_source_camera.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_event_command.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_xa_stream.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tools/build_hardware_test.py",
+    "change": "modified"
+  },
+  {
+    "path": "tools/cook_xa_stream.py",
+    "change": "added"
+  },
+  {
+    "path": "SOURCE_MANIFEST.sha256",
+    "change": "modified"
+  },
+  {
+    "path": "docs/CHANGED_FILES_01425.json",
+    "change": "added"
+  }
+]

@@ -1,0 +1,49 @@
+all_unique_source_primitives total=2493 degenerate=15 rectangles=0
+unique_vertices counts_1_2_3_4=0,3,220,2270 hull_vertices=0,15,1761,717
+coverage strip_only=495 fan_only=682 both=117 neither=1184
+coverage_hull_3 strip_only=260 fan_only=282 both=117 neither=1102
+coverage_hull_4 strip_only=235 fan_only=400 both=0 neither=82
+invalid strip_overlap=644 strip_missing=1704 fan_overlap=1048 fan_missing=948
+missing_hull_area_fraction strip=0.356334858 fan=0.084592132
+native_primary_mid_area_0 total=1752 degenerate=28 rectangles=0
+unique_vertices counts_1_2_3_4=0,2,99,1651 hull_vertices=0,28,867,857
+coverage strip_only=296 fan_only=622 both=69 neither=737
+coverage_hull_3 strip_only=47 fan_only=82 both=69 neither=669
+coverage_hull_4 strip_only=249 fan_only=540 both=0 neither=68
+invalid strip_overlap=755 strip_missing=1212 fan_overlap=697 fan_missing=653
+missing_hull_area_fraction strip=0.252883882 fan=0.069199958
+native_primary_mid_area_1 total=854 degenerate=12 rectangles=0
+unique_vertices counts_1_2_3_4=0,2,65,787 hull_vertices=0,12,489,353
+coverage strip_only=266 fan_only=243 both=41 neither=292
+coverage_hull_3 strip_only=139 fan_only=42 both=41 neither=267
+coverage_hull_4 strip_only=127 fan_only=201 both=0 neither=25
+invalid strip_overlap=321 strip_missing=440 fan_overlap=343 fan_missing=367
+missing_hull_area_fraction strip=0.226415689 fan=0.079829305
+native_primary_mid_area_2 total=674 degenerate=0 rectangles=0
+unique_vertices counts_1_2_3_4=0,0,106,568 hull_vertices=0,0,462,212
+coverage strip_only=237 fan_only=257 both=18 neither=162
+coverage_hull_3 strip_only=149 fan_only=146 both=18 neither=149
+coverage_hull_4 strip_only=88 fan_only=111 both=0 neither=13
+invalid strip_overlap=147 strip_missing=396 fan_overlap=250 fan_missing=250
+missing_hull_area_fraction strip=0.320715223 fan=0.120357989
+native_primary_mid_area_3 total=120 degenerate=0 rectangles=0
+unique_vertices counts_1_2_3_4=0,0,22,98 hull_vertices=0,0,76,44
+coverage strip_only=30 fan_only=45 both=12 neither=33
+coverage_hull_3 strip_only=20 fan_only=15 both=12 neither=29
+coverage_hull_4 strip_only=10 fan_only=30 both=0 neither=4
+invalid strip_overlap=42 strip_missing=70 fan_overlap=29 fan_missing=48
+missing_hull_area_fraction strip=0.275022501 fan=0.126376060
+native_primary_mid_area_4 total=12112 degenerate=0 rectangles=0
+unique_vertices counts_1_2_3_4=0,0,76,12036 hull_vertices=0,0,9956,2156
+coverage strip_only=100 fan_only=2820 both=8 neither=9184
+coverage_hull_3 strip_only=16 fan_only=2676 both=8 neither=7256
+coverage_hull_4 strip_only=84 fan_only=144 both=0 neither=1928
+invalid strip_overlap=2112 strip_missing=11964 fan_overlap=7928 fan_missing=3368
+missing_hull_area_fraction strip=0.495550636 fan=0.122486524
+native_primary_mid_all_five_areas total=15512 degenerate=40 rectangles=0
+unique_vertices counts_1_2_3_4=0,4,368,15140 hull_vertices=0,40,11850,3622
+coverage strip_only=929 fan_only=3987 both=148 neither=10408
+coverage_hull_3 strip_only=371 fan_only=2961 both=148 neither=8370
+coverage_hull_4 strip_only=558 fan_only=1026 both=0 neither=2038
+invalid strip_overlap=3377 strip_missing=14082 fan_overlap=9247 fan_missing=4686
+missing_hull_area_fraction strip=0.488170712 fan=0.121265387

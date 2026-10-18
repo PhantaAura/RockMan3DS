@@ -1,0 +1,507 @@
+{
+  "schema": "mml-class03-combat-fields-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "ebd_sha256": "8c1dd36fbd7b5e3a48b1b45be0c232f39f8e6c9e19245f3f7de93b2905ba4ba1",
+  "cooked_package_sha256": "034c714b39c5a42090b9888e10374ec88e8839f86e81a8046880a125cec971b7",
+  "owner_expected_sha256": "c7d15efcc2025a20036620eab0ca2b19e469f4bcbbde9475ad14cd5acde3ca32",
+  "owner_record_cases": 2,
+  "authored_unsigned_boundary_cases": 10,
+  "instructions_executed": 14076,
+  "cases": [
+    {
+      "raw_selector": 1,
+      "source_variant": 0,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f35c",
+      "authored_fields": null,
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f36b",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f364",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f366",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 1,
+      "source_variant": 0,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f35c",
+      "authored_fields": [
+        0,
+        0,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f36b",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f364",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f366",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 1,
+      "source_variant": 0,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f35c",
+      "authored_fields": [
+        1,
+        1,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f36b",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f364",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f366",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 1,
+      "source_variant": 0,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f35c",
+      "authored_fields": [
+        127,
+        127,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f36b",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f364",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f366",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 1,
+      "source_variant": 0,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f35c",
+      "authored_fields": [
+        128,
+        128,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f36b",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f364",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f366",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 1,
+      "source_variant": 0,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f35c",
+      "authored_fields": [
+        255,
+        255,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f36b",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f364",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f366",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 2,
+      "source_variant": 1,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f6bc",
+      "authored_fields": null,
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f6cb",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f6c4",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f6c6",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 2,
+      "source_variant": 1,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f6bc",
+      "authored_fields": [
+        0,
+        0,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f6cb",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f6c4",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f6c6",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 2,
+      "source_variant": 1,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f6bc",
+      "authored_fields": [
+        1,
+        1,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f6cb",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f6c4",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f6c6",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 2,
+      "source_variant": 1,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f6bc",
+      "authored_fields": [
+        127,
+        127,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f6cb",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f6c4",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f6c6",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 2,
+      "source_variant": 1,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f6bc",
+      "authored_fields": [
+        128,
+        128,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f6cb",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f6c4",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f6c6",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    },
+    {
+      "raw_selector": 2,
+      "source_variant": 1,
+      "source_class": 32,
+      "source_subtype": 3,
+      "record_index0C": 0,
+      "context_high0F": 0,
+      "source_record": "0x8008f6bc",
+      "authored_fields": [
+        255,
+        255,
+        4
+      ],
+      "initializer_instructions": 1078,
+      "initializer_return_only_hooks": [
+        "0x80048e6c",
+        "0x8003346c"
+      ],
+      "initializer_selected_reads": [
+        {
+          "address": "0x8008f6cb",
+          "bytes": 1,
+          "signed": false
+        },
+        {
+          "address": "0x8008f6c4",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "action3_phase0_instructions": 53,
+      "action3_phase0_calls": [],
+      "action3_selected_reads": [
+        {
+          "address": "0x8008f6c6",
+          "bytes": 1,
+          "signed": false
+        }
+      ],
+      "original_vs_cooked_or_authored_fields": "MATCHES_MEASURED_FIELDS"
+    }
+  ],
+  "retail_parity": false,
+  "universal_selector_default": false,
+  "limits": [
+    "Only original class03 selected record index0C0/context0F0 is exercised.",
+    "Source initializer floor/matrix dependencies are authored return-only hooks.",
+    "Action3 phase0 has no helper calls; later phases are not covered.",
+    "Synthetic CPU execution is neither live gameplay nor Old3DS hardware evidence.",
+    "Scalar expected TSV remains owner-local and excluded from source release."
+  ]
+}

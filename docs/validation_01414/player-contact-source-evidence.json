@@ -1,0 +1,115 @@
+{
+  "format": "player-contact-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "PHYSICS_1TO1": false,
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "PL00_bounds_address": "0x80097D90",
+  "bounds_signed_world_units": [
+    -32,
+    32,
+    -32,
+    32,
+    -160,
+    0
+  ],
+  "coordinate_convention": "retail signed16 Y-down, fixed16.16 integration; velocity in sixteenth world units/update",
+  "supported_geometry": [
+    "rectangle code01 motion-eligible response",
+    "code03 downward/grounded floor",
+    "code0F ceiling",
+    "negative packed-cell Y response"
+  ],
+  "unknown_geometry": [
+    "diagonal classifiers2..7",
+    "slope response code08",
+    "deep-overlap fallback0x80050400",
+    "airborne-upward code03 horizontal/ceiling branch"
+  ],
+  "source_scalar_checks": {
+    "rectangle_response_cases_passed": 2444,
+    "untranslated_deep_overlap_cases_excluded": 1756,
+    "floor_ceiling_response_cases_passed": 1008,
+    "negative_packed_cell_cases_passed": 2304,
+    "jump_launch_cases_passed": 6,
+    "limits": [
+      "synthetic scalar blocks, no GTE or complete player tick",
+      "diagonal walls/slope response/deep-overlap remain UNKNOWN",
+      "no measured retail-vs-native parity"
+    ]
+  },
+  "source_blocks": [
+    {
+      "id": "player_bounds_initializer",
+      "start": "0x8003bed4",
+      "end_exclusive": "0x8003bee0",
+      "sha256": "be4b03b7279dcd18740070f0cd275571495b1ab66a79a3e87d739f9ab60a6f92"
+    },
+    {
+      "id": "player_contact_wrapper",
+      "start": "0x8004b414",
+      "end_exclusive": "0x8004b5cc",
+      "sha256": "38649df1888a219a879eddef9b711ee31ca6c54249f9aca0d7efa95ee2623973"
+    },
+    {
+      "id": "negative_cell_response",
+      "start": "0x8004b8b8",
+      "end_exclusive": "0x8004b984",
+      "sha256": "1fb6318f008746bdf877d413d5aa5138d763827563c8ec09c2a96202586aa4d4"
+    },
+    {
+      "id": "response_dispatch",
+      "start": "0x8004bdc8",
+      "end_exclusive": "0x8004c170",
+      "sha256": "b90425ebea75b2e5ee14430ea5a8885489d0cb09864080033260cefb0b277e0e"
+    },
+    {
+      "id": "rectangle_response",
+      "start": "0x8004f44c",
+      "end_exclusive": "0x8004f8bc",
+      "sha256": "f975db7a71bc379f7d29b1c9282c4069f2e1dca40ba9939a2e4cc30629e6c3c3"
+    },
+    {
+      "id": "axis_eligibility",
+      "start": "0x80050808",
+      "end_exclusive": "0x80050c2c",
+      "sha256": "944876ee46d179302eaecc829528e6ffcf0fc97d45ba390a1248ecb4e826eead"
+    },
+    {
+      "id": "floor_query",
+      "start": "0x80048e6c",
+      "end_exclusive": "0x8004920c",
+      "sha256": "02debe52dc66099b54c61bb9097409907cb6f1e86a4b48f5431d31efcff86020"
+    },
+    {
+      "id": "floor_adhesion",
+      "start": "0x8003c610",
+      "end_exclusive": "0x8003c6fc",
+      "sha256": "4737f434adc9b4f209da1407fb319321f9760a12e69a8dff08cc9bc33917ee3f"
+    },
+    {
+      "id": "jump_action",
+      "start": "0x8003da34",
+      "end_exclusive": "0x8003dc5c",
+      "sha256": "a4e8313e144094ad013d1dc3c9aab5c66987d94b6d9f93b99f07d7df807224ca"
+    },
+    {
+      "id": "air_control_landing",
+      "start": "0x8003e068",
+      "end_exclusive": "0x8003e224",
+      "sha256": "a9202129dec24f06b9e435bffb28634ce496a182b1bc05d997d61345662280c1"
+    },
+    {
+      "id": "animation_record_seed",
+      "start": "0x8003218c",
+      "end_exclusive": "0x800321ac",
+      "sha256": "8d92a39208c15d2d762213de1133b98276c4d979d5d927479a6068a6d244a79b"
+    },
+    {
+      "id": "animation_record_tick",
+      "start": "0x8003234c",
+      "end_exclusive": "0x800323e8",
+      "sha256": "fca59fb524d483c360dcfe2d5ad4d48e85846d3a48c985947d172c019941ab57"
+    }
+  ],
+  "payload_policy": "hashes, addresses, behavioral constants and aggregate counts only; no owner executable bytes/instruction listings"
+}

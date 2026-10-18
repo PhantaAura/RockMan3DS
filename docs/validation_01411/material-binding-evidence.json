@@ -1,0 +1,209 @@
+{
+  "schema": "visibility-material-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "overlay_bytes": 141056,
+  "overlay_crc32": "46628af1",
+  "findings": [
+    {
+      "id": "NEGATIVE_MATERIAL_TABLE",
+      "anchors": [
+        "0x80021b90",
+        "0x80021ba4",
+        "0x80021bb0",
+        "0x80021bbc",
+        "0x800223e0",
+        "0x8002240c"
+      ],
+      "meaning": "Default negative branch indexes eight-byte row by (packed << 1) & 0xf8; material uses table word high16 CLUT with fixed TPAGE0x1d; low8 atlas tile. bit7 branch retains source-record material and is unresolved here."
+    },
+    {
+      "id": "AREA_TABLE_SETUP",
+      "anchors": [
+        "0x80100528",
+        "0x8010054c",
+        "0x8010055c",
+        "0x800371a0",
+        "0x800371b8",
+        "0x800176dc",
+        "0x80017728"
+      ],
+      "meaning": "Area selector at0x8011ade4 selects source0x8011ad1c+8*selector; common helper copies256bytes to0x800badb0. Native sidecar admits authored rows before next area selector, keeping copied tail unassigned."
+    },
+    {
+      "id": "MID_FAR_UV_ATLAS",
+      "anchors": [
+        "0x80022050",
+        "0x80022068",
+        "0x800228c4",
+        "0x800228dc"
+      ],
+      "meaning": "Default Mid/Far UVs form32x32quad at tile (tile & 7, tile >> 3), each dimension multiplied32; original vertex order retained."
+    },
+    {
+      "id": "MATERIAL_PAGE_STRIPES",
+      "meaning": "Default TPAGE uses physicalVRAM page832,256. Four owner common uploads compose rows0..127 in order; latest overlapping rectangle wins. Existing single-origin-image cache discarded lower stripes by padding zero."
+    }
+  ],
+  "uv_instruction_probes": [
+    {
+      "start": "0x80022068",
+      "end_exclusive": "0x800220a4",
+      "block_sha256": "d14e510f651b68a97790ab936e252c1cdae34cb2f458cd201ae499c294198827",
+      "synthetic_tiles_passed": 64
+    },
+    {
+      "start": "0x800228dc",
+      "end_exclusive": "0x80022918",
+      "block_sha256": "cce8559d3a18600b6db55c3cf63642a589212f460014c7143d2781232076d71b",
+      "synthetic_tiles_passed": 64
+    }
+  ],
+  "areas": [
+    {
+      "area": 0,
+      "negative_cells": 8,
+      "known_binding_cells": 8,
+      "unknown_binding_cells": 0,
+      "active_slot_counts": {
+        "2": 5,
+        "3": 3
+      },
+      "source_table_address": "0x8011ad1c",
+      "authored_rows": 5,
+      "original_copy_bytes": 256,
+      "source_copy_sha256": "4c38c904b0ca74baa6ac2a2b949835b681a1558d2ce18d6b60e137d72648ed4b"
+    },
+    {
+      "area": 1,
+      "negative_cells": 71,
+      "known_binding_cells": 71,
+      "unknown_binding_cells": 0,
+      "active_slot_counts": {
+        "0": 20,
+        "2": 41,
+        "3": 10
+      },
+      "source_table_address": "0x8011ad44",
+      "authored_rows": 5,
+      "original_copy_bytes": 256,
+      "source_copy_sha256": "de6f120a60b84af3d9f30f13fea6a2e7e5ecde022e4c0c48717e963031afe8a1"
+    },
+    {
+      "area": 2,
+      "negative_cells": 14,
+      "known_binding_cells": 14,
+      "unknown_binding_cells": 0,
+      "active_slot_counts": {
+        "0": 11,
+        "1": 3
+      },
+      "source_table_address": "0x8011ad6c",
+      "authored_rows": 5,
+      "original_copy_bytes": 256,
+      "source_copy_sha256": "74e67db924d0a5d5a82e98479e81c66a6d617c145ab51eac400460a046b36145"
+    },
+    {
+      "area": 3,
+      "negative_cells": 16,
+      "known_binding_cells": 16,
+      "unknown_binding_cells": 0,
+      "active_slot_counts": {
+        "4": 16
+      },
+      "source_table_address": "0x8011ad94",
+      "authored_rows": 5,
+      "original_copy_bytes": 256,
+      "source_copy_sha256": "89e0b36ab7db6b239cd9903c6741e6ca256329c5b89640e4194e11017dabbaef"
+    },
+    {
+      "area": 4,
+      "negative_cells": 0,
+      "known_binding_cells": 0,
+      "unknown_binding_cells": 0,
+      "active_slot_counts": {},
+      "source_table_address": "0x8011adbc",
+      "authored_rows": 5,
+      "original_copy_bytes": 256,
+      "source_copy_sha256": "405a918bb06acf3545948fc8927f5ae5181c3abf2c3ca1df40d7c22694d1da6b"
+    }
+  ],
+  "objects": [
+    {
+      "area": 0,
+      "imported_records": 1,
+      "class_counts": {
+        "C0": 1
+      },
+      "native_model_bindings": 0,
+      "native_object_draw_submissions": 0,
+      "scope": "Imported object records exclude separate player visual renderer",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "area": 1,
+      "imported_records": 16,
+      "class_counts": {
+        "00": 1,
+        "C0": 3,
+        "E0": 12
+      },
+      "native_model_bindings": 0,
+      "native_object_draw_submissions": 0,
+      "scope": "Imported object records exclude separate player visual renderer",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "area": 2,
+      "imported_records": 20,
+      "class_counts": {
+        "00": 1,
+        "20": 2,
+        "C0": 2,
+        "E0": 15
+      },
+      "native_model_bindings": 0,
+      "native_object_draw_submissions": 0,
+      "scope": "Imported object records exclude separate player visual renderer",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "area": 3,
+      "imported_records": 11,
+      "class_counts": {
+        "00": 1,
+        "C0": 2,
+        "E0": 8
+      },
+      "native_model_bindings": 0,
+      "native_object_draw_submissions": 0,
+      "scope": "Imported object records exclude separate player visual renderer",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "area": 4,
+      "imported_records": 1,
+      "class_counts": {
+        "C0": 1
+      },
+      "native_model_bindings": 0,
+      "native_object_draw_submissions": 0,
+      "scope": "Imported object records exclude separate player visual renderer",
+      "status": "SOURCE_BACKED_PARTIAL"
+    }
+  ],
+  "object_blockers": [
+    "Generalized area package frontend decodes geometry/collision plus local sidecars; objectmodel/animationdispatch is absent.",
+    "Tutorial flow instantiates sourcework and EBD candidates; frontend submits terrain, player andprojectiles only.",
+    "No proven importedobject\u2192mesh binding or retail enemy initializer is available in current nativepath."
+  ],
+  "limitations": [
+    "Near subdivision UV tail state unported",
+    "bit7 specialdescriptor/materialbranch unverified",
+    "Retail stage dispatch model mapping and animation not established",
+    "Unwritten VRAM texels remain zero UNKNOWN; fullretail dynamicuploadstate notclaimed",
+    "Physical Old3DS validation pending"
+  ],
+  "payload_policy": "Hashes, addresses, semantics and aggregate counts only; no original bytes, disassembly, meshes, textures or palettes."
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "source": "src/world/actor_runtime.cpp",
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "source": "src/world/actor_pose_runtime.cpp",
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "source": "src/world/child_runtime.cpp",
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "source": "src/world/source_effects.cpp",
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "source": "src/flow/source_event_phase2.cpp",
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "source": "src/world/runtime_session.cpp",
+    "returncode": 0,
+    "output": ""
+  },
+  {
+    "source": "platform/3ds/source/main.cpp",
+    "returncode": 1,
+    "output": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261008-worldalive-01423/integrated-native-r1/native-source/platform/3ds/source/main.cpp:43:10: fatal error: mml_renderer_recovery.h: No such file or directory\n   43 | #include \"mml_renderer_recovery.h\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n"
+  }
+]

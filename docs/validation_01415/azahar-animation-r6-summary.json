@@ -1,0 +1,42 @@
+{
+  "build": "0.0.14.15 install-r6",
+  "binary_sha256": "eba03c7de31ee4e2b8294457bc325e0a12370dcb38ad4406f1088880783a56cb",
+  "device": "Azahar2126.0 Old-model HLE",
+  "input": "synthetic HID replay, diagnostic start0,-1,-7200 heading2048, owner-local request0 animation opt-in",
+  "samples": 58,
+  "areas": [
+    "1",
+    "2"
+  ],
+  "native_cache": {
+    "unique_cache": 1,
+    "decoded_cache_element_bytes_arm": 1836,
+    "total_actor_decoded_element_bytes_arm": 4888
+  },
+  "memory": {
+    "malloc_live_min_bytes": 1886560,
+    "malloc_live_max_bytes": 1893520,
+    "owned_texture_bytes": [
+      3670016
+    ],
+    "owned_linear_bytes": [
+      71640,
+      82560
+    ]
+  },
+  "post_diagnostic_load_position": {
+    "x": "10",
+    "y": "-384",
+    "z": "11185",
+    "grounded": "-1",
+    "contact_status": "2"
+  },
+  "limitations": [
+    "No native enemy AI/HP/hit delivery",
+    "No clear enemy playback capture or source cadence acceptance",
+    "Diagnostic SELECT not normal progression",
+    "Contact status2 Unsupported remains unknown",
+    "HLE timing/sparse samples are not hardware performance",
+    "No physical Old3DS test"
+  ]
+}

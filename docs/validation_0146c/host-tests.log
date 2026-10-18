@@ -1,0 +1,16 @@
+ctest --test-dir /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/old3ds-test-20260924/validated-final/host --output-on-failure
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/old3ds-test-20260924/validated-final/host
+    Start 1: core
+1/5 Test #1: core .............................   Passed    0.00 sec
+    Start 2: map_sharing
+2/5 Test #2: map_sharing ......................   Passed    0.00 sec
+    Start 3: push2
+3/5 Test #3: push2 ............................   Passed    0.00 sec
+    Start 4: integrity
+4/5 Test #4: integrity ........................   Passed    0.00 sec
+    Start 5: pipeline_python
+5/5 Test #5: pipeline_python ..................   Passed    0.16 sec
+
+100% tests passed out of 5
+
+Total Test time (real) =   0.17 sec

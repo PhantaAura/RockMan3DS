@@ -1,0 +1,114 @@
+{
+  "schema": "mml-original-reference-observation/1",
+  "version": "0.0.14.25",
+  "status": "UNKNOWN",
+  "snapshot_name": "reference-observation-r1",
+  "frozen_utc": "2026-10-10T14:15:26.421725+00:00",
+  "launch_started_utc": "2026-10-10T14:13:55.701686+00:00",
+  "launch_record_sha256": "465b06efe141b7aa035d9468e68f3609e44aa1762695b3d2d3bf2a4f943251de",
+  "actual_launch_hashes": {
+    "bootstrap_sha256": "a61d5bafe6e7f3766322c2005a820a8ffb1b18be1385e14fbe2b13398987a9f1",
+    "modules": {
+      "rng": "a85c6e12264db487dac37bfe361ac6310498f5225ef72f526025bd69a950eb4e",
+      "input": "d6c1b4af5727e6587b874ed34106b5b6e0011fe6d06b6a4a1fb9d21ace705952",
+      "lease": "c854a225b0bb93f27f06756bb4ddc63b93ae026dc5331ad2f9e6f25445a012cf"
+    },
+    "profile_sha256": "89b2a6abf1e2d7413a46a29677fc8922536bb33460d3eb07695085bd5bcb51fe",
+    "shaders": {
+      "output.lua": "0e51142a60aa432a90b631f58d03141827b5b8027ef9313d553d17a20f1fca9c",
+      "output.frag": "af6050ce93710cc3f6a72be10dfa8f5c7003529de0b0ce2c58f9b962999424f9",
+      "output.vert": "ffd46a99a0deb815f7ac6e4a177a4afdc1971149b00c2a52c281cb7acda5fc74",
+      "offscreen.lua": "0e51142a60aa432a90b631f58d03141827b5b8027ef9313d553d17a20f1fca9c",
+      "offscreen.frag": "af6050ce93710cc3f6a72be10dfa8f5c7003529de0b0ce2c58f9b962999424f9",
+      "offscreen.vert": "ffd46a99a0deb815f7ac6e4a177a4afdc1971149b00c2a52c281cb7acda5fc74"
+    },
+    "owner_identity_sha256": {
+      "bios": "713ea2aed58606282b3ff5e91d77f8c5892ea36f5adcd279d2c7dd26604a625d",
+      "exe": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+      "overlay": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c"
+    }
+  },
+  "streams": {
+    "rng-reference.jsonl": {
+      "sha256": "b483f7b2113943ada1e636890f4065bce48bb669176c238549dc9ee6ee91d4fe",
+      "complete_line_bytes_frozen": 499,
+      "rows": 2,
+      "kinds": {
+        "observer_start": 1,
+        "game_entry": 1
+      },
+      "status": "UNKNOWN",
+      "validation": {
+        "schema": "mml-measured-rng-reference-validation/1",
+        "status": "UNKNOWN",
+        "trace_rows": 2,
+        "actual_rand_returns": 0,
+        "actual_reseed_returns": 0,
+        "actual_class03_samples": 0,
+        "class03_overlay_admitted": false,
+        "not_admitted_overlay_markers": 0,
+        "class03_rand_caller_ra": 2148541176,
+        "class03_sample_store_pc": 2148541180,
+        "class03_captured_context_fields_validated": false,
+        "class03_input_update_chronology_proved": false,
+        "game_entry_boundaries": 1,
+        "unobserved_state_changes": [],
+        "pending_return_at_end": false,
+        "bounded_observer_completed": false,
+        "continuous_since_installation": true,
+        "game_entry_observed": true,
+        "game_seed_for_retail_bios_proved": false,
+        "shared_native_consumer_lifecycle_proved": false,
+        "retail_parity": false,
+        "limits": [
+          "This validates supplied observed scalars; it generates no missing samples.",
+          "The installed OpenBIOS reference is not a proved retail BIOS profile.",
+          "A game-entry boundary does not reconstruct BIOS consumers before installation.",
+          "Imported actor identity, input chronology and native scheduling need independent matching.",
+          "No seed or scalar is admitted automatically into the native runtime."
+        ]
+      }
+    },
+    "input-reference.jsonl": {
+      "sha256": "11d8a2b1bb0433d2c09cceeccb211ad9ba116079a2e9ebc0f55b98736de2df91",
+      "complete_line_bytes_frozen": 3202702,
+      "rows": 1666,
+      "kinds": {
+        "input_observer_start": 1,
+        "source_update_input": 1665
+      },
+      "status": "MEASURED_UPDATES",
+      "update_rows": 1665,
+      "guard_failures": []
+    },
+    "player-lease-reference.jsonl": {
+      "sha256": "2d03be875a2d01fe600a96db9981d4ddd4d270799de6398d78e35f9c47c153f6",
+      "complete_line_bytes_frozen": 726041,
+      "rows": 1209,
+      "kinds": {
+        "lease_observer_start": 1,
+        "player_lease_enter": 604,
+        "player_lease_return": 604
+      },
+      "status": "MEASURED_TRANSFER_BOUNDARY",
+      "completed_pairs": 604,
+      "pending_return_at_end": false,
+      "selected_owner_snapshots": 0,
+      "changed_owner_words_pairs": 0,
+      "changed_raw_cp2_pairs": 597,
+      "validation_error": null
+    }
+  },
+  "class03_samples": 0,
+  "class03_input_update_chronology_proved": false,
+  "native_scheduling_parity_proved": false,
+  "native_camera_writer_chronology_proved": false,
+  "hardware_tested": false,
+  "retail_parity": false,
+  "limits": [
+    "The private snapshot contains zero RNG services and zero class03 samples.",
+    "The input/update and raw CP2 transfer observations are title/pre-tutorial fields.",
+    "There are no selected owner snapshots in this capture.",
+    "Source owner memory and traces remain outside the code-only release archive."
+  ]
+}

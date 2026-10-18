@@ -1,0 +1,755 @@
+{
+  "schema": "mml-01439-prop-capture-review/1",
+  "snapshot_utc": "2026-10-14T20:12:25.882887+00:00",
+  "evidence": "SOURCE_BACKED_PARTIAL",
+  "retail_parity": false,
+  "hardware_tested": false,
+  "sample_stride_frames": 60,
+  "source_status_mapping": {
+    "9": "Updated",
+    "16": "NeedsRngOrChildOwner",
+    "20": "NeedsForeignReleaseOwner"
+  },
+  "runs": {
+    "r1": {
+      "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01439/azahar-01439-props-r1/sdmc/3ds/Legends3DS/hardware_01439_4000953841080.csv",
+      "snapshot_bytes": 6143506,
+      "snapshot_sha256": "67877431a91e8d6e777e9f5b60ebbe466a69492083e6392d700355c43a16ab6e",
+      "binary_sha256": "83a6f0252044f69db5f0a53544f123f290bf465ac6187fbab1b80a9b46e660e4",
+      "last_prop_sample_frame": 14160,
+      "slot0": [
+        {
+          "first": {
+            "frame": 120,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 292,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 1740,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 5374,
+            "status_name": "Updated"
+          },
+          "samples": 28
+        },
+        {
+          "first": {
+            "frame": 1800,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "2/-423/3556",
+            "position_known": "111111",
+            "line": 5563,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 1860,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "4/-424/3556",
+            "position_known": "111111",
+            "line": 5747,
+            "status_name": "Updated"
+          },
+          "samples": 2
+        },
+        {
+          "first": {
+            "frame": 1920,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112e80",
+            "state": 2,
+            "substate": 1,
+            "xyz": "-1/-366/3488",
+            "position_known": "111111",
+            "line": 5936,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 2460,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112e80",
+            "state": 2,
+            "substate": 1,
+            "xyz": "-68/-276/3307",
+            "position_known": "111111",
+            "line": 7612,
+            "status_name": "Updated"
+          },
+          "samples": 10
+        },
+        {
+          "first": {
+            "frame": 2520,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112f70",
+            "state": 3,
+            "substate": 1,
+            "xyz": "-24/-77/2014",
+            "position_known": "111111",
+            "line": 7801,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 14160,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112f70",
+            "state": 3,
+            "substate": 1,
+            "xyz": "-21/-89/-1462",
+            "position_known": "111111",
+            "line": 36441,
+            "status_name": "Updated"
+          },
+          "samples": 195
+        }
+      ],
+      "slot2": [
+        {
+          "first": {
+            "frame": 120,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/0/-488",
+            "position_known": "111111",
+            "line": 293,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 480,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/0/-488",
+            "position_known": "111111",
+            "line": 1418,
+            "status_name": "Updated"
+          },
+          "samples": 7
+        },
+        {
+          "first": {
+            "frame": 540,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "801132ec",
+            "state": 2,
+            "substate": 1,
+            "xyz": "0/-7/-488",
+            "position_known": "111111",
+            "line": 1608,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 540,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "801132ec",
+            "state": 2,
+            "substate": 1,
+            "xyz": "0/-7/-488",
+            "position_known": "111111",
+            "line": 1608,
+            "status_name": "Updated"
+          },
+          "samples": 1
+        },
+        {
+          "first": {
+            "frame": 600,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-50/-488",
+            "position_known": "111111",
+            "line": 1799,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 600,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-50/-488",
+            "position_known": "111111",
+            "line": 1799,
+            "status_name": "Updated"
+          },
+          "samples": 1
+        },
+        {
+          "first": {
+            "frame": 660,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801131d8",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 1986,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "last": {
+            "frame": 780,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801131d8",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 2361,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "samples": 3
+        },
+        {
+          "first": {
+            "frame": 840,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 2551,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 2520,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 7802,
+            "status_name": "Updated"
+          },
+          "samples": 29
+        },
+        {
+          "first": {
+            "frame": 2580,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801133b4",
+            "state": 3,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 7986,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "last": {
+            "frame": 14160,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801133b4",
+            "state": 3,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 36442,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "samples": 194
+        }
+      ],
+      "slot14": [
+        {
+          "first": {
+            "frame": 120,
+            "slot": 14,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 294,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 1740,
+            "slot": 14,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 5376,
+            "status_name": "Updated"
+          },
+          "samples": 28
+        },
+        {
+          "first": {
+            "frame": 1800,
+            "slot": 14,
+            "status": 20,
+            "committed": 0,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 5565,
+            "status_name": "NeedsForeignReleaseOwner"
+          },
+          "last": {
+            "frame": 14160,
+            "slot": 14,
+            "status": 20,
+            "committed": 0,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 36443,
+            "status_name": "NeedsForeignReleaseOwner"
+          },
+          "samples": 207
+        }
+      ],
+      "r2_live_during_review": false
+    },
+    "r2": {
+      "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01439/azahar-01439-props-r2/sdmc/3ds/Legends3DS/hardware_01439_4000982833845.csv",
+      "snapshot_bytes": 3023471,
+      "snapshot_sha256": "f21fb989d85095d409b9989e81524587649c870950696c621b08230f0abf1c0a",
+      "binary_sha256": "83a6f0252044f69db5f0a53544f123f290bf465ac6187fbab1b80a9b46e660e4",
+      "last_prop_sample_frame": 6300,
+      "slot0": [
+        {
+          "first": {
+            "frame": 120,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 295,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 1740,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 5376,
+            "status_name": "Updated"
+          },
+          "samples": 28
+        },
+        {
+          "first": {
+            "frame": 1800,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "2/-423/3556",
+            "position_known": "111111",
+            "line": 5571,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 1860,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "4/-424/3556",
+            "position_known": "111111",
+            "line": 5755,
+            "status_name": "Updated"
+          },
+          "samples": 2
+        },
+        {
+          "first": {
+            "frame": 1920,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112e80",
+            "state": 2,
+            "substate": 1,
+            "xyz": "-1/-366/3488",
+            "position_known": "111111",
+            "line": 5944,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 2460,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112e80",
+            "state": 2,
+            "substate": 1,
+            "xyz": "-68/-276/3307",
+            "position_known": "111111",
+            "line": 7616,
+            "status_name": "Updated"
+          },
+          "samples": 10
+        },
+        {
+          "first": {
+            "frame": 2520,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112f70",
+            "state": 3,
+            "substate": 1,
+            "xyz": "-24/-77/2014",
+            "position_known": "111111",
+            "line": 7811,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 6300,
+            "slot": 0,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112f70",
+            "state": 3,
+            "substate": 1,
+            "xyz": "-21/-89/-1462",
+            "position_known": "111111",
+            "line": 17449,
+            "status_name": "Updated"
+          },
+          "samples": 64
+        }
+      ],
+      "slot2": [
+        {
+          "first": {
+            "frame": 120,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/0/-488",
+            "position_known": "111111",
+            "line": 296,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 480,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/0/-488",
+            "position_known": "111111",
+            "line": 1422,
+            "status_name": "Updated"
+          },
+          "samples": 7
+        },
+        {
+          "first": {
+            "frame": 540,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "801132ec",
+            "state": 2,
+            "substate": 1,
+            "xyz": "0/-7/-488",
+            "position_known": "111111",
+            "line": 1607,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 540,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "801132ec",
+            "state": 2,
+            "substate": 1,
+            "xyz": "0/-7/-488",
+            "position_known": "111111",
+            "line": 1607,
+            "status_name": "Updated"
+          },
+          "samples": 1
+        },
+        {
+          "first": {
+            "frame": 600,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-50/-488",
+            "position_known": "111111",
+            "line": 1798,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 600,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-50/-488",
+            "position_known": "111111",
+            "line": 1798,
+            "status_name": "Updated"
+          },
+          "samples": 1
+        },
+        {
+          "first": {
+            "frame": 660,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801131d8",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 1985,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "last": {
+            "frame": 780,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801131d8",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 2366,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "samples": 3
+        },
+        {
+          "first": {
+            "frame": 840,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 2556,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 2520,
+            "slot": 2,
+            "status": 9,
+            "committed": 1,
+            "handler": "8011316c",
+            "state": 0,
+            "substate": 0,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 7812,
+            "status_name": "Updated"
+          },
+          "samples": 29
+        },
+        {
+          "first": {
+            "frame": 2580,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801133b4",
+            "state": 3,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 7996,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "last": {
+            "frame": 6300,
+            "slot": 2,
+            "status": 16,
+            "committed": 0,
+            "handler": "801133b4",
+            "state": 3,
+            "substate": 1,
+            "xyz": "0/-53/-488",
+            "position_known": "111111",
+            "line": 17450,
+            "status_name": "NeedsRngOrChildOwner"
+          },
+          "samples": 63
+        }
+      ],
+      "slot14": [
+        {
+          "first": {
+            "frame": 120,
+            "slot": 14,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 297,
+            "status_name": "Updated"
+          },
+          "last": {
+            "frame": 1740,
+            "slot": 14,
+            "status": 9,
+            "committed": 1,
+            "handler": "80112c9c",
+            "state": 0,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 5378,
+            "status_name": "Updated"
+          },
+          "samples": 28
+        },
+        {
+          "first": {
+            "frame": 1800,
+            "slot": 14,
+            "status": 20,
+            "committed": 0,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 5573,
+            "status_name": "NeedsForeignReleaseOwner"
+          },
+          "last": {
+            "frame": 6300,
+            "slot": 14,
+            "status": 20,
+            "committed": 0,
+            "handler": "80112d14",
+            "state": 1,
+            "substate": 1,
+            "xyz": "0/-404/3584",
+            "position_known": "111111",
+            "line": 17451,
+            "status_name": "NeedsForeignReleaseOwner"
+          },
+          "samples": 76
+        }
+      ],
+      "r2_live_during_review": true
+    }
+  },
+  "foreign_release_source_key": {
+    "prop_identity": "800bf578",
+    "pending_address": "8009898c",
+    "used_address": "800988fc",
+    "bit": "08000000",
+    "kind": "derived_from_implemented_unchanged-original_helper_equation_not_live_memory_receipt"
+  },
+  "observations": [
+    "Both runs commit slot0 state1/80112D14 at samples1800 and1860, state2/80112E80 samples1920..2460, and state3/80112F70 from2520.",
+    "Slot0 changes position from anchor0/-404/3584 to2/-423/3556 at first recorded attachment.",
+    "Slot14 status20 is NeedsForeignReleaseOwner, not an unknown numeric status; it remains uncommitted and retains0/-404/3584 starting sample1800.",
+    "The renderer iterates E0 records independently of update status; retained draw-ready work can still be submitted.",
+    "Door drop is committed at sample540, but lift is held status16 at660..780 and later state3 behavior remainsheld."
+  ],
+  "inference": "Missing foreign-release owner preserves auxiliaryslot14 at its anchor while mainprop0 already follows the actor; this is a concrete candidate cause of an anchored visual duplicate. CSV does not identify per-slot submitted pixels, so the actual visible duplicate is not proved by these records alone.",
+  "next_fix": "Resolve the actual80031988 computed pending/used owner with current generation/address witness, publish its mask operation atomically with slot14 attachment/release, then repeat capture. Do not treat it as E0free or simply hide/delete slot14."
+}

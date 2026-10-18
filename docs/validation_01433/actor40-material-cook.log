@@ -1,0 +1,3 @@
+word=3c000025 resolved=1 image=16384/16384 clut=16/16
+word=3e48002f resolved=1 image=16384/16384 clut=16/16
+entries=2 resolved=2 bytes=131328 snapshot=INITIAL_UPLOAD_BATCH chronology=SOURCE_BACKED_PARTIAL live_palette=UNKNOWN

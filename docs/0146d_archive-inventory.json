@@ -1,0 +1,3783 @@
+{
+  "archives": [
+    {
+      "archive_bytes": 646852939,
+      "crc_status": "Archive-provided CRC metadata; contents not independently verified",
+      "directory_count": 0,
+      "entries": [
+        {
+          "compressed_bytes": 116,
+          "crc32_archive_metadata": "9e88194d",
+          "filename": "Megaman Legends Rom/Mega Man Legends (USA).cue",
+          "is_directory": false,
+          "uncompressed_bytes": 214
+        },
+        {
+          "compressed_bytes": 7918056,
+          "crc32_archive_metadata": "52b25f5d",
+          "filename": "Megaman Legends Rom/MML_extracted.zip.part-ab",
+          "is_directory": false,
+          "uncompressed_bytes": 7985612
+        },
+        {
+          "compressed_bytes": 36354,
+          "crc32_archive_metadata": "7976083e",
+          "filename": "Megaman Legends Rom/Mega Man Legends (USA) (Track 2).bin",
+          "is_directory": false,
+          "uncompressed_bytes": 37396800
+        },
+        {
+          "compressed_bytes": 217008027,
+          "crc32_archive_metadata": "207b4abb",
+          "filename": "Megaman Legends Rom/Mega Man Legends (USA).chd",
+          "is_directory": false,
+          "uncompressed_bytes": 217298243
+        },
+        {
+          "compressed_bytes": 188772485,
+          "crc32_archive_metadata": "12cf1f66",
+          "filename": "Megaman Legends Rom/MML_extracted.zip.part-aa.zip",
+          "is_directory": false,
+          "uncompressed_bytes": 188743680
+        },
+        {
+          "compressed_bytes": 233116027,
+          "crc32_archive_metadata": "1f55bd97",
+          "filename": "Megaman Legends Rom/Mega Man Legends (USA) (Track 1).bin",
+          "is_directory": false,
+          "uncompressed_bytes": 487205040
+        }
+      ],
+      "exists": true,
+      "extension_counts": {
+        ".bin": 2,
+        ".chd": 1,
+        ".cue": 1,
+        ".part-ab": 1,
+        ".zip": 1
+      },
+      "file_count": 6,
+      "inspection": "ZIP central-directory metadata only; no member payload opened or extracted",
+      "path": "/Users/emeraldhunter/Downloads/Mega Man Legends Files.zip"
+    },
+    {
+      "archive_bytes": 346296,
+      "crc_status": "Archive-provided CRC metadata; contents not independently verified",
+      "directory_count": 25,
+      "entries": [
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/3ds/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 1510,
+          "crc32_archive_metadata": "dd494062",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/3ds/Makefile",
+          "is_directory": false,
+          "uncompressed_bytes": 3306
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/3ds/source/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 10010,
+          "crc32_archive_metadata": "82723f2b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/3ds/source/main.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 41352
+        },
+        {
+          "compressed_bytes": 297,
+          "crc32_archive_metadata": "f7dfe3bb",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/3ds/source/vshader0143.v.pica",
+          "is_directory": false,
+          "uncompressed_bytes": 634
+        },
+        {
+          "compressed_bytes": 324,
+          "crc32_archive_metadata": "50d08e8c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/3ds/source/vshader_uv.v.pica",
+          "is_directory": false,
+          "uncompressed_bytes": 719
+        },
+        {
+          "compressed_bytes": 2019,
+          "crc32_archive_metadata": "ff21a730",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/platform/3ds/README.md",
+          "is_directory": false,
+          "uncompressed_bytes": 4094
+        },
+        {
+          "compressed_bytes": 1673,
+          "crc32_archive_metadata": "2e9aa11e",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/CMakeLists.txt",
+          "is_directory": false,
+          "uncompressed_bytes": 9039
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/state/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 815,
+          "crc32_archive_metadata": "189a428a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/state/CURRENT_CHECKPOINT.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1615
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tests/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tests/p2/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 1680,
+          "crc32_archive_metadata": "ba3395fd",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tests/p2/test_all.c",
+          "is_directory": false,
+          "uncompressed_bytes": 3967
+        },
+        {
+          "compressed_bytes": 18625,
+          "crc32_archive_metadata": "2b7e0f11",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tests/test_core.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 73625
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 572,
+          "crc32_archive_metadata": "16294ea9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_integrated_sweep.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1171
+        },
+        {
+          "compressed_bytes": 556,
+          "crc32_archive_metadata": "48ebfb75",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_0146.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1048
+        },
+        {
+          "compressed_bytes": 1744,
+          "crc32_archive_metadata": "11f02a3d",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/visual_evidence_004.md",
+          "is_directory": false,
+          "uncompressed_bytes": 3514
+        },
+        {
+          "compressed_bytes": 700,
+          "crc32_archive_metadata": "730620d8",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1167
+        },
+        {
+          "compressed_bytes": 2691,
+          "crc32_archive_metadata": "5bcc981a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/flight_sprint_012.md",
+          "is_directory": false,
+          "uncompressed_bytes": 5564
+        },
+        {
+          "compressed_bytes": 1781,
+          "crc32_archive_metadata": "33ebdfe1",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/reference_fidelity_008.md",
+          "is_directory": false,
+          "uncompressed_bytes": 3290
+        },
+        {
+          "compressed_bytes": 2345,
+          "crc32_archive_metadata": "1044fca4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/tutorial_runtime_006.md",
+          "is_directory": false,
+          "uncompressed_bytes": 5047
+        },
+        {
+          "compressed_bytes": 1484,
+          "crc32_archive_metadata": "a55a6b99",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/collision_ownership_011.md",
+          "is_directory": false,
+          "uncompressed_bytes": 2905
+        },
+        {
+          "compressed_bytes": 1322,
+          "crc32_archive_metadata": "b1530957",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/flight_sprint_013.md",
+          "is_directory": false,
+          "uncompressed_bytes": 2500
+        },
+        {
+          "compressed_bytes": 822,
+          "crc32_archive_metadata": "fde51c54",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_008.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1724
+        },
+        {
+          "compressed_bytes": 584,
+          "crc32_archive_metadata": "87de6248",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/flight_sprint_0143.md",
+          "is_directory": false,
+          "uncompressed_bytes": 932
+        },
+        {
+          "compressed_bytes": 567,
+          "crc32_archive_metadata": "7a1cec08",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/flight_sprint_0145.md",
+          "is_directory": false,
+          "uncompressed_bytes": 928
+        },
+        {
+          "compressed_bytes": 3353,
+          "crc32_archive_metadata": "467df7cc",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/tutorial_runtime_007.md",
+          "is_directory": false,
+          "uncompressed_bytes": 7657
+        },
+        {
+          "compressed_bytes": 1038,
+          "crc32_archive_metadata": "7bd934b1",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_006.json",
+          "is_directory": false,
+          "uncompressed_bytes": 2122
+        },
+        {
+          "compressed_bytes": 1393,
+          "crc32_archive_metadata": "7d137891",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/dynamic_ebd_trace_009.md",
+          "is_directory": false,
+          "uncompressed_bytes": 2873
+        },
+        {
+          "compressed_bytes": 727,
+          "crc32_archive_metadata": "9950810d",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_005.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1420
+        },
+        {
+          "compressed_bytes": 2265,
+          "crc32_archive_metadata": "c6469690",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/native_runtime_010.md",
+          "is_directory": false,
+          "uncompressed_bytes": 4637
+        },
+        {
+          "compressed_bytes": 693,
+          "crc32_archive_metadata": "e90797d4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_009.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1316
+        },
+        {
+          "compressed_bytes": 1525,
+          "crc32_archive_metadata": "59d4c360",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_007.json",
+          "is_directory": false,
+          "uncompressed_bytes": 3844
+        },
+        {
+          "compressed_bytes": 906,
+          "crc32_archive_metadata": "b4549b17",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_012.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1948
+        },
+        {
+          "compressed_bytes": 479,
+          "crc32_archive_metadata": "304b6978",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_011.json",
+          "is_directory": false,
+          "uncompressed_bytes": 870
+        },
+        {
+          "compressed_bytes": 1062,
+          "crc32_archive_metadata": "8345e06e",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_010.json",
+          "is_directory": false,
+          "uncompressed_bytes": 2433
+        },
+        {
+          "compressed_bytes": 963,
+          "crc32_archive_metadata": "9ba455e9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/prebuild_fidelity_pass.md",
+          "is_directory": false,
+          "uncompressed_bytes": 1769
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 201,
+          "crc32_archive_metadata": "b15988b0",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_03.md",
+          "is_directory": false,
+          "uncompressed_bytes": 257
+        },
+        {
+          "compressed_bytes": 134,
+          "crc32_archive_metadata": "57211eb3",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_10.md",
+          "is_directory": false,
+          "uncompressed_bytes": 168
+        },
+        {
+          "compressed_bytes": 140,
+          "crc32_archive_metadata": "c527ac52",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_05.md",
+          "is_directory": false,
+          "uncompressed_bytes": 190
+        },
+        {
+          "compressed_bytes": 157,
+          "crc32_archive_metadata": "7f8cc43b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_02.md",
+          "is_directory": false,
+          "uncompressed_bytes": 209
+        },
+        {
+          "compressed_bytes": 140,
+          "crc32_archive_metadata": "267241eb",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_09.md",
+          "is_directory": false,
+          "uncompressed_bytes": 164
+        },
+        {
+          "compressed_bytes": 160,
+          "crc32_archive_metadata": "48f286d5",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_08.md",
+          "is_directory": false,
+          "uncompressed_bytes": 204
+        },
+        {
+          "compressed_bytes": 1264,
+          "crc32_archive_metadata": "cc487c98",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_MANIFEST.json",
+          "is_directory": false,
+          "uncompressed_bytes": 4458
+        },
+        {
+          "compressed_bytes": 189,
+          "crc32_archive_metadata": "d61376d7",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_01.md",
+          "is_directory": false,
+          "uncompressed_bytes": 235
+        },
+        {
+          "compressed_bytes": 185,
+          "crc32_archive_metadata": "a04651b9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_04.md",
+          "is_directory": false,
+          "uncompressed_bytes": 243
+        },
+        {
+          "compressed_bytes": 407,
+          "crc32_archive_metadata": "b3b5bf98",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/OLD3DS_EXACT_TEST.md",
+          "is_directory": false,
+          "uncompressed_bytes": 639
+        },
+        {
+          "compressed_bytes": 368,
+          "crc32_archive_metadata": "401150e9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/PARITY_READINESS.md",
+          "is_directory": false,
+          "uncompressed_bytes": 973
+        },
+        {
+          "compressed_bytes": 186,
+          "crc32_archive_metadata": "b0e0be52",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_07.md",
+          "is_directory": false,
+          "uncompressed_bytes": 258
+        },
+        {
+          "compressed_bytes": 148,
+          "crc32_archive_metadata": "bae9ac34",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/push2/HOUR_06.md",
+          "is_directory": false,
+          "uncompressed_bytes": 196
+        },
+        {
+          "compressed_bytes": 1957,
+          "crc32_archive_metadata": "0996b9af",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/flight_sprint_014.md",
+          "is_directory": false,
+          "uncompressed_bytes": 4042
+        },
+        {
+          "compressed_bytes": 670,
+          "crc32_archive_metadata": "0c4927da",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_013.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1210
+        },
+        {
+          "compressed_bytes": 955,
+          "crc32_archive_metadata": "318f89e4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_0144.json",
+          "is_directory": false,
+          "uncompressed_bytes": 2133
+        },
+        {
+          "compressed_bytes": 1045,
+          "crc32_archive_metadata": "839f1eb7",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_004.json",
+          "is_directory": false,
+          "uncompressed_bytes": 2347
+        },
+        {
+          "compressed_bytes": 1536,
+          "crc32_archive_metadata": "8527dca5",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/integration_0146.md",
+          "is_directory": false,
+          "uncompressed_bytes": 2889
+        },
+        {
+          "compressed_bytes": 1387,
+          "crc32_archive_metadata": "d3bb3fe6",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/integrated_sweep_wip.md",
+          "is_directory": false,
+          "uncompressed_bytes": 2686
+        },
+        {
+          "compressed_bytes": 1159,
+          "crc32_archive_metadata": "a457012e",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_003.json",
+          "is_directory": false,
+          "uncompressed_bytes": 3068
+        },
+        {
+          "compressed_bytes": 1820,
+          "crc32_archive_metadata": "282f9ac3",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/tutorial_flow_005.md",
+          "is_directory": false,
+          "uncompressed_bytes": 3538
+        },
+        {
+          "compressed_bytes": 735,
+          "crc32_archive_metadata": "377c60d4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_014.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1547
+        },
+        {
+          "compressed_bytes": 555,
+          "crc32_archive_metadata": "96cc3af2",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/research/validation_002.json",
+          "is_directory": false,
+          "uncompressed_bytes": 1388
+        },
+        {
+          "compressed_bytes": 10692,
+          "crc32_archive_metadata": "e9936559",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/SOURCE_MANIFEST.sha256",
+          "is_directory": false,
+          "uncompressed_bytes": 21663
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 1907,
+          "crc32_archive_metadata": "ca482caf",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/psxexe_to_elf.py",
+          "is_directory": false,
+          "uncompressed_bytes": 5068
+        },
+        {
+          "compressed_bytes": 1770,
+          "crc32_archive_metadata": "ae7fb0a7",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3runtime_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 6605
+        },
+        {
+          "compressed_bytes": 1280,
+          "crc32_archive_metadata": "b6c62b55",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_game_runtime_pack.py",
+          "is_directory": false,
+          "uncompressed_bytes": 3188
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/p2/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 988,
+          "crc32_archive_metadata": "ae760cf0",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/p2/mml_player_packet_scan.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1756
+        },
+        {
+          "compressed_bytes": 468,
+          "crc32_archive_metadata": "524001e2",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/p2/h7_owner_evidence.py",
+          "is_directory": false,
+          "uncompressed_bytes": 733
+        },
+        {
+          "compressed_bytes": 798,
+          "crc32_archive_metadata": "045482cd",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/p2/verify_cumulative_tree.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1618
+        },
+        {
+          "compressed_bytes": 527,
+          "crc32_archive_metadata": "ad4c1238",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/p2/trace_compare.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1086
+        },
+        {
+          "compressed_bytes": 804,
+          "crc32_archive_metadata": "77a42aaa",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/p2/mml_content_graph_v2.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1443
+        },
+        {
+          "compressed_bytes": 345,
+          "crc32_archive_metadata": "9571d7e7",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_render.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 668
+        },
+        {
+          "compressed_bytes": 760,
+          "crc32_archive_metadata": "7967232c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3runtime_pack_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2047
+        },
+        {
+          "compressed_bytes": 1031,
+          "crc32_archive_metadata": "3fa008a5",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_palette.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2737
+        },
+        {
+          "compressed_bytes": 544,
+          "crc32_archive_metadata": "b468af35",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_player_comp.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1100
+        },
+        {
+          "compressed_bytes": 322,
+          "crc32_archive_metadata": "617c8da4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_palette.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 530
+        },
+        {
+          "compressed_bytes": 410,
+          "crc32_archive_metadata": "325a50cc",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_st00_flow.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 792
+        },
+        {
+          "compressed_bytes": 1361,
+          "crc32_archive_metadata": "c683d1d0",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3player_runtime_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 4035
+        },
+        {
+          "compressed_bytes": 880,
+          "crc32_archive_metadata": "d65ca1ab",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3scan_materials.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2582
+        },
+        {
+          "compressed_bytes": 981,
+          "crc32_archive_metadata": "e41780a5",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_player_material_cache.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2692
+        },
+        {
+          "compressed_bytes": 1837,
+          "crc32_archive_metadata": "14499178",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_runtime_resource_catalog.py",
+          "is_directory": false,
+          "uncompressed_bytes": 4139
+        },
+        {
+          "compressed_bytes": 1094,
+          "crc32_archive_metadata": "26b60a33",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3flight_render_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 3078
+        },
+        {
+          "compressed_bytes": 731,
+          "crc32_archive_metadata": "50e18843",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_anim.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1856
+        },
+        {
+          "compressed_bytes": 603,
+          "crc32_archive_metadata": "d1288b21",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_ebd.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1469
+        },
+        {
+          "compressed_bytes": 1367,
+          "crc32_archive_metadata": "6e19a792",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3flight_material_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 4457
+        },
+        {
+          "compressed_bytes": 864,
+          "crc32_archive_metadata": "0101ffed",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3visual_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2038
+        },
+        {
+          "compressed_bytes": 451,
+          "crc32_archive_metadata": "3980d008",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_material_cache.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1087
+        },
+        {
+          "compressed_bytes": 545,
+          "crc32_archive_metadata": "ae166dbd",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_msg.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1084
+        },
+        {
+          "compressed_bytes": 458,
+          "crc32_archive_metadata": "7fad0825",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_pbd.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 822
+        },
+        {
+          "compressed_bytes": 1585,
+          "crc32_archive_metadata": "6fbfad01",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3runtime_session_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 4603
+        },
+        {
+          "compressed_bytes": 761,
+          "crc32_archive_metadata": "145c3578",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3runtime_msg_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2191
+        },
+        {
+          "compressed_bytes": 455,
+          "crc32_archive_metadata": "17a9725b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_audio_catalog.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 813
+        },
+        {
+          "compressed_bytes": 1037,
+          "crc32_archive_metadata": "ee55ff23",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/cook_reference_tables.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1874
+        },
+        {
+          "compressed_bytes": 408,
+          "crc32_archive_metadata": "717e4511",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_stage_catalog.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 756
+        },
+        {
+          "compressed_bytes": 467,
+          "crc32_archive_metadata": "a1c8a2ad",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_ebd.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1001
+        },
+        {
+          "compressed_bytes": 961,
+          "crc32_archive_metadata": "a9dcf359",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_texture.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2385
+        },
+        {
+          "compressed_bytes": 551,
+          "crc32_archive_metadata": "080b94a6",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_msg.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1476
+        },
+        {
+          "compressed_bytes": 633,
+          "crc32_archive_metadata": "7a6bfec9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3stage_object_pack_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1288
+        },
+        {
+          "compressed_bytes": 1825,
+          "crc32_archive_metadata": "bfc0b2e1",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_stage_object_catalog.py",
+          "is_directory": false,
+          "uncompressed_bytes": 4149
+        },
+        {
+          "compressed_bytes": 1013,
+          "crc32_archive_metadata": "54e1cfdd",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3script_pack_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 3381
+        },
+        {
+          "compressed_bytes": 1182,
+          "crc32_archive_metadata": "3f991a12",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_audio_reference_catalog.py",
+          "is_directory": false,
+          "uncompressed_bytes": 2371
+        },
+        {
+          "compressed_bytes": 1422,
+          "crc32_archive_metadata": "238f7fd0",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/verify_0146_source.py",
+          "is_directory": false,
+          "uncompressed_bytes": 3142
+        },
+        {
+          "compressed_bytes": 411,
+          "crc32_archive_metadata": "2b64a04c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_anim.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1045
+        },
+        {
+          "compressed_bytes": 1221,
+          "crc32_archive_metadata": "3fe2ab0f",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_material_cache.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 3585
+        },
+        {
+          "compressed_bytes": 430,
+          "crc32_archive_metadata": "f9bbcf97",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_map.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 885
+        },
+        {
+          "compressed_bytes": 356,
+          "crc32_archive_metadata": "73b0bfe9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_model.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 649
+        },
+        {
+          "compressed_bytes": 323,
+          "crc32_archive_metadata": "0b79b4df",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_player_comp.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 577
+        },
+        {
+          "compressed_bytes": 870,
+          "crc32_archive_metadata": "49fb9469",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_flight_sd.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1966
+        },
+        {
+          "compressed_bytes": 2160,
+          "crc32_archive_metadata": "a0dab3c7",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/verify_mml_us_reference.py",
+          "is_directory": false,
+          "uncompressed_bytes": 5154
+        },
+        {
+          "compressed_bytes": 2627,
+          "crc32_archive_metadata": "c3175b55",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_stage_catalog.py",
+          "is_directory": false,
+          "uncompressed_bytes": 6758
+        },
+        {
+          "compressed_bytes": 503,
+          "crc32_archive_metadata": "356bbf0c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_st00.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1014
+        },
+        {
+          "compressed_bytes": 427,
+          "crc32_archive_metadata": "483fcf04",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_resource_catalog.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 783
+        },
+        {
+          "compressed_bytes": 3816,
+          "crc32_archive_metadata": "064c7347",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_tutorial_pack.py",
+          "is_directory": false,
+          "uncompressed_bytes": 11309
+        },
+        {
+          "compressed_bytes": 797,
+          "crc32_archive_metadata": "2f343823",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/flight_qa.sh",
+          "is_directory": false,
+          "uncompressed_bytes": 1650
+        },
+        {
+          "compressed_bytes": 731,
+          "crc32_archive_metadata": "cd79ac19",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_st00_flow.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2025
+        },
+        {
+          "compressed_bytes": 577,
+          "crc32_archive_metadata": "c0e2595f",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_skeleton.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1053
+        },
+        {
+          "compressed_bytes": 322,
+          "crc32_archive_metadata": "93c120db",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_skeleton.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 536
+        },
+        {
+          "compressed_bytes": 686,
+          "crc32_archive_metadata": "de5ba5db",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/build_0146_mac.sh",
+          "is_directory": false,
+          "uncompressed_bytes": 1470
+        },
+        {
+          "compressed_bytes": 495,
+          "crc32_archive_metadata": "9a32b364",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3cook_render.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 973
+        },
+        {
+          "compressed_bytes": 906,
+          "crc32_archive_metadata": "4b814669",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/extract_st00_type0.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1759
+        },
+        {
+          "compressed_bytes": 383,
+          "crc32_archive_metadata": "b4ebe3c4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3inspect_texture.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 708
+        },
+        {
+          "compressed_bytes": 934,
+          "crc32_archive_metadata": "5644dec4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/extract_player_meshes.py",
+          "is_directory": false,
+          "uncompressed_bytes": 1727
+        },
+        {
+          "compressed_bytes": 1085,
+          "crc32_archive_metadata": "3cd186f8",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3game_pack_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 4036
+        },
+        {
+          "compressed_bytes": 974,
+          "crc32_archive_metadata": "2421235b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/tools/l3flight_animation_probe.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2794
+        },
+        {
+          "compressed_bytes": 14473,
+          "crc32_archive_metadata": "02500423",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/README.md",
+          "is_directory": false,
+          "uncompressed_bytes": 38336
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 205,
+          "crc32_archive_metadata": "d79d00ba",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_retail_anim_request.c",
+          "is_directory": false,
+          "uncompressed_bytes": 352
+        },
+        {
+          "compressed_bytes": 1170,
+          "crc32_archive_metadata": "0f94ff6f",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_retail_save_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 2864
+        },
+        {
+          "compressed_bytes": 272,
+          "crc32_archive_metadata": "6445c2ba",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_player_material.c",
+          "is_directory": false,
+          "uncompressed_bytes": 476
+        },
+        {
+          "compressed_bytes": 734,
+          "crc32_archive_metadata": "cb870f43",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_cutscene_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1830
+        },
+        {
+          "compressed_bytes": 250,
+          "crc32_archive_metadata": "3237be77",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_bottom_ui_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 521
+        },
+        {
+          "compressed_bytes": 454,
+          "crc32_archive_metadata": "e41f4570",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_retail_motion.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1117
+        },
+        {
+          "compressed_bytes": 573,
+          "crc32_archive_metadata": "4b2574cb",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_combat_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1378
+        },
+        {
+          "compressed_bytes": 328,
+          "crc32_archive_metadata": "00e6905b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_enemy_bridge_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 707
+        },
+        {
+          "compressed_bytes": 1012,
+          "crc32_archive_metadata": "210a2cc9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_native_save_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 2613
+        },
+        {
+          "compressed_bytes": 453,
+          "crc32_archive_metadata": "096219bc",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_package_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 958
+        },
+        {
+          "compressed_bytes": 549,
+          "crc32_archive_metadata": "61349970",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_event_vm_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1522
+        },
+        {
+          "compressed_bytes": 377,
+          "crc32_archive_metadata": "b0186a62",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_loader_guard_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1054
+        },
+        {
+          "compressed_bytes": 669,
+          "crc32_archive_metadata": "494ced36",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_world_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1983
+        },
+        {
+          "compressed_bytes": 350,
+          "crc32_archive_metadata": "4b1bbeca",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_runtime_diag_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 898
+        },
+        {
+          "compressed_bytes": 207,
+          "crc32_archive_metadata": "ba300e27",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_qol_v2.c",
+          "is_directory": false,
+          "uncompressed_bytes": 397
+        },
+        {
+          "compressed_bytes": 1258,
+          "crc32_archive_metadata": "9507603a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_h4_runtime.c",
+          "is_directory": false,
+          "uncompressed_bytes": 3310
+        },
+        {
+          "compressed_bytes": 474,
+          "crc32_archive_metadata": "1c5c100b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/p2/mml_renderer_recovery.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1088
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 4777,
+          "crc32_archive_metadata": "5d3fdced",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/st00_render.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 18079
+        },
+        {
+          "compressed_bytes": 1722,
+          "crc32_archive_metadata": "c4ba928d",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/ebd_directory.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 7171
+        },
+        {
+          "compressed_bytes": 1358,
+          "crc32_archive_metadata": "178eff59",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/stage_object_catalog.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 4378
+        },
+        {
+          "compressed_bytes": 2457,
+          "crc32_archive_metadata": "ab89167c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/stage_runtime.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 9991
+        },
+        {
+          "compressed_bytes": 6088,
+          "crc32_archive_metadata": "e9d40d4a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/runtime_session.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 22758
+        },
+        {
+          "compressed_bytes": 392,
+          "crc32_archive_metadata": "8cbe7a8b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/tutorial_runtime.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 991
+        },
+        {
+          "compressed_bytes": 280,
+          "crc32_archive_metadata": "429debd3",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/tile_transform.c",
+          "is_directory": false,
+          "uncompressed_bytes": 661
+        },
+        {
+          "compressed_bytes": 1116,
+          "crc32_archive_metadata": "8db6f06c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/stage_catalog.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 3240
+        },
+        {
+          "compressed_bytes": 4859,
+          "crc32_archive_metadata": "d24a8c3e",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/l3map.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 20227
+        },
+        {
+          "compressed_bytes": 1633,
+          "crc32_archive_metadata": "0275ddd0",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/st00_source.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 5208
+        },
+        {
+          "compressed_bytes": 1378,
+          "crc32_archive_metadata": "d2d2cb81",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/resource_catalog.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 5010
+        },
+        {
+          "compressed_bytes": 879,
+          "crc32_archive_metadata": "c117a307",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/audio_catalog.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2106
+        },
+        {
+          "compressed_bytes": 554,
+          "crc32_archive_metadata": "bfab01bc",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/stage_spawn.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1385
+        },
+        {
+          "compressed_bytes": 445,
+          "crc32_archive_metadata": "a787a16e",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/world/ebd_dynamic_selector.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1200
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/render/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 1712,
+          "crc32_archive_metadata": "aef13aaa",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/render/visual_bridge.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 6309
+        },
+        {
+          "compressed_bytes": 631,
+          "crc32_archive_metadata": "56d4e7a2",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/render/ctr_texture_layout.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1704
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/texture/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 3151,
+          "crc32_archive_metadata": "64c98128",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/texture/ps1_texture.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 16094
+        },
+        {
+          "compressed_bytes": 3436,
+          "crc32_archive_metadata": "c4fc0cf4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/texture/material_cache.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 14769
+        },
+        {
+          "compressed_bytes": 995,
+          "crc32_archive_metadata": "55adcf65",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/texture/material_resolver.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 3120
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/input/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 725,
+          "crc32_archive_metadata": "d99148f2",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/input/classic_input.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1886
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/player/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 539,
+          "crc32_archive_metadata": "29fb4421",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/player/classic_motion.c",
+          "is_directory": false,
+          "uncompressed_bytes": 1248
+        },
+        {
+          "compressed_bytes": 799,
+          "crc32_archive_metadata": "9c43a019",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/player/reference_tables.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 1916
+        },
+        {
+          "compressed_bytes": 1876,
+          "crc32_archive_metadata": "8beddd05",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/player/player_runtime.c",
+          "is_directory": false,
+          "uncompressed_bytes": 9457
+        },
+        {
+          "compressed_bytes": 1434,
+          "crc32_archive_metadata": "a3a1185a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/player/player_collision.c",
+          "is_directory": false,
+          "uncompressed_bytes": 5341
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/flow/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 3684,
+          "crc32_archive_metadata": "17f87ba6",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/flow/mml_message.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 15078
+        },
+        {
+          "compressed_bytes": 3705,
+          "crc32_archive_metadata": "702ee631",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/flow/st00_flow.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 16799
+        },
+        {
+          "compressed_bytes": 1042,
+          "crc32_archive_metadata": "68836977",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/flow/st00_event.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 3434
+        },
+        {
+          "compressed_bytes": 1725,
+          "crc32_archive_metadata": "e280ae72",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/flow/save_state.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 5454
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/animation/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 5622,
+          "crc32_archive_metadata": "a659e81f",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/animation/pbd_animation.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 23158
+        },
+        {
+          "compressed_bytes": 962,
+          "crc32_archive_metadata": "9297b7b1",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/animation/player_pose.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 3034
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/ui/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 746,
+          "crc32_archive_metadata": "e478d66f",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/ui/bottom_map.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 2530
+        },
+        {
+          "compressed_bytes": 687,
+          "crc32_archive_metadata": "c1c05e0d",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/ui/qol_settings.c",
+          "is_directory": false,
+          "uncompressed_bytes": 2498
+        },
+        {
+          "compressed_bytes": 340,
+          "crc32_archive_metadata": "b87b5535",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/ui/dialogue_history.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 771
+        },
+        {
+          "compressed_bytes": 1778,
+          "crc32_archive_metadata": "2c0d4aab",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/ui/bottom_screen.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 8071
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/model/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 1536,
+          "crc32_archive_metadata": "79e1f7e9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/model/player_composition.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 5204
+        },
+        {
+          "compressed_bytes": 2918,
+          "crc32_archive_metadata": "882e76e7",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/src/model/pbd_model.cpp",
+          "is_directory": false,
+          "uncompressed_bytes": 10465
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 2116,
+          "crc32_archive_metadata": "74628523",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/pbd_animation.h",
+          "is_directory": false,
+          "uncompressed_bytes": 6696
+        },
+        {
+          "compressed_bytes": 1244,
+          "crc32_archive_metadata": "d12eac5c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/mml_message.h",
+          "is_directory": false,
+          "uncompressed_bytes": 3618
+        },
+        {
+          "compressed_bytes": 1911,
+          "crc32_archive_metadata": "827fa14b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/player_runtime.h",
+          "is_directory": false,
+          "uncompressed_bytes": 5136
+        },
+        {
+          "compressed_bytes": 0,
+          "crc32_archive_metadata": "00000000",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/",
+          "is_directory": true,
+          "uncompressed_bytes": 0
+        },
+        {
+          "compressed_bytes": 596,
+          "crc32_archive_metadata": "07a72579",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_world_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1606
+        },
+        {
+          "compressed_bytes": 544,
+          "crc32_archive_metadata": "8a48d6e9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_renderer_recovery.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1490
+        },
+        {
+          "compressed_bytes": 344,
+          "crc32_archive_metadata": "1b9b0d54",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_event_vm_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 721
+        },
+        {
+          "compressed_bytes": 401,
+          "crc32_archive_metadata": "309cc5b1",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_native_save_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 940
+        },
+        {
+          "compressed_bytes": 307,
+          "crc32_archive_metadata": "f01b0580",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_loader_guard_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 731
+        },
+        {
+          "compressed_bytes": 355,
+          "crc32_archive_metadata": "8dd2d9a9",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_runtime_diag_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 770
+        },
+        {
+          "compressed_bytes": 262,
+          "crc32_archive_metadata": "0c018170",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_retail_save_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 607
+        },
+        {
+          "compressed_bytes": 603,
+          "crc32_archive_metadata": "cab31899",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_h4_runtime.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1675
+        },
+        {
+          "compressed_bytes": 222,
+          "crc32_archive_metadata": "7ac935be",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_bottom_ui_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 421
+        },
+        {
+          "compressed_bytes": 298,
+          "crc32_archive_metadata": "7233ea09",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_retail_motion.h",
+          "is_directory": false,
+          "uncompressed_bytes": 640
+        },
+        {
+          "compressed_bytes": 218,
+          "crc32_archive_metadata": "6af7b0e4",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_player_material.h",
+          "is_directory": false,
+          "uncompressed_bytes": 437
+        },
+        {
+          "compressed_bytes": 511,
+          "crc32_archive_metadata": "21021ab2",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_cutscene_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1145
+        },
+        {
+          "compressed_bytes": 197,
+          "crc32_archive_metadata": "3ffce6a8",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_qol_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 294
+        },
+        {
+          "compressed_bytes": 230,
+          "crc32_archive_metadata": "b4b9beca",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_enemy_bridge_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 425
+        },
+        {
+          "compressed_bytes": 177,
+          "crc32_archive_metadata": "1139a67e",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_retail_anim_request.h",
+          "is_directory": false,
+          "uncompressed_bytes": 278
+        },
+        {
+          "compressed_bytes": 282,
+          "crc32_archive_metadata": "b94df98e",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_package_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 471
+        },
+        {
+          "compressed_bytes": 497,
+          "crc32_archive_metadata": "a0865b7a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/p2/mml_combat_v2.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1192
+        },
+        {
+          "compressed_bytes": 1586,
+          "crc32_archive_metadata": "2c4979f6",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/st00_render.h",
+          "is_directory": false,
+          "uncompressed_bytes": 4785
+        },
+        {
+          "compressed_bytes": 1062,
+          "crc32_archive_metadata": "31493df6",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/ps1_texture.h",
+          "is_directory": false,
+          "uncompressed_bytes": 4586
+        },
+        {
+          "compressed_bytes": 818,
+          "crc32_archive_metadata": "60f1718a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/player_pose.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1769
+        },
+        {
+          "compressed_bytes": 280,
+          "crc32_archive_metadata": "7839833c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/classic_input.h",
+          "is_directory": false,
+          "uncompressed_bytes": 548
+        },
+        {
+          "compressed_bytes": 541,
+          "crc32_archive_metadata": "e704d533",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/dialogue_history.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1100
+        },
+        {
+          "compressed_bytes": 1246,
+          "crc32_archive_metadata": "a852d52a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/ebd_directory.h",
+          "is_directory": false,
+          "uncompressed_bytes": 3533
+        },
+        {
+          "compressed_bytes": 374,
+          "crc32_archive_metadata": "b1c4e657",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/endian_io.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1085
+        },
+        {
+          "compressed_bytes": 494,
+          "crc32_archive_metadata": "77df0285",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/stage_spawn.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1007
+        },
+        {
+          "compressed_bytes": 266,
+          "crc32_archive_metadata": "cd7c3ab5",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/ctr_texture_layout.h",
+          "is_directory": false,
+          "uncompressed_bytes": 464
+        },
+        {
+          "compressed_bytes": 900,
+          "crc32_archive_metadata": "5ba08356",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/visual_bridge.h",
+          "is_directory": false,
+          "uncompressed_bytes": 2580
+        },
+        {
+          "compressed_bytes": 971,
+          "crc32_archive_metadata": "923fe355",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/bottom_screen.h",
+          "is_directory": false,
+          "uncompressed_bytes": 2364
+        },
+        {
+          "compressed_bytes": 655,
+          "crc32_archive_metadata": "a47aaf33",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/bottom_map.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1559
+        },
+        {
+          "compressed_bytes": 2198,
+          "crc32_archive_metadata": "60e0a33b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/l3map.h",
+          "is_directory": false,
+          "uncompressed_bytes": 7458
+        },
+        {
+          "compressed_bytes": 438,
+          "crc32_archive_metadata": "e851427b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/resource_catalog.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1399
+        },
+        {
+          "compressed_bytes": 464,
+          "crc32_archive_metadata": "bc53c74c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/material_resolver.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1031
+        },
+        {
+          "compressed_bytes": 1557,
+          "crc32_archive_metadata": "09d69e31",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/stage_runtime.h",
+          "is_directory": false,
+          "uncompressed_bytes": 4377
+        },
+        {
+          "compressed_bytes": 1149,
+          "crc32_archive_metadata": "27ecb687",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/st00_flow.h",
+          "is_directory": false,
+          "uncompressed_bytes": 3042
+        },
+        {
+          "compressed_bytes": 320,
+          "crc32_archive_metadata": "67bd3c9b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/stage_object_catalog.h",
+          "is_directory": false,
+          "uncompressed_bytes": 769
+        },
+        {
+          "compressed_bytes": 3038,
+          "crc32_archive_metadata": "aa4f64da",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/runtime_session.h",
+          "is_directory": false,
+          "uncompressed_bytes": 10246
+        },
+        {
+          "compressed_bytes": 654,
+          "crc32_archive_metadata": "8335514c",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/save_state.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1614
+        },
+        {
+          "compressed_bytes": 861,
+          "crc32_archive_metadata": "fd788410",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/qol_settings.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1824
+        },
+        {
+          "compressed_bytes": 751,
+          "crc32_archive_metadata": "33ec816a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/player_composition.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1894
+        },
+        {
+          "compressed_bytes": 685,
+          "crc32_archive_metadata": "d6e832f6",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/ebd_dynamic_selector.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1338
+        },
+        {
+          "compressed_bytes": 1000,
+          "crc32_archive_metadata": "5830807b",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/st00_event.h",
+          "is_directory": false,
+          "uncompressed_bytes": 2413
+        },
+        {
+          "compressed_bytes": 689,
+          "crc32_archive_metadata": "73714e1a",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/reference_tables.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1609
+        },
+        {
+          "compressed_bytes": 988,
+          "crc32_archive_metadata": "5bab3b74",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/material_cache.h",
+          "is_directory": false,
+          "uncompressed_bytes": 2662
+        },
+        {
+          "compressed_bytes": 204,
+          "crc32_archive_metadata": "e5b8969f",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/tile_transform.h",
+          "is_directory": false,
+          "uncompressed_bytes": 336
+        },
+        {
+          "compressed_bytes": 233,
+          "crc32_archive_metadata": "b05c9a62",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/classic_motion.h",
+          "is_directory": false,
+          "uncompressed_bytes": 457
+        },
+        {
+          "compressed_bytes": 527,
+          "crc32_archive_metadata": "cc66d4cb",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/pbd_model.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1417
+        },
+        {
+          "compressed_bytes": 505,
+          "crc32_archive_metadata": "40440798",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/st00_source.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1549
+        },
+        {
+          "compressed_bytes": 1392,
+          "crc32_archive_metadata": "866d0976",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/player_collision.h",
+          "is_directory": false,
+          "uncompressed_bytes": 3309
+        },
+        {
+          "compressed_bytes": 352,
+          "crc32_archive_metadata": "19c116c3",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/audio_catalog.h",
+          "is_directory": false,
+          "uncompressed_bytes": 738
+        },
+        {
+          "compressed_bytes": 511,
+          "crc32_archive_metadata": "79edcecd",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/stage_catalog.h",
+          "is_directory": false,
+          "uncompressed_bytes": 1268
+        },
+        {
+          "compressed_bytes": 420,
+          "crc32_archive_metadata": "475e14c8",
+          "filename": "Legends3DS_0.0.14.6a_Integration_Source/include/legends3ds/tutorial_runtime.h",
+          "is_directory": false,
+          "uncompressed_bytes": 916
+        }
+      ],
+      "exists": true,
+      "extension_counts": {
+        "": 1,
+        ".c": 24,
+        ".cpp": 73,
+        ".h": 54,
+        ".json": 19,
+        ".md": 30,
+        ".pica": 2,
+        ".py": 18,
+        ".sh": 2,
+        ".sha256": 1,
+        ".txt": 1
+      },
+      "file_count": 225,
+      "inspection": "ZIP central-directory metadata only; no member payload opened or extracted",
+      "path": "/Users/emeraldhunter/Documents/Legends3DS_0.0.14.6a_Integration_Source.zip"
+    }
+  ],
+  "blockers": [
+    "No loose raw asset filenames are visible at the outer directory of the game-files ZIP; split/nested member contents are unknown and were not read.",
+    "Integration source ZIP has source/text filenames only; no game-data suffix candidates.",
+    "No raw or cooked asset suffix candidates were found in the current source tree; generated platform binaries are build products, not pack inputs.",
+    "A filename inventory cannot establish original palette ownership, animation semantics, event logic, audio assets/playback, or retail fidelity.",
+    "Existing pack audit documents 3 unique unresolved material words across 1,184 terrain primitives; this metadata inventory supplies no independently verified replacement input for them."
+  ],
+  "created_utc": "2026-10-01T01:09:40.812657+00:00",
+  "current_source_data_candidates_by_suffix": [],
+  "importer": {
+    "allowed_pack_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial",
+    "allowed_suffixes": [
+      ".l3anim",
+      ".l3ebd",
+      ".l3flow",
+      ".l3map",
+      ".l3mc",
+      ".l3model",
+      ".l3msg",
+      ".l3pal",
+      ".l3pc",
+      ".l3ref",
+      ".l3render",
+      ".l3skel",
+      ".l3tex"
+    ],
+    "asset_input_kind": "Existing complete cooked tutorial directory only",
+    "manifest_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial/manifest.json",
+    "observed_cooked_bytes": 3673827,
+    "observed_cooked_files": 100,
+    "output_constraint": "Fresh or empty directory separate from source and pack",
+    "payload_validation_in_this_audit": "Not performed; build importer must enforce format-1 manifest, exact inventory, sizes, SHA-256, no symlinks, required frontend files, and supported cooked suffixes before use",
+    "required_filenames_missing_in_metadata": [],
+    "required_frontend_files": [
+      "ebd/area_00.l3ebd",
+      "ebd/area_01.l3ebd",
+      "ebd/area_02.l3ebd",
+      "ebd/area_03.l3ebd",
+      "ebd/area_04.l3ebd",
+      "materials/area_00.l3mc",
+      "materials/area_01.l3mc",
+      "materials/area_02.l3mc",
+      "materials/area_03.l3mc",
+      "materials/area_04.l3mc",
+      "materials/player_area_00.l3mc",
+      "materials/player_area_01.l3mc",
+      "materials/player_area_02.l3mc",
+      "materials/player_area_03.l3mc",
+      "materials/player_area_04.l3mc",
+      "messages/st00_01.l3msg",
+      "messages/st00_02.l3msg",
+      "player/body.l3model",
+      "player/feet.l3model",
+      "player/head.l3model",
+      "player/left.l3model",
+      "player/main.l3anim",
+      "player/main.l3skel",
+      "player/player.l3pc",
+      "player/right.l3model",
+      "reference.l3ref",
+      "st00.l3flow",
+      "st00.l3map",
+      "st00.l3render"
+    ],
+    "script": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6c_HardwareTest/tools/build_hardware_test.py",
+    "script_does_not_accept": "CHD, CUE, track BINs, EXE/ROM/raw commercial binaries, nested archive payloads, raw owner-data, or loose uncooked assets"
+  },
+  "loose_inventories": [
+    {
+      "entries": [
+        {
+          "bytes": 10600,
+          "filename": "CMakeLists.txt"
+        },
+        {
+          "bytes": 42146,
+          "filename": "README.md"
+        },
+        {
+          "bytes": 26624,
+          "filename": "SOURCE_MANIFEST.sha256"
+        },
+        {
+          "bytes": 124,
+          "filename": "build_mml3ds.sh"
+        },
+        {
+          "bytes": 444,
+          "filename": "docs/BASELINE.json"
+        },
+        {
+          "bytes": 1163,
+          "filename": "docs/CHANGED_FILES_0146c.md"
+        },
+        {
+          "bytes": 3118,
+          "filename": "docs/CHECKPOINT_EXCLUSIONS_0146c.txt"
+        },
+        {
+          "bytes": 5819,
+          "filename": "docs/HARDWARE_TEST_0146c.md"
+        },
+        {
+          "bytes": 2312,
+          "filename": "docs/PORTING_MAP_0146c.md"
+        },
+        {
+          "bytes": 7434,
+          "filename": "docs/REPORT_0146c.md"
+        },
+        {
+          "bytes": 3229,
+          "filename": "docs/RESUME_0146c_20260925_002.md"
+        },
+        {
+          "bytes": 2079,
+          "filename": "docs/RESUME_20260925.md"
+        },
+        {
+          "bytes": 2078,
+          "filename": "docs/RESUME_20260926_UV.md"
+        },
+        {
+          "bytes": 2113,
+          "filename": "docs/RESUME_FINAL_0146c.md"
+        },
+        {
+          "bytes": 58041,
+          "filename": "docs/pack_audit.json"
+        },
+        {
+          "bytes": 3941,
+          "filename": "docs/pack_audit.md"
+        },
+        {
+          "bytes": 2882,
+          "filename": "docs/validation_0146c/build-result.json"
+        },
+        {
+          "bytes": 13305,
+          "filename": "docs/validation_0146c/host-build.log"
+        },
+        {
+          "bytes": 1220,
+          "filename": "docs/validation_0146c/host-configure.log"
+        },
+        {
+          "bytes": 834,
+          "filename": "docs/validation_0146c/host-tests.log"
+        },
+        {
+          "bytes": 911,
+          "filename": "docs/validation_0146c/native-build.log"
+        },
+        {
+          "bytes": 273,
+          "filename": "docs/validation_0146c/native-size.txt"
+        },
+        {
+          "bytes": 15542,
+          "filename": "docs/validation_0146c/native-source-manifest.json"
+        },
+        {
+          "bytes": 17431,
+          "filename": "docs/validation_0146c/pack-validation.json"
+        },
+        {
+          "bytes": 682,
+          "filename": "docs/validation_0146c/script-negative-checks.log"
+        },
+        {
+          "bytes": 738,
+          "filename": "include/legends3ds/audio_catalog.h"
+        },
+        {
+          "bytes": 1559,
+          "filename": "include/legends3ds/bottom_map.h"
+        },
+        {
+          "bytes": 2364,
+          "filename": "include/legends3ds/bottom_screen.h"
+        },
+        {
+          "bytes": 548,
+          "filename": "include/legends3ds/classic_input.h"
+        },
+        {
+          "bytes": 457,
+          "filename": "include/legends3ds/classic_motion.h"
+        },
+        {
+          "bytes": 464,
+          "filename": "include/legends3ds/ctr_texture_layout.h"
+        },
+        {
+          "bytes": 1100,
+          "filename": "include/legends3ds/dialogue_history.h"
+        },
+        {
+          "bytes": 3533,
+          "filename": "include/legends3ds/ebd_directory.h"
+        },
+        {
+          "bytes": 1338,
+          "filename": "include/legends3ds/ebd_dynamic_selector.h"
+        },
+        {
+          "bytes": 1085,
+          "filename": "include/legends3ds/endian_io.h"
+        },
+        {
+          "bytes": 7458,
+          "filename": "include/legends3ds/l3map.h"
+        },
+        {
+          "bytes": 2662,
+          "filename": "include/legends3ds/material_cache.h"
+        },
+        {
+          "bytes": 1031,
+          "filename": "include/legends3ds/material_resolver.h"
+        },
+        {
+          "bytes": 3618,
+          "filename": "include/legends3ds/mml_message.h"
+        },
+        {
+          "bytes": 6696,
+          "filename": "include/legends3ds/pbd_animation.h"
+        },
+        {
+          "bytes": 1417,
+          "filename": "include/legends3ds/pbd_model.h"
+        },
+        {
+          "bytes": 3309,
+          "filename": "include/legends3ds/player_collision.h"
+        },
+        {
+          "bytes": 1894,
+          "filename": "include/legends3ds/player_composition.h"
+        },
+        {
+          "bytes": 1769,
+          "filename": "include/legends3ds/player_pose.h"
+        },
+        {
+          "bytes": 5136,
+          "filename": "include/legends3ds/player_runtime.h"
+        },
+        {
+          "bytes": 4586,
+          "filename": "include/legends3ds/ps1_texture.h"
+        },
+        {
+          "bytes": 1824,
+          "filename": "include/legends3ds/qol_settings.h"
+        },
+        {
+          "bytes": 1609,
+          "filename": "include/legends3ds/reference_tables.h"
+        },
+        {
+          "bytes": 1399,
+          "filename": "include/legends3ds/resource_catalog.h"
+        },
+        {
+          "bytes": 10764,
+          "filename": "include/legends3ds/runtime_session.h"
+        },
+        {
+          "bytes": 1614,
+          "filename": "include/legends3ds/save_state.h"
+        },
+        {
+          "bytes": 2413,
+          "filename": "include/legends3ds/st00_event.h"
+        },
+        {
+          "bytes": 3042,
+          "filename": "include/legends3ds/st00_flow.h"
+        },
+        {
+          "bytes": 4785,
+          "filename": "include/legends3ds/st00_render.h"
+        },
+        {
+          "bytes": 1549,
+          "filename": "include/legends3ds/st00_source.h"
+        },
+        {
+          "bytes": 1268,
+          "filename": "include/legends3ds/stage_catalog.h"
+        },
+        {
+          "bytes": 769,
+          "filename": "include/legends3ds/stage_object_catalog.h"
+        },
+        {
+          "bytes": 4377,
+          "filename": "include/legends3ds/stage_runtime.h"
+        },
+        {
+          "bytes": 1007,
+          "filename": "include/legends3ds/stage_spawn.h"
+        },
+        {
+          "bytes": 336,
+          "filename": "include/legends3ds/tile_transform.h"
+        },
+        {
+          "bytes": 916,
+          "filename": "include/legends3ds/tutorial_runtime.h"
+        },
+        {
+          "bytes": 2580,
+          "filename": "include/legends3ds/visual_bridge.h"
+        },
+        {
+          "bytes": 421,
+          "filename": "include/legends3ds/p2/mml_bottom_ui_v2.h"
+        },
+        {
+          "bytes": 1192,
+          "filename": "include/legends3ds/p2/mml_combat_v2.h"
+        },
+        {
+          "bytes": 1145,
+          "filename": "include/legends3ds/p2/mml_cutscene_v2.h"
+        },
+        {
+          "bytes": 425,
+          "filename": "include/legends3ds/p2/mml_enemy_bridge_v2.h"
+        },
+        {
+          "bytes": 721,
+          "filename": "include/legends3ds/p2/mml_event_vm_v2.h"
+        },
+        {
+          "bytes": 1675,
+          "filename": "include/legends3ds/p2/mml_h4_runtime.h"
+        },
+        {
+          "bytes": 731,
+          "filename": "include/legends3ds/p2/mml_loader_guard_v2.h"
+        },
+        {
+          "bytes": 940,
+          "filename": "include/legends3ds/p2/mml_native_save_v2.h"
+        },
+        {
+          "bytes": 971,
+          "filename": "include/legends3ds/p2/mml_package_v2.h"
+        },
+        {
+          "bytes": 437,
+          "filename": "include/legends3ds/p2/mml_player_material.h"
+        },
+        {
+          "bytes": 294,
+          "filename": "include/legends3ds/p2/mml_qol_v2.h"
+        },
+        {
+          "bytes": 1835,
+          "filename": "include/legends3ds/p2/mml_renderer_recovery.h"
+        },
+        {
+          "bytes": 278,
+          "filename": "include/legends3ds/p2/mml_retail_anim_request.h"
+        },
+        {
+          "bytes": 640,
+          "filename": "include/legends3ds/p2/mml_retail_motion.h"
+        },
+        {
+          "bytes": 607,
+          "filename": "include/legends3ds/p2/mml_retail_save_v2.h"
+        },
+        {
+          "bytes": 1094,
+          "filename": "include/legends3ds/p2/mml_runtime_diag_v2.h"
+        },
+        {
+          "bytes": 1606,
+          "filename": "include/legends3ds/p2/mml_world_v2.h"
+        },
+        {
+          "bytes": 380468,
+          "filename": "platform/3ds/Legends3DS_FlightProbe_0146.3dsx"
+        },
+        {
+          "bytes": 11541912,
+          "filename": "platform/3ds/Legends3DS_FlightProbe_0146.elf"
+        },
+        {
+          "bytes": 14016,
+          "filename": "platform/3ds/Legends3DS_FlightProbe_0146.smdh"
+        },
+        {
+          "bytes": 3333,
+          "filename": "platform/3ds/Makefile"
+        },
+        {
+          "bytes": 4094,
+          "filename": "platform/3ds/README.md"
+        },
+        {
+          "bytes": 3921302,
+          "filename": "platform/3ds/build_3ds/.map"
+        },
+        {
+          "bytes": 89276,
+          "filename": "platform/3ds/build_3ds/Legends3DS_FlightProbe_0146.lst"
+        },
+        {
+          "bytes": 1222,
+          "filename": "platform/3ds/build_3ds/bottom_map.d"
+        },
+        {
+          "bytes": 210736,
+          "filename": "platform/3ds/build_3ds/bottom_map.o"
+        },
+        {
+          "bytes": 1258,
+          "filename": "platform/3ds/build_3ds/bottom_screen.d"
+        },
+        {
+          "bytes": 153616,
+          "filename": "platform/3ds/build_3ds/bottom_screen.o"
+        },
+        {
+          "bytes": 566,
+          "filename": "platform/3ds/build_3ds/ctr_texture_layout.d"
+        },
+        {
+          "bytes": 52048,
+          "filename": "platform/3ds/build_3ds/ctr_texture_layout.o"
+        },
+        {
+          "bytes": 554,
+          "filename": "platform/3ds/build_3ds/dialogue_history.d"
+        },
+        {
+          "bytes": 57336,
+          "filename": "platform/3ds/build_3ds/dialogue_history.o"
+        },
+        {
+          "bytes": 1937,
+          "filename": "platform/3ds/build_3ds/ebd_directory.d"
+        },
+        {
+          "bytes": 266720,
+          "filename": "platform/3ds/build_3ds/ebd_directory.o"
+        },
+        {
+          "bytes": 16166,
+          "filename": "platform/3ds/build_3ds/hardware_test.d"
+        },
+        {
+          "bytes": 799756,
+          "filename": "platform/3ds/build_3ds/hardware_test.o"
+        },
+        {
+          "bytes": 1213,
+          "filename": "platform/3ds/build_3ds/l3map.d"
+        },
+        {
+          "bytes": 1082740,
+          "filename": "platform/3ds/build_3ds/l3map.o"
+        },
+        {
+          "bytes": 22316,
+          "filename": "platform/3ds/build_3ds/main.d"
+        },
+        {
+          "bytes": 2620444,
+          "filename": "platform/3ds/build_3ds/main.o"
+        },
+        {
+          "bytes": 2659,
+          "filename": "platform/3ds/build_3ds/material_cache.d"
+        },
+        {
+          "bytes": 487584,
+          "filename": "platform/3ds/build_3ds/material_cache.o"
+        },
+        {
+          "bytes": 1263,
+          "filename": "platform/3ds/build_3ds/material_resolver.d"
+        },
+        {
+          "bytes": 266904,
+          "filename": "platform/3ds/build_3ds/material_resolver.o"
+        },
+        {
+          "bytes": 1576,
+          "filename": "platform/3ds/build_3ds/mml_message.d"
+        },
+        {
+          "bytes": 411544,
+          "filename": "platform/3ds/build_3ds/mml_message.o"
+        },
+        {
+          "bytes": 578,
+          "filename": "platform/3ds/build_3ds/mml_renderer_recovery.d"
+        },
+        {
+          "bytes": 8176,
+          "filename": "platform/3ds/build_3ds/mml_renderer_recovery.o"
+        },
+        {
+          "bytes": 570,
+          "filename": "platform/3ds/build_3ds/mml_runtime_diag_v2.d"
+        },
+        {
+          "bytes": 7816,
+          "filename": "platform/3ds/build_3ds/mml_runtime_diag_v2.o"
+        },
+        {
+          "bytes": 1589,
+          "filename": "platform/3ds/build_3ds/pbd_animation.d"
+        },
+        {
+          "bytes": 672864,
+          "filename": "platform/3ds/build_3ds/pbd_animation.o"
+        },
+        {
+          "bytes": 1569,
+          "filename": "platform/3ds/build_3ds/pbd_model.d"
+        },
+        {
+          "bytes": 661568,
+          "filename": "platform/3ds/build_3ds/pbd_model.o"
+        },
+        {
+          "bytes": 914,
+          "filename": "platform/3ds/build_3ds/player_collision.d"
+        },
+        {
+          "bytes": 14660,
+          "filename": "platform/3ds/build_3ds/player_collision.o"
+        },
+        {
+          "bytes": 2309,
+          "filename": "platform/3ds/build_3ds/player_composition.d"
+        },
+        {
+          "bytes": 296948,
+          "filename": "platform/3ds/build_3ds/player_composition.o"
+        },
+        {
+          "bytes": 897,
+          "filename": "platform/3ds/build_3ds/player_pose.d"
+        },
+        {
+          "bytes": 60284,
+          "filename": "platform/3ds/build_3ds/player_pose.o"
+        },
+        {
+          "bytes": 548,
+          "filename": "platform/3ds/build_3ds/player_runtime.d"
+        },
+        {
+          "bytes": 24180,
+          "filename": "platform/3ds/build_3ds/player_runtime.o"
+        },
+        {
+          "bytes": 1579,
+          "filename": "platform/3ds/build_3ds/ps1_texture.d"
+        },
+        {
+          "bytes": 395280,
+          "filename": "platform/3ds/build_3ds/ps1_texture.o"
+        },
+        {
+          "bytes": 536,
+          "filename": "platform/3ds/build_3ds/qol_settings.d"
+        },
+        {
+          "bytes": 7656,
+          "filename": "platform/3ds/build_3ds/qol_settings.o"
+        },
+        {
+          "bytes": 1598,
+          "filename": "platform/3ds/build_3ds/reference_tables.d"
+        },
+        {
+          "bytes": 57440,
+          "filename": "platform/3ds/build_3ds/reference_tables.o"
+        },
+        {
+          "bytes": 6225,
+          "filename": "platform/3ds/build_3ds/runtime_session.d"
+        },
+        {
+          "bytes": 2078752,
+          "filename": "platform/3ds/build_3ds/runtime_session.o"
+        },
+        {
+          "bytes": 1232,
+          "filename": "platform/3ds/build_3ds/st00_event.d"
+        },
+        {
+          "bytes": 84020,
+          "filename": "platform/3ds/build_3ds/st00_event.o"
+        },
+        {
+          "bytes": 1920,
+          "filename": "platform/3ds/build_3ds/st00_flow.d"
+        },
+        {
+          "bytes": 407344,
+          "filename": "platform/3ds/build_3ds/st00_flow.o"
+        },
+        {
+          "bytes": 1935,
+          "filename": "platform/3ds/build_3ds/st00_render.d"
+        },
+        {
+          "bytes": 1177556,
+          "filename": "platform/3ds/build_3ds/st00_render.o"
+        },
+        {
+          "bytes": 1601,
+          "filename": "platform/3ds/build_3ds/stage_runtime.d"
+        },
+        {
+          "bytes": 405160,
+          "filename": "platform/3ds/build_3ds/stage_runtime.o"
+        },
+        {
+          "bytes": 885,
+          "filename": "platform/3ds/build_3ds/stage_spawn.d"
+        },
+        {
+          "bytes": 91560,
+          "filename": "platform/3ds/build_3ds/stage_spawn.o"
+        },
+        {
+          "bytes": 547,
+          "filename": "platform/3ds/build_3ds/tile_transform.d"
+        },
+        {
+          "bytes": 5356,
+          "filename": "platform/3ds/build_3ds/tile_transform.o"
+        },
+        {
+          "bytes": 1969,
+          "filename": "platform/3ds/build_3ds/tutorial_runtime.d"
+        },
+        {
+          "bytes": 281212,
+          "filename": "platform/3ds/build_3ds/tutorial_runtime.o"
+        },
+        {
+          "bytes": 2672,
+          "filename": "platform/3ds/build_3ds/visual_bridge.d"
+        },
+        {
+          "bytes": 545660,
+          "filename": "platform/3ds/build_3ds/visual_bridge.o"
+        },
+        {
+          "bytes": 296,
+          "filename": "platform/3ds/build_3ds/vshader0143.shbin"
+        },
+        {
+          "bytes": 341,
+          "filename": "platform/3ds/build_3ds/vshader0143.shbin.d"
+        },
+        {
+          "bytes": 1012,
+          "filename": "platform/3ds/build_3ds/vshader0143.shbin.o"
+        },
+        {
+          "bytes": 336,
+          "filename": "platform/3ds/build_3ds/vshader0143_shbin.h"
+        },
+        {
+          "bytes": 316,
+          "filename": "platform/3ds/build_3ds/vshader_uv.shbin"
+        },
+        {
+          "bytes": 338,
+          "filename": "platform/3ds/build_3ds/vshader_uv.shbin.d"
+        },
+        {
+          "bytes": 1028,
+          "filename": "platform/3ds/build_3ds/vshader_uv.shbin.o"
+        },
+        {
+          "bytes": 332,
+          "filename": "platform/3ds/build_3ds/vshader_uv_shbin.h"
+        },
+        {
+          "bytes": 5336,
+          "filename": "platform/3ds/source/hardware_test.cpp"
+        },
+        {
+          "bytes": 579,
+          "filename": "platform/3ds/source/hardware_test.h"
+        },
+        {
+          "bytes": 43687,
+          "filename": "platform/3ds/source/main.cpp"
+        },
+        {
+          "bytes": 634,
+          "filename": "platform/3ds/source/vshader0143.v.pica"
+        },
+        {
+          "bytes": 719,
+          "filename": "platform/3ds/source/vshader_uv.v.pica"
+        },
+        {
+          "bytes": 5145,
+          "filename": "research/PACKAGE_AND_REPLAY_0146b.md"
+        },
+        {
+          "bytes": 2905,
+          "filename": "research/collision_ownership_011.md"
+        },
+        {
+          "bytes": 2873,
+          "filename": "research/dynamic_ebd_trace_009.md"
+        },
+        {
+          "bytes": 5564,
+          "filename": "research/flight_sprint_012.md"
+        },
+        {
+          "bytes": 2500,
+          "filename": "research/flight_sprint_013.md"
+        },
+        {
+          "bytes": 4042,
+          "filename": "research/flight_sprint_014.md"
+        },
+        {
+          "bytes": 932,
+          "filename": "research/flight_sprint_0143.md"
+        },
+        {
+          "bytes": 928,
+          "filename": "research/flight_sprint_0145.md"
+        },
+        {
+          "bytes": 2686,
+          "filename": "research/integrated_sweep_wip.md"
+        },
+        {
+          "bytes": 2889,
+          "filename": "research/integration_0146.md"
+        },
+        {
+          "bytes": 4637,
+          "filename": "research/native_runtime_010.md"
+        },
+        {
+          "bytes": 1769,
+          "filename": "research/prebuild_fidelity_pass.md"
+        },
+        {
+          "bytes": 3290,
+          "filename": "research/reference_fidelity_008.md"
+        },
+        {
+          "bytes": 3538,
+          "filename": "research/tutorial_flow_005.md"
+        },
+        {
+          "bytes": 5047,
+          "filename": "research/tutorial_runtime_006.md"
+        },
+        {
+          "bytes": 7657,
+          "filename": "research/tutorial_runtime_007.md"
+        },
+        {
+          "bytes": 1167,
+          "filename": "research/validation.json"
+        },
+        {
+          "bytes": 1388,
+          "filename": "research/validation_002.json"
+        },
+        {
+          "bytes": 3068,
+          "filename": "research/validation_003.json"
+        },
+        {
+          "bytes": 2347,
+          "filename": "research/validation_004.json"
+        },
+        {
+          "bytes": 1420,
+          "filename": "research/validation_005.json"
+        },
+        {
+          "bytes": 2122,
+          "filename": "research/validation_006.json"
+        },
+        {
+          "bytes": 3844,
+          "filename": "research/validation_007.json"
+        },
+        {
+          "bytes": 1724,
+          "filename": "research/validation_008.json"
+        },
+        {
+          "bytes": 1316,
+          "filename": "research/validation_009.json"
+        },
+        {
+          "bytes": 2433,
+          "filename": "research/validation_010.json"
+        },
+        {
+          "bytes": 870,
+          "filename": "research/validation_011.json"
+        },
+        {
+          "bytes": 1948,
+          "filename": "research/validation_012.json"
+        },
+        {
+          "bytes": 1210,
+          "filename": "research/validation_013.json"
+        },
+        {
+          "bytes": 1547,
+          "filename": "research/validation_014.json"
+        },
+        {
+          "bytes": 2133,
+          "filename": "research/validation_0144.json"
+        },
+        {
+          "bytes": 1048,
+          "filename": "research/validation_0146.json"
+        },
+        {
+          "bytes": 1171,
+          "filename": "research/validation_integrated_sweep.json"
+        },
+        {
+          "bytes": 3514,
+          "filename": "research/visual_evidence_004.md"
+        },
+        {
+          "bytes": 1997,
+          "filename": "research/0146b/CHANGED_FILES.md"
+        },
+        {
+          "bytes": 9821,
+          "filename": "research/0146b/REPORT.md"
+        },
+        {
+          "bytes": 17209,
+          "filename": "research/0146b/animation_evidence.json"
+        },
+        {
+          "bytes": 4025,
+          "filename": "research/0146b/changed_files.json"
+        },
+        {
+          "bytes": 3118,
+          "filename": "research/0146b/early_area_corpus.json"
+        },
+        {
+          "bytes": 1910,
+          "filename": "research/0146b/evidence_ledger.json"
+        },
+        {
+          "bytes": 1922303,
+          "filename": "research/0146b/executable_evidence.json"
+        },
+        {
+          "bytes": 35887,
+          "filename": "research/0146b/inherited_file_hashes.json"
+        },
+        {
+          "bytes": 4800,
+          "filename": "research/0146b/readiness.json"
+        },
+        {
+          "bytes": 334312,
+          "filename": "research/0146b/regression_corpus.json"
+        },
+        {
+          "bytes": 3560,
+          "filename": "research/0146b/replay_results.json"
+        },
+        {
+          "bytes": 1135,
+          "filename": "research/0146b/source_audit.json"
+        },
+        {
+          "bytes": 8613,
+          "filename": "research/0146b/validation.json"
+        },
+        {
+          "bytes": 235,
+          "filename": "research/push2/HOUR_01.md"
+        },
+        {
+          "bytes": 209,
+          "filename": "research/push2/HOUR_02.md"
+        },
+        {
+          "bytes": 257,
+          "filename": "research/push2/HOUR_03.md"
+        },
+        {
+          "bytes": 243,
+          "filename": "research/push2/HOUR_04.md"
+        },
+        {
+          "bytes": 190,
+          "filename": "research/push2/HOUR_05.md"
+        },
+        {
+          "bytes": 196,
+          "filename": "research/push2/HOUR_06.md"
+        },
+        {
+          "bytes": 258,
+          "filename": "research/push2/HOUR_07.md"
+        },
+        {
+          "bytes": 204,
+          "filename": "research/push2/HOUR_08.md"
+        },
+        {
+          "bytes": 164,
+          "filename": "research/push2/HOUR_09.md"
+        },
+        {
+          "bytes": 168,
+          "filename": "research/push2/HOUR_10.md"
+        },
+        {
+          "bytes": 4458,
+          "filename": "research/push2/HOUR_MANIFEST.json"
+        },
+        {
+          "bytes": 639,
+          "filename": "research/push2/OLD3DS_EXACT_TEST.md"
+        },
+        {
+          "bytes": 973,
+          "filename": "research/push2/PARITY_READINESS.md"
+        },
+        {
+          "bytes": 23158,
+          "filename": "src/animation/pbd_animation.cpp"
+        },
+        {
+          "bytes": 3034,
+          "filename": "src/animation/player_pose.cpp"
+        },
+        {
+          "bytes": 15078,
+          "filename": "src/flow/mml_message.cpp"
+        },
+        {
+          "bytes": 5454,
+          "filename": "src/flow/save_state.cpp"
+        },
+        {
+          "bytes": 3434,
+          "filename": "src/flow/st00_event.cpp"
+        },
+        {
+          "bytes": 16799,
+          "filename": "src/flow/st00_flow.cpp"
+        },
+        {
+          "bytes": 1886,
+          "filename": "src/input/classic_input.c"
+        },
+        {
+          "bytes": 10465,
+          "filename": "src/model/pbd_model.cpp"
+        },
+        {
+          "bytes": 5204,
+          "filename": "src/model/player_composition.cpp"
+        },
+        {
+          "bytes": 521,
+          "filename": "src/p2/mml_bottom_ui_v2.c"
+        },
+        {
+          "bytes": 1378,
+          "filename": "src/p2/mml_combat_v2.c"
+        },
+        {
+          "bytes": 1830,
+          "filename": "src/p2/mml_cutscene_v2.c"
+        },
+        {
+          "bytes": 707,
+          "filename": "src/p2/mml_enemy_bridge_v2.c"
+        },
+        {
+          "bytes": 1522,
+          "filename": "src/p2/mml_event_vm_v2.c"
+        },
+        {
+          "bytes": 3310,
+          "filename": "src/p2/mml_h4_runtime.c"
+        },
+        {
+          "bytes": 1054,
+          "filename": "src/p2/mml_loader_guard_v2.c"
+        },
+        {
+          "bytes": 3666,
+          "filename": "src/p2/mml_native_save_v2.c"
+        },
+        {
+          "bytes": 2252,
+          "filename": "src/p2/mml_package_v2.c"
+        },
+        {
+          "bytes": 476,
+          "filename": "src/p2/mml_player_material.c"
+        },
+        {
+          "bytes": 397,
+          "filename": "src/p2/mml_qol_v2.c"
+        },
+        {
+          "bytes": 2115,
+          "filename": "src/p2/mml_renderer_recovery.c"
+        },
+        {
+          "bytes": 352,
+          "filename": "src/p2/mml_retail_anim_request.c"
+        },
+        {
+          "bytes": 1117,
+          "filename": "src/p2/mml_retail_motion.c"
+        },
+        {
+          "bytes": 2864,
+          "filename": "src/p2/mml_retail_save_v2.c"
+        },
+        {
+          "bytes": 1275,
+          "filename": "src/p2/mml_runtime_diag_v2.c"
+        },
+        {
+          "bytes": 1983,
+          "filename": "src/p2/mml_world_v2.c"
+        },
+        {
+          "bytes": 1248,
+          "filename": "src/player/classic_motion.c"
+        },
+        {
+          "bytes": 5341,
+          "filename": "src/player/player_collision.c"
+        },
+        {
+          "bytes": 9457,
+          "filename": "src/player/player_runtime.c"
+        },
+        {
+          "bytes": 1916,
+          "filename": "src/player/reference_tables.cpp"
+        },
+        {
+          "bytes": 1704,
+          "filename": "src/render/ctr_texture_layout.cpp"
+        },
+        {
+          "bytes": 6309,
+          "filename": "src/render/visual_bridge.cpp"
+        },
+        {
+          "bytes": 14769,
+          "filename": "src/texture/material_cache.cpp"
+        },
+        {
+          "bytes": 3120,
+          "filename": "src/texture/material_resolver.cpp"
+        },
+        {
+          "bytes": 16094,
+          "filename": "src/texture/ps1_texture.cpp"
+        },
+        {
+          "bytes": 2530,
+          "filename": "src/ui/bottom_map.cpp"
+        },
+        {
+          "bytes": 8071,
+          "filename": "src/ui/bottom_screen.cpp"
+        },
+        {
+          "bytes": 771,
+          "filename": "src/ui/dialogue_history.cpp"
+        },
+        {
+          "bytes": 2498,
+          "filename": "src/ui/qol_settings.c"
+        },
+        {
+          "bytes": 2106,
+          "filename": "src/world/audio_catalog.cpp"
+        },
+        {
+          "bytes": 7171,
+          "filename": "src/world/ebd_directory.cpp"
+        },
+        {
+          "bytes": 1200,
+          "filename": "src/world/ebd_dynamic_selector.cpp"
+        },
+        {
+          "bytes": 20227,
+          "filename": "src/world/l3map.cpp"
+        },
+        {
+          "bytes": 5010,
+          "filename": "src/world/resource_catalog.cpp"
+        },
+        {
+          "bytes": 22833,
+          "filename": "src/world/runtime_session.cpp"
+        },
+        {
+          "bytes": 18079,
+          "filename": "src/world/st00_render.cpp"
+        },
+        {
+          "bytes": 5208,
+          "filename": "src/world/st00_source.cpp"
+        },
+        {
+          "bytes": 3240,
+          "filename": "src/world/stage_catalog.cpp"
+        },
+        {
+          "bytes": 4378,
+          "filename": "src/world/stage_object_catalog.cpp"
+        },
+        {
+          "bytes": 9991,
+          "filename": "src/world/stage_runtime.cpp"
+        },
+        {
+          "bytes": 1385,
+          "filename": "src/world/stage_spawn.cpp"
+        },
+        {
+          "bytes": 968,
+          "filename": "src/world/tile_transform.c"
+        },
+        {
+          "bytes": 991,
+          "filename": "src/world/tutorial_runtime.cpp"
+        },
+        {
+          "bytes": 1421,
+          "filename": "state/CURRENT_CHECKPOINT.json"
+        },
+        {
+          "bytes": 1615,
+          "filename": "state/PARENT_0146a_CHECKPOINT.json"
+        },
+        {
+          "bytes": 1005,
+          "filename": "state/RUN_STATE.json"
+        },
+        {
+          "bytes": 73794,
+          "filename": "tests/test_core.cpp"
+        },
+        {
+          "bytes": 6430,
+          "filename": "tests/test_map_sharing.cpp"
+        },
+        {
+          "bytes": 3931,
+          "filename": "tests/test_pipeline.py"
+        },
+        {
+          "bytes": 4072,
+          "filename": "tests/p2/test_all.c"
+        },
+        {
+          "bytes": 3197,
+          "filename": "tests/p2/test_integrity.c"
+        },
+        {
+          "bytes": 1470,
+          "filename": "tools/build_0146_mac.sh"
+        },
+        {
+          "bytes": 2371,
+          "filename": "tools/build_audio_reference_catalog.py"
+        },
+        {
+          "bytes": 1966,
+          "filename": "tools/build_flight_sd.py"
+        },
+        {
+          "bytes": 3283,
+          "filename": "tools/build_game_runtime_pack.py"
+        },
+        {
+          "bytes": 10375,
+          "filename": "tools/build_hardware_test.py"
+        },
+        {
+          "bytes": 5551,
+          "filename": "tools/build_mml3ds.py"
+        },
+        {
+          "bytes": 4139,
+          "filename": "tools/build_runtime_resource_catalog.py"
+        },
+        {
+          "bytes": 6758,
+          "filename": "tools/build_stage_catalog.py"
+        },
+        {
+          "bytes": 4149,
+          "filename": "tools/build_stage_object_catalog.py"
+        },
+        {
+          "bytes": 11330,
+          "filename": "tools/build_tutorial_pack.py"
+        },
+        {
+          "bytes": 1874,
+          "filename": "tools/cook_reference_tables.py"
+        },
+        {
+          "bytes": 1727,
+          "filename": "tools/extract_player_meshes.py"
+        },
+        {
+          "bytes": 1759,
+          "filename": "tools/extract_st00_type0.py"
+        },
+        {
+          "bytes": 1680,
+          "filename": "tools/flight_qa.sh"
+        },
+        {
+          "bytes": 1740,
+          "filename": "tools/l3animation_evidence.cpp"
+        },
+        {
+          "bytes": 1576,
+          "filename": "tools/l3area_validate.cpp"
+        },
+        {
+          "bytes": 1856,
+          "filename": "tools/l3cook_anim.cpp"
+        },
+        {
+          "bytes": 1469,
+          "filename": "tools/l3cook_ebd.cpp"
+        },
+        {
+          "bytes": 3585,
+          "filename": "tools/l3cook_material_cache.cpp"
+        },
+        {
+          "bytes": 1084,
+          "filename": "tools/l3cook_msg.cpp"
+        },
+        {
+          "bytes": 2737,
+          "filename": "tools/l3cook_palette.cpp"
+        },
+        {
+          "bytes": 822,
+          "filename": "tools/l3cook_pbd.cpp"
+        },
+        {
+          "bytes": 1100,
+          "filename": "tools/l3cook_player_comp.cpp"
+        },
+        {
+          "bytes": 2692,
+          "filename": "tools/l3cook_player_material_cache.cpp"
+        },
+        {
+          "bytes": 973,
+          "filename": "tools/l3cook_render.cpp"
+        },
+        {
+          "bytes": 1053,
+          "filename": "tools/l3cook_skeleton.cpp"
+        },
+        {
+          "bytes": 1014,
+          "filename": "tools/l3cook_st00.cpp"
+        },
+        {
+          "bytes": 2025,
+          "filename": "tools/l3cook_st00_flow.cpp"
+        },
+        {
+          "bytes": 2385,
+          "filename": "tools/l3cook_texture.cpp"
+        },
+        {
+          "bytes": 2794,
+          "filename": "tools/l3flight_animation_probe.cpp"
+        },
+        {
+          "bytes": 4457,
+          "filename": "tools/l3flight_material_probe.cpp"
+        },
+        {
+          "bytes": 3078,
+          "filename": "tools/l3flight_render_probe.cpp"
+        },
+        {
+          "bytes": 4036,
+          "filename": "tools/l3game_pack_probe.cpp"
+        },
+        {
+          "bytes": 1045,
+          "filename": "tools/l3inspect_anim.cpp"
+        },
+        {
+          "bytes": 813,
+          "filename": "tools/l3inspect_audio_catalog.cpp"
+        },
+        {
+          "bytes": 1001,
+          "filename": "tools/l3inspect_ebd.cpp"
+        },
+        {
+          "bytes": 885,
+          "filename": "tools/l3inspect_map.cpp"
+        },
+        {
+          "bytes": 1087,
+          "filename": "tools/l3inspect_material_cache.cpp"
+        },
+        {
+          "bytes": 649,
+          "filename": "tools/l3inspect_model.cpp"
+        },
+        {
+          "bytes": 1476,
+          "filename": "tools/l3inspect_msg.cpp"
+        },
+        {
+          "bytes": 530,
+          "filename": "tools/l3inspect_palette.cpp"
+        },
+        {
+          "bytes": 577,
+          "filename": "tools/l3inspect_player_comp.cpp"
+        },
+        {
+          "bytes": 668,
+          "filename": "tools/l3inspect_render.cpp"
+        },
+        {
+          "bytes": 783,
+          "filename": "tools/l3inspect_resource_catalog.cpp"
+        },
+        {
+          "bytes": 536,
+          "filename": "tools/l3inspect_skeleton.cpp"
+        },
+        {
+          "bytes": 792,
+          "filename": "tools/l3inspect_st00_flow.cpp"
+        },
+        {
+          "bytes": 756,
+          "filename": "tools/l3inspect_stage_catalog.cpp"
+        },
+        {
+          "bytes": 708,
+          "filename": "tools/l3inspect_texture.cpp"
+        },
+        {
+          "bytes": 4035,
+          "filename": "tools/l3player_runtime_probe.cpp"
+        },
+        {
+          "bytes": 5107,
+          "filename": "tools/l3replay.cpp"
+        },
+        {
+          "bytes": 2191,
+          "filename": "tools/l3runtime_msg_probe.cpp"
+        },
+        {
+          "bytes": 2047,
+          "filename": "tools/l3runtime_pack_probe.cpp"
+        },
+        {
+          "bytes": 6605,
+          "filename": "tools/l3runtime_probe.cpp"
+        },
+        {
+          "bytes": 4603,
+          "filename": "tools/l3runtime_session_probe.cpp"
+        },
+        {
+          "bytes": 2582,
+          "filename": "tools/l3scan_materials.cpp"
+        },
+        {
+          "bytes": 3381,
+          "filename": "tools/l3script_pack_probe.cpp"
+        },
+        {
+          "bytes": 1288,
+          "filename": "tools/l3stage_object_pack_probe.cpp"
+        },
+        {
+          "bytes": 2038,
+          "filename": "tools/l3visual_probe.cpp"
+        },
+        {
+          "bytes": 8604,
+          "filename": "tools/mml_exe_research.py"
+        },
+        {
+          "bytes": 13002,
+          "filename": "tools/mml_pipeline.py"
+        },
+        {
+          "bytes": 3039,
+          "filename": "tools/mml_replay_suite.py"
+        },
+        {
+          "bytes": 5068,
+          "filename": "tools/psxexe_to_elf.py"
+        },
+        {
+          "bytes": 2016,
+          "filename": "tools/release_source.py"
+        },
+        {
+          "bytes": 3142,
+          "filename": "tools/verify_0146_source.py"
+        },
+        {
+          "bytes": 5154,
+          "filename": "tools/verify_mml_us_reference.py"
+        },
+        {
+          "bytes": 733,
+          "filename": "tools/p2/h7_owner_evidence.py"
+        },
+        {
+          "bytes": 1443,
+          "filename": "tools/p2/mml_content_graph_v2.py"
+        },
+        {
+          "bytes": 1756,
+          "filename": "tools/p2/mml_player_packet_scan.py"
+        },
+        {
+          "bytes": 2760,
+          "filename": "tools/p2/trace_compare.py"
+        },
+        {
+          "bytes": 1887,
+          "filename": "tools/p2/verify_cumulative_tree.py"
+        }
+      ],
+      "exists": true,
+      "extension_counts": {
+        "": 2,
+        ".3dsx": 1,
+        ".c": 25,
+        ".cpp": 78,
+        ".d": 33,
+        ".elf": 1,
+        ".h": 57,
+        ".json": 37,
+        ".log": 5,
+        ".lst": 1,
+        ".md": 42,
+        ".o": 33,
+        ".pica": 2,
+        ".py": 25,
+        ".sh": 3,
+        ".sha256": 1,
+        ".shbin": 2,
+        ".smdh": 1,
+        ".txt": 3
+      },
+      "file_count": 352,
+      "inspection": "Filename and file-size metadata only; no file payload read",
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.6c_HardwareTest"
+    },
+    {
+      "entries": [
+        {
+          "bytes": 32665,
+          "filename": "manifest.json"
+        },
+        {
+          "bytes": 16416,
+          "filename": "reference.l3ref"
+        },
+        {
+          "bytes": 1580,
+          "filename": "st00.l3flow"
+        },
+        {
+          "bytes": 30446,
+          "filename": "st00.l3map"
+        },
+        {
+          "bytes": 78360,
+          "filename": "st00.l3render"
+        },
+        {
+          "bytes": 256,
+          "filename": "ebd/area_00.l3ebd"
+        },
+        {
+          "bytes": 816,
+          "filename": "ebd/area_01.l3ebd"
+        },
+        {
+          "bytes": 816,
+          "filename": "ebd/area_02.l3ebd"
+        },
+        {
+          "bytes": 672,
+          "filename": "ebd/area_03.l3ebd"
+        },
+        {
+          "bytes": 128,
+          "filename": "ebd/area_04.l3ebd"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/INIT_DAT__OBJ__COMM__PL0000.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/INIT_DAT__OBJ__COMM__PL0001.TIM.l3pal"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/INIT_DAT__OBJ__FACE__PL00B00.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_00__OBJ__COMM__PL0000.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_00__OBJ__COMM__PL0001.TIM.l3pal"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_00__OBJ__FACE__PL00B01.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_01__OBJ__COMM__PL0000N.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_01__OBJ__COMM__PL0001N.TIM.l3pal"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_01__OBJ__FACE__PL00B00N.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00_01__OBJ__ST00__AR01__EM0300.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00_01__OBJ__ST00__AR01__EM0400.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00_01__OBJ__ST00__AR01__EM3500.TIM.l3tex"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00_01__SCR__st00__tcc600.CLT.l3pal"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00_01__SCR__st00__tcc601.CLT.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_02__OBJ__COMM__PL0000N.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_02__OBJ__COMM__PL0001N.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_02__OBJ__FACE__PL00B00N.TIM.l3pal"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00_02__OBJ__ST00__AR01__BATTERY.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_02__OBJ__ST00__AR01__BS0400.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00_02__OBJ__ST00__AR01__EM0300.TIM.l3tex"
+        },
+        {
+          "bytes": 8512,
+          "filename": "indexed/ST00_02__OBJ__ST00__AR01__KONTE.TIM.l3tex"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00_02__SCR__st00__tcc630.CLT.l3pal"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00_02__SCR__st00__tcc631.CLT.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_03__OBJ__COMM__PL0000N.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_03__OBJ__COMM__PL0001N.TIM.l3pal"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_03__OBJ__FACE__PL00B00N.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_03__OBJ__ST00__AR01__BS0200x.TIM.l3tex"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00_03__SCR__st00__tcca10.CLT.l3pal"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00_03__SCR__st00__tcca11.CLT.l3pal"
+        },
+        {
+          "bytes": 32896,
+          "filename": "indexed/ST00_04__BG__CHAR__ST00BG00.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_04__OBJ__COMM__PL0000.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00_04__OBJ__COMM__PL0001.TIM.l3pal"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_04__OBJ__FACE__PL00B02.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_04__OBJ__ST00__AR04__BS0200Z.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_04__OBJ__ST00__AR04__EM0A00.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00_04__OBJ__ST00__AR04__EM1D00.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00_04__SCR__st00__op00.TIM.l3tex"
+        },
+        {
+          "bytes": 8512,
+          "filename": "indexed/ST00_04__SCR__st00__op02.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00__OBJ__COMM__DKOUKA01.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00__SCR__st00__TOU500.TIM.l3tex"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00__SCR__st00__TOU510.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOU520.TIM.l3pal"
+        },
+        {
+          "bytes": 16704,
+          "filename": "indexed/ST00__SCR__st00__TOU600.TIM.l3tex"
+        },
+        {
+          "bytes": 10560,
+          "filename": "indexed/ST00__SCR__st00__TOU610.TIM.l3tex"
+        },
+        {
+          "bytes": 8512,
+          "filename": "indexed/ST00__SCR__st00__TOU620.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOU630.TIM.l3pal"
+        },
+        {
+          "bytes": 4416,
+          "filename": "indexed/ST00__SCR__st00__TOU640.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00__SCR__st00__TOU700.TIM.l3tex"
+        },
+        {
+          "bytes": 8512,
+          "filename": "indexed/ST00__SCR__st00__TOU710.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOU720.TIM.l3pal"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00__SCR__st00__TOU800.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOU810.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOU820.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOU830.TIM.l3pal"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOU840.TIM.l3pal"
+        },
+        {
+          "bytes": 4416,
+          "filename": "indexed/ST00__SCR__st00__TOU900.TIM.l3tex"
+        },
+        {
+          "bytes": 4416,
+          "filename": "indexed/ST00__SCR__st00__TOU910.TIM.l3tex"
+        },
+        {
+          "bytes": 8512,
+          "filename": "indexed/ST00__SCR__st00__TOU920.TIM.l3tex"
+        },
+        {
+          "bytes": 4416,
+          "filename": "indexed/ST00__SCR__st00__TOU930.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00__SCR__st00__TOUa00.TIM.l3tex"
+        },
+        {
+          "bytes": 304,
+          "filename": "indexed/ST00__SCR__st00__TOUa10.TIM.l3pal"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00__SCR__st00__tcc100.CLT.l3pal"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00__SCR__st00__tcc300.TIM.l3pal"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00__SCR__st00__tcc500.CLT.l3pal"
+        },
+        {
+          "bytes": 80,
+          "filename": "indexed/ST00__SCR__st00__tcc501.CLT.l3pal"
+        },
+        {
+          "bytes": 32992,
+          "filename": "indexed/ST00__SCR__st00__tou100.TIM.l3tex"
+        },
+        {
+          "bytes": 33088,
+          "filename": "indexed/ST00__SCR__st00__tou200.TIM.l3tex"
+        },
+        {
+          "bytes": 33056,
+          "filename": "indexed/ST00__SCR__st00__tou300.TIM.l3tex"
+        },
+        {
+          "bytes": 32928,
+          "filename": "indexed/ST00__SCR__st00__tou400.TIM.l3tex"
+        },
+        {
+          "bytes": 328208,
+          "filename": "materials/area_00.l3mc"
+        },
+        {
+          "bytes": 590560,
+          "filename": "materials/area_01.l3mc"
+        },
+        {
+          "bytes": 656128,
+          "filename": "materials/area_02.l3mc"
+        },
+        {
+          "bytes": 196872,
+          "filename": "materials/area_03.l3mc"
+        },
+        {
+          "bytes": 131264,
+          "filename": "materials/area_04.l3mc"
+        },
+        {
+          "bytes": 131264,
+          "filename": "materials/player_area_00.l3mc"
+        },
+        {
+          "bytes": 131264,
+          "filename": "materials/player_area_01.l3mc"
+        },
+        {
+          "bytes": 131264,
+          "filename": "materials/player_area_02.l3mc"
+        },
+        {
+          "bytes": 131264,
+          "filename": "materials/player_area_03.l3mc"
+        },
+        {
+          "bytes": 131264,
+          "filename": "materials/player_area_04.l3mc"
+        },
+        {
+          "bytes": 9614,
+          "filename": "messages/st00_01.l3msg"
+        },
+        {
+          "bytes": 19079,
+          "filename": "messages/st00_02.l3msg"
+        },
+        {
+          "bytes": 2888,
+          "filename": "player/body.l3model"
+        },
+        {
+          "bytes": 928,
+          "filename": "player/feet.l3model"
+        },
+        {
+          "bytes": 3472,
+          "filename": "player/head.l3model"
+        },
+        {
+          "bytes": 1432,
+          "filename": "player/left.l3anim"
+        },
+        {
+          "bytes": 1632,
+          "filename": "player/left.l3model"
+        },
+        {
+          "bytes": 69576,
+          "filename": "player/main.l3anim"
+        },
+        {
+          "bytes": 228,
+          "filename": "player/main.l3skel"
+        },
+        {
+          "bytes": 176,
+          "filename": "player/player.l3pc"
+        },
+        {
+          "bytes": 1432,
+          "filename": "player/right.l3anim"
+        },
+        {
+          "bytes": 1632,
+          "filename": "player/right.l3model"
+        }
+      ],
+      "exists": true,
+      "extension_counts": {
+        ".json": 1,
+        ".l3anim": 3,
+        ".l3ebd": 5,
+        ".l3flow": 1,
+        ".l3map": 1,
+        ".l3mc": 10,
+        ".l3model": 5,
+        ".l3msg": 2,
+        ".l3pal": 30,
+        ".l3pc": 1,
+        ".l3ref": 1,
+        ".l3render": 1,
+        ".l3skel": 1,
+        ".l3tex": 39
+      },
+      "file_count": 101,
+      "inspection": "Filename and file-size metadata only; no file payload read",
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/full-build/tutorial/legends3ds/tutorial"
+    }
+  ],
+  "restrictions": {
+    "cookers_run": false,
+    "extraction_run": false,
+    "hashes_recomputed": false,
+    "member_payloads_read": false,
+    "nested_archives_read": false,
+    "raw_commercial_binaries_opened": false,
+    "rights_or_provenance_determined": false,
+    "sources_modified": false
+  },
+  "scope": "Bounded metadata inventory of two supplied ZIPs, current source tree filenames, and existing cooked tutorial pack filenames. Two existing text files were read for importer constraints. No owner-data or synced sources examined."
+}

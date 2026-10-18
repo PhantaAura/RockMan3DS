@@ -1,0 +1,148 @@
+{
+  "schema": "tutorial-actor-identity/1",
+  "status": "INVESTIGATION_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "static_lists": [
+    {
+      "area": 0,
+      "pointer": "0x8011a704",
+      "count": 1,
+      "classes": {
+        "0xc0": 1
+      },
+      "class40_count": 0
+    },
+    {
+      "area": 1,
+      "pointer": "0x8011a72c",
+      "count": 16,
+      "classes": {
+        "0x0": 1,
+        "0xc0": 3,
+        "0xe0": 12
+      },
+      "class40_count": 0
+    },
+    {
+      "area": 2,
+      "pointer": "0x8011a880",
+      "count": 20,
+      "classes": {
+        "0x0": 1,
+        "0xc0": 2,
+        "0xe0": 15,
+        "0x20": 2
+      },
+      "class40_count": 0
+    },
+    {
+      "area": 3,
+      "pointer": "0x8011aa24",
+      "count": 11,
+      "classes": {
+        "0x0": 1,
+        "0xc0": 2,
+        "0xe0": 8
+      },
+      "class40_count": 0
+    },
+    {
+      "area": 4,
+      "pointer": "0x8011ab14",
+      "count": 1,
+      "classes": {
+        "0xc0": 1
+      },
+      "class40_count": 0
+    }
+  ],
+  "synthetic_dispatch_traces": [
+    {
+      "class": "0x40",
+      "subtype": 2,
+      "parameter3": 0,
+      "dispatch4": 0,
+      "subtype_entry": "0x8011a5b8",
+      "dispatch_table": "0x8011a4a8",
+      "callback": "0x801076e8",
+      "steps": 175,
+      "direct_calls": [
+        {
+          "site": "0x8010776c",
+          "target": "0x8007fe50"
+        },
+        {
+          "site": "0x801078c8",
+          "target": "0x80031518"
+        },
+        {
+          "site": "0x80107940",
+          "target": "0x80031518"
+        },
+        {
+          "site": "0x801079e8",
+          "target": "0x8002f9c4"
+        }
+      ],
+      "indirect_calls": [
+        {
+          "site": "0x80107790",
+          "target": "0x801078b8"
+        }
+      ],
+      "error": null,
+      "wrapper_args": [
+        "0x1000",
+        "0x0",
+        "0x80000000",
+        "0x3"
+      ],
+      "return_only_hooks": [
+        "0x8007fe50"
+      ]
+    },
+    {
+      "class": "0x40",
+      "subtype": 4,
+      "parameter3": 0,
+      "dispatch4": 0,
+      "subtype_entry": "0x8011a5c0",
+      "dispatch_table": "0x8011a4ac",
+      "callback": "0x8010a68c",
+      "steps": 58,
+      "direct_calls": [
+        {
+          "site": "0x8010a710",
+          "target": "0x8007fe50"
+        },
+        {
+          "site": "0x8010a86c",
+          "target": "0x8002f9c4"
+        }
+      ],
+      "indirect_calls": [
+        {
+          "site": "0x8010a734",
+          "target": "0x8010a844"
+        }
+      ],
+      "error": null,
+      "wrapper_args": [
+        "0x1000",
+        "0x0",
+        "0x0",
+        "0x0"
+      ],
+      "return_only_hooks": [
+        "0x8007fe50"
+      ]
+    }
+  ],
+  "class40_enemy_identity_proved": false,
+  "limits": [
+    "Class identity and EBD presence do not prove enemy role.",
+    "Synthetic fresh work is not an observed encounter.",
+    "No retail code, data, original function table or assets exported."
+  ]
+}

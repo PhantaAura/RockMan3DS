@@ -1,0 +1,34 @@
+{
+  "schema": "mml-class03-shadow-tail/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "cases": 128,
+  "original_instructions": 15639,
+  "call_site": "0x80102368",
+  "function": "0x8002C8CC",
+  "arguments": {
+    "radius": 48,
+    "scale": 512,
+    "type": 0
+  },
+  "floor_return_boundary": "0x80048E6C",
+  "floor_calls": 8,
+  "fresh_clear": {
+    "entry": "0x8002E840..8002E854",
+    "slots": 16,
+    "offset": "0x76",
+    "all_dirty_sentinels_cleared": true,
+    "instructions": 11527
+  },
+  "fixture_sha256": "1da9baaf360de8301b43b893abf592bf02f3b6da5beb8d700b11a3e8d0c975a6",
+  "limits": [
+    "Authored work/queue/floor fields, not live combat chronology.",
+    "Original class03 shadow caller and8002C8CC packing execute; floor return is explicit authored scalar hook.",
+    "Fresh pool clear owns zero work76 only at explicit fresh lifecycle; warm/untracked writes remain UNKNOWN.",
+    "Separate native wrapper uses actual bounded map/bounds query; unsupported geometry holds.",
+    "Shadow rasterization, actual Buster firing, full RNG, defeat and physicalOld3DS remain unproved."
+  ],
+  "caller_and_shadow_instruction_patches": 0,
+  "floor_return_hook": true
+}

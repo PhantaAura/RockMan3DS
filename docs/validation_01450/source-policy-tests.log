@@ -1,0 +1,9 @@
+Test project /private/tmp/legends3ds-01450-host
+    Start  16: source_tools_python
+1/2 Test  #16: source_tools_python ..............   Passed    0.48 sec
+    Start 136: native_checkpoint_version
+2/2 Test #136: native_checkpoint_version ........   Passed    0.03 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   0.51 sec

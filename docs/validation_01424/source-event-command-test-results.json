@@ -1,0 +1,80 @@
+{
+  "schema": "mml-event-command-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "tests": [
+    {
+      "kind": "strict-host-r4",
+      "argv": [
+        "work/pass-20261008-worldalive-01424/event-command-r1/test_source_event_command_r4",
+        "work/Legends3DS_0.0.14.24_WorldComesAlive/tests/fixtures/source_event_command_01424.tsv"
+      ],
+      "returncode": 0,
+      "log": "strict-host-r4.log"
+    },
+    {
+      "kind": "asan-ubsan-r1",
+      "argv": [
+        "work/pass-20261008-worldalive-01424/event-command-r1/test_source_event_command_sanitized",
+        "work/Legends3DS_0.0.14.24_WorldComesAlive/tests/fixtures/source_event_command_01424.tsv"
+      ],
+      "returncode": 0,
+      "log": "asan-ubsan-r1.log"
+    },
+    {
+      "kind": "arm-compile-r2",
+      "toolchain": "devkitARM GCC16.1.0",
+      "flags": "-Wall -Wextra -Werror -O2 -march=armv6k -mtune=mpcore -mfloat-abi=hard -std=gnu++17 -fstack-usage",
+      "returncode": 0,
+      "frame_bytes": {
+        "type4_exclusive": 1784,
+        "outer_exclusive": 2144,
+        "transport_lambda": 72,
+        "sync_callback": 24
+      },
+      "limits": "Compiler exclusiveframes; excludesnestedwholeprogrampeak/hardwaremeasurement."
+    },
+    {
+      "kind": "asan-ubsan-r2-after-empty-noop-fix",
+      "argv": [
+        "work/pass-20261008-worldalive-01424/event-command-r1/test_source_event_command_sanitized_r2",
+        "work/Legends3DS_0.0.14.24_WorldComesAlive/tests/fixtures/source_event_command_01424.tsv"
+      ],
+      "returncode": 0,
+      "log": "source-event-command-asan-ubsan-r2.log"
+    },
+    {
+      "kind": "arm-compile-r3-after-empty-noop-fix",
+      "flags": "-Wall -Wextra -Werror -O2 -march=armv6k -mtune=mpcore -mfloat-abi=hard -std=gnu++17 -fstack-usage",
+      "returncode": 0
+    }
+  ],
+  "failures_and_fixes": [
+    {
+      "stage": "MMIO proof observer",
+      "failure": "CD bank2 channel value32 miscounted as bank3 apply32; differentialseed68 native127/source128",
+      "fix": "Require actual bank3 selector for mixerapply; preservefailedobservationsoutsideSRC; regeneratecorrectfixtures."
+    },
+    {
+      "stage": "ARM-Werror r1",
+      "failure": "Newfieldlambda misleading-indentation diagnostic",
+      "fix": "Separateguardedifreturnfromfollowingstores; no warning suppression; ARM r2passes."
+    }
+  ],
+  "per_frame_allocations": 0,
+  "hardware_tested": false,
+  "retail_parity": false,
+  "files": [
+    {
+      "path": "include/legends3ds/source_event_command.h",
+      "sha256": "a5f40afad7870481898e17a791953922edb5ffb9c8be0843583ab934e8ba05bc"
+    },
+    {
+      "path": "src/flow/source_event_command.cpp",
+      "sha256": "3e65fb868705dbc5c9905e46a9a4e89c13340164bd0e5bd13b9b8c867732777b"
+    },
+    {
+      "path": "tests/test_source_event_command.cpp",
+      "sha256": "5600524b7aeb00d0183a3cec0d4316e00d820da2547d9b2bce32aa92e82d78b8"
+    }
+  ]
+}

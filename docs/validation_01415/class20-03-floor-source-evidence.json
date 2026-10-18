@@ -1,0 +1,50 @@
+{
+  "schema": "class20-03-floor-source-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "bounds_address": "0x8011bed4",
+  "bounds_xyz_minmax": [
+    -60,
+    60,
+    -60,
+    60,
+    -128,
+    0
+  ],
+  "bounds_sha256": "62de884fbddc639e9afbfddb9e73def0d7025aed21a74684c1a3581d6ca932e0",
+  "initializer": "0x80102410",
+  "floor_call_site": "0x801025a8",
+  "floor_wrapper": "0x80048e6c",
+  "floor_core": "0x80048ea4",
+  "floor_core_sha256": "dd39bae524909db08687b80b283b3e8a0f7bf18084cd7c9ea81855a5a9adc95b",
+  "fresh_delta_xyz": [
+    0,
+    0,
+    0
+  ],
+  "source_scalar_checks": {
+    "passed": 1944,
+    "floor_hits": 132,
+    "instructions_executed": 479570,
+    "codes": [
+      1,
+      3,
+      15
+    ],
+    "profiles": [
+      "class20/35 null bounds",
+      "class20/03 installed bounds"
+    ],
+    "hooks": [
+      "0x8004b1e0 returns one synthetic candidate cell index"
+    ],
+    "source_position_preserved": true
+  },
+  "limits": [
+    "Authored synthetic rectangles; no full retail tick parity.",
+    "Floor intervals for codes8..11 use separately verified shared helper; movement remains unported.",
+    "Source shade, HP selector, AI and movement are unchanged."
+  ],
+  "shared_slope_interval_evidence": "floor08-source-evidence.json"
+}

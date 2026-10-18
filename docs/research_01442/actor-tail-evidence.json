@@ -1,0 +1,48 @@
+{
+  "schema": "mml-atomic-actor-body-tail/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "changed_runtime_and_test_files": [
+    "include/legends3ds/source_hit_proxy.h",
+    "src/world/source_hit_proxy.cpp",
+    "include/legends3ds/class20_03_proxy.h",
+    "src/world/class20_03_proxy.cpp",
+    "include/legends3ds/actor_animation_bank.h",
+    "src/world/actor_animation_bank.cpp",
+    "include/legends3ds/actor_runtime.h",
+    "src/world/actor_runtime.cpp",
+    "include/legends3ds/source_actor_consumers.h",
+    "src/world/source_actor_consumers.cpp",
+    "tests/test_actor_source_transaction.cpp",
+    "tests/fixtures/actor_shadow_tail_01442.tsv"
+  ],
+  "source_proof": "actor-shadow-tail-proof.json",
+  "source_case_count": 128,
+  "source_instruction_count": 15639,
+  "host_regression": "actor-transaction-r5.log",
+  "standalone_warnings_as_errors": true,
+  "shared_ctest_after_final_test_addition": "139/139 PASS;final3.17s",
+  "actual_owner_package_witness": {
+    "real_records_loaded": 5,
+    "actual_initialized_work00": 3,
+    "actual_body_shadow_commits": 5,
+    "actual_child_callback_commits": 2,
+    "actual_owner_rules_admitted_pairs": 0,
+    "actual_retail_contact_packet_continuations": 0,
+    "separate_authored_external_packet_witness": {
+      "area1_committed": 1,
+      "area2_held_missing_predicate": 4,
+      "packet": "0x08000000",
+      "packet_is_genuine_firing": false
+    },
+    "external_driver_premises": [
+      "Explicit fresh pool/render subset admission",
+      "Authored far-away player position for the existing source range rejection",
+      "Child producer tested with an authored attack-phase COPY of the imported parent state"
+    ]
+  },
+  "correction": "Spawn raw0=1 is NOT final callback work00. Original scalar initializer ORs bit2; actual witnesses havework00=3. Initial no-shadow applicability inference was withdrawn before acceptance.",
+  "native_and_hardware_acceptance": "Final native42 compiled;280source hashes match. Old-modelAzahar finalbinary04000000 body+shadow+pose+proxy clears observed; physical hardware pending.",
+  "full_rng_or_buster_or_defeat_or_tutorial_parity": false,
+  "shadow_rasterization": false,
+  "native_evidence": "../../validation_01442/emulator-observation.json"
+}

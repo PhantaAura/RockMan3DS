@@ -1,0 +1,4 @@
+original action3 contact cases=1152 supported=832 held=320 corrected=208
+original sound176/180 producer+queuewriter cases=12
+materialized source action3 contact cases=24 supported=24 held=0
+PASS: original action3 contact and pointed soundpayload;640 allocation-free preparations

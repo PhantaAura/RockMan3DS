@@ -1,0 +1,17 @@
+{
+  "schema": "class20-03-action3-native-differential/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "test_result": "PASS",
+  "fixture_sha256": "fec50121634c9af7f47cb28cb3fd70aa8164cbf7283cd8b4eb3046386d0169db",
+  "original_body_cases": 1626,
+  "source_used_state_fields": 67,
+  "allocation_free_entries": 480,
+  "compiler": "Apple c++ with -std=c++17 -Wall -Wextra -Werror",
+  "command": "c++ -std=c++17 -Wall -Wextra -Werror -I include src/world/class20_03_action3.cpp src/world/class20_03_behavior.cpp tests/test_class20_03_action3.cpp -o /local/l3test_action3; /local/l3test_action3 tests/fixtures/class20_03_action3_01419.tsv",
+  "retail_parity": false,
+  "limitations": [
+    "Authored helper premises and consumer readiness; not a live encounter.",
+    "Old 3DS hardware validation pending.",
+    "Native runtime preparation/consumer ownership require separate integration proof."
+  ]
+}

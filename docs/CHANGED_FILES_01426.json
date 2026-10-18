@@ -1,0 +1,488 @@
+{
+  "baseline": "0.0.14.25",
+  "checkpoint": "0.0.14.26",
+  "changed_files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified",
+      "baseline_sha256": "6ae7c867076c39a90f2f507a4dc9b001d06b8f9f4a27610e48732d43b45414c2",
+      "sha256": "285ada9c10b38eebce2a97fdff3712bcc6346e1bfbabd8a7739bac12b335d36f"
+    },
+    {
+      "path": "README.md",
+      "change": "modified",
+      "baseline_sha256": "c833d52b117ba6f0b3326e9f56a3739586c7491a22b964edb492205679f04582",
+      "sha256": "b3322763c56bb426c5a7c0a8cfb996461cc8d54379f541b17c637d4e245e3172"
+    },
+    {
+      "path": "RESUME_01426.md",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "782a0801a4f477dbb7cd1d4d07125cf5e3017424dc1ec31493e17248379e8feb"
+    },
+    {
+      "path": "RESUME_01426_RECOVERY.md",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "1dda63472c7a096e864ee4faa470c6a6095aa3bb7df0ceb51776fca7cfd3a391"
+    },
+    {
+      "path": "SOURCE_MANIFEST.sha256",
+      "change": "modified",
+      "baseline_sha256": "2b660a8ae9a71d63afe06adcafded8b96537ce22625bd20ec2faa186894e119e",
+      "sha256": null
+    },
+    {
+      "path": "docs/PASS_REPORT_01426.md",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "15e9c290e323ec02dfd739b43b955d779ba37a28968790f3fa7288c2b130b54a"
+    },
+    {
+      "path": "docs/PORTING_MAP_01426.md",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "58f0504bf24dcca5ab424e6221388bb9c2a04aaad3760de501c1c7323e0e7fe5"
+    },
+    {
+      "path": "docs/SCREENSHOTS_01426.md",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "cbfe9954b3917aa1c55ce26134b6648895d6c33c4e47c3824334eb5b81ef78eb"
+    },
+    {
+      "path": "docs/SOURCE_EXCLUSIONS_01426.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "0c8855a5ec6d4fdcb33d969148d0b98d0c0ecba87263baa283e846a7c38dae1d"
+    },
+    {
+      "path": "docs/research_01426/PLAYER_HEAD_AUDIT.md",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "d052eb601663790afd390772559d3ce1c54a3747e173c25a1996b11d43f53a09"
+    },
+    {
+      "path": "docs/research_01426/SOURCE_FADE_STARTUP.md",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "af9d745be58f195d6700e85e00c17344310706202ac84e4c4bfa505edb207d2e"
+    },
+    {
+      "path": "docs/research_01426/fresh-player-head-source-proof.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "b42e5f002652fa83e97925e2d66a2f5b02871da6938abbe1c2f743a85aa07fae"
+    },
+    {
+      "path": "docs/research_01426/player-head-audit.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "0d9b6bb4c7e603bb04208da29083da22d0d0f463aa61cdf46eac98e5b1724d42"
+    },
+    {
+      "path": "docs/research_01426/player_head_source_probe.py",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "db68c716b077fd2f40ed4de2175c77e2a0ef2c6f03508958796a6cbb2c9d9f09"
+    },
+    {
+      "path": "docs/research_01426/source_fade_startup_probe.py",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "6e646e1e1f4ce770721e26bf651af281e3aeff789da11b1d2e60290d4a0545a0"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r2/boot_01426.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "f50a9a4696221e44e5fdef6d877c1838e26847ad02d1c88a435c4747fcb0cb7f"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r2/emulator.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "a8f5522b959d28d34eede6551ac02477f18db6bc443261434882e68f5bbe3746"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r2/hardware_01426_4000638818474.csv",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "85b673b70683e5ebb97bf8d8e849f1119cc2132553c7dcf8550f42009c87df6b"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r2/launch.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "a492ed562dcc2fa18823fb8b33e2c21a11a6c47abf99a2378873cabbc3be070a"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r2/settings-verification.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "4ea279da669a8abe8fadee3d4d8e5db47388085480659df1caf75537ab62662d"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r4/boot_01426.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "06b2e71b0a629af49d5418526f0118fcb2bc665ac06760b81e7168039d00fdc8"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r4/emulator.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "6aeea00db4604e72e135f5e25349324bdd678401017c619bac65733386b944cf"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r4/hardware_01426_4000639709003.csv",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "49712805a4b707ee16345bd989c638589fd40b45f9499fc596bc182bc4573d60"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r4/launch.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "2f4b2f55a1dd874476243970e39fdd79c70bdf12a41c8dc549c36873f673e1f7"
+    },
+    {
+      "path": "docs/validation_01426/azahar-01426-r4/settings-verification.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "d50a4ece4bdf8c0809367de5045b60d07e39cd4454b47dba43d8cd0c9ed972ff"
+    },
+    {
+      "path": "docs/validation_01426/baseline-build.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "6a0d8c93e1c59847c918140070949443cbc25d219d865a77f236e18af5441981"
+    },
+    {
+      "path": "docs/validation_01426/baseline-results.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "27a1bfb2ae83592c1935295ce8f82d38bfc66c6e810010e77c56af7c2db56a02"
+    },
+    {
+      "path": "docs/validation_01426/baseline-tests.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "6823acdb55648a2df201e2246f0a93a741b266460587b80ce38efb3cd1cb41fe"
+    },
+    {
+      "path": "docs/validation_01426/build-result.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "ce44936bd36612dae1719462a1a877de459f4415fc0a6f01a6ebec7b867070a9"
+    },
+    {
+      "path": "docs/validation_01426/commands.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "5ea9ffa171a5d6f82bb5c92b01440cc626045783459c8089e38c5438b1811650"
+    },
+    {
+      "path": "docs/validation_01426/compiled-source-verification.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "cc0b5edca1a41b5b63a609d32cf879fc1ebad18eef99762816e48f6172419c57"
+    },
+    {
+      "path": "docs/validation_01426/emulator-observation.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "d2be901fe4ec33df016d74b9c72a3ad2e0587962405fcf6c1c406186d31aaa41"
+    },
+    {
+      "path": "docs/validation_01426/fade-module-proof.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "2a369112f2124c35e8d63e1071d05db3905b7e18e014b5d6fb99d01a0a243312"
+    },
+    {
+      "path": "docs/validation_01426/fade-source-proof.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "5895c5e4b06187af7418413081e4d0a135218eed32381feac07744a60919d281"
+    },
+    {
+      "path": "docs/validation_01426/final-host-tests.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "0ddc9ff146163e1f2da0985693a01779b6eccbeaa6ae01fd1c16bb1dcb0478b4"
+    },
+    {
+      "path": "docs/validation_01426/head-cook-r1.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "a740615f75ac73588a5b27fec5c6f71952291cdc184198d244bf7fd0e45e0013"
+    },
+    {
+      "path": "docs/validation_01426/head-cook-r2.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "d2b4e98c70426ff9094f2b6c7a87103c0e3446b602461792bc72112806ffaaa9"
+    },
+    {
+      "path": "docs/validation_01426/head-cook-result.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "3b6dce67652b6b343ea079bad54aca499107319aef49339ee84b8248779dd843"
+    },
+    {
+      "path": "docs/validation_01426/host-tests-r2.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "6643becf1a241f518ae0499f70f6f62db530081ac07f3d18abf01e079687b1ef"
+    },
+    {
+      "path": "docs/validation_01426/native-r4/area-inspection-probe.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "9dd644de0c8080a6e5814f9c3895e1b23bef9f143e16048136eb927e26ff571c"
+    },
+    {
+      "path": "docs/validation_01426/native-r4/area-package.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "1528e7ceac0a0ff3a9db1d36b00a74971c4be501478043e8ee4672b2ebb18594"
+    },
+    {
+      "path": "docs/validation_01426/native-r4/area-runtime-probe.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "39883d8ec72802305c7a035db295cbac2c7d9d5d76e4ba71486105e2b41e3bbd"
+    },
+    {
+      "path": "docs/validation_01426/native-r4/host-build.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "0d00fbcd749796dc27cdd786992dffac7ef170271b099bf7c072fd726820c21d"
+    },
+    {
+      "path": "docs/validation_01426/native-r4/host-configure.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "8a39a2f23e7eb58be65a9386f6b3948963631b6919e90da19040660b9bc04d69"
+    },
+    {
+      "path": "docs/validation_01426/native-r4/host-tests.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "7ce9e79d53c74257fb345dc4ddfe8731d0f25fb950df7daddbf918020ebabf20"
+    },
+    {
+      "path": "docs/validation_01426/native-r4/native-build.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "a646909c07c46b44b6581e6dce43fc430ca60f64b252fb4517b9f1c407ff247e"
+    },
+    {
+      "path": "docs/validation_01426/native-source-manifest.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "a5d52c139b1315890c4f57ae86daef264c856226db47606e469ed63f2336ab3c"
+    },
+    {
+      "path": "docs/validation_01426/pack-validation.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "8b79d7152e41c05f70c06c0be971f0f59ab8d1fef5796c681028819ac2bf0dde"
+    },
+    {
+      "path": "docs/validation_01426/safe0143-observation.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "3ebd6277d18d599f85378eb2dd509addc31f846e8d87467aa482e432f4ac7e19"
+    },
+    {
+      "path": "docs/validation_01426/sanitizer-result.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "8ed8f7dd704b3e76808b09ace6f92bfbda5fe028b3f87a1a3a1edc270b639a2f"
+    },
+    {
+      "path": "docs/validation_01426/sanitizers/command-0.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "18948b22f5ae2658c76f62d4e29ef1f940b8901c5570e85507431aecd0769087"
+    },
+    {
+      "path": "docs/validation_01426/sanitizers/command-1.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "2e319758bca9394e54bf310927d9b25f9545b4ef36ed65ee0bff8414aa440fc7"
+    },
+    {
+      "path": "docs/validation_01426/sanitizers/command-2.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "bbaf28775c520f79d4fe28ae3e55b4434f9c92c9dd4dac0eecf8b97fec6a4a2b"
+    },
+    {
+      "path": "docs/validation_01426/source-tools-r3.log",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "32716fd99d5f06f2f451d3f55d3df7ba6213699dd8559954c34597e5f0aaf90e"
+    },
+    {
+      "path": "docs/validation_01426/test-results.json",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "c7fb52986a6d20a42dac5b7591ad137c193e2178d9e576911a64e3e685b458c2"
+    },
+    {
+      "path": "include/legends3ds/render/ps1_texture_modulation.h",
+      "change": "modified",
+      "baseline_sha256": "06c2fc03ce72bb622efa4c2e38202d7c78a80e40d303c2e50c0757dabe56b31c",
+      "sha256": "f85ccdba03bec8a7183cd5272f30f13626a27cfb2ca54c27f4e922e404fb9248"
+    },
+    {
+      "path": "include/legends3ds/runtime_session.h",
+      "change": "modified",
+      "baseline_sha256": "1a2d1247faa34153ad41e39a6d04b1c85ec8cc8ac0e294726d5ebb58498fa701",
+      "sha256": "41d78d27d0e942d1ca9446f038fc3d9d8b15f0187af43807c74bb2521743510b"
+    },
+    {
+      "path": "include/legends3ds/source_event_pipeline.h",
+      "change": "modified",
+      "baseline_sha256": "efeaea47c30d833f249af765202d5c370781d0595d41b97bec68b9ca803df0ce",
+      "sha256": "7d814ff0e332949f2bc1bd0ce74d3374b0cf874605bf72b5fe8f5dcc3257a5e5"
+    },
+    {
+      "path": "include/legends3ds/source_fade.h",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "02dcb99ffba19b8c836579fb172f8fb068fc117198b4cd1e5e3631b79647b3b1"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified",
+      "baseline_sha256": "5c4ea35224830b7d4705d2a9936a3b1f94ccd5a59279c75b17c22986168c5eff",
+      "sha256": "ee357c4b6cfd6a83241f4977f5ff5e8e363e68527285ad2d2b20f3a0c1b74392"
+    },
+    {
+      "path": "platform/3ds/source/hardware_test.cpp",
+      "change": "modified",
+      "baseline_sha256": "84af7c004b0aa179b465ab1983242817abf08f9e42dba0ec677b777c18fd43a0",
+      "sha256": "5d7d2d6c076a1fbb453cf7bf82941c8eab9670fa46d33f039ee7a8cb00018ec8"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified",
+      "baseline_sha256": "9cb578643861a13bf4369242fd3cfeb005e1b4587a2dda6d9690ee8681a4c3aa",
+      "sha256": "a82efbef881815c4dbb121a52efe21c6c94d26032d7d8f5d0a23a94ee9840053"
+    },
+    {
+      "path": "src/flow/source_event_pipeline.cpp",
+      "change": "modified",
+      "baseline_sha256": "f29ebfaa04b8cb5bfa7b8baac76352fe4fe9d1b9f1193f7962f5aed713f40357",
+      "sha256": "f274a32922f62a30e5f48a14c2f0e27ca828b7feda741f06ed3d449e28890c0d"
+    },
+    {
+      "path": "src/flow/source_fade.cpp",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "955862a4233a2dd48fd5c704d8c69866f177b500044d38c39df2a80a34e8d43a"
+    },
+    {
+      "path": "src/world/runtime_session.cpp",
+      "change": "modified",
+      "baseline_sha256": "c43b3332b2a4cdb9b1c7609781a15d294a6819410822eb4d49ea68af80fad370",
+      "sha256": "1b9cdba4c4eddfd70c135cee715ce3d0fb8fba566eaa328103ad5ed988611e3d"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified",
+      "baseline_sha256": "b86ccfc4f5fc1ed5b1e199792045d19b2be372dd154ff79d615f0947a91b8bf7",
+      "sha256": "7beaf8b661fdf015011f2e026fd18d63ab46cd2f39d3c16a83ff0889ed2e413c"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified",
+      "baseline_sha256": "9f1e5df09bbbd47d0fa61ff206e9625e68ffc93778dde33510c3b35d375b43c7",
+      "sha256": "bde338abf724a7a8a579f083ecf5fe5eec11d5335774510bd0c38e4ee386f907"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified",
+      "baseline_sha256": "e0020cba3c95c994fb54447dd7bfc9d1d308bd6fd132498c250b8f9bcc0be1d0",
+      "sha256": "e1f37c8ce04548b5519be959ac25231506865aec0c3a8ed2d23a350ecd1afaf7"
+    },
+    {
+      "path": "tests/fixtures/source_fade_startup_01426.tsv",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "2df96d7cebbdf8db9d17ad5591c38abcf6a9aa259af791946938412b8074588d"
+    },
+    {
+      "path": "tests/test_ps1_geometry.cpp",
+      "change": "modified",
+      "baseline_sha256": "3e14ead74e8a661b718568bb225983d0e3b51cef014f07bf9b88381fdf01e28c",
+      "sha256": "1658172ca11b2bc303c66fc6a87d888d9a0ca19e995c6946116da19de78bb13e"
+    },
+    {
+      "path": "tests/test_runtime_fade.cpp",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "889763a3e42bc61d3a7e2796ec785594c84901ddde2815c09319f176ac982e1c"
+    },
+    {
+      "path": "tests/test_source_fade.cpp",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "70d0cd2cd1683c4d34c7dcc22f853a36d4785b1bdcc96d1aea9b505b7556de8b"
+    },
+    {
+      "path": "tests/test_source_player_head.py",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "f8d027e9ce374c214eaf7595514ddd0269da609f9c337c2a9178504442958e6d"
+    },
+    {
+      "path": "tests/test_source_tools.py",
+      "change": "modified",
+      "baseline_sha256": "809e9d8ffaf2b7f326efecc1de31ca3a83e1609354965f3f7d1cd21467535253",
+      "sha256": "0c7b6f8cc80a97681b12562c04c9435052537bed91aae22d5f0de9d98971d67e"
+    },
+    {
+      "path": "tools/build_hardware_test.py",
+      "change": "modified",
+      "baseline_sha256": "f0be9de05d77f207b9aa7f57d57651345e3c6277c128473c3f87f4d46a2bea10",
+      "sha256": "a1e02cb87f24ea7ffb6ec6ae438adf0ddfa51cfe2f7641951ba8b89cf0246e78"
+    },
+    {
+      "path": "tools/build_tutorial_pack.py",
+      "change": "modified",
+      "baseline_sha256": "e62e89c2126098fca2dc34cab67d51e58fa10c9fca37366cd8830883b7ccf0a6",
+      "sha256": "eb131f1ca0ffb61a9ebac96c1c719dadf5fce54dcc12d5cc673349acf790b07e"
+    },
+    {
+      "path": "tools/cook_source_fade.py",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "81ff9e49a0f14b2c0b3df546e1e82d1d0cb86782fdeb551beb46ff5b4f4e7b8b"
+    },
+    {
+      "path": "tools/release_source.py",
+      "change": "modified",
+      "baseline_sha256": "1472bc07abe9bad51ec21b705c9798421ee43fd2078a835004e9d3f09b9236d0",
+      "sha256": "c505e8667c7237974caa9a4e24a8f4d66dea9917a3c007602bba05856390baf3"
+    },
+    {
+      "path": "tools/source_player_head.py",
+      "change": "added",
+      "baseline_sha256": null,
+      "sha256": "4ffaab47d5ef34fff151cb0f07cd2b4170776395696c45329bf1fe9b70b35ff8"
+    },
+    {
+      "path": "docs/CHANGED_FILES_01426.json",
+      "change": "added",
+      "sha256": null,
+      "note": "Self hash available in SOURCE_MANIFEST.sha256."
+    }
+  ],
+  "removed_files": [],
+  "note": "SOURCE_MANIFEST.sha256 is regenerated by final release; self-referential changed list hash is in manifest. No inherited source file was discarded."
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "mml-projection-initialization/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "writer": "800371A0",
+  "destination": "800BC7F8",
+  "field_offset": 36,
+  "field_address": "800BC81C",
+  "field_type": "unsigned_halfword",
+  "stage_caller": "80100528..80100564",
+  "stage_config_base": "8011AC54",
+  "stage_config_stride": 40,
+  "fresh_boot_caller": "80013648..80013660",
+  "authored_writer_cases": 80,
+  "authored_shift_cases": 240,
+  "owner_stage_writer_cases": 5,
+  "owner_stage_shift_cases": 15,
+  "fresh_boot_writer_cases": 1,
+  "unchanged_original_instructions": 43096,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "authored_fixture_sha256": "fdf0a7991aa84ce6f803b64d57d2c21295aef90c9aad894ccd6a598aba4d5b6d",
+  "source_blocks": [
+    {
+      "id": "config_writer",
+      "start": "0x800371a0",
+      "end_exclusive": "0x80037440",
+      "sha256": "2a8fd70fd6dec51a543f4ed4503759f2962226a0e7b4339b5be1b13c6950522f"
+    },
+    {
+      "id": "shift0",
+      "start": "0x8003697c",
+      "end_exclusive": "0x800369c0",
+      "sha256": "905680655286cc602b9a6e22986c33f382c2848f98cee8208ce151b7ff625e78"
+    },
+    {
+      "id": "shift1",
+      "start": "0x800369c0",
+      "end_exclusive": "0x80036a1c",
+      "sha256": "01a849e5dee50ebfc327f614210ff1032c02f2c4937d0d2606c5c9a0f9267e81"
+    },
+    {
+      "id": "shift2",
+      "start": "0x80036a1c",
+      "end_exclusive": "0x80036a88",
+      "sha256": "864d22dc88421289f75b1584b54af68de21ab91e85d411bc483e8666c9f853a4"
+    },
+    {
+      "id": "fog",
+      "start": "0x8007a1cc",
+      "end_exclusive": "0x8007a230",
+      "sha256": "84f21f65bd98fd087127a613060b876ea6850464d32dfeeeb5aa77c9a0da1b7a"
+    }
+  ],
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Original caller selection and scalar ownership only; no complete stage lifecycle.",
+    "Authored records exercise copy alignment, fog narrowing and shift thresholds.",
+    "Control transfers are interpreted; no independent hardware GTE comparison.",
+    "This does not bind current scratch camera, follow behavior or script chronology."
+  ]
+}

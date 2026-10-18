@@ -1,0 +1,48 @@
+{
+  "schema": "mml-action4-source-differential/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "action4_cases": 1568,
+  "child_cases": 135,
+  "release_cases": 32,
+  "original_instructions": 140405,
+  "dispatch": {
+    "initializer": "0x80100324",
+    "scratch_owner": "0x1f800060",
+    "stage_table": "0x8011a5d4",
+    "actual_source_entries": {
+      "6": "0x8010f354",
+      "9": "0x0"
+    },
+    "pool_dispatch_cases": [
+      {
+        "subtype": 6,
+        "actual_callback": "0x8010f354",
+        "null_dispatch": false
+      },
+      {
+        "subtype": 9,
+        "actual_callback": "0x0",
+        "null_dispatch": true
+      },
+      {
+        "subtype": 128,
+        "actual_callback": "0x800433c0",
+        "null_dispatch": false
+      },
+      {
+        "subtype": 134,
+        "actual_callback": "0x800d8804",
+        "null_dispatch": false
+      }
+    ],
+    "corrects": "01420 report incorrectly indexed resident table80089820 for subtype6/9; source uses it only for subtype>=128."
+  },
+  "limits": [
+    "Action4 motion/wall/floor and child helper are authored body boundaries. Contact verified separately.",
+    "Child GTE delta is authored, full original allocator/stores/conversion/sound executes.",
+    "Release helper and batch bitmap clear execute; batch pending-mask reset remains outer ownership.",
+    "Child lifecycle, collision, resources, rendering and damage remain UNKNOWN; no live retail parity claim."
+  ]
+}

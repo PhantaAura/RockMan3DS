@@ -1,0 +1,346 @@
+[
+  {
+    "path": "CMakeLists.txt",
+    "change": "modified"
+  },
+  {
+    "path": "README.md",
+    "change": "modified"
+  },
+  {
+    "path": "RESUME_01423.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/PASS_REPORT_01423.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/PORTING_MAP_01423.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/SOURCE_EXCLUSIONS_01423.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/ACTOR_POSE_PROXY.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/PLAYER_BUSTER_PROXY_BOUNDARY.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/SOURCE_EFFECTS.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/SOURCE_EVENT_PHASE2.md",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/actor_pose_proxy_source_evidence.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/actor_pose_proxy_source_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/source_effects_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/research_01423/source_event_phase2_probe.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/actor-pose-proxy-sanitize.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/actor-pose-proxy-source-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/area-inspection-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/area-runtime-probe.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-actor_pose_runtime.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-actor_runtime.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-child_runtime.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-commands.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-main.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-runtime_session.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-source_effects.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r1-source_event_phase2.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r3-command.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r3-compile.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/arm-stack-r3-main.su",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/child-effects-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/compiled-source-manifest.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/exact-commands.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/host-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/host-configure.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/native-build-r3.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/native-build.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/native-observations.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/ps1-reference-status.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/screenshots.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/source-effects-host-tests.log",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/source-effects-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "docs/validation_01423/source-event-phase2-proof.json",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/actor_pose_runtime.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/actor_runtime.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/child_runtime.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/class20_03_proxy.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/runtime_session.h",
+    "change": "modified"
+  },
+  {
+    "path": "include/legends3ds/source_effects.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_event_package.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_event_phase2.h",
+    "change": "added"
+  },
+  {
+    "path": "include/legends3ds/source_event_pipeline.h",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/Makefile",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "platform/3ds/source/main.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/flow/source_event_package.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/flow/source_event_phase2.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/flow/source_event_pipeline.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/actor_pose_runtime.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/actor_runtime.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/child_runtime.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/class20_03_proxy.cpp",
+    "change": "added"
+  },
+  {
+    "path": "src/world/runtime_session.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "src/world/source_effects.cpp",
+    "change": "added"
+  },
+  {
+    "path": "state/CURRENT_CHECKPOINT.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/CURRENT_READINESS.json",
+    "change": "modified"
+  },
+  {
+    "path": "state/EVIDENCE_LEDGER.json",
+    "change": "modified"
+  },
+  {
+    "path": "tests/fixtures/actor_pose_collision_01423.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/class20_03_proxy_01423.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_effects_01423/allocator.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_effects_01423/callback128.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_effects_01423/callback131.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_effects_01423/release.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/fixtures/source_event_phase2_01423.tsv",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_actor_pose_proxy.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_actor_pose_proxy_runtime.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_child_runtime.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_cook_source_event_phase2.py",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_runtime_source_events.cpp",
+    "change": "modified"
+  },
+  {
+    "path": "tests/test_source_effects.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_event_package.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tests/test_source_event_phase2.cpp",
+    "change": "added"
+  },
+  {
+    "path": "tools/build_hardware_test.py",
+    "change": "modified"
+  },
+  {
+    "path": "tools/cook_source_event_phase2.py",
+    "change": "added"
+  },
+  {
+    "path": "docs/CHANGED_FILES_01423.json",
+    "change": "added"
+  },
+  {
+    "path": "SOURCE_MANIFEST.sha256",
+    "change": "modified"
+  }
+]

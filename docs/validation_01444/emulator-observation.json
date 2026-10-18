@@ -1,0 +1,483 @@
+{
+  "version": "0.0.14.44",
+  "binary_sha256": "1177b985a18b63c6b1eae044606630877776c7e6e21937b5750253638dd5d948",
+  "emulator": "Azahar 2126.0",
+  "is_new_3ds": false,
+  "cpu_clock_percentage": 100,
+  "renderer": "Vulkan, resolution factor1",
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.29.43.647.png",
+      "sha256": "93b9f79ba467d5dfb2a3d598d26893b3f05918f873a952c0754a77f9445ed740",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "RGB boot display diagnostic",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.29.58.071.png",
+      "sha256": "52656c1967f35cbd24884bd3731ab79e2678fb8b5fb70551a7fbc048e3e6eb93",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "Cyan GPU clear diagnostic, before resource loading",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.30.11.926.png",
+      "sha256": "20c6283beb5bc145675e4039eabbca0a042ebcfd23b7072112dde7ea0bc599fa",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "A: enhanced textured room and imported player",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.30.13.492.png",
+      "sha256": "d2e4f55ffc90c9eb3fa82c252192f00c60c0b6c025c2c3c3cbbe3ef909b12d10",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "A: movement and firing input exercise",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.30.50.959.png",
+      "sha256": "3ea3ff691923b79521b56a8cccf4399a5ea7c2f90e32539876449d0ade66a1a3",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "A: jump input exercise near the stairs",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.32.19.535.png",
+      "sha256": "2b0467247784ee937ff3fbb3da0144bfd9ba412a0e05d1396951516c23f1c809",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "X: preserved 0143 fallback renderer",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.33.18.19.png",
+      "sha256": "20349c2d7c1cc0a40703431be801849d26835cfdab3a97f4d6f790023b7ec363",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "Gated source scene with source camera, no RNG/replay override",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/azahar-01444/captures/_16.10.26_19.33.37.216.png",
+      "sha256": "572985b6f83b00ef622eead876919c1d3417357cd1d3ccdb87880dbef390592e",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.44",
+      "scene": "Later gated source scene, phase6 still incomplete",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    }
+  ],
+  "boot_logs": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/emulator-evidence/boot-gated-scene.log",
+      "sha256": "a2de36f1944457c7c8480ed6431c230a0e8b1b3b673be1e498ce9193f8b2b78f",
+      "first_gpu_submission_completed": true,
+      "gpu_timeout_reported": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/emulator-evidence/boot-safe.log",
+      "sha256": "35bd0765b0a552586efa674bf9afb10d2c11931ee638dd308766065954282b56",
+      "first_gpu_submission_completed": true,
+      "gpu_timeout_reported": false
+    }
+  ],
+  "traces": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/emulator-evidence/hardware_01444_4001167669567.csv",
+      "sha256": "669c57478e390975c80a9f5ddabd1e89d913145529ab9e4845a83f58bb6e9452",
+      "mode": "A: enhanced textured normal gameplay",
+      "samples": 92,
+      "last_sampled_frame": "1374",
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          10100,
+          106327
+        ],
+        "interval_us": [
+          0,
+          106539
+        ],
+        "update_us": [
+          3,
+          139
+        ],
+        "render_us": [
+          10037,
+          33333
+        ],
+        "draw_calls": [
+          11,
+          12
+        ],
+        "triangles": [
+          1478,
+          1479
+        ],
+        "owned_linear": [
+          59520,
+          59520
+        ],
+        "owned_texture": [
+          2883584,
+          2883584
+        ],
+        "malloc_live": [
+          1683040,
+          1683088
+        ],
+        "malloc_arena_free": [
+          545136,
+          545184
+        ],
+        "linear_free": [
+          28735744,
+          28735744
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          -448,
+          624
+        ],
+        "projectiles": [
+          0,
+          1
+        ],
+        "x": [
+          0,
+          0
+        ],
+        "y": [
+          -273,
+          0
+        ],
+        "z": [
+          512,
+          3648
+        ],
+        "grounded": [
+          -1,
+          1
+        ],
+        "contact_status": [
+          0,
+          1
+        ],
+        "floor_known": [
+          0,
+          1
+        ],
+        "wall_contact": [
+          0,
+          0
+        ],
+        "ceiling_contact": [
+          0,
+          0
+        ],
+        "landed": [
+          0,
+          1
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456",
+        "# area_event=unload_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1683088,linear_free=28735744,vram_free=5523456",
+        "# area_event=gpu_unloaded,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=372904,linear_free=31941632,vram_free=6291456",
+        "# area_event=cpu_scope_unloaded,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35840,linear_free=31941632,vram_free=6291456"
+      ],
+      "timeout_records": [],
+      "last_scene_callback": null,
+      "last_event": "# source_event,frame=1,area=0,status=1,committed=0,event=0,phase=0,consumer=00000000",
+      "last_lower80_hold": null
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/emulator-evidence/hardware_01444_4001167922464.csv",
+      "sha256": "613387d0fbadd9136ce1dbc2ee24cc8810bc18574b7ad03c516a637e1d716c18",
+      "mode": "X: preserved 0143 fallback",
+      "samples": 2,
+      "last_sampled_frame": "4",
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          87370,
+          123042
+        ],
+        "interval_us": [
+          0,
+          123254
+        ],
+        "update_us": [
+          46,
+          135
+        ],
+        "render_us": [
+          12860,
+          33334
+        ],
+        "draw_calls": [
+          2,
+          2
+        ],
+        "triangles": [
+          3990,
+          3990
+        ],
+        "owned_linear": [
+          126144,
+          126144
+        ],
+        "owned_texture": [
+          0,
+          0
+        ],
+        "malloc_live": [
+          960264,
+          960264
+        ],
+        "malloc_arena_free": [
+          755960,
+          755960
+        ],
+        "linear_free": [
+          31553280,
+          31553280
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          0
+        ],
+        "projectiles": [
+          0,
+          0
+        ],
+        "x": [
+          -768,
+          -768
+        ],
+        "y": [
+          0,
+          0
+        ],
+        "z": [
+          -2816,
+          -2816
+        ],
+        "grounded": [
+          -1,
+          -1
+        ],
+        "contact_status": [
+          0,
+          2
+        ],
+        "floor_known": [
+          0,
+          1
+        ],
+        "wall_contact": [
+          0,
+          0
+        ],
+        "ceiling_contact": [
+          0,
+          0
+        ],
+        "landed": [
+          0,
+          0
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456",
+        "# area_event=unload_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=960264,linear_free=31553280,vram_free=5523456",
+        "# area_event=gpu_unloaded,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=372864,linear_free=31941632,vram_free=6291456",
+        "# area_event=cpu_scope_unloaded,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35840,linear_free=31941632,vram_free=6291456"
+      ],
+      "timeout_records": [],
+      "last_scene_callback": null,
+      "last_event": "# source_event,frame=1,area=0,status=1,committed=0,event=0,phase=0,consumer=00000000",
+      "last_lower80_hold": null
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-worldalive-01444/emulator-evidence/hardware_01444_4001167980939.csv",
+      "sha256": "773c1409213cfcc4c981b3f29bf8034525d8b39ed933c6c1a6160f3c2045508e",
+      "mode": "Gated source scene, no RNG/replay overrides",
+      "samples": 12,
+      "last_sampled_frame": "600",
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          14989,
+          123084
+        ],
+        "interval_us": [
+          0,
+          123501
+        ],
+        "update_us": [
+          3,
+          1441
+        ],
+        "render_us": [
+          14085,
+          33247
+        ],
+        "draw_calls": [
+          11,
+          46
+        ],
+        "triangles": [
+          1478,
+          2442
+        ],
+        "owned_linear": [
+          59520,
+          59520
+        ],
+        "owned_texture": [
+          4980736,
+          4980736
+        ],
+        "malloc_live": [
+          2191120,
+          2191120
+        ],
+        "malloc_arena_free": [
+          139504,
+          139504
+        ],
+        "linear_free": [
+          26622464,
+          26622464
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          0
+        ],
+        "projectiles": [
+          0,
+          0
+        ],
+        "x": [
+          0,
+          80
+        ],
+        "y": [
+          0,
+          0
+        ],
+        "z": [
+          -544,
+          512
+        ],
+        "grounded": [
+          -1,
+          -1
+        ],
+        "contact_status": [
+          0,
+          0
+        ],
+        "floor_known": [
+          0,
+          0
+        ],
+        "wall_contact": [
+          0,
+          0
+        ],
+        "ceiling_contact": [
+          0,
+          0
+        ],
+        "landed": [
+          0,
+          0
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1371057,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456",
+        "# area_event=unload_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=2086816,linear_free=26638592,vram_free=5523456",
+        "# area_event=gpu_unloaded,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=767872,linear_free=31941632,vram_free=6291456",
+        "# area_event=cpu_scope_unloaded,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35840,linear_free=31941632,vram_free=6291456"
+      ],
+      "timeout_records": [],
+      "last_scene_callback": "# source_scene_callback,frame=689,status=29,committed=1,callback=801007f0,awaiting_camera=0,awaiting_timeline=0,awaiting_caller=0,next_consumer=00000000,scene_complete=false",
+      "last_event": "# source_event,frame=660,area=0,status=0,committed=1,event=1,phase=6,consumer=00000000",
+      "last_lower80_hold": "# source_lower80_hold,frame=660,slot=0,subtype=2,callback=80116e68,kind=3,status=10,missing_offset=255,unknowns_preserved=true"
+    }
+  ],
+  "normal_unload_all_three_runs": true,
+  "owned_emulator_pids": [
+    41430,
+    41880
+  ],
+  "owned_pids_absent_after_gui_quit": true,
+  "gated_scene_files": {
+    "source_event.ini": "SOURCE_EVENT_BOOT=1",
+    "source_scene_e0.ini": "SOURCE_SCENE_E0=1",
+    "source_scene_actor40.ini": "SOURCE_SCENE_ACTOR40=1",
+    "source_scene_textures.ini": "SOURCE_SCENE_TEXTURES=1",
+    "source_scene_camera.ini": "SOURCE_SCENE_CAMERA=1",
+    "source_audio.cfg": "SOURCE_XA_AUDIO=1"
+  },
+  "rng_or_recorded_replay_overrides": false,
+  "limits": [
+    "01444 has not been tested on physical hardware. User photos/report establish textured room/player rendering in01443.",
+    "Gated scene ran689ticks, remained event1phase6, and did not demonstrate a natural area transition. An intermediate caller wait later advanced to callback801007F0; it must not be reported as a permanent stop at the earlier callback.",
+    "Lower80 subtype2 callback80116E68 remains held: kind3/status10/missing_offset255. Head UV reset owner admitted10records, but actual phase7 restore, ordered pause and source area commit were not reached in this emulator sample.",
+    "Jump input produced vertical motion in sampled data; exact retail trajectory, full collision and recovery are unverified. Native-vs-native determinism is not retail parity.",
+    "Safe renderer visibly displayed, but its sparse trace contains only two rows and contact_status2. It is not evidence of safe-path gameplay parity.",
+    "Full timing ranges include observed loading/first-frame spikes. Sparse emulated counters cannot establish physical frame pacing, true peak memory or stack high-water usage.",
+    "Partial bottom-screen presentation remains an inherited issue; this pass did not establish its absence."
+  ]
+}

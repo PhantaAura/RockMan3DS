@@ -1,0 +1,88 @@
+{
+  "schema": "mml-source-main-loop-scalar/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "pad_cases": 256,
+  "pad_original_instructions": 94274,
+  "pad_cold_clear_cases": 2,
+  "scratch_prefix_cases": 8,
+  "scratch_prefix_preserves_half2": true,
+  "cold_prefix_original_instructions": 1902,
+  "gate_cases": 50,
+  "gate_original_instructions": 350,
+  "phase_cases": 11,
+  "phase_active_event_fastpath_cases": 5,
+  "phase_original_instructions": 267,
+  "vblank_cases": 9,
+  "vblank_original_instructions": 90,
+  "suffix_call_boundary_cases": 9,
+  "suffix_original_instructions": 28,
+  "suffix": [
+    {
+      "caller": "0x80011e70",
+      "consumer": "0x80012c80",
+      "resume": "0x80011e78"
+    },
+    {
+      "caller": "0x80011e78",
+      "consumer": "0x8001a110",
+      "resume": "0x80011e80"
+    },
+    {
+      "caller": "0x80011e80",
+      "consumer": "0x8001c95c",
+      "resume": "0x80011e88"
+    },
+    {
+      "caller": "0x80011e88",
+      "consumer": "0x800203a8",
+      "resume": "0x80011e90"
+    },
+    {
+      "caller": "0x80011e90",
+      "consumer": "0x80053b40",
+      "resume": "0x80011e98"
+    },
+    {
+      "caller": "0x80011e98",
+      "consumer": "0x80064060",
+      "resume": "0x80011ea0"
+    },
+    {
+      "caller": "0x80011ea0",
+      "consumer": "0x8007d02c",
+      "resume": "0x80011ea8"
+    },
+    {
+      "caller": "0x80011ea8",
+      "consumer": "0x80017b24",
+      "resume": "0x80011eb0"
+    },
+    {
+      "caller": "0x80011eb0",
+      "consumer": "0x800178fc",
+      "resume": "0x80011eb8"
+    }
+  ],
+  "declared_opaque_callee_return_boundaries": 9,
+  "helper_hooks": 0,
+  "instruction_patches": 0,
+  "fixture_sha256": {
+    "source-main-loop-pads.tsv": "6ed799dc3e353211a56ea21c4723a61328dad0ca6705c5b3aceb147458d99f54",
+    "source-main-loop-gates.tsv": "c3dd618f6a22b2d5a769c370b2ddc674a3bfe26a2fff1eba85de92888c96c1c6",
+    "source-main-loop-phase.tsv": "bccaf166b79bef4dc0e4a9c3d544dc11647b0fc06d6fdbf0886516707de526d9",
+    "source-main-loop-phase-active.tsv": "6e1bad45039456d3f8c12c2ce475b12b82f9fd7a008ccb105231b0f29eb1332e",
+    "source-main-loop-vblank.tsv": "c7eec82ecf6eb7b239f13b2696b9c38c5eeb0f42c1fc492486b8b75b4885c0e3"
+  },
+  "scratch_half_1f800002_initial_owner": "UNKNOWN",
+  "retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Authored pad/scalar owners, not observed retail controller or BIOS chronology.",
+    "Phase3 subphases0/6 and subphase2 outside the admitted active-event fast path require further branch owners.",
+    "The original80015DB4 update pass invokes other actor families before the E0 sweep.",
+    "Suffix proof checks call ordering only; opaque callees are external return boundaries.",
+    "Boot scratch prefix and BIOS/game BSS do not establish initial scratch halfword2.",
+    "No original code, retail asset, source table or save bytes are exported."
+  ]
+}

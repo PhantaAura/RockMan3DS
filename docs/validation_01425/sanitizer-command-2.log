@@ -1,0 +1,11 @@
+Test project /Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01425/sanitize-r1/build
+    Start 93: runtime_command_lease
+1/3 Test #93: runtime_command_lease ............   Passed    0.46 sec
+    Start 94: xa_stream
+2/3 Test #94: xa_stream ........................   Passed    0.37 sec
+    Start 95: source_camera
+3/3 Test #95: source_camera ....................   Passed    0.12 sec
+
+100% tests passed out of 3
+
+Total Test time (real) =   0.96 sec

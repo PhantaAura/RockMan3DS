@@ -1,0 +1,195 @@
+{
+  "schema": "actor-detection-context-source-proof/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "source_owner": {
+    "configuration_argument": "0x80100528..0x80100560",
+    "configuration_copy": "0x800371A0",
+    "global_scalar": "0x800C0DE6",
+    "scratch_scalar": "0x1F800075"
+  },
+  "area_contexts": [
+    {
+      "area_id": 0,
+      "configuration_pointer": "0x8011ac54",
+      "configuration_scalar_offset": 38,
+      "scalar_mode_word": 2,
+      "scalar_mode_low_byte": 2,
+      "original_40_byte_copy_verified": true,
+      "render_transfers": [
+        {
+          "entry": "0x80023728",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x80023728",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        }
+      ]
+    },
+    {
+      "area_id": 1,
+      "configuration_pointer": "0x8011ac7c",
+      "configuration_scalar_offset": 38,
+      "scalar_mode_word": 2,
+      "scalar_mode_low_byte": 2,
+      "original_40_byte_copy_verified": true,
+      "render_transfers": [
+        {
+          "entry": "0x80023728",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x80023728",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        }
+      ]
+    },
+    {
+      "area_id": 2,
+      "configuration_pointer": "0x8011aca4",
+      "configuration_scalar_offset": 38,
+      "scalar_mode_word": 2,
+      "scalar_mode_low_byte": 2,
+      "original_40_byte_copy_verified": true,
+      "render_transfers": [
+        {
+          "entry": "0x80023728",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x80023728",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        }
+      ]
+    },
+    {
+      "area_id": 3,
+      "configuration_pointer": "0x8011accc",
+      "configuration_scalar_offset": 38,
+      "scalar_mode_word": 2,
+      "scalar_mode_low_byte": 2,
+      "original_40_byte_copy_verified": true,
+      "render_transfers": [
+        {
+          "entry": "0x80023728",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x80023728",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 0,
+          "scratch_mode": 2,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        }
+      ]
+    },
+    {
+      "area_id": 4,
+      "configuration_pointer": "0x8011acf4",
+      "configuration_scalar_offset": 38,
+      "scalar_mode_word": 0,
+      "scalar_mode_low_byte": 0,
+      "original_40_byte_copy_verified": true,
+      "render_transfers": [
+        {
+          "entry": "0x80023728",
+          "gate80098824": 0,
+          "scratch_mode": 0,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x80023728",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 0,
+          "scratch_mode": 0,
+          "expected_copy": true
+        },
+        {
+          "entry": "0x800238b4",
+          "gate80098824": 1,
+          "scratch_mode": 170,
+          "expected_copy": false
+        }
+      ]
+    }
+  ],
+  "render_copy_cases": 20,
+  "instructions_executed": 1070,
+  "retail_parity": false,
+  "no_original_payload_exported": true,
+  "limits": [
+    "Original stage/configuration identity for supported ST00areas0..4 only.",
+    "Scalar mode has no invented gameplay name or sound meaning.",
+    "Lighting/GTE setup consumer calls excluded; original40-byte CPU copy executes.",
+    "Renderer gate0/1 are explicitly authored contexts; complete runtime render cadence remains unverified.",
+    "Unsupported overlay/area contexts must hold rather than borrow a mode."
+  ]
+}

@@ -1,0 +1,279 @@
+[
+  {
+    "profile": "off",
+    "emulator": "Azahar 2126.0",
+    "old_model": true,
+    "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-off-r1/sdmc/3ds/Legends3DS/hardware_01429_4000698364062.csv",
+    "trace_sha256": "6ab7f0d2141cecf01b75cac1e9ac461aa3f321b38efe8392e15cce0d66fb6e83",
+    "sample_rows": 62,
+    "sample_ranges": {
+      "x": {
+        "min": 0,
+        "max": 0
+      },
+      "y": {
+        "min": -1,
+        "max": 0
+      },
+      "z": {
+        "min": 512,
+        "max": 1088
+      },
+      "heading": {
+        "min": 1628,
+        "max": 2048
+      },
+      "projectiles": {
+        "min": 0,
+        "max": 1
+      },
+      "malloc_live": {
+        "min": 1683016,
+        "max": 1683064
+      },
+      "linear_free": {
+        "min": 28735744,
+        "max": 28735744
+      },
+      "vram_free": {
+        "min": 5523456,
+        "max": 5523456
+      },
+      "owned_linear": {
+        "min": 59520,
+        "max": 59520
+      },
+      "owned_texture": {
+        "min": 2883584,
+        "max": 2883584
+      },
+      "triangles": {
+        "min": 1478,
+        "max": 1479
+      },
+      "draw_calls": {
+        "min": 12,
+        "max": 12
+      },
+      "frame_before_log_us": {
+        "min": 10396,
+        "max": 89613
+      },
+      "render_us": {
+        "min": 6815,
+        "max": 16679
+      },
+      "update_us": {
+        "min": 3,
+        "max": 72
+      }
+    },
+    "captures": [
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-off-r1/captures/01429_off_idle.png",
+        "sha256": "111f16e2b14ded0480df2555ed9da75acbab9092719c636c61e929f635862a59"
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-off-r1/captures/01429_off_movement.png",
+        "sha256": "5a9d5646efcebcc0be1af3cacd5f0022314c5b2509652ac8fa0345d38e717587"
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-off-r1/captures/01429_off_turn.png",
+        "sha256": "f9866a32207fe69a7934b42f6e20ca4fa648ee4433bd78efe494298506d55943"
+      }
+    ],
+    "profile_configuration": {
+      "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-off-r1",
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01429_WorldComesAlive.3dsx",
+      "binary_sha256": "dd71eb4a4b9176d32cef460ad6e60f30c7bffe04a9128b89d31d69736b6c86d8",
+      "source_event_boot": false,
+      "source_audio": false,
+      "old_3ds": true,
+      "hardware_tested": false
+    },
+    "hardware_tested": false,
+    "limitations": "Sparse emulator samples; render includes synchronization, reservations are not live usage. No physical performance or retail visual/gameplay parity inferred."
+  },
+  {
+    "profile": "on",
+    "emulator": "Azahar 2126.0",
+    "old_model": true,
+    "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-on-r1/sdmc/3ds/Legends3DS/hardware_01429_4000698498392.csv",
+    "trace_sha256": "ade3afaf81da912a611196c3cd6cfc6f554dad69efa87e1e8bb603de829e07e8",
+    "sample_rows": 83,
+    "sample_ranges": {
+      "x": {
+        "min": 0,
+        "max": 0
+      },
+      "y": {
+        "min": -1,
+        "max": 0
+      },
+      "z": {
+        "min": 512,
+        "max": 512
+      },
+      "heading": {
+        "min": 2048,
+        "max": 2048
+      },
+      "projectiles": {
+        "min": 0,
+        "max": 0
+      },
+      "malloc_live": {
+        "min": 1787320,
+        "max": 1787320
+      },
+      "linear_free": {
+        "min": 28719616,
+        "max": 28719616
+      },
+      "vram_free": {
+        "min": 5523456,
+        "max": 5523456
+      },
+      "owned_linear": {
+        "min": 59520,
+        "max": 59520
+      },
+      "owned_texture": {
+        "min": 2883584,
+        "max": 2883584
+      },
+      "triangles": {
+        "min": 1478,
+        "max": 1478
+      },
+      "draw_calls": {
+        "min": 12,
+        "max": 12
+      },
+      "frame_before_log_us": {
+        "min": 10352,
+        "max": 89701
+      },
+      "render_us": {
+        "min": 6406,
+        "max": 16497
+      },
+      "update_us": {
+        "min": 3,
+        "max": 467
+      }
+    },
+    "captures": [
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-on-r1/captures/01429_on_gameplay.png",
+        "sha256": "12a6efcfbd7a3173a261a557a348f21dc6136d226b27496d76cca087954296af"
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-on-r1/captures/01429_on_ready.png",
+        "sha256": "afec517dc4c4ced44177c82370b06cc71794991427af24762fb0ce3ade573e28"
+      }
+    ],
+    "profile_configuration": {
+      "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-on-r1",
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01429_WorldComesAlive.3dsx",
+      "binary_sha256": "dd71eb4a4b9176d32cef460ad6e60f30c7bffe04a9128b89d31d69736b6c86d8",
+      "source_event_boot": true,
+      "source_audio": true,
+      "old_3ds": true,
+      "hardware_tested": false
+    },
+    "hardware_tested": false,
+    "limitations": "Sparse emulator samples; render includes synchronization, reservations are not live usage. No physical performance or retail visual/gameplay parity inferred."
+  },
+  {
+    "profile": "safe",
+    "emulator": "Azahar 2126.0",
+    "old_model": true,
+    "trace": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-safe-r1/sdmc/3ds/Legends3DS/hardware_01429_4000698689346.csv",
+    "trace_sha256": "b6abcc9e22508ddd69b5adae990df60ede6fadf54abffd11d525ab0869a1fdd3",
+    "sample_rows": 45,
+    "sample_ranges": {
+      "x": {
+        "min": -768,
+        "max": -768
+      },
+      "y": {
+        "min": 0,
+        "max": 0
+      },
+      "z": {
+        "min": -3232,
+        "max": -2816
+      },
+      "heading": {
+        "min": 0,
+        "max": 0
+      },
+      "projectiles": {
+        "min": 0,
+        "max": 0
+      },
+      "malloc_live": {
+        "min": 960240,
+        "max": 960240
+      },
+      "linear_free": {
+        "min": 31553280,
+        "max": 31553280
+      },
+      "vram_free": {
+        "min": 5523456,
+        "max": 5523456
+      },
+      "owned_linear": {
+        "min": 126144,
+        "max": 126144
+      },
+      "owned_texture": {
+        "min": 0,
+        "max": 0
+      },
+      "triangles": {
+        "min": 3990,
+        "max": 3990
+      },
+      "draw_calls": {
+        "min": 3,
+        "max": 3
+      },
+      "frame_before_log_us": {
+        "min": 10402,
+        "max": 89614
+      },
+      "render_us": {
+        "min": 5628,
+        "max": 16679
+      },
+      "update_us": {
+        "min": 3,
+        "max": 71
+      }
+    },
+    "captures": [
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-safe-r1/captures/01429_safe_after_input.png",
+        "sha256": "099bdeef8ae1353e027edea4e69e7e467e77fe995f14fb1d21ff41ef563cadc8"
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-safe-r1/captures/01429_safe_idle.png",
+        "sha256": "ef74eee37484f83ce05b1724418125588ba18d21103b02c2c34a5519613d10ec"
+      }
+    ],
+    "profile_configuration": {
+      "profile": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-safe-r1",
+      "binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01429_WorldComesAlive.3dsx",
+      "binary_sha256": "dd71eb4a4b9176d32cef460ad6e60f30c7bffe04a9128b89d31d69736b6c86d8",
+      "source_event_boot": false,
+      "source_audio": false,
+      "old_3ds": true,
+      "hardware_tested": false
+    },
+    "hardware_tested": false,
+    "limitations": "Sparse emulator samples; render includes synchronization, reservations are not live usage. No physical performance or retail visual/gameplay parity inferred."
+  }
+]

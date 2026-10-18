@@ -1,0 +1,113 @@
+{
+  "host_ctest": "23/23 PASS",
+  "native": {
+    "area_package": {
+      "bytes": 111562,
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/local-data/boot.mmlpkg",
+      "scope": "Existing cooked map/render and optional negative material envelope; local only. Other package bindings remain unsupported.",
+      "sha256": "b3666a9f9d4fb8e7145dbdb57a63bd703bfb8ccd3e6e69573a5ecdab7da23a18"
+    },
+    "commands": [
+      {
+        "argv": [
+          "cmake",
+          "-S",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.12_VisualParity",
+          "-B",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/host",
+          "-DCMAKE_BUILD_TYPE=Release"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/logs/host-configure.log",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "cmake",
+          "--build",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/host",
+          "--parallel",
+          "4"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/logs/host-build.log",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "ctest",
+          "--test-dir",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/host",
+          "--output-on-failure"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/logs/host-tests.log",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/Library/Developer/CommandLineTools/usr/bin/python3",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.12_VisualParity/tools/package_cooked_area.py",
+          "--map",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/sd_out/3ds/Legends3DS/data/legends3ds/tutorial/st00.l3map",
+          "--render",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/sd_out/3ds/Legends3DS/data/legends3ds/tutorial/st00.l3render",
+          "--state-id",
+          "local:verified-tutorial-pair",
+          "--out",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/local-data/boot.mmlpkg",
+          "--negative-materials",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/sd_out/3ds/Legends3DS/data/legends3ds/tutorial/st00.l3nm"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/logs/area-package.log",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/host/l3area_runtime_probe",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/local-data/boot.mmlpkg"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/logs/area-runtime-probe.log",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/host/l3area_inspection_probe",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/local-data/boot.mmlpkg"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/logs/area-inspection-probe.log",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "make",
+          "-C",
+          "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/native-source/platform/3ds",
+          "-j4"
+        ],
+        "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/logs/native-build.log",
+        "returncode": 0
+      }
+    ],
+    "cookers_or_extractors_invoked": false,
+    "created_utc": "2026-10-03T19:25:07.642919+00:00",
+    "hardware": "PENDING",
+    "host_tests": "PASS",
+    "native_binary_bytes": 455340,
+    "native_binary_path": "build/Legends3DS_01412_VisualParity.3dsx",
+    "native_binary_sha256": "d4c5d88ab40424553b93c2d88534f74dbb0f843ec138f1f5da3c952989cd3416",
+    "native_build": "PASS",
+    "pack": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261002-visibility/install-final-r2/sd_out/3ds/Legends3DS/data/legends3ds/tutorial",
+    "pack_manifest_sha256": "c9035b63a75b19979052138d9548bdb7dc6bb4d66c46b6c49f0206a8b09af932",
+    "packaging_existing_cooked_payloads": true,
+    "sd_binary_path": "sd_out/3ds/Legends3DS/Legends3DS_01412_VisualParity.3dsx",
+    "sd_root": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261003-visual/install-r3/sd_out",
+    "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.12_VisualParity",
+    "status": "PASS"
+  },
+  "focused_sanitizers": "view/UI/player modified units PASS",
+  "native_touch_exercised": false,
+  "old3ds_hardware": "HARDWARE_PENDING",
+  "physics_1to1": false,
+  "top_original_hud": "UNKNOWN",
+  "current_visual_acceptance": false,
+  "original_bounded_source_checks": 346,
+  "source_native_snapshot_match": true
+}

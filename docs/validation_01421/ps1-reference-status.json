@@ -1,0 +1,16 @@
+{
+  "trace_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01421/rng-reference/live-r1/trace-checkpoint.jsonl",
+  "trace_sha256": "49650a3f8e2dce334af9b3b7808ed9ee127f7f511a20bbc2ac8db06596f5261d",
+  "rows": 4,
+  "kinds": {
+    "game_entry": 3,
+    "observer_start": 1
+  },
+  "whole_trace_admitted": false,
+  "live_enemy_rng_admitted": false,
+  "retail_parity": false,
+  "start_failure": "User reports START does not work; cause unknown. Saved Port1 Keyboard/Digital with Return=START and X=Cross verified. Current computer-use inventory reports Mac locked.",
+  "memory_cards_inserted": false,
+  "observer": "read-only",
+  "source_data_modified": false
+}

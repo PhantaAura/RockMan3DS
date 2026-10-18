@@ -1,0 +1,24 @@
+{
+  "emulator": "Azahar2126.0",
+  "old_model": true,
+  "cpu_clock_percentage": 100,
+  "resolution_factor": 1,
+  "hardware_tested": false,
+  "retail_parity": false,
+  "build": "0.0.14.25",
+  "binary_revision": "r4",
+  "actor_rng_candidate": false,
+  "source_event_boot": true,
+  "source_xa_audio": true,
+  "source_actor_proxy": false,
+  "renderer_flags": "7f",
+  "renderer": "ENHANCED",
+  "isolated_storage": true,
+  "actor_state_fields": true,
+  "dsp_component": {
+    "owner_path": "/Users/emeraldhunter/Downloads/3ds backups/3ds/dspfirm.cdc",
+    "bytes": 49756,
+    "sha256": "8e213f3e71d2e3e45d1169bac6465a70eabeb22b303f1fa6d7679370ffad0f54",
+    "included_in_source_release": false
+  }
+}

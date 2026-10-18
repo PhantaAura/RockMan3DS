@@ -1,0 +1,12 @@
+{
+  "retail_payloads_in_source": false,
+  "excluded_source_tree_files": [],
+  "outside_source_not_packaged": [
+    "owner-data/",
+    "private cooked pack and neutral payload files",
+    "private SD layout",
+    "native binaries/build caches",
+    "screenshots and raw reference captures (paths/hashes recorded)",
+    "original saves"
+  ]
+}

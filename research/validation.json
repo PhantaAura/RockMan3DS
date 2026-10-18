@@ -1,0 +1,30 @@
+{
+  "source": "user-supplied Mega Man Legends (USA) extracted disc",
+  "note": "Hashes/statistics only; no game asset bytes are included in this package.",
+  "st00_source_hashes": {
+    "R3_ST00.BIN": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+    "ST00_MAP.IDX": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e",
+    "ST00_MAP.MDT": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e",
+    "ST00.STG": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+    "ST00.HED": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+  },
+  "cooked_l3mp_v1_validation": {
+    "areas": 5,
+    "cells": 4255,
+    "positive_cells": 2892,
+    "negative_cells": 109,
+    "idx_records": 995,
+    "descriptors": 116,
+    "unique_contact_lists_union": 46,
+    "contact_groups": 175,
+    "contact_primitives": 190,
+    "cooked_bytes": 30446,
+    "payload_crc32": "c5dffec6",
+    "internal_test_cooked_sha256": "94c703b1d6dcf1690afcf8dc1e738c124936919cb33f302b0796941378c72545"
+  },
+  "host_build": {
+    "compiler": "GNU C/C++ 14.2.0",
+    "warnings_as_errors": true,
+    "ctest": "1/1 PASS"
+  }
+}

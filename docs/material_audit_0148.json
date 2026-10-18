@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "checkpoint": "0.0.14.8",
+  "audit_date": "2026-10-01",
+  "scope": "Read-only inspection of authorized existing cooked tutorial data and inherited native material code",
+  "source_inspection_status": "SOURCE_BACKED_PARTIAL",
+  "retail_vram_semantics_status": "UNKNOWN",
+  "old_3ds_validation_status": "HARDWARE_PENDING",
+  "current_emulator_visual_success_claimed": false,
+  "raw_owner_data_read": false,
+  "extractor_or_cooker_run": false,
+  "game_assets_modified": false,
+  "palette_substitution_performed": false,
+  "indexed_resource_validation": {
+    "textures": 39,
+    "palettes": 30,
+    "total": 69,
+    "crc_passed": 69,
+    "reader_functions": ["inspect_l3texture(bytes,true)", "inspect_l3palette(bytes,true)"]
+  },
+  "terrain_expansion": {
+    "bank": "Primary",
+    "lod": "Mid",
+    "global_scale_shift": 0,
+    "positive_cells_only": true,
+    "total_primitives": 15512,
+    "resolved_primitives": 14328,
+    "unresolved_primitives": 1184,
+    "per_area": [
+      {"area": 0, "total": 1752, "resolved": 928, "unresolved": 824},
+      {"area": 1, "total": 854, "resolved": 494, "unresolved": 360},
+      {"area": 2, "total": 674, "resolved": 674, "unresolved": 0},
+      {"area": 3, "total": 120, "resolved": 120, "unresolved": 0},
+      {"area": 4, "total": 12112, "resolved": 12112, "unresolved": 0}
+    ]
+  },
+  "unresolved_materials": [
+    {"material_word": "0x7c810016", "expanded_primitives": 288, "area_counts": {"0": 288}, "exact_clut_matches_all_indexed_resources": 0, "exact_image_page_matches_all_indexed_resources": 2, "palette_semantics": "UNKNOWN"},
+    {"material_word": "0x7c830016", "expanded_primitives": 176, "area_counts": {"0": 176}, "exact_clut_matches_all_indexed_resources": 0, "exact_image_page_matches_all_indexed_resources": 2, "palette_semantics": "UNKNOWN"},
+    {"material_word": "0x7cc20017", "expanded_primitives": 720, "area_counts": {"0": 360, "1": 360}, "exact_clut_matches_all_indexed_resources": 0, "exact_image_page_matches_all_indexed_resources": 1, "palette_semantics": "UNKNOWN"}
+  ],
+  "resolved_uv_corner_samples": {
+    "definition": "Read the four stored byte UV endpoints directly from the resolved padded 256x256 material page; palette color word zero means transparent",
+    "primitives_with_any_transparent_corner": 136,
+    "transparent_corner_material_word": "0x7c800016",
+    "transparent_corner_area": 0,
+    "primitives_with_four_transparent_corners": 0,
+    "primitives_with_any_corner_outside_retained_image_dimensions": 358,
+    "outside_dimensions_area_counts": {"1": 84, "2": 222, "3": 52},
+    "outside_dimensions_material_words": ["0x7e800019", "0x7ec0001a"],
+    "outside_dimensions_retained_image_width": 128,
+    "outside_dimensions_sampled_corners_are_opaque": true,
+    "interior_texels_rasterized": false,
+    "limitations": ["Corner samples do not establish rasterized transparency or coverage", "Padding with index zero does not reconstruct surrounding PS1 VRAM", "Exact original upload state and UV intent remain unknown"]
+  },
+  "inherited_native_behavior": {
+    "unresolved_material_vbo_retained": true,
+    "unresolved_material_draw_submitted": true,
+    "unresolved_material_fallback": "Opaque primary color without texture modulation",
+    "unresolved_material_fallback_alpha": 1,
+    "unresolved_material_alpha_test_discarded": false,
+    "geometry_loss_caused_by_unresolved_entry_alone": false,
+    "cache_load_or_gpu_upload_failure": "Can abort enhanced boot; 0143 fallback avoids material-cache loading",
+    "ps1_semitransparency_blend_complete": false,
+    "source_functions": ["rebuild_terrain_batches", "draw_terrain", "configure_terrain_attributes_uv", "configure_texenv_uv", "material_page_rgba8", "init_gpu"]
+  },
+  "probe_commands": [
+    "work/pass-20261001/validated-0147-final/host/l3flight_material_probe work/tutorial-pack/legends3ds/tutorial",
+    "c++ -std=c++17 -O2 -I work/Legends3DS_0.0.14.8_TerrainRepair/include /private/tmp/mml_material_audit_0148.cpp work/pass-20261001/validated-0147-final/host/liblegends3ds_core.a -o /private/tmp/mml_material_audit_0148",
+    "/private/tmp/mml_material_audit_0148 work/tutorial-pack/legends3ds/tutorial"
+  ],
+  "probe_exit_codes": [0, 0, 0],
+  "evidence_hashes": [
+    {"path": "/private/tmp/mml_material_audit_0148.cpp", "sha256": "856500ad4b3d53d91029f93881b09f8231cc9dda32e3f19c85ae8dbd2b4fcda8"},
+    {"path": "/private/tmp/mml_material_audit_0148", "sha256": "ec426fddc428be4ab1c6006433e5f3c6a9c35893e32424df1b736d21f31e8bf6"},
+    {"path": "work/pass-20261001/validated-0147-final/host/liblegends3ds_core.a", "sha256": "28365a6f6f5196ddb249137664c43265da0246f3df73fe7c07775289e84732bb"},
+    {"path": "work/tutorial-pack/legends3ds/tutorial/st00.l3map", "sha256": "94c703b1d6dcf1690afcf8dc1e738c124936919cb33f302b0796941378c72545"},
+    {"path": "work/tutorial-pack/legends3ds/tutorial/st00.l3render", "sha256": "f25348fc2fa9743210c205c148c43f650d95dd247ffb7a95723152c68ca99faa"}
+  ],
+  "remaining_unknowns": ["Dynamic CLUT ownership and write timing", "Original surrounding image-page contents", "Full PS1 stateful VRAM reconstruction", "Retail material and UV equivalence", "Old 3DS visual and performance validation"]
+}

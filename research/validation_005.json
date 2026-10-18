@@ -1,0 +1,37 @@
+{
+  "checkpoint": "0.0.5 tutorial flow bridge",
+  "host_build": {
+    "warnings_as_errors": true,
+    "ctest": "1/1 PASS"
+  },
+  "message": {
+    "st00_01": {"blocks":15,"glyph_bytes":930,"newline_bytes":41,"controls":156,"unknown_high_bytes":6,"audio":21,"wait":16,"next":13,"sel":4,"multi":2,"camera":0,"cooked_bytes":9614},
+    "st00_02": {"blocks":21,"glyph_bytes":1902,"newline_bytes":80,"controls":281,"unknown_high_bytes":15,"audio":28,"wait":33,"next":41,"sel":10,"multi":5,"camera":0,"cooked_bytes":19079},
+    "audio_index_evidence": "AUDIO arg0 covers 0..45 across the two tutorial banks; remaining three args are zero in all observed tutorial AUDIO commands; IDs 7..9 repeat in st00_01"
+  },
+  "pose": {
+    "transforms": 15,
+    "angle_domain": 4096,
+    "rotation_order": "X*Y*Z",
+    "math": "backend-neutral float affine matrices",
+    "fixed_point_bit_exact": false
+  },
+  "stage_objects": {
+    "record_bytes": 20,
+    "terminator": "0xFF at record +0x00",
+    "position_like_offsets": [12,14,16],
+    "semantic_enemy_ids_assigned": false
+  },
+  "tutorial_pack_cooker": {
+    "core_outputs_without_manifest": 14,
+    "indexed_resources_cooked": 69,
+    "full_validation_pack_files_including_manifest": 84,
+    "generated_assets_in_source_archive": false
+  },
+  "known_visual_material_status": {
+    "material_references": 393,
+    "complete": 388,
+    "incomplete": 5,
+    "unique_incomplete": 3
+  }
+}

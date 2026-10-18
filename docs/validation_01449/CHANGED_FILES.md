@@ -1,0 +1,29 @@
+# Changed files — 0.0.14.49
+
+- `CMakeLists.txt`
+- `README.md`, `MODLOG.md`, `RESUME_01449.md`
+- `include/legends3ds/player_runtime.h`
+- `include/legends3ds/source_buster_profile.h`
+- `include/legends3ds/source_player_pose.h`
+- `src/player/player_runtime.c`
+- `src/world/source_buster_profile.cpp`
+- `src/world/source_player_pose.cpp`
+- `platform/3ds/Makefile`
+- `platform/3ds/source/checkpoint_version.h`
+- `platform/3ds/source/main.cpp`
+- `tools/build_hardware_test.py`
+- `tools/build_mml3ds.py`
+- `tools/build_tutorial_pack.py`
+- `tools/cook_source_buster_profile.py`
+- `tests/test_local_install.py`
+- `tests/test_source_tools.py`
+- `tests/test_player_fire_state.cpp`
+- `tests/test_source_buster_profile.cpp`
+- `tests/test_source_player_pose.cpp`
+- `docs/research_01449/*`
+- `docs/validation_01449/*`
+- `state/CURRENT_CHECKPOINT.json`
+- `state/CURRENT_READINESS.json`
+- `state/EVIDENCE_LEDGER.json`
+- `state/RUN_STATE.json`
+- `SOURCE_MANIFEST.sha256`

@@ -1,0 +1,33 @@
+{
+  "checkpoint": "0.0.14.47",
+  "emulator": "Azahar 2126.0",
+  "model": "Old 3DS",
+  "cpu_percent": 100,
+  "renderer": "Vulkan",
+  "result": "SOURCE_BACKED_PARTIAL",
+  "source_transition": {
+    "from_area": 0,
+    "to_area": 1,
+    "transition_after_elapsed_us": 1797689,
+    "destination_status": 0,
+    "developer_room_skip": false
+  },
+  "post_transition_gameplay": {
+    "movement_observed": true,
+    "grounded_collision_observed": true,
+    "start_position": [2822, -1, -4833],
+    "later_sample": [-3288, -1, -6201]
+  },
+  "trace_sha256": "2583658185f9716a08e5e6e9b3b4d3c9cfb561d1d66bc84dc6a22aa507266758",
+  "screenshots_captured": false,
+  "premises": [
+    "Candidate shared RNG was enabled.",
+    "Recorded constructor clock was used.",
+    "Existing owner-local cooked payload was reused.",
+    "This does not establish retail chronology, frame rate or physical hardware behavior."
+  ],
+  "evidence": [
+    "handoff-trace.txt",
+    "movement-trace.txt"
+  ]
+}

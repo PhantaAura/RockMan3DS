@@ -1,0 +1,16 @@
+{
+  "schema": "mml-source-buster-spawn-01436/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "cases": 258,
+  "instructions_executed": 927450,
+  "helper_hooks": 0,
+  "instruction_replacements": 0,
+  "fixture_sha256": "bdc5d2d4fb2d6bb7a74cdc364fce2e2d64dda88c77c8f49221c6cf516e62341a",
+  "retail_payload_exported": false,
+  "limits": [
+    "Authored muzzle/table/counter/target fields, not live player pose ownership.",
+    "Tests original producer allocation/lease/counter/scalar stores only.",
+    "Firing cadence, projectile callback/motion, damage and complete encounter remain unknown."
+  ]
+}

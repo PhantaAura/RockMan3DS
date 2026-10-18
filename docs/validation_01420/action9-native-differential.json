@@ -1,0 +1,54 @@
+{
+  "schema": "action9-native-differential/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "commands": [
+    {
+      "argv": [
+        "c++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-I",
+        "work/Legends3DS_0.0.14.20_WorldComesAlive/include",
+        "work/Legends3DS_0.0.14.20_WorldComesAlive/tests/test_class20_03_action9.cpp",
+        "work/Legends3DS_0.0.14.20_WorldComesAlive/src/world/class20_03_action9.cpp",
+        "work/Legends3DS_0.0.14.20_WorldComesAlive/src/world/class20_03_behavior.cpp",
+        "work/Legends3DS_0.0.14.20_WorldComesAlive/src/world/class20_03_action3.cpp",
+        "-o",
+        "work/pass-20261007-worldalive-01420/action9/test_class20_03_action9"
+      ],
+      "returncode": 0,
+      "log": "work/pass-20261007-worldalive-01420/action9/differential-1.log",
+      "output": ""
+    },
+    {
+      "argv": [
+        "work/pass-20261007-worldalive-01420/action9/test_class20_03_action9",
+        "work/Legends3DS_0.0.14.20_WorldComesAlive/tests/fixtures/class20_03_action9_01420.tsv"
+      ],
+      "returncode": 0,
+      "log": "work/pass-20261007-worldalive-01420/action9/differential-2.log",
+      "output": "original action9 reducer cases=2496 cues=192\nPASS action9 strong dependency holds and640 allocation-free entries\n"
+    },
+    {
+      "argv": [
+        "work/pass-20261007-worldalive-01420/action9/test_actor_action9_contact",
+        "work/Legends3DS_0.0.14.20_WorldComesAlive/tests/fixtures/actor_action9_contact_01420.tsv",
+        "work/pass-20261007-worldalive-01420/action9/source-r1/action9-contact-owner.tsv",
+        "work/pass-20261006-worldalive-01419/pack-runtime-r1"
+      ],
+      "returncode": 0,
+      "log": "work/pass-20261007-worldalive-01420/action9/differential-3.log",
+      "output": "original action9 contact supported=216 held=72 corrected=24 cues=108\nmaterialized source action9 contact supported=24 held=0\nPASS distinct action9 contact and640 allocation-free preparations\n"
+    }
+  ],
+  "reducer_cases": 2496,
+  "authored_contact_exact": 216,
+  "authored_contact_held": 72,
+  "owner_contact_exact": 24,
+  "owner_contact_held": 0,
+  "no_allocation_iterations_each": 640,
+  "full_callback_parity": false,
+  "hardware_tested": false
+}

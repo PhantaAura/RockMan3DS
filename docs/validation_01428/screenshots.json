@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/captures/01428_gameplay_after_restart.png",
+    "sha256": "4bc7f55311508267768737a0d33e4ce4b1dedda2c9655997f1ac66cb4a942e89",
+    "device": "Azahar2126.0 Oldmodel",
+    "build": "01428",
+    "scene": "black-screen failed attempt; notgameplayacceptance",
+    "original_unedited": true
+  },
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/captures/01428_scene.png",
+    "sha256": "42f9bd3fbfa9ac4920f873a6d8466ea3217ed00cb389d40e1121e731eeba9112",
+    "device": "Azahar2126.0 Oldmodel",
+    "build": "01428",
+    "scene": "black-screen failed attempt; notgameplayacceptance",
+    "original_unedited": true
+  },
+  {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01428/captures/01428_title.png",
+    "sha256": "71b05baa3c3b04579ed966701c9dfc80855d9071f7ec8d847f0fded7f3a18e96",
+    "device": "Azahar2126.0 Oldmodel",
+    "build": "01428",
+    "scene": "title",
+    "original_unedited": true
+  }
+]

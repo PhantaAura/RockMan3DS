@@ -1,0 +1,51 @@
+# Exact changed-file list
+
+No inherited files removed.
+
+- modified: `CMakeLists.txt`
+- modified: `README.md`
+- modified: `SOURCE_MANIFEST.sha256`
+- added: `build_mml3ds.sh`
+- modified: `include/legends3ds/p2/mml_package_v2.h`
+- modified: `include/legends3ds/p2/mml_renderer_recovery.h`
+- modified: `include/legends3ds/p2/mml_runtime_diag_v2.h`
+- modified: `platform/3ds/source/main.cpp`
+- added: `research/0146b/CHANGED_FILES.md`
+- added: `research/0146b/REPORT.md`
+- added: `research/0146b/animation_evidence.json`
+- added: `research/0146b/changed_files.json`
+- added: `research/0146b/early_area_corpus.json`
+- added: `research/0146b/evidence_ledger.json`
+- added: `research/0146b/executable_evidence.json`
+- added: `research/0146b/inherited_file_hashes.json`
+- added: `research/0146b/readiness.json`
+- added: `research/0146b/regression_corpus.json`
+- added: `research/0146b/replay_results.json`
+- added: `research/0146b/source_audit.json`
+- added: `research/0146b/validation.json`
+- added: `research/PACKAGE_AND_REPLAY_0146b.md`
+- modified: `src/p2/mml_native_save_v2.c`
+- modified: `src/p2/mml_package_v2.c`
+- modified: `src/p2/mml_renderer_recovery.c`
+- modified: `src/p2/mml_runtime_diag_v2.c`
+- modified: `src/world/tile_transform.c`
+- modified: `state/CURRENT_CHECKPOINT.json`
+- added: `state/PARENT_0146a_CHECKPOINT.json`
+- added: `state/RUN_STATE.json`
+- modified: `tests/p2/test_all.c`
+- added: `tests/p2/test_integrity.c`
+- modified: `tests/test_core.cpp`
+- added: `tests/test_pipeline.py`
+- modified: `tools/build_game_runtime_pack.py`
+- added: `tools/build_mml3ds.py`
+- modified: `tools/build_tutorial_pack.py`
+- modified: `tools/flight_qa.sh`
+- added: `tools/l3animation_evidence.cpp`
+- added: `tools/l3area_validate.cpp`
+- added: `tools/l3replay.cpp`
+- added: `tools/mml_exe_research.py`
+- added: `tools/mml_pipeline.py`
+- added: `tools/mml_replay_suite.py`
+- modified: `tools/p2/trace_compare.py`
+- modified: `tools/p2/verify_cumulative_tree.py`
+- added: `tools/release_source.py`

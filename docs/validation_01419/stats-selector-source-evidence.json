@@ -1,0 +1,4607 @@
+{
+  "schema": "mml-stats-selector-lifecycle/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "boot_direct_edge": {
+    "site": "0x800680a0",
+    "target": "0x80011c90"
+  },
+  "bootstrap_registration": [
+    {
+      "authored_initial_helper_result": 0,
+      "registration_helper": "0x80012e10",
+      "callback_argument_a1": "0x800131fc",
+      "slot_argument_a0": 0,
+      "instructions": 24,
+      "direct_calls": [
+        {
+          "site": "0x80011ca0",
+          "target": "0x80067ff8"
+        },
+        {
+          "site": "0x80011cb8",
+          "target": "0x80012938"
+        },
+        {
+          "site": "0x80011cc0",
+          "target": "0x80011f04"
+        },
+        {
+          "site": "0x80011cd0",
+          "target": "0x80012e10"
+        }
+      ]
+    },
+    {
+      "authored_initial_helper_result": 1,
+      "registration_helper": "0x80012e10",
+      "callback_argument_a1": "0x800131fc",
+      "slot_argument_a0": 0,
+      "instructions": 24,
+      "direct_calls": [
+        {
+          "site": "0x80011ca0",
+          "target": "0x80067ff8"
+        },
+        {
+          "site": "0x80011cb8",
+          "target": "0x80012938"
+        },
+        {
+          "site": "0x80011cc0",
+          "target": "0x80011f04"
+        },
+        {
+          "site": "0x80011cd0",
+          "target": "0x80012e10"
+        }
+      ]
+    }
+  ],
+  "BIOS_registration": {
+    "source_helper": "0x80012e10",
+    "BIOS_wrapper": "0x8007ff10",
+    "entrypoint_argument_a0": "0x800131fc",
+    "instructions": 22,
+    "hooks": [
+      "0x8007ff70"
+    ],
+    "limits": [
+      "Critical section and actual thread stack/GP ownership excluded."
+    ],
+    "BIOS_function_id": 14,
+    "BIOS_gateway": "0xb0",
+    "original_trampoline_instructions": 3
+  },
+  "fresh_dispatch_cases": [
+    {
+      "previous_selector": 0,
+      "previous_dispatch_state": 0,
+      "selector_after": 1,
+      "dispatch_state80098B1C_after": 1,
+      "dispatch_state80098B1D_after": 0,
+      "source_table_index": 0,
+      "source_table_entry": "0x80080894",
+      "original_indirect_dispatch": [
+        {
+          "site": "0x80013240",
+          "target": "0x8001326c"
+        }
+      ],
+      "instructions": 156,
+      "hooks": [
+        "0x8007cf90",
+        "0x8007c478",
+        "0x8007df38",
+        "0x80063ef0",
+        "0x80053788",
+        "0x800665e8",
+        "0x8001d440"
+      ]
+    },
+    {
+      "previous_selector": 1,
+      "previous_dispatch_state": 1,
+      "selector_after": 1,
+      "dispatch_state80098B1C_after": 1,
+      "dispatch_state80098B1D_after": 0,
+      "source_table_index": 0,
+      "source_table_entry": "0x80080894",
+      "original_indirect_dispatch": [
+        {
+          "site": "0x80013240",
+          "target": "0x8001326c"
+        }
+      ],
+      "instructions": 156,
+      "hooks": [
+        "0x8007cf90",
+        "0x8007c478",
+        "0x8007df38",
+        "0x80063ef0",
+        "0x80053788",
+        "0x800665e8",
+        "0x8001d440"
+      ]
+    },
+    {
+      "previous_selector": 2,
+      "previous_dispatch_state": 2,
+      "selector_after": 1,
+      "dispatch_state80098B1C_after": 1,
+      "dispatch_state80098B1D_after": 0,
+      "source_table_index": 0,
+      "source_table_entry": "0x80080894",
+      "original_indirect_dispatch": [
+        {
+          "site": "0x80013240",
+          "target": "0x8001326c"
+        }
+      ],
+      "instructions": 156,
+      "hooks": [
+        "0x8007cf90",
+        "0x8007c478",
+        "0x8007df38",
+        "0x80063ef0",
+        "0x80053788",
+        "0x800665e8",
+        "0x8001d440"
+      ]
+    },
+    {
+      "previous_selector": 127,
+      "previous_dispatch_state": 17,
+      "selector_after": 1,
+      "dispatch_state80098B1C_after": 1,
+      "dispatch_state80098B1D_after": 0,
+      "source_table_index": 0,
+      "source_table_entry": "0x80080894",
+      "original_indirect_dispatch": [
+        {
+          "site": "0x80013240",
+          "target": "0x8001326c"
+        }
+      ],
+      "instructions": 156,
+      "hooks": [
+        "0x8007cf90",
+        "0x8007c478",
+        "0x8007df38",
+        "0x80063ef0",
+        "0x80053788",
+        "0x800665e8",
+        "0x8001d440"
+      ]
+    },
+    {
+      "previous_selector": 255,
+      "previous_dispatch_state": 255,
+      "selector_after": 1,
+      "dispatch_state80098B1C_after": 1,
+      "dispatch_state80098B1D_after": 0,
+      "source_table_index": 0,
+      "source_table_entry": "0x80080894",
+      "original_indirect_dispatch": [
+        {
+          "site": "0x80013240",
+          "target": "0x8001326c"
+        }
+      ],
+      "instructions": 156,
+      "hooks": [
+        "0x8007cf90",
+        "0x8007c478",
+        "0x8007df38",
+        "0x80063ef0",
+        "0x80053788",
+        "0x800665e8",
+        "0x8001d440"
+      ]
+    }
+  ],
+  "fresh_writer_cases": [
+    {
+      "previous_selector": 0,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 1,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 2,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 3,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 4,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 5,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 6,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 7,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 8,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 9,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 10,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 11,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 12,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 13,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 14,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 15,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 16,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 17,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 18,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 19,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 20,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 21,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 22,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 23,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 24,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 25,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 26,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 27,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 28,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 29,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 30,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 31,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 32,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 33,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 34,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 35,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 36,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 37,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 38,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 39,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 40,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 41,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 42,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 43,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 44,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 45,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 46,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 47,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 48,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 49,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 50,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 51,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 52,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 53,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 54,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 55,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 56,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 57,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 58,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 59,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 60,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 61,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 62,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 63,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 64,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 65,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 66,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 67,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 68,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 69,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 70,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 71,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 72,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 73,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 74,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 75,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 76,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 77,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 78,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 79,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 80,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 81,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 82,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 83,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 84,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 85,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 86,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 87,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 88,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 89,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 90,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 91,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 92,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 93,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 94,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 95,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 96,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 97,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 98,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 99,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 100,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 101,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 102,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 103,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 104,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 105,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 106,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 107,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 108,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 109,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 110,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 111,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 112,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 113,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 114,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 115,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 116,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 117,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 118,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 119,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 120,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 121,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 122,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 123,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 124,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 125,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 126,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 127,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 128,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 129,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 130,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 131,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 132,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 133,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 134,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 135,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 136,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 137,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 138,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 139,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 140,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 141,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 142,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 143,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 144,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 145,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 146,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 147,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 148,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 149,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 150,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 151,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 152,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 153,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 154,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 155,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 156,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 157,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 158,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 159,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 160,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 161,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 162,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 163,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 164,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 165,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 166,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 167,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 168,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 169,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 170,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 171,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 172,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 173,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 174,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 175,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 176,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 177,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 178,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 179,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 180,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 181,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 182,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 183,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 184,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 185,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 186,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 187,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 188,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 189,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 190,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 191,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 192,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 193,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 194,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 195,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 196,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 197,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 198,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 199,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 200,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 201,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 202,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 203,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 204,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 205,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 206,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 207,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 208,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 209,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 210,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 211,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 212,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 213,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 214,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 215,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 216,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 217,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 218,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 219,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 220,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 221,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 222,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 223,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 224,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 225,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 226,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 227,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 228,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 229,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 230,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 231,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 232,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 233,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 234,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 235,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 236,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 237,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 238,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 239,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 240,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 241,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 242,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 243,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 244,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 245,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 246,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 247,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 248,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 249,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 250,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 251,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 252,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 253,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 254,
+      "selector_after": 1,
+      "instructions": 4
+    },
+    {
+      "previous_selector": 255,
+      "selector_after": 1,
+      "instructions": 4
+    }
+  ],
+  "snapshot_copy_cases": [
+    {
+      "authored_byte800B5F4F": 0,
+      "previous_selector": 165,
+      "selector_after": 0,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 1,
+      "previous_selector": 164,
+      "selector_after": 1,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 2,
+      "previous_selector": 167,
+      "selector_after": 2,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 3,
+      "previous_selector": 166,
+      "selector_after": 3,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 4,
+      "previous_selector": 161,
+      "selector_after": 4,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 5,
+      "previous_selector": 160,
+      "selector_after": 5,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 6,
+      "previous_selector": 163,
+      "selector_after": 6,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 7,
+      "previous_selector": 162,
+      "selector_after": 7,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 8,
+      "previous_selector": 173,
+      "selector_after": 8,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 9,
+      "previous_selector": 172,
+      "selector_after": 9,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 10,
+      "previous_selector": 175,
+      "selector_after": 10,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 11,
+      "previous_selector": 174,
+      "selector_after": 11,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 12,
+      "previous_selector": 169,
+      "selector_after": 12,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 13,
+      "previous_selector": 168,
+      "selector_after": 13,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 14,
+      "previous_selector": 171,
+      "selector_after": 14,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 15,
+      "previous_selector": 170,
+      "selector_after": 15,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 16,
+      "previous_selector": 181,
+      "selector_after": 16,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 17,
+      "previous_selector": 180,
+      "selector_after": 17,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 18,
+      "previous_selector": 183,
+      "selector_after": 18,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 19,
+      "previous_selector": 182,
+      "selector_after": 19,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 20,
+      "previous_selector": 177,
+      "selector_after": 20,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 21,
+      "previous_selector": 176,
+      "selector_after": 21,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 22,
+      "previous_selector": 179,
+      "selector_after": 22,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 23,
+      "previous_selector": 178,
+      "selector_after": 23,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 24,
+      "previous_selector": 189,
+      "selector_after": 24,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 25,
+      "previous_selector": 188,
+      "selector_after": 25,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 26,
+      "previous_selector": 191,
+      "selector_after": 26,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 27,
+      "previous_selector": 190,
+      "selector_after": 27,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 28,
+      "previous_selector": 185,
+      "selector_after": 28,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 29,
+      "previous_selector": 184,
+      "selector_after": 29,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 30,
+      "previous_selector": 187,
+      "selector_after": 30,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 31,
+      "previous_selector": 186,
+      "selector_after": 31,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 32,
+      "previous_selector": 133,
+      "selector_after": 32,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 33,
+      "previous_selector": 132,
+      "selector_after": 33,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 34,
+      "previous_selector": 135,
+      "selector_after": 34,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 35,
+      "previous_selector": 134,
+      "selector_after": 35,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 36,
+      "previous_selector": 129,
+      "selector_after": 36,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 37,
+      "previous_selector": 128,
+      "selector_after": 37,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 38,
+      "previous_selector": 131,
+      "selector_after": 38,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 39,
+      "previous_selector": 130,
+      "selector_after": 39,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 40,
+      "previous_selector": 141,
+      "selector_after": 40,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 41,
+      "previous_selector": 140,
+      "selector_after": 41,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 42,
+      "previous_selector": 143,
+      "selector_after": 42,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 43,
+      "previous_selector": 142,
+      "selector_after": 43,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 44,
+      "previous_selector": 137,
+      "selector_after": 44,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 45,
+      "previous_selector": 136,
+      "selector_after": 45,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 46,
+      "previous_selector": 139,
+      "selector_after": 46,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 47,
+      "previous_selector": 138,
+      "selector_after": 47,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 48,
+      "previous_selector": 149,
+      "selector_after": 48,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 49,
+      "previous_selector": 148,
+      "selector_after": 49,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 50,
+      "previous_selector": 151,
+      "selector_after": 50,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 51,
+      "previous_selector": 150,
+      "selector_after": 51,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 52,
+      "previous_selector": 145,
+      "selector_after": 52,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 53,
+      "previous_selector": 144,
+      "selector_after": 53,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 54,
+      "previous_selector": 147,
+      "selector_after": 54,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 55,
+      "previous_selector": 146,
+      "selector_after": 55,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 56,
+      "previous_selector": 157,
+      "selector_after": 56,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 57,
+      "previous_selector": 156,
+      "selector_after": 57,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 58,
+      "previous_selector": 159,
+      "selector_after": 58,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 59,
+      "previous_selector": 158,
+      "selector_after": 59,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 60,
+      "previous_selector": 153,
+      "selector_after": 60,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 61,
+      "previous_selector": 152,
+      "selector_after": 61,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 62,
+      "previous_selector": 155,
+      "selector_after": 62,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 63,
+      "previous_selector": 154,
+      "selector_after": 63,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 64,
+      "previous_selector": 229,
+      "selector_after": 64,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 65,
+      "previous_selector": 228,
+      "selector_after": 65,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 66,
+      "previous_selector": 231,
+      "selector_after": 66,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 67,
+      "previous_selector": 230,
+      "selector_after": 67,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 68,
+      "previous_selector": 225,
+      "selector_after": 68,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 69,
+      "previous_selector": 224,
+      "selector_after": 69,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 70,
+      "previous_selector": 227,
+      "selector_after": 70,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 71,
+      "previous_selector": 226,
+      "selector_after": 71,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 72,
+      "previous_selector": 237,
+      "selector_after": 72,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 73,
+      "previous_selector": 236,
+      "selector_after": 73,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 74,
+      "previous_selector": 239,
+      "selector_after": 74,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 75,
+      "previous_selector": 238,
+      "selector_after": 75,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 76,
+      "previous_selector": 233,
+      "selector_after": 76,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 77,
+      "previous_selector": 232,
+      "selector_after": 77,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 78,
+      "previous_selector": 235,
+      "selector_after": 78,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 79,
+      "previous_selector": 234,
+      "selector_after": 79,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 80,
+      "previous_selector": 245,
+      "selector_after": 80,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 81,
+      "previous_selector": 244,
+      "selector_after": 81,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 82,
+      "previous_selector": 247,
+      "selector_after": 82,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 83,
+      "previous_selector": 246,
+      "selector_after": 83,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 84,
+      "previous_selector": 241,
+      "selector_after": 84,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 85,
+      "previous_selector": 240,
+      "selector_after": 85,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 86,
+      "previous_selector": 243,
+      "selector_after": 86,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 87,
+      "previous_selector": 242,
+      "selector_after": 87,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 88,
+      "previous_selector": 253,
+      "selector_after": 88,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 89,
+      "previous_selector": 252,
+      "selector_after": 89,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 90,
+      "previous_selector": 255,
+      "selector_after": 90,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 91,
+      "previous_selector": 254,
+      "selector_after": 91,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 92,
+      "previous_selector": 249,
+      "selector_after": 92,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 93,
+      "previous_selector": 248,
+      "selector_after": 93,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 94,
+      "previous_selector": 251,
+      "selector_after": 94,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 95,
+      "previous_selector": 250,
+      "selector_after": 95,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 96,
+      "previous_selector": 197,
+      "selector_after": 96,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 97,
+      "previous_selector": 196,
+      "selector_after": 97,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 98,
+      "previous_selector": 199,
+      "selector_after": 98,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 99,
+      "previous_selector": 198,
+      "selector_after": 99,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 100,
+      "previous_selector": 193,
+      "selector_after": 100,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 101,
+      "previous_selector": 192,
+      "selector_after": 101,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 102,
+      "previous_selector": 195,
+      "selector_after": 102,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 103,
+      "previous_selector": 194,
+      "selector_after": 103,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 104,
+      "previous_selector": 205,
+      "selector_after": 104,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 105,
+      "previous_selector": 204,
+      "selector_after": 105,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 106,
+      "previous_selector": 207,
+      "selector_after": 106,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 107,
+      "previous_selector": 206,
+      "selector_after": 107,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 108,
+      "previous_selector": 201,
+      "selector_after": 108,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 109,
+      "previous_selector": 200,
+      "selector_after": 109,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 110,
+      "previous_selector": 203,
+      "selector_after": 110,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 111,
+      "previous_selector": 202,
+      "selector_after": 111,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 112,
+      "previous_selector": 213,
+      "selector_after": 112,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 113,
+      "previous_selector": 212,
+      "selector_after": 113,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 114,
+      "previous_selector": 215,
+      "selector_after": 114,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 115,
+      "previous_selector": 214,
+      "selector_after": 115,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 116,
+      "previous_selector": 209,
+      "selector_after": 116,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 117,
+      "previous_selector": 208,
+      "selector_after": 117,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 118,
+      "previous_selector": 211,
+      "selector_after": 118,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 119,
+      "previous_selector": 210,
+      "selector_after": 119,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 120,
+      "previous_selector": 221,
+      "selector_after": 120,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 121,
+      "previous_selector": 220,
+      "selector_after": 121,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 122,
+      "previous_selector": 223,
+      "selector_after": 122,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 123,
+      "previous_selector": 222,
+      "selector_after": 123,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 124,
+      "previous_selector": 217,
+      "selector_after": 124,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 125,
+      "previous_selector": 216,
+      "selector_after": 125,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 126,
+      "previous_selector": 219,
+      "selector_after": 126,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 127,
+      "previous_selector": 218,
+      "selector_after": 127,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 128,
+      "previous_selector": 37,
+      "selector_after": 128,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 129,
+      "previous_selector": 36,
+      "selector_after": 129,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 130,
+      "previous_selector": 39,
+      "selector_after": 130,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 131,
+      "previous_selector": 38,
+      "selector_after": 131,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 132,
+      "previous_selector": 33,
+      "selector_after": 132,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 133,
+      "previous_selector": 32,
+      "selector_after": 133,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 134,
+      "previous_selector": 35,
+      "selector_after": 134,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 135,
+      "previous_selector": 34,
+      "selector_after": 135,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 136,
+      "previous_selector": 45,
+      "selector_after": 136,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 137,
+      "previous_selector": 44,
+      "selector_after": 137,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 138,
+      "previous_selector": 47,
+      "selector_after": 138,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 139,
+      "previous_selector": 46,
+      "selector_after": 139,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 140,
+      "previous_selector": 41,
+      "selector_after": 140,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 141,
+      "previous_selector": 40,
+      "selector_after": 141,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 142,
+      "previous_selector": 43,
+      "selector_after": 142,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 143,
+      "previous_selector": 42,
+      "selector_after": 143,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 144,
+      "previous_selector": 53,
+      "selector_after": 144,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 145,
+      "previous_selector": 52,
+      "selector_after": 145,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 146,
+      "previous_selector": 55,
+      "selector_after": 146,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 147,
+      "previous_selector": 54,
+      "selector_after": 147,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 148,
+      "previous_selector": 49,
+      "selector_after": 148,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 149,
+      "previous_selector": 48,
+      "selector_after": 149,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 150,
+      "previous_selector": 51,
+      "selector_after": 150,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 151,
+      "previous_selector": 50,
+      "selector_after": 151,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 152,
+      "previous_selector": 61,
+      "selector_after": 152,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 153,
+      "previous_selector": 60,
+      "selector_after": 153,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 154,
+      "previous_selector": 63,
+      "selector_after": 154,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 155,
+      "previous_selector": 62,
+      "selector_after": 155,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 156,
+      "previous_selector": 57,
+      "selector_after": 156,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 157,
+      "previous_selector": 56,
+      "selector_after": 157,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 158,
+      "previous_selector": 59,
+      "selector_after": 158,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 159,
+      "previous_selector": 58,
+      "selector_after": 159,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 160,
+      "previous_selector": 5,
+      "selector_after": 160,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 161,
+      "previous_selector": 4,
+      "selector_after": 161,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 162,
+      "previous_selector": 7,
+      "selector_after": 162,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 163,
+      "previous_selector": 6,
+      "selector_after": 163,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 164,
+      "previous_selector": 1,
+      "selector_after": 164,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 165,
+      "previous_selector": 0,
+      "selector_after": 165,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 166,
+      "previous_selector": 3,
+      "selector_after": 166,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 167,
+      "previous_selector": 2,
+      "selector_after": 167,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 168,
+      "previous_selector": 13,
+      "selector_after": 168,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 169,
+      "previous_selector": 12,
+      "selector_after": 169,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 170,
+      "previous_selector": 15,
+      "selector_after": 170,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 171,
+      "previous_selector": 14,
+      "selector_after": 171,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 172,
+      "previous_selector": 9,
+      "selector_after": 172,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 173,
+      "previous_selector": 8,
+      "selector_after": 173,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 174,
+      "previous_selector": 11,
+      "selector_after": 174,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 175,
+      "previous_selector": 10,
+      "selector_after": 175,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 176,
+      "previous_selector": 21,
+      "selector_after": 176,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 177,
+      "previous_selector": 20,
+      "selector_after": 177,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 178,
+      "previous_selector": 23,
+      "selector_after": 178,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 179,
+      "previous_selector": 22,
+      "selector_after": 179,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 180,
+      "previous_selector": 17,
+      "selector_after": 180,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 181,
+      "previous_selector": 16,
+      "selector_after": 181,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 182,
+      "previous_selector": 19,
+      "selector_after": 182,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 183,
+      "previous_selector": 18,
+      "selector_after": 183,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 184,
+      "previous_selector": 29,
+      "selector_after": 184,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 185,
+      "previous_selector": 28,
+      "selector_after": 185,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 186,
+      "previous_selector": 31,
+      "selector_after": 186,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 187,
+      "previous_selector": 30,
+      "selector_after": 187,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 188,
+      "previous_selector": 25,
+      "selector_after": 188,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 189,
+      "previous_selector": 24,
+      "selector_after": 189,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 190,
+      "previous_selector": 27,
+      "selector_after": 190,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 191,
+      "previous_selector": 26,
+      "selector_after": 191,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 192,
+      "previous_selector": 101,
+      "selector_after": 192,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 193,
+      "previous_selector": 100,
+      "selector_after": 193,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 194,
+      "previous_selector": 103,
+      "selector_after": 194,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 195,
+      "previous_selector": 102,
+      "selector_after": 195,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 196,
+      "previous_selector": 97,
+      "selector_after": 196,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 197,
+      "previous_selector": 96,
+      "selector_after": 197,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 198,
+      "previous_selector": 99,
+      "selector_after": 198,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 199,
+      "previous_selector": 98,
+      "selector_after": 199,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 200,
+      "previous_selector": 109,
+      "selector_after": 200,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 201,
+      "previous_selector": 108,
+      "selector_after": 201,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 202,
+      "previous_selector": 111,
+      "selector_after": 202,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 203,
+      "previous_selector": 110,
+      "selector_after": 203,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 204,
+      "previous_selector": 105,
+      "selector_after": 204,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 205,
+      "previous_selector": 104,
+      "selector_after": 205,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 206,
+      "previous_selector": 107,
+      "selector_after": 206,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 207,
+      "previous_selector": 106,
+      "selector_after": 207,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 208,
+      "previous_selector": 117,
+      "selector_after": 208,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 209,
+      "previous_selector": 116,
+      "selector_after": 209,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 210,
+      "previous_selector": 119,
+      "selector_after": 210,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 211,
+      "previous_selector": 118,
+      "selector_after": 211,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 212,
+      "previous_selector": 113,
+      "selector_after": 212,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 213,
+      "previous_selector": 112,
+      "selector_after": 213,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 214,
+      "previous_selector": 115,
+      "selector_after": 214,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 215,
+      "previous_selector": 114,
+      "selector_after": 215,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 216,
+      "previous_selector": 125,
+      "selector_after": 216,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 217,
+      "previous_selector": 124,
+      "selector_after": 217,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 218,
+      "previous_selector": 127,
+      "selector_after": 218,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 219,
+      "previous_selector": 126,
+      "selector_after": 219,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 220,
+      "previous_selector": 121,
+      "selector_after": 220,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 221,
+      "previous_selector": 120,
+      "selector_after": 221,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 222,
+      "previous_selector": 123,
+      "selector_after": 222,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 223,
+      "previous_selector": 122,
+      "selector_after": 223,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 224,
+      "previous_selector": 69,
+      "selector_after": 224,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 225,
+      "previous_selector": 68,
+      "selector_after": 225,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 226,
+      "previous_selector": 71,
+      "selector_after": 226,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 227,
+      "previous_selector": 70,
+      "selector_after": 227,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 228,
+      "previous_selector": 65,
+      "selector_after": 228,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 229,
+      "previous_selector": 64,
+      "selector_after": 229,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 230,
+      "previous_selector": 67,
+      "selector_after": 230,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 231,
+      "previous_selector": 66,
+      "selector_after": 231,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 232,
+      "previous_selector": 77,
+      "selector_after": 232,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 233,
+      "previous_selector": 76,
+      "selector_after": 233,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 234,
+      "previous_selector": 79,
+      "selector_after": 234,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 235,
+      "previous_selector": 78,
+      "selector_after": 235,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 236,
+      "previous_selector": 73,
+      "selector_after": 236,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 237,
+      "previous_selector": 72,
+      "selector_after": 237,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 238,
+      "previous_selector": 75,
+      "selector_after": 238,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 239,
+      "previous_selector": 74,
+      "selector_after": 239,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 240,
+      "previous_selector": 85,
+      "selector_after": 240,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 241,
+      "previous_selector": 84,
+      "selector_after": 241,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 242,
+      "previous_selector": 87,
+      "selector_after": 242,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 243,
+      "previous_selector": 86,
+      "selector_after": 243,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 244,
+      "previous_selector": 81,
+      "selector_after": 244,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 245,
+      "previous_selector": 80,
+      "selector_after": 245,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 246,
+      "previous_selector": 83,
+      "selector_after": 246,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 247,
+      "previous_selector": 82,
+      "selector_after": 247,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 248,
+      "previous_selector": 93,
+      "selector_after": 248,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 249,
+      "previous_selector": 92,
+      "selector_after": 249,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 250,
+      "previous_selector": 95,
+      "selector_after": 250,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 251,
+      "previous_selector": 94,
+      "selector_after": 251,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 252,
+      "previous_selector": 89,
+      "selector_after": 252,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 253,
+      "previous_selector": 88,
+      "selector_after": 253,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 254,
+      "previous_selector": 91,
+      "selector_after": 254,
+      "instructions": 184
+    },
+    {
+      "authored_byte800B5F4F": 255,
+      "previous_selector": 90,
+      "selector_after": 255,
+      "instructions": 184
+    }
+  ],
+  "stats_table_consumer_cases": [
+    {
+      "selector": 0,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 1,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 2,
+      "table_pointer80098844": "0x8008f060",
+      "selector_equals_two": true,
+      "instructions": 22
+    },
+    {
+      "selector": 3,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 4,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 5,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 6,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 7,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 8,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 9,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 10,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 11,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 12,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 13,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 14,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 15,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 16,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 17,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 18,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 19,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 20,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 21,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 22,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 23,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 24,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 25,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 26,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 27,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 28,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 29,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 30,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 31,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 32,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 33,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 34,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 35,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 36,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 37,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 38,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 39,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 40,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 41,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 42,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 43,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 44,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 45,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 46,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 47,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 48,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 49,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 50,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 51,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 52,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 53,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 54,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 55,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 56,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 57,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 58,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 59,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 60,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 61,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 62,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 63,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 64,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 65,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 66,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 67,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 68,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 69,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 70,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 71,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 72,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 73,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 74,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 75,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 76,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 77,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 78,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 79,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 80,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 81,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 82,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 83,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 84,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 85,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 86,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 87,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 88,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 89,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 90,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 91,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 92,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 93,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 94,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 95,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 96,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 97,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 98,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 99,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 100,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 101,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 102,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 103,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 104,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 105,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 106,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 107,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 108,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 109,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 110,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 111,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 112,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 113,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 114,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 115,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 116,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 117,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 118,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 119,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 120,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 121,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 122,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 123,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 124,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 125,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 126,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 127,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 128,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 129,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 130,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 131,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 132,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 133,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 134,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 135,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 136,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 137,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 138,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 139,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 140,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 141,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 142,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 143,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 144,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 145,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 146,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 147,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 148,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 149,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 150,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 151,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 152,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 153,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 154,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 155,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 156,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 157,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 158,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 159,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 160,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 161,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 162,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 163,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 164,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 165,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 166,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 167,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 168,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 169,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 170,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 171,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 172,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 173,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 174,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 175,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 176,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 177,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 178,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 179,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 180,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 181,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 182,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 183,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 184,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 185,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 186,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 187,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 188,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 189,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 190,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 191,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 192,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 193,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 194,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 195,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 196,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 197,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 198,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 199,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 200,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 201,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 202,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 203,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 204,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 205,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 206,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 207,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 208,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 209,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 210,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 211,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 212,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 213,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 214,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 215,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 216,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 217,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 218,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 219,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 220,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 221,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 222,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 223,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 224,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 225,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 226,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 227,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 228,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 229,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 230,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 231,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 232,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 233,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 234,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 235,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 236,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 237,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 238,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 239,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 240,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 241,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 242,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 243,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 244,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 245,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 246,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 247,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 248,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 249,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 250,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 251,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 252,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 253,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 254,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    },
+    {
+      "selector": 255,
+      "table_pointer80098844": "0x8008edc4",
+      "selector_equals_two": false,
+      "instructions": 20
+    }
+  ],
+  "code_regions": [
+    {
+      "start": "0x80068000",
+      "end_exclusive": "0x800680a8",
+      "sha256": "25112a9ef348d7933042a88704eb2895350001411d23bca2bc11334313a59873"
+    },
+    {
+      "start": "0x80011c90",
+      "end_exclusive": "0x80011cd8",
+      "sha256": "ab7b30e2030488f95b3c814ce4c41ec7206a57929a7d7b9b3376d401fae08dc2"
+    },
+    {
+      "start": "0x80012e10",
+      "end_exclusive": "0x80012e60",
+      "sha256": "fcb9de658953f58150d9736732c13f3d6b269ee2190cfd558fefaf3dfbb1d259"
+    },
+    {
+      "start": "0x800131fc",
+      "end_exclusive": "0x800133cc",
+      "sha256": "091c991014cb0bf48411c67081260244eac33f264dab02a9c420c408edb790ec"
+    },
+    {
+      "start": "0x80065b18",
+      "end_exclusive": "0x80065e04",
+      "sha256": "bd8d600fa5f0280e36b01890e857c54b9329a590af1120104796fe596ebb0509"
+    },
+    {
+      "start": "0x80064718",
+      "end_exclusive": "0x80064794",
+      "sha256": "b3eecc07481c3b1c3ee1fb7693840d5a87a52d5ce00cba1bb0162f477d331634"
+    }
+  ],
+  "probe_instructions_executed": 54103,
+  "fresh_boot_selector": 1,
+  "restore_source_semantic_name": null,
+  "native_universal_default_justified": false,
+  "BIOS_seed_proved": false,
+  "retail_parity": false,
+  "limits": [
+    "Setup/graphics/game-subsystem calls are authored return-only hooks in dispatch cases.",
+    "Thread callback argument is proven; BIOS scheduling/stack/GP are not exercised.",
+    "Snapshot copy block caller and persistence meaning remain unknown.",
+    "Aliases, bulk copies and other overlays may overwrite selector later.",
+    "No combat-profile bytes, original tables, game payloads or save data are serialized."
+  ]
+}

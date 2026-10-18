@@ -1,0 +1,28 @@
+{
+  "excluded": [
+    "docs/validation_01410/build-result.json",
+    "docs/validation_01412/build-result.json",
+    "docs/validation_01413/build-result.json",
+    "docs/validation_01414/build-result.json",
+    "docs/validation_01415/build-result.json",
+    "docs/validation_01416/build-result.json",
+    "docs/validation_01418/build-result-r2.json",
+    "docs/validation_0146c/build-result.json",
+    "docs/validation_0146d/build-result.json",
+    "docs/validation_0146d_r1/build-result.json",
+    "docs/validation_0147/build-result.json",
+    "docs/validation_0148/build-result.json",
+    "docs/validation_0149/build-result.json",
+    "tools/build_0146_mac.sh",
+    "tools/build_audio_reference_catalog.py",
+    "tools/build_flight_sd.py",
+    "tools/build_game_runtime_pack.py",
+    "tools/build_hardware_test.py",
+    "tools/build_mml3ds.py",
+    "tools/build_runtime_resource_catalog.py",
+    "tools/build_stage_catalog.py",
+    "tools/build_stage_object_catalog.py",
+    "tools/build_tutorial_pack.py"
+  ],
+  "policy": "Code/text only; original and cooked retail assets, saves, binary build output, emulator profiles and captures remain outside archive."
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "actor-angle-cooker-safety/1",
+  "checks": {
+    "empty_rejected": true,
+    "arbitrary_rejected": true,
+    "modified_owner_rejected": true,
+    "overwrite_rejected": true,
+    "source_tree_payload_rejected": true
+  },
+  "package_payload_exported": false
+}

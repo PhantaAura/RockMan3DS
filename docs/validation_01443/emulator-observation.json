@@ -1,0 +1,552 @@
+{
+  "version": "0.0.14.43",
+  "binary_sha256": "b12b1dadd956f98d8eab7b9d7f53bcdedc951bef577a3b1e1861a0f348e3bd13",
+  "emulator": "Azahar 2126.0",
+  "is_new_3ds": false,
+  "cpu_clock_percentage": 100,
+  "renderer": "Vulkan, resolution factor 1",
+  "physical_hardware": false,
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.17.45.488.png",
+      "sha256": "977bf80043147cd8496105a75f7f25fdc3f3f7a68de4ecbad5aa760b573a2b68",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "CPU RGB boot diagnostic",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.17.53.817.png",
+      "sha256": "ca21393aae73c322189919a4e77f6c019712ada37fcf1f699a8ca0668661ae57",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "GPU clear-only cyan diagnostic",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.18.05.409.png",
+      "sha256": "5889709c4e51a3d9f103c336cff9bb00c7e48c5494e5bfc0ae0ee21c84f276f2",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "B: enhanced terrain and player, textures disabled",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.18.33.445.png",
+      "sha256": "a07c6228265d70d5f4f2303ae91d37c9163b2079abc32ea01f405d6c4b5a4ce8",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "LEFT: enhanced terrain only, textures disabled",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.19.00.962.png",
+      "sha256": "ade15c5c1e468874292ddf1b3d1c68bddeec557fdd389ca8604814fabb58649d",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "RIGHT: enhanced player only, textures disabled",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.19.36.251.png",
+      "sha256": "c5be3f57130398684b3642abd6a845a28ef64b4c6a9ab85dde7b780ddad266f9",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "X: original 0143 fallback scene",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.20.14.037.png",
+      "sha256": "63784daa4aa950c7e637f75e0456132238f2fa668b3a2ca23b8479575e1f19eb",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "A: enhanced textured area 0",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.20.27.761.png",
+      "sha256": "dc7dd3c0c56c6ad887108594e56aff651890a49f6c0c811cb2b6e3c987cc48d8",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "A: movement, jump and fire input exercise",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/azahar-01443/captures/_15.10.26_19.21.02.611.png",
+      "sha256": "922d23a1f452a176e59dc41972e5fd062a74ba5689d1b46263be58fd1a4e4739",
+      "device_or_emulator": "Azahar 2126.0, Old 3DS model configured",
+      "build": "0.0.14.43",
+      "scene": "A: final gameplay scene before normal exit",
+      "size": [
+        400,
+        480
+      ],
+      "edited": false
+    }
+  ],
+  "boot_logs": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/boot-A-textured.log",
+      "sha256": "b5c2e905db50524bc4cd2cf25b6728c9859ab9f437977e256b85a5e0cdfabe63",
+      "first_gpu_submission_completed": true,
+      "gpu_timeout_reported": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/boot-B-uv-no-textures.log",
+      "sha256": "7ec7cbb1be1f719f2ec811eac277fd28c0145bf5329d9283e95a1864a3e88d93",
+      "first_gpu_submission_completed": true,
+      "gpu_timeout_reported": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/boot-LEFT-uv-terrain.log",
+      "sha256": "7ec7cbb1be1f719f2ec811eac277fd28c0145bf5329d9283e95a1864a3e88d93",
+      "first_gpu_submission_completed": true,
+      "gpu_timeout_reported": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/boot-RIGHT-uv-player.log",
+      "sha256": "7ec7cbb1be1f719f2ec811eac277fd28c0145bf5329d9283e95a1864a3e88d93",
+      "first_gpu_submission_completed": true,
+      "gpu_timeout_reported": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/boot-X-0143.log",
+      "sha256": "5dad2a01c055f98dcc5ae2f3507e15b924615a2d27585890604d40f17896487d",
+      "first_gpu_submission_completed": true,
+      "gpu_timeout_reported": false
+    }
+  ],
+  "traces": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/hardware_01443_4001080641593.csv",
+      "sha256": "3088afad30f3869f379dc45d5137b31d2c7c69d8169cc30bacf89c70da116064",
+      "mode": "B: enhanced textures off",
+      "samples": 10,
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          16421,
+          114121
+        ],
+        "interval_us": [
+          0,
+          114305
+        ],
+        "update_us": [
+          3,
+          101
+        ],
+        "render_us": [
+          14309,
+          41127
+        ],
+        "draw_calls": [
+          11,
+          11
+        ],
+        "triangles": [
+          1478,
+          1478
+        ],
+        "owned_linear": [
+          59520,
+          59520
+        ],
+        "owned_texture": [
+          0,
+          0
+        ],
+        "malloc_live": [
+          960824,
+          960824
+        ],
+        "linear_free": [
+          31619328,
+          31619328
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          0
+        ],
+        "projectiles": [
+          0,
+          0
+        ],
+        "x": [
+          0,
+          0
+        ],
+        "y": [
+          -1,
+          0
+        ],
+        "z": [
+          512,
+          512
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456"
+      ],
+      "timeout_records": []
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/hardware_01443_4001080699354.csv",
+      "sha256": "8d4482f5226f764572ee73db050fee81dc19e51f4654f46944d60a718632860a",
+      "mode": "LEFT: enhanced terrain only",
+      "samples": 7,
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          2571,
+          98532
+        ],
+        "interval_us": [
+          0,
+          98715
+        ],
+        "update_us": [
+          3,
+          101
+        ],
+        "render_us": [
+          2522,
+          33333
+        ],
+        "draw_calls": [
+          9,
+          9
+        ],
+        "triangles": [
+          992,
+          992
+        ],
+        "owned_linear": [
+          59520,
+          59520
+        ],
+        "owned_texture": [
+          0,
+          0
+        ],
+        "malloc_live": [
+          960824,
+          960824
+        ],
+        "linear_free": [
+          31619328,
+          31619328
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          0
+        ],
+        "projectiles": [
+          0,
+          0
+        ],
+        "x": [
+          0,
+          0
+        ],
+        "y": [
+          -1,
+          0
+        ],
+        "z": [
+          512,
+          512
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456"
+      ],
+      "timeout_records": []
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/hardware_01443_4001080725852.csv",
+      "sha256": "108d27ada3d635671653af7ace03923cf5eb742ae3d0b2800cd99772587c3a27",
+      "mode": "RIGHT: enhanced player only",
+      "samples": 6,
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          16297,
+          114121
+        ],
+        "interval_us": [
+          0,
+          114304
+        ],
+        "update_us": [
+          3,
+          101
+        ],
+        "render_us": [
+          14184,
+          41127
+        ],
+        "draw_calls": [
+          2,
+          2
+        ],
+        "triangles": [
+          486,
+          486
+        ],
+        "owned_linear": [
+          59520,
+          59520
+        ],
+        "owned_texture": [
+          0,
+          0
+        ],
+        "malloc_live": [
+          960824,
+          960824
+        ],
+        "linear_free": [
+          31619328,
+          31619328
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          0
+        ],
+        "projectiles": [
+          0,
+          0
+        ],
+        "x": [
+          0,
+          0
+        ],
+        "y": [
+          -1,
+          0
+        ],
+        "z": [
+          512,
+          512
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1378671,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456"
+      ],
+      "timeout_records": []
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/hardware_01443_4001080751581.csv",
+      "sha256": "8c07dca274cf919b4c6003ce7be713c8debf50a325a4d642cce1679a64c589ac",
+      "mode": "X: 0143 fallback",
+      "samples": 12,
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          16036,
+          106328
+        ],
+        "interval_us": [
+          0,
+          106513
+        ],
+        "update_us": [
+          3,
+          104
+        ],
+        "render_us": [
+          12860,
+          33334
+        ],
+        "draw_calls": [
+          2,
+          2
+        ],
+        "triangles": [
+          3990,
+          3990
+        ],
+        "owned_linear": [
+          126144,
+          126144
+        ],
+        "owned_texture": [
+          0,
+          0
+        ],
+        "malloc_live": [
+          960264,
+          960264
+        ],
+        "linear_free": [
+          31553280,
+          31553280
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          0
+        ],
+        "projectiles": [
+          0,
+          0
+        ],
+        "x": [
+          -768,
+          -768
+        ],
+        "y": [
+          0,
+          0
+        ],
+        "z": [
+          -2816,
+          -2816
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1370528,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456"
+      ],
+      "timeout_records": []
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261015-native-01443/emulator-evidence/hardware_01443_4001080787387.csv",
+      "sha256": "1fb8b0a49ed2a9ed19e436559bd238fbc1f01cf3ce32f0eb6e601ea37c860278",
+      "mode": "A: enhanced textured",
+      "samples": 91,
+      "sampled_ranges": {
+        "frame_before_log_us": [
+          10094,
+          106327
+        ],
+        "interval_us": [
+          0,
+          106516
+        ],
+        "update_us": [
+          3,
+          105
+        ],
+        "render_us": [
+          10037,
+          33332
+        ],
+        "draw_calls": [
+          11,
+          12
+        ],
+        "triangles": [
+          1478,
+          1479
+        ],
+        "owned_linear": [
+          59520,
+          59520
+        ],
+        "owned_texture": [
+          2883584,
+          2883584
+        ],
+        "malloc_live": [
+          1683040,
+          1683088
+        ],
+        "linear_free": [
+          28735744,
+          28735744
+        ],
+        "vram_free": [
+          5523456,
+          5523456
+        ],
+        "vertical_velocity": [
+          0,
+          20976
+        ],
+        "projectiles": [
+          0,
+          1
+        ],
+        "x": [
+          -1536,
+          207
+        ],
+        "y": [
+          -16658,
+          22321
+        ],
+        "z": [
+          512,
+          4585
+        ]
+      },
+      "area_events": [
+        "# area_event=package_before,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=36984,linear_free=31679488,vram_free=5523456",
+        "# area_event=package_loaded,area=0,elapsed_us=1395385,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=749432,linear_free=31679488,vram_free=5523456",
+        "# area_event=unload_before,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=1683088,linear_free=28735744,vram_free=5523456",
+        "# area_event=gpu_unloaded,area=0,elapsed_us=0,package_bytes=701943,decoded_estimate=810616,load_peak_estimate=1898932,malloc_live=372904,linear_free=31941632,vram_free=6291456",
+        "# area_event=cpu_scope_unloaded,area=0,elapsed_us=0,package_bytes=0,decoded_estimate=0,load_peak_estimate=0,malloc_live=35840,linear_free=31941632,vram_free=6291456"
+      ],
+      "timeout_records": []
+    }
+  ],
+  "normal_exit": true,
+  "owned_emulator_pid": 20974,
+  "owned_emulator_pid_absent_after_gui_quit": true,
+  "diagnostic_actor_rng_or_event_gates_enabled": false,
+  "limits": [
+    "Azahar accepted the earlier failing hardware path too; this run cannot prove a physical GPU timeout fix.",
+    "Intermittent partial bottom-screen presentation is present in retained captures. The user physical safe-path photo shows the map/status screen; the emulator capture issue is not resolved.",
+    "Movement/jump/fire inputs were exercised; no retail parity or actual enemy damage is claimed.",
+    "No natural area transition or complete tutorial progression was tested in 01443.",
+    "Sampled timing and resource counters are emulated, not physical Old 3DS speed or measured peak memory."
+  ]
+}

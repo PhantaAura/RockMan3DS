@@ -1,0 +1,206 @@
+[
+  {
+    "path": "CMakeLists.txt",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "README.md",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "docs/0147_BASELINE.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/DISTRIBUTION_AND_IMPORT_0147.md",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/HARDWARE_TEST_0147.md",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/PORTING_MAP_0147.md",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/REPORT_0147.md",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/RESUME_0147_20261001.md",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/SOURCE_ZIP_EXCLUSIONS_0147.md",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/area-package.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/area-runtime-probe.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/baseline-build.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/baseline-configure.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/baseline-result.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/baseline-tests.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/build-result.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/host-build.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/host-configure.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/host-tests.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/native-build.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/native-source-manifest.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/pack-validation.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/runtime-probe-summary.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/sanitizer-build.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/sanitizer-configure.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/sanitizer-result.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/sanitizer-tests.log",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/validation_0147/snapshot-equality.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "include/legends3ds/area_package.h",
+    "change": "ADDED"
+  },
+  {
+    "path": "include/legends3ds/runtime_session.h",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "platform/3ds/Makefile",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.cpp",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "platform/3ds/source/hardware_test.h",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "platform/3ds/source/main.cpp",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "src/world/area_package.cpp",
+    "change": "ADDED"
+  },
+  {
+    "path": "src/world/runtime_session.cpp",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "state/CURRENT_CHECKPOINT.json",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "state/CURRENT_READINESS.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "state/EVIDENCE_LEDGER.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "state/PARENT_0146d_r1_CHECKPOINT_METADATA.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "state/RUN_STATE.json",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "tests/test_area_package.cpp",
+    "change": "ADDED"
+  },
+  {
+    "path": "tests/test_cooked_area.py",
+    "change": "ADDED"
+  },
+  {
+    "path": "tests/test_map_sharing.cpp",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "tools/build_hardware_test.py",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "tools/l3area_runtime_probe.cpp",
+    "change": "ADDED"
+  },
+  {
+    "path": "tools/package_cooked_area.py",
+    "change": "ADDED"
+  },
+  {
+    "path": "tools/release_source.py",
+    "change": "MODIFIED"
+  },
+  {
+    "path": "docs/CHANGED_FILES_0147.md",
+    "change": "ADDED"
+  },
+  {
+    "path": "docs/changed-files-0147.json",
+    "change": "ADDED"
+  },
+  {
+    "path": "SOURCE_MANIFEST.sha256",
+    "change": "REGENERATED"
+  }
+]

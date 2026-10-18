@@ -1,0 +1,138 @@
+{
+  "ANIMATION": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Player source jump/land phases retained. Class20/03 initializer selects genuine pose0; source sequence240 scalar cases and36 callback-admission cases proved. Default-off owner RETAIL_ACTOR_ANIMATION request0 cache supports eight genuine poses with allocation-free playback; class35 remains static. Native cadence CANDIDATE, allocation-first-frame/distance-flag/pause ownership UNKNOWN; r6 owner-opt-in cache initialized natively (one shared cache,1836 ARM decoded-element bytes); playback loop host-tested, native actor visibility/cadence not accepted."
+  },
+  "AUDIO": {
+    "evidence": "Inherited reference/catalog architecture retained; runtime playback/routing incomplete.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "BOOT": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Current01417 nativeARMv6K build boots in Azahar2126.0 Oldmodel; source-bound initializer994writes; hardwarepending."
+  },
+  "BOTTOM SCREEN": {
+    "evidence": "Optional companion, follow/heading, tab/zoom/pan/center commands, touch gestures and double-buffer reuse pass host tests and render in native emulator. Dedicated native touch/button acceptance pending.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "BUSTER": {
+    "evidence": "Current replay records Y presses and projectiles; retail cadence/damage/targets not verified.",
+    "status": "CANDIDATE"
+  },
+  "CAMERA": {
+    "evidence": "Original H384/center160,120 sampled303 vsyncs; source/live baseline distance511/512 eye187/512 target150/512 integrated400x240 widescreen. Fixedpoint rounding, scripted/dynamic camera, obstruction/spawn UNKNOWN; runtime views can be occluded.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "COLLISION": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Original map materializer reproduced all995 owner rows/994writes; corrected shared selector and128 diagonal bounds edges. Three original/no-hook and native actor floors agree at-1. Native authored replay observes airborne and grounded phases. Fullcollision/physics parity unknown."
+  },
+  "COMBAT": {
+    "status": "CANDIDATE",
+    "evidence": "Explicit-input initial HP and isolated hit consumer retained. Action0/1 kernels2018 scalar cases and work80 distance675 cases verified under authored premises; heading/detection/RNG/movement/attacks/hit delivery and live actor HP context remain unbound. Tutorial snapshot raw stats selector1 had no active class20/03 actors and is not a native default."
+  },
+  "CONTENT GRAPH": {
+    "evidence": "205packages/4115nodes/3916edges validated; structuralcounts do notestablishgameplaycompletion.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "CUTSCENES": {
+    "evidence": "Inherited cue scaffolding is not complete original scene playback.",
+    "status": "CANDIDATE"
+  },
+  "DIALOGUE": {
+    "evidence": "Existing verified-pair tutorial message adapter retained; generalized bank/event selection unbound.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "EARLY-GAME IMPORT": {
+    "evidence": "37geometrypackages/203areas checkedhostside; fivebaselineareas plus one structurallydistinct package nativelyloadedinAzahar; natural progression andcompleteboundaryproof remain pending.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "EBD / EVENTS": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "567232 EBD bytes retained across 5 area bindings; EBD resource directories are not executable event bytecode. Initial C0/03 is an RGB555 palette timeline. Separate real event poll/handler/interpreter and final transition branch are source-proved; complete native event execution absent."
+  },
+  "ENEMIES": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "C0/21-to-E0 spatial selector produces three genuine class20/03 meshes/initializer poses. Eight genuine request0 poses can play under a default-off owner diagnostic gate. Isolated behavior kernels exist; full callback/AI, request changes, attacks, damage delivery, defeat/events, shade and original lifecycle remain incomplete. 01416 connects original face material/UV/CLUT through optional area cache. Original integer heading/work80 evidence queries are allocation-free; full AI remains unbound."
+  },
+  "EXPRESSIONS": {
+    "evidence": "Original expression/eye/mouth state mappings absent.",
+    "status": "UNKNOWN"
+  },
+  "FRAME PACING": {
+    "status": "HARDWARE_PENDING",
+    "evidence": "Current01416 nominal30Hz core;56sparseOldmodelHLEsamples include2.210676s diagnosticloadingframe. HLE60AppFPS notphysicalgamepacing proof."
+  },
+  "GENERALIZED IMPORTER": {
+    "evidence": "247profilefiles,205packages,31geometryidentities; HD2 optionalinput and exactoverlayL3NM supported; unknownoverlay state retained; directdisc intake unsupported.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "GENERALIZED RUNTIME LOADER": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Section35 boundedCRC-bound neutral initializer applies transactionally before shared geometry/contact/session map consumption. Legacy absence remains compatible; Stage0Startup profileonly, later variants UNKNOWN."
+  },
+  "LOADING": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Conditional actor replacement constructs/validates candidate before a nonthrowing presentation commit. Failure preserves old resources/stale poses, consumes observed revision once and records failure; no per-frame retry. Logical RuntimeSession source group is not rolled back. Portable exact-exception/malformed-payload/lifetime/success-commit tests pass; r6 native failure exercise pending. Diagnostic area GPU restore policy retained; broader replacement/streaming incomplete."
+  },
+  "LOCK-ON": {
+    "evidence": "Inherited provisional integration retained; new packages do not establish retail behavior. 01416 source heading kernel validated against owner executable; native sparse queries do not perform acquisition/retention or aiming.",
+    "status": "CANDIDATE"
+  },
+  "MEGA MAN MATERIALS": {
+    "evidence": "2 distinct material words resolve10 bindings across 5 caches; UV presentation retained; dynamic palette/UV equivalence unresolved.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "MEGA MAN MODEL": {
+    "evidence": "Actual5-component supplied model retained. Final local1/8 scale and correct Y sign integratedUV only; 98 actor tests and346 bounded original checks. Player remains obscured at diagnostic placements; original113px reference is not native parity.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "MEMORY": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Initializer transient26012hostestimatedB released afterload. No perframe initializer allocations. Emulator sparse telemetry in validation_01417; devicepeaks/hardwarepending."
+  },
+  "MOVEMENT": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Historical25-update source-forward window and r4 standing/running jump/landing diagnostic replay retained. New PS1 tutorial live scalar snapshot is not a matched trajectory; unsupported contact and full retail parity remain unresolved."
+  },
+  "OBJECTS": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Combined bounded pools retain static and conditional groups. Candidate failure preserves old stale presentation while logical source group may differ. Three class03 instances share genuine geometry/request0 cache when opted in; wider families and persistence incomplete."
+  },
+  "OLD-3DS BUILD": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Current156sourcehashes match actual558036B ARMv6K binary;devkitARM GCC16.1.0;0compilewarnings/errors."
+  },
+  "OLD-3DS HARDWARE": {
+    "status": "HARDWARE_PENDING",
+    "evidence": "No physical test performed."
+  },
+  "PHYSICS": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "PHYSICS_1TO1=false. Ordinary running-jump action8 subset has 672 original scalar cases; r4 synthetic Old-model replay records standing/running launch and landing. Complete contact ordering, slopes/steps/ledges and live retail trajectory parity remain incomplete."
+  },
+  "QoL": {
+    "evidence": "Inherited options preserved; companion visibility and camera-independent map controls added. No invented inventory/EN/currency.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "RENDERER": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "0143 fallback preserved. Genuine original actor geometry/hierarchy/poses retained; default-off class03 request0 diagnostic cache has eight distinct real poses. Latest accepted native coverage is historical; r6 execution pending. Visibility, GTE rounding, actor shade/materials and top PS1 HUD unbound."
+  },
+  "SAVE": {
+    "evidence": "Safe native persistence/research retained; removed location IDs require re-registration before save restore. Retail field semantics incomplete.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "TERRAIN GEOMETRY": {
+    "evidence": "37actual map/render packages,203areas:58,000 formerly omitted negativeMid primitives now bound; positives unchanged. Native5baselineareas match496/597/688/136/3028. Original LOD/clipping parity unproven.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "TERRAIN TEXTURES": {
+    "evidence": "PartialVRAM uploads/last-writer composition and recovered CPU palette bank staging; five terrain caches resolve9/12/12/4/2 materials;109baseline negativebindings. Other default/special material states UNKNOWN; dynamicpalette timing UNKNOWN.",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "TRANSITIONS": {
+    "status": "SOURCE_BACKED_PARTIAL",
+    "evidence": "Bounded diagnostic SELECT area1->2 exercised with prepare/commit/restore. Source event1 final transition branch proved under completion premise; native normal event/message/transition chain and runtime package replacement incomplete."
+  }
+}

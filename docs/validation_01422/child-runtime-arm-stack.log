@@ -1,0 +1,16 @@
+src/world/child_runtime.cpp:52:22:l3::SourceHitProxyTarget l3::{anonymous}::proxy_target(uint32_t, const l3::Class60_06Work&)	0	static
+src/world/child_runtime.cpp:60:19:l3::ActorFloorContact l3::query_class60_shadow_floor_80048e6c(const Class60_06Work&, const RuntimeMap&, size_t)	112	static
+src/world/child_runtime.cpp:72:6:void l3::ChildRuntime::initialize()	48	static
+src/world/child_runtime.cpp:71:1:l3::ChildRuntime::ChildRuntime()	24	static
+src/world/child_runtime.cpp:80:20:l3::ChildRuntimeStatus l3::ChildRuntime::prepare_parent_delivery(const l3::Class20_03CallbackState&, const l3::ReferenceTables&, const l3::SourceAudioQueue&, l3::ParentChildDelivery&)	72	static
+src/world/child_runtime.cpp:109:6:bool l3::ChildRuntime::current_pool_matches(const l3::ParentChildDelivery&) const	24	static
+src/world/child_runtime.cpp:115:6:bool l3::ChildRuntime::validate_parent_delivery(const l3::ParentChildDelivery&, const l3::Class20_03CallbackState&, const l3::SourceAudioQueue&) const	40	static
+src/world/child_runtime.cpp:121:6:bool l3::ChildRuntime::commit_parent_delivery(l3::ParentChildDelivery&)	56	static
+src/world/child_runtime.cpp:130:18:l3::ChildRuntimeTick l3::ChildRuntime::tick(uint32_t, const l3::ChildFrameContext&)	2608	static
+src/world/child_runtime.cpp:262:6:bool l3::ChildRuntime::bind_proxy_owner(size_t, uint32_t, l3::SourceHitProxyOwnerPoint)	0	static
+src/world/child_runtime.cpp:266:6:void l3::ChildRuntime::clear_proxy_owner(size_t)	0	static
+src/world/child_runtime.cpp:269:33:const l3::SourceHitProxyOwnerPoint* l3::ChildRuntime::proxy_owner_point(size_t) const	0	static
+src/world/child_runtime.cpp:272:22:l3::SourceHitProxyResult l3::ChildRuntime::consume_proxy_pairs(const std::optional<l3::SourceHitProxyRules>&)	48	static
+src/world/child_runtime.cpp:289:6:void l3::ChildRuntime::reset_frame_queues()	0	static
+src/world/child_runtime.cpp:292:6:bool l3::ChildRuntime::mark_release(uint32_t)	24	static
+src/world/child_runtime.cpp:297:6:void l3::ChildRuntime::consume_pending_releases()	16	static

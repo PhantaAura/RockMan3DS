@@ -1,0 +1,123 @@
+{
+  "format": "camera-player-transform-live-linkage/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "checkpoint": "0.0.14.12",
+  "owner_payloads_included": false,
+  "reference_scope": "paused initial controllable corridor before enemy contact; scalar values and hashes only",
+  "source_evidence": "camera-player-transform-source-evidence.json",
+  "original_reference": [
+    {
+      "path": "work/pass-20261003-visual/ps1-reference/camera_measurements/tutorial_reference_idle.json",
+      "bytes": 839,
+      "sha256": "d750ffbc4a90315d1762754739f1a054857f5cd43b3304f042bff395cc6c8065"
+    },
+    {
+      "path": "work/pass-20261003-visual/ps1-reference/captures/tutorial_reference_idle.png",
+      "bytes": 29346,
+      "sha256": "7e6772577113fc5641a689315a150e72dd18f92d7ab79671ded359775c436c83"
+    }
+  ],
+  "measured": {
+    "actor_s16x3_at_0x800b51c4": [
+      2822,
+      -1,
+      -4833
+    ],
+    "target_s32x3_at_0x800a39a0": [
+      2822,
+      -151,
+      -4833
+    ],
+    "eye_s32x3_at_0x800a39f0": [
+      2822,
+      -188,
+      -4322
+    ],
+    "scratch_eye_s16x3_at_0x1f800028": [
+      2822,
+      -188,
+      -4322
+    ],
+    "camera_distance_yaw_pitch": {
+      "0x800a3964": 512,
+      "0x800a3968": 2048,
+      "0x800a396c": 48
+    },
+    "camera_angles_s16x3_at_0x800a3a10": [
+      4048,
+      2048,
+      0
+    ],
+    "GP": "0x80097864",
+    "player_scale_s32_at_gp_plus_0x498": 512,
+    "global_shift": 0,
+    "root_matrix_s16_at_0x800b5378": [
+      512,
+      0,
+      0,
+      0,
+      510,
+      36,
+      0,
+      -37,
+      510
+    ],
+    "root_position_s16x3_at_0x800b5558": [
+      2822,
+      -91,
+      -4833
+    ],
+    "actor_yaw_s16_at_0x800b5206": 0,
+    "raw_actor_work_0116_s16_at_0x800b52c6": 0,
+    "gte_H": 384,
+    "gte_OFX": 160,
+    "gte_OFY": 120
+  },
+  "derived_verified_fields": {
+    "status": "MATCHES_MEASURED_FIELDS",
+    "eye_equals_scratch": true,
+    "target_minus_actor": [
+      0,
+      -150,
+      0
+    ],
+    "eye_minus_actor": [
+      0,
+      -187,
+      511
+    ],
+    "source_baseline_eye_formula_matches_live": true,
+    "ordinary_camera_native_defaults": {
+      "horizontal_distance": 0.998046875,
+      "eye_height": 0.365234375,
+      "target_height": 0.29296875
+    },
+    "local_player_scale": 0.125
+  },
+  "blockers": [
+    {
+      "id": "COMPLETE_CAMERA_BEHAVIOR",
+      "status": "UNKNOWN",
+      "missing": "scripted ownership, interpolation, obstruction, transitions and state terms"
+    },
+    {
+      "id": "FLOAT_FIXED_POINT_RENDER_PARITY",
+      "status": "UNKNOWN",
+      "missing": "source arithmetic rounding and complete original/native pose projection comparison"
+    },
+    {
+      "id": "EXTRA_YAW_FIELD_SEMANTICS",
+      "status": "UNKNOWN",
+      "field": "raw actor work+0x116"
+    },
+    {
+      "id": "DYNAMIC_RENDER_SCALE",
+      "status": "UNKNOWN",
+      "missing": "full changing global shift/scale state behavior; baseline measured shift0/scale512"
+    },
+    {
+      "id": "PHYSICAL_OLD3DS_CAMERA_PRESENTATION",
+      "status": "HARDWARE_PENDING"
+    }
+  ]
+}

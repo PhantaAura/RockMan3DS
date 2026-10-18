@@ -1,0 +1,35 @@
+{
+  "schema": "mml-source-event-phase5-resource-ownership/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "checkpoint": "0.0.14.29",
+  "format_migration": false,
+  "actual_retained_payload_sha256_verified": true,
+  "owner_ebd_sha256": "ea7239d21db9d06c26a70825588ad7981a980ce798f7352588c5865a0e001d15",
+  "selected_resource_joins": 15,
+  "directory_rows_cross_checked": 14,
+  "constructor_committed": true,
+  "witness_host_bytes": 816,
+  "owner_payload_duplicated": false,
+  "witness_lifetime": "WEAK_IMMUTABLE_SHARED_PAYLOAD",
+  "active_storage_identity_guard": true,
+  "load_time_allocations": 0,
+  "constructor_update_allocations": 0,
+  "authored_sha_vectors": 7,
+  "malformed_join_cases": 12,
+  "expired_lease_hold_iterations": 4096,
+  "original_payloads_in_source": false,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "known_limits": [
+    "Supported source constructor profile only; unknown resource semantics stay unassigned.",
+    "Native stack/frame/loading cost needs native measurement.",
+    "Scripted rendering and phase6 callback/command progression are separate consumers."
+  ],
+  "active_directory_metadata_guard": true,
+  "focused_ctest": {
+    "passed": 3,
+    "failed": 0,
+    "seconds": 0.14
+  },
+  "focused_cpp_warnings_as_errors": true
+}

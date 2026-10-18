@@ -1,0 +1,99 @@
+{
+  "schema": "redux-keyboard-source-audit/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "installed_changeset": "f78f8ef80d91598983739bb8c4e713c953ca2711",
+  "scope": "Read-only installed-session configuration and exact official source. Key delivery remains unverified.",
+  "sources": [
+    {
+      "url": "https://github.com/grumpycoders/pcsx-redux/blob/f78f8ef80d91598983739bb8c4e713c953ca2711/src/core/pad.cc",
+      "sha256": "455eac951a79c60cabfa07d73edacce28b1ff2390bb28c931621d0b9e9bec5f5"
+    },
+    {
+      "url": "https://github.com/grumpycoders/pcsx-redux/blob/f78f8ef80d91598983739bb8c4e713c953ca2711/src/gui/gui.cc",
+      "sha256": "8c3ce8f553485a572c87873962947f92c30597a0c1bcb554ec51b4d064bbff13"
+    }
+  ],
+  "pad0_config": {
+    "Connected": true,
+    "DeviceType": 0,
+    "DeviceType_meaning": "Digital",
+    "PadType": 2,
+    "PadType_meaning": "Keyboard"
+  },
+  "game_keys": {
+    "START": {
+      "key": "Return",
+      "SDL_scancode": 40
+    },
+    "CROSS": {
+      "key": "X",
+      "SDL_scancode": 27
+    },
+    "SQUARE": {
+      "key": "Z",
+      "SDL_scancode": 29
+    },
+    "CIRCLE": {
+      "key": "D",
+      "SDL_scancode": 7
+    },
+    "TRIANGLE": {
+      "key": "S",
+      "SDL_scancode": 22
+    },
+    "SELECT": {
+      "key": "Backspace",
+      "SDL_scancode": 42
+    },
+    "UP": {
+      "key": "Up",
+      "SDL_scancode": 82
+    },
+    "DOWN": {
+      "key": "Down",
+      "SDL_scancode": 81
+    },
+    "LEFT": {
+      "key": "Left",
+      "SDL_scancode": 80
+    },
+    "RIGHT": {
+      "key": "Right",
+      "SDL_scancode": 79
+    }
+  },
+  "emulator_hotkeys": {
+    "F5": "Resume if paused",
+    "F6": "Pause if running",
+    "Escape": "Toggle menu"
+  },
+  "keyboard_admission": {
+    "uses": "ImGui::IsKeyDown(mapped SDL scancode)",
+    "explicit_game_viewport_focus_gate": false,
+    "explicit_WantCaptureKeyboard_gate": false,
+    "Auto_policy": "Connected controller takes priority; otherwise keyboard",
+    "Keyboard_policy": "Always use keyboard"
+  },
+  "controls_ui": "Configuration -> Controls -> Device type -> Keyboard",
+  "input_limit": "No injected pad input installed. CUA key delivery must span an emulated frame and be observed; source audit does not prove it.",
+  "isolated_reference_restart": {
+    "exec_session": 98981,
+    "running": true,
+    "previous_r3_exit": 0,
+    "initial_stage": "Boot; not gameplay"
+  },
+  "owner_save_or_installed_app_modified": false,
+  "input_delivery": {
+    "status": "MATCHES_MEASURED_FIELDS",
+    "scope": "CUA delivery to official emulator pad. No gameplay parity claim.",
+    "snapshot_vsync": 3953,
+    "START_frames_observed": 2,
+    "CROSS_frames_observed": 1,
+    "START_last_vsync": 3362,
+    "CROSS_last_vsync": 3369,
+    "source_read_API": "PCSX.SIO0.slots[1].pads[1].getButton; START3/CROSS14",
+    "writes": false,
+    "player_class": 0,
+    "gameplay_reached": false
+  }
+}

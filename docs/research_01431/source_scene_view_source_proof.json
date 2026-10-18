@@ -1,0 +1,65 @@
+{
+  "schema": "mml-source-scene-view/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "authored_radial_cases": 384,
+  "unchanged_original_instructions": 288451,
+  "restricted_mvmva_commands": 1536,
+  "fresh_projection_original_instructions": 14,
+  "fresh_projection_controls": {
+    "ofx": 10485760,
+    "ofy": 7864320,
+    "h": 384
+  },
+  "fixture_sha256": "f39b6848d27b02aa063cc405536ada4bb28cea2cad89af2d91cc306a14799cdb",
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "retail_payload_exported": false,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "source_blocks": [
+    {
+      "id": "script_view",
+      "start": "0x8001e550",
+      "end_exclusive": "0x8001e6c0",
+      "sha256": "6d941c6bf23616c6d324629bd804e2558d0bacb3ddecfc881dcda4c85c893353"
+    },
+    {
+      "id": "script_radial_wrapper",
+      "start": "0x80038324",
+      "end_exclusive": "0x80038370",
+      "sha256": "3c490aa504b3cf115467076ec15ff6e556ac74159cef69735ea501a4c7c74f52"
+    },
+    {
+      "id": "radial_view",
+      "start": "0x80037fb4",
+      "end_exclusive": "0x80038324",
+      "sha256": "a94e80e6d3fa105fc82f7538de6ae229e0aee0a943464390a8c20c395a00759d"
+    },
+    {
+      "id": "scalar_sine",
+      "start": "0x8007a060",
+      "end_exclusive": "0x8007a12c",
+      "sha256": "7bc4f6d2f383c18b3d5d5f877750f71cd9f7af8ac4fd34bdaa93e23d90d48593"
+    },
+    {
+      "id": "scalar_cosine",
+      "start": "0x8007a12c",
+      "end_exclusive": "0x8007a1cc",
+      "sha256": "ff6a2b3a724fefdb59bb4c3de10d08b95c86db6fe3d7f0630d67ee61e97ffa74"
+    },
+    {
+      "id": "fresh_projection",
+      "start": "0x80011f48",
+      "end_exclusive": "0x80011f5c",
+      "sha256": "9a9809d845be496ff7b70a2a22969c03e1059ddb93ce3e74f022ed2690f27e44"
+    }
+  ],
+  "limits": [
+    "Authored states are not live scene chronology.",
+    "Inherited restricted MVMVA arithmetic is interpreted; independent hardware GTE saturation/FLAG parity is not established.",
+    "Actor-tracked and target-point camera branches remain explicit holds.",
+    "Float native matrix adaptation preserves original coefficient/translation outputs but not PS1 fixed-point rasterization, GPU ordering, clipping or depth.",
+    "Original scratch padding and extra mirrors are not renderer inputs and remain unowned when their writer is absent."
+  ]
+}

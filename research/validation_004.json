@@ -1,0 +1,72 @@
+{
+  "checkpoint": "Legends3DS Tutorial Core 0.0.4 - Visual Bridge",
+  "asset_policy": {
+    "copyrighted_game_assets_bundled": false,
+    "validation_contains_only_derived_statistics": true
+  },
+  "host_validation": {
+    "warnings_as_errors": "PASS",
+    "ctest": "PASS",
+    "tests_passed": 1,
+    "tests_failed": 0,
+    "devkitpro_available_in_checkpoint_environment": false
+  },
+  "player_composition": {
+    "l3pc_version": 1,
+    "component_slots": 5,
+    "attachments": 18,
+    "head_mesh_part_ids": [1, 15, 16, 17],
+    "head_transform_ids": [1, 1, 1, 1],
+    "cooked_bytes": 176,
+    "crc": "PASS",
+    "evidence": "ROCK_NEO.EXE renderer table"
+  },
+  "player_visual_bridge": {
+    "parts": 18,
+    "primitives": 316,
+    "triangles": 116,
+    "quads": 200,
+    "vertex_references": 1148
+  },
+  "render": {
+    "l3rg_version": 3,
+    "descriptors": 116,
+    "records": 319,
+    "unique_streams": 307,
+    "stream_references": 422,
+    "material_words": 393,
+    "unique_primitives": 2493,
+    "cooked_bytes": 78360,
+    "crc": "PASS",
+    "primary_lod_thresholds": {
+      "near_replay_below": 1025,
+      "mid_from": 2801,
+      "far_from": 7201
+    },
+    "primary_secondary_triplets_identical_descriptors": 115,
+    "primary_secondary_triplets_different_descriptors": 1
+  },
+  "tutorial_loaded_material_scan": {
+    "type1_textures": 39,
+    "type4_clut_patches": 9,
+    "type9_palette_patches": 21,
+    "material_references": 393,
+    "complete_references": 388,
+    "incomplete_references": 5,
+    "complete_unique_materials": 21,
+    "incomplete_unique_materials": 3,
+    "newly_resolved_by_type4_clt_references": 7,
+    "remaining_unresolved_material_words": ["0x7C810016", "0x7C830016", "0x7CC20017"]
+  },
+  "st00_visual_bridge_probe": {
+    "positive_cells": 2892,
+    "synthetic_mid_lod_primitives": 15512,
+    "note": "Constant mid-range depth is a structural validation input, not a captured game camera frame."
+  },
+  "remaining_visual_boundaries": [
+    "Trace the runtime source/copy behavior for 3 unresolved palette material words (5 references).",
+    "Finish exact player pose matrix application and animation-to-render transform path.",
+    "Compile and validate the Citro3D backend on a devkitPro environment and Old 3DS hardware.",
+    "Prove when/if the preserved secondary ST00 descriptor bank is selected."
+  ]
+}

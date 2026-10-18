@@ -1,0 +1,39 @@
+{
+  "schema": "actor-detection-segment-extended-source/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "entry": "0x80049c54",
+  "authored_cases": 11690,
+  "authored_original_trap_cases_excluded": 0,
+  "materialized_owner_stage_cases": 294,
+  "original_instructions_executed": 11133302,
+  "return_only_hooks": [],
+  "authored_fixture_sha256": "ed85c3a57806382eb109c14b3a2cb926134c108f3a618b21d6610425bf82b9eb",
+  "owner_stage_fixture_sha256": "0bb7160e183f18288c518f77748249159be2340410ffa36b9da1e54694519b4d",
+  "resources": {
+    "idx": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e",
+    "mdt": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e",
+    "stg": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e",
+    "hed": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+  },
+  "materialized_identities": 994,
+  "classifier_contract": "families2..5 original short-wrap and diagonal tolerance; family6 original diamond; family7 outer strict bounds only",
+  "Y_contract": "8004A060 low8 dispatch; only unchanged interval admitted; slope branches held",
+  "limits": [
+    "Authored/materialized RAM contexts; not live retail encounter or Old3DS proof.",
+    "Owner stage scalar fixture stays local; authored fixture has no owner bounds, geometry or tables.",
+    "Original classifier endpoint labels are consumed only as truthiness by this helper; their response scratch is outside this query contract."
+  ],
+  "native_differential": {
+    "authored_exact_supported": 11113,
+    "authored_held": 577,
+    "authored_nonzero": 444,
+    "owner_stage_exact_supported": 294,
+    "owner_stage_held": 0,
+    "owner_stage_nonzero": 82,
+    "hot_query_allocation_checks": 1536,
+    "old_owner_stage_held": 7,
+    "old_owner_stage_total": 21
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "compiler": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+  "compiler_version": "arm-none-eabi-gcc (devkitARM) 16.1.0\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "source": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.15_WorldComesAlive/src/p2/mml_renderer_recovery.c",
+  "source_sha256": "927174974bbdac7a36868d2e38bc186baed11f6c28b7fe45475753842b6c184e",
+  "historical_source_kind": "temporary reconstruction of the exact expression in work/3ds-patch.log",
+  "historical_expression": "if(!g||s<MML_RENDER_0143_FALLBACK||s>MML_RENDER_ANIMATION)return false;",
+  "existing_fixed_expression": "if(!g||(unsigned)s>(unsigned)MML_RENDER_ANIMATION)return false;",
+  "warning": "-Wtype-limits",
+  "suppressions_used": false,
+  "checks": [
+    {
+      "label": "historical-before",
+      "command": [
+        "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+        "-std=gnu11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-march=armv6k",
+        "-mtune=mpcore",
+        "-mfloat-abi=hard",
+        "-mtp=soft",
+        "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.15_WorldComesAlive/include/legends3ds/p2",
+        "-c",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/host-baseline/renderer-gcc-warning/historical-type-limits-reconstruction.c",
+        "-o",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/host-baseline/renderer-gcc-warning/historical-before.o"
+      ],
+      "exit_code": 1,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/host-baseline/renderer-gcc-warning/historical-before.log",
+      "expected_result_met": true
+    },
+    {
+      "label": "current-after",
+      "command": [
+        "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+        "-std=gnu11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-march=armv6k",
+        "-mtune=mpcore",
+        "-mfloat-abi=hard",
+        "-mtp=soft",
+        "-I/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.15_WorldComesAlive/include/legends3ds/p2",
+        "-c",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.15_WorldComesAlive/src/p2/mml_renderer_recovery.c",
+        "-o",
+        "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/host-baseline/renderer-gcc-warning/current-after.o"
+      ],
+      "exit_code": 0,
+      "log": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261004-worldalive/host-baseline/renderer-gcc-warning/current-after.log",
+      "expected_result_met": true
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "input": {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261011-worldalive-01429/azahar-01429-safe-r1/sdmc/3ds/Legends3DS/hardware_01429_4000698689346.csv",
+    "sha256": "b6abcc9e22508ddd69b5adae990df60ede6fadf54abffd11d525ab0869a1fdd3",
+    "bytes": 8633,
+    "lines": 73,
+    "complete_final_line": true
+  },
+  "header": {
+    "build": "0.0.14.29",
+    "line": 1,
+    "model_query_rc": 0,
+    "new3ds": 0,
+    "memory_layout": 2,
+    "app_region_bytes": 100663296,
+    "heap_reserved": 66318336,
+    "linear_reserved": 33554432,
+    "stack_reserved": 262144
+  },
+  "last_valid_records": {
+    "source_event": {
+      "frame": 1,
+      "area": 0,
+      "status": 1,
+      "committed": false,
+      "event": 0,
+      "consumer": "0x00000000",
+      "line": 13,
+      "event_phase": 0
+    },
+    "source_command_service": null,
+    "source_fade_callback": null,
+    "source_scene_constructor": null,
+    "source_scene_callback": null,
+    "source_scene_camera": null
+  },
+  "last_valid_numeric_row": {
+    "frame": 1920,
+    "area": 0,
+    "held": 0,
+    "pressed": 0,
+    "x": -768,
+    "y": 0,
+    "z": -3232,
+    "heading": 0,
+    "projectiles": 0,
+    "frame_before_log_us": 16530,
+    "interval_us": 16894,
+    "update_us": 3,
+    "render_us": 16498,
+    "bottom_ui_us": 18,
+    "draw_calls": 3,
+    "triangles": 3990,
+    "owned_linear": 126144,
+    "owned_texture": 0,
+    "malloc_live": 960240,
+    "malloc_arena_free": 751888,
+    "linear_free": 31553280,
+    "vram_free": 5523456,
+    "action": 0,
+    "phase": 1,
+    "animation": 0,
+    "animation_pose": 0,
+    "vertical_velocity": 0,
+    "grounded": -1,
+    "contact_status": 1,
+    "psx_held": 0,
+    "psx_pressed": 0,
+    "line": 73
+  },
+  "numeric_column_owners": {
+    "action": "player_work_09",
+    "phase": "player_work_0A"
+  },
+  "current_run": {
+    "render_rows": 45,
+    "last_numeric_frame": 1920,
+    "maximum_numeric_frame": 1920,
+    "event_phase": 0,
+    "command_queue_phase": null,
+    "fade_running": null,
+    "last_fade_termination": null,
+    "scene_callback_next_consumer": null
+  },
+  "counts": {
+    "build_headers": 1,
+    "valid_numeric_rows": 45,
+    "valid_comment_records": 1,
+    "malformed_lines": 0,
+    "truncated_final_lines": 0,
+    "ignored_lines": 25,
+    "valid_by_kind": {
+      "source_event": 1,
+      "source_command_service": 0,
+      "source_fade_callback": 0,
+      "source_scene_constructor": 0,
+      "source_scene_callback": 0,
+      "source_scene_camera": 0
+    }
+  },
+  "issues": [],
+  "visual_acceptance": "UNKNOWN",
+  "physical_hardware_validation": "UNKNOWN",
+  "limits": [
+    "Event phase and CD command queue phase are separate states.",
+    "The numeric row's action/phase columns are player work bytes 09/0A.",
+    "A trace does not identify a screenshot's run or prove visible gameplay.",
+    "The model query does not distinguish emulator execution from physical hardware."
+  ]
+}

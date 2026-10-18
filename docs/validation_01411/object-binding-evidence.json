@@ -1,0 +1,69 @@
+{
+  "schema": "visibility-object-binding-evidence/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "scope": "Five tutorial areas; imported records exclude the separate player renderer",
+  "executable_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "aggregates": {
+    "area_imported_records": [1, 16, 20, 11, 1],
+    "imported_records": 49,
+    "generic_seed_work_mirrors": 46,
+    "separate_class00_work_records": 3,
+    "class_counts": {"00": 3, "20": 2, "C0": 9, "E0": 35},
+    "ebd_class_subtype_candidates": {"unique": 3, "ambiguous": 32, "common_or_no_local": 14},
+    "complete_imported_presentation_bindings_proven": 0
+  },
+  "findings": [
+    {
+      "id": "EBD_DIRECTORY_ONLY_RETENTION",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "source": "src/world/ebd_directory.cpp",
+      "meaning": "Cooked L3EB retains directory rows and three relative resource offsets per row; EOF is required after the rows. Pointed geometry/animation resource payloads are not retained. A unique row is not a usable model binding."
+    },
+    {
+      "id": "INITIALIZER_RESOURCE_ROLES",
+      "status": "UNKNOWN",
+      "sources": ["include/legends3ds/stage_runtime.h", "src/world/stage_runtime.cpp", "research/tutorial_runtime_007.md", "research/dynamic_ebd_trace_009.md"],
+      "meaning": "Specific imported record ownership by an initializer, runtime variant provenance, family-dependent resource-pointer roles and subsequent presentation work fields are not established. Source class, list order and narrowed EBD candidates do not prove actor identity."
+    },
+    {
+      "id": "NATIVE_OBJECT_PRESENTATION_PATH",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "sources": ["tools/build_tutorial_pack.py", "platform/3ds/source/main.cpp", "include/legends3ds/area_package.h"],
+      "meaning": "Tutorial model/animation cooking and native model loading serve the separate player visual path. The native frame submits terrain, player and projectiles; imported object presentation has no established resource cooker or draw binding."
+    },
+    {
+      "id": "MEASURED_INITIALIZER_POINTER",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "pointer_address": "0x80089a78",
+      "target_address": "0x80047318",
+      "region_start": "0x80089a58",
+      "region_end_exclusive": "0x80089a84",
+      "region_sha256": "92e11ad15b5ddf6ffda6489129bdf8707f8a874a0a82174152eaeb75f5d4aabb",
+      "ownership_status": "UNKNOWN",
+      "meaning": "A measured pointer supplies a focused dispatch research anchor. Consecutive pointer position does not establish class/subtype ownership."
+    },
+    {
+      "id": "E0_CALLBACK_SEED_GATE",
+      "status": "SOURCE_BACKED_PARTIAL",
+      "start": "0x80029b94",
+      "end_exclusive": "0x80029c14",
+      "block_sha256": "dfb6537a80184014902a03e8501914ff2e30713ac9ed747298add9a91924fc5b",
+      "pool_base": "0x800bf118",
+      "slots": 32,
+      "stride_bytes": "0x50",
+      "gate": "(work[0] & work[6] & 2) != 0",
+      "callback_base": "0x800898d0",
+      "callback_byte_offset": "work[0] & 0x1c",
+      "callback_argument": "work+0x14",
+      "zero_offset_target": "0x80029c18",
+      "current_e0_seed_count": 35,
+      "current_e0_seed_work0": 1,
+      "current_e0_seed_gate_pass_count": 0,
+      "runtime_field_semantics": "UNKNOWN",
+      "meaning": "Fresh work mirrors alone cannot reach this callback. Runtime work[0] semantics, its initializer mutations and subsequent visibility are not inferred from the source record identifier."
+    }
+  ],
+  "required_proof": "Specific source record to actual initializer to selected resource roles/presentation data to initialized runtime fields to native draw binding",
+  "payload_policy": "Addresses, hashes, source behavior and aggregate counts only; no owner payload, original directory/function tables, disassembly, geometry, textures, palettes or gameplay spoilers."
+}

@@ -1,0 +1,27 @@
+{
+  "version": "0.0.14.6",
+  "host": {
+    "core_test": "PASS",
+    "push2_test": "PASS",
+    "source_verifier": "PASS"
+  },
+  "owner_cook": {
+    "files": 101,
+    "terrain": {"total": 15512, "resolved": 14328, "unresolved": 1184},
+    "player_materials": {"count": 2, "all_five_areas_resolved": true},
+    "animation": {"mapped_requests": 55, "s_records": 833, "branches": 10, "repeats": 45, "request_0x0c": "PASS"}
+  },
+  "renderer_recovery": {
+    "fallback_shader_sha256": "fd242f3023a04cb03ba80ee20ea716daff2f9921f54502f5eeefa1d3a2b373bb",
+    "uv_shader_sha256": "7ddf62f20bc02fa2b2e9d1eb2e0b4c62338d758112d05594202eb1982cf94248",
+    "boot_stages": ["0143 fallback", "0143 + logging", "UV input", "batching textures off", "one terrain texture", "all terrain textures", "player textures", "alpha", "animation"]
+  },
+  "not_proven": [
+    "3DSX compilation in this environment",
+    "real Old 3DS boot of 0.0.14.6",
+    "hardware texture correctness",
+    "hardware alpha correctness",
+    "1:1 physics",
+    "complete tutorial parity"
+  ]
+}

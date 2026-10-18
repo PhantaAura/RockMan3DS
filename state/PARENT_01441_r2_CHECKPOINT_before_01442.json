@@ -1,0 +1,110 @@
+{
+  "PHYSICS_1TO1": false,
+  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.41_Source.zip",
+  "baseline_sha256": "e9b654535a8985720d75f8013cb4bb8ba583aa540ab996c3eb97c1233f1af1c9",
+  "blockers": [
+    "User physical01441: RGB bars and GPU cyan clear appear; after X top remains cyan and bottom map/status appears. Loop liveness inconclusive.01441r2 hardware retest pending.",
+    "Empty draw groups removed; whether they caused physical failure is UNKNOWN.",
+    "Inherited WCA: whole-world RNG chronology, true player Buster firing ownership, complete enemy encounter/reaction/defeat, original display UV reset and natural progression remain incomplete. PHYSICS_1TO1=false."
+  ],
+  "branch": null,
+  "commit": null,
+  "compiled_source_hashes_match": true,
+  "created_utc": "2026-10-15T03:10:16.716950+00:00",
+  "current_emulator_validation": "All/terrain/player0143 modes exercised in Azahar2126.0 Old-model configuration; physical retest pending",
+  "emulator": {
+    "evidence": "docs/validation_01441_r2/emulator-observation.json",
+    "captures": [
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.04.30.312.png",
+        "sha256": "7b1fa7d79fdf16d6cbd0fe65591589154a6b3a4697f8d9efa5fc7fab53e3d324",
+        "scene": "CPU RGB bars",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.04.41.82.png",
+        "sha256": "dd3f251c1587f81e534df0d9832185094b13c75c0b9488497dcd15ab368c0008",
+        "scene": "GPU cyan clear",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.04.56.598.png",
+        "sha256": "a51a5caec725615450fe245f03bda6eb2f8c712ce35c2cb545f8e7f23dc73f7f",
+        "scene": "X / all0143; full gray player + terrain + bottom map",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.06.20.717.png",
+        "sha256": "bc527781e3d343d597a4211972d2673692953f82ea35bcc837c90c91018780f2",
+        "scene": "D-pad LEFT / terrain-only0143 + bottom map",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.07.10.83.png",
+        "sha256": "8cb59d2519fe45b10bb61195ec880724cdce85eb79c3ad05ba5cc2a962bef83e",
+        "scene": "D-pad RIGHT / player-only0143; bottom black in this capture",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      },
+      {
+        "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261014-worldalive-01441-r2/azahar-01441r2-draw/captures/_14.10.26_23.07.38.955.png",
+        "sha256": "cc36f0e1664d0720621a52e70b140c65f6c34864beb02cb8111b62b3a41dc65d",
+        "scene": "D-pad RIGHT / player-only0143 + bottom map",
+        "size": [
+          400,
+          480
+        ],
+        "edited": false
+      }
+    ]
+  },
+  "evidence": [
+    "docs/validation_01441_r2/FINAL_REPORT.md",
+    "docs/validation_01441_r2/build-result.json",
+    "docs/validation_01441_r2/emulator-observation.json",
+    "docs/validation_01441_r2/HARDWARE_TEST.md"
+  ],
+  "git_repository": false,
+  "hardware_tested": false,
+  "host_tests": "138/138 PASS;18.74 seconds",
+  "native_build": "PASS",
+  "project_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.41_WorldComesAlive",
+  "source_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.41_Source_r2.zip",
+  "source_release_excludes_retail_payloads": true,
+  "title": "World Comes Alive \u2014 draw submission repair",
+  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hard float",
+  "usage_reset_used": false,
+  "version": "0.0.14.41-r2",
+  "world_comes_alive_finished": false,
+  "recovery_checkpoint": {
+    "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.40_Recovery_20261014_210844_Source.zip",
+    "sha256": "b22a016ff51c368813d835be025a5847a29d93e7f5d1e3375d45e38fb928adac",
+    "files": 2008,
+    "excluded": [],
+    "status": "IN_PROGRESS_RECOVERY"
+  },
+  "evidence_revision": "01441r2",
+  "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_DrawTest_01441r2.3dsx",
+  "native_binary_sha256": "135f6517c449af35aa6f6f528f08f3be6e84e27340bb2e92c7b3379cf83f270a",
+  "sd_install_zip": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01441r2_DrawTest_SD.zip",
+  "sd_install_sha256": "da55b09cb4f79cef733aeb7be0a5d45ff7946899d476325229cf975d8ada295f"
+}

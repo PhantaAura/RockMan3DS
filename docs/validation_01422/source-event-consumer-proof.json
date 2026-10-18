@@ -1,0 +1,147 @@
+{
+  "schema": "mml-source-event-consumer/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "consumer_cases": 324,
+  "logical_driver_reset_cases": 16,
+  "busy_completion_prefix_cases": [
+    {
+      "entry": "0x80017fe8",
+      "before_busy": -32768,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x80017fe8",
+      "before_busy": -1,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x80017fe8",
+      "before_busy": 1,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x80017fe8",
+      "before_busy": 32767,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x800182d4",
+      "before_busy": -32768,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x800182d4",
+      "before_busy": -1,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x800182d4",
+      "before_busy": 1,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x800182d4",
+      "before_busy": 32767,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x8001840c",
+      "before_busy": -32768,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x8001840c",
+      "before_busy": -1,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x8001840c",
+      "before_busy": 1,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    },
+    {
+      "entry": "0x8001840c",
+      "before_busy": 32767,
+      "after_busy": 0,
+      "stop_before_untranslated_consumer": "0x80012ECC"
+    }
+  ],
+  "original_instructions_executed": 40577,
+  "accepted_cases_helper_hooks": [],
+  "fixture_sha256": "c5685efbf1f71ceb8e7a091972e13dee11f8d694cc8bcfcd9c7ec9699150b83e",
+  "boot_busy": {
+    "address": "0x80098A72",
+    "value": 0,
+    "source": "hash-guarded executable load image",
+    "scene_reset_equivalence": false
+  },
+  "regions": [
+    {
+      "start": "0x80042238",
+      "end_exclusive": "0x80042314",
+      "sha256": "e11d0a5dc8e34c66a0aa05829f9c4af87a39b3eebf936361cb1960fe9ddebad8"
+    },
+    {
+      "start": "0x8004324c",
+      "end_exclusive": "0x80043278",
+      "sha256": "3b7dffdf62820d0df0d1efcf1743f6ac4d9d9f92b971d6c382367686571c169f"
+    },
+    {
+      "start": "0x8001b2f0",
+      "end_exclusive": "0x8001b314",
+      "sha256": "ab517f8fc7e48ee85aed372f043e798cc59434e4d5650af0483a87cd7c4e9108"
+    },
+    {
+      "start": "0x80071220",
+      "end_exclusive": "0x80071298",
+      "sha256": "96a4967d3adc82b61158801f006d97697c2a2d4aa4f8945efbce36c1da0ab74d"
+    },
+    {
+      "start": "0x800742c8",
+      "end_exclusive": "0x80074398",
+      "sha256": "ab2ef7b01e12b8677deb6bb3fcb26eceb3ea33a9894c9052d9a4e5f9c1acf280"
+    },
+    {
+      "start": "0x801010c4",
+      "end_exclusive": "0x8010114c",
+      "sha256": "3df28e4de696550bf641daba087a226176294614cb103d3f0273b02754326a10"
+    },
+    {
+      "start": "0x8006b57c",
+      "end_exclusive": "0x8006b584",
+      "sha256": "3a7357e46fc14203f77964b77c8a322a8b6ee165ed9c48bc0f45f193ac0a9824"
+    },
+    {
+      "start": "0x800729d0",
+      "end_exclusive": "0x800729f0",
+      "sha256": "c5e6be3b3616f23032f47b0d8d7209be5f70501bde81205f60c770a637ea9a3c"
+    }
+  ],
+  "source_stop_writes": "54-byte voice slots+00/+04 halfwords,+1D byte; pending masks OR; active AND complement of entire pending masks",
+  "source_lock_rejection": "lock exactly1 returns-1; original player ignores both driver returns",
+  "atomic_native_receipt_policy": "both22/23 calls must fit and be consumed before player/event/driver publication",
+  "limits": [
+    "All work/global inputs are authored, not a live retail scene.",
+    "Driver reset slices prove only logical fields; excluded hardware consumers are not acknowledged.",
+    "Cold boot busy0 is measured image data; fresh scene/NewGame does not imply busy reset.",
+    "Busy completion prefixes stop before callback80012ECC; whole fade scheduling remains unported.",
+    "Phases2+ camera/command/message consumers and natural tutorial completion remain unfinished.",
+    "No original code/table/assets/save/sample payload is exported."
+  ],
+  "audible_playback_proved": false,
+  "retail_parity": false,
+  "hardware_tested": false
+}

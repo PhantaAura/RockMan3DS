@@ -1,0 +1,49 @@
+{
+  "schema": "mml-source-effect-dispatch-validation/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "protected_scalar_payload_sha256": "6015208c30d7c82fa3ce30147d74697b65842be15a220278178565aea2295ee3",
+  "canonical_L3E2_bytes": 384,
+  "original_world_boundaries": 24,
+  "original_table_boot_store_cases": 6,
+  "original_dispatch_cases": 90,
+  "original_instructions": 71680,
+  "original_helper_hooks": 0,
+  "original_instruction_patches": 0,
+  "public_package_framing_guards": 384,
+  "private_self_crc_mutation_guards": 384,
+  "private_tests": [
+    "exact owner-local L3E2 accepted",
+    "profile/P5/resource-binding rebind rejected",
+    "scene owner/generation mismatch rejected",
+    "directory and payload replacement/unload rejected",
+    "default/failed-rebind leases hold",
+    "new later child updates in same sweep",
+    "new earlier child waits next sweep",
+    "raw dispatcher does not invent bitmap eligibility",
+    "unsupported low callbacks reported visibly",
+    "builtin high callbacks skipped here",
+    "sibling3/4 control/lifetime consumers connected",
+    "later RNG hold preserves earlier publication",
+    "finite provider receives complete published/held result in source order",
+    "all exercised hot sweeps allocate zero C++ heap objects"
+  ],
+  "standalone_host_warnings_as_errors": true,
+  "standalone_armv6k_warnings_as_errors": true,
+  "arm_static_stack_bytes": {
+    "load_profile": 672,
+    "bind": 40,
+    "current": 32,
+    "dispatch": 704
+  },
+  "source_assets_embedded": false,
+  "native_build_complete": false,
+  "retail_parity": false,
+  "hardware_tested": false,
+  "limits": [
+    "Standalone compilation/host checks do not establish native connected build or emulator/hardware exercise.",
+    "External RNG owner is not supplied or advanced by this dispatcher.",
+    "The continuing diagnostic partial sweep does not establish complete original cooperative world phase cadence.",
+    "Unsupported lower callbacks0/5/6/9/15 remain visible holds when active.",
+    "Nested callback stack/complete frame RAM peak are not measured by these per-function static values."
+  ]
+}

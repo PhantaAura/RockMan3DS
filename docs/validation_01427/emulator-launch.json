@@ -1,0 +1,22 @@
+{
+  "pid": 8621,
+  "argv": [
+    "/Applications/Azahar.app/Contents/MacOS/azahar",
+    "-w",
+    "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/native-r2/build/Legends3DS_01427_WorldComesAlive.3dsx"
+  ],
+  "binary_sha256": "bde6d0ffd32d0dee6d27f4d6e6930f87d06969788bde8724f01e23eea2f64cbd",
+  "build": "01427 texture-sector decoder repair",
+  "camera": "unchanged native gameplay camera",
+  "hardware": false,
+  "model": "Old3DS",
+  "cpu_clock_percentage": 100,
+  "resolution_factor": 1,
+  "source_audio": false,
+  "source_event_boot": false,
+  "environment": {
+    "XDG_CONFIG_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/azahar-01427-r1/config",
+    "XDG_DATA_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/azahar-01427-r1/data",
+    "XDG_CACHE_HOME": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-player-hair-repair-01427/azahar-01427-r1/cache"
+  }
+}

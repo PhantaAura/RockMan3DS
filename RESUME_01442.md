@@ -1,0 +1,9 @@
+# Resume 0.0.14.42
+
+Exact project: `/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.41_WorldComesAlive`. No Git repository, branch or commit. The folder name is historical; content is version 42. Complete source: `/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.42_Source_r1.zip`. Earlier archives and the recovery checkpoint are preserved.
+
+Completed: GPU ownership/fences and bounded wait; atomic actor body/animation/shadow/proxy continuation; retained live-pose preview correction; throttled contact logging. All 139 host checks pass. The final native binary is 874,432 bytes, SHA-256 fd10ea30d61bbea16f5257b896e9ca0d4a810fd6bbb9822198be9b8b69f6af91. All 280 native source hashes match. Final safe/textured rendering, inputs, developer area replacement, native no-damage actor contacts and shutdown were exercised in Old-model Azahar. Exact commands/results and changed files are in docs/validation_01442. No reset used.
+
+Known limits: WCA unfinished; PHYSICS_1TO1=false. Whole-world RNG, true Buster ownership, full child hit/defeat and natural progression remain incomplete. The physical 01441 RGB/cyan tests passed but world stayed cyan. The user has not tested 41-r2 or 42. Camera occlusion at the developer area-1 spawn and intermittent emulator bottom presentation remain risks.
+
+Next: user tests 42 X, then LEFT/RIGHT if needed, or provides the exact timeout and boot_01442.log. Continue genuine player Buster endpoint ownership and actual child-contact/predicate admission without forcing RNG or HP. Host cache: work/pass-20261014-worldalive-01441/native-r1/host. Final native stage: work/pass-20261015-worldalive-01442/native-r2. Private logs/captures/owner SD remain in that pass directory. Emulator PIDs 5793 and 8096 were verified absent after GUI quit.

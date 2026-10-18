@@ -1,0 +1,41 @@
+[
+  {
+    "argv": [
+      "cmake",
+      "-S",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.26_WorldComesAlive",
+      "-B",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/sanitize-r1/build",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DCMAKE_C_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer",
+      "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-omit-frame-pointer",
+      "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
+    ],
+    "exit": 0
+  },
+  {
+    "argv": [
+      "cmake",
+      "--build",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/sanitize-r1/build",
+      "--parallel",
+      "4",
+      "--target",
+      "test_source_fade",
+      "test_runtime_fade",
+      "test_ps1_geometry"
+    ],
+    "exit": 0
+  },
+  {
+    "argv": [
+      "ctest",
+      "--test-dir",
+      "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261010-worldalive-01426/sanitize-r1/build",
+      "--output-on-failure",
+      "-R",
+      "^(source_fade|runtime_fade|ps1_geometry)$"
+    ],
+    "exit": 0
+  }
+]

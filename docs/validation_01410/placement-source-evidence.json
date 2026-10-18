@@ -1,0 +1,338 @@
+{
+  "container": {
+    "bytes": 1024000,
+    "sha256": "3f46c6bac9261ee1def37bddd8a91377343e5ee1235391b2ed3a18f2cbcc8dc0"
+  },
+  "coordinate_block_probe": {
+    "cases_passed": 128,
+    "families": [
+      {
+        "block_end_exclusive": "0x800240c8",
+        "block_sha256": "d80b0377be866644b843d8ce012e7c50edd65b93d0fd6a06b5a86a6f77b9f0c4",
+        "block_start": "0x80023fa0",
+        "entry": "0x80023ea8",
+        "instructions_per_case": 74,
+        "synthetic_cases": 32
+      },
+      {
+        "block_end_exclusive": "0x80025158",
+        "block_sha256": "ee50c7924e0060f8c54af79c0cc9dde4ec1b83e770be8263a817a66b821ad6f4",
+        "block_start": "0x80025030",
+        "entry": "0x80024f30",
+        "instructions_per_case": 74,
+        "synthetic_cases": 32
+      },
+      {
+        "block_end_exclusive": "0x80025b20",
+        "block_sha256": "d80b0377be866644b843d8ce012e7c50edd65b93d0fd6a06b5a86a6f77b9f0c4",
+        "block_start": "0x800259f8",
+        "entry": "0x80025900",
+        "instructions_per_case": 74,
+        "synthetic_cases": 32
+      },
+      {
+        "block_end_exclusive": "0x80026d24",
+        "block_sha256": "d80b0377be866644b843d8ce012e7c50edd65b93d0fd6a06b5a86a6f77b9f0c4",
+        "block_start": "0x80026bfc",
+        "entry": "0x80026b04",
+        "instructions_per_case": 74,
+        "synthetic_cases": 32
+      }
+    ],
+    "limitation": "A coordinate decode proof over synthetic inputs, not retail gameplay or full renderer execution.",
+    "method": "Execute four bounded original CPU gather blocks on synthetic geometry; GTE projections ignored. Halfword stores compared exactly.",
+    "status": "SOURCE_BACKED_PARTIAL",
+    "synthetic_cases": 128
+  },
+  "data_measurements": {
+    "areas": [
+      {
+        "area": 0,
+        "negative_cells": 8,
+        "negative_descriptor_branch_counts": {
+          "default_stg": 8
+        },
+        "negative_quarter_turn_counts": {
+          "0": 3,
+          "2": 5
+        },
+        "negative_special_table_slot_counts": {},
+        "positive_bank_unique_idx_counts": {
+          "secondary": 18
+        },
+        "positive_cell_occurrences": 40,
+        "positive_unique_idx": 18,
+        "repeated_positive_occurrences_avoided": 22
+      },
+      {
+        "area": 1,
+        "negative_cells": 71,
+        "negative_descriptor_branch_counts": {
+          "default_stg": 71
+        },
+        "negative_quarter_turn_counts": {
+          "0": 54,
+          "3": 17
+        },
+        "negative_special_table_slot_counts": {},
+        "positive_bank_unique_idx_counts": {
+          "secondary": 126
+        },
+        "positive_cell_occurrences": 130,
+        "positive_unique_idx": 126,
+        "repeated_positive_occurrences_avoided": 4
+      },
+      {
+        "area": 2,
+        "negative_cells": 14,
+        "negative_descriptor_branch_counts": {
+          "default_stg": 14
+        },
+        "negative_quarter_turn_counts": {
+          "0": 11,
+          "1": 3
+        },
+        "negative_special_table_slot_counts": {},
+        "positive_bank_unique_idx_counts": {
+          "secondary": 202
+        },
+        "positive_cell_occurrences": 202,
+        "positive_unique_idx": 202,
+        "repeated_positive_occurrences_avoided": 0
+      },
+      {
+        "area": 3,
+        "negative_cells": 16,
+        "negative_descriptor_branch_counts": {
+          "default_stg": 16
+        },
+        "negative_quarter_turn_counts": {
+          "0": 16
+        },
+        "negative_special_table_slot_counts": {},
+        "positive_bank_unique_idx_counts": {
+          "secondary": 24
+        },
+        "positive_cell_occurrences": 24,
+        "positive_unique_idx": 24,
+        "repeated_positive_occurrences_avoided": 0
+      },
+      {
+        "area": 4,
+        "negative_cells": 0,
+        "negative_descriptor_branch_counts": {},
+        "negative_quarter_turn_counts": {},
+        "negative_special_table_slot_counts": {},
+        "positive_bank_unique_idx_counts": {
+          "secondary": 624
+        },
+        "positive_cell_occurrences": 2496,
+        "positive_unique_idx": 624,
+        "repeated_positive_occurrences_avoided": 1872
+      }
+    ],
+    "descriptor_count": 116,
+    "descriptor_slot_presence": {
+      "primary_0_present": 116,
+      "primary_1_present": 116,
+      "primary_2_present": 116,
+      "secondary_0_present": 116,
+      "secondary_1_present": 116,
+      "secondary_2_present": 116
+    },
+    "idx_raw6_nonzero_rows": 0,
+    "idx_raw6_zero_rows": 995,
+    "idx_rows": 995,
+    "negative_descriptor_branch_totals": {
+      "default_stg": 109
+    },
+    "resource_hashes": {
+      "HED": {
+        "bytes": 936,
+        "load_address": "0x8013a000",
+        "sha256": "83b9ae4bc64318b64d223a2c529e97f7f596f44f5e12760abc00c17931f52e66"
+      },
+      "IDX": {
+        "bytes": 11940,
+        "load_address": "0x8015c000",
+        "sha256": "fe7346fff13fdc76c4a3f179b994652df5629facca802148fad798f30226f68e"
+      },
+      "MDT": {
+        "bytes": 8554,
+        "load_address": "0x80164000",
+        "sha256": "f678d3391df0577bb74b6079a47502ec34ad40c84115e9d86d29999e20d6145e"
+      },
+      "STG": {
+        "bytes": 61296,
+        "load_address": "0x80194000",
+        "sha256": "01b071af3d952aa5a72d00ad6c7a6ea1c8b788b0e44bfc01c07ae2bcb0f35b7e"
+      }
+    },
+    "stored_primitive_shift_counts": {
+      "3": 648,
+      "4": 1297,
+      "5": 548
+    },
+    "stored_y_byte_diagnostics": {
+      "positive_y_high_bit_set_bytes": 2000,
+      "positive_y_nonzero_bytes": 7843
+    }
+  },
+  "executable": {
+    "bytes": 825344,
+    "entry": "0x80068000",
+    "load_address": "0x80010000",
+    "sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0"
+  },
+  "findings": [
+    {
+      "anchors": [
+        "0x80021914",
+        "0x80021938",
+        "0x80021944",
+        "0x80021958",
+        "0x80024c1c",
+        "0x80024c34",
+        "0x80024cec",
+        "0x80024cf0"
+      ],
+      "id": "POSITIVE_VISIBILITY_IDENTITY",
+      "meaning": "Positive full IDX index sets a visibility bit. Drawing iterates bits once and advances the IDX pointer by12. Repeated cell occurrences reference one placed IDX object. Positive low bits are part of identity, not quarter-turn flags.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "anchors": [
+        "0x80024c3c",
+        "0x80024c40",
+        "0x80024c44",
+        "0x80024c48",
+        "0x80024c50",
+        "0x80023f4c",
+        "0x80023f60",
+        "0x80023f74"
+      ],
+      "id": "POSITIVE_IDX_ORIGIN",
+      "meaning": "Positive draw copies first8 IDX bytes to scratch, then reads signed halfwords X,Y,Z at scratch320,322,324. Grid centers are visibility-scan locations only.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "anchors": [
+        "0x80024c90",
+        "0x80024cb0",
+        "0x80024cb4",
+        "0x80024cbc",
+        "0x80024cc4",
+        "0x80024cc8",
+        "0x800268b4"
+      ],
+      "id": "POSITIVE_BANK",
+      "meaning": "LOD uses positive transformed depth thresholds2801/7201. raw6 is loaded as unsigned16 at scratch70 and tested as whole16bits: nonzero descriptor+24/28/32, zero adds12 and selects+36/40/44. Current ST00 has zero in all995 IDX raw6 fields.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "anchors": [
+        "0x80023fa0",
+        "0x80023fc0",
+        "0x80023fcc",
+        "0x80024030",
+        "0x80024038",
+        "0x800240a4",
+        "0x800240b0",
+        "0x80025030",
+        "0x800259f8",
+        "0x80026bfc"
+      ],
+      "id": "POSITIVE_COORDINATE_GATHER",
+      "meaning": "Consecutive four triplets across12 compressed bytes: X/Z signed8; Y unsigned8. X/Z add to IDX origin, Y subtracts from IDX origin. No quarter-turn in any of four inspected positive primitive families.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "anchors": [
+        "0x80023f08",
+        "0x80023f20",
+        "0x80023f50",
+        "0x80023f6c",
+        "0x80023f78",
+        "0x80023f80",
+        "0x80013344",
+        "0x8001f4c0"
+      ],
+      "id": "POSITIVE_SCALE",
+      "meaning": "Local coordinate shift is UVword high nibble plus unsigned scratch byte0x1f800074. Origin X/Y/Z additionally shift by scratch byte. Startup and a conditional stage path explicitly reset scratch byte to0.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "anchors": [
+        "0x800218fc",
+        "0x80021904",
+        "0x80021978",
+        "0x80021990",
+        "0x80021c3c",
+        "0x80021c58",
+        "0x80021d70",
+        "0x8002246c"
+      ],
+      "id": "NEGATIVE_FLAT_GEOMETRY",
+      "meaning": "Negative cells use gridcenter=(grid<<9)-0x7f00, flatY=-((packed&0x1f00)>>1). Distinct primitive path consumes X={b0,b3,b6,b9},Z={b2,b5,b8,b11} relative to12 primitive bytes and ignores Y={b1,b4,b7,b10}, with packed low2quarter-turns. The inherited cooked cross-gather is historically incorrect; retainedbytes permit exact inversion.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "anchors": [
+        "0x800219bc",
+        "0x800219cc",
+        "0x800219d8",
+        "0x800219e4",
+        "0x80022270",
+        "0x8002228c"
+      ],
+      "id": "NEGATIVE_DESCRIPTOR",
+      "meaning": "Negative packed bit7 selects pointer table0x80139f04+((packed<<1)&0xf8); otherwise descriptorbase0x80194000. Table population/original source identity unresolved. Selected negative LOD is primary slots0..2.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    },
+    {
+      "anchors": [
+        "0x80023f00",
+        "0x80023f04",
+        "0x80023f18",
+        "0x80024f88",
+        "0x80024f8c"
+      ],
+      "id": "POSITIVE_MATERIAL_SLOT",
+      "meaning": "Stream UVword material index=(UVword>>24)&0xf; read copied materialword at scratch456+4*index. Source pointer words and primitive prefixes stay retained metadata.",
+      "status": "SOURCE_BACKED_PARTIAL"
+    }
+  ],
+  "format": "terrain-placement-source-evidence/1",
+  "negative_coordinate_block_probe": {
+    "cases_passed": 256,
+    "families": [
+      {
+        "block_end_exclusive": "0x80021e6c",
+        "block_sha256": "bbbdace03fea9447d20685560ad4982e323a6ad68efef8f086752813690ddd18",
+        "block_start": "0x80021c3c",
+        "entry": "0x80021b14",
+        "synthetic_cases": 128
+      },
+      {
+        "block_end_exclusive": "0x8002269c",
+        "block_sha256": "e8b5c044c29cc74f574b949163209ee3521a9fca0e16c33f3c5893df55d1d936",
+        "block_start": "0x8002246c",
+        "entry": "0x8002235c",
+        "synthetic_cases": 128
+      }
+    ],
+    "limitation": "Source instruction block probes only; no retail parity or renderer execution.",
+    "method": "Execute two bounded original negative flat-coordinate CPU gather blocks with four quarter turns and synthetic geometry; branch delay slots honored, GTE projection ignored.",
+    "status": "SOURCE_BACKED_PARTIAL",
+    "synthetic_cases": 256
+  },
+  "payload_policy": "Hashes, addresses, semantics and aggregate counts only. No gamebytes, disassembly, textures, models or owner saves emitted.",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "unknowns": [
+    "Negative special pointer-table population",
+    "Negative material override tables and upload lifetime",
+    "Prefix-controlled alpha,culling,subdivision beyond preserved flag bits",
+    "Dynamic globalshift mutations and ownership beyond inspected reset sites",
+    "Old3DS hardware behavior and full original-game rendering parity"
+  ]
+}

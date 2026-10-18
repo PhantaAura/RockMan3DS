@@ -1,0 +1,211 @@
+{
+  "version": "0.0.14.39",
+  "baseline": "0.0.14.38-r2",
+  "evidence_revision": "r1",
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "change": "modified"
+    },
+    {
+      "path": "README.md",
+      "change": "modified"
+    },
+    {
+      "path": "RESUME_01439.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/CHANGED_FILES_01439.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/PORTING_MAP.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/SOURCE_E0_MATERIAL.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/SOURCE_PROP_ATTACH.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/SOURCE_PROP_LIFT.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/WORLD_COMES_ALIVE_01439.md",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/source-e0-material-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/source-prop-attach-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/source-prop-lift-proof.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/source_e0_material_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/source_prop_attach_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/research_01439/source_prop_lift_probe.py",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/build-result.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/capture-trace-review-r1.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/capture-validation-r1.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/compiled-source-manifest.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/compiled-source-verification.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/emulator-observation.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/host-tests-inherited.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/host-tests.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/native-build.log",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/pack-validation.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/safe-renderer-source-preservation.json",
+      "change": "added"
+    },
+    {
+      "path": "docs/validation_01439/toolchain.json",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/runtime_session.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/scene_e0.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/scene_e0_material.h",
+      "change": "modified"
+    },
+    {
+      "path": "include/legends3ds/source_prop_attach.h",
+      "change": "added"
+    },
+    {
+      "path": "include/legends3ds/source_prop_lift.h",
+      "change": "added"
+    },
+    {
+      "path": "platform/3ds/Makefile",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/checkpoint_version.h",
+      "change": "modified"
+    },
+    {
+      "path": "platform/3ds/source/main.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/render/scene_e0_material.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/runtime_session.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/scene_e0.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "src/world/source_prop_attach.cpp",
+      "change": "added"
+    },
+    {
+      "path": "src/world/source_prop_lift.cpp",
+      "change": "added"
+    },
+    {
+      "path": "state/CURRENT_CHECKPOINT.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/CURRENT_READINESS.json",
+      "change": "modified"
+    },
+    {
+      "path": "state/EVIDENCE_LEDGER.json",
+      "change": "modified"
+    },
+    {
+      "path": "tests/fixtures/source_prop_attach_01439/attachment-authored.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/fixtures/source_prop_lift_01439/callback-authored.tsv",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_scene_e0.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_scene_e0_material.cpp",
+      "change": "modified"
+    },
+    {
+      "path": "tests/test_source_prop_attach.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tests/test_source_prop_lift.cpp",
+      "change": "added"
+    },
+    {
+      "path": "tools/build_hardware_test.py",
+      "change": "modified"
+    },
+    {
+      "path": "tools/cook_source_prop_lift.py",
+      "change": "added"
+    }
+  ]
+}

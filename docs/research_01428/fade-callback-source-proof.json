@@ -1,0 +1,78 @@
+{
+  "schema": "mml-source-fade-callback-probe/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "owner_exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "authored_callback_cases": 1632,
+  "authored_presentation_cases": 192,
+  "executed_original_instructions": 42774,
+  "instruction_patches": 0,
+  "helper_hooks": 0,
+  "callback_entry": "80017E94",
+  "type2_dispatch": "80017ED0",
+  "resume_iteration": "80017F3C",
+  "yield_boundary": "80012E98(1) before BIOS ChangeThread8007FF30",
+  "termination_boundary": "80012ECC before BIOS close/delete/change operations",
+  "presentation_entry": "80017B24",
+  "packet_order": "DR_MODE then TILE then previous OT+116 tail",
+  "required_external_owners": [
+    "endpoint hold byte1F800001",
+    "selected buffer byte1F800000",
+    "current ordering-table tag+116 for exact packet ownership",
+    "native explicit scheduling pass; no PS1 BIOS handle is provided"
+  ],
+  "frame_budget_writer_probes": [
+    {
+      "start": "0x80012004",
+      "stop_before": "0x80012020",
+      "written_byte": 2
+    },
+    {
+      "start": "0x80013430",
+      "stop_before": "0x80013444",
+      "written_byte": 2
+    },
+    {
+      "start": "0x800155b4",
+      "stop_before": "0x800155d0",
+      "written_byte": 2
+    },
+    {
+      "start": "0x800167d4",
+      "stop_before": "0x800167e0",
+      "written_byte": 4
+    },
+    {
+      "start": "0x8001683c",
+      "stop_before": "0x80016848",
+      "written_byte": 2
+    },
+    {
+      "start": "0x800169e8",
+      "stop_before": "0x800169f4",
+      "written_byte": 4
+    },
+    {
+      "start": "0x80016a50",
+      "stop_before": "0x80016a5c",
+      "written_byte": 2
+    }
+  ],
+  "frame_budget_admission_limit": "Fresh initialization proves2 only at its own boundary; control writers prove4/2 and prevent a universal constant fallback.",
+  "source_block_sha256": {
+    "dispatch": "0e934f56cfa9c30f4e2b1c13d5f49f2e4a939e066cd739c2e1d7dc6bb16ba3d6",
+    "callback": "682089795949b8d85ab5c2d949b4f46432c7ebb351566524cd58f6a408e5f789",
+    "presentation": "e6b2eb41d3ef8038c3cb7095935c2b8ed0be9aee7cc714a76f9c3cf3b82b97a0",
+    "yield": "ef433fbe67a2fe62f2de95eaa77e2e0d2bdff4a672ce750950478ca055fd6353"
+  },
+  "fixture_sha256": {
+    "callback": "d36d9264979774379cde7491ae6e71df4b04789be7687fe3172384ce05e807f0",
+    "presentation": "577b22e94dcbe5fcefdb79239af78c781925ca1c4716c1eed11d67b00c6d4fb7"
+  },
+  "limits": [
+    "Authored state is not live retail chronology or whole-fade parity.",
+    "CPU source instructions execute unchanged; BIOS and GPU boundaries are never hooked or executed.",
+    "Native scheduling acknowledgment is not a PS1 BIOS thread creation/completion receipt.",
+    "Subtract-mode command semantics do not prove 3DS framebuffer quantization or blend parity.",
+    "No commercial instruction bytes, resource tables, textures or audio are emitted."
+  ]
+}

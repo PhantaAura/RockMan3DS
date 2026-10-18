@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "parent_manifest_sha256": "ecbb7eaa322e481168ac85e291a000ad3daa514e2686b6b14e23e8dd5e0cb306",
+  "new_manifest_sha256": "2c58349a6880fc42e1df8f66deff4e4e41accef8e24d33fe6072f55bb393e027",
+  "outputs": 113,
+  "changed_outputs": [
+    {
+      "path": "legends3ds/tutorial/actor_combat.l3cb",
+      "old_sha256": "034c714b39c5a42090b9888e10374ec88e8839f86e81a8046880a125cec971b7",
+      "new_sha256": "a6cb5eacb6ab64b93b621ad9608a0e1fbc254f9428c1eaa1942d1b7fd5faa26f"
+    }
+  ],
+  "all_other_outputs_hash_identical": true,
+  "original_pack_untouched": true,
+  "source_release_includes_payloads": false
+}

@@ -1,0 +1,44 @@
+{
+  "PHYSICS_1TO1": false,
+  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.35_Source.zip",
+  "baseline_sha256": "5cfdf21d1ff4c58d75eacbaed9e726b05b8b2ae8a912d5bf2d141a0e17c96ae3",
+  "blockers": [
+    "FirstRNGboundary timer matches recorded9336; missing low-numberedfamily80 dispatch800172F4 via scratch1F800064 table8011A604 subtype2consumer80116E68 allocateschildren and RNG. Firstposition is inferred within1 of reference; exactrawvalue unknown; first-boundarylogging stillneeded. Strictreceiptguard retained.",
+    "Global player firing caller/pose/muzzle/selector ownership, source projectile update and full enemy hit/HP/reaction/defeat are incomplete.",
+    "Full EBD trigger/message/transition/unload/load/natural tutorial progression remain incomplete.",
+    "Normal player physics, complete camera/HUD/material/audio/save parity and physical Old 3DS testing remain unverified."
+  ],
+  "branch": null,
+  "commit": null,
+  "compiled_source_hashes_match": true,
+  "created_utc": "2026-10-13T20:25:20.844708+00:00",
+  "current_emulator_validation": "Azahar2126.0 Old-model: native traces reach all13actorstates and20requests; no131effects before strictRNGpoolhold. No01436screenshots/inputacceptance because capture service reportslocked. Physicalhardware untested.",
+  "emulator": {
+    "captures": [],
+    "hardware_tested": false,
+    "observation": "docs/validation_01436/emulator-observation.json",
+    "status": "SOURCE_BACKED_PARTIAL"
+  },
+  "evidence": [
+    "docs/research_01436/WORLD_COMES_ALIVE_01436.md",
+    "docs/validation_01436/build-result.json",
+    "docs/validation_01436/compiled-source-verification.json"
+  ],
+  "git_repository": false,
+  "hardware_tested": false,
+  "host_tests": "131/131 PASS; 4.82 seconds",
+  "native_binary": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_01436_WorldComesAlive.3dsx",
+  "native_binary_bytes": 827580,
+  "native_binary_sha256": "da9d074346a4e97c0d2105eb254b86b49481450953a1153d1268bdc5713b9b3d",
+  "native_build": "PASS",
+  "project_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/Legends3DS_0.0.14.36_WorldComesAlive",
+  "sd_layout": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261013-worldalive-01436/native-r1/sd_out",
+  "source_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.36_Source.zip",
+  "source_release_excludes_retail_payloads": true,
+  "source_snapshot_files": 269,
+  "title": "World Comes Alive \u2014 original scene actor states and owned Buster producer",
+  "toolchain": "Freshly checked devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hard float",
+  "usage_reset_used": false,
+  "version": "0.0.14.36",
+  "world_comes_alive_finished": false
+}

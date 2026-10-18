@@ -1,0 +1,34 @@
+{
+  "steps": [
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "work/pass-20261002-visibility/host-current",
+        "--parallel",
+        "4",
+        "--target",
+        "test_core",
+        "test_material_vram",
+        "l3cook_material_cache",
+        "l3cook_player_material_cache"
+      ],
+      "returncode": 0,
+      "seconds": 5.654,
+      "log": "work/pass-20261002-visibility/research/palette-bank-focused-0.log"
+    },
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "work/pass-20261002-visibility/host-current",
+        "--output-on-failure",
+        "-R",
+        "^(core|material_vram)$"
+      ],
+      "returncode": 0,
+      "seconds": 0.034,
+      "log": "work/pass-20261002-visibility/research/palette-bank-focused-1.log"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "build": "0.0.14.22",
+  "emulator": "Azahar2126.0",
+  "binary_sha256": "03e468efc42f55eb1e31248b05072638a541f4224277b4044148df6a13816abe",
+  "profile": {
+    "emulator": "Azahar2126.0",
+    "old_model": true,
+    "cpu_clock_percentage": 100,
+    "resolution_factor": 1,
+    "actor_state_fields": true,
+    "input_replay": "work/pass-20261004-worldalive/replays/worldalive-ground-jump-01415.ctm",
+    "hardware_tested": false,
+    "retail_parity": false,
+    "build": "0.0.14.22",
+    "binary_revision": "r5",
+    "actor_rng_candidate": true,
+    "source_event_boot": false
+  },
+  "csv_path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01422/native-observation-r5/hardware_01422_4000086010072.csv",
+  "csv_sha256": "41f156db65d44eb4ea9bd85c4444ffcfa59fa64a4f8a8118aac59e4a23ebec4d",
+  "samples": 47,
+  "last_sample": {
+    "frame": 600,
+    "area": 1,
+    "draw_calls": 18,
+    "triangles": 2184,
+    "owned_linear": 71640,
+    "owned_texture": 4194304,
+    "malloc_live": 1937440,
+    "linear_free": 27412992,
+    "vram_free": 5523456,
+    "update_us": 3,
+    "render_us": 15441,
+    "frame_before_log_us": 15473
+  },
+  "sampled_maxima": {
+    "draw_calls": 18,
+    "triangles": 2184,
+    "owned_linear": 71640,
+    "owned_texture": 4194304,
+    "malloc_live": 1937440,
+    "linear_free": 28735744,
+    "vram_free": 5523456,
+    "update_us": 640,
+    "render_us": 16678,
+    "frame_before_log_us": 2280021
+  },
+  "rng_candidate_records": [
+    "# actor_rng_candidate,frame=540,update=540,slot=0,ordinal=40,seed_before=2539649755,seed_after=1387182456,sample=21166,committed=1,body=0,retail_parity=false",
+    "# actor_rng_candidate,frame=540,update=540,slot=1,ordinal=41,seed_before=1387182456,seed_after=1538766929,sample=23479,committed=1,body=0,retail_parity=false",
+    "# actor_rng_candidate,frame=540,update=540,slot=2,ordinal=42,seed_before=1538766929,seed_after=654858422,sample=9992,committed=1,body=0,retail_parity=false",
+    "# actor_rng_candidate,frame=600,update=600,slot=0,ordinal=220,seed_before=2379211783,seed_after=3714607412,sample=23912,committed=1,body=0,retail_parity=false",
+    "# actor_rng_candidate,frame=600,update=600,slot=1,ordinal=221,seed_before=3714607412,seed_after=2814038877,sample=10170,committed=1,body=0,retail_parity=false",
+    "# actor_rng_candidate,frame=600,update=600,slot=2,ordinal=222,seed_before=2814038877,seed_after=1843430610,sample=28128,committed=1,body=0,retail_parity=false"
+  ],
+  "child_records": [],
+  "event_records": [
+    "# source_event,frame=1,area=0,status=1,committed=0,event=0,phase=0,consumer=00000000"
+  ],
+  "actor_state_records": [
+    "# actor_state1,frame=600,source_index=16,initialized=1,status=0,action=2,phase=1,timer32c=-1,flags328=14,request=1,pose_request=1,pose_record=42,hp_known=1,bank_requests=8,full_callback=false,retail_parity=false",
+    "# actor_source_context,frame=600,source_index=16,detector_status=0,preparation_status=0,detector_phase=1,detector_countdown=29,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=2,last_audio_queued=0,last_audio_drops=0,audio_playback=false",
+    "# actor_state1,frame=600,source_index=17,initialized=1,status=0,action=0,phase=2,timer32c=29,flags328=46,request=0,pose_request=0,pose_record=2,hp_known=1,bank_requests=8,full_callback=false,retail_parity=false",
+    "# actor_source_context,frame=600,source_index=17,detector_status=0,preparation_status=0,detector_phase=1,detector_countdown=27,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=2,last_audio_queued=0,last_audio_drops=0,audio_playback=false",
+    "# actor_state1,frame=600,source_index=18,initialized=1,status=0,action=0,phase=2,timer32c=29,flags328=46,request=0,pose_request=0,pose_record=2,hp_known=1,bank_requests=8,full_callback=false,retail_parity=false",
+    "# actor_source_context,frame=600,source_index=18,detector_status=0,preparation_status=0,detector_phase=1,detector_countdown=29,hp=64,combat_A_known=1,stats_selector=1,scratch75=2,audio_count=2,last_audio_queued=0,last_audio_drops=0,audio_playback=false"
+  ],
+  "global_child_owner_bss_bytes": 23940,
+  "global_rng_service_bytes": 1280,
+  "physical_hardware_tested": false,
+  "retail_parity": false,
+  "limitation": "Sparse emulator timings include synchronization and host scheduling. Replay ends at native frame600; paused/repeated frame600 samples cannot establish hardware FPS. No child allocated during this replay; source event boot gate OFF, so its phase1 path is exercised by host differential/integration tests only. Imported actor overlap/camera clipping visible."
+}

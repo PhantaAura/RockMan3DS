@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "source": "owner-supplied unchanged executable and ST00 overlay, private input excluded",
+  "fresh_wrapper_cases": 12,
+  "later_consecutive_wrapper_cases": 7,
+  "checked_fields": [
+    "work+0x98 sequence pointer",
+    "work+0xA4 sequence word",
+    "integer heading matrix",
+    "18 part positions and integer matrices"
+  ],
+  "hot_allocations": 0,
+  "original_full_wrapper_parity": false,
+  "retail_frame_chronology_verified": false,
+  "hardware_tested": false
+}

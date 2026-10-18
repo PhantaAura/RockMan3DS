@@ -1,0 +1,5 @@
+
+#include "mml_loader_guard_v2.h"
+#include <string.h>
+void mml_loader_begin(MMLLoaderGuard*g,uint32_t b,uint32_t s){if(g){memset(g,0,sizeof(*g));g->phase=MML_LOAD_PREPARE;g->expected_bytes=b;g->expected_sections=s;}}
+bool mml_loader_advance(MMLLoaderGuard*g,MMLLoadPhase n){if(!g||g->phase==MML_LOAD_FAILED||n!=(MMLLoadPhase)(g->phase+1)||n>MML_LOAD_DONE)return false;g->phase=n;return true;}bool mml_loader_add_bytes(MMLLoaderGuard*g,uint32_t n){if(!g||g->phase!=MML_LOAD_READ||n>g->expected_bytes-g->read_bytes)return false;g->read_bytes+=n;return true;}bool mml_loader_decoded(MMLLoaderGuard*g){if(!g||g->phase!=MML_LOAD_DECODE||g->decoded_sections>=g->expected_sections)return false;g->decoded_sections++;return true;}bool mml_loader_commit(MMLLoaderGuard*g){if(!g||g->phase!=MML_LOAD_COMMIT||g->read_bytes!=g->expected_bytes||g->decoded_sections!=g->expected_sections)return false;g->committed=true;g->phase=MML_LOAD_DONE;return true;}void mml_loader_fail(MMLLoaderGuard*g,uint32_t e){if(g){g->phase=MML_LOAD_FAILED;g->error=e;g->committed=false;}}

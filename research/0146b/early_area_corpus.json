@@ -1,0 +1,91 @@
+{
+  "status": "SOURCE_BACKED_PARTIAL",
+  "scope": "five known tutorial states with differing resource layouts; no broader early-game ordering inferred",
+  "areas": [
+    {
+      "label": "EARLY_AREA_A",
+      "source_sha256": "11016acb5b13a0699b22e9e4ca9066fe58b4be80d053860bc68454316768a92d",
+      "stats": {
+        "ebd_resources": 1,
+        "geometry_sections": 0,
+        "message_resources": 1,
+        "object_lists": 0,
+        "object_records": 0,
+        "object_tables": 0,
+        "palette_upload_resources": 2,
+        "resources": 5,
+        "texture_upload_resources": 1
+      },
+      "geometry_binding": "Inherited tutorial uses common base; generalized package leaves binding unknown",
+      "unresolved_terrain_primitives": 824
+    },
+    {
+      "label": "EARLY_AREA_B",
+      "source_sha256": "f7283379a49d028623fd129f938c6a318e3c1338a62d4d9b585198748fd24779",
+      "stats": {
+        "ebd_resources": 1,
+        "geometry_sections": 0,
+        "message_resources": 1,
+        "object_lists": 0,
+        "object_records": 0,
+        "object_tables": 0,
+        "palette_upload_resources": 4,
+        "resources": 10,
+        "texture_upload_resources": 4
+      },
+      "geometry_binding": "Inherited tutorial uses common base; generalized package leaves binding unknown",
+      "unresolved_terrain_primitives": 360
+    },
+    {
+      "label": "EARLY_AREA_C",
+      "source_sha256": "1fb567b6f86c1654ca9ae153ceba9e62b4501794d607b1844086591772774421",
+      "stats": {
+        "ebd_resources": 1,
+        "geometry_sections": 0,
+        "message_resources": 1,
+        "object_lists": 0,
+        "object_records": 0,
+        "object_tables": 0,
+        "palette_upload_resources": 5,
+        "resources": 11,
+        "texture_upload_resources": 4
+      },
+      "geometry_binding": "Inherited tutorial uses common base; generalized package leaves binding unknown",
+      "unresolved_terrain_primitives": 0
+    },
+    {
+      "label": "EARLY_AREA_D",
+      "source_sha256": "02c7bb8bb9f2dae67e10370cee23fdf748c17d741d121b479e61236aa7e36fa8",
+      "stats": {
+        "ebd_resources": 1,
+        "geometry_sections": 0,
+        "message_resources": 1,
+        "object_lists": 0,
+        "object_records": 0,
+        "object_tables": 0,
+        "palette_upload_resources": 4,
+        "resources": 8,
+        "texture_upload_resources": 2
+      },
+      "geometry_binding": "Inherited tutorial uses common base; generalized package leaves binding unknown",
+      "unresolved_terrain_primitives": 0
+    },
+    {
+      "label": "EARLY_AREA_E",
+      "source_sha256": "da52dca72a566a6a1ad10e3925c341c89dafe79cc6c384487f60caaebb9bea20",
+      "stats": {
+        "ebd_resources": 1,
+        "geometry_sections": 0,
+        "message_resources": 1,
+        "object_lists": 0,
+        "object_records": 0,
+        "object_tables": 0,
+        "palette_upload_resources": 2,
+        "resources": 11,
+        "texture_upload_resources": 7
+      },
+      "geometry_binding": "Inherited tutorial uses common base; generalized package leaves binding unknown",
+      "unresolved_terrain_primitives": 0
+    }
+  ]
+}

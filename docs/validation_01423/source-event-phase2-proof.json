@@ -1,0 +1,82 @@
+{
+  "schema": "mml-source-event-phase2/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "overlay_sha256": "9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c",
+  "cases": 128,
+  "initializer_cases": 16,
+  "sound_calls": 320,
+  "voice_stops": 1020,
+  "current_write_alias_cases": 32,
+  "original_instructions_executed": 202032,
+  "accepted_cases_helper_hooks": [],
+  "fixture_sha256": "faeee33640344704135ff2f96f3421f46c4508d68b38336f4a27c35f4bc7e7d4",
+  "boot_regions": [
+    {
+      "address": "0x80098af8",
+      "bytes": 32,
+      "all_zero": true,
+      "sha256": "66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925",
+      "scope": "cold executable LOAD only; source resets retain unmodified fields"
+    },
+    {
+      "address": "0x800a3a40",
+      "bytes": 256,
+      "all_zero": true,
+      "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+      "scope": "cold executable LOAD only; source resets retain unmodified fields"
+    }
+  ],
+  "regions": [
+    {
+      "start": "0x8001b33c",
+      "end_exclusive": "0x8001b3e4",
+      "sha256": "60f15a146f8563c943c47c4f51d740545dfcfd02933e7f3c98d0391573644afd"
+    },
+    {
+      "start": "0x80070114",
+      "end_exclusive": "0x80070168",
+      "sha256": "7a149407361d3eb9e76aafa02e13b7bb8fe08b6ff275f3635639f19447fac2ae"
+    },
+    {
+      "start": "0x8006ff90",
+      "end_exclusive": "0x80070114",
+      "sha256": "eb3174765e9e4f8aa9a136726c46041c9f73be8415c6457d8668978156e98760"
+    },
+    {
+      "start": "0x80075314",
+      "end_exclusive": "0x800753b0",
+      "sha256": "c69de35faf918be1683172b5281132327dd5f18b031a2151fe9d2fc00a01c309"
+    },
+    {
+      "start": "0x800725bc",
+      "end_exclusive": "0x800725cc",
+      "sha256": "f63b17bff9372595d76aa5f962630905d9b52156b626b24657313c0e7fe4d80c"
+    },
+    {
+      "start": "0x8001d58c",
+      "end_exclusive": "0x8001d648",
+      "sha256": "64dc149919e496831fbfa37578e27fbb2d54e077bf0683466258e22f8b11b9b9"
+    },
+    {
+      "start": "0x80019f0c",
+      "end_exclusive": "0x80019f40",
+      "sha256": "e24f3c2890cf4a7200982813487c959edf533cc1229eacc1451a13d20a535d8c"
+    },
+    {
+      "start": "0x8001b44c",
+      "end_exclusive": "0x8001b4b4",
+      "sha256": "675e36099e5599caac266ff8a86edcd575a23128053b80a41ff9d41acbe0e6d3"
+    }
+  ],
+  "limits": [
+    "Authored descriptor/sequence/voice/table/queue inputs; no live retail state or chronology claim.",
+    "Source masks and retained byte changes only; no SPU/sample/audio timing claim.",
+    "Type4 dispatch8001B89C still requires CD/control callbacks; no completionbit20 writer admitted.",
+    "Native queue reserves a source type0 sentinel; overflow/missing owners hold atomically.",
+    "No original code/table/assets/saves/sample bytes exported."
+  ],
+  "retail_parity": false,
+  "PHYSICS_1TO1": false,
+  "hardware_tested": false
+}

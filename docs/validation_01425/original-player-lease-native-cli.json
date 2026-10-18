@@ -1,0 +1,60 @@
+{
+  "schema": "mml-inherited-comparator-cli-receipt/1",
+  "status": "MATCHES_MEASURED_FIELDS",
+  "completed_pairs": 4094,
+  "normal_budget_complete": true,
+  "whole_trace_accepted": true,
+  "checker_invoked": true,
+  "checker_returncode": 0,
+  "reference_sha256": "212856228d63306f280feb87b87d3026e0fc3a59edde367d08407b08b3f9e22e",
+  "inherited_comparator_sha256": "cb6ae2dbb93df5e2f1deb4184b6a220bf6533ee3b48392d913b202c70026b002",
+  "checker_sha256": "12edb12a28db8618227129c092127f5ad5d3eb2d7cd2cd2c3272b2260941af1f",
+  "normalized_fixture_sha256": "d3d6eb9fc58db8c43c1149afe9a097fb956cfae26d16763acc4c880be23dc4f2",
+  "native_result": {
+    "schema": "mml-source-player-lease-native-comparison/1",
+    "cases": 4094,
+    "matched": 4094,
+    "held": 0,
+    "projections": 0,
+    "retail_parity": false,
+    "status": "MATCHES_MEASURED_FIELDS"
+  },
+  "native_stdout_sha256": "7c415a8dda8762dce47cff12d4dca4e91530f720bd5527e9df8525e9d1669b54",
+  "native_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "comparator_stdout_sha256": "80be732d3203a780d9779b84e2f19e77cc052b92e8838aef0e664b5a70ad6504",
+  "comparator_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "comparator_returncode": 0,
+  "exact_private_argv_receipt_sha256": "7e88a36f1a3ee51c84e7cffdf5af23e7e808ca5ae778d0896780ed6044a478ae",
+  "exact_private_argv_receipt_retained_outside_evidence": true,
+  "comparator_argv_roles": [
+    "python3",
+    "INHERITED_COMPARATOR",
+    "--reference",
+    "FROZEN_R2_CAPTURE",
+    "--native-checker",
+    "EXISTING_NATIVE_CHECKER",
+    "--out",
+    "PRIVATE_NEW_TEMPORARY_OUTPUT"
+  ],
+  "native_checker_argv_roles": [
+    "EXISTING_NATIVE_CHECKER",
+    "--reference",
+    "PRIVATE_TRANSIENT_NORMALIZED_FIXTURE"
+  ],
+  "normalized_fixture_retained": false,
+  "original_private_paths_exported": false,
+  "raw_scalar_fixture_exported": false,
+  "guest_memory_modified": false,
+  "guest_registers_modified": false,
+  "pad_input_modified": false,
+  "retail_parity": false,
+  "hardware_parity_status": "UNKNOWN",
+  "native_camera_status": "UNKNOWN",
+  "camera_writer_chronology_status": "UNKNOWN",
+  "selected_owner_chronology_status": "UNKNOWN",
+  "limits": [
+    "Inherited comparator CLI was executed unchanged against the existing checker; exact argv are retained privately outside the metadata evidence directory and identified by hash only.",
+    "Raw32+32bank snapshots are compared without return normalization; CP2D15 backing is preserved. No selected owners/projections exist in this trace.",
+    "The private normalized scalar fixture and original comparator temporary output are removed before result delivery."
+  ]
+}

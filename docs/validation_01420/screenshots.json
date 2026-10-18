@@ -1,0 +1,45 @@
+{
+  "captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/azahar-01420-r2/captures/Azahar2126_OldModel_01420_r2_area1_continued.png",
+      "sha256": "056473272f0a234aac9088f04a749d85d822c5009899f72e1e04ae2d9daa0c80",
+      "emulator": "Azahar2126.0",
+      "model": "Old3DS emulated",
+      "build": "0.0.14.20-r2",
+      "binary_sha256": "1a95de3b4b32af67f31a31fe81e79a675e41e0ca9bd4b42f13a94d9d9955839a",
+      "scene": "Area1 gameplay after Continue; terrain obstructs player; bottom companion visible.",
+      "hardware": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/azahar-01420-r2/captures/Azahar2126_OldModel_01420_r2_area1_replay_end_obstructed.png",
+      "sha256": "ea83e8a600471b2379ba3fce31d36cc6fd0e8900a21eeb094b159bf97610e04c",
+      "emulator": "Azahar2126.0",
+      "model": "Old3DS emulated",
+      "build": "0.0.14.20-r2",
+      "binary_sha256": "1a95de3b4b32af67f31a31fe81e79a675e41e0ca9bd4b42f13a94d9d9955839a",
+      "scene": "Initial paused capture after prior test processes closed; black capture preserved as failed attempt.",
+      "hardware": false
+    },
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/azahar-01420-r2/captures/Azahar2126_OldModel_01420_r2_area2_diagnostic.png",
+      "sha256": "fbd9845c374aad3edeac19cb4db8ed6b4f4585819f699c84af5323826e12bda3",
+      "emulator": "Azahar2126.0",
+      "model": "Old3DS emulated",
+      "build": "0.0.14.20-r2",
+      "binary_sha256": "1a95de3b4b32af67f31a31fe81e79a675e41e0ca9bd4b42f13a94d9d9955839a",
+      "scene": "Actual Area1; attempted SELECT short key was not accepted. Filename incorrectly says area2; no area2 claim.",
+      "hardware": false
+    }
+  ],
+  "physical_hardware_tested": false,
+  "original_reference_captures": [
+    {
+      "path": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261007-worldalive-01420/ps1-reference-r2/PCSXRedux_reference_tutorial_gameplay_01420.png",
+      "sha256": "88354e44a9ccd76e1cea9754cbefa1886b59e46ca97e38c67e6dd96d14b2a79a",
+      "emulator": "PCSX-Redux Reference",
+      "scene": "Original tutorial corridor gameplay, player and originalHUD visible",
+      "native_3ds_evidence": false,
+      "hardware": false
+    }
+  ]
+}

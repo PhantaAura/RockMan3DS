@@ -1,0 +1,64 @@
+{
+  "checkpoint": "0.0.12",
+  "name": "Flight Sprint / First 3DS Hardware Probe Source",
+  "host_release_build": "PASS",
+  "warnings_as_errors": true,
+  "ctest": {"passed": 1, "failed": 0},
+  "tutorial_cook": {"files": 91, "owner_side_only": true},
+  "player_runtime_probe": {
+    "components": 5,
+    "attachments": 18,
+    "visual_primitives": 316,
+    "triangles": 116,
+    "quads": 200,
+    "animation_slots": 64,
+    "selected_probe_action": 1,
+    "selected_probe_action_frames": 31,
+    "posed_vertex_references": 1148,
+    "result": "PASS"
+  },
+  "runtime_session_probe": {
+    "areas": 5,
+    "mapped": 5,
+    "moved": 5,
+    "ui_commands": 65,
+    "dialogue_audio_requests": 1,
+    "save_area": 4,
+    "save_bytes": 322,
+    "result": "PASS"
+  },
+  "flight_render_probe": {
+    "areas": 5,
+    "positive_cells": 2892,
+    "mid_lod_primitives": 15512,
+    "triangle_vertices_after_quad_triangulation": 93072,
+    "result": "PASS"
+  },
+  "new_exact_bridges": [
+    "ROCK_NEO 0x8004B1E0 four-cell contact candidate gather core behavior",
+    "ROCK_NEO 0x8004BC2C..0x8004BD90 collision no-contact result tail"
+  ],
+  "new_runtime_bridges": [
+    "L3MD runtime loader",
+    "L3PC runtime loader",
+    "L3AN runtime loader",
+    "L3SK runtime loader",
+    "ST00 runtime render expansion probe",
+    "libctru/Citro3D hardware-probe source",
+    "owner-side SD layout assembler",
+    "flight batch QA runner"
+  ],
+  "source_archive_game_assets": 0,
+  "source_archive_cooked_game_assets": 0,
+  "real_3ds_compile": "NOT RUN - devkitARM/libctru/Citro3D unavailable in validation container",
+  "not_claimed": [
+    "complete ROCK_NEO 0x8004B6AC geometry/contact response loop",
+    "complete player grounding/action-state machine",
+    "exact Buster/lock-on ownership",
+    "per-frame tutorial EBD/enemy behavior",
+    "cutscene/event choreography",
+    "AUDIO-to-XA routing/decoding/playback",
+    "tutorial-complete 0.1",
+    "compiled 3DSX"
+  ]
+}

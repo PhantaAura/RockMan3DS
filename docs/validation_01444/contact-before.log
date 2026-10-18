@@ -1,0 +1,1 @@
+Assertion failed: (s.player_position().x==-32&&s.player_position().y==-8), function floor_adhesion_precedes_geometry_response, file test_runtime_contact.cpp, line 78.
