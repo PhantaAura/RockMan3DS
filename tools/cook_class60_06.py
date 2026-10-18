@@ -12,6 +12,9 @@ def cook(overlay):
     payload=overlay[0x1c81c:0x1c834]+overlay[0x1c834:0x1c84c]
     if len(payload)!=48: raise ValueError('Truncated source UV table')
     return struct.pack('<4sHH6I32s',b'L3C6',1,64,1,0,6,112,zlib.crc32(payload),8,bytes.fromhex(OVERLAY_SHA))+payload
+def cook_from_dat(dat):
+    overlay=next(r['payload'] for r in iter_resources(Path(dat)/'ST00.BIN') if r['load']==0x80100000 and 'PROGBIN' in r['internal'].upper())
+    return cook(overlay)
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--dat',type=Path,required=True);p.add_argument('--out',type=Path,required=True)

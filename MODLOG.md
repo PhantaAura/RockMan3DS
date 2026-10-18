@@ -84,3 +84,11 @@ proxy cleanup, and one bounded reward handoff; later ticks cannot duplicate the
 transaction. Exact subtype-`0x87` RNG expansion and pickup collection remain
 held. Host 144/144, owner-local package/replay validation and ARMv6K build pass;
 physical 0.0.14.51 validation is pending.
+
+## 0.0.15.0 (M1)
+
+Source-backed combat becomes the default on the enhanced renderer (gate profile,
+single combat owner, fire admission, diagnostic Buster ribbon) and the
+one-command tutorial pack gains the exact combat sidecars. Git introduced.
+Host 145/145, sanitizer subset and native type-check pass in the cloud session;
+devkitARM link and Azahar test pending on the Mac.

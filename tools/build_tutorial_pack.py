@@ -15,6 +15,10 @@ from cook_source_event_phase5 import cook as cook_source_event_phase5
 from cook_source_event_phase6 import cook as cook_source_event_phase6
 from source_player_head import select_fresh_player_head
 from cook_source_scene_view import cook as cook_source_scene_view
+from cook_hit_proxy import build_metadata as cook_hit_proxy_rules
+from cook_class60_06 import cook_from_dat as cook_class60_06
+from cook_reaction_profile import cook as cook_reaction_profile
+from cook_actor_angle import cook as cook_actor_angle
 
 SECTOR=0x800
 SOURCE_ROOT=Path(__file__).resolve().parents[1]
@@ -126,6 +130,32 @@ def _write_actor_source_metadata(rock_neo:Path,runtime:Path,out:Path,manifest:di
     for name,data in packages.items():
         with (runtime/name).open('xb') as file: file.write(data)
     manifest['actor_source_metadata']=provenance
+
+def _write_combat_sidecars(rock_neo:Path,dat:Path,runtime:Path,out:Path,manifest:dict)->None:
+    """0.0.15.0 M1: deterministic EXE/ST00-overlay combat sidecars.
+
+    Before 0.0.15.0 these exact profiles were cooked only into private
+    research packs, so the one-command SD could not complete the source
+    Buster->hit->reaction->defeat chain. Each cooker validates the supported
+    owner EXE/overlay identity and embeds no retail values in source.
+    The trace-observed RNG profile (source_rng.l3rg) is NOT cooked here.
+    """
+    image=Path(rock_neo).read_bytes()
+    packages={
+        'hit_proxy_rules.l3pr':cook_hit_proxy_rules(image),
+        'class60_06.l3c6':cook_class60_06(dat),
+        'actor_reactions.l3r7':cook_reaction_profile(image,dat),
+        'actor_angle.l3ref':cook_actor_angle(image),
+    }
+    if any((runtime/name).exists() for name in packages):
+        raise ValueError('combat sidecar output already exists; choose fresh pack staging')
+    for name,data in packages.items():
+        with (runtime/name).open('xb') as file: file.write(data)
+    manifest['combat_sidecars']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+        'default_enabled':True,'runtime_gate':'SOURCE_ACTOR_PROXY (0.0.15.0 default ON)',
+        'outputs':{name:{'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),
+            'path':str((runtime/name).relative_to(out))} for name,data in packages.items()},
+        'not_cooked':['source_rng.l3rg requires an observed PCSX-Redux trace; copy the private profile separately']}
 
 def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
                with_indexed:bool=False,with_material_cache:bool=False)->Path:
@@ -244,6 +274,7 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         run(tools,'l3cook_skeleton',player/'PL00M00M.PBD',hex(load(r'..\PLBIN\PL00M00M.PBD')),pout/'main.l3skel')
         subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_buster_profile.py')),
                         '--exe',str(rock_neo),'--out',str(pout/'buster.l3bp')],check=True)
+        _write_combat_sidecars(rock_neo,dat,runtime,out,manifest)
         manifest['source_buster_profile']={'format':'L3BP/1','status':'SOURCE_BACKED_PARTIAL',
             'selection_count':16,'fresh_lane_initialization':'0x80037534',
             'limits':['weapon selection changes','alternate limb pose bank','projectile callback']}

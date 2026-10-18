@@ -154,6 +154,10 @@ class TutorialOutputTests(unittest.TestCase):
              patch.object(cooker,'cook_source_event_phase5',return_value=(b'authored scene profile',{'retail_parity':False})), \
              patch.object(cooker,'cook_source_event_phase6',return_value=(b'authored camera timeline profile',{'retail_parity':False})), \
              patch.object(cooker,'cook_source_scene_view',return_value=b'authored view profile'), \
+             patch.object(cooker,'cook_hit_proxy_rules',return_value=b'authored proxy rules'), \
+             patch.object(cooker,'cook_class60_06',return_value=b'authored child profile'), \
+             patch.object(cooker,'cook_reaction_profile',return_value=b'authored reaction profile'), \
+             patch.object(cooker,'cook_actor_angle',return_value=b'authored angle profile'), \
              patch.object(cooker,'select_fresh_player_head',return_value={
                  'container':'HEAD01.BIN','resource':'PL00H01P.PBD','internal':r'..\PLBIN\PL00H01P.PBD',
                  'provenance':{'fresh_only':True}}):
@@ -190,6 +194,12 @@ class TutorialOutputTests(unittest.TestCase):
             self.assertEqual(record['sha256'],cooker.sha256(self.out/record['path']))
         self.assertFalse(manifest['actor_materials']['default_enabled'])
         self.assertTrue(manifest['player_head_selection']['provenance']['fresh_only'])
+        combat=manifest['combat_sidecars']
+        self.assertTrue(combat['default_enabled'])
+        for name in ('hit_proxy_rules.l3pr','class60_06.l3c6','actor_reactions.l3r7','actor_angle.l3ref'):
+            self.assertIn('legends3ds/tutorial/'+name,{r['path'] for r in manifest['outputs']})
+            self.assertEqual(combat['outputs'][name]['sha256'],cooker.sha256(self.out/combat['outputs'][name]['path']))
+        self.assertNotIn('legends3ds/tutorial/source_rng.l3rg',{r['path'] for r in manifest['outputs']})
         self.assertIn('legends3ds/tutorial/source_fade.l3fd',{r['path'] for r in manifest['outputs']})
         self.assertIn('legends3ds/tutorial/source_event_phase5.l3p5',{r['path'] for r in manifest['outputs']})
         for call in calls:

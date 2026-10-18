@@ -1,3 +1,13 @@
+# Mega Man Legends 3DS — 0.0.15.0 (M1: default combat)
+
+The source-backed Buster → hit → reaction → defeat path is now the default
+gameplay path on the enhanced renderer; the old candidate projectile is retired
+there. Build on the Mac with `tools/m1_mac_build.sh`; test with
+[docs/validation_01500/AZAHAR_TEST.md](docs/validation_01500/AZAHAR_TEST.md).
+Resume: [RESUME_01500.md](RESUME_01500.md). `PHYSICS_1TO1=false`.
+
+---
+
 # Mega Man Legends 3DS — 0.0.14.51
 
 Cumulative native Old 3DS/XL technical prototype. The imported class-20/03
