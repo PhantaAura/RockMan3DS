@@ -9,7 +9,7 @@
  },
  "BOOT": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "0.0.15.2 default boot (no SOURCE_EVENT_BOOT) starts at the original opening-scene handoff (overlay 0x80101274 immediates at 0x80101280/0x80101298: Area 1, (2822,-1,-4833), heading 0) instead of the diagnostic first-positive-cell spawn, which sat inside a solid Area 0 block. The opening scene itself is skipped in this mode. Current native build result is recorded in CURRENT_CHECKPOINT.json."
+  "evidence": "0.0.15.4 default boot (no SOURCE_EVENT_BOOT) spawns at the original opening-scene handoff (overlay 0x80101274: Area 1, (2822,-1,-4833), heading 0) on the enhanced terrain-XYZ renderer too; through 0.0.15.3 that renderer's inspection entry pre-empted the handoff and booted into Area 0. Azahar Old 3DS confirms BOOT_SPAWN=SOURCE_HANDOFF_80101274 and area 1 at the handoff. The opening scene itself is skipped in this mode."
  },
  "BOTTOM SCREEN": {
   "evidence": "User physical 01442 evidence shows map/status UI. Historical 01443 Azahar captures include intermittent partial bottom-screen presentation. The issue remains unresolved; no UI parity or physical 01444 acceptance is claimed.",

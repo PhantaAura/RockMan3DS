@@ -1995,21 +1995,26 @@ int main() {
         g_current_area=next_diagnostic_area(map,render,0);
         auto spawn=first_positive_cell_center(map,g_current_area);
         uint16_t inspection_yaw=0;
-        if (terrain_xyz_active()) { const auto entry=inspection_entry(map,render,g_current_area); spawn={entry.origin.x,entry.origin.y,entry.origin.z}; inspection_yaw=entry.yaw; }
-        else if(!g_source_event_boot) {
-            // 0.0.15.0 M2: without the source opening scene, begin where the
-            // original first gives Mega Man to the player (0x80101274 handoff:
-            // Area 1). The earlier first-positive-cell diagnostic spawn placed
-            // him inside a solid Area 0 block, which the contact solver could
-            // not resolve and which led to the reported map-edge escape.
+        // 0.0.15.0 M2: without the source opening scene, begin where the
+        // original first gives Mega Man to the player (0x80101274 handoff:
+        // Area 1). The earlier first-positive-cell diagnostic spawn placed
+        // him inside a solid Area 0 block, which the contact solver could
+        // not resolve and which led to the reported map-edge escape.
+        // 0.0.15.4: the handoff must precede the terrain-XYZ inspection entry.
+        // Through 0.0.15.3 it was an else-branch of that default-on renderer
+        // path, so the enhanced build never reached it and booted into the
+        // Area 0 inspection camera instead.
+        bool handoff_spawn=false;
+        if(!g_source_event_boot) {
             constexpr auto& handoff=l3::kSourceSt00OpeningHandoff;
             if(handoff.destination_area<map.areas.size()&&
                validate_area_vertex_budget(map,render,handoff.destination_area)) {
                 g_current_area=handoff.destination_area;
-                spawn={handoff.x,handoff.y,handoff.z};inspection_yaw=handoff.heading;
+                spawn={handoff.x,handoff.y,handoff.z};inspection_yaw=handoff.heading;handoff_spawn=true;
                 boot_log(MML_BOOT_DATA,"BOOT_SPAWN=SOURCE_HANDOFF_80101274 area1 opening_scene=SKIPPED");
             } else boot_log(MML_BOOT_DATA,"BOOT_SPAWN=DIAGNOSTIC handoff area unavailable");
         }
+        if (!handoff_spawn && terrain_xyz_active()) { const auto entry=inspection_entry(map,render,g_current_area); spawn={entry.origin.x,entry.origin.y,entry.origin.z}; inspection_yaw=entry.yaw; }
         load_diagnostic_spawn(map,render,g_current_area,spawn,inspection_yaw);
         if (g_current_area) session.transition_to_area(g_current_area,spawn,inspection_yaw);
         session.reset_player(spawn,inspection_yaw,100,100);

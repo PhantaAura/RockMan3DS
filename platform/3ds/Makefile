@@ -7,7 +7,7 @@ endif
 TOPDIR ?= $(CURDIR)
 include $(DEVKITARM)/3ds_rules
 
-TARGET      := Legends3DS_01503_WorldComesAlive
+TARGET      := Legends3DS_01504_WorldComesAlive
 BUILD       := build_3ds
 SOURCES     := source \
                ../../src/world ../../src/model ../../src/texture ../../src/render \
@@ -24,7 +24,7 @@ ASFLAGS     := -g $(ARCH)
 LDFLAGS     := -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map),--gc-sections
 LIBS        := -lcitro3d -lctru -lm
 LIBDIRS     := $(CTRULIB)
-APP_TITLE   := Legends3DS 0.0.15.3 Deep Overlap
+APP_TITLE   := Legends3DS 0.0.15.4 Area1 Boot
 APP_DESCRIPTION := Automatic top-screen diagnostics
 APP_AUTHOR  := Legends3DS Project
 

@@ -130,3 +130,11 @@ audit is unchanged at 0 unsupported, 0 escapes and 0 falls. Across Areas 1–4,
 now recover through `0x80050400` and 389,292 reach the original 9-pass rollback.
 4,072 (Area 2) still meet unported primitives. No PS1 trace comparison yet.
 `PHYSICS_1TO1=false`.
+
+## 0.0.15.4 (M2c — Area 1 boot)
+
+The default boot now checks the `0x80101274` Area 1 handoff before the
+terrain-XYZ inspection entry. Before this, that default-on renderer branch
+pre-empted the handoff, so 0.0.15.0–0.0.15.3 booted into the Area 0
+inspection camera. In Azahar's Old 3DS mode the build now spawns in Area 1 at
+(2822,-1,-4833). Host suite 147/147; the native build passes.

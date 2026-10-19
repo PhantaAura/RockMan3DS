@@ -1,4 +1,8 @@
-# Mega Man Legends 3DS — 0.0.15.3 (M2c deep-overlap recovery)
+# Mega Man Legends 3DS — 0.0.15.4 (M2c deep-overlap recovery + Area 1 boot)
+
+0.0.15.4: the enhanced build now boots at the original Area 1 handoff
+(2822,-1,-4833) instead of the Area 0 inspection camera; confirmed in Azahar.
+[Results](docs/validation_01504/RESULTS.md) · [Resume](RESUME_01504.md).
 
 Ports the original deep-overlap recovery `0x80050400` and the `0x8004B6AC`
 correction history. Both are verified against the original R3000 instructions

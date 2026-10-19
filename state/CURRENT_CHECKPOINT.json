@@ -1,6 +1,6 @@
 {
- "version": "0.0.15.3",
- "title": "M2c \u2014 original deep-overlap recovery 0x80050400 and 0x8004B6AC correction history",
+ "version": "0.0.15.4",
+ "title": "M2c boot \u2014 default enhanced build spawns at the 0x80101274 Area 1 handoff",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -13,16 +13,16 @@
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
- "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261019-101256-m2c-01503/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
- "native_binary_bytes": 926240,
- "native_binary_sha256": "ed6d4e621bb86126ea85386e90bc592c833a7a71a96a79c04d9c81920ae21f1d",
+ "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261019-102248-m2c-01504/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
+ "native_binary_bytes": 926216,
+ "native_binary_sha256": "f6c143d67bfca3b5cb49b8c0b9c36f9772b643950be1296a0d578c13880997e2",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "BOOT_ONLY: Azahar 2126.0 (Old 3DS model, new3ds=0, CPU 100%) booted 0.0.15.3, bound all data, synchronized the first 3D GPU submission and advanced to frame 1080 with no input. This build's boot took the terrain-inspection entry (Area 0), not the Area 1 handoff, so no gameplay collision was exercised in the emulator. See docs/validation_01503/RESULTS.md.",
- "emulator_evidence": "docs/validation_01503/RESULTS.md",
+ "current_emulator_validation": "BOOT_TO_AREA1: Azahar 2126.0 (Old 3DS model) boot_01504.log reports BOOT_SPAWN=SOURCE_HANDOFF_80101274; hardware trace frames 120-240 report area 1 at (2822,-1,-4833) heading 0, stationary without input. The start-up GPU test screen needs a button press. Interactive Area 1 collision play in Azahar is the user's own pending test.",
+ "emulator_evidence": "docs/validation_01504/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
@@ -30,7 +30,7 @@
  "world_comes_alive_finished": false,
  "usage_reset_used": false,
  "evidence": [
-  "RESUME_01503.md",
+  "RESUME_01504.md",
   "docs/research_01503/DEEP_OVERLAP_80050400.md",
   "src/player/player_contact_runtime.cpp",
   "tests/test_runtime_contact.cpp",
@@ -47,7 +47,7 @@
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.15.2",
-  "source_archive": "git main (M2b commit b14042f)"
+  "version": "0.0.15.3",
+  "source_archive": "git main (M2c commit 0230891)"
  }
 }
