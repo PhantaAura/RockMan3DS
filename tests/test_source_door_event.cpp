@@ -1,5 +1,8 @@
 // Player door event: 0x800514FC query, 0x80051970 gate, 0x80050C2C case 3
-// matching/request lanes, event-0 arrival 0x80048898 and the session commit.
+// matching/request lanes, event-0 arrival 0x80048898, the event-0 door
+// sequence (0x800485E4: 0x80042238, state 3 0x80041B8C, input 0x8003C07C,
+// walk 0x80048A9C, release 0x80042314, state 0 0x8003C7B0), the ST00 door
+// object 0x8011C928 states 0..5 and the session commit.
 // Synthetic map and aux data only; the values mirror the Area 1 door record.
 #include "legends3ds/runtime_session.h"
 #include "legends3ds/source_door_event.h"
@@ -32,6 +35,20 @@ RuntimeMap door_map(RuntimeMapIdx origin,uint16_t code=0x301,uint16_t flags=0x80
     m.contact_groups.push_back({-129,129,-129,129,1,1});
     m.contact_primitives.push_back({0,1024,3,0});
     m.contact_primitives.push_back({-33,33,code,flags});
+    return m;
+}
+// The same door on an 8x8 grid with a 4096-unit floor, so the forced walks
+// (about 30 frames at 32 units) stay on it. `door_pair` adds the closed/open
+// descriptor pair 0x61900/0x60900 that the ST00 door object swaps.
+RuntimeMap walk_map(bool door_pair){
+    RuntimeMap m=door_map({},0x301,0x8000,2);
+    for(auto& a:m.areas){a.start_x=60;a.start_z=60;a.width=8;a.height=8;a.cell_count=64;}
+    m.cells.assign(64,1);
+    m.contact_groups[0]={-2048,2048,-2048,2048,0,1};
+    if(door_pair){
+        m.descriptors[0].word0=0x61900;
+        RuntimeMapDescriptor open;open.word0=0x60900;open.default_contact_index=0;m.descriptors.push_back(open);
+    }
     return m;
 }
 L3PlayerCompatWork player_at(int16_t x,int16_t y,int16_t z,uint16_t heading){
@@ -200,33 +217,161 @@ void session_commit(){
     TutorialRuntimeArea a0;a0.area_index=0;a0.flow.aux.records.push_back(
         record({int16_t(0x8000),0,0,0x0100,0,0,0,2048,0,-1,100,2048}));
     L3QolSettings qol{};l3_qol_settings_defaults(&qol);
-    RuntimeSession s(door_map({},0x301,0x8000,2),a0,{},qol);s.set_reference_tables(refs());
+    RuntimeSession s(walk_map(false),a0,{},qol);s.set_reference_tables(refs());
     s.reset_player({0,-1,-100},0x800,100,100);
     RuntimeInputFrame idle{};s.tick(idle);
     assert(s.source_door_result().status==SourceDoorStatus::GateClosed&&!s.source_door_transition());
     // Story flag 0x200 suppresses the call entirely.
     s.set_story_flag(0x200,true);
     RuntimeInputFrame press{};press.held_psx_mask=0x2000;press.pressed_psx_mask=0x2000;
-    s.tick(press);assert(!s.source_door_transition());
+    s.tick(press);assert(!s.source_door_transition()&&!s.source_door_event0().active);
     s.set_story_flag(0x200,false);
     s.tick(idle);s.tick(press);
     assert(s.source_door_result().status==SourceDoorStatus::TransitionRequested);
-    assert(s.story_flag(0x7B0)&&s.source_door_transition()&&s.source_door_transition()->destination_area==1);
+    // Event 0 starts at once; the load is not offered before substate 6.
+    assert(s.story_flag(0x7B0)&&s.source_door_event0().active&&s.source_door_event0().phase==1);
+    assert(!s.source_door_transition()&&s.compat_player().bytes[0xBD]==0x40);
+    // This synthetic cell has no 0x1000 door pair: 0x7B1 opens nothing, so
+    // 0x7B2 never holds substates 2 and 5.
+    int frames=0;
+    while(!s.source_door_transition()&&frames<100){s.tick(press);++frames;}
+    const auto& e=s.source_door_event0();
+    assert(s.source_door_transition()&&e.substate==6&&e.status_356c==1&&e.counter==40);
+    assert(s.source_door_transition()->destination_area==1&&s.story_flag(0x7B0)&&!s.story_flag(0x7B1));
     // The destination must be registered before anything changes.
     assert(!s.can_commit_source_door_transition()&&!s.commit_source_door_transition()&&s.map_area_index()==0);
     TutorialRuntimeArea a1;a1.area_index=1;s.register_area(1,a1);
-    // A pending request is not re-evaluated.
-    s.tick(press);assert(s.source_door_transition()&&s.map_area_index()==0);
+    // Substate 6 keeps waiting; a pending request is not re-evaluated.
+    s.tick(press);assert(s.source_door_transition()&&s.map_area_index()==0&&e.counter==41);
     assert(s.can_commit_source_door_transition()&&s.commit_source_door_transition());
     const auto p=s.player_position();
     assert(s.map_area_index()==1&&p.x==0&&p.y==-2&&p.z==36&&s.player_yaw()==2048);
-    assert(!s.story_flag(0x7B0)&&s.story_flag(0x380)&&!s.source_door_transition());
+    assert(e.active&&e.substate==9&&e.status_356c==0&&e.counter==44&&!s.source_door_transition());
     const auto& w=s.compat_player();
-    assert(w.bytes[8]==1&&w.bytes[9]==0&&w.bytes[10]==0&&w.bytes[11]==0);
+    assert(w.bytes[8]==3&&w.bytes[9]==1);
     assert(get(w,0x2C)==0&&get(w,0x2E)==-2&&get(w,0x30)==36);
-    // The synthetic floor stands at y=0: one idle update lands the arrival.
-    s.tick(idle);
-    assert(s.player_position().y==0&&s.player_contact().grounded.value_or(false));
+    // Second walk until counter > 108, then phase 2 returns control.
+    frames=0;while(e.active&&frames<200){s.tick(idle);++frames;}
+    assert(!e.active&&e.counter==112);
+    assert(!s.story_flag(0x7B0)&&!s.story_flag(0x7B1)&&!s.story_flag(0x7B3)&&s.story_flag(0x380));
+    assert(w.bytes[8]==0&&w.bytes[0xBD]==8);
+    // Player state 0 (0x8003C7B0) then normal updates: +0xBD bit 8 clears.
+    s.tick(idle);assert(w.bytes[8]==1&&w.bytes[9]==0);
+    s.tick(idle);assert(w.bytes[0xBD]==0);
+    assert(s.player_position().z>36&&s.player_position().y==0&&s.player_contact().grounded.value_or(false));
+}
+
+void event0_player_routines(){
+    assert(source_event0_walk_limit_8008aa04(0)==108&&source_event0_walk_limit_8008aa04(19)==0x70&&
+           source_event0_walk_limit_8008aa04(1)==0&&source_event0_walk_limit_8008aa04(40)==0);
+    // 0x80042238.
+    auto w=player_at(0,-1,0,0);w.bytes[0]=1;put(w,0xB4,77);
+    auto r=source_player_event_ready_80042238(w,std::nullopt);
+    assert(r&&*r&&w.bytes[0x449]==0xFF&&w.bytes[0xBD]==0x40&&get(w,0xB4)==0);
+    w.bytes[0x174]=0x40;put(w,0xB4,77);r=source_player_event_ready_80042238(w,std::nullopt);
+    assert(r&&!*r&&get(w,0xB4)==77);
+    w.bytes[9]=0x0D;w.bytes[10]=0x02;r=source_player_event_ready_80042238(w,std::nullopt);
+    assert(r&&!*r&&w.bytes[10]==6);
+    w.bytes[9]=14;assert(!source_player_event_ready_80042238(w,std::nullopt));
+    r=source_player_event_ready_80042238(w,uint8_t(0));assert(r&&!*r);   // byte 0: mask path only
+    w.bytes[0x174]=0;r=source_player_event_ready_80042238(w,uint8_t(1));assert(r&&*r);
+    w.bytes[8]=3;w.bytes[9]=5;r=source_player_event_ready_80042238(w,std::nullopt);assert(r&&*r);
+    w.bytes[8]=2;r=source_player_event_ready_80042238(w,std::nullopt);assert(r&&!*r);
+    w.bytes[0]=0;r=source_player_event_ready_80042238(w,std::nullopt);assert(r&&*r);
+
+    // 0x80041B8C state 3: substate 1 -> 2 pins the pose to the targets.
+    auto p=player_at(5,-1,7,0x123);p.bytes[8]=3;p.bytes[9]=1;p.bytes[0xAC]=9;p.bytes[0xA4]=4;
+    put(p,0x438,-256);put(p,0x43A,-2);put(p,0x43C,6208);put(p,0x442,2048);p.bytes[0x448]=48;
+    for(size_t i=0;i<4;++i){p.bytes[0x428+i]=0x11;p.bytes[0x42C+i]=0x22;p.bytes[0x430+i]=0x33;}
+    source_player_state3_80041b8c(p);
+    assert(p.bytes[9]==2&&p.bytes[0xBD]==0x40&&p.bytes[0x104]==9&&p.bytes[0x100]==4);
+    assert(get(p,0x14)==-256&&get(p,0x16)==-2&&get(p,0x18)==6208&&get(p,0x56)==2048);
+    assert(get(p,0x2C)==5&&get(p,0x30)==7&&get(p,0x5E)==0x123&&p.bytes[0x1C]==0x11&&p.bytes[0x24]==0x33);
+    assert(p.bytes[0xAC]==48&&p.bytes[0x448]==0xFF);
+    source_player_state3_80041b8c(p);assert(get(p,0x2C)==-256&&p.bytes[9]==2);
+    p.bytes[9]=3;source_player_state3_80041b8c(p);
+    assert(p.bytes[8]==1&&p.bytes[9]==0&&p.bytes[0xBD]==8&&(p.bytes[0x175]&1));
+
+    // 0x8003C07C input selection.
+    auto in=player_at(0,0,0,0);put(in,0x11C,0x2010);put(in,0x11E,0x2000);
+    assert(!source_player_input_select_8003c07c(in,0x10)&&get(in,0x11C)==0x2010);
+    in.bytes[0xBD]=0x20;assert(source_player_input_select_8003c07c(in,0x10)&&get(in,0x11C)==0x10&&get(in,0x11E)==0);
+    in.bytes[0xBD]=0x60;put(in,0x11C,0x10);assert(source_player_input_select_8003c07c(in,0x10)&&get(in,0x11C)==0);
+
+    // 0x80048A9C: first walk until counter >= 37, second while counter <= +11.
+    SourceDoorEvent0 e;e.substate=3;auto wk=player_at(0,0,0,0);wk.bytes[0xBD]=8;e.counter=36;
+    source_event0_forced_walk_80048a9c(e,wk,0);
+    assert(e.walk_state==1&&e.walk_limit==108&&e.forced_pad==0x10&&wk.bytes[0xBD]==0x28&&e.substate==3);
+    e.counter=37;source_event0_forced_walk_80048a9c(e,wk,0);
+    assert(e.walk_state==2&&e.substate==4&&e.forced_pad==0&&wk.bytes[0xBD]==0x48);
+    e.substate=11;wk.bytes[0xBD]=0;e.counter=108;source_event0_forced_walk_80048a9c(e,wk,0);
+    assert(e.walk_state==3&&e.forced_pad==0x10&&wk.bytes[0xBD]==0x20&&e.substate==11);
+    e.counter=109;source_event0_forced_walk_80048a9c(e,wk,0);
+    assert(e.walk_state==4&&e.substate==12&&wk.bytes[0xBD]==0x40);
+    e.counter=1;source_event0_forced_walk_80048a9c(e,wk,0);assert(e.substate==12&&e.forced_pad==0);
+
+    // 0x80042314 and 0x8003C7B0.
+    auto rel=player_at(0,0,0,0);rel.bytes[0]=1;rel.bytes[8]=1;rel.bytes[0x449]=0xFF;rel.bytes[0x190]=4;
+    source_player_event_release_80042314(rel);
+    assert(rel.bytes[0]==3&&rel.bytes[6]==3&&rel.bytes[0xBD]==8&&rel.bytes[0x449]==0&&rel.bytes[0x190]==0);
+    rel.bytes[8]=3;rel.bytes[0xBD]=0;source_player_event_release_80042314(rel);
+    assert(rel.bytes[9]==3&&rel.bytes[0xBD]==0);
+    rel.bytes[8]=0;put(rel,0x44,90);rel.bytes[0xAC]=5;source_player_state0_8003c7b0(rel);
+    assert(get32(rel,8)==1&&get(rel,0x6C)==60&&get(rel,0x44)==0&&rel.bytes[0x175]==7&&rel.bytes[0xAC]==0);
+}
+
+void event0_door_object(){
+    auto m=walk_map(true);
+    assert(!source_door_object_init_801124b0(walk_map(false),1)&&!source_door_object_init_801124b0(m,0));
+    auto o=*source_door_object_init_801124b0(m,1);
+    assert(o.state==1&&o.closed_descriptor==0&&o.open_descriptor==1);
+    // State 1: 0x7B1 alone or the player elsewhere opens nothing.
+    assert(!source_door_object_step(o,true,false,int16_t(1),m).flag_7b2&&o.state==1);
+    assert(!source_door_object_step(o,true,true,int16_t(2),m).flag_7b2&&o.state==1);
+    auto st=source_door_object_step(o,false,true,int16_t(1),m);
+    assert(o.state==2&&o.frames==16&&st.flag_7b2==true&&st.sound==0x105&&!st.descriptor_write);
+    for(int i=0;i<15;++i){st=source_door_object_step(o,true,true,int16_t(1),m);assert(!st.flag_7b2&&o.state==2);}
+    st=source_door_object_step(o,true,true,int16_t(1),m);
+    assert(o.state==3&&st.flag_7b2==false&&st.descriptor_write==1&&st.sound==0x185);
+    // Open: 0x7B0 holds it while 0x7B1 is set; clearing 0x7B1 closes it.
+    assert(!source_door_object_step(o,true,true,int16_t(2),m).flag_7b2&&o.state==3);
+    st=source_door_object_step(o,true,false,int16_t(2),m);
+    assert(o.state==4&&o.frames==16&&st.flag_7b2==true&&!st.flag_7b1&&st.sound==0x106);
+    for(int i=0;i<15;++i)assert(!source_door_object_step(o,true,false,int16_t(2),m).flag_7b2);
+    st=source_door_object_step(o,true,false,int16_t(2),m);assert(o.state==5&&st.flag_7b2==false&&st.sound==0x186);
+    st=source_door_object_step(o,true,false,int16_t(2),m);assert(o.state==0&&st.descriptor_write==0);
+    source_door_object_step(o,true,false,int16_t(2),m);assert(o.state==1&&o.open_descriptor==1);
+    // Without 0x7B0 (local door), leaving the cell closes it and clears 0x7B1.
+    o.state=3;st=source_door_object_step(o,false,true,int16_t(1),m);assert(o.state==3&&!st.flag_7b2);
+    st=source_door_object_step(o,false,true,int16_t(2),m);assert(o.state==4&&st.flag_7b1==false&&st.flag_7b2==true);
+
+    // Session: the door opens (descriptor 0 -> 1 in the active map) before the
+    // first walk, holds substate 2 for 16 frames, and is restored after it.
+    TutorialRuntimeArea a0;a0.area_index=0;a0.flow.aux.records.push_back(
+        record({int16_t(0x8000),0,0,0x0100,0,0,0,2048,0,-1,100,2048}));
+    TutorialRuntimeArea a1=a0;a1.area_index=1;
+    L3QolSettings qol{};l3_qol_settings_defaults(&qol);
+    RuntimeSession s(walk_map(true),a0,{},qol);s.set_reference_tables(refs());s.register_area(1,a1);
+    s.reset_player({0,-1,-100},0x800,100,100);
+    RuntimeInputFrame idle{},press{};press.held_psx_mask=0x2000;press.pressed_psx_mask=0x2000;
+    s.tick(idle);s.tick(press);
+    const auto& e=s.source_door_event0();
+    assert(e.active&&e.phase==1&&e.substate==0);   // phase 0 handed over at once
+    s.tick(idle);   // substate 0: targets; player enters state 3 next frame
+    s.tick(idle);   // substate 1: 0x7B1; the object opens in the same frame
+    assert(s.story_flag(0x7B1)&&s.story_flag(0x7B2)&&s.source_door_objects().size()==1&&e.substate==2);
+    assert(s.active_map().idx[1].descriptor_index==0);
+    int held=0;while(s.story_flag(0x7B2)){s.tick(idle);++held;}
+    assert(held==16&&s.active_map().idx[1].descriptor_index==1&&e.substate==2);
+    // Pinned in front of the door: 0x800 heading, 64 back from the sample.
+    assert(s.player_position().x==0&&s.player_position().z==-64);
+    while(!s.source_door_transition())s.tick(idle);
+    assert(s.active_map().idx[1].descriptor_index==0&&!s.story_flag(0x7B2)&&s.player_position().z>-64);
+    assert(s.can_commit_source_door_transition()&&s.commit_source_door_transition());
+    assert(s.source_door_objects().empty()&&s.active_map().idx[1].descriptor_index==0);
+    s.tick(idle);assert(s.source_door_objects().size()==1&&s.story_flag(0x7B2));
+    while(e.active)s.tick(idle);
+    assert(s.active_map().idx[1].descriptor_index==0&&s.story_flag(0x380)&&!s.story_flag(0x7B0));
 }
 } // namespace
 
@@ -236,6 +381,8 @@ int main(){
     case3_80050c2c();
     arrival_80048898();
     session_commit();
+    event0_player_routines();
+    event0_door_object();
     std::puts("source_door_event: PASS");
     return 0;
 }

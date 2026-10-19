@@ -1,4 +1,11 @@
-# Mega Man Legends 3DS — 0.0.15.6 (M2 first Area 1 door)
+# Mega Man Legends 3DS — 0.0.15.7 (M2 door event 0)
+
+0.0.15.7: the original door sequence (event 0, `0x800485E4`) now runs. After A
+at the first Area 1 door, the door opens, Mega Man walks through on his own,
+the game loads Area 2, its door opens and he walks through it too, then control
+returns. The door leaf and the redrawn terrain are not shown yet, so he passes
+through the visible slab. Host replay passes; Azahar check pending.
+[Results](docs/validation_01507/RESULTS.md) · [Resume](RESUME_01507.md).
 
 0.0.15.6: pressing A (the original Circle) while facing the first Area 1 door
 now takes Mega Man to Area 2, using the original door event `0x80050C2C`. He

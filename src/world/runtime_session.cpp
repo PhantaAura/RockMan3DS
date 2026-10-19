@@ -70,6 +70,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
     locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear();
+    source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
 
@@ -126,7 +127,7 @@ void RuntimeSession::register_area(size_t idx,TutorialRuntimeArea area){
     if(idx>=map_->areas.size()) throw std::out_of_range("tutorial area index outside current map");
     area.area_index=idx;
     TutorialRuntimeArea registry_area=area;
-    SharedLocationRegistration location{map_,idx,std::move(area)};
+    SharedLocationRegistration location{registry_map(),idx,std::move(area)};
     static_assert(std::is_nothrow_move_assignable<TutorialRuntimeArea>::value &&
                   std::is_nothrow_move_assignable<SharedLocationRegistration>::value,
                   "area registration publication must not allocate");
@@ -146,7 +147,7 @@ void RuntimeSession::register_area(size_t idx,TutorialRuntimeArea area){
 bool RuntimeSession::has_registered_area(size_t idx)const{return area_registry_.find(idx)!=area_registry_.end();}
 const TutorialRuntimeArea* RuntimeSession::registered_area(size_t idx)const{
     const auto it=location_registry_.find(idx);
-    if(it==location_registry_.end() || it->second.map!=map_ || it->second.map_area_index!=idx)return nullptr;
+    if(it==location_registry_.end() || it->second.map!=registry_map() || it->second.map_area_index!=idx)return nullptr;
     return &it->second.area;
 }
 bool RuntimeSession::transition_to_area(size_t idx,RuntimeVec3i p,uint16_t yaw){return transition_to_location(idx,p,yaw);}
@@ -185,6 +186,8 @@ bool RuntimeSession::transition_to_location(size_t id,RuntimeVec3i p,uint16_t ya
                   "area transition commit must not allocate");
     TutorialRuntimeArea next_area=it->second.area;
     area_=std::move(next_area);area_index_=id;map_=it->second.map;map_area_index_=it->second.map_area_index;
+    // Door objects belong to the outgoing area; its IDX swaps go with it.
+    source_door_objects_.clear();door_map_.reset();
     player_position_=p;wr16w(player_,0x56,yaw&0x0FFFu);sync_primary_position_to_compat();
     reset_player_contact();
     // Area-local metadata must be rebound to the new source stage. Global
@@ -459,6 +462,7 @@ void RuntimeSession::update_player_motion(){
     // USA 0x8003C89C saves rollback mirrors even on stationary frames.
     l3_pl00_snapshot_collision_pose(&player_);
     player_.bytes[0xAD]=player_.bytes[0xAC]; // 0x8003C918: last-request mirror.
+    player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]&0xF7u); // 0x8003C90C..C92C clears bit 8.
     const uint16_t held=rd16w(player_,0x11C);
     const uint16_t forward_mask=rd16w(player_,0x124);
 
@@ -1018,16 +1022,26 @@ bool RuntimeSession::commit_source_area_handoff() {
 void RuntimeSession::update_source_door_event(){
     // 0x8003C4EC calls 0x80050C2C after the player update when flag 0x200 is
     // clear. While a request waits, the source player is owned by event 0.
-    if(source_door_request_||story_flag(0x200))return;
+    // Event 0 keeps +0xBD nonzero while it owns the player, so 0x80050C2C
+    // returns before its switch; the explicit check keeps a stale request out.
+    if(source_door_request_||source_door_event0_.active||story_flag(0x200))return;
     const auto query=runtime_player_event_primitive_800514fc(*map_,map_area_index_,player_,
         reference_tables_?&*reference_tables_:nullptr);
     source_door_result_=evaluate_source_door_event_80050c2c(query,player_,area_.flow.aux,
         story_flags_.data(),story_flags_.size());
     if(source_door_result_.flag_set)set_story_flag(*source_door_result_.flag_set,true);
-    if(source_door_result_.request){source_door_request_=source_door_result_.request;++source_door_generation_;}
+    if(source_door_result_.request){
+        source_door_request_=source_door_result_.request;++source_door_generation_;
+        // 0x7B0 is polled by ST00 0x80100598; 0x8001DDE4 starts event 0 with
+        // its work zeroed (CANDIDATE: started in the requesting frame).
+        source_door_event0_={};source_door_event0_.active=true;
+        source_door_event0_.lanes=source_door_request_->raw;
+    }
 }
 std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_door_transition() const noexcept {
-    if(!source_door_request_)return std::nullopt;
+    // Offered while event 0 substate 6 waits for the loader (356C == 1).
+    const auto& e=source_door_event0_;
+    if(!source_door_request_||!e.active||e.phase!=1||e.substate!=6||e.status_356c!=1)return std::nullopt;
     return source_door_transition_intent(*source_door_request_,source_door_generation_);
 }
 bool RuntimeSession::can_commit_source_door_transition() const noexcept {
@@ -1045,23 +1059,122 @@ bool RuntimeSession::commit_source_door_transition() {
     if(!source_event_consumers_bound_)known.fill(1);
     // Loader spawn: 800158A8 passes argument6=1 for a new area.
     if(!apply_source_handoff_spawn_80015ee8(intent,intent.source_generation,prepared,known,true))return false;
+    // Event 0 substate 8 targets; the state-3 copy runs here too so the
+    // spawn and previous pose are the arrival (it repeats every frame).
     if(!apply_source_door_arrival_80048898(intent,*reference_tables_,prepared))return false;
-    // Event 0 returns control through 80041DA8..B8 (+8..+B = 1,0,0,0).
-    prepared.bytes[8]=1;prepared.bytes[9]=0;prepared.bytes[10]=0;prepared.bytes[11]=0;
+    prepared.bytes[8]=3;prepared.bytes[9]=1;
     const RuntimeVec3i spawn{rds16w(prepared,0x14),rds16w(prepared,0x16),rds16w(prepared,0x18)};
+    auto event=source_door_event0_;
     if(!transition_to_area(intent.destination_area,spawn,rd16w(prepared,0x56)))return false;
     player_=prepared;
     if(source_event_consumers_bound_){
-        for(const size_t at:{size_t(8),size_t(9),size_t(10),size_t(11)})known[at]=1;
+        for(const size_t at:{size_t(8),size_t(9)})known[at]=1;
         source_event_player_known_=known;
     }
     sync_primary_position_from_fixed();
     player_contact_={};
-    // Net event-0 flags: 0x7B0 cleared at 800489F4, 0x7B3 set/cleared, and
-    // 8001D990 sets 0x380+event when the event ends.
-    set_story_flag(0x7B0,false);set_story_flag(0x380,true);
+    // Loader: 356C 1 -> 2 (substate 6), 3 (substate 7), 0, then substate 8.
+    // Each is one counted event frame here; the PS1 CD load spends more
+    // (CANDIDATE), which shortens the second walk there.
+    event.status_356c=2;++event.substate;++event.counter;
+    event.status_356c=3;++event.substate;++event.counter;
+    event.status_356c=0;++event.camera_requests;++event.substate;++event.counter;
+    source_door_event0_=event;
     update_gameplay_camera_target();camera_.current=camera_.target;
     return true;
+}
+void RuntimeSession::update_source_door_event0(){
+    auto& e=source_door_event0_;
+    if(!e.active||!reference_tables_)return;
+    ++e.frames;
+    const auto lane16=[&](size_t at){return int16_t(uint16_t(e.lanes[at]|(uint16_t(e.lanes[at+1])<<8)));};
+    // ST00 poll: stage 0x800C1B60 is 0 while event 0 runs from it.
+    constexpr uint8_t stage=0;
+    if(e.phase==0){
+        // 0x80048620: player +6 |= 3, 0x8002EE90(8,128), then 0x80042238.
+        if(e.substate==0){player_.bytes[6]=uint8_t(player_.bytes[6]|3u);e.last_sound=8;e.substate=1;}
+        const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
+        if(!ready||!*ready)return;
+        // 0x800BC7F0 camera script by door heading and event +0xA4 = 0x8008A9F4
+        // are camera/command owners (0x8001EC0C), not ported.
+        e.substate=0;e.phase=1;return;
+    }
+    if(e.phase==2){
+        // 0x80048A40.
+        source_player_event_release_80042314(player_);
+        player_.bytes[8]=0;player_.bytes[9]=0;player_.bytes[10]=0;player_.bytes[11]=0;
+        set_story_flag(0x7B3,false);e.active=false;
+        source_door_request_.reset();
+        // 0x8001D990 after the event ends: flag 0x380 + event id.
+        set_story_flag(0x380,true);
+        return;
+    }
+    const auto targets=[&](int16_t x,int16_t y,int16_t z,uint16_t heading){
+        // 0x80048754 / 0x80048898: player state 3 substate 1 toward the target.
+        const auto& trig=reference_tables_->trig[heading&0x0FFFu];
+        const int16_t tx=int16_t(uint16_t(int32_t(x)+((int32_t(trig.sin_q12)*64)>>12)));
+        const int16_t tz=int16_t(uint16_t(int32_t(z)+((int32_t(trig.cos_q12)*64)>>12)));
+        player_.bytes[8]=3;player_.bytes[9]=1;
+        wr16w(player_,0x438,uint16_t(tx));wr16w(player_,0x43A,uint16_t(y));wr16w(player_,0x43C,uint16_t(tz));
+        wr16w(player_,0x440,0);wr16w(player_,0x442,heading);wr16w(player_,0x444,0);player_.bytes[0x448]=48;
+        wr32w(player_,0x428,int32_t(uint32_t(int32_t(tx))<<16));wr32w(player_,0x42C,int32_t(uint32_t(int32_t(y))<<16));
+        wr32w(player_,0x430,int32_t(uint32_t(int32_t(tz))<<16));
+        ++e.camera_requests;
+    };
+    switch(e.substate){
+        case 0:targets(lane16(0),rds16w(player_,0x16),lane16(4),uint16_t(lane16(16)));++e.substate;break;
+        case 1:case 9:++e.substate;set_story_flag(0x7B1,true);break;
+        case 2:case 10:if(!story_flag(0x7B2)){++player_.bytes[9];if(e.substate==2)e.walk_state=0;++e.substate;}break;
+        case 3:case 11:source_event0_forced_walk_80048a9c(e,player_,stage);break;
+        case 4:case 12:set_story_flag(0x7B1,false);++e.substate;break;
+        case 5:if(!story_flag(0x7B2)){e.status_356c=1;e.lanes[25]=10;e.lanes[24]=2;++e.substate;}break;
+        case 6:if(e.status_356c==2)++e.substate;break;
+        case 7:if(!story_flag(0x7B2)){e.status_356c=3;++e.substate;}break;
+        case 8:if(e.status_356c==0){targets(lane16(8),int16_t(lane16(10)-1),lane16(12),uint16_t(lane16(18)));++e.substate;}break;
+        case 13:if(!story_flag(0x7B2)){set_story_flag(0x7B0,false);set_story_flag(0x7B3,true);e.phase=2;e.substate=0;}break;
+        default:break;
+    }
+    // 0x8001EC0C (command interpreter) is not ported; 0x8001F070 counts.
+    ++e.counter;
+}
+std::optional<int16_t> RuntimeSession::player_packed_cell() const {
+    // 0x80048C60 over the player position +0x14/+0x18.
+    const auto cell=runtime_map_find_cell(*map_,map_area_index_,rds16w(player_,0x14),rds16w(player_,0x18));
+    if(!cell)return int16_t(0);
+    return cell->packed_cell;
+}
+void RuntimeSession::write_idx_descriptor(uint16_t idx,uint16_t descriptor){
+    if(idx>=map_->idx.size()||map_->idx[idx].descriptor_index==descriptor)return;
+    if(!door_map_||door_map_.get()!=map_.get()){
+        // The shared original stays alive for references taken before the swap.
+        door_map_source_=map_;door_map_=std::make_shared<RuntimeMap>(*map_);map_=door_map_;
+    }
+    door_map_->idx[idx].descriptor_index=descriptor;
+}
+void RuntimeSession::update_source_door_objects(){
+    const bool f7b1=story_flag(0x7B1);
+    // CANDIDATE: the area object list that spawns 0x801124B0 is not cooked.
+    // A door object is assumed for the player's cell when 0x7B1 is raised
+    // there, one of the area's door aux records (0x80050C2C hw4/hw6) lies in
+    // that cell, and its descriptor has a 0x1000 closed/open pair.
+    const auto cell=player_packed_cell();
+    if(f7b1&&cell&&*cell>0){
+        bool known=false;for(const auto& o:source_door_objects_)known|=o.idx_index==uint16_t(*cell);
+        bool door_record=false;
+        for(const auto& r:area_.flow.aux.records){
+            if(r.halfwords[0]==-1)break;
+            const auto at=runtime_map_find_cell(*map_,map_area_index_,r.halfwords[4],r.halfwords[6]);
+            door_record|=at&&at->packed_cell==*cell;
+        }
+        if(!known&&door_record)
+            if(const auto o=source_door_object_init_801124b0(*map_,uint16_t(*cell)))source_door_objects_.push_back(*o);
+    }
+    for(auto& o:source_door_objects_){
+        const auto step=source_door_object_step(o,story_flag(0x7B0),story_flag(0x7B1),cell,*map_);
+        if(step.flag_7b1)set_story_flag(0x7B1,*step.flag_7b1);
+        if(step.flag_7b2)set_story_flag(0x7B2,*step.flag_7b2);
+        if(step.descriptor_write)write_idx_descriptor(o.idx_index,*step.descriptor_write);
+    }
 }
 bool RuntimeSession::bind_source_handoff_display_receipt(const SourceEventHandoffDisplayReceipt& receipt) noexcept {
     if(!receipt.admitted || receipt.native_owner!=this ||
@@ -1385,7 +1498,15 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     const bool gameplay_owned=!dialogue_.active&&camera_.owner==RuntimeCameraOwner::Gameplay&&!active_cutscene_id_
         &&(!source_player_gate||*source_player_gate);
     if(gameplay_owned){
-        update_input_compat(in);update_player_motion();update_player_contact();update_source_door_event();
+        update_input_compat(in);
+        // 0x8003C07C: +0xBD 0x40 zeroes the pad, 0x20 takes event 0's 0x800C0F96.
+        (void)source_player_input_select_8003c07c(player_,source_door_event0_.forced_pad);
+        if(player_.bytes[8]==3&&source_door_event0_.active){source_player_state3_80041b8c(player_);sync_primary_position_from_fixed();}
+        else if(player_.bytes[8]==0)source_player_state0_8003c7b0(player_);
+        else{update_player_motion();update_player_contact();}
+        update_source_door_event();
+        // CANDIDATE order: event 0 after the player, then the door objects.
+        update_source_door_event0();update_source_door_objects();
         if(candidate_combat_enabled_){update_lock_on(in);if(in.fire_pressed)spawn_buster_projectile();}
         else locked_target_index_.reset();
     }

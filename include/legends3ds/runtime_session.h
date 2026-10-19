@@ -275,10 +275,16 @@ public:
     const SourceDoorResult& source_door_result() const noexcept { return source_door_result_; }
     std::optional<SourceEventHandoffTransitionIntent> source_door_transition() const noexcept;
     bool can_commit_source_door_transition() const noexcept;
-    // CANDIDATE scheduling: commits at once in place of the unported event-0
-    // door cinematic (door objects, forced walk, fade, camera). Applies the
-    // loader spawn 80015EE8, the event-0 arrival 80048898 and its net flags.
+    // Event 0 (0x800485E4) runs in tick() from the request: phase 0, then
+    // phase-1 substates 0..5 (turn to the door, open it via 0x7B1, forced
+    // walk 0x80048A9C, close it, 356C = 1). The transition is offered only
+    // while substate 6 waits for the area load. The commit is the loader:
+    // spawn 80015EE8, substates 6..8 (one counted frame each, CANDIDATE: the
+    // PS1 load takes longer) and the arrival 80048898. Substates 9..13 (open
+    // the destination door, second walk, close) and phase 2 follow in tick().
     bool commit_source_door_transition();
+    const SourceDoorEvent0& source_door_event0() const noexcept { return source_door_event0_; }
+    const std::vector<SourceDoorObject>& source_door_objects() const noexcept { return source_door_objects_; }
     // Expose a renderer work request only after the original phase-7 caller
     // reaches its missing head-UV reset owner. A frame counter is not a lease.
     std::optional<uint64_t> source_handoff_display_generation() const noexcept;
@@ -485,6 +491,14 @@ private:
     void update_running_player_motion();
     void update_player_contact();
     void update_source_door_event();
+    void update_source_door_event0();
+    void update_source_door_objects();
+    void write_idx_descriptor(uint16_t idx,uint16_t descriptor);
+    std::optional<int16_t> player_packed_cell() const;
+    // The shared stage map, also while a door swap points map_ at door_map_.
+    const std::shared_ptr<const RuntimeMap>& registry_map() const noexcept {
+        return door_map_&&map_.get()==door_map_.get()?door_map_source_:map_;
+    }
     void update_airborne_motion();
     void reset_player_contact();
     void update_input_compat(const RuntimeInputFrame& input);
@@ -571,6 +585,12 @@ private:
     SourceDoorResult source_door_result_{};
     std::optional<SourceDoorRequest> source_door_request_;
     uint64_t source_door_generation_=0;
+    SourceDoorEvent0 source_door_event0_{};
+    std::vector<SourceDoorObject> source_door_objects_;
+    // Copy-on-write map for the door objects' IDX descriptor swaps; map_
+    // points at it while a swap is live in this area.
+    std::shared_ptr<RuntimeMap> door_map_;
+    std::shared_ptr<const RuntimeMap> door_map_source_;
     std::optional<SourceEventPhase2Package> source_event_phase2_package_;
     SourceEventPhase2Context source_event_phase2_context_{};
     SourceEventCommandQueue source_event_commands_{};

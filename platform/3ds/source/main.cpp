@@ -2270,8 +2270,8 @@ int main() {
                 hardware_test_trace("# source_area_handoff_held,frame=%lu,destination=%u,command_status=%u,source_request_retained=true",
                     (unsigned long)session.frame_counter(),unsigned(source_handoff->destination_area),
                     unsigned(session.source_event_command_result().status));
-            // Player door event 0x80050C2C case 3: the request is committed at
-            // once (CANDIDATE: the event-0 door cinematic is not ported).
+            // Player door event 0x80050C2C case 3: event 0 runs in tick() and
+            // offers the load at substate 6 (356C = 1); this commit is the loader.
             const auto door_handoff=source_area_transition?std::optional<l3::SourceEventHandoffTransitionIntent>{}
                 : session.source_door_transition();
             if(!door_handoff)failed_door_generation.reset();

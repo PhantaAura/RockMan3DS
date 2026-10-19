@@ -160,3 +160,14 @@ loader spawn `0x80015EE8`, then the event-0 arrival `0x80048898`: Area 2 at
 (−256,−2,6208), heading 2048. 3DS A sends Circle. `tools/l3door_replay` phase 2
 and the new `source_door_event` test pass; host suite 148/148. Mega Man is left
 in front of the closed Area 2 door until event 0 is ported.
+
+## 0.0.15.7 (M2 — event 0 door sequence)
+
+Ported event 0 (`0x800485E4`) from the original instructions: phases 0–2, the
+14 phase-1 substates, the forced walk `0x80048A9C` (counter from `0x8001F070`,
+limits 37 and `0x8008AA04`), player states 3 and 0, the `0x8003C07C` input
+selection, and the ST00 door object (states 0–5) with its IDX descriptor swap.
+The load is offered at substate 6; the commit runs substates 6–8. On the host
+replay Mega Man walks through the Area 1 door and, after the load, through the
+Area 2 door to (−256,−1,7104). CANDIDATE: lazy door-object spawn, frame order,
+one frame per load substate. Host 148/148, native build passes.

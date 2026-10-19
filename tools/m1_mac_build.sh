@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Legends3DS 0.0.15.6 (M2 Area 1 door) — one-command Mac build + Azahar-ready SD folder.
+# Legends3DS 0.0.15.7 (M2 door event 0) — one-command Mac build + Azahar-ready SD folder.
 #
 # Runs the existing owner-local pipeline (tools/build_mml3ds.py): host build,
 # full host test suite, tutorial cook (cache reused when unchanged), actual
@@ -15,7 +15,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECT="${PROJECT:-$HOME/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca}"
 OWNER="${OWNER:-$PROJECT/owner-data/extracted}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
-OUT="${OUT:-$PROJECT/work/pass-$STAMP-m2-01506}"
+OUT="${OUT:-$PROJECT/work/pass-$STAMP-m2-01507}"
 CACHE="${CACHE:-$PROJECT/work/mml3ds-cache-01500}"
 RNG="${RNG:-$PROJECT/work/pass-20261017-worldalive-01447/native-r1/sd_out/3ds/Legends3DS/data/legends3ds/tutorial/source_rng.l3rg}"
 export DEVKITPRO="${DEVKITPRO:-/opt/devkitpro}"
@@ -53,6 +53,6 @@ BUILD OK
 Azahar: Emulation > Configure > System: New 3DS mode OFF.
         Emulation > Configure > Storage: Use custom storage, SDMC = $OUT/sd_out
         File > Load File... > $SD/Legends3DS.3dsx
-Then follow docs/validation_01506/AZAHAR_TEST.md and send back:
-        $SD/boot_01506.log and $SD/hardware_01506*.csv
+Then follow docs/validation_01507/AZAHAR_TEST.md and send back:
+        $SD/boot_01507.log and $SD/hardware_01507*.csv
 EOF
