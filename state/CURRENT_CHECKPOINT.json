@@ -1,6 +1,6 @@
 {
- "version": "0.0.15.4",
- "title": "M2c boot \u2014 default enhanced build spawns at the 0x80101274 Area 1 handoff",
+ "version": "0.0.15.5",
+ "title": "M2 regression \u2014 boot package applies the original ST00 startup map initialization",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -13,16 +13,16 @@
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
- "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261019-102248-m2c-01504/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
- "native_binary_bytes": 926216,
- "native_binary_sha256": "f6c143d67bfca3b5cb49b8c0b9c36f9772b643950be1296a0d578c13880997e2",
+ "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261019-123124-m2-01505/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
+ "native_binary_bytes": 927256,
+ "native_binary_sha256": "4f88021476ef64805792fe256dbdc333dbe46d6f75d68e389fa055144feec639",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "BOOT_TO_AREA1: Azahar 2126.0 (Old 3DS model) boot_01504.log reports BOOT_SPAWN=SOURCE_HANDOFF_80101274; hardware trace frames 120-240 report area 1 at (2822,-1,-4833) heading 0, stationary without input. The start-up GPU test screen needs a button press. Interactive Area 1 collision play in Azahar is the user's own pending test.",
- "emulator_evidence": "docs/validation_01504/RESULTS.md",
+ "current_emulator_validation": "NOT_RUN_THIS_PASS: Mac screen locked, so macOS refused input/capture to Azahar. 0.0.15.5 is installed on Azahar's SD; owner interactive replay pending. Host replay of the recorded input on the real boot package passes (tools/l3door_replay).",
+ "emulator_evidence": "docs/validation_01505/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
@@ -30,13 +30,16 @@
  "world_comes_alive_finished": false,
  "usage_reset_used": false,
  "evidence": [
-  "RESUME_01504.md",
+  "RESUME_01505.md",
+  "docs/validation_01505/RESULTS.md",
+  "tools/l3door_replay.cpp",
   "docs/research_01503/DEEP_OVERLAP_80050400.md",
   "src/player/player_contact_runtime.cpp",
   "tests/test_runtime_contact.cpp",
   "docs/validation_01503/AZAHAR_TEST.md"
  ],
  "blockers": [
+  "Area 1 door event 0x80050C2C case 3 (button-press door to Area 2) and 0x800514FC event-primitive query are unported; doors stay closed walls. Oct 19 camera events at recording 32 s/44 s remain unverified.",
   "No paired PS1/native movement trace yet for corners, deep overlap or the ported correction history; codes 2/0x0B/0x0C (0x8004F44C modes 0/0x43), the x5 diagonal fallback and slopes/steps remain unported (4,072 embedded Area 2 poses still Unsupported). Actor-side deep overlap in actor_contact remains excluded.",
   "Areas 2-4 entry spawns and door/transition progression from Area 1 are not yet audited.",
   "Lock-on 80034EB8 is still not wired: it needs the original gameplay camera matrix (owner UNKNOWN). Candidate lock-on is retired while source combat is active, so X does nothing in that mode.",
@@ -47,7 +50,7 @@
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.15.3",
-  "source_archive": "git main (M2c commit 0230891)"
+  "version": "0.0.15.4",
+  "source_archive": "git main (commit 6d4c477)"
  }
 }

@@ -1,4 +1,11 @@
-# Mega Man Legends 3DS — 0.0.15.4 (M2c deep-overlap recovery + Area 1 boot)
+# Mega Man Legends 3DS — 0.0.15.5 (M2 map-initialization regression fix)
+
+0.0.15.5: the 3DS boot package now applies the original ST00 startup map
+initialization. Without it the floor in front of the first Area 1 door was
+missing, and Mega Man sank through the door and fell out of the world (Oct 19
+Azahar playtest). Host replay of the recorded input now passes; interactive
+Azahar re-check pending. [Results](docs/validation_01505/RESULTS.md) ·
+[Resume](RESUME_01505.md).
 
 0.0.15.4: the enhanced build now boots at the original Area 1 handoff
 (2822,-1,-4833) instead of the Area 0 inspection camera; confirmed in Azahar.

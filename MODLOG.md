@@ -138,3 +138,14 @@ terrain-XYZ inspection entry. Before this, that default-on renderer branch
 pre-empted the handoff, so 0.0.15.0–0.0.15.3 booted into the Area 0
 inspection camera. In Azahar's Old 3DS mode the build now spawns in Area 1 at
 (2822,-1,-4833). Host suite 147/147; the native build passes.
+
+## 0.0.15.5 (M2 — Oct 19 playtest regression)
+
+Root cause of the Oct 19 Azahar fall: the generalized boot package carries no
+map-initialization section, so the 3DS build ran Area 1 without the original
+994 startup rewrites that the host tests apply. The floor in front of the first
+door was missing; Mega Man sank through the door slab and left the grid. The
+package path now applies the sidecar `st00.l3init`, bound to the package's
+map/render CRCs. The recorded-input replay (`tools/l3door_replay`) fails
+without the fix and passes with it. Host suite 147/147, Area 1 audit clean,
+native build passes. Interactive Azahar check blocked by a locked screen.

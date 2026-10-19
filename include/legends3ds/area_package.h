@@ -81,6 +81,18 @@ struct LoadedAreaPackage {
 // bounded metadata is released after applying it to the shared decoded map.
 // Unknown sections have their CRC checked but their payload is not retained.
 LoadedAreaPackage load_area_package(const std::string& path, const AreaPackageLimits& limits);
+struct MapInitialization;
+// Applies a separately cooked L3MI startup initialization to a package that
+// carries no section35, binding it to the package's own map/render section
+// CRCs (the cooked L3MP/L3RG identities the L3MI header names). The caller
+// must already have proved those sections byte-identical to the sidecar
+// map/render the initialization was cooked from. Returns false, changing
+// nothing, when the package already applied section35 or lacks map/render.
+// Without this the generalized ST00 boot package ran the original stage
+// geometry before its 0x8002xxxx startup rewrites: in Area 1 the floor in
+// front of the first door vanished and Mega Man fell out of the world.
+bool apply_sidecar_map_initialization(LoadedAreaPackage& package,
+                                      const MapInitialization& initialization);
 // Counts the positive-cell Mid/Primary primitive instances used by the current
 // native terrain frontend. Reused cells/streams count on every expansion. This
 // allocates no geometry and assumes no triangle topology or vertex format.

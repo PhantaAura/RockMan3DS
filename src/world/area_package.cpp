@@ -334,6 +334,24 @@ uint64_t spawn_preflight(const std::vector<uint8_t>& bytes, size_t map_areas,
 }
 } // namespace
 
+bool apply_sidecar_map_initialization(LoadedAreaPackage& package,
+                                      const MapInitialization& initialization) {
+    const AreaPackageSection* map_section=nullptr;
+    const AreaPackageSection* render_section=nullptr;
+    for(const auto& section:package.directory){
+        if(section.kind==35)return false;
+        if(section.kind==2)map_section=&section;
+        else if(section.kind==3)render_section=&section;
+    }
+    if(!map_section||!render_section||package.diagnostics.map_initialization_writes)return false;
+    // apply_map_initialization rejects a CRC/count/entry mismatch before writing.
+    const auto applied=apply_map_initialization(package.map,package.render,initialization,
+        map_section->crc32,render_section->crc32);
+    package.diagnostics.map_initialization_writes=applied.write_count;
+    package.diagnostics.map_initialization_profile=static_cast<uint32_t>(initialization.profile);
+    return true;
+}
+
 void LoadedAreaPackage::unload() noexcept {
     LoadedAreaPackage empty;
     std::swap(map, empty.map);

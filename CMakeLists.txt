@@ -358,6 +358,8 @@ add_test(NAME push2 COMMAND test_push2)
 
 add_executable(l3edge_audit tools/l3edge_audit.cpp)
 target_link_libraries(l3edge_audit PRIVATE legends3ds_core)
+add_executable(l3door_replay tools/l3door_replay.cpp)
+target_link_libraries(l3door_replay PRIVATE legends3ds_core)
 add_executable(l3replay tools/l3replay.cpp)
 target_link_libraries(l3replay PRIVATE legends3ds_core)
 add_executable(l3area_validate tools/l3area_validate.cpp)

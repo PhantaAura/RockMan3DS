@@ -1793,6 +1793,27 @@ int main() {
                 // pair may use the tutorial's independently supplied flow/materials.
                 g_sidecars_bound = section_matches_file(package, 2, data_path("st00.l3map")) &&
                                    section_matches_file(package, 3, data_path("st00.l3render"));
+                // 0.0.15.5: the generalized boot package has no section35. With
+                // byte-identical sidecar map/render, apply the sidecar's original
+                // startup initialization, exactly as the loose path below does.
+                // Through 0.0.15.4 the package ran Area 1 without its 994 writes
+                // (host tests always applied them): the floor before the first
+                // door was absent and Mega Man fell out of the world.
+                if (g_sidecars_bound && !package.diagnostics.map_initialization_writes) {
+                    const auto initialization_path=data_path("st00.l3init");
+                    if(FILE* input=std::fopen(initialization_path.c_str(),"rb")) {
+                        std::fclose(input);
+                        try {
+                            const auto initialization=l3::load_map_initialization(
+                                read_binary(initialization_path,l3::kMapInitializationMaxFileBytes),true);
+                            if(!l3::apply_sidecar_map_initialization(package,initialization))
+                                boot_log(MML_BOOT_DATA,"sidecar map initialization refused; package geometry retained");
+                        } catch(const std::exception& error) {
+                            boot_log(MML_BOOT_DATA,error.what());
+                            boot_log(MML_BOOT_DATA,"sidecar map initialization UNKNOWN; package geometry retained");
+                        }
+                    } else boot_log(MML_BOOT_DATA,"sidecar map initialization absent UNKNOWN");
+                }
                 char initialization_message[112];
                 std::snprintf(initialization_message,sizeof(initialization_message),
                     "map initialization profile=%lu writes=%lu temporary=%llu; absent=UNKNOWN",

@@ -74,6 +74,18 @@ int main() {
     corrupt=sections;corrupt.back().second.resize(l3::kMapInitializationMaxFileBytes+1);reject(corrupt,limits);
     auto low=limits;low.max_load_peak_bytes=1;reject(sections,low);
     assert(session.active_map().idx[1].raw6==1 && legacy.map.idx[1].raw6==0);
+    // 0.0.15.5 sidecar binding: a package without section35 (the generalized
+    // ST00 boot package) takes the sidecar initialization bound to its own
+    // map/render section CRCs, once, and gains exactly the section35 result.
+    auto mismatched=init;mismatched.map_crc32^=1;bool rejected=false;
+    try {(void)l3::apply_sidecar_map_initialization(legacy,mismatched);} catch(const std::runtime_error&) {rejected=true;}
+    assert(rejected && legacy.map.idx[1].raw6==0 && legacy.diagnostics.map_initialization_writes==0);
+    assert(l3::apply_sidecar_map_initialization(legacy,init));
+    assert(legacy.map.idx[0].raw6==0 && legacy.map.idx[1].raw6==1);
+    assert(legacy.diagnostics.map_initialization_writes==1 && legacy.diagnostics.map_initialization_profile==1);
+    assert(!l3::apply_sidecar_map_initialization(legacy,init));
+    publish(sections); auto packaged=l3::load_area_package(path.string(),limits);
+    assert(!l3::apply_sidecar_map_initialization(packaged,init) && packaged.diagnostics.map_initialization_writes==1);
     std::filesystem::remove_all(directory);
     std::cout<<"PASS: optional initializer package/session integration, malformed rejection, legacy preservation, unload\n";
 }
