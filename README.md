@@ -1,12 +1,15 @@
-# Mega Man Legends 3DS — 0.0.15.1 (M1 default combat + M2 map edge)
+# Mega Man Legends 3DS — 0.0.15.2 (M2b diagonal walls)
 
 Default boot now starts where the original first gives Mega Man to the player
 (Area 1 handoff). Source-backed Buster/hit/defeat is the default combat on the
-enhanced renderer. The Area 0/1 map-edge escape is fixed (contact solver and
-floor-rule repairs; host audit with real data: 0 escapes in 600k frames).
+enhanced renderer. The Area 0/1 map-edge escape remains fixed. Original
+diagonal wall classifiers and response paths for families `0x21`, `0x31`,
+`0x41`, and `0x51` now drive native contact and sliding. Executable-derived
+vectors match for all four families; the owner-local Area 1 audit records zero
+unsupported frames, escapes, or falls across 600,000 frames.
 Build on the Mac with `tools/m1_mac_build.sh`; test with
-[docs/validation_01500/AZAHAR_TEST.md](docs/validation_01500/AZAHAR_TEST.md).
-Resume: [RESUME_01501.md](RESUME_01501.md). `PHYSICS_1TO1=false`.
+[docs/validation_01502/AZAHAR_TEST.md](docs/validation_01502/AZAHAR_TEST.md).
+Resume: [RESUME_01502.md](RESUME_01502.md). `PHYSICS_1TO1=false`.
 
 ---
 

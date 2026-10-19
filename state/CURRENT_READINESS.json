@@ -9,7 +9,7 @@
  },
  "BOOT": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "0.0.15.1 default boot (no SOURCE_EVENT_BOOT) starts at the original opening-scene handoff (overlay 0x80101274 immediates at 0x80101280/0x80101298: Area 1, (2822,-1,-4833), heading 0) instead of the diagnostic first-positive-cell spawn, which sat inside a solid Area 0 block. The opening scene itself is skipped in this mode. Native devkitARM build pending on the Mac."
+  "evidence": "0.0.15.2 default boot (no SOURCE_EVENT_BOOT) starts at the original opening-scene handoff (overlay 0x80101274 immediates at 0x80101280/0x80101298: Area 1, (2822,-1,-4833), heading 0) instead of the diagnostic first-positive-cell spawn, which sat inside a solid Area 0 block. The opening scene itself is skipped in this mode. Current native build result is recorded in CURRENT_CHECKPOINT.json."
  },
  "BOTTOM SCREEN": {
   "evidence": "User physical 01442 evidence shows map/status UI. Historical 01443 Azahar captures include intermittent partial bottom-screen presentation. The issue remains unresolved; no UI parity or physical 01444 acceptance is claimed.",
@@ -25,11 +25,11 @@
  },
  "COLLISION": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "0.0.15.1: Area 0/1 escape fixed. Owner-local audit (tools/l3edge_audit, real st00 pack with st00.l3init materialization): Area 1 from the 0x80101274 handoff spawn, 200 random walks x 3000 frames: 0 escapes, 0 falls (0.0.15.0: 191 escapes, 182 falls). Fixes: wall/ceiling pushes restart the candidate scan as 0x8004BDC8 case1->LAB_8004C144->0x8004B6AC LAB_8004BB24 does; untranslated responses apply the 0x8004B414 failure contract instead of free motion; null selected lists are empty. Diagonal families 0x21-0x51 and 0x80050400 remain untranslated (held, 4.7% of audit frames)."
+  "evidence": "0.0.15.2 ports diagonal classifiers 0x8004E490/E750/EA10/ECD0 and response paths 0x8004F8BC/0x8004FBE8/0x8004FF14 for families 0x21/0x31/0x41/0x51. Four bounded original-executable vectors match native results. Deterministic integration verifies diagonal sliding while inherited floor, corner-landing and Area 1 containment tests remain green. Owner-local Area 1 audit: 200 seeds x 3000 frames, 0 unsupported frames, 0 escapes, 0 falls, 53 cells visited. Deep-overlap 0x80050400 and broader measured retail chronology remain UNKNOWN; PHYSICS_1TO1=false."
  },
  "COMBAT": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16→8→0 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
+  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16\u21928\u21920 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
  },
  "CONTENT GRAPH": {
   "evidence": "Historical structural validation covers 205 packages, 4,115 nodes and 3,916 edges. These counts establish content structure, not gameplay completion.",
@@ -101,14 +101,14 @@
  },
  "OLD-3DS BUILD": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "01451 actual devkitARM ARMv6K/mpcore build PASS, 919748 bytes, SHA 76786a99e534… with no warnings/errors in the saved log. Host 144/144 PASS in 4.89 seconds; physical acceptance pending."
+  "evidence": "0.0.15.2 actual devkitARM ARMv6K/mpcore build PASS with no warnings/errors. Legends3DS.3dsx is 924136 bytes, SHA-256 41abf4b4ba762744b7c108d2a31dc46c2b487ff05e7ea5ea4d46ca1647f1c16f. Host suite 147/147 PASS. Physical acceptance remains pending."
  },
  "OLD-3DS HARDWARE": {
   "status": "HARDWARE_PENDING",
-  "evidence": "0.0.14.51 physical test pending; historical 0.0.14.43 user photos show the imported textured room/player followed by a collision escape."
+  "evidence": "0.0.15.2 physical test pending. Historical 0.0.14.43 user photos show the imported textured room/player followed by a collision escape; the new diagonal response has not been exercised on hardware."
  },
  "PHYSICS": {
-  "evidence": "PHYSICS_1TO1=false. 0.0.15.1 applies the 0x8003C4EC floor rule as decompiled (+8 in {1,2}, +74==0, +76==0; y<floor-0x20 -> +75-gated fall action, +74=1; else adhesion) without the earlier native 'already grounded' precondition, so leaving the floor falls instead of walking on air. PHYSICS_1TO1=false. Historical 1,568 Action-4 body cases match original instructions under declared premises. 01444 corrects supported floor/response ordering and negative-result rollback, with focused regressions. Full player physics, slopes and live retail chronology remain incomplete. The reported escape/fall is unresolved; the original kill/recovery caller and threshold remain unknown, and sampled map-query results are not whole-game proof.",
+  "evidence": "PHYSICS_1TO1=false. 0.0.15.2 adds source-backed diagonal wall projection, direction-bit response and straight/diagonal corner dispatch while preserving the 0.0.15.1 floor, fall and scan-restart fixes. Direct executable vectors cover four family projections; the Area 1 stress audit is containment evidence, not full movement parity. Deep-overlap 0x80050400, broader steps/slopes/ledges and paired live retail trajectories remain incomplete.",
   "status": "SOURCE_BACKED_PARTIAL"
  },
  "QoL": {

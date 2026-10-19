@@ -79,16 +79,28 @@ void floor_adhesion_precedes_geometry_response(){
     assert(get(s.compat_player(),0x16)==-8);
     assert(s.player_contact().floor_y==0&&!s.player_contact().grounded.value_or(false));
 }
-void unsupported_response_does_not_publish_adhesion(){
+void diagonal_response_does_not_publish_false_adhesion(){
     auto map=map_with_floor();
     map.contact_lists[0].group_count=2;
     map.contact_groups.push_back({-512,512,-512,512,1,1});
     map.contact_primitives.push_back({-8,1024,0x31,0});
     auto s=session(std::move(map));s.reset_player({0,-16,0},0,100,100);s.tick({});
-    assert(s.player_contact().status==l3::RuntimeContactStatus::Unsupported);
-    assert(!s.player_contact().grounded.has_value());
-    assert(s.player_position().y==-16&&get(s.compat_player(),0x16)==-16);
-    assert(s.player_contact().scratch.y==-16&&s.compat_player().bytes[0x74]==0);
+    assert(s.player_contact().status==l3::RuntimeContactStatus::SourceBackedPartial);
+    assert(!s.player_contact().grounded.value_or(false));
+}
+void diagonal_wall_source_vectors(){
+    struct Case{uint16_t code;int16_t x,z,dx,dz,out_x,out_z;};
+    constexpr Case cases[]={{0x21,-24,-80,16,16,-16,-88},{0x31,-80,16,16,16,-84,12},
+                            {0x41,-24,-24,16,16,36,36},{0x51,-80,-24,16,16,-88,-16}};
+    for(const auto& c:cases){
+        auto map=map_with_floor(c.code,-512);map.contact_primitives[0].y1=512;
+        map.contact_groups[0]={-64,64,-64,64,0,1};L3PlayerCompatWork w{};
+        put(w,0x14,c.x);put(w,0x16,0);put(w,0x18,c.z);
+        put(w,0x2c,int16_t(c.x-c.dx));put(w,0x2e,0);put(w,0x30,int16_t(c.z-c.dz));
+        const auto hit=l3::runtime_player_contact_step(map,0,w);
+        assert(hit.status==l3::RuntimeContactStatus::SourceBackedPartial&&hit.wall_contact);
+        assert(hit.scratch.x==c.out_x&&hit.scratch.z==c.out_z&&hit.unsupported_primitives==0);
+    }
 }
 void iteration_failure_consumes_source_rollback(){
     auto map=map_with_floor();
@@ -177,9 +189,9 @@ void ordinary_running_jump_and_land(){
 void adhesion_lifecycle_and_unknowns(){
     auto s=session(map_with_floor());s.reset_player({0,-16,0},0,100,100);s.tick({});
     assert(s.player_position().y==0&&s.player_contact().grounded==true);
-    auto unknown=session(map_with_floor(0x31));unknown.reset_player({0,16,0},0,100,100);unknown.tick({});
-    assert(unknown.player_contact().status==l3::RuntimeContactStatus::Unsupported);
-    assert(!unknown.player_contact().grounded.has_value()&&unknown.player_position().y==16);
+    auto diagonal=session(map_with_floor(0x31));diagonal.reset_player({0,16,0},0,100,100);diagonal.tick({});
+    assert(diagonal.player_contact().status==l3::RuntimeContactStatus::SourceBackedPartial);
+    assert(!diagonal.player_contact().grounded.value_or(false));
     auto empty=map_with_floor();empty.cells={0,0,0,0};auto missing=session(std::move(empty));
     missing.tick({});assert(missing.player_contact().status==l3::RuntimeContactStatus::NoData);
     // 0.0.15.0: 0x8003C4EC uses the no-floor sentinel 32767, so a player with
@@ -319,7 +331,7 @@ void source_floor_fixture(const char* path){
     std::cout<<"PASS: 240 original source floor interval scalar cases; slope movement remains UNKNOWN\n";
 }
 } // namespace
-int main(int argc,char** argv){contact_response_and_bounds();floor_adhesion_precedes_geometry_response();unsupported_response_does_not_publish_adhesion();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
+int main(int argc,char** argv){contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
     assert(argc==1 || argc==2);if(argc==2)source_floor_fixture(argv[1]);
     std::cout<<"PASS: source-backed contact subset, ordinary action2 forward/reverse/release/turn, bounded retail scalar window, diagnostic seed, animation-gated jump and zero-allocation ticks; PHYSICS_1TO1=false\n";
 }

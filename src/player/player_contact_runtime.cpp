@@ -10,6 +10,12 @@ int16_t rd(const L3PlayerCompatWork& w, size_t o) {
     return static_cast<int16_t>(uint16_t(w.bytes[o]) | (uint16_t(w.bytes[o+1]) << 8));
 }
 int16_t short_wrap(int32_t v) { return static_cast<int16_t>(static_cast<uint16_t>(v)); }
+int32_t word_wrap(int64_t v) { return static_cast<int32_t>(static_cast<uint32_t>(v)); }
+int32_t word_mul(int32_t a,int32_t b) { return word_wrap(int64_t(a)*b); }
+std::optional<int32_t> word_div(int32_t a,int32_t b) {
+    if(!b || (a==std::numeric_limits<int32_t>::min() && b==-1))return {};
+    return a/b;
+}
 int32_t grid(int32_t v) { return v >= 0 ? v / 512 : -((-v + 511) / 512); }
 struct Candidates { std::array<RuntimeCellRef,4> cells{}; uint8_t size = 0; };
 Candidates gather(const RuntimeMap& map, size_t area, int16_t x, int16_t z) {
@@ -55,6 +61,34 @@ bool inside_xz(const Rect& r, int16_t x, int16_t z) {
 bool inside(const Rect& r, const L3RetailContactScratch& p) {
     return inside_xz(r,p.x,p.z) && r.y0<p.y && p.y<r.y1;
 }
+std::optional<Rect> diagonal_rect(const RuntimeMapIdx& idx,const RuntimeContactGroup& g,
+                                  const RuntimeContactPrimitive& p,uint16_t classifier,
+                                  const RetailPlayerBounds& b,int16_t x,int16_t z) {
+    const unsigned family=(classifier&0xf0u)>>4;
+    if(family<2||family>5)return {};
+    int16_t x0=short_wrap(int32_t(idx.x)+g.x0),x1=short_wrap(int32_t(idx.x)+g.x1);
+    int16_t z0=short_wrap(int32_t(idx.z)+g.z0),z1=short_wrap(int32_t(idx.z)+g.z1);
+    const bool special=classifier==uint16_t((family<<4)|5u);
+    const bool left=family==2||family==4,bottom=family==2||family==3;
+    const bool plus_x=left!=special,plus_z=bottom==special;
+    x0=short_wrap(int32_t(x0)+(plus_x?b.x1:-int32_t(b.x1)));
+    x1=short_wrap(int32_t(x1)+(plus_x?-int32_t(b.x0):b.x0));
+    z0=short_wrap(int32_t(z0)+(plus_z?b.z1:-int32_t(b.z1)));
+    z1=short_wrap(int32_t(z1)+(plus_z?-int32_t(b.z0):b.z0));
+    const int32_t sx=int32_t(x1)-x0,sz=int32_t(z1)-z0;
+    const auto qx=word_div(word_mul(int32_t(z)-z0,sx),sz);
+    const auto qz=word_div(word_mul(int32_t(x)-x0,sz),sx);
+    if(!qx||!qz)return {};
+    int32_t lo_x=x0,hi_x=x1,lo_z=z0,hi_z=z1;
+    if(family==2){hi_x=std::min<int32_t>(x1,word_wrap(int64_t(x0)+*qx+4));lo_z=std::max<int32_t>(z0,word_wrap(int64_t(z0)+*qz-4));}
+    else if(family==3){lo_x=std::max<int32_t>(x0,word_wrap(int64_t(x1)-*qx-4));lo_z=std::max<int32_t>(z0,word_wrap(int64_t(z1)-*qz-4));}
+    else if(family==4){hi_x=std::min<int32_t>(x1,word_wrap(int64_t(x1)-*qx+4));hi_z=std::min<int32_t>(z1,word_wrap(int64_t(z1)-*qz+4));}
+    else {lo_x=std::max<int32_t>(x0,word_wrap(int64_t(x0)+*qx-4));hi_z=std::min<int32_t>(z1,word_wrap(int64_t(z0)+*qz+4));}
+    Rect out{short_wrap(lo_x),short_wrap(hi_x),short_wrap(lo_z),short_wrap(hi_z),
+        short_wrap(int32_t(idx.y)+p.y0-b.y1),short_wrap(int32_t(idx.y)+p.y1-b.y0)};
+    if(!inside_xz(out,x,z))return {};
+    return out;
+}
 bool eligible(int16_t correction, int16_t delta, uint8_t blocked, uint8_t positive, uint8_t negative) {
     // 0x80050808/0x800508BC/0x80050970: the correction must fit the
     // per-pass movement magnitude; earlier response-direction bits exclude it.
@@ -98,6 +132,67 @@ bool generic_rectangle_response(Rect r, L3RetailContactScratch& p,
     // so a corrected pose never re-tested the floor cell it was pushed into:
     // landing against a wall corner sank Mega Man through the floor.
     return true;
+}
+void block_x(int16_t correction,uint8_t& blocked) {blocked=correction<1?2:1;}
+void block_z(int16_t correction,uint8_t& blocked) {blocked=correction<1?8:4;}
+void block_y(int16_t correction,uint8_t& blocked) {blocked=correction>0?16:32;}
+bool diagonal_project_8004ff14(const Rect& r,L3RetailContactScratch& p,
+                               int16_t dy,uint8_t& blocked,unsigned mode,
+                               RuntimePlayerContact& out) {
+    int32_t ax=0,az=0;
+    if(mode==0){ax=int32_t(r.x1)-short_wrap(int32_t(p.x)-4);az=int32_t(r.z0)-short_wrap(int32_t(p.z)+4);}
+    else if(mode==1){ax=int32_t(r.x0)-short_wrap(int32_t(p.x)+4);az=int32_t(r.z0)-short_wrap(int32_t(p.z)+4);}
+    else if(mode==2){ax=int32_t(r.x1)-short_wrap(int32_t(p.x)-4);az=int32_t(r.z1)-short_wrap(int32_t(p.z)-4);}
+    else if(mode==3){ax=int32_t(r.x0)-short_wrap(int32_t(p.x)+4);az=int32_t(r.z1)-short_wrap(int32_t(p.z)-4);}
+    else return false;
+    const int32_t denom=word_wrap(int64_t(word_mul(ax,ax))+word_mul(az,az));
+    const auto cx32=word_div(word_mul(word_mul(ax,az),az),denom);
+    const auto cz32=word_div(word_mul(word_mul(ax,az),ax),denom);
+    if(!cx32||!cz32)return false;
+    const int16_t cx=short_wrap(*cx32),cz=short_wrap(*cz32);
+    const int16_t cy=short_wrap(int32_t(dy>0?r.y0:r.y1)-p.y);
+    if(dy!=0&&std::abs(int(cy))<=std::abs(int(cx))&&std::abs(int(cy))<=std::abs(int(cz))){
+        p.y=short_wrap(int32_t(p.y)+cy);block_y(cy,blocked);
+        if(cy<=0)p.contact_state=0;else out.ceiling_contact=true;
+    }else{
+        p.x=short_wrap(int32_t(p.x)+cx);p.z=short_wrap(int32_t(p.z)+cz);
+        block_x(cx,blocked);block_z(cz,blocked);out.wall_contact=true;
+    }
+    return true;
+}
+bool diagonal_axis_response(const Rect& r,L3RetailContactScratch& p,
+                            int16_t& before_axis,int16_t delta_axis,int16_t dy,
+                            uint8_t& blocked,bool x_axis,bool high_side,
+                            RuntimePlayerContact& out) {
+    const int16_t ca=short_wrap(int32_t(x_axis?(high_side?r.x1:r.x0):(high_side?r.z1:r.z0))-
+                                (x_axis?p.x:p.z));
+    const int16_t cy=short_wrap(int32_t(dy>=0?r.y0:r.y1)-p.y);
+    const bool ea=eligible(ca,delta_axis,blocked,x_axis?2:8,x_axis?1:4);
+    const bool ey=eligible(cy,dy,blocked,32,16);
+    if(!ea&&!ey){
+        const int16_t near_a=short_wrap((std::abs(int((x_axis?r.x0:r.z0)-(x_axis?p.x:p.z)))<
+            std::abs(int((x_axis?r.x1:r.z1)-(x_axis?p.x:p.z)))?(x_axis?r.x0:r.z0):(x_axis?r.x1:r.z1))-(x_axis?p.x:p.z));
+        const int16_t near_y=short_wrap((std::abs(int(r.y0-p.y))<std::abs(int(r.y1-p.y))?r.y0:r.y1)-p.y);
+        if(std::abs(int(near_y))<std::abs(int(near_a))){p.y=short_wrap(int32_t(p.y)+near_y);block_y(near_y,blocked);if(near_y<=0)p.contact_state=0;else out.ceiling_contact=true;}
+        else {if(x_axis)p.x=short_wrap(int32_t(p.x)+near_a);else p.z=short_wrap(int32_t(p.z)+near_a);before_axis=short_wrap(int32_t(before_axis)+near_a);if(x_axis)block_x(near_a,blocked);else block_z(near_a,blocked);out.wall_contact=true;}
+    }else if(ey&&std::abs(int(cy))<std::abs(int(ca))){p.y=short_wrap(int32_t(p.y)+cy);block_y(cy,blocked);if(cy<=0)p.contact_state=0;else out.ceiling_contact=true;}
+    else {if(x_axis)p.x=short_wrap(int32_t(p.x)+ca);else p.z=short_wrap(int32_t(p.z)+ca);if(x_axis)block_x(ca,blocked);else block_z(ca,blocked);out.wall_contact=true;}
+    return true;
+}
+bool diagonal_response(uint16_t code,const Rect& r,L3RetailContactScratch& p,
+                       int16_t& before_x,int16_t& before_z,int16_t dx,int16_t dy,int16_t dz,
+                       int32_t span_x,int32_t span_z,const RetailPlayerBounds& b,
+                       uint8_t& blocked,RuntimePlayerContact& out) {
+    const unsigned family=(code&0xf0u)>>4;
+    if(family<2||family>5||((code&0x0fu)!=1u&&(code&0x0fu)!=2u))return false;
+    const int32_t adx=std::abs(int(dx)),adz=std::abs(int(dz));
+    const int32_t lhs=word_mul(adx+(family==3?-int32_t(b.x0):int32_t(b.x1)),span_x);
+    const int32_t rhs=word_mul(adz+((family==4)?int32_t(b.z1):-int32_t(b.z0)),span_z);
+    if(family==2){if(lhs>rhs&&(blocked&1))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,false,out);if(rhs>lhs&&(blocked&8))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,true,out);}
+    else if(family==3){if(lhs>rhs&&(blocked&2))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,false,out);if(rhs>lhs&&(blocked&8))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,false,out);}
+    else if(family==4){if(lhs>rhs&&(blocked&1))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,true,out);if(rhs>lhs&&(blocked&4))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,true,out);}
+    else {if(lhs>rhs&&(blocked&2))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,true,out);if(rhs>lhs&&(blocked&4))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,false,out);}
+    return diagonal_project_8004ff14(r,p,dy,blocked,family-2,out);
 }
 bool allowed(const RuntimeContactPrimitive& p,const L3PlayerCompatWork& player) {
     // Geometry response 0x8004BA98..BAA8 uses only the 0x8000 filter bit.
@@ -208,7 +303,8 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
     RuntimePlayerContact out;
     const L3RetailContactScratch requested{rd(w,0x14),rd(w,0x16),rd(w,0x18),w.bytes[0x74]};
     out.scratch=requested;
-    const int16_t before_x=rd(w,0x2C),before_y=rd(w,0x2E),before_z=rd(w,0x30);
+    int16_t before_x=rd(w,0x2C),before_z=rd(w,0x30);
+    const int16_t before_y=rd(w,0x2E);
     const auto candidates=gather(map,area,requested.x,requested.z);
     out.candidate_cells=candidates.size;
     if(!candidates.size)return out;
@@ -253,15 +349,30 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                 if(!g.primitive_count)continue;
                 if(g.primitive_first>=map.contact_primitives.size()){++out.unsupported_primitives;continue;}
                 const auto first_code=map.contact_primitives[g.primitive_first].code;
+                const unsigned first_family=(first_code&0xf0u)>>4;
+                if(first_family>=2&&first_family<=5){
+                    if(g.x0==g.x1||g.z0==g.z1){++out.unsupported_primitives;continue;}
+                    const auto classified=diagonal_rect(*idx,g,map.contact_primitives[g.primitive_first],
+                        first_code,b,out.scratch.x,out.scratch.z);
+                    if(!classified)continue;
+                }
                 for(uint32_t pi=0;pi<g.primitive_count&&!repeat;++pi){
                     const auto pix=uint64_t(g.primitive_first)+pi;
                     if(pix>=map.contact_primitives.size()){++out.unsupported_primitives;continue;}
                     const auto& p=map.contact_primitives[static_cast<size_t>(pix)];
                     ++out.primitives_tested;
                     if(!allowed(p,w))continue;
-                    const auto r=rect(*idx,g,p,b);
+                    const auto diagonal=first_family>=2&&first_family<=5;
+                    const auto clipped=diagonal?diagonal_rect(*idx,g,p,first_code,b,out.scratch.x,out.scratch.z):std::optional<Rect>{};
+                    const auto r=clipped?*clipped:rect(*idx,g,p,b);
                     if(!inside(r,out.scratch))continue;
                     if(first_code>=256u)continue; // exact dispatcher admission
+                    if(diagonal){
+                        if(diagonal_response(p.code,r,out.scratch,before_x,before_z,dx,dy,dz,
+                            int32_t(g.x1)-g.x0,int32_t(g.z1)-g.z0,b,blocked,out))repeat=true;
+                        else ++out.unsupported_primitives;
+                        continue;
+                    }
                     if((first_code&0xF0u)>=0x20u || (p.code!=1u&&p.code!=3u&&p.code!=15u)){
                         ++out.unsupported_primitives;continue;
                     }

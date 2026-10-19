@@ -78,7 +78,7 @@ void leaving_the_floor_falls() {
     assert(off.player_position().y > y0 + 32); // gravity applies; no walking on air
 }
 
-void unsupported_response_holds() {
+void diagonal_response_slides() {
     // One positive cell list: a floor slab plus a diagonal (0x21) group ahead.
     auto m = grid({1, 1, 1, 1});
     m.idx[1] = {0, 0, 0, 0, 0};
@@ -91,17 +91,17 @@ void unsupported_response_holds() {
     auto s = session(m, {0, 0, 0});
     s.tick({});
     l3::RuntimeInputFrame forward; forward.held_psx_mask = 0x0010; // heading 0 -> -z
-    bool held = false; int16_t stop_z = 0;
+    bool saw_wall = false;
     for (int i = 0; i < 60; ++i) {
         s.tick(forward);
-        if (s.player_contact().status == l3::RuntimeContactStatus::Unsupported && !held) {
-            held = true; stop_z = int16_t(s.player_position().z);
-        }
+        assert(s.player_contact().status != l3::RuntimeContactStatus::Unsupported);
+        saw_wall = saw_wall || s.player_contact().wall_contact;
     }
-    assert(held);
-    // Never enters the untranslated primitive's footprint (-300+32 expanded edge).
-    assert(s.player_position().z >= -300 + 32 && s.player_position().z == stop_z);
-    assert(s.player_position().y == 0);
+    assert(saw_wall && s.player_position().x != 0);
+    // The original diagonal projection preserves tangential motion instead of
+    // freezing at the former conservative hold boundary.
+    assert(s.player_position().z < -300 + 32);
+    assert(s.player_position().z != 0);
 }
 
 void null_list_is_not_unsupported() {
@@ -122,8 +122,8 @@ void null_list_is_not_unsupported() {
 int main() {
     corner_landing_restarts_scan();
     leaving_the_floor_falls();
-    unsupported_response_holds();
+    diagonal_response_slides();
     null_list_is_not_unsupported();
-    std::puts("map edge PASS: corner landing, edge fall, unsupported hold, null list");
+    std::puts("map edge PASS: corner landing, edge fall, diagonal slide, null list");
     return 0;
 }

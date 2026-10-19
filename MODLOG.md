@@ -103,3 +103,14 @@ handoff spawn (0x80101274), the 0x8004B6AC scan restart, the 0x8004B414
 failure contract for untranslated responses, and the 0x8003C4EC floor rule.
 Owner-local audit: 0 escapes/0 falls (was 191/182). Host 146/146; native
 type-check of all 113 sources; devkitARM link and Azahar pending on the Mac.
+
+## 0.0.15.2 (M2b — diagonal walls)
+
+Translated the four original diagonal classifiers and the response dispatcher
+paths through `0x8004F8BC`, `0x8004FBE8`, and `0x8004FF14`. Native contact now
+projects penetration onto angled walls, preserves tangential movement, and
+uses the source direction-bit rules at straight/diagonal corners. Four direct
+executable vectors and deterministic sliding tests pass. The owner-local Area
+1 audit reports 0 unsupported frames, 0 escapes, and 0 falls in 600,000 frames;
+deep-overlap recovery `0x80050400` and broader measured retail traces remain
+unresolved. `PHYSICS_1TO1=false`.
