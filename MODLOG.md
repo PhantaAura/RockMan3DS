@@ -182,3 +182,13 @@ door descriptors (32→28, 33→30) share their render streams, so open and clos
 draw identically and the doors still look closed; only collision changes. The
 door object's draw and rotation `0x801126DC` stay UNKNOWN. Host 149/149
 (new `terrain_descriptor_patch`), replay 2 hides / 2 restores, native build passes.
+
+## 0.0.15.9 (WCA — original gameplay camera)
+
+Ported the original follow camera: init `0x80038648`/`0x800397E8`, the ordinary
+`0x80038894` update, yaw helpers `0x8003A218`/`0x8003A154`, the `0x80037FB4`
+eye, and the `0x80049C54` eye-in-geometry test. The 3DS view uses it whenever
+gameplay owns the camera, replacing the native rigid follow. New deterministic
+camera test; host 150/150; Area 1 audit clean (distance 512..768, 0 unsupported
+eye tests); door replay PASS; native build PASS. Lock-on stays blocked on the
+matrix half of `0x80037FB4`.

@@ -75,6 +75,22 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,
                                                 const L3PlayerCompatWork& player,
                                                 RetailPlayerBounds bounds = {});
 
+// USA 0x80049C54 with identical start and end points (the gameplay camera's
+// eye test): is a point inside solid collision? Free (raw 0) when every
+// candidate cell lets it through; Embedded with the original nonzero raw
+// result otherwise (0x40000000 = no cell at the point; low16 = packed cell,
+// bits16..19 = primitive flags). Candidates come from 0x8004B1E0 mode 1
+// (empty cells included, gather stops at the grid edge). Primitives whose
+// height interval needs an unported 0x8004A060 case return Unsupported.
+enum class RuntimePointEmbedding : uint8_t { Free, Embedded, Unsupported };
+struct RuntimePointEmbeddingResult {
+    RuntimePointEmbedding status = RuntimePointEmbedding::Unsupported;
+    uint32_t raw = 0;
+};
+RuntimePointEmbeddingResult runtime_point_embedded_80049c54(const RuntimeMap& map,
+    size_t area_index, int16_t x, int16_t y, int16_t z, RetailPlayerBounds bounds,
+    bool skip_flag_8000) noexcept;
+
 const char* runtime_contact_status_name(RuntimeContactStatus status);
 
 // Event primitive found by USA 0x800514FC (contact code > 0xFF). Coordinates

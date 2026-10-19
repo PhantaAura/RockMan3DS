@@ -1,4 +1,5 @@
 #pragma once
+#include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/bottom_screen.h"
 #include "legends3ds/mml_message.h"
 #include "legends3ds/player_runtime.h"
@@ -424,6 +425,10 @@ public:
     void start_script_camera(const RuntimeCameraPose& target, uint16_t frames);
     void release_script_camera(uint16_t blend_frames);
     const RuntimeCameraState& camera() const { return camera_; }
+    // Original gameplay follow camera (0x80038648/0x80038894). Initialized on
+    // the first tick after a player reset or area change; updated each tick
+    // while the gameplay camera owns the view.
+    const SourceGameplayCamera& source_gameplay_camera() const { return source_gameplay_camera_; }
 
     void tick(const RuntimeInputFrame& input,SourceRngService* candidate_rng=nullptr);
     // Source E0/00 gate/state2 subset. Records retain their retail fields;
@@ -616,6 +621,7 @@ private:
     RuntimeCombatTuning combat_tuning_{};
     bool candidate_combat_enabled_=true;
     RuntimeCameraState camera_{};
+    SourceGameplayCamera source_gameplay_camera_{};
     RuntimeDialogueState dialogue_{};
     std::optional<MmlMessageRuntimeCursor> dialogue_cursor_;
     DialogueHistory history_{};

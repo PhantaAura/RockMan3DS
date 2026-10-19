@@ -63,6 +63,7 @@ add_library(legends3ds_core STATIC
     src/world/source_player_pose.cpp
     src/world/source_buster_profile.cpp
     src/world/source_camera.cpp
+    src/world/source_gameplay_camera.cpp
     src/world/xa_stream.cpp
     src/world/xa_transport.cpp
     src/world/source_effects.cpp
@@ -842,6 +843,12 @@ add_executable(test_xa_stream tests/test_xa_stream.cpp)
 target_link_libraries(test_xa_stream PRIVATE legends3ds_core)
 target_compile_options(test_xa_stream PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_test(NAME xa_stream COMMAND test_xa_stream)
+add_executable(test_source_gameplay_camera tests/test_source_gameplay_camera.cpp)
+target_link_libraries(test_source_gameplay_camera PRIVATE legends3ds_core)
+add_test(NAME source_gameplay_camera COMMAND test_source_gameplay_camera)
+if(NOT MSVC)
+  target_compile_options(test_source_gameplay_camera PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+endif()
 add_executable(test_source_camera tests/test_source_camera.cpp)
 target_link_libraries(test_source_camera PRIVATE legends3ds_core)
 target_compile_options(test_source_camera PRIVATE -Wall -Wextra -Wpedantic -Werror)

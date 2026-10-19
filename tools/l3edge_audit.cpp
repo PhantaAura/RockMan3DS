@@ -9,6 +9,7 @@
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/st00_render.h"
 #include "legends3ds/map_initialization.h"
+#include <algorithm>
 #include <cstdio>
 #include <filesystem>
 #include <random>
@@ -31,7 +32,7 @@ int main(int argc,char** argv){
         char ebd[64];std::snprintf(ebd,sizeof(ebd),"ebd/area_%02lu.l3ebd",(unsigned long)ai);
         L3QolSettings q{};l3_qol_settings_defaults(&q);
         static const uint16_t inputs[]={0x10,0x10|0x80,0x10|0x20,0x80,0x20,0x40,0x10|0x4000,0x10};
-        int escapes=0,falls=0;long unsupported=0,nodata=0,deep=0;std::set<std::pair<int,int>> cells;
+        int escapes=0,falls=0;long unsupported=0,nodata=0,deep=0,cam_unsup=0;int cam_min=1<<30,cam_max=0;std::set<std::pair<int,int>> cells;
         for(int sd=0;sd<seeds;++sd){
             std::mt19937 rng{static_cast<uint32_t>(sd)};
             auto area=load_tutorial_runtime_area(read_file(root/"st00.l3flow"),read_file(root/ebd),ai,true);
@@ -46,13 +47,14 @@ int main(int argc,char** argv){
                 if(c.status==RuntimeContactStatus::Unsupported)++unsupported;
                 if(c.status==RuntimeContactStatus::NoData)++nodata;
                 deep+=long(c.deep_overlap_recoveries);
+                {const auto& g=s.source_gameplay_camera();if(g.initialized&&g.follow_frames_80098668){cam_min=std::min(cam_min,g.distance_800a3964);cam_max=std::max(cam_max,g.distance_800a3964);}if(f==frames-1)cam_unsup+=long(g.unsupported_eye_tests);}
                 cells.insert({p.x>>9,p.z>>9});
                 if(!s.probe_player_map().in_area&&!escaped){escaped=true;++escapes;std::printf("ESCAPE seed=%d frame=%d pos=%d,%d,%d\n",sd,f,p.x,p.y,p.z);}
                 if(p.y>600&&!fell){fell=true;++falls;std::printf("FALL seed=%d frame=%d pos=%d,%d,%d\n",sd,f,p.x,p.y,p.z);}
             }
         }
-        std::printf("{\"area\":%lu,\"spawn\":[%d,%d,%d],\"map_init_writes\":%lu,\"seeds\":%d,\"frames\":%d,\"escapes\":%d,\"falls\":%d,\"unsupported_frames\":%ld,\"nodata_frames\":%ld,\"deep_overlap_recoveries\":%ld,\"visited_cells\":%lu}\n",
-            (unsigned long)ai,spawn.x,spawn.y,spawn.z,(unsigned long)applied.write_count,seeds,frames,escapes,falls,unsupported,nodata,deep,(unsigned long)cells.size());
+        std::printf("{\"area\":%lu,\"spawn\":[%d,%d,%d],\"map_init_writes\":%lu,\"seeds\":%d,\"frames\":%d,\"escapes\":%d,\"falls\":%d,\"unsupported_frames\":%ld,\"nodata_frames\":%ld,\"deep_overlap_recoveries\":%ld,\"camera_distance\":[%d,%d],\"camera_unsupported_eye_tests\":%ld,\"visited_cells\":%lu}\n",
+            (unsigned long)ai,spawn.x,spawn.y,spawn.z,(unsigned long)applied.write_count,seeds,frames,escapes,falls,unsupported,nodata,deep,cam_min,cam_max,cam_unsup,(unsigned long)cells.size());
         return escapes||falls?1:0;
     }catch(const std::exception& e){std::fprintf(stderr,"%s\n",e.what());return 2;}
 }

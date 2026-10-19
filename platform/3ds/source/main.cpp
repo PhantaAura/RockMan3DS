@@ -3330,9 +3330,26 @@ int main() {
                     inspection_position={half(20),half(22),half(24)};inspection_yaw=uint16_t(half(86))&0xfffu;inspect_scene_actor=true;
                 }
             }
-            const auto camera=l3::frontend_follow_camera(
+            auto camera=l3::frontend_follow_camera(
                 l3::frontend_world_point(float(inspection_position.x),float(inspection_position.y),float(inspection_position.z)),
                 inspection_yaw,g_view_settings);
+            // 0.0.15.9: the original follow camera (0x80038894 eye and look-at)
+            // replaces the rigid native follow whenever gameplay owns the view.
+            const auto& source_follow=session.source_gameplay_camera();
+            const bool source_follow_view=!inspect_scene_actor&&source_follow.initialized&&
+                source_follow.follow_frames_80098668>0&&session.camera().owner==l3::RuntimeCameraOwner::Gameplay;
+            if(source_follow_view) {
+                camera.eye=l3::frontend_world_point(float(source_follow.eye_800a39f0[0]),
+                    float(source_follow.eye_800a39f0[1]),float(source_follow.eye_800a39f0[2]));
+                camera.target=l3::frontend_world_point(float(source_follow.target_800a39a0[0]),
+                    float(source_follow.target_800a39a0[1]),float(source_follow.target_800a39a0[2]));
+                if(session.frame_counter()%120u==0u)
+                    hardware_test_trace("# source_follow_camera,frame=%lu,eye=%ld,%ld,%ld,target=%ld,%ld,%ld,yaw=%ld,distance=%ld,unsupported_eye_tests=%lu,source=0x80038894",
+                        (unsigned long)session.frame_counter(),(long)source_follow.eye_800a39f0[0],(long)source_follow.eye_800a39f0[1],
+                        (long)source_follow.eye_800a39f0[2],(long)source_follow.target_800a39a0[0],(long)source_follow.target_800a39a0[1],
+                        (long)source_follow.target_800a39a0[2],(long)(source_follow.yaw_800a3968&0xfff),(long)source_follow.distance_800a3964,
+                        (unsigned long)source_follow.unsupported_eye_tests);
+            }
             if(inspect_scene_actor&&session.frame_counter()%60u==0u)
                 hardware_test_trace("# source_actor40_inspection_camera,frame=%lu,x=%ld,y=%ld,z=%ld,camera=FRONTEND_DIAGNOSTIC,retail_camera=false,source_actor_moved=false",
                     (unsigned long)session.frame_counter(),(long)inspection_position.x,(long)inspection_position.y,(long)inspection_position.z);

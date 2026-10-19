@@ -20,8 +20,8 @@
   "status": "SOURCE_BACKED_PARTIAL"
  },
  "CAMERA": {
-  "evidence": "Existing source radial subset retained. Candidate scene handoff reaches Area 1; native fallback view there was obstructed by a nearby wall. Source gameplay optics/ownership and spawn presentation remain incomplete.",
-  "status": "SOURCE_BACKED_PARTIAL"
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "0.0.15.9: the 3DS gameplay view uses the original follow camera (0x80038648 init, 0x80038894 ordinary follow, yaw helpers 0x8003A218/0x8003A154, 0x80037FB4 eye, 0x80049C54 eye-in-geometry test), checked against the R3000 instructions. Rate-limited turn with 0x200 lag clamp; target Y fixed at -0x96; distance 0x200..0x300 driven by player +0x44D and the eye test. Not ported: first-person, scripted modes 2-4 and blends, shake, the 0x1F800008 matrix (lock-on input), and some 0x8004A060 slope cases (distance holds). Owner-local Area 1 audit: distance 512..768, 0 unsupported eye tests. Azahar check pending."
  },
  "COLLISION": {
   "status": "SOURCE_BACKED_PARTIAL",

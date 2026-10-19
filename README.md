@@ -1,3 +1,13 @@
+# Mega Man Legends 3DS — 0.0.15.9 (original gameplay camera)
+
+0.0.15.9: the 3DS gameplay view now uses the original follow camera
+(`0x80038894`). It turns toward Mega Man at the original rate instead of
+snapping, backs out while he runs and eases back in. Host 150/150 and the native
+build pass; not yet checked in Azahar.
+[Results](docs/validation_01509/RESULTS.md) · [Resume](RESUME_01509.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.8 (M2 door terrain patch)
 
 0.0.15.8: the 3DS renderer now follows door IDX swaps without rebuilding the

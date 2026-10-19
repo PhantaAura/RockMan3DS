@@ -566,6 +566,104 @@ RuntimeEventPrimitiveQuery runtime_player_event_primitive_800514fc(
     return out;
 }
 
+RuntimePointEmbeddingResult runtime_point_embedded_80049c54(const RuntimeMap& map,
+    size_t area_index, int16_t x, int16_t y, int16_t z, RetailPlayerBounds b,
+    bool skip_flag_8000) noexcept {
+    RuntimePointEmbeddingResult out;
+    if(area_index>=map.areas.size())return out;
+    const auto& a=map.areas[area_index];
+    // 0x80048C60: the packed cell under the point; none or zero = 0x40000000.
+    const auto cell_at=[&](int32_t px,int32_t pz)->std::optional<uint32_t>{
+        const uint32_t gx=uint32_t((px+0x8000)>>9)-uint32_t(uint16_t(a.start_x));
+        const uint32_t gz=uint32_t((pz+0x8000)>>9)-uint32_t(uint16_t(a.start_z));
+        if(gx>=a.width||gz>=a.height)return {};
+        const uint64_t ci=uint64_t(a.cell_first)+uint64_t(gz)*a.width+gx;
+        if(ci>=map.cells.size())return {};
+        return static_cast<uint32_t>(ci);
+    };
+    const auto here=cell_at(x,z);
+    if(!here||map.cells[*here]==0){out.status=RuntimePointEmbedding::Embedded;out.raw=0x40000000u;return out;}
+    // 0x8004B1E0 mode 1: four probes, stop at the first one off the grid,
+    // positive cells deduplicated by value, empty and negative cells kept.
+    std::array<uint32_t,4> candidates{};uint8_t count=0;
+    const int32_t nx=(uint16_t(x)&0x1ffu)>0x100u?0x8200:0x7e00;
+    const int32_t nz=(uint16_t(z)&0x1ffu)>0x100u?0x8200:0x7e00;
+    const std::array<std::array<int32_t,2>,4> offsets{{{{0x8000,0x8000}},{{nx,0x8000}},{{0x8000,nz}},{{nx,nz}}}};
+    for(const auto& o:offsets){
+        const uint32_t gx=uint32_t((int32_t(x)+o[0])>>9)-uint32_t(uint16_t(a.start_x));
+        if(gx>=a.width)break;
+        const uint32_t gz=uint32_t((int32_t(z)+o[1])>>9)-uint32_t(uint16_t(a.start_z));
+        if(gz>=a.height)break;
+        const uint64_t ci=uint64_t(a.cell_first)+uint64_t(gz)*a.width+gx;
+        if(ci>=map.cells.size())break;
+        const int16_t packed=map.cells[static_cast<size_t>(ci)];
+        bool duplicate=false;
+        if(packed>0)for(uint8_t i=0;i<count;++i)if(map.cells[candidates[i]]==packed)duplicate=true;
+        if(!duplicate)candidates[count++]=static_cast<uint32_t>(ci);
+    }
+    for(uint8_t rev=count;rev>0;--rev){
+        const uint32_t ci=candidates[rev-1];
+        const int16_t packed=map.cells[ci];
+        if(packed<1){
+            if(ci!=*here)continue;
+            const int32_t top=-int32_t((uint16_t(packed)&0x1F00u)>>1);
+            const int32_t bands=(uint16_t(packed)&0x6000u)>>13;
+            if(int32_t(y)<=top-1-b.y1&&(bands==0||top-bands*0x180+1-b.y0<=int32_t(y)))continue;
+            out.raw=uint16_t(packed);
+            out.status=out.raw?RuntimePointEmbedding::Embedded:RuntimePointEmbedding::Free;
+            return out;
+        }
+        RuntimeCellRef cell;cell.area_index=area_index;cell.cell_index=ci;cell.packed_cell=packed;
+        const auto* idx=runtime_map_cell_idx(map,cell);
+        const auto* list=runtime_map_cell_contact_list(map,cell);
+        if(!idx||!list)continue;
+        for(uint32_t gi=0;gi<list->group_count;++gi){
+            const auto gix=uint64_t(list->group_first)+gi;
+            if(gix>=map.contact_groups.size())return out;
+            const auto& g=map.contact_groups[static_cast<size_t>(gix)];
+            if(!g.primitive_count||g.primitive_first>=map.contact_primitives.size())continue;
+            const auto& first=map.contact_primitives[g.primitive_first];
+            if(first.code>=0x100u)continue;
+            const unsigned family=(first.code&0xf0u)>>4;
+            bool classified=false;
+            if(family<=1)classified=inside_xz(rect(*idx,g,first,b),x,z);
+            else if(family<=5){
+                if(g.x0==g.x1||g.z0==g.z1)return out;
+                classified=diagonal_rect(*idx,g,first,first.code,b,x,z).has_value();
+            } else return out;
+            if(!classified)continue;
+            for(uint32_t pi=0;pi<g.primitive_count;++pi){
+                const auto pix=uint64_t(g.primitive_first)+pi;
+                if(pix>=map.contact_primitives.size())return out;
+                const auto& p=map.contact_primitives[static_cast<size_t>(pix)];
+                if(skip_flag_8000&&(p.flags&0x8000u))continue;
+                const unsigned code=p.code&0xffu;
+                int32_t y0=0,y1=0;
+                if(code>=8u&&code<=11u){
+                    const auto interval=runtime_contact_floor_interval_8004a060(*idx,g,p,b,x,z);
+                    if(!interval)return out;
+                    y0=interval->y0;y1=interval->y1;
+                } else if((code>=0x0cu&&code<=0x0eu)||(code>=0x10u&&code<=0x13u)||(code>=0x18u&&code<=0x1bu)||
+                          code==0x24u||code==0x34u||code==0x44u||code==0x54u||
+                          code==0x25u||code==0x35u||code==0x45u||code==0x55u){
+                    return out; // unported 0x8004A060 case
+                } else {
+                    // 0x8004A060 default: subtract the bounds from the Y range.
+                    y0=short_wrap(int32_t(idx->y)+p.y0-b.y1);
+                    y1=short_wrap(int32_t(idx->y)+p.y1-b.y0);
+                }
+                if(y0<y&&y<y1){
+                    out.status=RuntimePointEmbedding::Embedded;
+                    out.raw=uint32_t(uint16_t(packed))|(uint32_t(p.flags&0xfu)<<16);
+                    return out;
+                }
+            }
+        }
+    }
+    out.status=RuntimePointEmbedding::Free;out.raw=0;
+    return out;
+}
+
 const char* runtime_contact_status_name(RuntimeContactStatus status) {
     switch(status){
         case RuntimeContactStatus::NoData:return "UNKNOWN";

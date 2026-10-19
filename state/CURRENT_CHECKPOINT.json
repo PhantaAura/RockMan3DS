@@ -1,6 +1,6 @@
 {
- "version": "0.0.15.8",
- "title": "M2 \u2014 door terrain patch: the 3DS renderer follows IDX descriptor swaps (doors still look closed: open/closed descriptors draw the same streams)",
+ "version": "0.0.15.9",
+ "title": "WCA integration \u2014 original gameplay follow camera 0x80038894",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -8,21 +8,21 @@
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 149/149)",
- "host_tests": "149/149 PASS; new terrain_descriptor_patch; source_door_event checks the descriptor generation; l3door_replay fall + door + terrain-patch phases PASS",
+ "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 150/150)",
+ "host_tests": "150/150 PASS (new source_gameplay_camera)",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
- "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261019-142747-m2-01508/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
- "native_binary_bytes": 957008,
- "native_binary_sha256": "b10bcfddd480f45c880f65e8d8c0be8bafc000d6f3c9f5d2f801f18eba8ae1fd",
+ "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261019-163409-m2-01509/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
+ "native_binary_bytes": 960864,
+ "native_binary_sha256": "aeedd7fcceffbff21ec04f07cd87121f551712b5e74445e1158c92181d70c0f8",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "NOT_RUN_THIS_PASS: owner card docs/validation_01508/AZAHAR_TEST.md. Host replay: event 0 unchanged; the terrain patch hides and restores both door cells (IDX 123, 149) and draws the open descriptor from an overlay.",
- "emulator_evidence": "docs/validation_01508/RESULTS.md",
+ "current_emulator_validation": "NOT_RUN_THIS_PASS: Azahar was in use for the owner's other project; 0.0.15.9 installed on Azahar's SD for owner testing.",
+ "emulator_evidence": "docs/validation_01509/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
@@ -30,12 +30,14 @@
  "world_comes_alive_finished": false,
  "usage_reset_used": false,
  "evidence": [
-  "RESUME_01508.md",
+  "RESUME_01509.md",
+  "docs/research_01509/GAMEPLAY_CAMERA_80038894.md",
+  "docs/validation_01509/RESULTS.md",
+  "src/world/source_gameplay_camera.cpp",
   "docs/validation_01508/RESULTS.md",
   "docs/research_01508/DOOR_TERRAIN_DESCRIPTORS.md",
   "src/render/terrain_descriptor_patch.cpp",
   "tests/test_terrain_descriptor_patch.cpp",
-  "RESUME_01507.md",
   "docs/validation_01507/RESULTS.md",
   "docs/research_01507/EVENT0_DOOR_SEQUENCE.md",
   "docs/research_01506/DOOR_EVENT_80050C2C.md",
@@ -45,10 +47,10 @@
   "tools/l3door_replay.cpp"
  ],
  "blockers": [
+  "Lock-on 0x80034EB8 still receives no camera: the matrix half of 0x80037FB4 (RotMatrixYXZ/transpose/translation into 0x1F800008) is not yet ported or verified. The follow camera's eye/target path is ported (0.0.15.9).",
   "Area 1 door: event 0 (0x800485E4) is ported (phases 0-2, 14 substates, forced walk 0x80048A9C, ST00 door object states 0-5 with the IDX descriptor swap) and Mega Man walks through both doors on the host replay. CANDIDATE: door objects are spawned lazily in the player's door cell (the area object list is not cooked); the load (substates 6-8) counts one frame each; frame order player -> event -> doors. Not ported: camera 0x8001E6C0/0x8001EC0C, door leaf model and its rotation, door/event sounds and the 0x8001F6C4 BGM check, fades. The 3DS terrain now follows the IDX swap (0.0.15.8 patch), but the ST00 door descriptors draw identical geometry open and closed, so the doors still look closed; the door object draw/rotation 0x801126DC is UNKNOWN. Oct 19 camera events at recording 32 s/44 s remain unverified.",
   "No paired PS1/native movement trace yet for corners, deep overlap or the ported correction history; codes 2/0x0B/0x0C (0x8004F44C modes 0/0x43), the x5 diagonal fallback and slopes/steps remain unported (4,072 embedded Area 2 poses still Unsupported). Actor-side deep overlap in actor_contact remains excluded.",
   "Areas 2-4 entry spawns and door/transition progression from Area 1 are not yet audited.",
-  "Lock-on 80034EB8 is still not wired: it needs the original gameplay camera matrix (owner UNKNOWN). Candidate lock-on is retired while source combat is active, so X does nothing in that mode.",
   "Reward descriptor 0x01010202 is queued exactly once, but original 0x80046B34 RNG-driven subtype-0x87 pickup expansion, update and collection are not implemented.",
   "Defeat effect subtype0x80 parameter0x41 is allocated, but its complete source callback and rendered lifetime remain unsupported.",
   "The exact player endpoint writers, projectile map bounds and source fire-cadence owner remain unresolved; existing candidate labels are retained.",
@@ -56,7 +58,7 @@
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.15.7",
-  "source_archive": "git main (commit 0ff03cc)"
+  "version": "0.0.15.8",
+  "source_archive": "git main (commit 41c2687)"
  }
 }

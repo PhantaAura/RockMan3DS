@@ -63,6 +63,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     source_event_player_known_={};source_event_consumers_bound_=false;
     source_event_phase2_bound_=false;source_event_command_bound_=false;
     player_={}; player_position_=p; hp_max_=hpmax?hpmax:1; hp_=std::min(hp,hp_max_);
+    source_gameplay_camera_={};
     wr16w(player_,0x56,yaw&0x0FFFu);
     // Retail USA boots with compatibility control profile 0 (table at 0x8008A04C).
     l3_pl00_install_control_profile_800425fc(&player_,0);
@@ -191,6 +192,7 @@ bool RuntimeSession::transition_to_location(size_t id,RuntimeVec3i p,uint16_t ya
     source_door_objects_.clear();door_map_.reset();
     player_position_=p;wr16w(player_,0x56,yaw&0x0FFFu);sync_primary_position_to_compat();
     reset_player_contact();
+    source_gameplay_camera_={};
     // Area-local metadata must be rebound to the new source stage. Global
     // event work survives; unknown transition/busy values cannot be inferred
     // from this native diagnostic transition succeeding.
@@ -765,6 +767,19 @@ void RuntimeSession::release_script_camera(uint16_t frames){camera_.owner=Runtim
 void RuntimeSession::update_gameplay_camera_target(){if(camera_.owner!=RuntimeCameraOwner::Gameplay)return;camera_.target.look_at=player_position_;camera_.target.look_at.y+=0x50;camera_.target.eye=player_position_;camera_.target.eye.y+=0x140;const uint16_t yaw=player_yaw();if(reference_tables_){const auto&t=reference_tables_->trig[yaw&0x0FFFu];camera_.target.eye.x+=int32_t((int64_t(t.sin_q12)*0x300)/4096);camera_.target.eye.z+=int32_t((int64_t(t.cos_q12)*0x300)/4096);}else{const double a=(double(yaw)/4096.0)*6.2831853071795864769;camera_.target.eye.x+=int32_t(std::lround(std::sin(a)*0x300));camera_.target.eye.z+=int32_t(std::lround(std::cos(a)*0x300));}camera_.target.yaw=yaw;}
 void RuntimeSession::update_camera(){
     if(camera_.owner==RuntimeCameraOwner::Gameplay)update_gameplay_camera_target();
+    if(camera_.owner==RuntimeCameraOwner::Gameplay&&reference_tables_&&map_area_index_<active_map().areas.size()){
+        if(!source_gameplay_camera_.initialized){
+            // 0x80038648 runs from the area-load callback; its 0x800397E8 tail
+            // clears player +0x44D (0x800B55FD). The follow update starts on
+            // the next tick.
+            source_gameplay_camera_init_80038648(source_gameplay_camera_,*reference_tables_,
+                rds16w(player_,0x14),rds16w(player_,0x18));
+            player_.bytes[0x44D]=0;
+        } else {
+            source_gameplay_camera_update_80038894(source_gameplay_camera_,*reference_tables_,
+                player_,active_map(),map_area_index_);
+        }
+    }
     if(camera_.transition_frames&&camera_.transition_frame<camera_.transition_frames){++camera_.transition_frame;const uint32_t n=camera_.transition_frame,d=camera_.transition_frames;camera_.current.eye=lerp_vec(camera_.start.eye,camera_.target.eye,n,d);camera_.current.look_at=lerp_vec(camera_.start.look_at,camera_.target.look_at,n,d);camera_.current.yaw=uint16_t(lerp_i32(camera_.start.yaw,camera_.target.yaw,n,d));}
     else camera_.current=camera_.target;
 }
