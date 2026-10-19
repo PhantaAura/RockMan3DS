@@ -182,9 +182,14 @@ void adhesion_lifecycle_and_unknowns(){
     assert(!unknown.player_contact().grounded.has_value()&&unknown.player_position().y==16);
     auto empty=map_with_floor();empty.cells={0,0,0,0};auto missing=session(std::move(empty));
     missing.tick({});assert(missing.player_contact().status==l3::RuntimeContactStatus::NoData);
-    assert(!missing.player_contact().grounded.has_value());
+    // 0.0.15.0: 0x8003C4EC uses the no-floor sentinel 32767, so a player with
+    // no floor below selects the fall branch (action7/4, +74=1) instead of
+    // standing on air. No floor-at-zero launch is invented either.
+    assert(missing.player_contact().grounded==false);
+    assert(missing.compat_player().bytes[0x09]==7&&missing.compat_player().bytes[0x0A]==4);
+    assert(missing.compat_player().bytes[0x74]==1);
     l3::RuntimeInputFrame jump;jump.held_psx_mask=0x4000;missing.tick(jump);
-    assert(missing.compat_player().bytes[0x09]==0); // no unproved floor-at-zero launch
+    assert(missing.compat_player().bytes[0x09]==7&&missing.compat_player().bytes[0x0A]!=1);
     auto malformed=map_with_floor();malformed.contact_groups[0].primitive_first=0xFFFFFFFFu;
     auto rejected=session(std::move(malformed));rejected.tick({});
     assert(rejected.player_contact().status==l3::RuntimeContactStatus::Unsupported);

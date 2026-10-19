@@ -9,6 +9,16 @@
 #include "legends3ds/visual_bridge.h"
 
 namespace l3 {
+// ST00 opening-scene handoff to player control, original overlay routine
+// 0x80101274 (ST00 PROGBIN): immediates at 0x80101280 (X=2822) and
+// 0x80101298 (Z=-4833), Y=-1, heading lane 0, destination area 1. This is
+// where the original first gives Mega Man to the player in the tutorial.
+struct SourceSt00ControlHandoff {
+    uint8_t destination_area;
+    int16_t x,y,z;
+    uint16_t heading;
+};
+inline constexpr SourceSt00ControlHandoff kSourceSt00OpeningHandoff{1,2822,-1,-4833,0};
 struct SourceEventWork;
 struct SourceEventFlagSnapshot;
 // The source stores only the marked lanes of800C3560..800C3571. Consumers

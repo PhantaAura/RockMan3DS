@@ -1,10 +1,12 @@
-# Mega Man Legends 3DS — 0.0.15.0 (M1: default combat)
+# Mega Man Legends 3DS — 0.0.15.1 (M1 default combat + M2 map edge)
 
-The source-backed Buster → hit → reaction → defeat path is now the default
-gameplay path on the enhanced renderer; the old candidate projectile is retired
-there. Build on the Mac with `tools/m1_mac_build.sh`; test with
+Default boot now starts where the original first gives Mega Man to the player
+(Area 1 handoff). Source-backed Buster/hit/defeat is the default combat on the
+enhanced renderer. The Area 0/1 map-edge escape is fixed (contact solver and
+floor-rule repairs; host audit with real data: 0 escapes in 600k frames).
+Build on the Mac with `tools/m1_mac_build.sh`; test with
 [docs/validation_01500/AZAHAR_TEST.md](docs/validation_01500/AZAHAR_TEST.md).
-Resume: [RESUME_01500.md](RESUME_01500.md). `PHYSICS_1TO1=false`.
+Resume: [RESUME_01501.md](RESUME_01501.md). `PHYSICS_1TO1=false`.
 
 ---
 

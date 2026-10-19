@@ -1,138 +1,138 @@
 {
-  "ANIMATION": {
-    "evidence": "01449 evaluates the source-backed ordinary 15-part primary player pose and exposes its two proven Buster muzzle joints. Limb selectors 1-3 hold because the current cooked format lacks the alternate eight-part arm banks. Full animation request/cadence parity remains unproved.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "AUDIO": {
-    "evidence": "At frame 3085 the actual native path applied all 254 mixer-prefix calls, paused NDSP and allowed outgoing transport invalidation on area commit. Candidate scene evidence; physical audibility, seek/loop/timing and other formats remain unproved.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "BOOT": {
-    "evidence": "01447 actual Old 3DS build passes. Old-model Azahar completes the source Area 0 to Area 1 handoff, clears transition state and resumes destination movement. Physical 01447 pending.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "BOTTOM SCREEN": {
-    "evidence": "User physical 01442 evidence shows map/status UI. Historical 01443 Azahar captures include intermittent partial bottom-screen presentation. The issue remains unresolved; no UI parity or physical 01444 acceptance is claimed.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "BUSTER": {
-    "evidence": "01450 connects the original normal subtype-0x80 callback states 0-2 to the existing native path: fixed 16-shot pool, 11-frame timer, owner +0x198 busy state, cue 0x96, lease release, two-point 0x28000008 producer, impact effect 0x84 and terminal release. Exact +0x400/+0x418 endpoint writers, +0x78 map bounds and +0x174 fire cadence owner remain unknown.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "CAMERA": {
-    "evidence": "Existing source radial subset retained. Candidate scene handoff reaches Area 1; native fallback view there was obstructed by a nearby wall. Source gameplay optics/ownership and spawn presentation remain incomplete.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "COLLISION": {
-    "evidence": "01444 queries the source floor before adhesion and movement response, consumes negative solver results through source rollback, and restores pre-adhesion work for unsupported responses; focused regressions pass. Historical actor fixed-point collision points, bounded proxy registration, child/effect ownership and floor/wall subsets remain connected. The reported 01443 escape/fall is unresolved. Sampled unchanged-original map queries returned no horizontal correction and floor 32767 outside the edge; this does not prove full original gameplay permits escape. Complete player steps/slopes/ledges, recovery ownership and GTE contact consumers remain partial.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "COMBAT": {
-    "status": "SOURCE_BACKED_PARTIAL",
-    "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16\u21928\u21920 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
-  },
-  "CONTENT GRAPH": {
-    "evidence": "Historical structural validation covers 205 packages, 4,115 nodes and 3,916 edges. These counts establish content structure, not gameplay completion.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "CUTSCENES": {
-    "evidence": "01445 shares opt-in RNG across source effects/lift/event consumers. Candidate scene reaches head UV reset at frame 3082, exact audio pause prefix and Area 1 replacement. Uses recorded constructor clock; full fidelity and retail cadence unproved.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "DIALOGUE": {
-    "evidence": "The historical verified-pair tutorial message adapter is retained. Generalized bank/event selection remains unbound.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "EARLY-GAME IMPORT": {
-    "evidence": "Historical checks cover 37 geometry packages and 203 areas on the host; five baseline areas and one structurally distinct package were loaded natively in Azahar. Natural progression and complete boundary proof remain pending.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "EBD / EVENTS": {
-    "evidence": "Existing guarded event pipeline reached phase 7, consumed live head UV/audio receipts and committed its destination in candidate Azahar run. Unknown opcodes/initial owners remain held. No retail parity claim.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "ENEMIES": {
-    "status": "SOURCE_BACKED_PARTIAL",
-    "evidence": "01451 completes one imported class20/03 enemy zero-HP transaction and tombstones the actor after source-backed cleanup. Full AI/attack parity, defeat visual callback, RNG pickup expansion and additional classes remain incomplete."
-  },
-  "EXPRESSIONS": {
-    "evidence": "Original expression/eye/mouth state mappings remain unknown. The 01444 source-requested head-UV reset restores known templates; it does not establish full facial animation.",
-    "status": "UNKNOWN"
-  },
-  "FRAME PACING": {
-    "evidence": "The bounded allocation-free wait replaces the indefinite GPU wait; emulator clock/GPU success and host timeout checks were exercised. Physical performance and retail cadence remain unknown.",
-    "status": "CANDIDATE"
-  },
-  "GENERALIZED IMPORTER": {
-    "status": "SOURCE_BACKED_PARTIAL",
-    "evidence": "01451 owner-local cook validates eleven tutorial packages and L3CB version4 retains the class/subtype reward descriptor. The source release contains no retail/cooked payload. Broader natural progression remains incomplete."
-  },
-  "GENERALIZED RUNTIME LOADER": {
-    "evidence": "The checked 384-byte scalar profile drives supported native callbacks; altered payloads reject even after CRC repair, and stale/unloaded/rebound owners hold. 01444 stages a registered destination before publishing the source handoff spawn and heading. Unsupported overlay variants and native load/audio overlap remain unimplemented; this is not proof of generalized natural progression.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "LOADING": {
-    "evidence": "01447 candidate scene replaces Area 0 with Area 1 inside the multi-area package in 1797689 us, retires outgoing CPU resources, commits spawn/camera/event prefix and acknowledges original callback 80015840. Destination status clears to zero and gameplay resumes. Different-package progression and physical loading remain pending.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "LOCK-ON": {
-    "evidence": "01448 implements the bounded source80034EB8 target scan over the shared imported-actor proxy bank: source mode filtering, paired-row advancement, target identity/flag rejection, player-relative depth gates, screen windows and closest-X choice. The broad lane is instruction-probed in six authored cases. The owner-profile strict lane has native tests but no unchanged-original differential; acquisition retention/release and live camera ownership remain incomplete.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "MEGA MAN MATERIALS": {
-    "evidence": "Original variant material identities and initial texture pages are retained. 01444 restores the source-requested head UV/CLUT/tpage templates on live visuals. Timed palette/UV cues, shading, alpha and complete material state remain incomplete.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "MEGA MAN MODEL": {
-    "evidence": "User 01443 hardware evidence shows the imported player in a textured room; historical 01442 safe-path photos also show the model. 01444 textured mode was exercised and the safe scene visibly captured in Azahar. No replacement-model, full-fidelity or physical 01444 claim is made.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "MEMORY": {
-    "status": "SOURCE_BACKED_PARTIAL",
-    "evidence": "01451 uses existing fixed effect/audio/proxy storage plus a bounded 32-entry reward queue; the focused defeat transaction performs no heap allocation. Physical linear-memory, stack and peak measurements remain pending."
-  },
-  "MOVEMENT": {
-    "evidence": "Historical source class-40 scripted handlers move the native actor and copy exact final halfwords to player mirrors. 01444 preserves floor-before-response ordering and exercises textured movement input in Azahar. Normal player control/physics parity and the reported escape/fall recovery remain incomplete.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "OBJECTS": {
-    "evidence": "Inherited imported actors are retained. The existing transaction preflights shadow, pose and proxy ownership before publication and preserves holds when an owner is missing.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "OLD-3DS BUILD": {
-    "status": "SOURCE_BACKED_PARTIAL",
-    "evidence": "01451 actual devkitARM ARMv6K/mpcore build PASS, 919748 bytes, SHA 76786a99e534\u2026 with no warnings/errors in the saved log. Host 144/144 PASS in 4.89 seconds; physical acceptance pending."
-  },
-  "OLD-3DS HARDWARE": {
-    "status": "HARDWARE_PENDING",
-    "evidence": "0.0.14.51 physical test pending; historical 0.0.14.43 user photos show the imported textured room/player followed by a collision escape."
-  },
-  "PHYSICS": {
-    "evidence": "PHYSICS_1TO1=false. Historical 1,568 Action-4 body cases match original instructions under declared premises. 01444 corrects supported floor/response ordering and negative-result rollback, with focused regressions. Full player physics, slopes and live retail chronology remain incomplete. The reported escape/fall is unresolved; the original kill/recovery caller and threshold remain unknown, and sampled map-query results are not whole-game proof.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "QoL": {
-    "evidence": "Inherited options, companion visibility and camera-independent map controls are retained. No inventory, energy or currency values are invented.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "RENDERER": {
-    "evidence": "01443 shader and vertex layout preserved. 01445 enhanced textured and 0143 safe scenes visibly captured in Old-model Azahar. Physical 01445 pending.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "SAVE": {
-    "evidence": "Historical native persistence and research are retained. Removed location IDs require re-registration before save restore. Retail field semantics remain incomplete.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "TERRAIN GEOMETRY": {
-    "evidence": "User 01443 hardware evidence shows a textured room; historical 01442 evidence shows terrain through the 0143 path. 01444 textured mode was exercised and the safe scene visibly captured in Azahar. Full retail topology and physical 01444 acceptance remain incomplete.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "TERRAIN TEXTURES": {
-    "evidence": "User 01443 hardware evidence shows a textured room, and 01444 A textured mode was exercised in Azahar. Historical 01442 enhanced textures-off also timed out, so texture content alone did not explain that failure. Physical 01444 validation remains pending.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  },
-  "TRANSITIONS": {
-    "evidence": "01447 original callback 80015840 state-1 tail is instruction-backed for 16 authored cases/480 unchanged instructions. Native handoff commits Area 1, exact spawn, event prefix and gameplay camera, clears status 2 to 0, then resumes movement and grounded collision with no room skip. Candidate RNG plus recorded clock; same-package only; broader progression incomplete.",
-    "status": "SOURCE_BACKED_PARTIAL"
-  }
+ "ANIMATION": {
+  "evidence": "01449 evaluates the source-backed ordinary 15-part primary player pose and exposes its two proven Buster muzzle joints. Limb selectors 1-3 hold because the current cooked format lacks the alternate eight-part arm banks. Full animation request/cadence parity remains unproved.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "AUDIO": {
+  "evidence": "At frame 3085 the actual native path applied all 254 mixer-prefix calls, paused NDSP and allowed outgoing transport invalidation on area commit. Candidate scene evidence; physical audibility, seek/loop/timing and other formats remain unproved.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "BOOT": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "0.0.15.1 default boot (no SOURCE_EVENT_BOOT) starts at the original opening-scene handoff (overlay 0x80101274 immediates at 0x80101280/0x80101298: Area 1, (2822,-1,-4833), heading 0) instead of the diagnostic first-positive-cell spawn, which sat inside a solid Area 0 block. The opening scene itself is skipped in this mode. Native devkitARM build pending on the Mac."
+ },
+ "BOTTOM SCREEN": {
+  "evidence": "User physical 01442 evidence shows map/status UI. Historical 01443 Azahar captures include intermittent partial bottom-screen presentation. The issue remains unresolved; no UI parity or physical 01444 acceptance is claimed.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "BUSTER": {
+  "evidence": "01450 connects the original normal subtype-0x80 callback states 0-2 to the existing native path: fixed 16-shot pool, 11-frame timer, owner +0x198 busy state, cue 0x96, lease release, two-point 0x28000008 producer, impact effect 0x84 and terminal release. Exact +0x400/+0x418 endpoint writers, +0x78 map bounds and +0x174 fire cadence owner remain unknown.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "CAMERA": {
+  "evidence": "Existing source radial subset retained. Candidate scene handoff reaches Area 1; native fallback view there was obstructed by a nearby wall. Source gameplay optics/ownership and spawn presentation remain incomplete.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "COLLISION": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "0.0.15.1: Area 0/1 escape fixed. Owner-local audit (tools/l3edge_audit, real st00 pack with st00.l3init materialization): Area 1 from the 0x80101274 handoff spawn, 200 random walks x 3000 frames: 0 escapes, 0 falls (0.0.15.0: 191 escapes, 182 falls). Fixes: wall/ceiling pushes restart the candidate scan as 0x8004BDC8 case1->LAB_8004C144->0x8004B6AC LAB_8004BB24 does; untranslated responses apply the 0x8004B414 failure contract instead of free motion; null selected lists are empty. Diagonal families 0x21-0x51 and 0x80050400 remain untranslated (held, 4.7% of audit frames)."
+ },
+ "COMBAT": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16→8→0 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
+ },
+ "CONTENT GRAPH": {
+  "evidence": "Historical structural validation covers 205 packages, 4,115 nodes and 3,916 edges. These counts establish content structure, not gameplay completion.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "CUTSCENES": {
+  "evidence": "01445 shares opt-in RNG across source effects/lift/event consumers. Candidate scene reaches head UV reset at frame 3082, exact audio pause prefix and Area 1 replacement. Uses recorded constructor clock; full fidelity and retail cadence unproved.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "DIALOGUE": {
+  "evidence": "The historical verified-pair tutorial message adapter is retained. Generalized bank/event selection remains unbound.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "EARLY-GAME IMPORT": {
+  "evidence": "Historical checks cover 37 geometry packages and 203 areas on the host; five baseline areas and one structurally distinct package were loaded natively in Azahar. Natural progression and complete boundary proof remain pending.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "EBD / EVENTS": {
+  "evidence": "Existing guarded event pipeline reached phase 7, consumed live head UV/audio receipts and committed its destination in candidate Azahar run. Unknown opcodes/initial owners remain held. No retail parity claim.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "ENEMIES": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "01451 completes one imported class20/03 enemy zero-HP transaction and tombstones the actor after source-backed cleanup. Full AI/attack parity, defeat visual callback, RNG pickup expansion and additional classes remain incomplete."
+ },
+ "EXPRESSIONS": {
+  "evidence": "Original expression/eye/mouth state mappings remain unknown. The 01444 source-requested head-UV reset restores known templates; it does not establish full facial animation.",
+  "status": "UNKNOWN"
+ },
+ "FRAME PACING": {
+  "evidence": "The bounded allocation-free wait replaces the indefinite GPU wait; emulator clock/GPU success and host timeout checks were exercised. Physical performance and retail cadence remain unknown.",
+  "status": "CANDIDATE"
+ },
+ "GENERALIZED IMPORTER": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "01451 owner-local cook validates eleven tutorial packages and L3CB version4 retains the class/subtype reward descriptor. The source release contains no retail/cooked payload. Broader natural progression remains incomplete."
+ },
+ "GENERALIZED RUNTIME LOADER": {
+  "evidence": "The checked 384-byte scalar profile drives supported native callbacks; altered payloads reject even after CRC repair, and stale/unloaded/rebound owners hold. 01444 stages a registered destination before publishing the source handoff spawn and heading. Unsupported overlay variants and native load/audio overlap remain unimplemented; this is not proof of generalized natural progression.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "LOADING": {
+  "evidence": "01447 candidate scene replaces Area 0 with Area 1 inside the multi-area package in 1797689 us, retires outgoing CPU resources, commits spawn/camera/event prefix and acknowledges original callback 80015840. Destination status clears to zero and gameplay resumes. Different-package progression and physical loading remain pending.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "LOCK-ON": {
+  "evidence": "01448 implements the bounded source80034EB8 target scan over the shared imported-actor proxy bank: source mode filtering, paired-row advancement, target identity/flag rejection, player-relative depth gates, screen windows and closest-X choice. The broad lane is instruction-probed in six authored cases. The owner-profile strict lane has native tests but no unchanged-original differential; acquisition retention/release and live camera ownership remain incomplete.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "MEGA MAN MATERIALS": {
+  "evidence": "Original variant material identities and initial texture pages are retained. 01444 restores the source-requested head UV/CLUT/tpage templates on live visuals. Timed palette/UV cues, shading, alpha and complete material state remain incomplete.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "MEGA MAN MODEL": {
+  "evidence": "User 01443 hardware evidence shows the imported player in a textured room; historical 01442 safe-path photos also show the model. 01444 textured mode was exercised and the safe scene visibly captured in Azahar. No replacement-model, full-fidelity or physical 01444 claim is made.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "MEMORY": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "01451 uses existing fixed effect/audio/proxy storage plus a bounded 32-entry reward queue; the focused defeat transaction performs no heap allocation. Physical linear-memory, stack and peak measurements remain pending."
+ },
+ "MOVEMENT": {
+  "evidence": "Historical source class-40 scripted handlers move the native actor and copy exact final halfwords to player mirrors. 01444 preserves floor-before-response ordering and exercises textured movement input in Azahar. Normal player control/physics parity and the reported escape/fall recovery remain incomplete.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "OBJECTS": {
+  "evidence": "Inherited imported actors are retained. The existing transaction preflights shadow, pose and proxy ownership before publication and preserves holds when an owner is missing.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "OLD-3DS BUILD": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "01451 actual devkitARM ARMv6K/mpcore build PASS, 919748 bytes, SHA 76786a99e534… with no warnings/errors in the saved log. Host 144/144 PASS in 4.89 seconds; physical acceptance pending."
+ },
+ "OLD-3DS HARDWARE": {
+  "status": "HARDWARE_PENDING",
+  "evidence": "0.0.14.51 physical test pending; historical 0.0.14.43 user photos show the imported textured room/player followed by a collision escape."
+ },
+ "PHYSICS": {
+  "evidence": "PHYSICS_1TO1=false. 0.0.15.1 applies the 0x8003C4EC floor rule as decompiled (+8 in {1,2}, +74==0, +76==0; y<floor-0x20 -> +75-gated fall action, +74=1; else adhesion) without the earlier native 'already grounded' precondition, so leaving the floor falls instead of walking on air. PHYSICS_1TO1=false. Historical 1,568 Action-4 body cases match original instructions under declared premises. 01444 corrects supported floor/response ordering and negative-result rollback, with focused regressions. Full player physics, slopes and live retail chronology remain incomplete. The reported escape/fall is unresolved; the original kill/recovery caller and threshold remain unknown, and sampled map-query results are not whole-game proof.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "QoL": {
+  "evidence": "Inherited options, companion visibility and camera-independent map controls are retained. No inventory, energy or currency values are invented.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "RENDERER": {
+  "evidence": "01443 shader and vertex layout preserved. 01445 enhanced textured and 0143 safe scenes visibly captured in Old-model Azahar. Physical 01445 pending.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "SAVE": {
+  "evidence": "Historical native persistence and research are retained. Removed location IDs require re-registration before save restore. Retail field semantics remain incomplete.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "TERRAIN GEOMETRY": {
+  "evidence": "User 01443 hardware evidence shows a textured room; historical 01442 evidence shows terrain through the 0143 path. 01444 textured mode was exercised and the safe scene visibly captured in Azahar. Full retail topology and physical 01444 acceptance remain incomplete.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "TERRAIN TEXTURES": {
+  "evidence": "User 01443 hardware evidence shows a textured room, and 01444 A textured mode was exercised in Azahar. Historical 01442 enhanced textures-off also timed out, so texture content alone did not explain that failure. Physical 01444 validation remains pending.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "TRANSITIONS": {
+  "evidence": "01447 original callback 80015840 state-1 tail is instruction-backed for 16 authored cases/480 unchanged instructions. Native handoff commits Area 1, exact spawn, event prefix and gameplay camera, clears status 2 to 0, then resumes movement and grounded collision with no room skip. Candidate RNG plus recorded clock; same-package only; broader progression incomplete.",
+  "status": "SOURCE_BACKED_PARTIAL"
+ }
 }

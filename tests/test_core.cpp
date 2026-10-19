@@ -909,7 +909,9 @@ int main() {
     session_area.start_x = 63; session_area.start_z = 63; session_area.width = 2; session_area.height = 2;
     session_area.cell_first = 0; session_area.cell_count = 4;
     session_map.areas.push_back(session_area);
-    session_map.cells = {0,0,0,0};
+    // Packed negative floor cells (top -1): an empty grid has no floor and the
+    // source 0x8003C4EC rule would correctly start a fall.
+    session_map.cells = {-32768,-32768,-32768,-32768};
     l3::TutorialRuntimeArea ta{}; ta.area_index = 0;
     l3_qol_settings_defaults(&qol);
     l3::RuntimeSession integrated_session(std::move(session_map), std::move(ta), {}, qol);

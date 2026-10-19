@@ -92,7 +92,12 @@ bool generic_rectangle_response(Rect r, L3RetailContactScratch& p,
         if(cy<=0){p.contact_state=0;return true;}
         out.ceiling_contact=true;
     }
-    return false;
+    // 0x8004BDC8 case 1 reaches LAB_8004C144 and returns true after every
+    // 0x8004F44C response, so 0x8004B6AC (LAB_8004BB24) restarts the whole
+    // candidate scan. Through 0.0.14.51 a wall/ceiling push ended the pass,
+    // so a corrected pose never re-tested the floor cell it was pushed into:
+    // landing against a wall corner sank Mega Man through the floor.
+    return true;
 }
 bool allowed(const RuntimeContactPrimitive& p,const L3PlayerCompatWork& player) {
     // Geometry response 0x8004BA98..BAA8 uses only the 0x8000 filter bit.
@@ -232,7 +237,14 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
             }
             const auto* idx=runtime_map_cell_idx(map,cell);
             const auto* list=runtime_map_cell_contact_list(map,cell);
-            if(!idx||!list){++out.unsupported_primitives;continue;}
+            if(!idx||!runtime_map_cell_descriptor(map,cell)){++out.unsupported_primitives;continue;}
+            // 0x8004B9B8..: the selected descriptor list (+8 default, +4 alt) is
+            // walked only while its first group word at +8 is nonzero. A null
+            // list pointer (cooked 0xFFFF) contributes no geometry; it is not
+            // an unsupported primitive. Premise: the PS1 word read through the
+            // null list (kernel RAM 0x00000008) is zero, as every ST00 cell with
+            // a null selected list relies on it (694 of 994 IDX entries).
+            if(!list)continue;
             for(uint32_t gi=0;gi<list->group_count&&!repeat;++gi){
                 const auto gix=uint64_t(list->group_first)+gi;
                 if(gix>=map.contact_groups.size()){++out.unsupported_primitives;continue;}

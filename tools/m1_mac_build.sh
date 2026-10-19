@@ -54,5 +54,5 @@ Azahar: Emulation > Configure > System: New 3DS mode OFF.
         Emulation > Configure > Storage: Use custom storage, SDMC = $OUT/sd_out
         File > Load File... > $SD/Legends3DS.3dsx
 Then follow docs/validation_01500/AZAHAR_TEST.md and send back:
-        $SD/boot_01500.log and $SD/hardware_01500*.csv
+        $SD/boot_01501.log and $SD/hardware_01501*.csv
 EOF

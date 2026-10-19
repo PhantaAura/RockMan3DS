@@ -1,0 +1,33 @@
+# Build outputs
+build/
+build_3ds/
+/host/
+*.3dsx
+*.smdh
+*.elf
+*.map
+*.o
+*.d
+*.shbin
+*_shbin.h
+__pycache__/
+*.pyc
+.DS_Store
+
+# Owner (retail) game data and anything cooked from it — NEVER commit.
+*.chd
+*.cue
+*.bin
+*.BIN
+*.iso
+*.img
+*.exe
+*.EXE
+*.sav
+*.mcr
+*.mmlpkg
+*.l3[a-z0-9]*
+owner-data/
+sd_out/
+.sd_out-staging/
+CDDATA/

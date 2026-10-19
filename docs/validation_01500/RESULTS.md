@@ -17,3 +17,15 @@ Commands (cloud):
 cmake -S . -B ../host -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 cmake --build ../host -j2 && ctest --test-dir ../host -E renderer_gcc_warning
 ```
+
+## 0.0.15.1 (M2 partial)
+
+| Check | Result |
+|---|---|
+| Host suite (`ctest -E renderer_gcc_warning`) | 146/146 PASS (adds `map_edge`) |
+| `map_edge` regressions vs 0.0.15.0 library | all 4 cases FAIL on 0.0.15.0, PASS on 0.0.15.1 |
+| ASan+UBSan (GCC 13): map_edge, runtime_contact, core, combat_owner, actor_defeat_runtime | PASS |
+| Native type check, all 113 Makefile sources (arm-none-eabi GCC 13, -Werror) | PASS |
+| Owner-local audit `l3edge_audit` Area 1 handoff, 200 seeds x 3000 frames | 0 escapes, 0 falls, 4.7% held (diagonal families) — 0.0.15.0: 191 escapes, 182 falls |
+| Area 0 diagnostic spawn (old default), 8 headings x 900 frames | 0.0.15.0: 6/8 headings escape the map; no longer the default spawn |
+| devkitARM link, Azahar, physical Old 3DS | PENDING (Mac) |

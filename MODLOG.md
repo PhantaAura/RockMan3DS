@@ -92,3 +92,14 @@ single combat owner, fire admission, diagnostic Buster ribbon) and the
 one-command tutorial pack gains the exact combat sidecars. Git introduced.
 Host 145/145, sanitizer subset and native type-check pass in the cloud session;
 devkitARM link and Azahar test pending on the Mac.
+
+## 0.0.15.1 (M2 partial — map edge)
+
+Root cause of the Area 0/1 escape: the default boot spawned inside a solid
+Area 0 block; untranslated contact responses then accepted free motion; wall
+pushes did not restart the candidate scan (corner landings sank through the
+floor); the fall rule required a prior grounded state. Fixed with the source
+handoff spawn (0x80101274), the 0x8004B6AC scan restart, the 0x8004B414
+failure contract for untranslated responses, and the 0x8003C4EC floor rule.
+Owner-local audit: 0 escapes/0 falls (was 191/182). Host 146/146; native
+type-check of all 113 sources; devkitARM link and Azahar pending on the Mac.

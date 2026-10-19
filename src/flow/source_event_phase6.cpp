@@ -609,9 +609,10 @@ SourceEventPhase6Result consume_source_event1_handoff_80101260(
     for(size_t offset=0x188;offset<=0x194;offset+=4)player_store(offset,4,0);
     if(player.bytes[8]==3)player_store(9,1,3);else player_store(0xbd,1,8);
     SourceEventHandoffTransitionIntent transition;transition.source_generation=in.source_generation;
-    transition.spawn={{2822,-1,-4833}};
+    constexpr auto& handoff=kSourceSt00OpeningHandoff;
+    transition.spawn={{handoff.x,handoff.y,handoff.z}};
     const auto write=[&](size_t offset,size_t count,uint32_t value)noexcept{for(size_t i=0;i<count;++i){transition.raw[offset+i]=uint8_t(value>>(8*i));transition.known[offset+i]=1;}};
-    write(0,2,2822);write(2,2,uint16_t(-1));write(4,2,uint16_t(-4833));write(10,2,0);
+    write(0,2,uint16_t(handoff.x));write(2,2,uint16_t(handoff.y));write(4,2,uint16_t(handoff.z));write(10,2,handoff.heading);
     write(12,1,2);write(13,1,0);write(14,1,0);write(15,1,1);write(16,1,2);write(17,1,255);
     in.flags->values[1540>>3u]&=uint8_t(~(1u<<(1540&7u)));
     in.flags->known[1540>>3u]|=uint8_t(1u<<(1540&7u));

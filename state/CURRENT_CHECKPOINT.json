@@ -1,6 +1,6 @@
 {
- "version": "0.0.15.0",
- "title": "M1 — source-backed combat is the default gameplay path",
+ "version": "0.0.15.1",
+ "title": "M2 (partial) — Area 0/1 map-edge escape fixed; source handoff spawn; contact solver repairs",
  "created_utc": "2026-10-18T00:00:00+00:00",
  "project_path": "work/Legends3DS_0.0.15.0_Claude (Git repository)",
  "git_repository": true,
@@ -8,7 +8,7 @@
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PENDING_ON_MAC (cloud session has no devkitARM; native sources syntax/type-checked against libctru+citro3d headers with arm-none-eabi GCC 13)",
+ "native_build": "PENDING_ON_MAC (native sources type-checked against libctru+citro3d headers, arm-none-eabi GCC 13)",
  "host_tests": "see docs/validation_01500/RESULTS.md",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "Pending: Azahar Old-model test card in docs/validation_01500/AZAHAR_TEST.md",
+ "current_emulator_validation": "Pending: docs/validation_01500/AZAHAR_TEST.md (updated for 0.0.15.1)",
  "emulator_evidence": "docs/validation_01447/emulator-observation.json",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
@@ -40,16 +40,18 @@
   "docs/validation_01451/replays.log"
  ],
  "blockers": [
+  "Diagonal wall families 0x21/0x31/0x41/0x51 (0x8004BDC8 cases 0x21..0x52 -> 0x8004F8BC/0x8004FBE8/0x8004FF14, classifiers 0x8004E490/E750/EA10/ECD0) are untranslated; the player is held at their bounding boxes (CANDIDATE hold via the 0x8004B414 failure contract) instead of sliding.",
+  "Deep-overlap recovery 0x80050400 untranslated (also held).",
+  "Areas 2-4 entry spawns and door/transition progression from Area 1 are not yet audited.",
   "Lock-on 80034EB8 is still not wired: it needs the original gameplay camera matrix (owner UNKNOWN). Candidate lock-on is retired while source combat is active, so X does nothing in that mode.",
   "Reward descriptor 0x01010202 is queued exactly once, but original 0x80046B34 RNG-driven subtype-0x87 pickup expansion, update and collection are not implemented.",
   "Defeat effect subtype0x80 parameter0x41 is allocated, but its complete source callback and rendered lifetime remain unsupported.",
   "The exact player endpoint writers, projectile map bounds and source fire-cadence owner remain unresolved; existing candidate labels are retained.",
   "Fresh source RNG chronology, broader EBD/dialogue, cross-package streaming and natural tutorial progression remain incomplete.",
-  "Map-edge recovery, full slopes/steps/ledges and original physics parity remain unresolved.",
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.14.51",
-  "source_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.51_Source_r1.zip"
+  "version": "0.0.15.0",
+  "source_archive": "git main (M1 commits)"
  }
 }

@@ -569,7 +569,6 @@ void RuntimeSession::update_player_motion(){
 }
 
 void RuntimeSession::update_player_contact(){
-    const bool was_grounded=player_contact_.grounded.value_or(false);
     // Keep unsupported geometry a hold: preparing the earlier adhesion owner
     // must not publish only half of a frame whose later response is unknown.
     static constexpr std::array<size_t,16> adhesion_offsets{{
@@ -582,21 +581,27 @@ void RuntimeSession::update_player_contact(){
     // 0x8004B414 at C6FC. Adhesion can introduce a wall/ceiling overlap: the
     // same frame's geometry solver must see that resulting requested pose.
     player_contact_=runtime_player_floor_query(*map_,map_area_index_,player_);
-    // Floor adhesion/fall state mutation at 0x8003C610..0x8003C6F8.
-    // Unsupported/no-data surfaces leave grounding UNKNOWN rather than using
-    // render geometry or guessing a floor at y=0.
-    if(player_.bytes[0x74]==0){
-        // The retail no-floor query returns its 32767 sentinel and therefore
-        // selects the same fall branch. Only an already-proved grounded actor
-        // is allowed to use that result here; an unverified spawn stays UNKNOWN.
+    // Floor adhesion/fall at 0x8003C4EC..0x8003C6F8 (decompiled 8003C4EC):
+    //   if (work+8 in {1,2} && work+74 == 0 && work+76 == 0) {
+    //     floor = 80048E6C(work) - bounds+10;
+    //     if (y < floor-0x20) { if (work+75 == 0) {fall action 7/4 ...} work+74 = 1; }
+    //     else if (y < floor) { y = floor; }
+    //   }
+    // The no-floor query returns 32767, so leaving the floor (or the grid)
+    // selects the fall branch. 0.0.15.0 removes the earlier native-only
+    // "already grounded" precondition, which let Mega Man walk on air.
+    // Unported: work+9==0x0E calls 0x800394AC; work+9==3 stops cues 0x8E/0x8F.
+    const uint8_t work08=player_.bytes[0x08];
+    if(work08>=1&&work08<=2&&player_.bytes[0x74]==0&&player_.bytes[0x76]==0){
         const int32_t floor=player_contact_.floor_y?int32_t(*player_contact_.floor_y):32767;
         if(player_position_.y<floor-32){
-            if(was_grounded){
+            if(player_.bytes[0x75]==0){
                 player_.bytes[0x09]=7;player_.bytes[0x0A]=4;player_.bytes[0x0B]=0;
                 wr16w(player_,0x46,0);player_.bytes[0x168]=0;player_.bytes[0x169]=0;
-                player_.bytes[0x110]=1;player_.bytes[0x111]=0;player_.bytes[0x74]=1;
-                player_contact_.grounded=false;
+                player_.bytes[0x110]=1;player_.bytes[0x111]=0;
             }
+            player_.bytes[0x74]=1;
+            player_contact_.grounded=false;
         }else if(player_position_.y<floor){
             wr16w(player_,0x16,static_cast<uint16_t>(floor));
             wr32w(player_,0x20,floor*65536);sync_primary_position_from_fixed();
@@ -605,9 +610,18 @@ void RuntimeSession::update_player_contact(){
     }
     player_contact_=runtime_player_contact_step(*map_,map_area_index_,player_);
     if(player_contact_.status==RuntimeContactStatus::Unsupported){
+        // A primitive response that is not yet translated (diagonal families
+        // 0x21..0x52 via 0x8004BDC8, deep overlap 0x80050400) must not become
+        // free motion: through 0.0.14.51 the requested pose was accepted and
+        // Mega Man walked through walls and off the map. Apply the original
+        // 0x8004B414 failure contract instead (negative result: restore the
+        // +2C/+34 pre-move pose), exactly like IterationLimit. CANDIDATE policy
+        // until those responses are ported; never a new collision rule.
         for(size_t i=0;i<adhesion_offsets.size();++i)player_.bytes[adhesion_offsets[i]]=before_adhesion[i];
         player_position_=requested_position;
         player_contact_.scratch={rds16w(player_,0x14),rds16w(player_,0x16),rds16w(player_,0x18),player_.bytes[0x74]};
+        l3_pl00_apply_contact_result_8004b414(&player_,static_cast<int32_t>(0x80000000u),&player_contact_.scratch);
+        sync_primary_position_from_fixed();
         return;
     }
     if(player_contact_.result!=0){
