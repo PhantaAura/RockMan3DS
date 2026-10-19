@@ -114,3 +114,19 @@ executable vectors and deterministic sliding tests pass. The owner-local Area
 1 audit reports 0 unsupported frames, 0 escapes, and 0 falls in 600,000 frames;
 deep-overlap recovery `0x80050400` and broader measured retail traces remain
 unresolved. `PHYSICS_1TO1=false`.
+
+## 0.0.15.3 (M2c — deep-overlap recovery)
+
+Ported the original deep-overlap recovery `0x80050400`, verified from the R3000
+instructions rather than the Ghidra output alone. It moves the player to the
+nearest face, with the original tie-breaks and blocked-axis rules, and shifts
+the pre-move pose by the same amount. Wired it for code 1 and for airborne-upward
+code 3, which was previously held. The same pass ported the `0x8004B6AC`
+correction history (`0x1F800100..10A`). At each restart the previous response's
+correction is undone unless the next response clears it, which changes the
+result at corners. Deterministic vectors and a corner regression pass. The Area 1
+audit is unchanged at 0 unsupported, 0 escapes and 0 falls. Across Areas 1–4,
+0.0.15.2 held 1,016,352 embedded test poses as unsupported. Of these, 622,988
+now recover through `0x80050400` and 389,292 reach the original 9-pass rollback.
+4,072 (Area 2) still meet unported primitives. No PS1 trace comparison yet.
+`PHYSICS_1TO1=false`.

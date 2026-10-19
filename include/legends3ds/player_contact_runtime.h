@@ -47,6 +47,7 @@ struct RuntimePlayerContact {
     uint32_t groups_tested = 0;
     uint32_t primitives_tested = 0;
     uint32_t unsupported_primitives = 0;
+    uint32_t deep_overlap_recoveries = 0; // 0x80050400 responses this step
     uint8_t iterations = 0;
     bool wall_contact = false;
     bool ceiling_contact = false;
@@ -63,7 +64,8 @@ RuntimePlayerContact runtime_player_floor_query(const RuntimeMap& map,
 
 // Bounded, allocation-free translation of the proved rectangle movement
 // subset (codes 1, 3, 15), packed negative-cell Y response, and floor query.
-// Source: USA 0x8004B6AC/0x8004BDC8/0x8004F44C/0x80048EA4.
+// Source: USA 0x8004B6AC/0x8004BDC8/0x8004F44C/0x80048EA4. Code 1 and
+// airborne-upward code 3 include the 0x80050400 deep-overlap recovery.
 // The floor query also supports proved 8..11 intervals. Their separate slope
 // movement responses, and remaining diagonal handlers, are Unsupported; no
 // movement semantics are assigned from a primitive's numeric code.

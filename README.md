@@ -1,3 +1,19 @@
+# Mega Man Legends 3DS — 0.0.15.3 (M2c deep-overlap recovery)
+
+Ports the original deep-overlap recovery `0x80050400` and the `0x8004B6AC`
+correction history. Both are verified against the original R3000 instructions
+and cross-checked with Ghidra 12.1.4. When Mega Man is embedded in geometry, he
+now moves out to the nearest face under the original rules instead of holding
+his pre-move pose. At corners, the previous push is undone as the original
+does, so he slides along the free axis. Diagonal walls, Area 1 containment and
+source combat are unchanged. The host suite passes 147/147 and the Old 3DS
+build passes. Azahar shows boot only; no gameplay collision was checked there.
+Details: [docs/validation_01503/RESULTS.md](docs/validation_01503/RESULTS.md) ·
+[research](docs/research_01503/DEEP_OVERLAP_80050400.md) ·
+Resume: [RESUME_01503.md](RESUME_01503.md). `PHYSICS_1TO1=false`.
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.2 (M2b diagonal walls)
 
 Default boot now starts where the original first gives Mega Man to the player

@@ -95,50 +95,120 @@ bool eligible(int16_t correction, int16_t delta, uint8_t blocked, uint8_t positi
     return delta!=0 && std::abs(int(correction))<=std::abs(int(delta)) &&
            (blocked & (correction>0 ? positive : negative))==0;
 }
+// Correction history of 0x8004B6AC, verified against the R3000 code at
+// 0x8004BB24..0x8004BC1C. A response records its negated correction in
+// 0x1F800100/102/104 (h). Each restart first adds the pending vector
+// 0x1F800106/108/10A (u) to the scratch pose, then moves h to u and clears h.
+// Responses clear parts of u (same-axis X/Z pushes, floor/ceiling snaps, any
+// response returning true), so a previous correction is undone only when the
+// next response is on a different axis and does not clear it. The
+// 0x1F80010C..116 copies only feed the unported x5 diagonal fallback.
+struct History { std::array<int16_t,3> h{}, u{}; };
+void clear_pending(History& hist) {hist.u={};}
+// 0x80050B74 / 0x80050BB4 / 0x80050BF4: the earlier blocked byte decides
+// whether the pending same-axis correction is cleared; then it is replaced.
+void block_x(int16_t correction,uint8_t& blocked,History& hist) {
+    if(blocked&0x03u)hist.u[0]=0;
+    blocked=correction<1?2:1;
+}
+void block_z(int16_t correction,uint8_t& blocked,History& hist) {
+    if(blocked&0x0Cu)hist.u[2]=0;
+    blocked=correction<1?8:4;
+}
+void block_y(int16_t correction,uint8_t& blocked) {blocked=correction>0?16:32;}
+// Dispatcher tails after a response: LAB_8004C144 (codes 1/2), case 3,
+// LAB_8004C0C8 (0x8004F8BC/FBE8) and LAB_8004E17C (0x8004FF14). A true result
+// clears u and, except for case 3, publishes +74 grounded when dy >= 0. The
+// diagonal-axis tail also clears u.x/u.z on a false result.
+void response_tail(bool result,bool publish_ground,bool clear_xz_on_false,int16_t dy,
+                   L3RetailContactScratch& p,History& hist) {
+    if(result){clear_pending(hist);if(publish_ground&&dy>=0)p.contact_state=0;}
+    else if(clear_xz_on_false){hist.u[0]=0;hist.u[2]=0;}
+}
+int16_t nearest_face(int16_t lo,int16_t hi,int16_t v) {
+    // 0x80050400: |lo-v| < |hi-v| selects lo; a tie selects hi.
+    return short_wrap(int32_t(std::abs(int32_t(lo)-v)<std::abs(int32_t(hi)-v)?lo:hi)-v);
+}
+// Exact 0x80050400 (verified against the original R3000 instructions, not only
+// Ghidra). Reached from 0x8004F44C when no per-pass axis correction fits the
+// movement delta. Each axis takes its nearest rectangle face; X/Z ties choose
+// the high face. With mode bit 2 the Y target is always the top face. Y wins
+// only when strictly smaller than both horizontal magnitudes and not blocked
+// by 0x30; it records h.y. Otherwise the smaller horizontal magnitude wins.
+// The 0x800506B0..0x80050790 branch tree reduces to: an X/Z tie chooses X
+// unless X is already blocked (0x03), then Z; the Z-blocked test (0x0C)
+// never changes the result. X/Z record no h. The chosen axis moves the
+// scratch pose and the pre-move pose (+2C..+30) by the same amount, so the
+// per-pass delta is unchanged. Returns the 0x80050BF4 result (Y only).
+bool deep_overlap_80050400(const Rect& r,L3RetailContactScratch& p,
+                           int16_t& before_x,int16_t& before_y,int16_t& before_z,
+                           unsigned mode,uint8_t& blocked,History& hist,
+                           RuntimePlayerContact& out) {
+    ++out.deep_overlap_recoveries;
+    const int16_t cx=nearest_face(r.x0,r.x1,p.x);
+    const int16_t cz=nearest_face(r.z0,r.z1,p.z);
+    const int16_t cy=(mode&2u)?short_wrap(int32_t(r.y0)-p.y):nearest_face(r.y0,r.y1,p.y);
+    const int ax=std::abs(int(cx)),az=std::abs(int(cz));
+    if((mode&1u) && std::abs(int(cy))<std::min(ax,az) && (blocked&0x30u)==0){
+        p.y=short_wrap(int32_t(p.y)+cy);before_y=short_wrap(int32_t(before_y)+cy);
+        hist.h[1]=short_wrap(-int32_t(cy));block_y(cy,blocked);
+        if(cy>0)out.ceiling_contact=true;
+        return cy<=0;
+    }
+    const bool x_axis=ax<az||(ax==az&&(blocked&0x03u)==0);
+    if(x_axis){p.x=short_wrap(int32_t(p.x)+cx);before_x=short_wrap(int32_t(before_x)+cx);block_x(cx,blocked,hist);}
+    else {p.z=short_wrap(int32_t(p.z)+cz);before_z=short_wrap(int32_t(before_z)+cz);block_z(cz,blocked,hist);}
+    out.wall_contact=true;
+    return false;
+}
+// 0x8004F44C for dispatcher modes 1 (code 1) and 3 (airborne-upward code 3).
+// Mode bit 2 keeps the Y target on the top face even while moving up. Only
+// the branch with both horizontal axes eligible records h.x/h.z; every Y
+// push records h.y except that branch in mode 3 (0x8004F7B0). Every response
+// restarts the candidate scan.
 bool generic_rectangle_response(Rect r, L3RetailContactScratch& p,
+                                int16_t& before_x,int16_t& before_y,int16_t& before_z,
                                 int16_t dx,int16_t dy,int16_t dz,uint8_t& blocked,
-                                RuntimePlayerContact& out) {
+                                unsigned mode,History& hist,RuntimePlayerContact& out) {
     const int16_t cx=short_wrap((dx<0?r.x1:r.x0)-p.x);
-    const int16_t cy=short_wrap((dy<0?r.y1:r.y0)-p.y);
+    const int16_t cy=short_wrap((dy<0&&!(mode&2u)?r.y1:r.y0)-p.y);
     const int16_t cz=short_wrap((dz<0?r.z1:r.z0)-p.z);
     const bool ex=eligible(cx,dx,blocked,2,1);
     const bool ez=eligible(cz,dz,blocked,8,4);
     const bool ey=eligible(cy,dy,blocked,32,16);
+    bool result=false;
     if (!ex && !ez && !ey) {
-        // The source invokes the still-untranslated 0x80050400 here. Never
-        // replace that deep-overlap recovery with a guessed shortest-axis push.
-        ++out.unsupported_primitives;
-        return false;
-    }
-    // Exact 0x8004F44C tie priority: horizontal ties choose Z. With both
-    // horizontal axes eligible, Y must be strictly smaller; with only one
-    // eligible horizontal axis, Y wins an equal-magnitude tie.
-    int axis=0;
-    if (!ex) axis=ez?2:1;
-    else if(!ez) axis=0;
-    else axis=std::abs(int(cx))<std::abs(int(cz))?0:2;
-    const int horizontal=axis==0?std::abs(int(cx)):std::abs(int(cz));
-    if(ey && ((!ex&&!ez)||((ex&&ez)?std::abs(int(cy))<horizontal:std::abs(int(cy))<=horizontal))) axis=1;
-    if(axis==0){p.x=short_wrap(int32_t(p.x)+cx);blocked=cx>0?1:2;out.wall_contact=true;}
-    else if(axis==2){p.z=short_wrap(int32_t(p.z)+cz);blocked=cz>0?4:8;out.wall_contact=true;}
-    else {
-        p.y=short_wrap(int32_t(p.y)+cy);blocked=cy>0?16:32;
-        if(cy<=0){p.contact_state=0;return true;}
-        out.ceiling_contact=true;
+        result=deep_overlap_80050400(r,p,before_x,before_y,before_z,mode,blocked,hist,out);
+    } else {
+        // Exact 0x8004F44C tie priority: horizontal ties choose Z. With both
+        // horizontal axes eligible, Y must be strictly smaller; with only one
+        // eligible horizontal axis, Y wins an equal-magnitude tie.
+        const bool both=ex&&ez;
+        int axis=0;
+        if (!ex) axis=ez?2:1;
+        else if(!ez) axis=0;
+        else axis=std::abs(int(cx))<std::abs(int(cz))?0:2;
+        const int horizontal=axis==0?std::abs(int(cx)):std::abs(int(cz));
+        if(ey && ((!ex&&!ez)||(both?std::abs(int(cy))<horizontal:std::abs(int(cy))<=horizontal))) axis=1;
+        if(axis==0){p.x=short_wrap(int32_t(p.x)+cx);if(both)hist.h[0]=short_wrap(-int32_t(cx));block_x(cx,blocked,hist);out.wall_contact=true;}
+        else if(axis==2){p.z=short_wrap(int32_t(p.z)+cz);if(both)hist.h[2]=short_wrap(-int32_t(cz));block_z(cz,blocked,hist);out.wall_contact=true;}
+        else {
+            p.y=short_wrap(int32_t(p.y)+cy);if(!both||!(mode&2u))hist.h[1]=short_wrap(-int32_t(cy));
+            block_y(cy,blocked);result=cy<=0;
+            if(!result)out.ceiling_contact=true;
+        }
     }
     // 0x8004BDC8 case 1 reaches LAB_8004C144 and returns true after every
     // 0x8004F44C response, so 0x8004B6AC (LAB_8004BB24) restarts the whole
     // candidate scan. Through 0.0.14.51 a wall/ceiling push ended the pass,
     // so a corrected pose never re-tested the floor cell it was pushed into:
     // landing against a wall corner sank Mega Man through the floor.
+    response_tail(result,mode==1u,false,dy,p,hist);
     return true;
 }
-void block_x(int16_t correction,uint8_t& blocked) {blocked=correction<1?2:1;}
-void block_z(int16_t correction,uint8_t& blocked) {blocked=correction<1?8:4;}
-void block_y(int16_t correction,uint8_t& blocked) {blocked=correction>0?16:32;}
 bool diagonal_project_8004ff14(const Rect& r,L3RetailContactScratch& p,
                                int16_t dy,uint8_t& blocked,unsigned mode,
-                               RuntimePlayerContact& out) {
+                               History& hist,RuntimePlayerContact& out) {
     int32_t ax=0,az=0;
     if(mode==0){ax=int32_t(r.x1)-short_wrap(int32_t(p.x)-4);az=int32_t(r.z0)-short_wrap(int32_t(p.z)+4);}
     else if(mode==1){ax=int32_t(r.x0)-short_wrap(int32_t(p.x)+4);az=int32_t(r.z0)-short_wrap(int32_t(p.z)+4);}
@@ -151,48 +221,70 @@ bool diagonal_project_8004ff14(const Rect& r,L3RetailContactScratch& p,
     if(!cx32||!cz32)return false;
     const int16_t cx=short_wrap(*cx32),cz=short_wrap(*cz32);
     const int16_t cy=short_wrap(int32_t(dy>0?r.y0:r.y1)-p.y);
+    bool result=false;
     if(dy!=0&&std::abs(int(cy))<=std::abs(int(cx))&&std::abs(int(cy))<=std::abs(int(cz))){
-        p.y=short_wrap(int32_t(p.y)+cy);block_y(cy,blocked);
-        if(cy<=0)p.contact_state=0;else out.ceiling_contact=true;
+        // 0x8004FF14 stores blocked 0x20 and returns 1 for either Y side.
+        p.y=short_wrap(int32_t(p.y)+cy);blocked=0x20;hist.h[1]=short_wrap(-int32_t(cy));result=true;
+        if(cy>0)out.ceiling_contact=true;
     }else{
         p.x=short_wrap(int32_t(p.x)+cx);p.z=short_wrap(int32_t(p.z)+cz);
-        block_x(cx,blocked);block_z(cz,blocked);out.wall_contact=true;
+        block_x(cx,blocked,hist);block_z(cz,blocked,hist);out.wall_contact=true;
     }
+    response_tail(result,true,false,dy,p,hist);
     return true;
 }
+// 0x8004FBE8 (x_axis) / 0x8004F8BC (z axis). The eligible branch records h;
+// the both-ineligible nearest-face branch shifts the pre-move pose instead.
 bool diagonal_axis_response(const Rect& r,L3RetailContactScratch& p,
-                            int16_t& before_axis,int16_t delta_axis,int16_t dy,
+                            int16_t& before_axis,int16_t& before_y,int16_t delta_axis,int16_t dy,
                             uint8_t& blocked,bool x_axis,bool high_side,
-                            RuntimePlayerContact& out) {
+                            History& hist,RuntimePlayerContact& out) {
     const int16_t ca=short_wrap(int32_t(x_axis?(high_side?r.x1:r.x0):(high_side?r.z1:r.z0))-
                                 (x_axis?p.x:p.z));
     const int16_t cy=short_wrap(int32_t(dy>=0?r.y0:r.y1)-p.y);
     const bool ea=eligible(ca,delta_axis,blocked,x_axis?2:8,x_axis?1:4);
     const bool ey=eligible(cy,dy,blocked,32,16);
+    int16_t& pa=x_axis?p.x:p.z;
+    const auto push_axis=[&](int16_t c,bool record){
+        pa=short_wrap(int32_t(pa)+c);
+        if(record)hist.h[x_axis?0:2]=short_wrap(-int32_t(c));
+        else before_axis=short_wrap(int32_t(before_axis)+c);
+        if(x_axis)block_x(c,blocked,hist);else block_z(c,blocked,hist);out.wall_contact=true;
+    };
+    bool result=false;
     if(!ea&&!ey){
-        const int16_t near_a=short_wrap((std::abs(int((x_axis?r.x0:r.z0)-(x_axis?p.x:p.z)))<
-            std::abs(int((x_axis?r.x1:r.z1)-(x_axis?p.x:p.z)))?(x_axis?r.x0:r.z0):(x_axis?r.x1:r.z1))-(x_axis?p.x:p.z));
-        const int16_t near_y=short_wrap((std::abs(int(r.y0-p.y))<std::abs(int(r.y1-p.y))?r.y0:r.y1)-p.y);
-        if(std::abs(int(near_y))<std::abs(int(near_a))){p.y=short_wrap(int32_t(p.y)+near_y);block_y(near_y,blocked);if(near_y<=0)p.contact_state=0;else out.ceiling_contact=true;}
-        else {if(x_axis)p.x=short_wrap(int32_t(p.x)+near_a);else p.z=short_wrap(int32_t(p.z)+near_a);before_axis=short_wrap(int32_t(before_axis)+near_a);if(x_axis)block_x(near_a,blocked);else block_z(near_a,blocked);out.wall_contact=true;}
-    }else if(ey&&std::abs(int(cy))<std::abs(int(ca))){p.y=short_wrap(int32_t(p.y)+cy);block_y(cy,blocked);if(cy<=0)p.contact_state=0;else out.ceiling_contact=true;}
-    else {if(x_axis)p.x=short_wrap(int32_t(p.x)+ca);else p.z=short_wrap(int32_t(p.z)+ca);if(x_axis)block_x(ca,blocked);else block_z(ca,blocked);out.wall_contact=true;}
+        const int16_t near_a=nearest_face(x_axis?r.x0:r.z0,x_axis?r.x1:r.z1,pa);
+        const int16_t near_y=nearest_face(r.y0,r.y1,p.y);
+        if(std::abs(int(near_y))<std::abs(int(near_a))){
+            p.y=short_wrap(int32_t(p.y)+near_y);before_y=short_wrap(int32_t(before_y)+near_y);
+            block_y(near_y,blocked);result=near_y<=0;if(!result)out.ceiling_contact=true;
+        }
+        else push_axis(near_a,false);
+    }else if(ey&&std::abs(int(cy))<std::abs(int(ca))){
+        p.y=short_wrap(int32_t(p.y)+cy);hist.h[1]=short_wrap(-int32_t(cy));
+        block_y(cy,blocked);result=cy<=0;if(!result)out.ceiling_contact=true;
+    }
+    else push_axis(ca,true);
+    response_tail(result,true,true,dy,p,hist);
     return true;
 }
 bool diagonal_response(uint16_t code,const Rect& r,L3RetailContactScratch& p,
-                       int16_t& before_x,int16_t& before_z,int16_t dx,int16_t dy,int16_t dz,
+                       int16_t& before_x,int16_t& before_y,int16_t& before_z,
+                       int16_t dx,int16_t dy,int16_t dz,
                        int32_t span_x,int32_t span_z,const RetailPlayerBounds& b,
-                       uint8_t& blocked,RuntimePlayerContact& out) {
+                       uint8_t& blocked,History& hist,RuntimePlayerContact& out) {
     const unsigned family=(code&0xf0u)>>4;
     if(family<2||family>5||((code&0x0fu)!=1u&&(code&0x0fu)!=2u))return false;
     const int32_t adx=std::abs(int(dx)),adz=std::abs(int(dz));
     const int32_t lhs=word_mul(adx+(family==3?-int32_t(b.x0):int32_t(b.x1)),span_x);
     const int32_t rhs=word_mul(adz+((family==4)?int32_t(b.z1):-int32_t(b.z0)),span_z);
-    if(family==2){if(lhs>rhs&&(blocked&1))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,false,out);if(rhs>lhs&&(blocked&8))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,true,out);}
-    else if(family==3){if(lhs>rhs&&(blocked&2))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,false,out);if(rhs>lhs&&(blocked&8))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,false,out);}
-    else if(family==4){if(lhs>rhs&&(blocked&1))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,true,out);if(rhs>lhs&&(blocked&4))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,true,out);}
-    else {if(lhs>rhs&&(blocked&2))return diagonal_axis_response(r,p,before_z,dz,dy,blocked,false,true,out);if(rhs>lhs&&(blocked&4))return diagonal_axis_response(r,p,before_x,dx,dy,blocked,true,false,out);}
-    return diagonal_project_8004ff14(r,p,dy,blocked,family-2,out);
+    const auto zr=[&](bool high){return diagonal_axis_response(r,p,before_z,before_y,dz,dy,blocked,false,high,hist,out);};
+    const auto xr=[&](bool high){return diagonal_axis_response(r,p,before_x,before_y,dx,dy,blocked,true,high,hist,out);};
+    if(family==2){if(lhs>rhs&&(blocked&1))return zr(false);if(rhs>lhs&&(blocked&8))return xr(true);}
+    else if(family==3){if(lhs>rhs&&(blocked&2))return zr(false);if(rhs>lhs&&(blocked&8))return xr(false);}
+    else if(family==4){if(lhs>rhs&&(blocked&1))return zr(true);if(rhs>lhs&&(blocked&4))return xr(true);}
+    else {if(lhs>rhs&&(blocked&2))return zr(true);if(rhs>lhs&&(blocked&4))return xr(false);}
+    return diagonal_project_8004ff14(r,p,dy,blocked,family-2,hist,out);
 }
 bool allowed(const RuntimeContactPrimitive& p,const L3PlayerCompatWork& player) {
     // Geometry response 0x8004BA98..BAA8 uses only the 0x8000 filter bit.
@@ -304,12 +396,13 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
     const L3RetailContactScratch requested{rd(w,0x14),rd(w,0x16),rd(w,0x18),w.bytes[0x74]};
     out.scratch=requested;
     int16_t before_x=rd(w,0x2C),before_z=rd(w,0x30);
-    const int16_t before_y=rd(w,0x2E);
+    int16_t before_y=rd(w,0x2E);
     const auto candidates=gather(map,area,requested.x,requested.z);
     out.candidate_cells=candidates.size;
     if(!candidates.size)return out;
     out.status=RuntimeContactStatus::SourceBackedPartial;
     uint8_t blocked=0;
+    History hist;
     for(unsigned pass=0;pass<9;++pass){
         out.iterations=static_cast<uint8_t>(pass+1);
         bool repeat=false;
@@ -323,11 +416,11 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                 if(!containing||containing->cell_index!=cell.cell_index)continue;
                 const int32_t top=-int32_t((uint16_t(cell.packed_cell)&0x1F00u)>>1);
                 const int16_t floor=short_wrap(top-1-b.y1);
-                if(floor<out.scratch.y){out.scratch.y=floor;if(dy>0)out.scratch.contact_state=0;repeat=true;}
+                if(floor<out.scratch.y){out.scratch.y=floor;if(dy>0)out.scratch.contact_state=0;clear_pending(hist);repeat=true;}
                 else if((uint16_t(cell.packed_cell)&0x6000u)!=0u){
                     const int32_t bands=(uint16_t(cell.packed_cell)&0x6000u)>>13;
                     const int16_t ceiling=short_wrap(top-bands*384+1-b.y0);
-                    if(out.scratch.y<ceiling){out.scratch.y=ceiling;out.ceiling_contact=true;repeat=true;}
+                    if(out.scratch.y<ceiling){out.scratch.y=ceiling;out.ceiling_contact=true;clear_pending(hist);repeat=true;}
                 }
                 continue;
             }
@@ -368,8 +461,8 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                     if(!inside(r,out.scratch))continue;
                     if(first_code>=256u)continue; // exact dispatcher admission
                     if(diagonal){
-                        if(diagonal_response(p.code,r,out.scratch,before_x,before_z,dx,dy,dz,
-                            int32_t(g.x1)-g.x0,int32_t(g.z1)-g.z0,b,blocked,out))repeat=true;
+                        if(diagonal_response(p.code,r,out.scratch,before_x,before_y,before_z,dx,dy,dz,
+                            int32_t(g.x1)-g.x0,int32_t(g.z1)-g.z0,b,blocked,hist,out))repeat=true;
                         else ++out.unsupported_primitives;
                         continue;
                     }
@@ -377,17 +470,24 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                         ++out.unsupported_primitives;continue;
                     }
                     if(p.code==3u){
-                        if(dy>=0 || out.scratch.contact_state==0){out.scratch.y=r.y0;out.scratch.contact_state=0;repeat=true;}
-                        else {++out.unsupported_primitives;}
-                    }else if(p.code==15u){out.scratch.y=r.y1;out.ceiling_contact=true;repeat=true;}
+                        if(dy>=0 || out.scratch.contact_state==0){out.scratch.y=r.y0;out.scratch.contact_state=0;clear_pending(hist);repeat=true;}
+                        else repeat=generic_rectangle_response(r,out.scratch,before_x,before_y,before_z,
+                                                                dx,dy,dz,blocked,3u,hist,out);
+                    }else if(p.code==15u){out.scratch.y=r.y1;out.ceiling_contact=true;clear_pending(hist);repeat=true;}
                     else if(out.scratch.contact_state==0 && int32_t(out.scratch.y)-r.y0<8 && !blocked){
-                        out.scratch.y=r.y0;repeat=true;
-                    }else repeat=generic_rectangle_response(r,out.scratch,dx,dy,dz,blocked,out);
+                        out.scratch.y=r.y0;clear_pending(hist);repeat=true;
+                    }else repeat=generic_rectangle_response(r,out.scratch,before_x,before_y,before_z,
+                                                          dx,dy,dz,blocked,1u,hist,out);
                 }
             }
         }
         if(!repeat)break;
         if(pass==8){out.status=RuntimeContactStatus::IterationLimit;out.result=static_cast<int32_t>(0x80000000u);return out;}
+        // LAB_8004BB24: apply the pending undo, then promote this response's h.
+        out.scratch.x=short_wrap(int32_t(out.scratch.x)+hist.u[0]);
+        out.scratch.y=short_wrap(int32_t(out.scratch.y)+hist.u[1]);
+        out.scratch.z=short_wrap(int32_t(out.scratch.z)+hist.u[2]);
+        hist.u=hist.h;hist.h={};
     }
     out.result=l3_collision_no_contact_result_8004bc2c(requested.x,requested.y,requested.z,
                                                      out.scratch.x,out.scratch.y,out.scratch.z);

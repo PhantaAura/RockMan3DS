@@ -331,7 +331,84 @@ void source_floor_fixture(const char* path){
     std::cout<<"PASS: 240 original source floor interval scalar cases; slope movement remains UNKNOWN\n";
 }
 } // namespace
-int main(int argc,char** argv){contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
+// 0x80050400 vectors, hand-derived from the original R3000 instructions
+// (docs/research_01503/DEEP_OVERLAP_80050400.md). Synthetic geometry checks
+// the branch tree; it is not a retail movement trace.
+L3PlayerCompatWork pose(int16_t x,int16_t y,int16_t z,int16_t bx,int16_t by,int16_t bz,uint8_t state){
+    L3PlayerCompatWork w{};put(w,0x14,x);put(w,0x16,y);put(w,0x18,z);
+    put(w,0x2C,bx);put(w,0x2E,by);put(w,0x30,bz);w.bytes[0x74]=state;return w;
+}
+void deep_overlap_recovery_80050400(){
+    using l3::RuntimeContactStatus;
+    // Deep wall penetration: no correction fits the 4-unit delta. Nearest X
+    // face (-44) beats the tied Z faces (544); Y (-1024) is larger.
+    auto wall=map_with_floor(1,-1024);
+    auto h=l3::runtime_player_contact_step(wall,0,pose(-500,0,0,-504,0,0,0));
+    assert(h.status==RuntimeContactStatus::SourceBackedPartial&&h.unsupported_primitives==0);
+    assert(h.deep_overlap_recoveries==1&&h.wall_contact&&!h.ceiling_contact);
+    assert(h.scratch.x==-544&&h.scratch.y==0&&h.scratch.z==0&&h.iterations==2);
+    assert((h.result&L3_CONTACT_RESULT_AXIS_X_MASK)!=0);
+    // Repeated resolution is stable: the corrected pose is on the strict face.
+    auto again=l3::runtime_player_contact_step(wall,0,pose(-544,0,0,-548,0,0,0));
+    assert(again.deep_overlap_recoveries==0&&again.scratch.x==-544&&again.result==0);
+    // Floor/wall intersection: shallow Y overlap (-20) beats tied horizontal
+    // faces; a nonnegative Y delta publishes the mode-1 grounded state.
+    auto block=map_with_floor(1,0);
+    h=l3::runtime_player_contact_step(block,0,pose(0,20,0,0,20,0,1));
+    assert(h.deep_overlap_recoveries==1&&h.scratch.y==0&&h.scratch.contact_state==0);
+    assert(h.grounded==true&&h.landed&&!h.wall_contact);
+    // Same recovery while moving up (dy<0): LAB_8004C144 leaves +74 airborne.
+    h=l3::runtime_player_contact_step(block,0,pose(0,20,0,0,24,0,1));
+    assert(h.deep_overlap_recoveries==1&&h.scratch.y==0&&h.scratch.contact_state==1);
+    assert(!h.grounded.value_or(false));
+    // Underside overlap pushes down to y1 and reports the ceiling.
+    h=l3::runtime_player_contact_step(block,0,pose(0,1180,0,0,1180,0,1));
+    assert(h.deep_overlap_recoveries==1&&h.scratch.y==1184&&h.ceiling_contact);
+    // Corner / multiple contacts: group 0 pushes X (blocked=2). Group 1 then
+    // needs deep recovery with equal X/Z magnitudes (24); a tie normally
+    // takes X, but the X block selects Z. The recovered pose leaves both.
+    auto corner=map_with_floor(1,-1024);
+    corner.contact_lists[0].group_count=2;
+    corner.contact_groups[0]={100,200,-512,512,0,1};
+    corner.contact_groups.push_back({-100,60,-300,-8,1,1});
+    corner.contact_primitives.push_back({-1024,1024,1,0});
+    h=l3::runtime_player_contact_step(corner,0,pose(80,0,0,64,0,0,0));
+    assert(h.status==RuntimeContactStatus::SourceBackedPartial&&h.deep_overlap_recoveries==1);
+    assert(h.scratch.x==68&&h.scratch.z==24&&h.iterations==3);
+    // Without the earlier X block the same tie takes X.
+    auto single=corner;single.contact_groups[0]={1000,1001,-512,512,0,1};
+    h=l3::runtime_player_contact_step(single,0,pose(68,0,0,64,0,0,0));
+    assert(h.deep_overlap_recoveries==1&&h.scratch.x==92&&h.scratch.z==0);
+    // 0x8004B6AC correction history in a corner. Pass 1: wall A with both
+    // horizontal corrections eligible pushes X by -4 and records h.x=+4.
+    // Pass 2: wall B pushes Z only (no h, and 0x80050BB4 does not clear u.x).
+    // Restart 2 adds u.x, undoing the X push, so the player slides to
+    // (100,95). The 0.0.15.2 solver, without the history, stopped at (96,95).
+    auto history=map_with_floor(1,-1024);
+    history.contact_lists[0].group_count=2;
+    history.contact_groups[0]={128,400,127,400,0,1};
+    history.contact_groups.push_back({82,118,127,400,1,1});
+    history.contact_primitives.push_back({-1024,1024,1,0});
+    h=l3::runtime_player_contact_step(history,0,pose(100,0,100,84,0,84,0));
+    assert(h.status==RuntimeContactStatus::SourceBackedPartial&&h.deep_overlap_recoveries==0);
+    assert(h.scratch.x==100&&h.scratch.z==95&&h.iterations==3&&h.wall_contact);
+    // Airborne-upward code 3 (dispatcher mode 3, previously held): the Y
+    // target is always the top face, and the grounded state is not published.
+    auto oneway=map_with_floor(3,0);
+    h=l3::runtime_player_contact_step(oneway,0,pose(0,500,0,0,504,0,1));
+    assert(h.status==RuntimeContactStatus::SourceBackedPartial&&h.unsupported_primitives==0);
+    assert(h.deep_overlap_recoveries==1&&h.scratch.y==0&&h.scratch.contact_state==1);
+    // Runtime: a player embedded in a wall block is recovered out of it
+    // instead of the 0.0.15.2 pre-move hold.
+    auto map=map_with_floor();
+    map.contact_lists[0].group_count=2;
+    map.contact_groups.push_back({0,400,-512,512,1,1});
+    map.contact_primitives.push_back({-512,-1,1,0});
+    auto s=session(std::move(map));s.reset_player({20,0,0},0,100,100);s.tick({});
+    assert(s.player_contact().status==RuntimeContactStatus::SourceBackedPartial);
+    assert(s.player_contact().deep_overlap_recoveries==1&&s.player_position().x==-32);
+}
+int main(int argc,char** argv){deep_overlap_recovery_80050400();contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
     assert(argc==1 || argc==2);if(argc==2)source_floor_fixture(argv[1]);
     std::cout<<"PASS: source-backed contact subset, ordinary action2 forward/reverse/release/turn, bounded retail scalar window, diagnostic seed, animation-gated jump and zero-allocation ticks; PHYSICS_1TO1=false\n";
 }

@@ -610,8 +610,8 @@ void RuntimeSession::update_player_contact(){
     }
     player_contact_=runtime_player_contact_step(*map_,map_area_index_,player_);
     if(player_contact_.status==RuntimeContactStatus::Unsupported){
-        // A primitive response that is not yet translated (diagonal families
-        // 0x21..0x52 via 0x8004BDC8, deep overlap 0x80050400) must not become
+        // A primitive response that is not yet translated (remaining diagonal
+        // subtypes and slope/step codes via 0x8004BDC8) must not become
         // free motion: through 0.0.14.51 the requested pose was accepted and
         // Mega Man walked through walls and off the map. Apply the original
         // 0x8004B414 failure contract instead (negative result: restore the

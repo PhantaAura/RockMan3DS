@@ -25,11 +25,11 @@
  },
  "COLLISION": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "0.0.15.2 ports diagonal classifiers 0x8004E490/E750/EA10/ECD0 and response paths 0x8004F8BC/0x8004FBE8/0x8004FF14 for families 0x21/0x31/0x41/0x51. Four bounded original-executable vectors match native results. Deterministic integration verifies diagonal sliding while inherited floor, corner-landing and Area 1 containment tests remain green. Owner-local Area 1 audit: 200 seeds x 3000 frames, 0 unsupported frames, 0 escapes, 0 falls, 53 cells visited. Deep-overlap 0x80050400 and broader measured retail chronology remain UNKNOWN; PHYSICS_1TO1=false."
+  "evidence": "0.0.15.3 ports deep-overlap recovery 0x80050400 (codes 1 and airborne-upward 3) and the 0x8004B6AC correction history 0x1F800100..10A, both verified against the original R3000 instructions; 0.0.15.2 diagonal families 0x21/0x31/0x41/0x51 retained with their four executable vectors. Deterministic deep/corner/history regressions pass. Owner-local Area 1 audit: 200 seeds x 3000 frames, 0 unsupported, 0 escapes, 0 falls. Areas 1-4 embedded-pose sweep: 1,016,352 formerly held poses -> 622,988 recovered, 389,292 source 9-pass rollback, 4,072 still unsupported (Area 2). No paired PS1 trace; codes 2/0x0B/0x0C, x5 diagonal fallback and slopes remain unported; PHYSICS_1TO1=false."
  },
  "COMBAT": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16\u21928\u21920 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
+  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16→8→0 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
  },
  "CONTENT GRAPH": {
   "evidence": "Historical structural validation covers 205 packages, 4,115 nodes and 3,916 edges. These counts establish content structure, not gameplay completion.",

@@ -1,28 +1,28 @@
 {
- "version": "0.0.15.2",
- "title": "M2b \u2014 original diagonal wall classifiers and response integrated",
- "created_utc": "2026-10-18T00:00:00+00:00",
- "project_path": "work/Legends3DS_0.0.15.0_Claude (Git repository)",
+ "version": "0.0.15.3",
+ "title": "M2c \u2014 original deep-overlap recovery 0x80050400 and 0x8004B6AC correction history",
+ "created_utc": "2026-10-19T00:00:00+00:00",
+ "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
  "branch": "main",
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors)",
- "host_tests": "147/147 PASS; focused collision and source-combat regressions PASS",
+ "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 147/147)",
+ "host_tests": "147/147 PASS; deep-overlap, corner-history and inherited collision/combat regressions PASS",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
- "native_binary": "/private/tmp/legends3ds-01502-native-r2/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
- "native_binary_bytes": 924136,
- "native_binary_sha256": "41abf4b4ba762744b7c108d2a31dc46c2b487ff05e7ea5ea4d46ca1647f1c16f",
+ "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261019-101256-m2c-01503/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
+ "native_binary_bytes": 926240,
+ "native_binary_sha256": "ed6d4e621bb86126ea85386e90bc592c833a7a71a96a79c04d9c81920ae21f1d",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "UNAVAILABLE_THIS_PASS: Azahar automation blocked because macOS reported the screen locked; no emulator result claimed.",
- "emulator_evidence": "docs/validation_01447/emulator-observation.json",
+ "current_emulator_validation": "BOOT_ONLY: Azahar 2126.0 (Old 3DS model, new3ds=0, CPU 100%) booted 0.0.15.3, bound all data, synchronized the first 3D GPU submission and advanced to frame 1080 with no input. This build's boot took the terrain-inspection entry (Area 0), not the Area 1 handoff, so no gameplay collision was exercised in the emulator. See docs/validation_01503/RESULTS.md.",
+ "emulator_evidence": "docs/validation_01503/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
@@ -30,15 +30,14 @@
  "world_comes_alive_finished": false,
  "usage_reset_used": false,
  "evidence": [
-  "RESUME_01502.md",
+  "RESUME_01503.md",
+  "docs/research_01503/DEEP_OVERLAP_80050400.md",
   "src/player/player_contact_runtime.cpp",
   "tests/test_runtime_contact.cpp",
-  "tests/test_map_edge.cpp",
-  "docs/validation_01502/AZAHAR_TEST.md"
+  "docs/validation_01503/AZAHAR_TEST.md"
  ],
  "blockers": [
-  "Deep-overlap recovery 0x80050400 remains untranslated. Full diagonal/corner parity still needs paired retail traces beyond the four executable-derived response vectors and Area 1 stress audit.",
-  "Deep-overlap recovery 0x80050400 untranslated (also held).",
+  "No paired PS1/native movement trace yet for corners, deep overlap or the ported correction history; codes 2/0x0B/0x0C (0x8004F44C modes 0/0x43), the x5 diagonal fallback and slopes/steps remain unported (4,072 embedded Area 2 poses still Unsupported). Actor-side deep overlap in actor_contact remains excluded.",
   "Areas 2-4 entry spawns and door/transition progression from Area 1 are not yet audited.",
   "Lock-on 80034EB8 is still not wired: it needs the original gameplay camera matrix (owner UNKNOWN). Candidate lock-on is retired while source combat is active, so X does nothing in that mode.",
   "Reward descriptor 0x01010202 is queued exactly once, but original 0x80046B34 RNG-driven subtype-0x87 pickup expansion, update and collection are not implemented.",
@@ -48,7 +47,7 @@
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.15.1",
-  "source_archive": "git main (M2 partial commit 20850a3)"
+  "version": "0.0.15.2",
+  "source_archive": "git main (M2b commit b14042f)"
  }
 }
