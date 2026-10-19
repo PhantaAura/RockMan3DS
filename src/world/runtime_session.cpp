@@ -187,6 +187,7 @@ bool RuntimeSession::transition_to_location(size_t id,RuntimeVec3i p,uint16_t ya
     TutorialRuntimeArea next_area=it->second.area;
     area_=std::move(next_area);area_index_=id;map_=it->second.map;map_area_index_=it->second.map_area_index;
     // Door objects belong to the outgoing area; its IDX swaps go with it.
+    if(door_map_)++idx_descriptor_generation_;
     source_door_objects_.clear();door_map_.reset();
     player_position_=p;wr16w(player_,0x56,yaw&0x0FFFu);sync_primary_position_to_compat();
     reset_player_contact();
@@ -1150,6 +1151,7 @@ void RuntimeSession::write_idx_descriptor(uint16_t idx,uint16_t descriptor){
         door_map_source_=map_;door_map_=std::make_shared<RuntimeMap>(*map_);map_=door_map_;
     }
     door_map_->idx[idx].descriptor_index=descriptor;
+    ++idx_descriptor_generation_;
 }
 void RuntimeSession::update_source_door_objects(){
     const bool f7b1=story_flag(0x7B1);

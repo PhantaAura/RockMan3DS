@@ -1,10 +1,18 @@
-# Mega Man Legends 3DS — 0.0.15.7 (M2 door event 0)
+# Mega Man Legends 3DS — 0.0.15.8 (M2 door terrain patch)
+
+0.0.15.8: the 3DS renderer now follows door IDX swaps without rebuilding the
+area (the swapped cell's baked terrain is hidden and its live descriptor drawn
+in a small overlay). The data shows the ST00 doors' open and closed
+descriptors draw the same geometry, so the doors still look closed; the door
+opening must come from the door object's own draw, which is not ported.
+[Research](docs/research_01508/DOOR_TERRAIN_DESCRIPTORS.md) ·
+[Results](docs/validation_01508/RESULTS.md) · [Resume](RESUME_01508.md).
 
 0.0.15.7: the original door sequence (event 0, `0x800485E4`) now runs. After A
 at the first Area 1 door, the door opens, Mega Man walks through on his own,
 the game loads Area 2, its door opens and he walks through it too, then control
-returns. The door leaf and the redrawn terrain are not shown yet, so he passes
-through the visible slab. Host replay passes; Azahar check pending.
+returns. The door leaf is not shown yet, so he passes through the visible
+slab. Host replay passes; Azahar check pending.
 [Results](docs/validation_01507/RESULTS.md) · [Resume](RESUME_01507.md).
 
 0.0.15.6: pressing A (the original Circle) while facing the first Area 1 door

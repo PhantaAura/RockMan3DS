@@ -7,7 +7,7 @@ endif
 TOPDIR ?= $(CURDIR)
 include $(DEVKITARM)/3ds_rules
 
-TARGET      := Legends3DS_01507_WorldComesAlive
+TARGET      := Legends3DS_01508_WorldComesAlive
 BUILD       := build_3ds
 SOURCES     := source \
                ../../src/world ../../src/model ../../src/texture ../../src/render \
@@ -24,7 +24,7 @@ ASFLAGS     := -g $(ARCH)
 LDFLAGS     := -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map),--gc-sections
 LIBS        := -lcitro3d -lctru -lm
 LIBDIRS     := $(CTRULIB)
-APP_TITLE   := Legends3DS 0.0.15.7 Door Walk
+APP_TITLE   := Legends3DS 0.0.15.8 Door Terrain
 APP_DESCRIPTION := Automatic top-screen diagnostics
 APP_AUTHOR  := Legends3DS Project
 
@@ -38,7 +38,7 @@ export DEPSDIR := $(CURDIR)/$(BUILD)
 # runtime pieces it actually exercises, rather than pulling host-only catalog/
 # filesystem utilities onto Old 3DS.
 CFILES       := tile_transform.c player_runtime.c player_collision.c qol_settings.c mml_renderer_recovery.c mml_runtime_diag_v2.c
-CPPFILES     := main.cpp hardware_test.cpp mockup_hud.cpp mockup_ui.cpp frontend_view.cpp terrain_geometry_candidate.cpp positive_terrain.cpp negative_terrain.cpp negative_materials.cpp area_inspection.cpp area_placement.cpp area_package.cpp map_initialization.cpp l3map.cpp st00_render.cpp pbd_model.cpp player_composition.cpp \
+CPPFILES     := main.cpp hardware_test.cpp mockup_hud.cpp mockup_ui.cpp frontend_view.cpp terrain_geometry_candidate.cpp positive_terrain.cpp negative_terrain.cpp negative_materials.cpp area_inspection.cpp area_placement.cpp terrain_descriptor_patch.cpp area_package.cpp map_initialization.cpp l3map.cpp st00_render.cpp pbd_model.cpp player_composition.cpp \
                 pbd_animation.cpp player_pose.cpp visual_bridge.cpp ctr_texture_layout.cpp reference_tables.cpp \
                 runtime_session.cpp tutorial_runtime.cpp mml_message.cpp st00_flow.cpp \
                 st00_event.cpp source_door_event.cpp st00_spawn.cpp ebd_directory.cpp actor_resource.cpp actor_contact.cpp actor_detection.cpp actor_detection_profile.cpp actor_detection_math.cpp actor_detection_segment.cpp actor_detection_preparation.cpp actor_action9_contact.cpp actor_action4_contact.cpp actor_action3_contact.cpp source_combat_profile.cpp source_audio_queue.cpp class20_03_action9.cpp class20_03_action4.cpp class60_06.cpp source_profile_class60_06.cpp class20_03_hit.cpp source_hit_proxy.cpp source_actor_consumers.cpp child_runtime.cpp source_rng_service.cpp source_fade.cpp source_event_phase5.cpp source_event_phase6.cpp source_event_random_effect.cpp source_event_random_tape.cpp scene_e0.cpp scene_e0_material.cpp source_scene_view.cpp source_scene_actor40.cpp source_scene_actor40_pose.cpp source_scene_actor40_init.cpp source_scene_actor40_update.cpp source_scene_actor40_tail.cpp source_main_loop.cpp source_loop_snapshot.cpp class20_03_reaction.cpp source_reaction_profile.cpp actor_reaction_contact.cpp source_event_pipeline.cpp source_event_consumer.cpp source_event_phase2.cpp source_event_package.cpp source_event_command.cpp source_event_command_package.cpp source_player_proxy.cpp source_player_buster.cpp gameplay_gates.cpp source_player_pose.cpp source_buster_profile.cpp source_camera.cpp xa_stream.cpp xa_transport.cpp native_xa_audio.cpp source_effects.cpp source_effect2.cpp source_effect34.cpp source_effect_dispatch.cpp source_prop_lift.cpp source_prop_attach.cpp actor_pose_runtime.cpp class20_03_proxy.cpp class20_03_action3.cpp actor_runtime.cpp actor_material.cpp class20_03_behavior.cpp source_angle.cpp actor_sequence.cpp actor_animation_bank.cpp player_contact_runtime.cpp stage_runtime.cpp stage_spawn.cpp \

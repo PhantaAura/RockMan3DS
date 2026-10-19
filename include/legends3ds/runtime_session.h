@@ -375,6 +375,10 @@ public:
     // Non-owning observation for memory-lifecycle diagnostics. Merely retaining
     // this observer does not prevent an unloaded map from being freed.
     std::weak_ptr<const RuntimeMap> active_map_lifetime() const { return map_; }
+    // Bumped whenever an IDX descriptor of the active map changes without a
+    // location change (door object 0x8003AC24 swaps) and when leaving an area
+    // drops such swaps. Renderers re-read active_map() when it moves.
+    uint32_t idx_descriptor_generation() const noexcept { return idx_descriptor_generation_; }
     void set_objective(std::optional<MessageRef> objective);
     void set_reference_tables(ReferenceTables tables);
     bool has_reference_tables() const { return reference_tables_.has_value(); }
@@ -591,6 +595,7 @@ private:
     // points at it while a swap is live in this area.
     std::shared_ptr<RuntimeMap> door_map_;
     std::shared_ptr<const RuntimeMap> door_map_source_;
+    uint32_t idx_descriptor_generation_=0;
     std::optional<SourceEventPhase2Package> source_event_phase2_package_;
     SourceEventPhase2Context source_event_phase2_context_{};
     SourceEventCommandQueue source_event_commands_{};

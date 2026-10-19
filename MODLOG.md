@@ -171,3 +171,14 @@ The load is offered at substate 6; the commit runs substates 6–8. On the host
 replay Mega Man walks through the Area 1 door and, after the load, through the
 Area 2 door to (−256,−1,7104). CANDIDATE: lazy door-object spawn, frame order,
 one frame per load substate. Host 148/148, native build passes.
+
+## 0.0.15.8 (M2 — door terrain patch)
+
+`RuntimeSession` exposes an IDX descriptor generation; the 3DS renderer
+re-plans on change, collapses the swapped identity's baked vertices in place
+and draws the live descriptor from an overlay (no area rebuild). Tracked only
+for word0-bit-0x1000 descriptors. Owner-local data check: the ST00 Area 1/2
+door descriptors (32→28, 33→30) share their render streams, so open and closed
+draw identically and the doors still look closed; only collision changes. The
+door object's draw and rotation `0x801126DC` stay UNKNOWN. Host 149/149
+(new `terrain_descriptor_patch`), replay 2 hides / 2 restores, native build passes.

@@ -97,6 +97,7 @@ add_library(legends3ds_core STATIC
     src/texture/material_cache.cpp
     src/render/terrain_geometry_candidate.cpp
     src/render/area_placement.cpp
+    src/render/terrain_descriptor_patch.cpp
     src/render/positive_terrain.cpp
     src/render/negative_terrain.cpp
     src/render/negative_materials.cpp
@@ -498,6 +499,10 @@ add_executable(test_source_door_event tests/test_source_door_event.cpp)
 target_link_libraries(test_source_door_event PRIVATE legends3ds_core)
 target_compile_options(test_source_door_event PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_door_event COMMAND test_source_door_event)
+add_executable(test_terrain_descriptor_patch tests/test_terrain_descriptor_patch.cpp)
+target_link_libraries(test_terrain_descriptor_patch PRIVATE legends3ds_core)
+target_compile_options(test_terrain_descriptor_patch PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME terrain_descriptor_patch COMMAND test_terrain_descriptor_patch)
 add_executable(test_runtime_contact tests/test_runtime_contact.cpp)
 target_link_libraries(test_runtime_contact PRIVATE legends3ds_core)
 target_compile_options(test_runtime_contact PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)

@@ -16,6 +16,10 @@
 //     opens, the second walk takes him through it, the door closes and phase
 //     2 returns control with 0x7B0 clear and 0x380 set. He must end in Area 2
 //     beyond the door cell (z > 6656) on a floor.
+//  3. Terrain patch (0.0.15.8): the 3DS renderer's IDX swap bookkeeping is
+//     run beside phase 2 over the package's render source. Every descriptor
+//     generation change re-plans; both doors must be hidden and restored, and
+//     the open descriptor's primitive count is reported (not a pass gate).
 //   l3door_replay BOOT.mmlpkg TUTORIAL_DIR [--no-init] [--trace]
 // Output contains only counts and coordinates; no retail payload.
 #include "legends3ds/area_package.h"
@@ -23,6 +27,9 @@
 #include "legends3ds/runtime_session.h"
 #include "legends3ds/pbd_animation.h"
 #include "legends3ds/runtime_animation.h"
+#include "legends3ds/render/area_placement.h"
+#include "legends3ds/render/positive_terrain.h"
+#include "legends3ds/render/terrain_descriptor_patch.h"
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -39,6 +46,7 @@ struct Inputs {
 struct Built {
     std::unique_ptr<RuntimeSession> session;
     PbdAnimation anim;
+    St00RenderSource render;
     bool applied=false;
     uint32_t writes=0;
 };
@@ -51,6 +59,7 @@ Built build(const Inputs& in){
     if(in.apply_init)b.applied=apply_sidecar_map_initialization(package,
         load_map_initialization(read_file(in.root/"st00.l3init"),true));
     b.writes=package.diagnostics.map_initialization_writes;
+    b.render=std::move(package.render);
     b.anim=load_l3animation(read_file(in.root/"player/main.l3anim"),true);
     const auto refs=load_l3reference(read_file(in.root/"reference.l3ref"),true);
     std::vector<MmlMessageFile> banks;
@@ -68,6 +77,60 @@ void step(Built& b,PbdMainBodyTrack& track,const RuntimeInputFrame& in){
     (void)runtime_animation_prepare(b.anim,track,*b.session);b.session->tick(in);
     (void)runtime_animation_finish(b.anim,track,*b.session);
 }
+// Mirrors platform/3ds main.cpp: bake the area's positive instances (Mid LOD),
+// then re-plan on each descriptor generation change. No GPU buffers here, so
+// only the hide/restore bookkeeping and overlay primitive counts are checked.
+struct PatchObserver {
+    TerrainDescriptorPatch patch;
+    size_t area=SIZE_MAX;
+    uint32_t generation=0;
+    int changes=0,hides=0,restores=0,max_overlay_idx=0;
+    size_t max_baked=0,max_spans=0;
+    uint16_t door_idx=0,closed_descriptor=0xFFFFu,open_descriptor=0xFFFFu;
+    size_t closed_prims=0,open_prims=0;
+    static size_t prims(const RuntimeMap& m,const St00RenderSource& r,size_t area,uint16_t idx,uint16_t* descriptor){
+        for(const auto& i:collect_area_positive_placement(m,area).instances){
+            if(i.idx_index!=idx)continue;
+            if(descriptor)*descriptor=i.descriptor_index;
+            if(i.descriptor_index==0xFFFFu)return 0;
+            return expand_positive_terrain_descriptor_lod(r,i.descriptor_index,i.bank,St00Lod::Mid,i.origin,0).size();
+        }
+        return 0;
+    }
+    void observe(const RuntimeSession& s,const St00RenderSource& r){
+        if(s.map_area_index()!=area){
+            patch.reset();area=s.map_area_index();generation=s.idx_descriptor_generation();
+            uint32_t first=0;
+            const auto& m=s.active_map();
+            for(const auto& i:collect_area_positive_placement(m,area).instances){
+                // As on the 3DS: only door descriptors (word0 bit 0x1000) are tracked.
+                if(i.descriptor_index>=m.descriptors.size()||!(m.descriptors[i.descriptor_index].word0&0x1000u))continue;
+                patch.bake(i.idx_index,i.descriptor_index);
+                const auto n=uint32_t(expand_positive_terrain_descriptor_lod(r,i.descriptor_index,i.bank,St00Lod::Mid,i.origin,0).size()*6u);
+                patch.add_span(i.idx_index,0,first,n);first+=n;
+            }
+            max_baked=std::max(max_baked,patch.baked_count());max_spans=std::max(max_spans,patch.span_count());
+        }
+        if(s.idx_descriptor_generation()==generation)return;
+        generation=s.idx_descriptor_generation();++changes;
+        const auto plan=patch.plan(s.active_map());
+        hides+=int(plan.hide.size());restores+=int(plan.restore.size());
+        max_overlay_idx=std::max(max_overlay_idx,int(plan.overlay.size()));
+        if(!plan.hide.empty()){
+            door_idx=plan.hide.front();
+            for(const auto& o:s.source_door_objects())
+                if(o.idx_index==door_idx){closed_descriptor=o.closed_descriptor;}
+            open_prims=prims(s.active_map(),r,area,door_idx,&open_descriptor);
+            // The closed count comes from the bake: the descriptor the door object saved.
+            if(closed_descriptor!=0xFFFFu&&closed_descriptor<r.descriptors.size()){
+                for(const auto& i:collect_area_positive_placement(s.active_map(),area).instances)
+                    if(i.idx_index==door_idx)
+                        closed_prims=expand_positive_terrain_descriptor_lod(r,closed_descriptor,i.bank,St00Lod::Mid,i.origin,0).size();
+            }
+        }
+        (void)patch.apply(plan,1,[](uint64_t)->uint8_t*{return nullptr;},[](uint8_t*,size_t){});
+    }
+};
 int16_t lane16(const SourceEventHandoffTransitionIntent& t,size_t at){return int16_t(uint16_t(t.raw[at]|(uint16_t(t.raw[at+1])<<8)));}
 } // namespace
 
@@ -98,6 +161,7 @@ int main(int argc,char** argv){
         // Phase 2: Up into the door, then Circle with Up held.
         auto d=build(inputs);auto& t=*d.session;
         t.reset_player({-334,-1,-5750},2048,100,100);PbdMainBodyTrack door_track{};
+        PatchObserver patch;patch.observe(t,d.render);
         int request_frame=-1;SourceDoorStatus press_status=SourceDoorStatus::NoEvent;
         for(int f=0;f<40;++f){
             RuntimeInputFrame in{};in.held_psx_mask=f<2?0:0x0010;in.pressed_psx_mask=f==2?0x0010:0;
@@ -119,7 +183,7 @@ int main(int argc,char** argv){
         int offer_frame=-1,area1_door_opened=0,max_area1_z=before.z;
         std::optional<SourceEventHandoffTransitionIntent> offered;
         for(int f=0;f<400&&!offered;++f){
-            step(d,door_track,{});log("pre",f);
+            step(d,door_track,{});patch.observe(t,d.render);log("pre",f);
             for(const auto& o:t.source_door_objects())if(o.state>=3)area1_door_opened=1;
             max_area1_z=std::max(max_area1_z,t.player_position().z);
             if(t.source_door_transition()){offered=t.source_door_transition();offer_frame=f;}
@@ -135,15 +199,15 @@ int main(int argc,char** argv){
             const auto& trig=refs.trig[uint16_t(lane16(*offered,10))&0x0FFFu];
             expected={lane16(*offered,0)+((int32_t(trig.sin_q12)*64)>>12),lane16(*offered,2)-1,
                       lane16(*offered,4)+((int32_t(trig.cos_q12)*64)>>12)};
-            committed=t.commit_source_door_transition();
+            committed=t.commit_source_door_transition();patch.observe(t,d.render);
             arrival=t.player_position();arrival_heading=t.player_yaw();
             counter_at_arrival=t.source_door_event0().counter;
             log("commit",0);
             for(int f=0;f<400&&t.source_door_event0().active;++f){
-                step(d,door_track,{});log("post",f);++event_frames;
+                step(d,door_track,{});patch.observe(t,d.render);log("post",f);++event_frames;
                 for(const auto& o:t.source_door_objects()){if(o.state>=3)area2_door_opened=1;if(area2_door_opened&&o.state==1)area2_door_closed=1;}
             }
-            for(int f=0;f<10;++f){step(d,door_track,{});if(!t.player_contact().floor_y)++door_floorless;log("idle",f);}
+            for(int f=0;f<10;++f){step(d,door_track,{});patch.observe(t,d.render);if(!t.player_contact().floor_y)++door_floorless;log("idle",f);}
             final_pos=t.player_position();
         }
         const bool door_pass=intent&&offered&&committed&&t.map_area_index()==2&&offered->destination_area==2&&
@@ -152,7 +216,10 @@ int main(int argc,char** argv){
             flag_7b0&&!t.source_door_event0().active&&area2_door_opened&&area2_door_closed&&
             !t.story_flag(0x7B0)&&!t.story_flag(0x7B1)&&!t.story_flag(0x7B2)&&!t.story_flag(0x7B3)&&t.story_flag(0x380)&&
             final_pos.z>6656&&door_floorless==0;
-        const bool pass=fall_pass&&door_pass;
+        // Both doors (Area 1, then Area 2 after the rebake) collapse and come back.
+        const bool patch_pass=patch.hides>=1&&patch.restores>=1&&patch.changes>=2&&patch.max_overlay_idx==1&&
+            !patch.patch.hidden(patch.door_idx);
+        const bool pass=fall_pass&&door_pass&&patch_pass;
         std::printf("{\"map_initialization_applied\":%s,\"map_initialization_writes\":%u,\"frames\":40,"
                     "\"floorless_frames\":%d,\"airborne_frames\":%d,\"below_floor_frames\":%d,"
                     "\"door_slab_contacts\":%d,\"first_failure_frame\":%d,\"final\":[%d,%d,%d],\"fall_result\":\"%s\",\n"
@@ -162,6 +229,8 @@ int main(int argc,char** argv){
                     "\"committed\":%s,\"area\":%zu,\"arrival\":[%d,%d,%d],\"expected_arrival\":[%d,%d,%d],"
                     "\"heading\":%u,\"counter_at_arrival\":%d,\"area2_door_opened\":%s,\"area2_door_closed\":%s,"
                     "\"event_frames_after_commit\":%d,\"final\":[%d,%d,%d],\"floorless_frames\":%d,\"result\":\"%s\"},\n"
+                    " \"terrain_patch\":{\"generation_changes\":%d,\"hides\":%d,\"restores\":%d,\"max_overlay_idx\":%d,\"max_tracked_idx\":%zu,\"max_spans\":%zu,"
+                    "\"last_door_idx\":%u,\"closed_descriptor\":%u,\"open_descriptor\":%u,\"closed_mid_prims\":%zu,\"open_mid_prims\":%zu,\"result\":\"%s\"},\n"
                     " \"result\":\"%s\"}\n",
             b.applied?"true":"false",b.writes,floorless,airborne,below_floor,door_contacts,first_fail,
             last.x,last.y,last.z,fall_pass?"PASS":"FAIL",
@@ -172,7 +241,9 @@ int main(int argc,char** argv){
             committed?"true":"false",t.map_area_index(),arrival.x,arrival.y,arrival.z,expected.x,expected.y,expected.z,
             unsigned(arrival_heading),counter_at_arrival,area2_door_opened?"true":"false",area2_door_closed?"true":"false",
             event_frames,final_pos.x,final_pos.y,final_pos.z,door_floorless,door_pass?"PASS":"FAIL",
-            pass?"PASS":"FAIL");
+            patch.changes,patch.hides,patch.restores,patch.max_overlay_idx,patch.max_baked,patch.max_spans,unsigned(patch.door_idx),
+            unsigned(patch.closed_descriptor),unsigned(patch.open_descriptor),patch.closed_prims,patch.open_prims,
+            patch_pass?"PASS":"FAIL",pass?"PASS":"FAIL");
         return pass?0:1;
     }catch(const std::exception& e){std::fprintf(stderr,"%s\n",e.what());return 2;}
 }

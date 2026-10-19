@@ -65,6 +65,7 @@
 #include "legends3ds/render/area_inspection.h"
 #include "legends3ds/render/gpu_frame_wait.h"
 #include "legends3ds/render/area_placement.h"
+#include "legends3ds/render/terrain_descriptor_patch.h"
 #include "legends3ds/render/ps1_texture_modulation.h"
 
 // Retain the 0.0.14.3 stack fix that is already proven on the user's Old 3DS XL.
@@ -106,6 +107,7 @@ static_assert(offsetof(ProbeVertexUV, u) == 12 && offsetof(ProbeVertexUV, v) == 
     "enhanced UV offsets must remain unchanged");
 struct TerrainBatch {
     uint32_t material_word = 0;
+    uint64_t key = 0; // material word | unknown-binding bit 32 (patch span buffer)
     ProbeVertexUV* vbo = nullptr;
     size_t vertex_count = 0;
     C3D_Tex texture{};
@@ -136,6 +138,26 @@ static size_t g_terrain_vertex_count_0143 = 0;
 static ProbeVertexUV* g_terrain_vbo_uv = nullptr;
 static size_t g_terrain_vertex_count_uv = 0;
 static std::vector<TerrainBatch> g_terrain_batches;
+// 0.0.15.8: IDX descriptor swaps (door object 0x8003AC24) patch the baked
+// terrain: the swapped identity's baked vertices collapse and its live
+// descriptor is drawn from this overlay. Native cache; the original redraws
+// from the live IDX every frame. Overlay textures are borrowed from the batch
+// with the same key and never released here. Only identities whose baked
+// descriptor has word0 bit 0x1000 are tracked: the door object (0x801124B0)
+// swaps only those (CANDIDATE: no other IDX writer is ported).
+struct TerrainOverlay {
+    uint64_t key = 0;
+    void* vbo = nullptr;
+    size_t vertex_count = 0;
+    size_t stride = 0;
+    const C3D_Tex* texture = nullptr;
+};
+static l3::TerrainDescriptorPatch g_terrain_patch;
+static std::vector<TerrainOverlay> g_terrain_overlay;
+static uint64_t g_terrain_patch_generation = UINT64_MAX;
+static bool g_terrain_patch_recording = false;
+static uint16_t g_area_primitive_idx = 0xFFFFu;   // 0xFFFF: not tracked for swaps
+static const std::vector<uint16_t>* g_area_idx_filter = nullptr;
 static std::vector<GpuMaterial> g_player_materials;
 static std::vector<GpuMaterial> g_actor_materials;
 static std::vector<GpuMaterial> g_scene_materials;
@@ -584,6 +606,17 @@ void release_terrain_batches() {
     std::vector<TerrainBatch>().swap(g_terrain_batches);
 }
 
+void release_terrain_overlay() {
+    require_gpu_idle_for_release();
+    for (auto& o : g_terrain_overlay) {
+        if (!o.vbo) continue;
+        const uint32_t bytes = uint32_t(o.vertex_count * o.stride);
+        linearFree(o.vbo);
+        if (g_owned_linear_bytes >= bytes) g_owned_linear_bytes -= bytes;
+    }
+    std::vector<TerrainOverlay>().swap(g_terrain_overlay);
+}
+
 void release_player_materials() {
     require_gpu_idle_for_release();
     for (auto& m : g_player_materials) release_gpu_texture(m.texture, m.texture_ready);
@@ -609,6 +642,9 @@ void release_scene_actor40_materials() {
 
 void release_all_render_resources() {
     require_gpu_idle_for_release();
+    release_terrain_overlay();
+    g_terrain_patch.reset();
+    g_terrain_patch_generation = UINT64_MAX;
     release_terrain_0143();
     release_terrain_uv_flat();
     release_terrain_batches();
@@ -659,6 +695,10 @@ size_t next_diagnostic_area(const l3::RuntimeMap& map,const l3::St00RenderSource
     throw std::runtime_error("package has no renderable diagnostic area");
 }
 
+bool swappable_descriptor(const l3::RuntimeMap& map, uint16_t descriptor) {
+    return descriptor < map.descriptors.size() && (map.descriptors[descriptor].word0 & 0x1000u);
+}
+
 template <typename Fn>
 void for_each_area_primitive(const l3::RuntimeMap& map,
                              const l3::St00RenderSource& render,
@@ -674,6 +714,11 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         // remains the independently selectable 0143/UV fallback.
         const auto placement = l3::collect_area_positive_placement(map, area_index);
         for (const auto& instance : placement.instances) {
+            if (g_area_idx_filter && std::find(g_area_idx_filter->begin(), g_area_idx_filter->end(),
+                                               instance.idx_index) == g_area_idx_filter->end()) continue;
+            const bool tracked = swappable_descriptor(map, instance.descriptor_index);
+            if (g_terrain_patch_recording && tracked) g_terrain_patch.bake(instance.idx_index, instance.descriptor_index);
+            g_area_primitive_idx = tracked ? instance.idx_index : uint16_t(0xFFFFu);
             if (instance.descriptor_index == 0xFFFFu) continue;
             const auto prims = l3::expand_positive_terrain_descriptor_lod(render,
                 instance.descriptor_index, instance.bank, l3::St00Lod::Mid,
@@ -688,6 +733,9 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
                 ++g_area_primitive_count;
             }
         }
+        g_area_primitive_idx = 0xFFFFu;
+        // Negative cells carry no IDX descriptor; a swap overlay skips them.
+        if (g_area_idx_filter) return;
         const auto negative = l3::collect_area_negative_placement(map, render, area_index);
         uint32_t unknown_materials = 0;
         for (const auto& instance : negative.instances) {
@@ -715,6 +763,11 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         const size_t ii = static_cast<uint16_t>(packed);
         if (ii >= map.idx.size()) throw std::runtime_error("terrain IDX escaped map");
         const auto& idx = map.idx[ii];
+        if (g_area_idx_filter && std::find(g_area_idx_filter->begin(), g_area_idx_filter->end(),
+                                           uint16_t(ii)) == g_area_idx_filter->end()) continue;
+        const bool tracked = swappable_descriptor(map, idx.descriptor_index);
+        if (g_terrain_patch_recording && tracked) g_terrain_patch.bake(uint16_t(ii), idx.descriptor_index);
+        g_area_primitive_idx = tracked ? uint16_t(ii) : uint16_t(0xFFFFu);
         if (idx.descriptor_index == 0xFFFFu || idx.descriptor_index >= render.descriptors.size()) continue;
         const uint32_t lx = local % area.width, lz = local / area.width;
         const int32_t gx = int32_t(area.start_x) + int32_t(lx);
@@ -733,6 +786,7 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
             ++g_area_primitive_count;
         }
     }
+    g_area_primitive_idx = 0xFFFFu;
 }
 
 l3::AreaInspectionEntry inspection_entry(const l3::RuntimeMap& map, const l3::St00RenderSource& render, size_t area) {
@@ -757,9 +811,14 @@ l3::AreaInspectionEntry inspection_entry(const l3::RuntimeMap& map, const l3::St
 void rebuild_terrain_0143(const l3::RuntimeMap& map, const l3::St00RenderSource& render, size_t area_index) {
     release_all_render_resources();
     std::vector<ProbeVertex0143> cpu;
+    g_terrain_patch_recording = true;
     for_each_area_primitive(map, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) {
+        const size_t first = cpu.size();
         push_quad_0143(cpu, p);
+        if (g_area_primitive_idx != 0xFFFFu)
+            g_terrain_patch.add_span(g_area_primitive_idx, 0, uint32_t(first), uint32_t(cpu.size() - first));
     });
+    g_terrain_patch_recording = false;
     if (cpu.empty()) throw std::runtime_error("selected area produced no terrain vertices");
     const size_t bytes = cpu.size() * sizeof(ProbeVertex0143);
     g_terrain_vbo_0143 = static_cast<ProbeVertex0143*>(linearAlloc(bytes));
@@ -772,9 +831,14 @@ void rebuild_terrain_0143(const l3::RuntimeMap& map, const l3::St00RenderSource&
 void rebuild_terrain_uv_flat(const l3::RuntimeMap& map, const l3::St00RenderSource& render, size_t area_index) {
     release_all_render_resources();
     std::vector<ProbeVertexUV> cpu;
+    g_terrain_patch_recording = true;
     for_each_area_primitive(map, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) {
+        const size_t first = cpu.size();
         push_quad_uv(cpu, p);
+        if (g_area_primitive_idx != 0xFFFFu)
+            g_terrain_patch.add_span(g_area_primitive_idx, 0, uint32_t(first), uint32_t(cpu.size() - first));
     });
+    g_terrain_patch_recording = false;
     if (cpu.empty()) throw std::runtime_error("selected area produced no UV terrain vertices");
     const size_t bytes = cpu.size() * sizeof(ProbeVertexUV);
     g_terrain_vbo_uv = static_cast<ProbeVertexUV*>(linearAlloc(bytes));
@@ -809,9 +873,16 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
                              size_t area_index) {
     release_all_render_resources();
     std::map<uint64_t, std::vector<ProbeVertexUV>> cpu;
+    g_terrain_patch_recording = true;
     for_each_area_primitive(map, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) {
-        push_quad_uv(cpu[uint64_t(p.material_word) | (p.texture_binding_known ? 0u : (uint64_t{1} << 32))], p);
+        const uint64_t key = uint64_t(p.material_word) | (p.texture_binding_known ? 0u : (uint64_t{1} << 32));
+        auto& dst = cpu[key];
+        const size_t first = dst.size();
+        push_quad_uv(dst, p);
+        if (g_area_primitive_idx != 0xFFFFu)
+            g_terrain_patch.add_span(g_area_primitive_idx, key, uint32_t(first), uint32_t(dst.size() - first));
     });
+    g_terrain_patch_recording = false;
     if (cpu.empty()) throw std::runtime_error("selected area produced no material batches");
 
     bool uploaded_one = false;
@@ -819,6 +890,7 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
     for (auto& kv : cpu) {
         TerrainBatch batch;
         batch.material_word = uint32_t(kv.first);
+        batch.key = kv.first;
         batch.vertex_count = kv.second.size();
         const size_t bytes = batch.vertex_count * sizeof(ProbeVertexUV);
         batch.vbo = static_cast<ProbeVertexUV*>(linearAlloc(bytes));
@@ -839,6 +911,75 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
             }
         }
     }
+}
+
+template <typename Vertex>
+void add_terrain_overlay(uint64_t key, const std::vector<Vertex>& cpu, const C3D_Tex* texture) {
+    if (cpu.empty()) return;
+    const size_t bytes = cpu.size() * sizeof(Vertex);
+    TerrainOverlay o;
+    o.key = key; o.vertex_count = cpu.size(); o.stride = sizeof(Vertex); o.texture = texture;
+    o.vbo = linearAlloc(bytes);
+    if (!o.vbo) throw std::runtime_error("linearAlloc failed for terrain swap overlay");
+    std::memcpy(o.vbo, cpu.data(), bytes);
+    GSPGPU_FlushDataCache(o.vbo, bytes);
+    g_owned_linear_bytes += uint32_t(bytes);
+    g_terrain_overlay.push_back(o);
+}
+
+// Runs with the GPU frame owned (the previous frame has completed), so the
+// baked buffers and the outgoing overlay are no longer being read.
+void patch_terrain_descriptors(const l3::RuntimeMap& live, const l3::St00RenderSource& render, size_t area_index) {
+    const auto plan = g_terrain_patch.plan(live);
+    if (plan.empty() && plan.overlay.empty() && g_terrain_overlay.empty()) return;
+    const size_t stride = use_uv_renderer() ? sizeof(ProbeVertexUV) : sizeof(ProbeVertex0143);
+    const size_t touched = g_terrain_patch.apply(plan, stride,
+        [](uint64_t key) -> uint8_t* {
+            if (!use_uv_renderer()) return reinterpret_cast<uint8_t*>(g_terrain_vbo_0143);
+            if (!use_material_batches()) return reinterpret_cast<uint8_t*>(g_terrain_vbo_uv);
+            for (auto& b : g_terrain_batches) if (b.key == key) return reinterpret_cast<uint8_t*>(b.vbo);
+            return nullptr;
+        },
+        [](uint8_t* p, size_t n) { GSPGPU_FlushDataCache(p, n); });
+    release_terrain_overlay();
+    // The overlay pass must not disturb the area's diagnostic geometry totals.
+    const uint32_t saved_count = g_area_primitive_count;
+    const int32_t saved_min_y = g_area_min_y, saved_max_y = g_area_max_y;
+    g_area_idx_filter = &plan.overlay;
+    try {
+        if (plan.overlay.empty()) {
+        } else if (!use_uv_renderer()) {
+            std::vector<ProbeVertex0143> cpu;
+            for_each_area_primitive(live, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) { push_quad_0143(cpu, p); });
+            add_terrain_overlay(0, cpu, nullptr);
+        } else if (!use_material_batches()) {
+            std::vector<ProbeVertexUV> cpu;
+            for_each_area_primitive(live, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) { push_quad_uv(cpu, p); });
+            add_terrain_overlay(0, cpu, nullptr);
+        } else {
+            std::map<uint64_t, std::vector<ProbeVertexUV>> cpu;
+            for_each_area_primitive(live, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) {
+                push_quad_uv(cpu[uint64_t(p.material_word) | (p.texture_binding_known ? 0u : (uint64_t{1} << 32))], p);
+            });
+            for (const auto& kv : cpu) {
+                const C3D_Tex* texture = nullptr;
+                for (const auto& b : g_terrain_batches)
+                    if (b.key == kv.first && b.texture_ready) { texture = &b.texture; break; }
+                add_terrain_overlay(kv.first, kv.second, texture);
+            }
+        }
+    } catch (...) {
+        g_area_idx_filter = nullptr;
+        throw;
+    }
+    g_area_idx_filter = nullptr;
+    g_area_primitive_count = saved_count; g_area_min_y = saved_min_y; g_area_max_y = saved_max_y;
+    size_t overlay_vertices = 0;
+    for (const auto& o : g_terrain_overlay) overlay_vertices += o.vertex_count;
+    hardware_test_line("IDX swap patch hide:%lu restore:%lu spans:%lu overlay_idx:%lu overlay_verts:%lu saved:%lu",
+        (unsigned long)plan.hide.size(), (unsigned long)plan.restore.size(), (unsigned long)touched,
+        (unsigned long)plan.overlay.size(), (unsigned long)overlay_vertices,
+        (unsigned long)g_terrain_patch.saved_bytes());
 }
 
 void rebuild_player_materials(const l3::MaterialCache* cache) {
@@ -874,7 +1015,7 @@ const std::array<uint16_t, l3::kPbdPackedAngleChannels>& fallback_probe_frame(
     return action.angle_frames[fi];
 }
 
-void configure_terrain_attributes_0143() {
+void configure_terrain_attributes_0143(const ProbeVertex0143* vbo = g_terrain_vbo_0143) {
     C3D_AttrInfo* ai = C3D_GetAttrInfo();
     AttrInfo_Init(ai);
     AttrInfo_AddLoader(ai, 0, GPU_FLOAT, 3);
@@ -882,8 +1023,8 @@ void configure_terrain_attributes_0143() {
     C3D_FixedAttribSet(1, 0.46f, 0.53f, 0.58f, 1.0f);
     C3D_BufInfo* bi = C3D_GetBufInfo();
     BufInfo_Init(bi);
-    if (g_terrain_vbo_0143)
-        BufInfo_Add(bi, g_terrain_vbo_0143, sizeof(ProbeVertex0143), 1, 0x0);
+    if (vbo)
+        BufInfo_Add(bi, vbo, sizeof(ProbeVertex0143), 1, 0x0);
 }
 
 void configure_terrain_attributes_uv(const ProbeVertexUV* vbo) {
@@ -1457,6 +1598,29 @@ size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
     return drawn;
 }
 
+void draw_terrain_range(size_t count) {
+    for (size_t first=0; first<count;) {
+        size_t n=std::min<size_t>(kDrawBatchVertices,count-first);
+        n-=n%3u; if(n==0)break;
+        ++g_runtime_diag.draw_calls;
+        g_submitted_vertices+=static_cast<uint32_t>(n);
+        C3D_DrawArrays(GPU_TRIANGLES,(int)first,(int)n); first+=n;
+    }
+}
+
+void draw_terrain_overlay() {
+    for (const auto& o : g_terrain_overlay) {
+        if (!use_uv_renderer()) {
+            configure_terrain_attributes_0143(static_cast<const ProbeVertex0143*>(o.vbo));
+        } else {
+            configure_terrain_attributes_uv(static_cast<const ProbeVertexUV*>(o.vbo));
+            if (o.texture) C3D_TexBind(0,const_cast<C3D_Tex*>(o.texture));
+            configure_texenv_uv(o.texture != nullptr);
+        }
+        draw_terrain_range(o.vertex_count);
+    }
+}
+
 void draw_terrain() {
     if (!use_uv_renderer()) {
         configure_texenv_0143();
@@ -1468,6 +1632,7 @@ void draw_terrain() {
             g_submitted_vertices+=static_cast<uint32_t>(n);
             C3D_DrawArrays(GPU_TRIANGLES,(int)first,(int)n); first+=n;
         }
+        draw_terrain_overlay();
         return;
     }
 
@@ -1481,6 +1646,7 @@ void draw_terrain() {
             g_submitted_vertices+=static_cast<uint32_t>(n);
             C3D_DrawArrays(GPU_TRIANGLES,(int)first,(int)n); first+=n;
         }
+        draw_terrain_overlay();
         return;
     }
 
@@ -1496,6 +1662,7 @@ void draw_terrain() {
             C3D_DrawArrays(GPU_TRIANGLES,(int)first,(int)n); first+=n;
         }
     }
+    draw_terrain_overlay();
 }
 
 uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
@@ -3200,6 +3367,14 @@ int main() {
             }
 
 
+            // 0.0.15.8: door objects swap IDX descriptors (0x8003AC24); show
+            // the live descriptor without rebuilding the area. The door-leaf
+            // rotation of state 2 (0x801126DC) is UNKNOWN/unported, so the
+            // slab switches at the IDX write.
+            if(session.idx_descriptor_generation()!=g_terrain_patch_generation){
+                patch_terrain_descriptors(session.active_map(),render,g_current_area);
+                g_terrain_patch_generation=session.idx_descriptor_generation();
+            }
             const u64 render_start=svcGetSystemTick();
             // Frame ownership was acquired before resource-changing updates.
             C3D_RenderTargetClear(g_top_target,C3D_CLEAR_ALL,kClearColor,0);

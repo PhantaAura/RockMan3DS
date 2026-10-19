@@ -354,6 +354,7 @@ void event0_door_object(){
     RuntimeSession s(walk_map(true),a0,{},qol);s.set_reference_tables(refs());s.register_area(1,a1);
     s.reset_player({0,-1,-100},0x800,100,100);
     RuntimeInputFrame idle{},press{};press.held_psx_mask=0x2000;press.pressed_psx_mask=0x2000;
+    const uint32_t g0=s.idx_descriptor_generation();
     s.tick(idle);s.tick(press);
     const auto& e=s.source_door_event0();
     assert(e.active&&e.phase==1&&e.substate==0);   // phase 0 handed over at once
@@ -363,15 +364,19 @@ void event0_door_object(){
     assert(s.active_map().idx[1].descriptor_index==0);
     int held=0;while(s.story_flag(0x7B2)){s.tick(idle);++held;}
     assert(held==16&&s.active_map().idx[1].descriptor_index==1&&e.substate==2);
+    // The renderer sees the swap through the descriptor generation.
+    const uint32_t g_open=s.idx_descriptor_generation();assert(g_open!=g0);
     // Pinned in front of the door: 0x800 heading, 64 back from the sample.
     assert(s.player_position().x==0&&s.player_position().z==-64);
     while(!s.source_door_transition())s.tick(idle);
     assert(s.active_map().idx[1].descriptor_index==0&&!s.story_flag(0x7B2)&&s.player_position().z>-64);
+    const uint32_t g_closed=s.idx_descriptor_generation();assert(g_closed!=g_open);
     assert(s.can_commit_source_door_transition()&&s.commit_source_door_transition());
     assert(s.source_door_objects().empty()&&s.active_map().idx[1].descriptor_index==0);
     s.tick(idle);assert(s.source_door_objects().size()==1&&s.story_flag(0x7B2));
     while(e.active)s.tick(idle);
     assert(s.active_map().idx[1].descriptor_index==0&&s.story_flag(0x380)&&!s.story_flag(0x7B0));
+    assert(s.idx_descriptor_generation()!=g_closed);   // Area 2 door opened and closed
 }
 } // namespace
 
