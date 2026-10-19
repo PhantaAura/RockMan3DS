@@ -1,4 +1,11 @@
-# Mega Man Legends 3DS — 0.0.15.5 (M2 map-initialization regression fix)
+# Mega Man Legends 3DS — 0.0.15.6 (M2 first Area 1 door)
+
+0.0.15.6: pressing A (the original Circle) while facing the first Area 1 door
+now takes Mega Man to Area 2, using the original door event `0x80050C2C`. He
+arrives where the original places him, (−256,−2,6208). The door animation,
+walk-in and fades are not ported yet, so he stops in front of the closed Area 2
+door. Host replay passes; Azahar check pending.
+[Results](docs/validation_01506/RESULTS.md) · [Resume](RESUME_01506.md).
 
 0.0.15.5: the 3DS boot package now applies the original ST00 startup map
 initialization. Without it the floor in front of the first Area 1 door was

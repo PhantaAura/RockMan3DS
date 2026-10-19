@@ -192,6 +192,7 @@ bool RuntimeSession::transition_to_location(size_t id,RuntimeVec3i p,uint16_t ya
     // from this native diagnostic transition succeeding.
     source_event_profile_.reset();source_event_stage_.reset();
     source_event_transition_.reset();source_event_busy_.reset();source_event_result_={};
+    source_door_request_.reset();source_door_result_={};
     source_fade_profile_.reset();source_fade_context_={};source_fade_intents_={};
     source_fade_callback_={};source_fade_endpoint_hold_.reset();
     source_effect_dispatch_lease_.invalidate();source_effect_dispatch_profile_.reset();source_prop_lift_profile_.reset();invalidate_source_prop_foreign_globals(source_prop_foreign_globals_);source_event_phase5_profile_.reset();source_event_phase5_context_={};source_event_phase5_resources_={};source_event_phase6_context_={};source_handoff_display_.reset();source_scene_actor40_initializer_globals_={};source_event_phase6_profile_.reset();
@@ -1014,6 +1015,54 @@ bool RuntimeSession::commit_source_area_handoff() {
     source_event_transition_=completed_transition_status;
     return true;
 }
+void RuntimeSession::update_source_door_event(){
+    // 0x8003C4EC calls 0x80050C2C after the player update when flag 0x200 is
+    // clear. While a request waits, the source player is owned by event 0.
+    if(source_door_request_||story_flag(0x200))return;
+    const auto query=runtime_player_event_primitive_800514fc(*map_,map_area_index_,player_,
+        reference_tables_?&*reference_tables_:nullptr);
+    source_door_result_=evaluate_source_door_event_80050c2c(query,player_,area_.flow.aux,
+        story_flags_.data(),story_flags_.size());
+    if(source_door_result_.flag_set)set_story_flag(*source_door_result_.flag_set,true);
+    if(source_door_result_.request){source_door_request_=source_door_result_.request;++source_door_generation_;}
+}
+std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_door_transition() const noexcept {
+    if(!source_door_request_)return std::nullopt;
+    return source_door_transition_intent(*source_door_request_,source_door_generation_);
+}
+bool RuntimeSession::can_commit_source_door_transition() const noexcept {
+    const auto intent=source_door_transition();
+    if(!intent||!reference_tables_||!intent->known[15]||intent->destination_area==map_area_index_||
+       !registered_area(intent->destination_area))return false;
+    auto player=player_;SourceEventPlayerKnown known{};known.fill(1);
+    return apply_source_handoff_spawn_80015ee8(*intent,intent->source_generation,player,known,true)&&
+           apply_source_door_arrival_80048898(*intent,*reference_tables_,player);
+}
+bool RuntimeSession::commit_source_door_transition() {
+    if(!can_commit_source_door_transition())return false;
+    const auto intent=*source_door_transition();
+    auto prepared=player_;auto known=source_event_player_known_;
+    if(!source_event_consumers_bound_)known.fill(1);
+    // Loader spawn: 800158A8 passes argument6=1 for a new area.
+    if(!apply_source_handoff_spawn_80015ee8(intent,intent.source_generation,prepared,known,true))return false;
+    if(!apply_source_door_arrival_80048898(intent,*reference_tables_,prepared))return false;
+    // Event 0 returns control through 80041DA8..B8 (+8..+B = 1,0,0,0).
+    prepared.bytes[8]=1;prepared.bytes[9]=0;prepared.bytes[10]=0;prepared.bytes[11]=0;
+    const RuntimeVec3i spawn{rds16w(prepared,0x14),rds16w(prepared,0x16),rds16w(prepared,0x18)};
+    if(!transition_to_area(intent.destination_area,spawn,rd16w(prepared,0x56)))return false;
+    player_=prepared;
+    if(source_event_consumers_bound_){
+        for(const size_t at:{size_t(8),size_t(9),size_t(10),size_t(11)})known[at]=1;
+        source_event_player_known_=known;
+    }
+    sync_primary_position_from_fixed();
+    player_contact_={};
+    // Net event-0 flags: 0x7B0 cleared at 800489F4, 0x7B3 set/cleared, and
+    // 8001D990 sets 0x380+event when the event ends.
+    set_story_flag(0x7B0,false);set_story_flag(0x380,true);
+    update_gameplay_camera_target();camera_.current=camera_.target;
+    return true;
+}
 bool RuntimeSession::bind_source_handoff_display_receipt(const SourceEventHandoffDisplayReceipt& receipt) noexcept {
     if(!receipt.admitted || receipt.native_owner!=this ||
        receipt.source_generation!=source_event_scene_overlay_generation_.value ||
@@ -1336,7 +1385,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     const bool gameplay_owned=!dialogue_.active&&camera_.owner==RuntimeCameraOwner::Gameplay&&!active_cutscene_id_
         &&(!source_player_gate||*source_player_gate);
     if(gameplay_owned){
-        update_input_compat(in);update_player_motion();update_player_contact();
+        update_input_compat(in);update_player_motion();update_player_contact();update_source_door_event();
         if(candidate_combat_enabled_){update_lock_on(in);if(in.fire_pressed)spawn_buster_projectile();}
         else locked_target_index_.reset();
     }

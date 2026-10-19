@@ -110,6 +110,7 @@ add_library(legends3ds_core STATIC
     src/flow/mml_message.cpp
     src/flow/st00_flow.cpp
     src/flow/st00_event.cpp
+    src/flow/source_door_event.cpp
     src/flow/save_state.cpp
     src/input/classic_input.c
     src/player/classic_motion.c
@@ -493,6 +494,10 @@ target_link_libraries(test_companion_ui PRIVATE legends3ds_core)
 target_include_directories(test_companion_ui PRIVATE include/legends3ds/p2)
 target_compile_options(test_companion_ui PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME companion_ui COMMAND test_companion_ui)
+add_executable(test_source_door_event tests/test_source_door_event.cpp)
+target_link_libraries(test_source_door_event PRIVATE legends3ds_core)
+target_compile_options(test_source_door_event PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_door_event COMMAND test_source_door_event)
 add_executable(test_runtime_contact tests/test_runtime_contact.cpp)
 target_link_libraries(test_runtime_contact PRIVATE legends3ds_core)
 target_compile_options(test_runtime_contact PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)

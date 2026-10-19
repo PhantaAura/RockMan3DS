@@ -149,3 +149,14 @@ package path now applies the sidecar `st00.l3init`, bound to the package's
 map/render CRCs. The recorded-input replay (`tools/l3door_replay`) fails
 without the fix and passes with it. Host suite 147/147, Area 1 audit clean,
 native build passes. Interactive Azahar check blocked by a locked screen.
+
+## 0.0.15.6 (M2 — first Area 1 door)
+
+Ported the player door event from the original instructions: event-primitive
+query `0x800514FC`, gate `0x80051970`, `0x80050C2C` case 3 and lock check
+`0x800519E4`, writing the `0x800C3558..71` request. The native commit is
+immediate (CANDIDATE) in place of the unported event-0 cinematic. It applies the
+loader spawn `0x80015EE8`, then the event-0 arrival `0x80048898`: Area 2 at
+(−256,−2,6208), heading 2048. 3DS A sends Circle. `tools/l3door_replay` phase 2
+and the new `source_door_event` test pass; host suite 148/148. Mega Man is left
+in front of the closed Area 2 door until event 0 is ported.

@@ -24,6 +24,7 @@
 #include "legends3ds/source_event_random_tape.h"
 #include "legends3ds/source_event_package.h"
 #include "legends3ds/source_event_command_package.h"
+#include "legends3ds/source_door_event.h"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -269,6 +270,15 @@ public:
     // Prepare the destination before publishing the exact original spawn
     // stores. Failed preparation retains the source intent and player work.
     bool commit_source_area_handoff();
+    // Player door event 0x80050C2C case 3, evaluated after player contact
+    // while story flag 0x200 is clear. A request is retained until committed.
+    const SourceDoorResult& source_door_result() const noexcept { return source_door_result_; }
+    std::optional<SourceEventHandoffTransitionIntent> source_door_transition() const noexcept;
+    bool can_commit_source_door_transition() const noexcept;
+    // CANDIDATE scheduling: commits at once in place of the unported event-0
+    // door cinematic (door objects, forced walk, fade, camera). Applies the
+    // loader spawn 80015EE8, the event-0 arrival 80048898 and its net flags.
+    bool commit_source_door_transition();
     // Expose a renderer work request only after the original phase-7 caller
     // reaches its missing head-UV reset owner. A frame counter is not a lease.
     std::optional<uint64_t> source_handoff_display_generation() const noexcept;
@@ -474,6 +484,7 @@ private:
     void update_ordinary_player_motion();
     void update_running_player_motion();
     void update_player_contact();
+    void update_source_door_event();
     void update_airborne_motion();
     void reset_player_contact();
     void update_input_compat(const RuntimeInputFrame& input);
@@ -557,6 +568,9 @@ private:
     SourceEventDriverIntentQueue source_event_driver_intents_{};
     std::optional<uint8_t> source_event_byte_800c1b93_;
     bool source_event_consumers_bound_=false;
+    SourceDoorResult source_door_result_{};
+    std::optional<SourceDoorRequest> source_door_request_;
+    uint64_t source_door_generation_=0;
     std::optional<SourceEventPhase2Package> source_event_phase2_package_;
     SourceEventPhase2Context source_event_phase2_context_{};
     SourceEventCommandQueue source_event_commands_{};

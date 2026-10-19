@@ -1507,6 +1507,7 @@ uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
     if (keys & KEY_L) m |= 0x0400u;
     if (keys & KEY_R) m |= 0x0800u;
     if (keys & KEY_B) m |= 0x4000u;
+    if (keys & KEY_A) m |= 0x2000u; // Circle: profile-0 +0x134/+0x136 (door/check action).
     if (cp.dy > 28) m |= 0x0010u;
     if (cp.dy < -28) m |= 0x0040u;
     if (cp.dx < -28) m |= 0x0400u;
@@ -2212,6 +2213,7 @@ int main() {
         uint32_t last_scene_callback=~0u;
         uint64_t actor_packet_commits=0;
         std::optional<uint64_t> failed_source_handoff_generation;
+        std::optional<uint64_t> failed_door_generation;
         std::optional<l3::SourceEventCdRequest> applied_mix_request;
         uint64_t applied_mix_digest=0;
         size_t applied_mix_count=0,applied_mix_index=0;
@@ -2268,9 +2270,17 @@ int main() {
                 hardware_test_trace("# source_area_handoff_held,frame=%lu,destination=%u,command_status=%u,source_request_retained=true",
                     (unsigned long)session.frame_counter(),unsigned(source_handoff->destination_area),
                     unsigned(session.source_event_command_result().status));
-            if(source_area_transition || ((released_keys&KEY_SELECT) && !select_ui_used)) {
+            // Player door event 0x80050C2C case 3: the request is committed at
+            // once (CANDIDATE: the event-0 door cinematic is not ported).
+            const auto door_handoff=source_area_transition?std::optional<l3::SourceEventHandoffTransitionIntent>{}
+                : session.source_door_transition();
+            if(!door_handoff)failed_door_generation.reset();
+            const bool door_transition=door_handoff&&failed_door_generation!=door_handoff->source_generation&&
+                session.can_commit_source_door_transition();
+            if(source_area_transition || door_transition || ((released_keys&KEY_SELECT) && !select_ui_used)) {
                 const u64 transition_start=svcGetSystemTick();
-                hardware_test_area_event(source_area_transition?"source_transition_before":"transition_before",g_current_area,0,
+                hardware_test_area_event(source_area_transition?"source_transition_before":
+                    door_transition?"door_transition_before":"transition_before",g_current_area,0,
                     g_package_bytes,g_package_decoded_estimate,g_package_peak_estimate);
                 const size_t outgoing_area=g_current_area;
                 const size_t outgoing_primitives=g_area_primitive_count;
@@ -2283,13 +2293,17 @@ int main() {
                 try {
                     l3::transition_area_resources([&] {
                         next_area=source_area_transition?source_handoff->destination_area:
+                            door_transition?door_handoff->destination_area:
                             next_diagnostic_area(map,render,(outgoing_area+1u)%map.areas.size());
                         const auto* binding=session.registered_area(next_area);
                         if (!binding) throw std::runtime_error("selected area has no runtime registration");
                         next_spawn=source_area_transition?l3::RuntimeVec3i{source_handoff->spawn[0],source_handoff->spawn[1],source_handoff->spawn[2]}:
+                            door_transition?l3::RuntimeVec3i{door_handoff->spawn[0],door_handoff->spawn[1],door_handoff->spawn[2]}:
                             first_positive_cell_center(map,next_area);
                         if (source_area_transition) {
                             next_yaw=uint16_t(source_handoff->raw[10])|(uint16_t(source_handoff->raw[11])<<8);
+                        } else if (door_transition) {
+                            next_yaw=uint16_t(door_handoff->raw[10])|(uint16_t(door_handoff->raw[11])<<8);
                         } else if (terrain_xyz_active()) {
                             const auto entry=inspection_entry(map,render,next_area);
                             next_spawn={entry.origin.x,entry.origin.y,entry.origin.z};next_yaw=entry.yaw;
@@ -2304,8 +2318,11 @@ int main() {
                         // RuntimeSession copies fallible work before changing
                         // collision, actor-table identity or pending events.
                         if (!(source_area_transition?session.commit_source_area_handoff():
+                              door_transition?session.commit_source_door_transition():
                               session.transition_to_area(next_area,next_spawn,next_yaw)))
                             throw std::runtime_error("selected area transition rejected");
+                        // The door arrival is event 0's offset from the request.
+                        if (door_transition) {next_spawn=session.player_position();next_yaw=session.player_yaw();}
                         // The committed replacement invalidates the command
                         // owner. A rejected staging attempt retains its audio.
                         xa_audio.close();xa_transport={};clear_applied_mix();
@@ -2364,7 +2381,8 @@ int main() {
                     pending_fire=pending_lock=pending_dialogue=false;
                     pending_psx_pressed=0;
                     hardware_test_geometry_event(terrain_xyz_active(),g_current_area,g_area_primitive_count,g_area_min_y,g_area_max_y);
-                    hardware_test_area_event(source_area_transition?"source_transition_after":"transition_after",g_current_area,
+                    hardware_test_area_event(source_area_transition?"source_transition_after":
+                        door_transition?"door_transition_after":"transition_after",g_current_area,
                         (svcGetSystemTick()-transition_start)/CPU_TICKS_PER_USEC,
                         g_package_bytes,g_package_decoded_estimate,g_package_peak_estimate);
                     last_valid=spawn;
@@ -2376,6 +2394,7 @@ int main() {
                     // replacement every frame. Keep the old area and intent;
                     // a fresh source lease or relaunch can retry preparation.
                     if(source_area_transition)failed_source_handoff_generation=source_handoff->source_generation;
+                    if(door_transition)failed_door_generation=door_handoff->source_generation;
                     hardware_test_area_event(restoration_failed?"transition_restore_failed":"transition_rejected",
                         outgoing_area,(svcGetSystemTick()-transition_start)/CPU_TICKS_PER_USEC,
                         g_package_bytes,g_package_decoded_estimate,g_package_peak_estimate);

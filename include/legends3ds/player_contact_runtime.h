@@ -1,6 +1,7 @@
 #pragma once
 #include "legends3ds/l3map.h"
 #include "legends3ds/player_collision.h"
+#include "legends3ds/reference_tables.h"
 #include <cstdint>
 #include <optional>
 
@@ -75,5 +76,44 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,
                                                 RetailPlayerBounds bounds = {});
 
 const char* runtime_contact_status_name(RuntimeContactStatus status);
+
+// Event primitive found by USA 0x800514FC (contact code > 0xFF). Coordinates
+// are the source group/primitive centres; type is code>>8, flags primitive +6.
+struct RuntimeEventPrimitiveSample {
+    int16_t x = 0, y = 0, z = 0;
+    uint16_t heading = 0; // player +0x56, copied unchanged
+    uint16_t type = 0;
+    uint16_t flags = 0;
+    uint32_t cell_index = 0;
+    uint32_t primitive_index = 0;
+};
+
+enum class RuntimeEventQueryStatus : uint8_t {
+    NoData,      // no candidate cell
+    Miss,        // candidates searched, no event primitive contains the point
+    Hit,
+    Unsupported, // an event group needs an unported shape family or interval
+    NeedsTrig,   // flag 0x8000 needs the RotMatrixY front point
+};
+
+struct RuntimeEventPrimitiveQuery {
+    RuntimeEventQueryStatus status = RuntimeEventQueryStatus::NoData;
+    std::optional<RuntimeEventPrimitiveSample> sample;
+    uint32_t candidate_cells = 0;
+    uint32_t event_groups_tested = 0;
+    uint16_t unsupported_code = 0;
+};
+
+// Exact USA 0x800514FC for the player (a1 = player +0x78 bounds). Candidates
+// come from 0x8004B1E0 and are searched last to first. Only groups whose first
+// primitive code exceeds 0xFF are tested; flag 0x8000 tests the point 64 units
+// ahead (RotMatrixY(+0x56) applied to (0,0,-64)). Supported: shape families
+// 0/1 (0x8004E304 strict expanded rectangle) and the default 0x8004A060
+// interval (low byte outside 8..85), whose second bounds subtraction is kept.
+// Anything else stops the search as Unsupported rather than guessing a miss.
+// Allocation-free.
+RuntimeEventPrimitiveQuery runtime_player_event_primitive_800514fc(
+    const RuntimeMap& map, size_t area_index, const L3PlayerCompatWork& player,
+    const ReferenceTables* trig, RetailPlayerBounds bounds = {});
 
 } // namespace l3

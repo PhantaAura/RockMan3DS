@@ -497,6 +497,75 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
     return out;
 }
 
+RuntimeEventPrimitiveQuery runtime_player_event_primitive_800514fc(
+    const RuntimeMap& map,size_t area,const L3PlayerCompatWork& w,
+    const ReferenceTables* trig,RetailPlayerBounds b) {
+    RuntimeEventPrimitiveQuery out;
+    const int16_t px=rd(w,0x14),py=rd(w,0x16),pz=rd(w,0x18),heading=rd(w,0x56);
+    const auto c=gather(map,area,px,pz);
+    out.candidate_cells=c.size;
+    if(!c.size)return out;
+    out.status=RuntimeEventQueryStatus::Miss;
+    // 0x800515A4..0x800515F4: RotMatrixY(heading) then ApplyMatrixSV on
+    // (0,0,-64). The GTE result is (m*v)>>12 (arithmetic), m02=sin, m22=cos.
+    const auto front=[&](int16_t& fx,int16_t& fz){
+        const auto& t=trig->trig[uint16_t(heading)&0x0FFFu];
+        fx=short_wrap(int32_t(px)+((int32_t(t.sin_q12)*-64)>>12));
+        fz=short_wrap(int32_t(pz)+((int32_t(t.cos_q12)*-64)>>12));
+    };
+    for(uint8_t rev=c.size;rev>0;--rev){
+        const auto& cell=c.cells[rev-1];
+        // 0x80048CEC returns the packed cell; zero/negative cells are skipped.
+        if(cell.packed_cell<=0)continue;
+        const auto* idx=runtime_map_cell_idx(map,cell);
+        const auto* list=runtime_map_cell_contact_list(map,cell);
+        if(!idx||!list)continue;
+        for(uint32_t gi=0;gi<list->group_count;++gi){
+            const auto gix=uint64_t(list->group_first)+gi;
+            if(gix>=map.contact_groups.size())continue;
+            const auto& g=map.contact_groups[static_cast<size_t>(gix)];
+            if(!g.primitive_count||g.primitive_first>=map.contact_primitives.size())continue;
+            const auto& first=map.contact_primitives[g.primitive_first];
+            if(first.code<256u)continue;
+            ++out.event_groups_tested;
+            int16_t qx=px,qz=pz;
+            if(first.flags&0x8000u){
+                if(!trig){out.status=RuntimeEventQueryStatus::NeedsTrig;out.unsupported_code=first.code;return out;}
+                front(qx,qz);
+            }
+            // Dispatcher 0x8008AA24: families 0/1 are 0x8004E304, whose
+            // nonzero result is exactly the strict expanded-rectangle test.
+            if((first.code&0xF0u)>=0x20u){
+                out.status=RuntimeEventQueryStatus::Unsupported;out.unsupported_code=first.code;return out;
+            }
+            const Rect r=rect(*idx,g,first,b);
+            if(!inside_xz(r,qx,qz))continue;
+            for(uint32_t pi=0;pi<g.primitive_count;++pi){
+                const auto pix=uint64_t(g.primitive_first)+pi;
+                if(pix>=map.contact_primitives.size())break;
+                const auto& p=map.contact_primitives[static_cast<size_t>(pix)];
+                const unsigned low=p.code&0xFFu;
+                if(low>=8u&&low<=85u){
+                    out.status=RuntimeEventQueryStatus::Unsupported;out.unsupported_code=p.code;return out;
+                }
+                // 0x800518A4..C4 subtract the bounds, then the default
+                // 0x8004AC54..88 tail of 0x8004A060 subtracts them again.
+                const Rect pr=rect(*idx,g,p,b);
+                const int16_t lo=short_wrap(int32_t(pr.y0)-b.y1),hi=short_wrap(int32_t(pr.y1)-b.y0);
+                if(!(lo<py&&py<hi))continue;
+                RuntimeEventPrimitiveSample s;
+                s.x=short_wrap(int32_t(idx->x)+(int32_t(g.x0)+g.x1)/2);
+                s.y=short_wrap(int32_t(idx->y)+(int32_t(p.y0)+p.y1)/2);
+                s.z=short_wrap(int32_t(idx->z)+(int32_t(g.z0)+g.z1)/2);
+                s.heading=uint16_t(heading);s.type=uint16_t(p.code>>8);s.flags=p.flags;
+                s.cell_index=cell.cell_index;s.primitive_index=static_cast<uint32_t>(pix);
+                out.sample=s;out.status=RuntimeEventQueryStatus::Hit;return out;
+            }
+        }
+    }
+    return out;
+}
+
 const char* runtime_contact_status_name(RuntimeContactStatus status) {
     switch(status){
         case RuntimeContactStatus::NoData:return "UNKNOWN";
