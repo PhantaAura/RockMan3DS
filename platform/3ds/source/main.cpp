@@ -56,6 +56,7 @@
 #include "hardware_test.h"
 #include "native_xa_audio.h"
 #include "legends3ds/source_camera.h"
+#include "legends3ds/source_player_buster.h"
 #include "mockup_hud.h"
 #include "legends3ds/render/frontend_view.h"
 #include "legends3ds/render/ps1_geometry.h"
@@ -1451,6 +1452,7 @@ struct ActorSourceMetadata {
     std::optional<l3::SourceReactionProfile> reaction;
     std::optional<l3::SourceHitProxyRules> hit_proxy_rules;
     std::optional<l3::SourceRngProfile> rng;
+    std::optional<l3::SourcePlayerTargetProfile> target;
 };
 ActorSourceMetadata load_actor_source_metadata() {
     ActorSourceMetadata out;
@@ -1482,6 +1484,9 @@ ActorSourceMetadata load_actor_source_metadata() {
         [&](const auto& bytes){out.effect_dispatch=l3::load_source_effect_dispatch_profile(bytes);});
     load("source_prop_lift.l3pl",l3::kSourcePropLiftProfileBytes,
         [&](const auto& bytes){out.prop_lift=l3::load_source_prop_lift_profile(bytes);});
+    load("player/target.l3tg",48,[&](const auto& bytes){l3::SourcePlayerTargetProfile profile;
+        if(!l3::decode_source_player_target_profile(bytes,profile))throw std::runtime_error("L3TG rejected");
+        out.target=profile;});
     load("source_scene_view.l3sv",l3::kSourceSceneViewProfileBytes,[&](const auto& bytes){out.scene_view=l3::load_source_scene_view_profile(bytes);});
     load("actor_reactions.l3r7",100,[&](const auto& bytes){out.reaction=l3::load_source_reaction_profile(bytes.data(),bytes.size());});
     load("source_event_phase2.l3eq",l3::kSourceEventPhase2PackageBytes,
@@ -2063,6 +2068,17 @@ int main() {
 
         const auto refs=l3::load_l3reference(read_binary(data_path("reference.l3ref")),true);
         const auto actor_metadata=load_actor_source_metadata();
+        // GTE projection for the player lease/lock-on path: InitGeom 0x8007A4F0
+        // then 0x80011F48 (OFX/OFY 160/120, H 384). Those are the only EXE
+        // writers of OFX/OFY/H (none in ST00). DQA/DQB keep the InitGeom
+        // values; later fog writers only change IR0, which 0x80034EB8 ignores.
+        if(actor_metadata.scene_view) {
+            l3::SourceProjectionControls player_projection;
+            l3::source_projection_init_geom_8007a4f0(player_projection);
+            (void)l3::initialize_source_scene_projection_80011f48(player_projection,*actor_metadata.scene_view);
+            hardware_test_trace("# source_player_projection,bound=%u,owner=8007A4F0+80011F48,dq=INITGEOM",
+                unsigned(l3::bind_source_projection_controls(g_source_player_gte,player_projection)));
+        }
         std::optional<l3::SourceAngleSteps> actor_angle_steps;
         if (g_sidecars_bound) {
             const auto path = data_path("actor_angle.l3ref");
@@ -3255,8 +3271,37 @@ int main() {
                             const auto buster_tick=g_children.tick_source_busters_80017154(buster_frame);
                             if(source_buster_busy_198)
                                 session.set_source_buster_busy_198(*source_buster_busy_198);
+                            // 0.0.15.10: 0x1F800008 comes from the matrix half of the
+                            // original gameplay producer 0x80037FB4 (session camera).
+                            const auto& follow_camera=session.source_gameplay_camera();
+                            const auto source_camera=follow_camera.initialized&&
+                                session.camera().owner==l3::RuntimeCameraOwner::Gameplay?
+                                std::optional<std::array<uint32_t,8>>(follow_camera.camera_1f800008):std::nullopt;
                             l3::SourceBusterSpawn buster_spawn;
-                            if(source_buster_fire_pressed&&muzzle_bound)
+                            std::optional<l3::SourcePlayerBusterResult> lock_on;
+                            if(source_camera&&muzzle_bound&&pose_input.player_position_14&&actor_metadata.target&&
+                               actor_metadata.target->image_target_mode_80097d02) {
+                                // Original order: 0x80034EB8 consumes the leases
+                                // (0x80035508), selects, then spawns via 0x80035724.
+                                l3::SourcePlayerBusterInputs select;
+                                // CANDIDATE: the writer of player work+00 bit0 is
+                                // untraced; a gameplay-owned player stands in.
+                                select.active=true;
+                                select.target_mode_49e=*actor_metadata.target->image_target_mode_80097d02;
+                                // CANDIDATE, as before: +0x174 bit 0x10 comes from an
+                                // untraced animation callback; the Y edge stands in.
+                                select.fire_flags_174=uint8_t(source_buster_fire_pressed?0x10u:0x00u);
+                                select.player_point_14=*pose_input.player_position_14;
+                                select.target_profile_8008994c=*actor_metadata.target;
+                                select.camera_1f800008=source_camera;
+                                lock_on=l3::source_player_select_and_spawn_80034eb8(g_children,
+                                    g_source_player_gte,source_buster_player,source_buster_proxy_mask,select);
+                                if(lock_on->spawn_attempted[1])buster_spawn=lock_on->spawns[1];
+                            }
+                            using LockStatus=l3::SourcePlayerBusterStatus;
+                            const bool lock_on_ran=lock_on&&(lock_on->status==LockStatus::SourceBackedPartial||
+                                lock_on->status==LockStatus::ProjectionHeld||lock_on->status==LockStatus::BusterHeld);
+                            if(!lock_on_ran&&source_buster_fire_pressed&&muzzle_bound)
                                 buster_spawn=g_children.spawn_source_buster_80035724(
                                     source_buster_player,1,-1,source_buster_proxy_mask);
                             if(source_buster_fire_pressed||buster_tick.committed||buster_tick.held)
@@ -3265,14 +3310,20 @@ int main() {
                                     unsigned(buster_spawn.status),(unsigned long)buster_spawn.source_identity,
                                     unsigned(buster_tick.status),unsigned(buster_tick.committed),unsigned(buster_tick.held),
                                     unsigned(buster_tick.registered),unsigned(buster_tick.impacts),unsigned(buster_tick.released));
-                            // The original camera/controls are still unbound.
-                            // Never substitute the renderer float camera or a
-                            // frozen PS1 screenshot matrix for gameplay state.
-                            const auto leases=g_children.consume_player_leases(g_source_player_gte,std::nullopt,source_buster_proxy_mask);
+                            if(lock_on&&(source_buster_fire_pressed||session.frame_counter()%60u==0u))
+                                hardware_test_trace("# source_lock_on,frame=%lu,status=%u,proxy_status=%u,projected=%lu,broad=%ld,window=%ld,player_depth_plus_50=%u,camera=80037FB4,pad_1f8000f2=RETAINED_UNKNOWN,shift=%u,packed_trig_substitutions=%lu,active=CANDIDATE,fire_174=CANDIDATE_Y,target_mode=IMAGE_80097D02_CANDIDATE",
+                                    (unsigned long)session.frame_counter(),unsigned(lock_on->status),unsigned(lock_on->proxy_status),
+                                    (unsigned long)lock_on->projected_proxies,(long)lock_on->selected_proxy[0],(long)lock_on->selected_proxy[1],
+                                    unsigned(lock_on->player_depth_plus_50),unsigned(follow_camera.scratch_shift_1f800074),
+                                    (unsigned long)follow_camera.packed_trig_substitutions);
+                            // Without the lock-on inputs the leases are consumed
+                            // alone, still with the source camera words.
+                            const auto leases=lock_on_ran?l3::SourcePlayerLeaseResult{lock_on->proxy_status}:
+                                g_children.consume_player_leases(g_source_player_gte,source_camera,source_buster_proxy_mask);
                             if(session.frame_counter()%60u==0u)
-                                hardware_test_trace("# source_player_leases,frame=%lu,status=%u,projected=%lu,pose=%u,muzzle=%u,profile=L3BP1,camera_owner=UNKNOWN,projection_owner=UNKNOWN,Buster_selection=UNKNOWN",
+                                hardware_test_trace("# source_player_leases,frame=%lu,status=%u,projected=%lu,pose=%u,muzzle=%u,profile=L3BP1,camera_owner=80037FB4,projection_owner=8007A4F0+80011F48,Buster_selection=%s",
                                     (unsigned long)session.frame_counter(),unsigned(leases.status),(unsigned long)leases.projected,
-                                    unsigned(integer_pose.status),unsigned(muzzle_bound));
+                                    unsigned(integer_pose.status),unsigned(muzzle_bound),lock_on_ran?"80034EB8":"NONE");
                         }
                         if(actor_metadata.hit_proxy_rules)
                             (void)g_children.consume_proxy_pairs(actor_metadata.hit_proxy_rules);

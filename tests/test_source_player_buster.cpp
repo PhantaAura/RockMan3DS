@@ -40,7 +40,12 @@ SourcePlayerBusterInputs input(const SourcePlayerTargetProfile& profile){
 void profile_decoder(){
     auto bytes=profile_bytes();SourcePlayerTargetProfile p;assert(decode_source_player_target_profile(bytes,p));
     assert(p.maximum_depth==1000&&p.minimum_x==130&&p.maximum_x==190&&p.minimum_y==0&&p.maximum_y==240);
-    for(std::size_t off:{0U,4U,6U,8U,12U,16U,20U,24U,28U,32U,42U}){auto bad=bytes;bad[off]^=1;SourcePlayerTargetProfile sentinel{1,2,3,4,5};assert(!decode_source_player_target_profile(bad,sentinel));assert(sentinel.maximum_depth==1&&sentinel.maximum_y==5);}
+    assert(!p.image_target_mode_80097d02);
+    // L3TG v2 appends the image bytes 0x80097D02/03 and a zero pad.
+    auto v2=bytes;v2.resize(48);put16(v2,4,2);put32(v2,8,48);put32(v2,12,16);v2[44]=0x49;v2[45]=0x89;put32(v2,16,crc32(v2.data()+32,16));
+    SourcePlayerTargetProfile q;assert(decode_source_player_target_profile(v2,q)&&q.image_target_mode_80097d02==0x49&&q.maximum_depth==1000);
+    auto padded=v2;padded[46]=1;put32(padded,16,crc32(padded.data()+32,16));assert(!decode_source_player_target_profile(padded,q));
+    for(std::size_t off:{0U,4U,6U,8U,12U,16U,20U,24U,28U,32U,42U}){auto bad=bytes;bad[off]^=1;SourcePlayerTargetProfile sentinel{1,2,3,4,5,std::nullopt};assert(!decode_source_player_target_profile(bad,sentinel));assert(sentinel.maximum_depth==1&&sentinel.maximum_y==5);}
 }
 void bridge(){
     SourcePlayerTargetProfile profile;assert(decode_source_player_target_profile(profile_bytes(),profile));

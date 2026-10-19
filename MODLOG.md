@@ -192,3 +192,12 @@ gameplay owns the camera, replacing the native rigid follow. New deterministic
 camera test; host 150/150; Area 1 audit clean (distance 512..768, 0 unsupported
 eye tests); door replay PASS; native build PASS. Lock-on stays blocked on the
 matrix half of `0x80037FB4`.
+
+## 0.0.15.10
+
+The matrix half of `0x80037FB4` is ported and matches the unchanged R3000 code
+on 640 authored states. The camera's `rsin`/`rcos` now read the `0x80092348`
+quarter table (L3RF v2); 0.0.15.9 had used the packed RotMatrix table. The 3DS
+loop binds the InitGeom + `0x80011F48` projection and runs lock-on `0x80034EB8`
+with the source camera and the L3TG v2 window/mode. Some inputs are CANDIDATE;
+see docs/research_01510.

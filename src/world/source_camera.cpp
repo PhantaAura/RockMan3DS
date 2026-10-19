@@ -24,7 +24,12 @@ std::int32_t mul12(std::int32_t a,std::int32_t b) noexcept {
 std::uint32_t signed_short_control(std::uint32_t value) noexcept {
     return static_cast<std::uint32_t>(static_cast<std::int32_t>(s16(value)));
 }
-std::array<std::int16_t,9> rotation_yx(const ReferenceTables& reference,
+SourceCameraDirectResult hold(SourceCameraStatus status) noexcept {
+    SourceCameraDirectResult result;result.status=status;return result;
+}
+} // namespace
+
+std::array<std::int16_t,9> source_rot_matrix_yx_transposed_8007b838(const ReferenceTables& reference,
     std::uint32_t pitch,std::uint32_t yaw) noexcept {
     const auto x=reference.trig[(0U-pitch)&4095U];
     const auto y=reference.trig[yaw&4095U];
@@ -47,13 +52,12 @@ std::array<std::int16_t,9> rotation_yx(const ReferenceTables& reference,
         for(std::size_t col=0;col<3;++col)result[row*3+col]=s16(full[col*3+row]);
     return result;
 }
-std::array<std::uint32_t,3> apply_matrix_lv(const std::array<std::int16_t,9>& matrix,
-    const std::array<std::int32_t,3>& eye) noexcept {
+std::array<std::uint32_t,3> source_apply_matrix_lv_8007a9b8(const std::array<std::int16_t,9>& matrix,
+    const std::array<std::uint32_t,3>& vector) noexcept {
     std::array<std::int16_t,3> high{},low{};
     for(std::size_t i=0;i<3;++i){
-        // The original caller negates the eye with low32 wrap. The helper
-        // splits signed magnitude; INT_MIN also retains its original wrap.
-        const auto value=0U-static_cast<std::uint32_t>(eye[i]);
+        // The helper splits signed magnitude; INT_MIN retains its original wrap.
+        const auto value=vector[i];
         const bool negative=s32(value)<0;
         const auto magnitude=negative ? 0U-value : value;
         const auto h=static_cast<std::uint32_t>(asr32(magnitude,15));
@@ -73,11 +77,20 @@ std::array<std::uint32_t,3> apply_matrix_lv(const std::array<std::int16_t,9>& ma
     }
     return result;
 }
-SourceCameraDirectResult hold(SourceCameraStatus status) noexcept {
-    SourceCameraDirectResult result;result.status=status;return result;
+std::array<std::uint32_t,8> source_pack_camera_words(const std::array<std::int16_t,9>& matrix,
+    std::uint16_t retained_pad_1f8000f2,const std::array<std::uint32_t,3>& translation) noexcept {
+    std::array<std::uint32_t,8> words{};
+    for(std::size_t i=0;i<4;++i)words[i]=static_cast<std::uint16_t>(matrix[2*i])|
+        (static_cast<std::uint32_t>(static_cast<std::uint16_t>(matrix[2*i+1]))<<16U);
+    words[4]=static_cast<std::uint16_t>(matrix[8])|(static_cast<std::uint32_t>(retained_pad_1f8000f2)<<16U);
+    for(std::size_t i=0;i<3;++i)words[5+i]=translation[i];
+    return words;
 }
-} // namespace
 
+void source_projection_init_geom_8007a4f0(SourceProjectionControls& owner) noexcept {
+    owner.h=signed_short_control(1000U);owner.dqa=signed_short_control(0U-4194U);
+    owner.dqb=0x01400000U;owner.ofx=0U;owner.ofy=0U;
+}
 void source_projection_offset_8007b118(SourceProjectionControls& owner,
     std::uint32_t x,std::uint32_t y) noexcept {owner.ofx=x<<16U;owner.ofy=y<<16U;}
 void source_projection_h_8007b138(SourceProjectionControls& owner,
@@ -110,15 +123,13 @@ SourceCameraDirectResult produce_source_camera_800384f0(
     if(!inputs.eye)return hold(Status::NeedsEye);
     if(!inputs.yaw || !inputs.pitch)return hold(Status::NeedsAngles);
     if(!inputs.retained_matrix_padding_1f8000f2)return hold(Status::NeedsRetainedMatrixPadding);
-    const auto matrix=rotation_yx(*inputs.reference,static_cast<std::uint32_t>(*inputs.pitch),
-                                  static_cast<std::uint32_t>(*inputs.yaw));
-    const auto translation=apply_matrix_lv(matrix,*inputs.eye);
-    std::array<std::uint32_t,8> words{};
-    for(std::size_t i=0;i<4;++i)words[i]=static_cast<std::uint16_t>(matrix[2*i])|
-        (static_cast<std::uint32_t>(static_cast<std::uint16_t>(matrix[2*i+1]))<<16U);
-    words[4]=static_cast<std::uint16_t>(matrix[8])|
-        (static_cast<std::uint32_t>(*inputs.retained_matrix_padding_1f8000f2)<<16U);
-    for(std::size_t i=0;i<3;++i)words[5+i]=translation[i];
+    const auto matrix=source_rot_matrix_yx_transposed_8007b838(*inputs.reference,
+        static_cast<std::uint32_t>(*inputs.pitch),static_cast<std::uint32_t>(*inputs.yaw));
+    // 0x800384F0 negates the eye with low32 wrap before ApplyMatrixLV.
+    std::array<std::uint32_t,3> negated{};
+    for(std::size_t i=0;i<3;++i)negated[i]=0U-static_cast<std::uint32_t>((*inputs.eye)[i]);
+    const auto words=source_pack_camera_words(matrix,*inputs.retained_matrix_padding_1f8000f2,
+        source_apply_matrix_lv_8007a9b8(matrix,negated));
     std::array<std::int16_t,3> short_eye{};
     std::array<std::int32_t,3> mirror_eye{};
     for(std::size_t i=0;i<3;++i){short_eye[i]=s16(static_cast<std::uint32_t>((*inputs.eye)[i]));

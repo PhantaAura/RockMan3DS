@@ -16,12 +16,12 @@
   "status": "SOURCE_BACKED_PARTIAL"
  },
  "BUSTER": {
-  "evidence": "01450 connects the original normal subtype-0x80 callback states 0-2 to the existing native path: fixed 16-shot pool, 11-frame timer, owner +0x198 busy state, cue 0x96, lease release, two-point 0x28000008 producer, impact effect 0x84 and terminal release. Exact +0x400/+0x418 endpoint writers, +0x78 map bounds and +0x174 fire cadence owner remain unknown.",
+  "evidence": "01450 connects the original normal subtype-0x80 callback states 0-2 to the existing native path: fixed 16-shot pool, 11-frame timer, owner +0x198 busy state, cue 0x96, lease release, two-point 0x28000008 producer, impact effect 0x84 and terminal release. Exact +0x400/+0x418 endpoint writers, +0x78 map bounds and +0x174 fire cadence owner remain unknown. 0.0.15.10: 0x80034EB8 lock-on runs in the 3DS loop with the source camera and InitGeom+0x80011F48 projection and selects the class 20/03 enemy ahead (host tests); work+00 bit0, +0x174 bit0x10 (Y edge) and target mode 0x80097D02 (image byte) are CANDIDATE.",
   "status": "SOURCE_BACKED_PARTIAL"
  },
  "CAMERA": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "0.0.15.9: the 3DS gameplay view uses the original follow camera (0x80038648 init, 0x80038894 ordinary follow, yaw helpers 0x8003A218/0x8003A154, 0x80037FB4 eye, 0x80049C54 eye-in-geometry test), checked against the R3000 instructions. Rate-limited turn with 0x200 lag clamp; target Y fixed at -0x96; distance 0x200..0x300 driven by player +0x44D and the eye test. Not ported: first-person, scripted modes 2-4 and blends, shake, the 0x1F800008 matrix (lock-on input), and some 0x8004A060 slope cases (distance holds). Owner-local Area 1 audit: distance 512..768, 0 unsupported eye tests. Azahar check pending."
+  "evidence": "0.0.15.10: the matrix half of 0x80037FB4 (RotMatrixYXZ 0x8007B838, transpose 0x8007B568, shifted translation, ApplyMatrixLV 0x8007A9B8, copy to 0x1F800008) matches the unchanged R3000 code on 640 authored states; rsin/rcos now read the 0x80092348 quarter table (L3RF v2). Pad 0x1F8000F2 is retained/UNKNOWN (no consumer reads it). 0.0.15.9 follow path retained. Not ported: first-person, scripted modes 2-4 and blends, shake, some 0x8004A060 slope cases. Azahar check pending."
  },
  "COLLISION": {
   "status": "SOURCE_BACKED_PARTIAL",
@@ -29,7 +29,7 @@
  },
  "COMBAT": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16→8→0 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
+  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16\u21928\u21920 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
  },
  "CONTENT GRAPH": {
   "evidence": "Historical structural validation covers 205 packages, 4,115 nodes and 3,916 edges. These counts establish content structure, not gameplay completion.",

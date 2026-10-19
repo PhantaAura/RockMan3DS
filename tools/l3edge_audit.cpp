@@ -9,6 +9,8 @@
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/st00_render.h"
 #include "legends3ds/map_initialization.h"
+#include "legends3ds/source_camera.h"
+#include "legends3ds/source_player_proxy.h"
 #include <algorithm>
 #include <cstdio>
 #include <filesystem>
@@ -32,7 +34,7 @@ int main(int argc,char** argv){
         char ebd[64];std::snprintf(ebd,sizeof(ebd),"ebd/area_%02lu.l3ebd",(unsigned long)ai);
         L3QolSettings q{};l3_qol_settings_defaults(&q);
         static const uint16_t inputs[]={0x10,0x10|0x80,0x10|0x20,0x80,0x20,0x40,0x10|0x4000,0x10};
-        int escapes=0,falls=0;long unsupported=0,nodata=0,deep=0,cam_unsup=0;int cam_min=1<<30,cam_max=0;std::set<std::pair<int,int>> cells;
+        int escapes=0,falls=0;long unsupported=0,nodata=0,deep=0,cam_unsup=0;int cam_min=1<<30,cam_max=0;long trig_sub=0,proj=0,proj_held=0;int sx_min=1<<30,sx_max=-(1<<30),sz_min=1<<30,sz_max=0;std::set<std::pair<int,int>> cells;
         for(int sd=0;sd<seeds;++sd){
             std::mt19937 rng{static_cast<uint32_t>(sd)};
             auto area=load_tutorial_runtime_area(read_file(root/"st00.l3flow"),read_file(root/ebd),ai,true);
@@ -47,14 +49,27 @@ int main(int argc,char** argv){
                 if(c.status==RuntimeContactStatus::Unsupported)++unsupported;
                 if(c.status==RuntimeContactStatus::NoData)++nodata;
                 deep+=long(c.deep_overlap_recoveries);
-                {const auto& g=s.source_gameplay_camera();if(g.initialized&&g.follow_frames_80098668){cam_min=std::min(cam_min,g.distance_800a3964);cam_max=std::max(cam_max,g.distance_800a3964);}if(f==frames-1)cam_unsup+=long(g.unsupported_eye_tests);}
+                {const auto& g=s.source_gameplay_camera();if(g.initialized&&g.follow_frames_80098668){cam_min=std::min(cam_min,g.distance_800a3964);cam_max=std::max(cam_max,g.distance_800a3964);}if(f==frames-1){cam_unsup+=long(g.unsupported_eye_tests);trig_sub+=long(g.packed_trig_substitutions);}
+                 // Live 0x1F800008 check: project Mega Man (+0x14) with the
+                 // camera words and the boot projection 0x8007A4F0+0x80011F48.
+                 if(g.initialized&&g.follow_frames_80098668){
+                    SourceProjectionControls pc;source_projection_init_geom_8007a4f0(pc);
+                    source_projection_offset_8007b118(pc,160,120);source_projection_h_8007b138(pc,384);
+                    SourceGteRtpsState gte;(void)bind_source_projection_controls(gte,pc);
+                    for(size_t i=0;i<8;++i)gte.control[i]=g.camera_1f800008[i];
+                    gte.control[4]=uint32_t(int32_t(int16_t(uint16_t(gte.control[4]))));gte.matrix_translation_bound=true;
+                    gte.data[0]=uint32_t(uint16_t(int16_t(p.x)))|(uint32_t(uint16_t(int16_t(p.y)))<<16);gte.data[1]=uint16_t(int16_t(p.z));
+                    const auto r=source_gte_rtps_0180001(gte);
+                    if(r.status==SourcePlayerProxyStatus::SourceBackedPartial){++proj;const int sx=int16_t(uint16_t(r.screen_xy));
+                        sx_min=std::min(sx_min,sx);sx_max=std::max(sx_max,sx);sz_min=std::min(sz_min,int(r.depth));sz_max=std::max(sz_max,int(r.depth));}
+                    else ++proj_held;}}
                 cells.insert({p.x>>9,p.z>>9});
                 if(!s.probe_player_map().in_area&&!escaped){escaped=true;++escapes;std::printf("ESCAPE seed=%d frame=%d pos=%d,%d,%d\n",sd,f,p.x,p.y,p.z);}
                 if(p.y>600&&!fell){fell=true;++falls;std::printf("FALL seed=%d frame=%d pos=%d,%d,%d\n",sd,f,p.x,p.y,p.z);}
             }
         }
-        std::printf("{\"area\":%lu,\"spawn\":[%d,%d,%d],\"map_init_writes\":%lu,\"seeds\":%d,\"frames\":%d,\"escapes\":%d,\"falls\":%d,\"unsupported_frames\":%ld,\"nodata_frames\":%ld,\"deep_overlap_recoveries\":%ld,\"camera_distance\":[%d,%d],\"camera_unsupported_eye_tests\":%ld,\"visited_cells\":%lu}\n",
-            (unsigned long)ai,spawn.x,spawn.y,spawn.z,(unsigned long)applied.write_count,seeds,frames,escapes,falls,unsupported,nodata,deep,cam_min,cam_max,cam_unsup,(unsigned long)cells.size());
+        std::printf("{\"area\":%lu,\"spawn\":[%d,%d,%d],\"map_init_writes\":%lu,\"seeds\":%d,\"frames\":%d,\"escapes\":%d,\"falls\":%d,\"unsupported_frames\":%ld,\"nodata_frames\":%ld,\"deep_overlap_recoveries\":%ld,\"camera_distance\":[%d,%d],\"camera_unsupported_eye_tests\":%ld,\"camera_packed_trig_substitutions\":%ld,\"player_projected\":%ld,\"player_projection_held\":%ld,\"player_screen_x\":[%d,%d],\"player_depth\":[%d,%d],\"visited_cells\":%lu}\n",
+            (unsigned long)ai,spawn.x,spawn.y,spawn.z,(unsigned long)applied.write_count,seeds,frames,escapes,falls,unsupported,nodata,deep,cam_min,cam_max,cam_unsup,trig_sub,proj,proj_held,sx_min,sx_max,sz_min,sz_max,(unsigned long)cells.size());
         return escapes||falls?1:0;
     }catch(const std::exception& e){std::fprintf(stderr,"%s\n",e.what());return 2;}
 }

@@ -26,7 +26,36 @@ struct SourceGameplayCamera {
     // Native counters: frames where the eye-embedding test met geometry the
     // native port cannot classify (distance then holds; never a guess).
     uint32_t unsupported_eye_tests = 0;
+    // Matrix half of 0x80037FB4: the eight words copied to 0x1F800008 and the
+    // rotation stored at 0x800A3A10. Valid once init has run.
+    std::array<uint32_t,8> camera_1f800008{};
+    std::array<int16_t,3> rotation_800a3a10{};
+    // Scratch shift 0x1F800074 the producer reads. The caller owns it.
+    uint8_t scratch_shift_1f800074 = 0;
+    // Halfword 0x1F8000F2 sits between the transposed coefficients and the
+    // translation, so 0x80037FB4 copies whatever an earlier scratch user left
+    // there into the high half of word 4. Its live value is UNKNOWN: it is
+    // retained here (initially 0) and never reaches the GTE, because CTC2 R4
+    // keeps only the low half (RT33) and libgte MATRIX users skip the pad.
+    uint16_t retained_pad_1f8000f2 = 0;
+    // Frames that used the packed RotMatrix table for rsin/rcos because the
+    // scalar quarter table was not loaded (L3RF v1). Not source behaviour.
+    uint32_t packed_trig_substitutions = 0;
 };
+
+struct SourceGameplayCameraFrame {
+    std::array<uint32_t,8> camera_1f800008{};
+    std::array<int16_t,3> rotation_800a3a10{};
+    std::array<int32_t,3> eye_800a39f0{};
+    bool packed_trig_substituted = false;
+};
+// Whole persistent output of 0x80037FB4: RotMatrixYXZ 0x8007B838 on
+// [(-pitch)&FFF, yaw&FFF, 0], TransposeMatrix 0x8007B568, the translation
+// (-t<<shift + (d<<shift)*trig) through ApplyMatrixLV 0x8007A9B8, the
+// 32-byte copy to 0x1F800008, then the narrowed eye.
+SourceGameplayCameraFrame source_gameplay_camera_80037fb4(const ReferenceTables& refs,
+    const std::array<int32_t,3>& target, int32_t distance, int32_t yaw, int32_t pitch,
+    uint8_t scratch_shift_1f800074, uint16_t retained_pad_1f8000f2) noexcept;
 
 // 0x80038648 + 0x800397E8: fresh controller at the player's XZ. The original
 // also clears player +0x44D (0x800B55FD); the caller owns that store.

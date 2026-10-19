@@ -1,13 +1,22 @@
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/player_contact_runtime.h"
+#include "legends3ds/source_camera.h"
 
 namespace l3 {
 namespace {
 int16_t rd16(const L3PlayerCompatWork& w,size_t o){
     return static_cast<int16_t>(uint16_t(w.bytes[o])|(uint16_t(w.bytes[o+1])<<8));
 }
-int32_t rsin(const ReferenceTables& r,int32_t a){return r.trig[uint32_t(a)&0xfffu].sin_q12;}
-int32_t rcos(const ReferenceTables& r,int32_t a){return r.trig[uint32_t(a)&0xfffu].cos_q12;}
+// rsin 0x8007A060 / rcos 0x8007A12C read the scalar quarter table. An L3RF v1
+// pack has only the packed RotMatrix table; that substitution is counted.
+int32_t rsin(const ReferenceTables& r,int32_t a){
+    return r.scalar_quarter_known?reference_rsin_8007a060(r,a):r.trig[uint32_t(a)&0xfffu].sin_q12;
+}
+int32_t rcos(const ReferenceTables& r,int32_t a){
+    return r.scalar_quarter_known?reference_rcos_8007a12c(r,a):r.trig[uint32_t(a)&0xfffu].cos_q12;
+}
+// mult + mflo + sra 12: low32 product, then an arithmetic shift.
+int32_t mul_sra12(uint32_t a,int32_t b){return int32_t(a*uint32_t(b))>>12;}
 int32_t wrap32(int64_t v){return static_cast<int32_t>(static_cast<uint32_t>(v));}
 // Camera point bounds at 0x80097D60 (x0,x1,z0,z1,y0,y1), read from the EXE.
 constexpr RetailPlayerBounds kCameraBounds{-32,32,-32,32,-32,32};
@@ -58,9 +67,44 @@ std::array<int32_t,3> source_camera_eye_80037fb4(const ReferenceTables& refs,
     return {narrow(vx),narrow(vy),narrow(vz)};
 }
 
+SourceGameplayCameraFrame source_gameplay_camera_80037fb4(const ReferenceTables& refs,
+    const std::array<int32_t,3>& t,int32_t d,int32_t yaw,int32_t pitch,
+    uint8_t shift_byte,uint16_t pad) noexcept {
+    SourceGameplayCameraFrame f;
+    f.packed_trig_substituted=!refs.scalar_quarter_known;
+    f.rotation_800a3a10={int16_t((0u-uint32_t(pitch))&0xfffu),int16_t(uint32_t(yaw)&0xfffu),0};
+    const auto matrix=source_rot_matrix_yx_transposed_8007b838(refs,uint32_t(pitch),uint32_t(yaw));
+    // sllv takes the low five bits of the shift byte (0x80038070..0x8003807C).
+    const unsigned sh=shift_byte&31u;
+    const uint32_t ds=uint32_t(d)<<sh;
+    const auto base=[&](int32_t v){return (0u-uint32_t(v))<<sh;};
+    const std::array<uint32_t,3> v{
+        base(t[0])+uint32_t(mul_sra12(uint32_t(mul_sra12(ds,rsin(refs,yaw))),rcos(refs,pitch))),
+        base(t[1])+uint32_t(mul_sra12(ds,rsin(refs,pitch))),
+        base(t[2])+uint32_t(mul_sra12(uint32_t(mul_sra12(ds,rcos(refs,yaw))),rcos(refs,pitch)))};
+    f.camera_1f800008=source_pack_camera_words(matrix,pad,source_apply_matrix_lv_8007a9b8(matrix,v));
+    f.eye_800a39f0=source_camera_eye_80037fb4(refs,t,d,yaw,pitch);
+    return f;
+}
+
+namespace {
+void produce_80037fb4(SourceGameplayCamera& c,const ReferenceTables& refs) noexcept {
+    c.previous_eye_800a3a00=c.eye_800a39f0;
+    const auto f=source_gameplay_camera_80037fb4(refs,c.target_800a39a0,c.distance_800a3964,
+        c.yaw_800a3968,c.pitch_800a396c,c.scratch_shift_1f800074,c.retained_pad_1f8000f2);
+    c.camera_1f800008=f.camera_1f800008;c.rotation_800a3a10=f.rotation_800a3a10;
+    c.eye_800a39f0=f.eye_800a39f0;
+    if(f.packed_trig_substituted)++c.packed_trig_substitutions;
+}
+} // namespace
+
 void source_gameplay_camera_init_80038648(SourceGameplayCamera& c,
     const ReferenceTables& refs,int16_t player_x,int16_t player_z) noexcept {
+    // Scratch bytes are not camera state: the shift and the retained pad
+    // survive a controller reset.
+    const auto shift=c.scratch_shift_1f800074;const auto pad=c.retained_pad_1f8000f2;
     c=SourceGameplayCamera{};
+    c.scratch_shift_1f800074=shift;c.retained_pad_1f8000f2=pad;
     c.initialized=true;
     c.target_800a39a0={player_x,0,player_z};
     c.distance_800a3964=0x200;c.pitch_800a396c=0x30;c.yaw_800a3968=0;
@@ -69,9 +113,7 @@ void source_gameplay_camera_init_80038648(SourceGameplayCamera& c,
     c.distance_goal_80097d2c=0x200;
     // Tail: 0x80037FB4 with the initial angles, then 0x800397E8 restores
     // distance 0x200 / pitch 0x30 (already equal).
-    c.previous_eye_800a3a00=c.eye_800a39f0;
-    c.eye_800a39f0=source_camera_eye_80037fb4(refs,c.target_800a39a0,c.distance_800a3964,
-        c.yaw_800a3968,c.pitch_800a396c);
+    produce_80037fb4(c,refs);
 }
 
 void source_gameplay_camera_update_80038894(SourceGameplayCamera& c,
@@ -110,9 +152,7 @@ void source_gameplay_camera_update_80038894(SourceGameplayCamera& c,
         if(c.distance_goal_80097d2c<0x200)c.distance_goal_80097d2c=0x200;
     }
     c.distance_800a3964=c.distance_goal_80097d2c;
-    c.previous_eye_800a3a00=c.eye_800a39f0;
-    c.eye_800a39f0=source_camera_eye_80037fb4(refs,c.target_800a39a0,c.distance_800a3964,
-        c.yaw_800a3968,c.pitch_800a396c);
+    produce_80037fb4(c,refs);
 }
 
 } // namespace l3

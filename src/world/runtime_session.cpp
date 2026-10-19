@@ -768,6 +768,11 @@ void RuntimeSession::update_gameplay_camera_target(){if(camera_.owner!=RuntimeCa
 void RuntimeSession::update_camera(){
     if(camera_.owner==RuntimeCameraOwner::Gameplay)update_gameplay_camera_target();
     if(camera_.owner==RuntimeCameraOwner::Gameplay&&reference_tables_&&map_area_index_<active_map().areas.size()){
+        // 0x1F800074 writers: boot 0x8001326C and the area load 0x8001F4C0
+        // (event byte 0x800C4C48 clear) store 0; only scene-camera commands
+        // 0x20/0x21/0x22 (0x8003697C/0x800369C0/0x80036A1C) store 0/1/2, and
+        // the phase-6 context mirrors those. Without a script value it is 0.
+        source_gameplay_camera_.scratch_shift_1f800074=source_event_phase6_context_.byte_1f800074.value_or(0);
         if(!source_gameplay_camera_.initialized){
             // 0x80038648 runs from the area-load callback; its 0x800397E8 tail
             // clears player +0x44D (0x800B55FD). The follow update starts on

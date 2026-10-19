@@ -16,6 +16,10 @@ struct SourcePlayerTargetProfile {
     std::int16_t maximum_x = 0;
     std::int16_t minimum_y = 0;
     std::int16_t maximum_y = 0;
+    // L3TG v2 only: the EXE image byte at 0x80097D02 (GP+0x49E, player0
+    // target mode). No direct store to it was found in the EXE or the ST00
+    // overlay, so the image value standing for the live one is CANDIDATE.
+    std::optional<std::uint8_t> image_target_mode_80097d02;
 };
 
 bool decode_source_player_target_profile(

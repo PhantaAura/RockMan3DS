@@ -1,3 +1,14 @@
+# Mega Man Legends 3DS — 0.0.15.10 (original lock-on)
+
+0.0.15.10: the gameplay camera now also produces its original `0x1F800008`
+matrix (`0x80037FB4`). It matches the unchanged R3000 code on 640 states. The
+original lock-on `0x80034EB8` uses it, so a Y shot is aimed at the tutorial
+enemy when it is ahead of Mega Man. It also fixes the camera's `rsin`/`rcos`
+table. Not yet checked in Azahar.
+[Results](docs/validation_01510/RESULTS.md) · [Resume](RESUME_01510.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.9 (original gameplay camera)
 
 0.0.15.9: the 3DS gameplay view now uses the original follow camera

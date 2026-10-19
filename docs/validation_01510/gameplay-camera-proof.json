@@ -1,0 +1,58 @@
+{
+  "schema": "mml-gameplay-camera-matrix/1",
+  "status": "SOURCE_BACKED_PARTIAL",
+  "exe_sha256": "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0",
+  "cases": 640,
+  "instructions_executed": 443689,
+  "mvmva_commands": 2560,
+  "fixture_sha256": {
+    "gameplay-camera-quarter": "3e670fa3100985cab3eeb90a5e0d6838a3f25017490b449917d960a366241dc4",
+    "gameplay-camera-matrix": "b6527409bc7befc34c9960f860e71b6788ed3c3a92569d8689453f6d4013db07"
+  },
+  "source_blocks": [
+    {
+      "id": "gameplay_camera",
+      "start": "0x80037fb4",
+      "end_exclusive": "0x80038324",
+      "sha256": "a94e80e6d3fa105fc82f7538de6ae229e0aee0a943464390a8c20c395a00759d"
+    },
+    {
+      "id": "RotMatrixYXZ",
+      "start": "0x8007b838",
+      "end_exclusive": "0x8007bac4",
+      "sha256": "080133c7f75521fbf0db398b33f8fa81391df98736de1285050d64e372d624db"
+    },
+    {
+      "id": "transpose",
+      "start": "0x8007b568",
+      "end_exclusive": "0x8007b5a8",
+      "sha256": "9fc271c9be12d61166eb7b2f679904083cb1caa92cb3e64d437e44d2598bf93e"
+    },
+    {
+      "id": "ApplyMatrixLV",
+      "start": "0x8007a9b8",
+      "end_exclusive": "0x8007ab18",
+      "sha256": "b5cca44ff50bf0ca0e5996e8f5cf1b954740710e6773d57827b764a47fee082e"
+    },
+    {
+      "id": "rsin",
+      "start": "0x8007a060",
+      "end_exclusive": "0x8007a12c",
+      "sha256": "7bc4f6d2f383c18b3d5d5f877750f71cd9f7af8ac4fd34bdaa93e23d90d48593"
+    },
+    {
+      "id": "rcos",
+      "start": "0x8007a12c",
+      "end_exclusive": "0x8007a1cc",
+      "sha256": "ff6a2b3a724fefdb59bb4c3de10d08b95c86db6fe3d7f0630d67ee61e97ffa74"
+    }
+  ],
+  "source_instructions_modified": false,
+  "return_only_hooks": [],
+  "retail_payload_exported": false,
+  "limits": [
+    "Authored original CPU differential with the restricted MVMVA adapter; no hardware GTE parity.",
+    "Persistent outputs only (800A3A10, 1F800008..24, 1F800028, 800A39F0); the trailing 1F800030 camera-space eye is not compared.",
+    "Retained pad 1F8000F2 is an authored premise here; its live value depends on earlier scratch users."
+  ]
+}

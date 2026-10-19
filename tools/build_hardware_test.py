@@ -25,7 +25,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 PACK_PREFIX = PurePosixPath("legends3ds/tutorial")
 SD_DATA_PATH = PurePosixPath("3ds/Legends3DS/data/legends3ds/tutorial")
-COOKED_SUFFIXES = {".l3pl", ".l3f2", ".l3sr", ".l3ls", ".l3a4", ".l3r7", ".l3sv", ".l3sm", ".l3p6", ".l3p5", ".l3fd", ".l3xa", ".l3eq", ".l3ec", ".l3rg", ".l3c6", ".l3ep", ".l3pr", ".l3anim", ".l3det", ".l3dp", ".l3nr", ".l3db", ".l3cb", ".l3ebd", ".l3flow", ".l3init", ".l3map", ".l3mc", ".l3bp",
+COOKED_SUFFIXES = {".l3tg", ".l3pl", ".l3f2", ".l3sr", ".l3ls", ".l3a4", ".l3r7", ".l3sv", ".l3sm", ".l3p6", ".l3p5", ".l3fd", ".l3xa", ".l3eq", ".l3ec", ".l3rg", ".l3c6", ".l3ep", ".l3pr", ".l3anim", ".l3det", ".l3dp", ".l3nr", ".l3db", ".l3cb", ".l3ebd", ".l3flow", ".l3init", ".l3map", ".l3mc", ".l3bp",
                    ".l3model", ".l3msg", ".l3nm", ".l3pal", ".l3pc", ".l3ref",
                    ".l3render", ".l3skel", ".l3spawn", ".l3tex"}
 SOURCE_SUFFIXES = {".c", ".cpp", ".h", ".hpp", ".pica"}

@@ -274,10 +274,15 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         run(tools,'l3cook_skeleton',player/'PL00M00M.PBD',hex(load(r'..\PLBIN\PL00M00M.PBD')),pout/'main.l3skel')
         subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_buster_profile.py')),
                         '--exe',str(rock_neo),'--out',str(pout/'buster.l3bp')],check=True)
+        # 0x80034EB8 lock-on window 0x8008994C and image target mode 0x80097D02.
+        subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_player_target.py')),
+                        '--exe',str(rock_neo),'--out',str(pout/'target.l3tg')],check=True)
         _write_combat_sidecars(rock_neo,dat,runtime,out,manifest)
         manifest['source_buster_profile']={'format':'L3BP/1','status':'SOURCE_BACKED_PARTIAL',
             'selection_count':16,'fresh_lane_initialization':'0x80037534',
             'limits':['weapon selection changes','alternate limb pose bank','projectile callback']}
+        manifest['source_player_target']={'format':'L3TG/2','status':'SOURCE_BACKED_PARTIAL',
+            'window':'0x8008994C','target_mode':'0x80097D02 image byte (CANDIDATE: no writer found)'}
         run(tools,'l3cook_anim',player/'PL00R00S.PBD',hex(load(r'..\PLBIN\PL00R00S.PBD')),player/'PL00R00M.PBD',hex(load(r'..\PLBIN\PL00R00M.PBD')),pout/'right.l3anim')
         run(tools,'l3cook_anim',player/'PL00L00S.PBD',hex(load(r'..\PLBIN\PL00L00S.PBD')),player/'PL00L00M.PBD',hex(load(r'..\PLBIN\PL00L00M.PBD')),pout/'left.l3anim')
         mout=runtime/'messages'; mout.mkdir()

@@ -44,18 +44,23 @@ bool spawn_ok(SourceBusterStatus status) noexcept {
 
 bool decode_source_player_target_profile(
     const std::vector<std::uint8_t>& bytes,SourcePlayerTargetProfile& out) noexcept {
-    if(bytes.size()!=44 || bytes[0]!='L' || bytes[1]!='3' || bytes[2]!='T' || bytes[3]!='G' ||
-       read16(bytes.data()+4)!=1 || read16(bytes.data()+6)!=32 ||
-       read32(bytes.data()+8)!=44 || read32(bytes.data()+12)!=12 ||
-       read32(bytes.data()+16)!=crc32(bytes.data()+32,12) ||
+    // v1: 12-byte window payload. v2: window + image bytes 0x80097D02/03 + pad.
+    if(bytes.size()<32 || bytes[0]!='L' || bytes[1]!='3' || bytes[2]!='T' || bytes[3]!='G')return false;
+    const auto version=read16(bytes.data()+4);
+    const std::size_t payload=version==1?12U:version==2?16U:0U;
+    if(!payload || bytes.size()!=32+payload || read16(bytes.data()+6)!=32 ||
+       read32(bytes.data()+8)!=32+payload || read32(bytes.data()+12)!=payload ||
+       read32(bytes.data()+16)!=crc32(bytes.data()+32,payload) ||
        read32(bytes.data()+20)!=0 || read32(bytes.data()+24)!=0 || read32(bytes.data()+28)!=0 ||
        read16(bytes.data()+42)!=0)return false;
+    if(version==2 && read16(bytes.data()+46)!=0)return false;
     SourcePlayerTargetProfile next;
     next.maximum_depth=signed16(read16(bytes.data()+32));
     next.minimum_x=signed16(read16(bytes.data()+34));
     next.maximum_x=signed16(read16(bytes.data()+36));
     next.minimum_y=signed16(read16(bytes.data()+38));
     next.maximum_y=signed16(read16(bytes.data()+40));
+    if(version==2)next.image_target_mode_80097d02=bytes[44];
     if(next.maximum_depth<=0 || next.minimum_x>=next.maximum_x ||
        next.minimum_y>=next.maximum_y)return false;
     out=next;return true;
