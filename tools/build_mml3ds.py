@@ -29,7 +29,7 @@ from mml_pipeline import build, encoded, sha
 from owner_data_intake import normalize_owner_directory, prepare_owner_input
 
 ROOT = Path(__file__).resolve().parents[1]
-TUTORIAL_RECIPE = "tutorial-install/01512-reward-pickups-1"
+TUTORIAL_RECIPE = "tutorial-install/01513-buster-shot81-1"
 TUTORIAL_SCRIPTS = (
     "build_tutorial_pack.py", "cook_reference_tables.py", "mml_pipeline.py",
     "build_stage_catalog.py", "build_stage_object_catalog.py", "cook_actor_combat.py",

@@ -192,7 +192,8 @@ struct SourceRngAccess {
     static SourceRngStagedSample reward(SourceRngUpdateTransaction& t,const SourceRngRewardContext& c) noexcept {
         SourceRngStagedSample out;
         if(!t.active_||!t.owner_||!t.owner_->admitted_||t.generation_!=t.owner_->generation_){out.status=SourceRngStatus::StaleTransaction;return out;}
-        constexpr uint32_t ras[]={0x80046bacu,0x80046bf0u,0x80046c30u,0x80046dd8u,0x80046e18u,0x80046480u,0x800468ecu};
+        constexpr uint32_t ras[]={0x80046bacu,0x80046bf0u,0x80046c30u,0x80046dd8u,0x80046e18u,0x80046480u,0x800468ecu,
+            0x80044b50u}; // + Buster impact 0x82 state 0
         bool known=false;for(auto ra:ras)known|=ra==c.caller_ra;
         const bool expansion_first=c.caller_ra==0x80046bacu;
         if(t.context_.phase!=SourceRngUpdatePhase::RewardPickupCallback||!known||!c.source_generation||

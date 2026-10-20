@@ -24,9 +24,9 @@
 //     0. Three Y presses run the 3DS main.cpp chain: fire admission, integer
 //     pose 0x800325D4, muzzles 0x800331A0, callbacks 0x80017154, then lock-on
 //     0x80034EB8 with the 0x80037FB4 camera and 0x80035724. Each press must
-//     spawn one shot whose registered segment (owner point -> +400/+418
-//     endpoint) is non-zero on all 10 state-1 frames, then release. The
-//     endpoint is still the CANDIDATE forward ray used by main.cpp.
+//     spawn one shot. 0.0.15.13: the Square lane is +171 = subtype 0x81
+//     (0x800437F8/0x80043A8C), a 100-unit-per-frame shot registered from its
+//     current to its previous point, released at range or on a map hit.
 //   l3door_replay BOOT.mmlpkg TUTORIAL_DIR [--no-init] [--trace]
 // Output contains only counts and coordinates; no retail payload.
 #include "legends3ds/area_package.h"
@@ -159,7 +159,8 @@ BusterReplay run_buster(const Inputs& in,Built& b){
     const auto refs=load_l3reference(read_file(in.root/"reference.l3ref"),true);
     const auto skeleton=load_l3skeleton(read_file(in.root/"player/main.l3skel"),true);
     SourceBusterPlayer player;
-    initialize_source_buster_fresh_lanes_80037534(load_source_buster_profile(read_file(in.root/"player/buster.l3bp"),true),player);
+    const auto buster_profile=load_source_buster_profile(read_file(in.root/"player/buster.l3bp"),true);
+    initialize_source_buster_lanes_8003be6c(buster_profile,player,0,1); // main.cpp tutorial loadout
     SourcePlayerTargetProfile target;
     if(!decode_source_player_target_profile(read_file(in.root/"player/target.l3tg"),target)||!target.image_target_mode_80097d02)
         throw std::runtime_error("L3TG v2 required");
@@ -203,16 +204,18 @@ BusterReplay run_buster(const Inputs& in,Built& b){
         }
         std::optional<uint32_t> busy=s.source_buster_busy_198();
         ctx.owner_busy_198=&busy;ctx.proxy_mask_80098798=&mask;ctx.map_collision_80049c24=false;ctx.audio=&s.source_audio_queue();
+        ctx.map=&s.active_map();ctx.area_index=s.map_area_index();ctx.references=&refs;
+        ctx.shot81=source_buster_shot81_stats(buster_profile,int8_t(pw[0x4fc]),int8_t(pw[0x4fe]));
         const auto tick=children->tick_source_busters_80017154(ctx);
         if(busy)s.set_source_buster_busy_198(*busy);
         r.released+=tick.released;
         const auto& camera=s.source_gameplay_camera();
         if(camera.initialized&&s.camera().owner==RuntimeCameraOwner::Gameplay&&muzzle_bound){
             SourcePlayerBusterInputs select;select.active=true;select.target_mode_49e=*target.image_target_mode_80097d02;
-            select.fire_flags_174=uint8_t(fire?0x10u:0u);select.player_point_14=pose.player_position_14;
+            select.fire_flags_174=uint8_t(fire?0x20u:0u);select.player_point_14=pose.player_position_14;
             select.target_profile_8008994c=target;select.camera_1f800008=camera.camera_1f800008;
             const auto lock=source_player_select_and_spawn_80034eb8(*children,gte,player,mask,select);
-            if(lock.spawn_attempted[1]&&lock.spawns[1].status==SourceBusterStatus::SourceBackedPartial&&lock.spawns[1].source_identity)++r.spawned;
+            if(lock.spawn_attempted[0]&&lock.spawns[0].status==SourceBusterStatus::SourceBackedPartial&&lock.spawns[0].source_identity)++r.spawned;
         }
         children->consume_pending_releases();
         (void)runtime_animation_finish(b.anim,track,s);
@@ -220,7 +223,7 @@ BusterReplay run_buster(const Inputs& in,Built& b){
         for(size_t slot=0;slot<source_buster_capacity;++slot){
             if(!(pool.allocated_800989f0&(0x80000000u>>slot)))continue;
             const auto& w=pool.slots[slot];
-            if(!(int8_t(w[0])&w[6]&1)||w[2]!=0x80||w[8]!=1)continue;
+            if(!(int8_t(w[0])&w[6]&1)||w[2]!=0x81||w[8]!=1)continue;
             const auto& seg=children->buster_registered_segments()[slot];
             long length=0;for(size_t a=0;a<3;++a)length+=std::labs(long(seg.first_14[a])-long(seg.second_2c[a]));
             // The state-0 registration is endpoint to endpoint by design
@@ -230,8 +233,10 @@ BusterReplay run_buster(const Inputs& in,Built& b){
         }
     }
     r.final_live=__builtin_popcount(children->buster_pool().allocated_800989f0);
-    r.pass=r.presses==3&&r.admitted==3&&r.spawned==3&&r.released==3&&r.state1_frames==33&&
-        r.zero_segments==3&&r.drawn_segments==30&&r.max_length>0&&r.final_live==0;
+    // Subtype 0x81: the state-0 segment is muzzle to muzzle; each later frame
+    // spans one 100-unit step until range 18 or the start-room wall ends it.
+    r.pass=r.presses==3&&r.admitted==3&&r.spawned==3&&r.released==3&&
+        r.zero_segments==3&&r.drawn_segments>=3&&r.max_length>=100&&r.max_length<=110&&r.final_live==0;
     return r;
 }
 } // namespace
@@ -338,7 +343,7 @@ int main(int argc,char** argv){
                     "\"last_door_idx\":%u,\"closed_descriptor\":%u,\"open_descriptor\":%u,\"closed_mid_prims\":%zu,\"open_mid_prims\":%zu,\"result\":\"%s\"},\n"
                     " \"buster\":{\"presses\":%d,\"admitted\":%d,\"spawned\":%d,\"released\":%d,\"state1_frames\":%d,"
                     "\"zero_length_frames\":%d,\"drawn_segment_frames\":%d,\"max_segment_length\":%ld,\"live_after\":%d,"
-                    "\"endpoint\":\"CANDIDATE_FORWARD_RAY\",\"result\":\"%s\"},\n"
+                    "\"shot\":\"SUBTYPE_81\",\"result\":\"%s\"},\n"
                     " \"result\":\"%s\"}\n",
             b.applied?"true":"false",b.writes,floorless,airborne,below_floor,door_contacts,first_fail,
             last.x,last.y,last.z,fall_pass?"PASS":"FAIL",

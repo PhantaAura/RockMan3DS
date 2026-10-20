@@ -2237,8 +2237,10 @@ int main() {
         const auto source_buster_profile=l3::load_source_buster_profile(
             read_binary(data_path("player/buster.l3bp")),true);
         l3::SourceBusterPlayer source_buster_player;
-        l3::initialize_source_buster_fresh_lanes_80037534(
-            source_buster_profile,source_buster_player);
+        // Tutorial loadout via the 0x8003BE6C restore branch: +170 = 0,
+        // +171 = 1 (MEASURED in PCSX-Redux at first tutorial control).
+        l3::initialize_source_buster_lanes_8003be6c(
+            source_buster_profile,source_buster_player,0,1);
         // 0.0.15.12 enemy-reward pickups (0x80046B34 / subtype 0x87). Optional
         // owner-local L3RW tables; without them defeat rewards stay queued.
         l3::SourceRewardProfile source_reward_profile;
@@ -3395,6 +3397,12 @@ int main() {
                             // never label the clear map receipt as retail map collision.
                             buster_frame.map_collision_80049c24=false;
                             buster_frame.audio=&session.source_audio_queue();
+                            // Subtype 0x81 (Square/Y lane +171): weapon row 1 at the
+                            // player's +4FC/+4FE levels; its own wall test reads the map.
+                            buster_frame.map=&session.active_map();buster_frame.area_index=session.map_area_index();
+                            buster_frame.references=&refs;
+                            buster_frame.shot81=l3::source_buster_shot81_stats(source_buster_profile,
+                                int8_t(player_work[0x4fc]),int8_t(player_work[0x4fe]));
                             const auto buster_tick=g_children.tick_source_busters_80017154(buster_frame);
                             if(source_buster_busy_198)
                                 session.set_source_buster_busy_198(*source_buster_busy_198);
@@ -3417,27 +3425,32 @@ int main() {
                                 select.target_mode_49e=*actor_metadata.target->image_target_mode_80097d02;
                                 // CANDIDATE, as before: +0x174 bit 0x10 comes from an
                                 // untraced animation callback; the Y edge stands in.
-                                select.fire_flags_174=uint8_t(source_buster_fire_pressed?0x10u:0x00u);
+                                // 0x80034EB8: +174 bit 0x20 fires lane +171 (stack10 0),
+                                // the measured Square shot; bit 0x10 is the +170 lane.
+                                select.fire_flags_174=uint8_t(source_buster_fire_pressed?0x20u:0x00u);
                                 select.player_point_14=*pose_input.player_position_14;
                                 select.target_profile_8008994c=*actor_metadata.target;
                                 select.camera_1f800008=source_camera;
                                 lock_on=l3::source_player_select_and_spawn_80034eb8(g_children,
                                     g_source_player_gte,source_buster_player,source_buster_proxy_mask,select);
-                                if(lock_on->spawn_attempted[1])buster_spawn=lock_on->spawns[1];
+                                // Lane 0 (+174 bit 0x20) is the Square shot; lane 1 is +170.
+                                if(lock_on->spawn_attempted[0])buster_spawn=lock_on->spawns[0];
+                                else if(lock_on->spawn_attempted[1])buster_spawn=lock_on->spawns[1];
                             }
                             using LockStatus=l3::SourcePlayerBusterStatus;
                             const bool lock_on_ran=lock_on&&(lock_on->status==LockStatus::SourceBackedPartial||
                                 lock_on->status==LockStatus::ProjectionHeld||lock_on->status==LockStatus::BusterHeld);
                             if(!lock_on_ran&&source_buster_fire_pressed&&muzzle_bound)
                                 buster_spawn=g_children.spawn_source_buster_80035724(
-                                    source_buster_player,1,-1,source_buster_proxy_mask);
+                                    source_buster_player,0,-1,source_buster_proxy_mask);
                             if(source_buster_fire_pressed||buster_tick.committed||buster_tick.held)
-                                hardware_test_trace("# source_buster_runtime,frame=%lu,fire_edge=%u,spawn_status=%u,identity=%08lx,callback_status=%u,committed=%u,held=%u,registered=%u,impacts=%u,released=%u,live=%u,producer=80035724,callback=800433C0,packet=28000008,damage=8,endpoint_owner_400_418=CANDIDATE_FORWARD_RAY,map_bounds_owner_78=UNKNOWN,retail_cadence=false",
+                                hardware_test_trace("# source_buster_runtime,frame=%lu,fire_edge=%u,spawn_status=%u,identity=%08lx,callback_status=%u,committed=%u,held=%u,registered=%u,impacts=%u,map_impacts=%u,released=%u,live=%u,producer=80035724,lane=171,callback=800437A8,damage=%d,range=%d,homing=UNPORTED,retail_cadence=false",
                                     (unsigned long)session.frame_counter(),unsigned(source_buster_fire_pressed),
                                     unsigned(buster_spawn.status),(unsigned long)buster_spawn.source_identity,
                                     unsigned(buster_tick.status),unsigned(buster_tick.committed),unsigned(buster_tick.held),
-                                    unsigned(buster_tick.registered),unsigned(buster_tick.impacts),unsigned(buster_tick.released),
-                                    unsigned(__builtin_popcount(g_children.buster_pool().allocated_800989f0)));
+                                    unsigned(buster_tick.registered),unsigned(buster_tick.impacts),unsigned(buster_tick.map_impacts),unsigned(buster_tick.released),
+                                    unsigned(__builtin_popcount(g_children.buster_pool().allocated_800989f0)),
+                                    buster_frame.shot81?int(buster_frame.shot81->damage_800375d4):-1,buster_frame.shot81?int(buster_frame.shot81->range_80037634):-1);
                             if(lock_on&&(source_buster_fire_pressed||session.frame_counter()%60u==0u))
                                 hardware_test_trace("# source_lock_on,frame=%lu,status=%u,proxy_status=%u,projected=%lu,broad=%ld,window=%ld,player_depth_plus_50=%u,camera=80037FB4,pad_1f8000f2=RETAINED_UNKNOWN,shift=%u,packed_trig_substitutions=%lu,active=CANDIDATE,fire_174=CANDIDATE_Y,target_mode=IMAGE_80097D02_CANDIDATE",
                                     (unsigned long)session.frame_counter(),unsigned(lock_on->status),unsigned(lock_on->proxy_status),
@@ -3453,15 +3466,35 @@ int main() {
                                     (unsigned long)session.frame_counter(),unsigned(leases.status),(unsigned long)leases.projected,
                                     unsigned(integer_pose.status),unsigned(muzzle_bound),lock_on_ran?"80034EB8":"NONE");
                         }
-                        if(actor_metadata.hit_proxy_rules)
-                            (void)g_children.consume_proxy_pairs(actor_metadata.hit_proxy_rules);
+                        if(actor_metadata.hit_proxy_rules) {
+                            const auto& bank=g_children.hit_proxy_bank();
+                            const size_t bank_rows=bank.count;
+                            const bool buster_live=g_children.buster_pool().allocated_800989f0!=0;
+                            char rows[256];size_t at=0;rows[0]=0;
+                            for(size_t r=0;buster_live&&r<bank_rows&&r<8&&at+32<sizeof rows;++r)
+                                at+=size_t(std::snprintf(rows+at,sizeof rows-at,"%08lx@%d:%d:%d/%u;",
+                                    (unsigned long)bank.records[r].encoded_identity,int(bank.records[r].point[0]),
+                                    int(bank.records[r].point[1]),int(bank.records[r].point[2]),unsigned(bank.records[r].encoded_extent)));
+                            const auto pairs=g_children.consume_proxy_pairs(actor_metadata.hit_proxy_rules);
+                            if(buster_live||pairs.status!=l3::SourceHitProxyStatus::SourceBackedPartial)
+                                hardware_test_trace("# source_proxy_pairs,frame=%lu,status=%u,rows=%lu,admitted=%lu,overlapping=%lu,records=%s",
+                                    (unsigned long)session.frame_counter(),unsigned(pairs.status),(unsigned long)bank_rows,
+                                    (unsigned long)pairs.admitted_pairs,(unsigned long)pairs.overlapping_pairs,rows);
+                        }
                         // Pair packets belong to the next original callback.
                         // Retain them; the body deliberately holds until all
                         // hit/reaction/defeat consumers are available.
                         if(g_source_actor_proxy)for(auto& actor:actors.actors)
                             if(actor.source_proxy_bound&&actor.source_behavior)
                                 actor.source_behavior->packet_33c=actor.source_proxy_target.packet_00;
-                        const auto effects=g_children.tick_effects();
+                        l3::SourceEffect128Inputs effect_inputs;
+                        effect_inputs.audio=&session.source_audio_queue();
+                        if(g_actor_rng.admitted()&&!g_source_scene_rng_replay){
+                            effect_inputs.rng=&g_actor_rng;effect_inputs.rng_frame=session.frame_counter();
+                            effect_inputs.source_generation=session.frame_counter()+1;
+                        }
+                        effect_inputs.impact82_timers_8008a240=source_buster_profile.impact82_timers_8008a240;
+                        const auto effects=g_children.tick_effects(effect_inputs);
                         // 0x80047228 -> 0x80046B34, then subtype-0x87 pickups.
                         if(source_reward_profile.loaded&&g_actor_rng.admitted()&&!g_source_scene_rng_replay) {
                             for(int n=0;n<8&&g_children.enemy_reward_queue().count;++n) {

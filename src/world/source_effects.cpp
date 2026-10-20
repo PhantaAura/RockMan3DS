@@ -1,5 +1,6 @@
 #include "legends3ds/source_effects.h"
 #include "legends3ds/source_event_phase5.h"
+#include "legends3ds/source_rng_service.h"
 #include <algorithm>
 namespace l3 {
 namespace {
@@ -109,6 +110,44 @@ SourceEffectStatus initialize_child_effect(SourceEffectPool& p,const Class60_06E
     if(e.copy_raw)for(size_t i=0;i<4;++i)put16(w,0x38+i*2,uint16_t(e.raw_to_38[i]));
     return SourceEffectStatus::SourceBackedPartial;
 }
+namespace {
+// Buster impact 0x80044AB0 -> 0x8008A250 states. Presentation-only stores
+// (+14..1B, +22..25 sprite fields) are not reproduced.
+SourceEffectTick callback82(SourceEffectWork& w,size_t slot,const SourceEffect128Inputs& in) noexcept {
+    SourceEffectTick result;
+    if(w[8]>1){result.status=SourceEffectStatus::UnknownState;return result;}
+    if(!in.impact82_timers_8008a240){result.status=SourceEffectStatus::NeedsSource128Consumers;return result;}
+    const auto& timers=*in.impact82_timers_8008a240;
+    if(w[8]==0){
+        if(w[0x0c]&&(!in.audio||!in.audio->initialized)){result.status=SourceEffectStatus::NeedsSoundConsumer;return result;}
+        if(!in.rng||!in.rng->admitted()||!in.source_generation){result.status=SourceEffectStatus::NeedsSource128Consumers;return result;}
+        SourceRngUpdateTransaction txn;SourceRngUpdateContext c;c.native_frame=in.rng_frame;c.native_update_ordinal=in.rng_frame;
+        c.phase=SourceRngUpdatePhase::RewardPickupCallback;
+        if(begin_source_rng_update(*in.rng,txn,c)!=SourceRngStatus::Ready){result.status=SourceEffectStatus::NeedsSource128Consumers;return result;}
+        SourceRngRewardContext r;r.caller_ra=0x80044b50u;r.work=source_effect_base+uint32_t(slot*source_effect_slot_bytes);
+        r.slot=uint8_t(slot);r.source_generation=in.source_generation;
+        const auto sample=stage_source_rng_reward(txn,r);
+        if(sample.status!=SourceRngStatus::Ready){rollback_source_rng_update(txn);result.status=SourceEffectStatus::NeedsSource128Consumers;return result;}
+        if(w[0x0c]){
+            const auto st=enqueue_source_audio_8001a050(*in.audio,0x9b,{{u32(w,0x1c),u32(w,0x20)}});
+            if(st==SourceAudioQueueStatus::Queued)++result.audio_queued;
+            else if(st==SourceAudioQueueStatus::DroppedFull)++result.audio_dropped;
+            else {rollback_source_rng_update(txn);result.status=SourceEffectStatus::NeedsSoundConsumer;return result;}
+        }
+        if(commit_source_rng_update(*in.rng,txn)!=SourceRngStatus::Ready){result.status=SourceEffectStatus::NeedsSource128Consumers;return result;}
+        w[0]|=0x22;put16(w,0x26,uint16_t(sample.sample32a&0x3fu));
+        w[0x0a]=0;w[9]=0;w[0x0b]=timers[0];++w[8];
+        result.status=SourceEffectStatus::SourceBackedPartial;result.committed=true;return result;
+    }
+    w[0x0b]=uint8_t(w[0x0b]-1u);++w[9];
+    if(w[0x0b]==0){
+        ++w[0x0a];
+        if(w[0x0a]<6)w[0x0b]=timers[w[0x0a]];
+        else {w[0]=0;result.released=true;}
+    }
+    result.status=SourceEffectStatus::SourceBackedPartial;result.committed=true;return result;
+}
+}
 SourceEffectTick tick_source_effect(SourceEffectPool& p,uint32_t id,const SourceEffect128Inputs& in) noexcept {
     SourceEffectTick result;const auto slot=source_effect_slot(id);
     if(!slot){result.status=SourceEffectStatus::InvalidIdentity;return result;}
@@ -117,6 +156,7 @@ SourceEffectTick tick_source_effect(SourceEffectPool& p,uint32_t id,const Source
     auto w=p.slots[*slot];if(!(w[0]&w[6]&1u))return result;
     if(w[2]==131)result=callback131(w);
     else if(w[2]==128)result=callback128(w,in);
+    else if(w[2]==0x82)result=callback82(w,*slot,in);
     else if(w[2]==0x87)return result; // pickups tick in tick_source_reward_pickups
     else {result.status=SourceEffectStatus::UnknownSubtype;return result;}
     if(result.committed){p.slots[*slot]=w;if(result.released)mark_source_effect_release_80031988(p,id);}

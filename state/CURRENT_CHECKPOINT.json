@@ -1,6 +1,6 @@
 {
- "version": "0.0.15.13",
- "title": "WCA integration — enemy attack, knockback and damaged actions 10/6/5 (ST00 0x80103DFC/0x80103554/0x8010324C)",
+ "version": "0.0.15.14",
+ "title": "WCA integration — original Mega Buster shot subtype 0x81 (0x800437F8/0x80043A8C) and impact effect 0x82; Azahar combat/reward/door loop validated",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,

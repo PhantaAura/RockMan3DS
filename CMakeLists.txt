@@ -1085,3 +1085,8 @@ add_executable(test_class20_03_late_actions tests/test_class20_03_late_actions.c
 target_link_libraries(test_class20_03_late_actions PRIVATE legends3ds_core)
 target_compile_options(test_class20_03_late_actions PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME class20_03_late_actions COMMAND test_class20_03_late_actions)
+
+add_executable(test_source_buster_shot81 tests/test_source_buster_shot81.cpp)
+target_link_libraries(test_source_buster_shot81 PRIVATE legends3ds_core)
+target_compile_options(test_source_buster_shot81 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_buster_shot81 COMMAND test_source_buster_shot81)

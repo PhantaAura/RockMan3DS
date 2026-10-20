@@ -141,7 +141,15 @@ struct SourceBusterSegment {
 enum class SourceBusterCallbackStatus : uint8_t {
     SourceBackedPartial,Inactive,InvalidPool,UnsupportedSubtype,UnknownState,
     NeedsOwnerPosition,NeedsOwnerEndpoint,NeedsOwnerBusy,NeedsProxyMask,
-    NeedsMapCollision,NeedsSoundConsumer,ProxyHeld,EffectHeld
+    NeedsMapCollision,NeedsSoundConsumer,ProxyHeld,EffectHeld,
+    NeedsShotProfile,UnsupportedAimPitch
+};
+// Subtype-0x81 Mega Buster shot (weapon row 1). Damage/range from the
+// PTR_DAT_80089EAC row at player +0x4FC/+0x4FE, radius 0x80097DCC, speed
+// 0x80097DD4 (cooked L3BP/2).
+struct SourceBusterShot81Stats {
+    int16_t damage_800375d4=0,range_80037634=0;
+    uint8_t radius_98=0,speed=0;
 };
 struct SourceBusterFrameContext {
     std::optional<std::array<uint32_t,2>> owner_position_14;
@@ -152,10 +160,19 @@ struct SourceBusterFrameContext {
     std::optional<bool> map_collision_80049c24;
     std::optional<uint16_t> midpoint_padding_06;
     SourceAudioQueue* audio=nullptr;
+    // Subtype 0x81 owners. The shot's own wall test 0x80049C24 -> 0x80049C54
+    // reads the map; 0x80039B80 aim pitch is nonzero only under a lock-on
+    // owner (0x800A3960) whose writer is untraced, so only pitch 0 runs.
+    const RuntimeMap* map=nullptr;
+    size_t area_index=0;
+    const ReferenceTables* references=nullptr;
+    std::optional<SourceBusterShot81Stats> shot81;
+    uint16_t aim_pitch_80039b80=0;
 };
 struct SourceBusterBatch {
     SourceBusterCallbackStatus status=SourceBusterCallbackStatus::SourceBackedPartial;
     uint8_t committed=0,held=0,registered=0,impacts=0,released=0;
+    uint8_t map_impacts=0;
 };
 // Exact cold slice8002E7F4..8002E83C clears all16 records, sets01=16|slot,
 // and clears the two original allocation/deferred-release masks.

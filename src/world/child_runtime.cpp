@@ -173,6 +173,143 @@ SourceBusterBatch ChildRuntime::tick_source_busters_80017154(
         if(!(busters_.allocated_800989f0&buster_bit(slot)))continue;
         auto& retained=busters_.slots[slot];
         if(!(int8_t(retained[0])&retained[6]&1))continue;
+        if(retained[2]==0x81){
+            // Mega Buster shot: 0x800437A8 states 0x800437F8 / 0x80043A8C.
+            if(retained[8]>1){hold(SourceBusterCallbackStatus::UnknownState);continue;}
+            if(!context.shot81||!context.references){hold(SourceBusterCallbackStatus::NeedsShotProfile);continue;}
+            if(!context.proxy_mask_80098798||!*context.proxy_mask_80098798){hold(SourceBusterCallbackStatus::NeedsProxyMask);continue;}
+            if(!context.audio||!audio_ready(*context.audio)){hold(SourceBusterCallbackStatus::NeedsSoundConsumer);continue;}
+            const auto& stats=*context.shot81;
+            auto next=retained;
+            auto target=buster_target(source_buster_base+uint32_t(slot*class60_slot_bytes),next);
+            auto mask=*context.proxy_mask_80098798;
+            const auto release_lease=[&]() noexcept {
+                if(next[3]>0x7f)(void)source_hit_proxy_release_lease_800354e0(mask,next[0x0d]);
+            };
+            // 0x80043E78: current +14 to previous +2C, both radius +98.
+            const auto registration=[&]() {
+                SourceHitProxyCompositeRegistration input;
+                input.first_words={{read32(next,0x14),read32(next,0x18)}};
+                input.second_words={{read32(next,0x2c),read32(next,0x30)}};
+                input.first_extent=input.second_extent=read16(next,0x98);
+                input.stack10=0x200;input.stack14=next[0x0c]?0x6000u:0x4000u;
+                input.stack18=next[1];
+                input.stack20=uint32_t(int32_t(stats.damage_800375d4))|0x08000000u;
+                input.stack24=0;input.stack28=0x80;input.target=&target;input.mask_80098798=mask;
+                input.midpoint_padding_06=context.midpoint_padding_06;
+                for(size_t i=0;i<owner_identities_.size();++i)
+                    if(owner_identities_[i])input.owners_800be478[i]=&owner_points_[i];
+                return input;
+            };
+            const auto raw_from_fixed=[&]() noexcept {
+                write16(next,0x14,read16(next,0x1e));write16(next,0x16,read16(next,0x22));write16(next,0x18,read16(next,0x26));
+            };
+            const auto previous_from_current=[&]() noexcept {
+                for(size_t i=0;i<16;i+=4)write32(next,0x34+i,read32(next,0x1c+i));
+                write32(next,0x2c,read32(next,0x14));write32(next,0x30,read32(next,0x18));
+            };
+            const auto publish=[&](const SourceHitProxyCompositeRegistration& input) {
+                buster_targets_[slot]=target;auto committed=input;committed.target=&buster_targets_[slot];
+                (void)source_hit_proxy_register_composite_8003430c(proxies_,committed);
+                const auto point=[](const std::array<uint32_t,2>& w) {
+                    return std::array<int16_t,3>{{int16_t(uint16_t(w[0])),int16_t(uint16_t(w[0]>>16)),int16_t(uint16_t(w[1]))}};
+                };
+                buster_segments_[slot]={point(input.first_words),point(input.second_words)};
+                write32(next,0xc4,buster_targets_[slot].packet_00);write32(next,0xc8,buster_targets_[slot].flags_04);
+                ++batch.registered;
+            };
+            const auto release=[&]() noexcept {
+                next[0]=0;busters_.pending_release_80098a60=(busters_.pending_release_80098a60|buster_bit(slot))&busters_.allocated_800989f0;
+                ++batch.released;
+            };
+            if(next[8]==0){
+                if(context.aim_pitch_80039b80!=0){hold(SourceBusterCallbackStatus::UnsupportedAimPitch);continue;}
+                next[0]|=0x2a;next[6]|=0x20;
+                write32(next,0xc4,0);write32(next,0xc8,0);
+                write32(next,0x78,0x80097da0u);
+                // RotMatrix(pitch 0, heading +64, 0) applied to (0,0,0xF000):
+                // the third column of RotY, exactly -sin / 0 / -cos in q12.
+                const auto& trig=context.references->trig[read16(next,0x64)&0xfffu];
+                const std::array<int32_t,3> unit{{-int32_t(trig.sin_q12),0,-int32_t(trig.cos_q12)}};
+                for(size_t i=0;i<3;++i)write16(next,0x44+i*2,uint16_t(int16_t((unit[i]*int32_t(stats.speed))>>4)));
+                write32(next,0xa4,uint32_t(uint16_t(unit[0]))|(uint32_t(uint16_t(unit[1]))<<16));
+                write32(next,0xa8,uint32_t(uint16_t(unit[2])));
+                for(size_t i=0x4c;i<0x52;++i)next[i]=0;
+                raw_from_fixed();previous_from_current();
+                next[0x7c]=0;next[0x7d]=0;next[0x0b]=0;
+                write16(next,0x98,stats.radius_98);
+                next[9]=0;++next[8];
+                const uint16_t extent=next[0x0a]?0x6208u:0x4208u;
+                write16(next,0x1a,extent);write16(next,0x32,extent);
+                if(next[3]>0x7f&&read32(next,0xbc)==0&&read32(next,0xc0)==0){release_lease();next[3]=0;}
+                const auto input=registration();
+                if(source_hit_proxy_check_register_composite_8003430c(proxies_,input).status!=SourceHitProxyStatus::SourceBackedPartial){
+                    hold(SourceBusterCallbackStatus::ProxyHeld);continue;
+                }
+                audio_scratch_=*context.audio;
+                const auto audio=enqueue_source_audio_8001a050(audio_scratch_,0x9a,{{read32(next,0x14),read32(next,0x18)}});
+                if(audio!=SourceAudioQueueStatus::Queued&&audio!=SourceAudioQueueStatus::DroppedFull){
+                    hold(SourceBusterCallbackStatus::NeedsSoundConsumer);continue;
+                }
+                publish(input);*context.audio=audio_scratch_;
+                retained=next;*context.proxy_mask_80098798=mask;++batch.committed;continue;
+            }
+            // State 1. 0x80037694: a published pair packet ends the shot,
+            // else 0x80049C24 tests +14 against the map (bounds +78).
+            uint32_t hit=0;
+            if(read32(next,0xc4)&0xff000000u)hit=0x7fff;
+            else {
+                if(!context.map){hold(SourceBusterCallbackStatus::NeedsMapCollision);continue;}
+                const int16_t px=signed16(read16(next,0x14)),py=signed16(read16(next,0x16)),pz=signed16(read16(next,0x18));
+                const int16_t qx=signed16(read16(next,0x2c)),qz=signed16(read16(next,0x30));
+                const auto far=[](int16_t v){return (v<0?-int32_t(v):int32_t(v))>0x4000;};
+                if(((uint16_t(px)^uint16_t(qx))&0x8000u)&&far(px))hit=0x80000000u;
+                else if(((uint16_t(pz)^uint16_t(qz))&0x8000u)&&far(pz))hit=0x80000000u;
+                else {
+                    // 0x80097DA0 bounds; class 0x10 skips flag-0x8000 primitives.
+                    const auto test=runtime_point_embedded_80049c54(*context.map,context.area_index,px,py,pz,
+                        RetailPlayerBounds{-16,16,-16,16,-16,16},true);
+                    if(test.status==RuntimePointEmbedding::Unsupported){hold(SourceBusterCallbackStatus::NeedsMapCollision);continue;}
+                    hit=test.raw;
+                }
+            }
+            if(hit==0&&read16(next,0x7c)==0){
+                previous_from_current();
+                const uint8_t age=next[0x0b];++next[0x0b];
+                if(int32_t(age)<int32_t(stats.range_80037634)){
+                    // Lock-on homing (+3 bit7 with a target point at +BC/+C0,
+                    // 0x80033F04) is not ported: such shots fly straight.
+                    if(next[3]>0x7f&&read32(next,0xbc)==0&&read32(next,0xc0)==0){release_lease();next[3]=0;}
+                    for(size_t i=0;i<3;++i){
+                        const int32_t v=signed16(read16(next,0x44+i*2));
+                        write32(next,0x1c+i*4,read32(next,0x1c+i*4)+uint32_t(v*0x100));
+                    }
+                    raw_from_fixed();
+                    write16(next,0x9a,uint16_t(read16(next,0x9a)+5u));
+                    const auto input=registration();
+                    if(source_hit_proxy_check_register_composite_8003430c(proxies_,input).status!=SourceHitProxyStatus::SourceBackedPartial){
+                        hold(SourceBusterCallbackStatus::ProxyHeld);continue;
+                    }
+                    publish(input);retained=next;*context.proxy_mask_80098798=mask;++batch.committed;continue;
+                }
+            } else {
+                // 0x80043E00: impact effect 0x82; +0C marks a map hit (sound 0x9B).
+                effect_scratch_=effects_;const auto effect=allocate_source_effect_80031618(effect_scratch_);
+                if(effect.status!=SourceEffectStatus::SourceBackedPartial){hold(SourceBusterCallbackStatus::EffectHeld);continue;}
+                if(effect.source_identity){
+                    const auto effect_slot=source_effect_slot(effect.source_identity);
+                    if(!effect_slot){hold(SourceBusterCallbackStatus::EffectHeld);continue;}
+                    auto& work=effect_scratch_.slots[*effect_slot];work[0]=9;work[2]=0x82;work[3]=1;
+                    work[0x0c]=uint8_t(hit!=0x7fff);
+                    effect_write16(work,0x1c,read16(next,0x14));
+                    effect_write16(work,0x1e,read16(next,0x16));
+                    effect_write16(work,0x20,read16(next,0x18));
+                }
+                effects_=effect_scratch_;++batch.impacts;if(hit!=0x7fff)++batch.map_impacts;
+            }
+            release();release_lease();
+            retained=next;*context.proxy_mask_80098798=mask;++batch.committed;continue;
+        }
         if(retained[2]!=0x80){hold(SourceBusterCallbackStatus::UnsupportedSubtype);continue;}
         if(retained[8]>2){hold(SourceBusterCallbackStatus::UnknownState);continue;}
         if(!context.owner_busy_198 || !*context.owner_busy_198){hold(SourceBusterCallbackStatus::NeedsOwnerBusy);continue;}

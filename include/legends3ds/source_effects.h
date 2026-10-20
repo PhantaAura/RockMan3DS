@@ -4,6 +4,7 @@
 
 namespace l3 {
 struct SourceEventPhase5Context;
+class SourceRngService;
 constexpr size_t source_effect_capacity=64,source_effect_slot_bytes=72;
 constexpr uint32_t source_effect_base=0x800a3b40u;
 using SourceEffectWork=std::array<uint8_t,source_effect_slot_bytes>;
@@ -32,6 +33,11 @@ struct SourceEffect128Inputs {
     // A nonzero pointer alone does not establish this external consumer.
     std::optional<SourceEffect128Resource> resource;
     SourceAudioQueue* audio=nullptr;
+    // Subtype 0x82 (Buster impact, 0x80044AB0): state 0 calls rand() at RA
+    // 0x80044B50 on the shared stream; step timers 0x8008A240 (cooked L3BP/2).
+    SourceRngService* rng=nullptr;
+    uint64_t rng_frame=0,source_generation=0;
+    std::optional<std::array<uint8_t,8>> impact82_timers_8008a240;
 };
 struct SourceEffectTick {
     SourceEffectStatus status=SourceEffectStatus::Inactive;
