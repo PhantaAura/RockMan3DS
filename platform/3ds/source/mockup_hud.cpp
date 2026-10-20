@@ -15,7 +15,7 @@ constexpr Color kGrid{20,46,66}, kGeometry{41,110,123}, kSpecial{161,116,74};
 constexpr Color kPlayer{255,221,86}, kHealth{61,220,133};
 // Keep only two identities/keys, not copies of the 230,400-byte framebuffers.
 // Full key comparison prevents a hash collision from suppressing a needed draw.
-using RasterKey = std::array<uint64_t,21>;
+using RasterKey = std::array<uint64_t,22>;
 struct RasterCacheEntry {
     unsigned char* framebuffer=nullptr;
     uint64_t fingerprint=0;
@@ -23,9 +23,14 @@ struct RasterCacheEntry {
 };
 std::array<RasterCacheEntry,2> raster_cache{};
 size_t next_cache_entry=0;
+// Tutorial message box overlay (FRONTEND_DIAGNOSTIC presentation of the
+// original top-screen window; text and choice state come from the runtime).
+struct DialogueOverlay { bool active=false; char text[480]={}; int options=0, choice=0; bool next=false; uint64_t hash=0; };
+DialogueOverlay g_dialogue{};
 RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel& status,
                      const l3::MockupMapView& map) {
     RasterKey key{};
+    key[21]=g_dialogue.active?g_dialogue.hash:0;
     key[0]=state.companion_visible;
     if(!state.companion_visible) return key;
     key[1]=static_cast<unsigned>(state.tab);
@@ -82,6 +87,8 @@ constexpr Glyph kGlyphs[] = {
  {'8',{14,17,17,14,17,17,14}}, {'9',{14,17,17,15,1,1,14}},
  {'/',{1,1,2,4,8,16,16}}, {'-',{0,0,0,31,0,0,0}},
  {':',{0,4,4,0,4,4,0}}, {'.',{0,0,0,0,0,4,4}},
+ {'!',{4,4,4,4,4,0,4}}, {'?',{14,17,1,2,4,0,4}}, {',',{0,0,0,0,4,4,8}},
+ {'\'',{4,4,8,0,0,0,0}}, {'>',{8,4,2,1,2,4,8}},
  {'+',{0,4,4,31,4,4,0}}, {'|',{4,4,4,4,4,4,4}}
 };
 class Raster {
@@ -291,6 +298,34 @@ void mockup_hud_raster(unsigned char* buffer, const l3::MockupUiState& state,
     }
     draw_content(r,state,map,diagnostics); draw_status(r,status);
     r.text(5,228,"TOUCH TABS | HOLD SELECT",kAccent);
+    if(g_dialogue.active) {
+        // Word-wrapped uppercase text, 50 columns, 9 rows; '\n' breaks lines.
+        const l3::BottomUiRect box{4,130,312,106};
+        r.fill(box.x,box.y,box.w,box.h,Color{6,14,40}); r.border(box,kAccent);
+        int col=0,row=0; char word[64]; size_t wn=0;
+        const auto put=[&](char c){ char one[2]={c,0}; if(row<9) r.text(box.x+6+col*6,box.y+6+row*11,one,kWhite); ++col; };
+        const auto flush=[&](){ if(!wn)return; if(col+int(wn)>50){col=0;++row;} for(size_t i=0;i<wn;++i)put(word[i]); wn=0; };
+        for(const char* p=g_dialogue.text;;++p) {
+            const char c=*p;
+            if(!c){flush();break;}
+            if(c=='\n'){flush();col=0;++row;continue;}
+            if(c==' '){flush();if(col)put(' ');continue;}
+            if(wn<sizeof(word)) word[wn++]=char(c>='a'&&c<='z'?c-32:c);
+        }
+        if(g_dialogue.next) r.text(box.x+box.w-12,box.y+box.h-11,">",kAccent);
+        if(g_dialogue.options>1) r.text(box.x+6,box.y+box.h-11,g_dialogue.choice==0?"> YES    NO":"  YES  > NO",kAccent);
+    }
+}
+void mockup_hud_set_dialogue(bool active, const char* text, int options, int choice, bool waiting_next) {
+    DialogueOverlay next{};
+    next.active=active;
+    if(active&&text){std::strncpy(next.text,text,sizeof(next.text)-1);}
+    next.options=options;next.choice=choice;next.next=waiting_next;
+    uint64_t h=1469598103934665603ULL;
+    for(const char* p=next.text;*p;++p){h^=uint8_t(*p);h*=1099511628211ULL;}
+    h^=uint64_t(options)<<40^uint64_t(choice)<<48^uint64_t(waiting_next)<<56^uint64_t(active)<<60;
+    next.hash=h|1;
+    g_dialogue=next;
 }
 void mockup_hud_init() {
     mockup_hud_invalidate();

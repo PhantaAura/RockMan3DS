@@ -26,6 +26,7 @@
 #include "legends3ds/source_event_package.h"
 #include "legends3ds/source_event_command_package.h"
 #include "legends3ds/source_door_event.h"
+#include "legends3ds/source_tutorial_triggers.h"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -69,6 +70,7 @@ struct RuntimeInputFrame {
     bool lock_pressed = false;
     bool lock_held = false;
     bool advance_dialogue = false;
+    bool dialogue_left = false, dialogue_right = false;   // choice cursor edges
     bool pause_pressed = false;
     bool skip_held = false;
     // Platform-delivered button edges retained between fixed gameplay updates.
@@ -150,6 +152,16 @@ struct RuntimeDialogueState {
     std::vector<uint8_t> visible_glyphs;
     std::vector<RuntimeAudioRequest> audio_requests;
     std::vector<RuntimeScriptRequest> script_requests;
+    // Tutorial-trigger messages (E0/06) run the source controls inline and do
+    // not take gameplay ownership: the handlers freeze through player +0xBD.
+    bool source_controls_inline = false;
+    bool gates_gameplay = true;
+    std::vector<std::pair<uint16_t,uint16_t>> call_stack; // 0x99 CALL return points
+    bool waiting_for_choice = false;                     // 0x97 MULTI
+    bool closing = false;                                // 0x84 CLOSE delay (CANDIDATE: u16 frames)
+    uint8_t choice = 0;
+    std::vector<uint8_t> choice_targets;                 // per 0x96 option; 0xFF continues
+    std::vector<uint16_t> option_glyph_at;               // visible_glyphs index of each option
 };
 
 struct RuntimeCheckpoint {
@@ -409,6 +421,18 @@ public:
     std::optional<uint32_t> locked_target_id() const;
 
     void start_dialogue(MessageRef ref);
+    // E0/06 message: inline source controls, no gameplay ownership.
+    void start_source_tutorial_dialogue(MessageRef ref);
+    // 0.0.15.15 E0/06 tutorial triggers. The catalog is owner-local L3TR data.
+    void bind_tutorial_triggers(std::shared_ptr<const TutorialTriggerCatalog> catalog);
+    bool tutorial_triggers_active() const { return tutorial_triggers_active_; }
+    const SourceTutorialTriggers& tutorial_triggers() const { return tutorial_triggers_; }
+    const TutorialTriggerTick& tutorial_trigger_tick() const { return tutorial_trigger_tick_; }
+    // Live class-0x20 +14/+18 owned by the native actor loop (type 6 reads them).
+    void set_tutorial_class20_positions(std::vector<std::array<int16_t,2>> xz) { tutorial_class20_xz_=std::move(xz); }
+    // 0x8002EE90 mode last broadcast to mask 0x27E/0x256 (1 pause, 2 resume).
+    uint32_t tutorial_pause_mode() const { return tutorial_pause_mode_; }
+    std::vector<uint32_t> take_tutorial_voice_requests(){auto out=std::move(tutorial_voice_requests_);tutorial_voice_requests_.clear();return out;}
     void stop_dialogue();
     const RuntimeDialogueState& dialogue() const { return dialogue_; }
     std::vector<RuntimeAudioRequest> take_audio_requests();
@@ -525,6 +549,8 @@ private:
     void update_camera();
     void reset_conditional_spawns();
     void update_conditional_spawns();
+    void reset_tutorial_triggers();
+    void update_tutorial_triggers();
     void update_gameplay_camera_target();
     std::optional<size_t> nearest_target_index() const;
     bool apply_active_cutscene_completion();
@@ -639,6 +665,13 @@ private:
     StageObjectList conditional_spawn_objects_;
     std::optional<size_t> conditional_spawn_pending_;
     int8_t conditional_spawn_qualifier_ = -1;
+    std::shared_ptr<const TutorialTriggerCatalog> tutorial_catalog_;
+    SourceTutorialTriggers tutorial_triggers_;
+    bool tutorial_triggers_active_ = false;
+    TutorialTriggerTick tutorial_trigger_tick_{};
+    std::vector<std::array<int16_t,2>> tutorial_class20_xz_;
+    uint32_t tutorial_pause_mode_ = 0;
+    std::vector<uint32_t> tutorial_voice_requests_;
     bool conditional_spawn_active_ = false;
     uint32_t conditional_spawn_revision_ = 0;
     std::unordered_map<uint32_t,RuntimeCutsceneCompletionContract> cutscene_contracts_;

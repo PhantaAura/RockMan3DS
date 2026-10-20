@@ -2276,6 +2276,18 @@ int main() {
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
         session.set_reference_tables(refs);
+        // 0.0.15.15: ST00 E0/06 tutorial message triggers (owner-local L3TR).
+        if(g_sidecars_bound){
+            const auto path=data_path("st00.l3tr");
+            if(FILE* present=std::fopen(path.c_str(),"rb")){
+                std::fclose(present);
+                try{
+                    session.bind_tutorial_triggers(std::make_shared<const l3::TutorialTriggerCatalog>(
+                        l3::load_l3tutorial_triggers(read_binary(path),true)));
+                    boot_log(MML_BOOT_DATA,"tutorial triggers E0/06 0x80114424 bound (L3TR)");
+                }catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+            }
+        }
         // 0.0.15.0: one combat owner. When the source actor/Buster path is active
         // (enhanced renderer + ACTOR_STATE_FIELDS + SOURCE_ACTOR_PROXY) the
         // historical candidate projectile and candidate lock-on are retired. The
@@ -2480,7 +2492,7 @@ int main() {
         }
         l3::GameplayClock gameplay_clock;
         u64 previous_update_clock=svcGetSystemTick();
-        bool pending_fire=false,pending_lock=false,pending_dialogue=false;
+        bool pending_fire=false,pending_lock=false,pending_dialogue=false,pending_left=false,pending_right=false;
         uint16_t pending_psx_pressed=0;
         uint64_t last_rng_mismatch_generation=0;
         unsigned last_scene_status=~0u,last_scene_waits=~0u;
@@ -2727,6 +2739,8 @@ int main() {
             in.lock_pressed=(down&KEY_X)!=0;
             in.lock_held=(held&KEY_X)!=0;
             in.advance_dialogue=(down&KEY_A)!=0;
+            in.dialogue_left=(down&(KEY_DLEFT|KEY_CPAD_LEFT))!=0;
+            in.dialogue_right=(down&(KEY_DRIGHT|KEY_CPAD_RIGHT))!=0;
             const u64 update_start=svcGetSystemTick();
             const u64 update_clock=svcGetSystemTick();
             gameplay_clock.advance((update_clock-previous_update_clock)/CPU_TICKS_PER_USEC,ui_focus);
@@ -2739,14 +2753,20 @@ int main() {
                 pending_fire=pending_fire||in.fire_pressed;
                 pending_lock=pending_lock||in.lock_pressed;
                 pending_dialogue=pending_dialogue||in.advance_dialogue;
+                pending_left=pending_left||in.dialogue_left;pending_right=pending_right||in.dialogue_right;
             }
             // Bounded catch-up retains debt; no variable-delta physics or render-rate animation.
             for (unsigned step=0;step<4 && gameplay_clock.consume();++step) {
                 in.fire_pressed=pending_fire;in.lock_pressed=pending_lock;in.advance_dialogue=pending_dialogue;
+                in.dialogue_left=pending_left;in.dialogue_right=pending_right;pending_left=pending_right=false;
                 in.pressed_psx_mask=pending_psx_pressed;pending_psx_pressed=0;
                 pending_fire=pending_lock=pending_dialogue=false;
                 const auto actor_gameplay_owned=[&]{
-                    return !session.dialogue().active&&!session.cutscene_active()&&
+                    // Tutorial messages keep gameplay; their handlers pause the
+                    // object classes through 0x8002EE90 (mode 1). CANDIDATE consumer:
+                    // the native class-0x20 loop holds while paused.
+                    return !(session.dialogue().active&&session.dialogue().gates_gameplay)&&
+                        session.tutorial_pause_mode()!=1&&!session.cutscene_active()&&
                         session.camera().owner==l3::RuntimeCameraOwner::Gameplay;
                 };
                 const bool actor_tick_admitted=(retail_actor_animation_requested()||actor_state_fields_requested())&&actor_gameplay_owned();
@@ -2912,7 +2932,28 @@ int main() {
                 // untraced, so this admission is CANDIDATE and is logged below.
                 const bool source_buster_fire_pressed=l3::source_buster_fire_admitted(
                     g_source_actor_proxy,in.fire_pressed,session.player_shot_enabled(),session.player_busy_8004324c());
+                {
+                    // E0/06 type 6 reads live class-0x20 +14/+18.
+                    std::vector<std::array<int16_t,2>> live;
+                    for(const auto& actor:actors.actors)
+                        if(actor.source_behavior&&!actor.source_released&&actor.source_class==0x20)
+                            live.push_back({{actor.source_behavior->raw_14[0],actor.source_behavior->raw_14[2]}});
+                    session.set_tutorial_class20_positions(std::move(live));
+                }
+                const bool dialogue_was_active=session.dialogue().active;
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                if(session.tutorial_triggers_active()&&(session.dialogue().active!=dialogue_was_active||
+                   session.frame_counter()%60u==0u))
+                    hardware_test_trace("# source_tutorial,frame=%lu,status=%u,cell=%d:%d,dialogue=%u,block=%u,choice=%u,pause=%lu,bd=%02x,flag1552=%u,flag1570=%u,unsupported=%d",
+                        (unsigned long)session.frame_counter(),unsigned(session.tutorial_trigger_tick().status),
+                        int(session.tutorial_triggers().cell_x()),int(session.tutorial_triggers().cell_z()),
+                        unsigned(session.dialogue().active),unsigned(session.dialogue().ref.block),unsigned(session.dialogue().choice),
+                        (unsigned long)session.tutorial_pause_mode(),unsigned(session.compat_player().bytes[0xBD]),
+                        unsigned(session.story_flag(0x610)),unsigned(session.story_flag(0x622)),
+                        session.tutorial_trigger_tick().unsupported_type?int(*session.tutorial_trigger_tick().unsupported_type):-1);
+                for(const auto clip:session.take_tutorial_voice_requests())
+                    if(session.frame_counter()%30u==0u)hardware_test_trace("# source_tutorial_voice,frame=%lu,clip=%lu,playback=UNPORTED",
+                        (unsigned long)session.frame_counter(),(unsigned long)clip);
                 if(session.source_event_result().random_callback_consumed_count&&g_actor_rng.admitted()&&!g_source_scene_rng_replay)
                     hardware_test_trace("# source_event_rng_candidate,frame=%lu,calls=%u,ordinal_after=%llu,scope=SHARED_OPENBIOS_CANDIDATE,retail_chronology=false",
                         (unsigned long)session.frame_counter(),unsigned(session.source_event_result().random_callback_consumed_count),
@@ -3724,6 +3765,21 @@ int main() {
             const auto ui_position=session.player_position();
             const auto ui_map=l3::make_mockup_map_view(session.active_map(),session.map_area_index(),ui_position.x,ui_position.z,session.player_yaw());
             l3::mockup_map_update_follow(ui_state,ui_map);
+            {
+                const auto& d=session.dialogue();
+                char text[480];size_t n=0;
+                if(d.active&&d.source_controls_inline){
+                    for(size_t i=0;i<d.visible_glyphs.size()&&n+8<sizeof(text);++i){
+                        const uint8_t g=d.visible_glyphs[i];
+                        if(g==0x86){text[n++]='\n';continue;}
+                        if(const char* icon=l3::mml_glyph_icon(g)){for(const char* p=icon;*p&&n+1<sizeof(text);++p)text[n++]=*p;continue;}
+                        const char c=l3::mml_glyph_ascii(g);if(c)text[n++]=c;
+                    }
+                }
+                text[n]=0;
+                mockup_hud_set_dialogue(d.active&&d.source_controls_inline,text,
+                    d.waiting_for_choice?int(d.choice_targets.size()):0,int(d.choice),d.waiting_for_advance);
+            }
             mockup_hud_draw(ui_state,session.bottom_screen_model(),ui_map,&g_runtime_diag);
             gfxScreenSwapBuffers(GFX_BOTTOM,false);
             mml_diag_phase(&g_runtime_diag,MML_PHASE_BOTTOM_UI,static_cast<uint32_t>((svcGetSystemTick()-ui_start)/CPU_TICKS_PER_USEC));

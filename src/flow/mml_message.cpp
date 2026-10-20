@@ -305,6 +305,31 @@ void MmlMessageRuntimeCursor::start_block(size_t block_index) {
     emitted_block_end_ = false;
 }
 
+void MmlMessageRuntimeCursor::seek(size_t block_index, size_t token_index) {
+    start_block(block_index);
+    if (token_index > message_->blocks[block_index].tokens.size())
+        throw std::runtime_error("message runtime token index out of range");
+    token_index_ = token_index;
+}
+
+char mml_glyph_ascii(uint8_t g) {
+    if (g >= 0x15 && g <= 0x28) return char('A' + (g - 0x15));
+    if (g >= 0x2A && g <= 0x2F) return char('U' + (g - 0x2A));
+    if (g >= 0x30 && g <= 0x3D) return char('a' + (g - 0x30));
+    if (g >= 0x3F && g <= 0x4A) return char('o' + (g - 0x3F));
+    switch (g) {
+    case 0x4F: return ' '; case 0x0D: return '!'; case 0x0E: return '?';
+    case 0x52: return '-'; case 0x5E: return '.';
+    case 0x0C: return '\''; case 0x5C: return ',';
+    default: return '\0';
+    }
+}
+
+const char* mml_glyph_icon(uint8_t g) {
+    // The port's 3DS buttons for the PS1 icon: Square=Y, R2=X, Circle=A, Cross=B.
+    switch (g) { case 0x57: return "Y"; case 0x5B: return "X"; case 0x54: return "A"; case 0x56: return "B"; default: return nullptr; }
+}
+
 bool MmlMessageRuntimeCursor::at_block_end() const {
     if (!block_started_ || !message_ || block_index_ >= message_->blocks.size()) return false;
     return token_index_ >= message_->blocks[block_index_].tokens.size();

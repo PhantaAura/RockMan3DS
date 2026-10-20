@@ -254,6 +254,9 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 for internal in (r'..\MAP\DATA\ST00_MAP.IDX',r'..\SCR\DATA\ST00.HED',r'..\SCR\DATA\ST00.STG')]}
         run(tools,'l3cook_st00_flow',stage/'R3_ST00.BIN',runtime/'st00.l3flow')
         run(tools,'l3cook_st00_spawn',stage/'R3_ST00.BIN',runtime/'st00.l3spawn')
+        # E0/06 tutorial message-trigger lists (0x8011CC9C), neutral L3TR/1.
+        subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_tutorial_triggers.py')),
+                        '--overlay',str(stage/'R3_ST00.BIN'),'--out',str(runtime/'st00.l3tr')],check=True)
 
         # Exact fixed-point reference table used by the original movement path.
         # The EXE is inferred from the normal extraction layout

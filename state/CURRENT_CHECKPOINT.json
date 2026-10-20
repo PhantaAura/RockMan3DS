@@ -1,6 +1,6 @@
 {
- "version": "0.0.15.14",
- "title": "WCA integration — original Mega Buster shot subtype 0x81 (0x800437F8/0x80043A8C) and impact effect 0x82; Azahar combat/reward/door loop validated",
+ "version": "0.0.15.15",
+ "title": "WCA integration — ST00 E0/06 tutorial message triggers (0x80114424) and an in-game message box",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -8,21 +8,21 @@
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 154/154)",
- "host_tests": "154/154 PASS (new source_buster_shot81; source_buster_profile L3BP/2); owner l3door_replay PASS",
+ "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 155/155)",
+ "host_tests": "155/155 PASS (new source_tutorial_triggers)",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
- "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261020-122714-m2-01514/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
- "native_binary_bytes": 994696,
- "native_binary_sha256": "c4164659a6b82a945f91f6ce339bcc88097f1d1b3bda96707c9ad536846f450a",
+ "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-*-m2-01515/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
+ "native_binary_bytes": 1013900,
+ "native_binary_sha256": "1b23aa0d6699d4e0bab64b054920cad1964a62311fb61d84195cba24613d8b1b",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, scripted diagnostic_autoplay, CSV trace evidence, no screenshots): Buster 0x81 hits, enemy 64->40->0 defeat, reward spawn + collection (+5), door Area 1->2->1. Lock-on target selection not observed.",
- "emulator_evidence": "docs/validation_01514/RESULTS.md",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, scripted, trace): the E0/06 radio call (type 1) freezes at z -5633, block 0 -> CALL -> block 1 Yes/No, No sets flag 1552 and releases; type 2 'Turn right there.' shown without a freeze.",
+ "emulator_evidence": "docs/validation_01515/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
@@ -30,6 +30,10 @@
  "world_comes_alive_finished": false,
  "usage_reset_used": false,
  "evidence": [
+  "docs/research_01514/TUTORIAL_MESSAGE_TRIGGERS.md",
+  "docs/validation_01515/RESULTS.md",
+  "src/flow/source_tutorial_triggers.cpp",
+  "tests/test_source_tutorial_triggers.cpp",
   "docs/research_01514/BUSTER_SHOT_81.md",
   "docs/validation_01514/RESULTS.md",
   "src/world/child_runtime.cpp",
@@ -68,6 +72,7 @@
   "tools/l3door_replay.cpp"
  ],
  "blockers": [
+  "Tutorial 0.0.15.15: E0/06 types 0-15 ported; type 16 holds; voice unplayed; message box on bottom screen; area->bank mapping CANDIDATE; +44D camera byte writers unported.",
   "Buster 0.0.15.14: subtype 0x81 ported and Azahar-validated by trace; lock-on homing 0x80033F04 and non-zero aim pitch unported; lock-on never selected a target in scripted runs; loadout +170/+171 measured, writer untraced.",
   "Reward pickups 0.0.15.12: gameplay lifecycle ported, but the pickup model/sparkle rendering (0x8002F9C4 stage resource) is a diagnostic marker, and pickup RNG chronology uses the CANDIDATE shared stream. Not yet validated in Azahar.",
   "Lock-on 0x80034EB8 now receives the 0x80037FB4 camera matrix (verified against 640 original-code rows) and runs in the 3DS loop with the InitGeom 0x8007A4F0 + 0x80011F48 projection. CANDIDATE inputs: player work+00 bit0 (writer untraced; gameplay-owned player stands in), +0x174 bit 0x10 (Y edge stands in), GP+0x49E target mode 0x80097D02 (EXE image byte; no writer found). Pad 0x1F8000F2 is retained/UNKNOWN and unobservable by GTE/MATRIX users. Not checked in Azahar; no PS1 lock-on trace.",
@@ -80,7 +85,7 @@
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.15.13",
-  "source_archive": "git main (commit 830a9ab)"
+  "version": "0.0.15.14",
+  "source_archive": "git main (commit e111515)"
  }
 }

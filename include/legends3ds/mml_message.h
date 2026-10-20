@@ -103,6 +103,8 @@ class MmlMessageRuntimeCursor {
 public:
     explicit MmlMessageRuntimeCursor(const MmlMessageFile& message);
     void start_block(size_t block_index);
+    // Resume inside a block (a returning CALL). Throws when out of range.
+    void seek(size_t block_index, size_t token_index);
     bool next(MmlRuntimeEvent& event);
     size_t block_index() const { return block_index_; }
     size_t token_index() const { return token_index_; }
@@ -114,6 +116,17 @@ private:
     bool block_started_ = false;
     bool emitted_block_end_ = false;
 };
+
+// USA glyph byte to printable ASCII for frontend presentation, measured from
+// st00_01 against the original screens and words: A..T 0x15..0x28, U..Z
+// 0x2A..0x2F, a..n 0x30..0x3D, o..z 0x3F..0x4A, space 0x4F, '!' 0x0D, '?'
+// 0x0E, '\'' 0x0C, ',' 0x5C, '-' 0x52, '.' 0x5E. Button icons (0x54, 0x57
+// square, 0x5B R2) and other bytes return '\0'; see mml_glyph_icon.
+char mml_glyph_ascii(uint8_t glyph);
+// PS1 button icons as the port's 3DS buttons: 0x57 Square -> "Y" and 0x5B
+// R2 -> "X" (icons seen on the original screen), 0x56 Cross (jump) -> "B",
+// 0x54 Circle (investigate/doors) -> "A" (CANDIDATE icon identities).
+const char* mml_glyph_icon(uint8_t glyph);
 
 // Argument count for a known fixed-width command, or -1 for either text bytes,
 // dynamic commands (MULTI), or currently unknown control bytes.

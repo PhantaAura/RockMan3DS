@@ -31,3 +31,7 @@ bool mockup_hud_raster_cached(unsigned char* framebuffer,
                               const l3::BottomScreenModel& status,
                               const l3::MockupMapView& map,
                               const MMLRuntimeDiag* diagnostics = nullptr);
+
+// Tutorial message box on the bottom screen. Text is ASCII (decoded glyphs and
+// '\n' line breaks); options > 1 shows the YES/NO cursor at choice.
+void mockup_hud_set_dialogue(bool active, const char* text, int options, int choice, bool waiting_next);

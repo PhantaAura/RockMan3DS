@@ -33,7 +33,7 @@ RuntimeSession::RuntimeSession(RuntimeMap map,TutorialRuntimeArea area,std::vect
     l3_qol_settings_sanitize(&settings_);
     area_registry_.emplace(area_index_,area_);
     location_registry_.emplace(area_index_,SharedLocationRegistration{map_,map_area_index_,area_});
-    reset_conditional_spawns();
+    reset_conditional_spawns();reset_tutorial_triggers();
     initialize_source_audio_queue_80019e14(source_audio_queue_);
     reset_player({},0,100,100);
 }
@@ -212,7 +212,7 @@ bool RuntimeSession::transition_to_location(size_t id,RuntimeVec3i p,uint16_t ya
     source_event_commands_={};source_event_phase2_intents_={};
     source_event_command_bound_=false;source_event_command_context_={};
     source_event_cd_inputs_={};source_event_command_result_={};source_event_cd_mix_intents_={};
-    reset_conditional_spawns();
+    reset_conditional_spawns();reset_tutorial_triggers();
     locked_target_index_.reset();targets_.clear();projectiles_.clear();aux_triggers_.clear();stop_dialogue();
     dialogue_={};active_cutscene_id_.reset();cutscene_skip_hold_frames_=0;
     camera_.owner=RuntimeCameraOwner::Gameplay;camera_.transition_frame=camera_.transition_frames=0;
@@ -686,12 +686,79 @@ void RuntimeSession::start_dialogue(MessageRef ref){
     if(!message_banks_ || ref.bank>=message_banks_->size()||ref.block>=(*message_banks_)[ref.bank].blocks.size())throw std::out_of_range("dialogue reference out of range");
     dialogue_={};dialogue_.active=true;dialogue_.ref=ref;dialogue_cursor_.emplace((*message_banks_)[ref.bank]);dialogue_cursor_->start_block(ref.block);history_.push(ref);
 }
-void RuntimeSession::stop_dialogue(){dialogue_.active=false;dialogue_.waiting_for_advance=false;dialogue_.waiting_for_script=false;dialogue_.waiting_for_audio=false;dialogue_.waiting_audio_id=0;dialogue_.wait_frames=0;dialogue_cursor_.reset();}
+void RuntimeSession::start_source_tutorial_dialogue(MessageRef ref){
+    start_dialogue(ref);dialogue_.source_controls_inline=true;dialogue_.gates_gameplay=false;
+}
+
+void RuntimeSession::bind_tutorial_triggers(std::shared_ptr<const TutorialTriggerCatalog> catalog){
+    tutorial_catalog_=std::move(catalog);reset_tutorial_triggers();
+}
+void RuntimeSession::reset_tutorial_triggers(){
+    // A new E0/06 object (area load) restarts at state 0 (0x80114460).
+    tutorial_triggers_.bind(tutorial_catalog_.get());tutorial_triggers_active_=false;
+    tutorial_trigger_tick_={};tutorial_pause_mode_=0;
+    if(!tutorial_catalog_)return;
+    for(const auto& instance:area_.stage.instances){
+        const auto& o=instance.object;
+        if(o.source_class==0xE0&&o.subtype==6){tutorial_triggers_active_=true;break;}
+    }
+}
+namespace {
+class SessionTutorialHost final:public TutorialTriggerHost{
+public:
+    SessionTutorialHost(RuntimeSession& s,L3PlayerCompatWork& player,uint16_t bank,
+        uint32_t& pause_mode,std::vector<uint32_t>& voices)
+        :s_(s),player_(player),bank_(bank),pause_(pause_mode),voices_(voices){}
+    bool flag(uint16_t id) const override{return s_.story_flag(id);}
+    void set_flag(uint16_t id) override{s_.set_story_flag(id,true);}
+    void clear_flag(uint16_t id) override{s_.set_story_flag(id,false);}
+    void request_message(int8_t block) override{
+        // 0x8005382C refuses while a slot-0 message runs; the bank is the area's.
+        if(block<0)return;
+        try{s_.start_source_tutorial_dialogue({bank_,uint16_t(block)});}catch(const std::out_of_range&){}
+    }
+    bool message_active() const override{return s_.dialogue().active;}
+    void voice(uint32_t clip) override{voices_.push_back(clip);}
+    void pause_objects(uint16_t,uint32_t mode) override{pause_=mode;}
+    uint8_t& player_bd() override{return player_.bytes[0xBD];}
+private:
+    RuntimeSession& s_;L3PlayerCompatWork& player_;uint16_t bank_;uint32_t& pause_;std::vector<uint32_t>& voices_;
+};
+}
+void RuntimeSession::update_tutorial_triggers(){
+    if(!tutorial_triggers_active_)return;
+    TutorialTriggerWorld world;
+    world.area=area_index_;
+    world.player_x=int16_t(player_position_.x);world.player_y=int16_t(player_position_.y);world.player_z=int16_t(player_position_.z);
+    world.player_heading=uint16_t(player_.bytes[0x56]|(uint16_t(player_.bytes[0x57])<<8));
+    if(player_contact_.floor_y)world.player_floor_y=*player_contact_.floor_y;
+    world.class20_xz=tutorial_class20_xz_;
+    // CANDIDATE: area N uses message bank st00_0N (banks are loaded in that order).
+    SessionTutorialHost host(*this,player_,uint16_t(area_index_>0?area_index_-1:0),tutorial_pause_mode_,tutorial_voice_requests_);
+    tutorial_trigger_tick_=tutorial_triggers_.tick(host,world);
+}
+
+void RuntimeSession::stop_dialogue(){dialogue_.waiting_for_choice=false;dialogue_.closing=false;dialogue_.call_stack.clear();dialogue_.active=false;dialogue_.waiting_for_advance=false;dialogue_.waiting_for_script=false;dialogue_.waiting_for_audio=false;dialogue_.waiting_audio_id=0;dialogue_.wait_frames=0;dialogue_cursor_.reset();}
 
 void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
     if(!dialogue_.active||!dialogue_cursor_)return;
     if(dialogue_.waiting_for_audio)return;
-    if(dialogue_.wait_frames){--dialogue_.wait_frames;return;}
+    if(dialogue_.wait_frames){--dialogue_.wait_frames;if(!dialogue_.wait_frames&&dialogue_.closing)stop_dialogue();return;}
+    if(dialogue_.waiting_for_choice){
+        const uint8_t count=uint8_t(dialogue_.choice_targets.size());
+        if(in.dialogue_left&&dialogue_.choice>0)--dialogue_.choice;
+        if(in.dialogue_right&&dialogue_.choice+1<count)++dialogue_.choice;
+        if(!in.advance_dialogue)return;
+        dialogue_.waiting_for_choice=false;
+        const uint8_t target=dialogue_.choice<count?dialogue_.choice_targets[dialogue_.choice]:0xFF;
+        dialogue_.choice_targets.clear();dialogue_.option_glyph_at.clear();dialogue_.choice=0;
+        dialogue_.visible_glyphs.clear();
+        // 0xFF continues after MULTI; another value restarts that block.
+        if(target!=0xFF){
+            if(target>=(*message_banks_)[dialogue_.ref.bank].blocks.size()){stop_dialogue();return;}
+            dialogue_.ref.block=target;dialogue_cursor_->start_block(target);
+        }
+    }
     if(dialogue_.waiting_for_advance){if(!in.advance_dialogue)return;dialogue_.waiting_for_advance=false;}
     if(dialogue_.waiting_for_script)return;
     unsigned budget=settings_.text_speed==L3_TEXT_SPEED_INSTANT?64u:(settings_.text_speed==L3_TEXT_SPEED_FAST?4u:1u);
@@ -700,16 +767,48 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
         switch(ev.kind){
             case MmlRuntimeEventKind::Glyph: dialogue_.visible_glyphs.push_back(ev.opcode); break;
             case MmlRuntimeEventKind::Newline: dialogue_.visible_glyphs.push_back(0x86); break;
-            case MmlRuntimeEventKind::Audio:{const uint32_t id=args_u32le(ev.args);dialogue_.audio_requests.push_back({dialogue_.ref,ev.args,id});dialogue_.waiting_for_audio=true;dialogue_.waiting_audio_id=id;return;}
+            case MmlRuntimeEventKind::Audio:{const uint32_t id=args_u32le(ev.args);dialogue_.audio_requests.push_back({dialogue_.ref,ev.args,id});
+                // Tutorial messages: no voice player is bound, so text continues.
+                if(dialogue_.source_controls_inline)break;
+                dialogue_.waiting_for_audio=true;dialogue_.waiting_audio_id=id;return;}
             case MmlRuntimeEventKind::Wait: dialogue_.wait_frames=ev.args.size()>=2?uint16_t(ev.args[0]|(uint16_t(ev.args[1])<<8)):0;if(dialogue_.wait_frames)return;break;
             case MmlRuntimeEventKind::Next: dialogue_.waiting_for_advance=true; return;
             case MmlRuntimeEventKind::Selection:
             case MmlRuntimeEventKind::Multi:
             case MmlRuntimeEventKind::Control:
             case MmlRuntimeEventKind::UnknownControl:
+                if(dialogue_.source_controls_inline){
+                    if(ev.opcode==0x84){ // CLOSE: hold the window for its u16 frames, then close
+                        dialogue_.closing=true;
+                        dialogue_.wait_frames=ev.args.size()>=2?uint16_t(ev.args[0]|(uint16_t(ev.args[1])<<8)):0;
+                        if(dialogue_.wait_frames)return;
+                        stop_dialogue();return;
+                    }
+                    if(ev.opcode==0x87){dialogue_.visible_glyphs.clear();dialogue_.option_glyph_at.clear();break;} // CLEAR
+                    if(ev.opcode==0x96){dialogue_.option_glyph_at.push_back(uint16_t(dialogue_.visible_glyphs.size()));break;} // SEL
+                    if(ev.opcode==0x97){ // MULTI: type byte, then one target per SEL
+                        dialogue_.choice_targets.assign(ev.args.size()>1?ev.args.begin()+1:ev.args.end(),ev.args.end());
+                        dialogue_.choice=0;dialogue_.waiting_for_choice=!dialogue_.choice_targets.empty();
+                        if(dialogue_.waiting_for_choice)return;
+                        break;
+                    }
+                    if(ev.opcode==0x99&&ev.args.size()>=2){ // CALL bank 0, block
+                        if(ev.args[0]!=0||ev.args[1]>=(*message_banks_)[dialogue_.ref.bank].blocks.size()){stop_dialogue();return;}
+                        dialogue_.call_stack.push_back({dialogue_.ref.block,uint16_t(dialogue_cursor_->token_index())});
+                        dialogue_.ref.block=ev.args[1];dialogue_cursor_->start_block(ev.args[1]);break;
+                    }
+                    break; // window, colour, pad, portrait, sound-effect controls: presentation only
+                }
                 dialogue_.script_requests.push_back({dialogue_.ref,ev.opcode,ev.kind,ev.args});dialogue_.waiting_for_script=true; return;
             case MmlRuntimeEventKind::End:
-            case MmlRuntimeEventKind::BlockEnd: stop_dialogue(); return;
+            case MmlRuntimeEventKind::BlockEnd:
+                if(dialogue_.source_controls_inline&&!dialogue_.call_stack.empty()){
+                    const auto back=dialogue_.call_stack.back();dialogue_.call_stack.pop_back();
+                    dialogue_.ref.block=back.first;dialogue_cursor_->seek(back.first,back.second);break;
+                }
+                // Tutorial messages: END is followed by CLOSE (0x84), which owns the close.
+                if(dialogue_.source_controls_inline&&ev.kind==MmlRuntimeEventKind::End)break;
+                stop_dialogue(); return;
         }
     }
 }
@@ -1517,7 +1616,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     }
     const auto source_player_gate=source_event_consumers_bound_
         ?source_player_update_gate_8003c07c(player_,source_event_player_known_):std::optional<bool>{};
-    const bool gameplay_owned=!dialogue_.active&&camera_.owner==RuntimeCameraOwner::Gameplay&&!active_cutscene_id_
+    const bool gameplay_owned=!(dialogue_.active&&dialogue_.gates_gameplay)&&camera_.owner==RuntimeCameraOwner::Gameplay&&!active_cutscene_id_
         &&(!source_player_gate||*source_player_gate);
     if(gameplay_owned){
         update_input_compat(in);
@@ -1534,6 +1633,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     }
     else{update_input_compat({});locked_target_index_.reset();}
     update_conditional_spawns();
+    update_tutorial_triggers();
     SourceEventInputs source_event_input;
     source_event_input.flags=&source_event_flags_;
     source_event_input.stage_800c1b60=source_event_stage_;

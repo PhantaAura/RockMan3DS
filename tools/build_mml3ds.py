@@ -29,12 +29,12 @@ from mml_pipeline import build, encoded, sha
 from owner_data_intake import normalize_owner_directory, prepare_owner_input
 
 ROOT = Path(__file__).resolve().parents[1]
-TUTORIAL_RECIPE = "tutorial-install/01513-buster-shot81-1"
+TUTORIAL_RECIPE = "tutorial-install/01515-tutorial-triggers-1"
 TUTORIAL_SCRIPTS = (
     "build_tutorial_pack.py", "cook_reference_tables.py", "mml_pipeline.py",
     "build_stage_catalog.py", "build_stage_object_catalog.py", "cook_actor_combat.py",
     "cook_source_fade.py", "cook_source_event_phase5.py", "cook_source_event_phase6.py",
-    "source_player_head.py", "cook_source_scene_view.py", "cook_source_buster_profile.py",
+    "source_player_head.py", "cook_source_scene_view.py", "cook_source_buster_profile.py", "cook_source_tutorial_triggers.py",
     "cook_hit_proxy.py", "cook_class60_06.py", "cook_reaction_profile.py", "cook_actor_angle.py",
     "cook_source_player_target.py", "cook_source_reward_profile.py",
 )

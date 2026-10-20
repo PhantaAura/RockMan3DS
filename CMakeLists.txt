@@ -112,6 +112,7 @@ add_library(legends3ds_core STATIC
     src/animation/pbd_animation.cpp
     src/animation/player_pose.cpp
     src/flow/mml_message.cpp
+    src/flow/source_tutorial_triggers.cpp
     src/flow/st00_flow.cpp
     src/flow/st00_event.cpp
     src/flow/source_door_event.cpp
@@ -1090,3 +1091,8 @@ add_executable(test_source_buster_shot81 tests/test_source_buster_shot81.cpp)
 target_link_libraries(test_source_buster_shot81 PRIVATE legends3ds_core)
 target_compile_options(test_source_buster_shot81 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_buster_shot81 COMMAND test_source_buster_shot81)
+
+add_executable(test_source_tutorial_triggers tests/test_source_tutorial_triggers.cpp)
+target_link_libraries(test_source_tutorial_triggers PRIVATE legends3ds_core)
+target_compile_options(test_source_tutorial_triggers PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_tutorial_triggers COMMAND test_source_tutorial_triggers)
