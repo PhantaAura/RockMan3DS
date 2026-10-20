@@ -38,3 +38,13 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.11 (`319893e
    real refractor/energy models draw.
 3. Tutorial progression: Roll's radio events after the first room. Use
    PCSX-Redux traces to fix the event order.
+
+## Blockers
+- **Azahar:** the 0.0.15.12 Azahar check is pending. The owner's Azahar session
+  was open, and the build is installed on its SD after the owner's go-ahead.
+- **REA:** REA (rea-agents 6.7.0) cannot open `ROCK_NEO.EXE`. Its own
+  file-type check accepts only ELF, PE and Mach-O, and its raw-binary route has
+  no MIPS. The Ghidra PSX loader is installed. Use Ghidra 12.1.4 headless
+  directly (`~/Downloads/ghidra_12.1.4_PUBLIC`, JDK Semeru 21) for original-code
+  work.
+- **Physical Old 3DS:** not tested.
