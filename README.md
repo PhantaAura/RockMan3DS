@@ -1,3 +1,13 @@
+# Mega Man Legends 3DS — 0.0.15.12 (enemy reward pickups)
+
+0.0.15.12: defeated Reaverbots drop the original reward pickups
+(`0x80046B34`). They arc out, bounce, rest, blink and despawn, and Mega Man
+collects them for money and energy. The pickup model is still a diagnostic
+marker. Host 152/152 and the native build pass; Azahar pending.
+[Results](docs/validation_01512/RESULTS.md) · [Resume](RESUME_01512.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.11 (visible Buster shot)
 
 0.0.15.11: in 0.0.15.10, pressing Y fired a Buster shot, but nothing appeared on

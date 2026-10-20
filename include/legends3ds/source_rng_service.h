@@ -37,7 +37,7 @@ enum class SourceRngStatus : uint8_t {
     Ready, Disabled, NeedsObservedProfile, InvalidProfile, InvalidContext,
     DuplicateCallback, UpdateFull, OrdinalExhausted, StaleTransaction
 };
-enum class SourceRngUpdatePhase : uint8_t { Class03Callbacks = 1, Effect2Callback = 2, SceneEventCallback = 3, PropLiftCallback = 4, Effect34Callback = 5 };
+enum class SourceRngUpdatePhase : uint8_t { Class03Callbacks = 1, Effect2Callback = 2, SceneEventCallback = 3, PropLiftCallback = 4, Effect34Callback = 5, RewardPickupCallback = 6 };
 struct SourceRngUpdateContext {
     uint64_t native_frame = 0, native_update_ordinal = 0;
     SourceRngUpdatePhase phase = SourceRngUpdatePhase::Class03Callbacks;
@@ -66,6 +66,14 @@ struct SourceRngEffect34Context {
     uint32_t work=0,callback=0;
     uint64_t source_generation=0;
     uint8_t slot=255,call_index=0,call_count=0;
+};
+// Enemy-reward pickups: 0x80046B34 expansion (work 0 for its first draw) and
+// the subtype-0x87 states. caller_ra must be one of the seven original rand
+// call sites (0x80046BAC/BF0/C30/DD8/E18, 0x80046480, 0x800468EC).
+struct SourceRngRewardContext {
+    uint32_t caller_ra=0,work=0;
+    uint64_t source_generation=0;
+    uint8_t slot=255;
 };
 struct SourceRngCallRecord {
     SourceRngUpdateContext update{};
@@ -132,6 +140,7 @@ SourceRngStagedSample stage_source_rng_effect2(SourceRngUpdateTransaction&, cons
 SourceRngStagedSample stage_source_rng_scene_event(SourceRngUpdateTransaction&, const SourceRngSceneEventContext&) noexcept;
 SourceRngStagedSample stage_source_rng_prop_lift(SourceRngUpdateTransaction&, const SourceRngPropLiftContext&) noexcept;
 SourceRngStagedSample stage_source_rng_effect34(SourceRngUpdateTransaction&, const SourceRngEffect34Context&) noexcept;
+SourceRngStagedSample stage_source_rng_reward(SourceRngUpdateTransaction&, const SourceRngRewardContext&) noexcept;
 SourceRngStatus commit_source_rng_update(SourceRngService&, SourceRngUpdateTransaction&) noexcept;
 void rollback_source_rng_update(SourceRngUpdateTransaction&) noexcept;
 } // namespace l3

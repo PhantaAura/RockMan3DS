@@ -211,3 +211,13 @@ was empty since 0.0.15.0. `ChildRuntime` now records the registered segment and
 the ribbon draws it. CSV `projectiles` counts the retired candidate projectile;
 new traces `live=` and `# source_buster_draw` report source shots. Tests:
 `test_child_runtime` segment case, `l3door_replay` phase 4.
+
+## 0.0.15.12 (WCA — enemy reward pickups)
+
+Ported the original reward lifecycle: wrapper `0x80047228`, expansion
+`0x80046B34` (cooked L3RW tables, 7 original rand sites on the shared RNG), the
+subtype-0x87 pickup states (`0x8004602C`: flight/bounce, rest, blink, despawn,
+collect) and collection `0x80046A0C`, which pays money `0x800C1B2C` and energy
+to HP. The 3DS loop expands queued defeat rewards and ticks the pickups. They
+draw as a diagnostic marker until the stage model resource is ported. New
+deterministic test; host 152/152; native build PASS, 0 warnings.

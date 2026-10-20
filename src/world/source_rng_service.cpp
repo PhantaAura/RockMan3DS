@@ -70,7 +70,8 @@ struct SourceRngAccess {
             context.phase != SourceRngUpdatePhase::Effect2Callback &&
             context.phase != SourceRngUpdatePhase::SceneEventCallback &&
             context.phase != SourceRngUpdatePhase::PropLiftCallback &&
-            context.phase != SourceRngUpdatePhase::Effect34Callback) return SourceRngStatus::InvalidContext;
+            context.phase != SourceRngUpdatePhase::Effect34Callback &&
+            context.phase != SourceRngUpdatePhase::RewardPickupCallback) return SourceRngStatus::InvalidContext;
         // Only the staged prefix is observable. Do not clear a120-call burst
         // buffer again when preparing a one-call actor transaction.
         t.count_=0;t.expected_calls_=0;t.used_slots_=0;
@@ -188,6 +189,22 @@ struct SourceRngAccess {
         row.seed_after32=t.seed_;row.sample32a=uint16_t((t.seed_>>16)&0x7fffu);row.native_global_ordinal=++t.ordinal_;++t.count_;t.expected_calls_=effect.call_count;
         out.status=SourceRngStatus::Ready;out.sample32a=row.sample32a;out.native_global_ordinal=row.native_global_ordinal;return out;
     }
+    static SourceRngStagedSample reward(SourceRngUpdateTransaction& t,const SourceRngRewardContext& c) noexcept {
+        SourceRngStagedSample out;
+        if(!t.active_||!t.owner_||!t.owner_->admitted_||t.generation_!=t.owner_->generation_){out.status=SourceRngStatus::StaleTransaction;return out;}
+        constexpr uint32_t ras[]={0x80046bacu,0x80046bf0u,0x80046c30u,0x80046dd8u,0x80046e18u,0x80046480u,0x800468ecu};
+        bool known=false;for(auto ra:ras)known|=ra==c.caller_ra;
+        const bool expansion_first=c.caller_ra==0x80046bacu;
+        if(t.context_.phase!=SourceRngUpdatePhase::RewardPickupCallback||!known||!c.source_generation||
+           (expansion_first?c.work!=0:(c.slot>=64||c.work!=0x800a3b40u+uint32_t(c.slot)*72u))){out.status=SourceRngStatus::InvalidContext;return out;}
+        if(t.count_>=kSourceRngUpdateMaximumCalls){out.status=SourceRngStatus::UpdateFull;return out;}
+        if(t.ordinal_==std::numeric_limits<uint64_t>::max()){out.status=SourceRngStatus::OrdinalExhausted;return out;}
+        auto& row=t.calls_[t.count_];row=SourceRngCallRecord{};row.update=t.context_;row.actor.caller_ra=c.caller_ra;
+        row.actor.work=c.work;row.actor.slot=c.slot;row.source_generation=c.source_generation;row.seed_before32=t.seed_;
+        t.seed_=t.seed_*1103515245u+12345u;row.seed_after32=t.seed_;row.sample32a=uint16_t((t.seed_>>16)&0x7fffu);
+        row.native_global_ordinal=++t.ordinal_;++t.count_;
+        out.status=SourceRngStatus::Ready;out.sample32a=row.sample32a;out.native_global_ordinal=row.native_global_ordinal;return out;
+    }
     static SourceRngStatus commit(SourceRngService& s, SourceRngUpdateTransaction& t) noexcept {
         if (!s.admitted_ || !t.active_ || t.owner_ != &s || t.generation_ != s.generation_) return SourceRngStatus::StaleTransaction;
         if (t.context_.phase == SourceRngUpdatePhase::Effect2Callback && t.count_ != 3)
@@ -231,6 +248,7 @@ SourceRngStagedSample stage_source_rng_effect2(SourceRngUpdateTransaction& t, co
 SourceRngStagedSample stage_source_rng_scene_event(SourceRngUpdateTransaction& t, const SourceRngSceneEventContext& c) noexcept { return SourceRngAccess::scene_event(t, c); }
 SourceRngStagedSample stage_source_rng_prop_lift(SourceRngUpdateTransaction& t, const SourceRngPropLiftContext& c) noexcept { return SourceRngAccess::prop_lift(t, c); }
 SourceRngStagedSample stage_source_rng_effect34(SourceRngUpdateTransaction& t, const SourceRngEffect34Context& c) noexcept { return SourceRngAccess::effect34(t, c); }
+SourceRngStagedSample stage_source_rng_reward(SourceRngUpdateTransaction& t, const SourceRngRewardContext& c) noexcept { return SourceRngAccess::reward(t, c); }
 SourceRngStatus commit_source_rng_update(SourceRngService& s, SourceRngUpdateTransaction& t) noexcept { return SourceRngAccess::commit(s, t); }
 void rollback_source_rng_update(SourceRngUpdateTransaction& t) noexcept { SourceRngAccess::rollback(t); }
 } // namespace l3

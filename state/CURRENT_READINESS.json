@@ -29,7 +29,7 @@
  },
  "COMBAT": {
   "status": "SOURCE_BACKED_PARTIAL",
-  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16\u21928\u21920 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
+  "evidence": "01451 drives the imported class20/03 enemy through two source Buster packets, 16→8→0 HP, reaction/defeat timing, effect80/41, soundA1, removal, proxy cleanup and one exact reward handoff. Duplicate effects/rewards are rejected. Pickup expansion/collection remains incomplete."
  },
  "CONTENT GRAPH": {
   "evidence": "Historical structural validation covers 205 packages, 4,115 nodes and 3,916 edges. These counts establish content structure, not gameplay completion.",
@@ -134,5 +134,9 @@
  "TRANSITIONS": {
   "evidence": "01447 original callback 80015840 state-1 tail is instruction-backed for 16 authored cases/480 unchanged instructions. Native handoff commits Area 1, exact spawn, event prefix and gameplay camera, clears status 2 to 0, then resumes movement and grounded collision with no room skip. Candidate RNG plus recorded clock; same-package only; broader progression incomplete.",
   "status": "SOURCE_BACKED_PARTIAL"
+ },
+ "REWARDS": {
+  "status": "SOURCE_BACKED_PARTIAL",
+  "evidence": "0.0.15.12: defeat reward 0x80047228 -> 0x80046B34 expansion (cooked L3RW tables, 7 original rand sites on the shared stream), subtype-0x87 pickup states 0x8004602C (flight/bounce/rest/blink/despawn/collect) and 0x80046A0C collection (money 0x800C1B2C, energy to HP). Host tests and native build pass. Model/sparkle rendering is a FRONTEND_DIAGNOSTIC marker; RNG chronology CANDIDATE; Azahar pending."
  }
 }

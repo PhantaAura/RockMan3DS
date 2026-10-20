@@ -4,6 +4,7 @@
 #include "legends3ds/source_hit_proxy.h"
 #include "legends3ds/source_player_proxy.h"
 #include "legends3ds/source_effects.h"
+#include "legends3ds/source_reward_pickup.h"
 
 namespace l3 {
 enum class ChildRuntimeStatus : uint8_t {
@@ -188,6 +189,13 @@ public:
     SourceBusterBatch tick_source_busters_80017154(
         const SourceBusterFrameContext&) noexcept;
     SourceEffectBatch tick_effects(const SourceEffect128Inputs& inputs = {}) noexcept;
+    // 0x80047228 -> 0x80046B34 for the oldest queued defeat reward, then pop
+    // it. A hold (missing profile/trig/RNG) keeps the request queued.
+    SourceRewardExpansion expand_next_enemy_reward(const SourceRewardProfile&,
+        const ReferenceTables&,SourceRngService&,uint64_t source_generation) noexcept;
+    SourceRewardTick tick_reward_pickups(const SourceRewardProfile&,const ReferenceTables&,
+        SourceRngService&,uint64_t source_generation,const SourceRewardWorld&,
+        int32_t& money_800c1b2c,int16_t& hp,int16_t hp_max) noexcept;
     SourceCollisionRegistry& collision_registry() noexcept { return registry_; }
     const SourceCollisionRegistry& collision_registry() const noexcept { return registry_; }
     SourceShadowQueue& shadow_queue() noexcept { return shadows_; }

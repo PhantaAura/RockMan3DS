@@ -117,6 +117,7 @@ SourceEffectTick tick_source_effect(SourceEffectPool& p,uint32_t id,const Source
     auto w=p.slots[*slot];if(!(w[0]&w[6]&1u))return result;
     if(w[2]==131)result=callback131(w);
     else if(w[2]==128)result=callback128(w,in);
+    else if(w[2]==0x87)return result; // pickups tick in tick_source_reward_pickups
     else {result.status=SourceEffectStatus::UnknownSubtype;return result;}
     if(result.committed){p.slots[*slot]=w;if(result.released)mark_source_effect_release_80031988(p,id);}
     return result;

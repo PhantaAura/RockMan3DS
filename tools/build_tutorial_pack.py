@@ -277,6 +277,12 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         # 0x80034EB8 lock-on window 0x8008994C and image target mode 0x80097D02.
         subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_player_target.py')),
                         '--exe',str(rock_neo),'--out',str(pout/'target.l3tg')],check=True)
+        # 0x80046B34 / subtype-0x87 reward pickup tables.
+        subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_reward_profile.py')),
+                        '--exe',str(rock_neo),'--out',str(runtime/'reward.l3rw')],check=True)
+        manifest['source_reward_profile']={'format':'L3RW/1','status':'SOURCE_BACKED_PARTIAL',
+            'expansion':'0x80046B34','pickup':'0x8004602C states 0x8008A6A8','collection':'0x80046A0C',
+            'limits':['pickup model/sparkle rendering','RNG chronology CANDIDATE shared stream']}
         _write_combat_sidecars(rock_neo,dat,runtime,out,manifest)
         manifest['source_buster_profile']={'format':'L3BP/1','status':'SOURCE_BACKED_PARTIAL',
             'selection_count':16,'fresh_lane_initialization':'0x80037534',

@@ -1608,6 +1608,32 @@ size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
     return drawn;
 }
 
+// Live subtype-0x87 reward pickups (0x80046B34). FRONTEND_DIAGNOSTIC marker:
+// the original model (0x8002F9C4 resource at +0x14, rotation matrix +0x18)
+// is not ported. A small diamond at the source position, sized by +0x3E,
+// hidden while the original visible bit (+0 bit 1) is clear, so the blink
+// state flashes like the original.
+size_t draw_source_reward_pickups_uv(const l3::ChildRuntime& children) {
+    const auto& pool=children.effect_pool();
+    size_t drawn=0;
+    for(size_t slot=0;slot<l3::source_effect_capacity;++slot){
+        if(!(pool.allocated_80098838[slot/32]&(0x80000000u>>(slot%32))))continue;
+        const auto& w=pool.slots[slot];
+        if(w[2]!=l3::kSourceRewardPickupSubtype||!(w[0]&w[6]&1u)||!(w[0]&2u)||w[8]>=7)continue;
+        if(!drawn){configure_texenv_uv(false);configure_immediate_attributes_uv();++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);}
+        const auto h16=[&](size_t o){return float(int16_t(uint16_t(w[o]|(w[o+1]<<8))));};
+        const float x=h16(0x38),y=h16(0x3a),z=h16(0x3c),s=std::max(4.0f,h16(0x3e)/8.0f);
+        const float r=w[3]?1.0f:0.3f,g=w[3]?0.35f:1.0f,b=w[3]?0.35f:0.8f;
+        send_immediate_uv(x-s,y,z,r,g,b);send_immediate_uv(x+s,y,z,r,g,b);send_immediate_uv(x,y-s,z,1,1,1);
+        send_immediate_uv(x-s,y,z,r,g,b);send_immediate_uv(x+s,y,z,r,g,b);send_immediate_uv(x,y+s,z,r*0.6f,g*0.6f,b*0.6f);
+        send_immediate_uv(x,y,z-s,r,g,b);send_immediate_uv(x,y,z+s,r,g,b);send_immediate_uv(x,y-s,z,1,1,1);
+        send_immediate_uv(x,y,z-s,r,g,b);send_immediate_uv(x,y,z+s,r,g,b);send_immediate_uv(x,y+s,z,r*0.6f,g*0.6f,b*0.6f);
+        ++drawn;
+    }
+    if(drawn)C3D_ImmDrawEnd();
+    return drawn;
+}
+
 void draw_terrain_range(size_t count) {
     for (size_t first=0; first<count;) {
         size_t n=std::min<size_t>(kDrawBatchVertices,count-first);
@@ -2167,6 +2193,18 @@ int main() {
         l3::SourceBusterPlayer source_buster_player;
         l3::initialize_source_buster_fresh_lanes_80037534(
             source_buster_profile,source_buster_player);
+        // 0.0.15.12 enemy-reward pickups (0x80046B34 / subtype 0x87). Optional
+        // owner-local L3RW tables; without them defeat rewards stay queued.
+        l3::SourceRewardProfile source_reward_profile;
+        {
+            const auto path=data_path("reward.l3rw");
+            if(FILE* present=std::fopen(path.c_str(),"rb")){
+                std::fclose(present);
+                if(!l3::load_source_reward_profile(read_binary(path),source_reward_profile))
+                    boot_log(MML_BOOT_DATA,"reward.l3rw rejected; rewards held");
+                else boot_log(MML_BOOT_DATA,"reward pickups 0x80046B34/0x8004602C bound (L3RW)");
+            } else boot_log(MML_BOOT_DATA,"reward.l3rw absent; rewards held");
+        }
         // Original global80098798 owns the shared24-slot projection leases.
         // The inherited native frontend has already reserved its low8 bits;
         // retain this owner across frames and reset it with the child pools.
@@ -3340,6 +3378,29 @@ int main() {
                             if(actor.source_proxy_bound&&actor.source_behavior)
                                 actor.source_behavior->packet_33c=actor.source_proxy_target.packet_00;
                         const auto effects=g_children.tick_effects();
+                        // 0x80047228 -> 0x80046B34, then subtype-0x87 pickups.
+                        if(source_reward_profile.loaded&&g_actor_rng.admitted()&&!g_source_scene_rng_replay) {
+                            for(int n=0;n<8&&g_children.enemy_reward_queue().count;++n) {
+                                const auto ex=g_children.expand_next_enemy_reward(source_reward_profile,refs,g_actor_rng,session.frame_counter());
+                                if(ex.status!=l3::SourceRewardStatus::SourceBackedPartial)break;
+                                hardware_test_trace("# source_reward_expand,frame=%lu,spawned=%u,discarded=%u,pool_full=%u,source=0x80046B34,rng=CANDIDATE_SHARED",
+                                    (unsigned long)session.frame_counter(),unsigned(ex.spawned),unsigned(ex.discarded),unsigned(ex.pool_full));
+                            }
+                            const auto pp=session.player_position();
+                            l3::SourceRewardWorld reward_world;reward_world.map=&session.active_map();reward_world.area_index=session.map_area_index();
+                            reward_world.player={int16_t(pp.x),int16_t(pp.y),int16_t(pp.z)};
+                            reward_world.stats_selector_800c1b6b=int8_t(session.source_stats_selector().value_or(1));
+                            reward_world.audio=&session.source_audio_queue();
+                            int32_t money=session.source_money_800c1b2c();int16_t hp=int16_t(session.hp());
+                            const auto pickups=g_children.tick_reward_pickups(source_reward_profile,refs,g_actor_rng,
+                                session.frame_counter(),reward_world,money,hp,int16_t(session.hp_max()));
+                            if(pickups.collected)session.apply_source_reward_collection(money,hp);
+                            if(pickups.collected||pickups.released||(pickups.updated&&session.frame_counter()%60u==0u))
+                                hardware_test_trace("# source_reward_pickups,frame=%lu,updated=%u,held=%u,collected=%u,released=%u,money=%ld,hp=%u,money_awarded=%ld,energy_awarded=%ld",
+                                    (unsigned long)session.frame_counter(),unsigned(pickups.updated),unsigned(pickups.held),unsigned(pickups.collected),
+                                    unsigned(pickups.released),(long)session.source_money_800c1b2c(),unsigned(session.hp()),
+                                    (long)pickups.money_awarded,(long)pickups.energy_awarded);
+                        }
                         if((effects.committed||effects.held) && session.frame_counter()%60u==0u)
                             hardware_test_trace("# source_effects,frame=%lu,considered=%lu,committed=%lu,held=%lu,retail_playback=false",
                                 (unsigned long)session.frame_counter(),(unsigned long)(effects.committed+effects.held),
@@ -3498,6 +3559,7 @@ int main() {
                 if(const auto drawn=draw_source_busters_uv(g_children))
                     hardware_test_trace("# source_buster_draw,frame=%lu,drawn=%lu,segment=8003430C_REGISTRATION,presentation=FRONTEND_DIAGNOSTIC",
                         (unsigned long)session.frame_counter(),(unsigned long)drawn);
+                (void)draw_source_reward_pickups_uv(g_children);
             }
             const auto scene_overlay=g_source_event_boot&&g_hardware_scene_draw==HardwareSceneDraw::All?session.source_event_scene_overlay():std::nullopt;
             const bool scene_overlay_submitted=scene_overlay&&scene_overlay->subtract_from_scene&&

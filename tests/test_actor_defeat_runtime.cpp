@@ -76,6 +76,18 @@ void lifecycle(){
         q.count==audio_after.count&&a.source_behavior->defeat_effect_368==state_after.defeat_effect_368,
         "released enemy duplicated reward/effect/sound");
     require(allocations==before,"defeat transaction allocated in gameplay path");
+    // 0.0.15.12: the queued 0x80047228 request feeds 0x80046B34. Authored
+    // tables (not retail): every roll is size 0, so 2 shards + 1 energy spawn
+    // at the defeat point (shards 0x14 higher) and the request is consumed once.
+    SourceRewardProfile reward;reward.loaded=true;
+    for(auto& t:reward.size_rolls_8008a5a8)t.fill(0);
+    reward.spread_80097efa.fill(1024);reward.scale_80097ee0.fill(100);reward.speed_80097f1c.fill(8);reward.lift_80097f24.fill(-20);
+    for(auto& k:reward.radius_80097eec)k.fill(10);
+    for(auto& k:reward.bounds_8008a618)k.fill(RetailPlayerBounds{-8,8,-8,8,-8,8});
+    SourceRngService rng;
+    require(children.expand_next_enemy_reward(reward,refs,rng,1).status==SourceRewardStatus::NeedsTrig||
+            children.expand_next_enemy_reward(reward,refs,rng,1).status==SourceRewardStatus::NeedsRng,"reward expanded without trig/RNG");
+    require(children.enemy_reward_queue().count==1,"held reward request was dropped");
 }
 }
 int main(){try{repeated_hit_boundary();lifecycle();std::cout<<"two source hits; atomic defeat effect/release/reward/sound; duplicate suppression PASS\n";return 0;}

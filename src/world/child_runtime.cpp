@@ -642,6 +642,21 @@ bool ChildRuntime::mark_release(uint32_t identity) noexcept {
 SourceEffectBatch ChildRuntime::tick_effects(const SourceEffect128Inputs& inputs) noexcept {
     return tick_source_effect_batch(effects_,inputs);
 }
+SourceRewardExpansion ChildRuntime::expand_next_enemy_reward(const SourceRewardProfile& profile,
+    const ReferenceTables& refs,SourceRngService& rng,uint64_t gen) noexcept {
+    SourceRewardExpansion out;out.status=SourceRewardStatus::Inactive;
+    if(!rewards_.count)return out;
+    const auto& request=rewards_.records[0];
+    out=expand_source_reward_80046b34(effects_,profile,refs,rng,gen,request.point_180,request.source_descriptor_word00);
+    if(out.status!=SourceRewardStatus::SourceBackedPartial)return out;
+    for(size_t i=1;i<rewards_.count;++i)rewards_.records[i-1]=rewards_.records[i];
+    rewards_.records[--rewards_.count]=SourceEnemyRewardRequest{};
+    return out;
+}
+SourceRewardTick ChildRuntime::tick_reward_pickups(const SourceRewardProfile& profile,const ReferenceTables& refs,
+    SourceRngService& rng,uint64_t gen,const SourceRewardWorld& world,int32_t& money,int16_t& hp,int16_t hp_max) noexcept {
+    return tick_source_reward_pickups(effects_,profile,refs,rng,gen,world,money,hp,hp_max);
+}
 void ChildRuntime::consume_pending_releases() noexcept {
     consume_source_effect_releases_80031b84(effects_);
     class60_apply_release_mask_80031b3c(pool_,pool_.pending_release_bitmap);

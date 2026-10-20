@@ -441,6 +441,13 @@ public:
     RuntimeVec3i player_position() const;
     uint16_t player_yaw() const;
     uint16_t hp() const { return hp_; }
+    // Money 0x800C1B2C (0x80043294 owner). Fresh-session value 0 is CANDIDATE.
+    int32_t source_money_800c1b2c() const { return source_money_800c1b2c_; }
+    // Commit a reward collection: money and HP (player +0x6E) after
+    // 0x80043294 / 0x80043340 ran on copies. HP stays within [0, hp_max].
+    void apply_source_reward_collection(int32_t money,int16_t hp) noexcept {
+        source_money_800c1b2c_=money;hp_=uint16_t(hp<0?0:(hp>int16_t(hp_max_)?hp_max_:hp));
+    }
     uint16_t hp_max() const { return hp_max_; }
     uint32_t frame_counter() const { return frame_counter_; }
     size_t area_index() const { return area_index_; }
@@ -540,6 +547,7 @@ private:
     std::optional<uint8_t> player_animation_record_request_;
     std::optional<ReferenceTables> reference_tables_;
     uint16_t hp_=0,hp_max_=0;
+    int32_t source_money_800c1b2c_=0;
     uint32_t frame_counter_=0;
     // Fresh subsystem initialization only; area replacement preserves globals.
     // Unported script setters and original pause/cadence remain separate gates.
