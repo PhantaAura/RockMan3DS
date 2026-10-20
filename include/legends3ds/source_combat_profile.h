@@ -65,6 +65,8 @@ struct SourceCombatProfiles {
 // No heap ownership or fallback identity. Parsing occurs at package load.
 SourceCombatProfiles load_l3source_combat_profiles(const uint8_t* bytes, size_t size);
 std::vector<uint8_t> encode_l3source_combat_profiles(const SourceCombatProfiles& profiles);
+// Lookup by work +0F: bit 0x80 is masked (0x8010252C) and finds the context-0
+// row; any of bits 0x7F returns nullptr (their HP multiplier is not modelled).
 const SourceCombatProfile* find_source_combat_profile(
     const SourceCombatProfiles& profiles, uint8_t raw_stats_selector,
     uint8_t source_class, uint8_t subtype, uint8_t record_index_0c,

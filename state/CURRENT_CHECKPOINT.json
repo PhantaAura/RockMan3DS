@@ -15,7 +15,7 @@
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
  "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-*-m2-01516/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
  "native_binary_bytes": 1024020,
- "native_binary_sha256": "5c5011ee92b2f0f9afc3fa25c7e5ffbd0f344595de74403ac363e276dce8fa3f",
+ "native_binary_sha256": "3aa1e885d85f3739387404e95fdd1e134ce981666cf92ed7f13f841dae0ffdc4",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
@@ -76,7 +76,7 @@
   "tools/l3door_replay.cpp"
  ],
  "blockers": [
-  "Pop-out 0.0.15.16: subtype 0x1F ported and validated by trace through the morph; action 8 airborne entrance with L3CB byte 0x0B unvalidated in Azahar; record 1585 context 0x80 unadmitted; hidden hit proxy unregistered; work80 writer CANDIDATE.",
+  "Pop-out 0.0.15.16: subtype 0x1F ported and validated by trace through the morph; action 8 airborne entrance with L3CB byte 0x0B unvalidated in Azahar; record 1585 context 0x80 admitted (masked by 0x7F at 0x80102528, host-only); hidden hit proxy unregistered; work80 writer CANDIDATE.",
   "Tutorial 0.0.15.15: E0/06 types 0-15 ported; type 16 holds; voice unplayed; message box on bottom screen; area->bank mapping CANDIDATE; +44D camera byte writers unported.",
   "Buster 0.0.15.14: subtype 0x81 ported and Azahar-validated by trace; lock-on homing 0x80033F04 and non-zero aim pitch unported; lock-on never selected a target in scripted runs; loadout +170/+171 measured, writer untraced.",
   "Reward pickups 0.0.15.12: gameplay lifecycle ported, but the pickup model/sparkle rendering (0x8002F9C4 stage resource) is a diagnostic marker, and pickup RNG chronology uses the CANDIDATE shared stream. Not yet validated in Azahar.",

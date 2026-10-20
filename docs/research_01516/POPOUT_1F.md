@@ -73,5 +73,9 @@ Z scale**: the hidden one is flat (0) and grows to 1.0.
   Damage is impossible anyway because bit 2 is clear.
 - The 0x1F HP (`0x80098844` record byte +8) is not cooked. It is unused before
   the morph, and the subtype-3 init sets the HP again.
-- Work +0x0F = 0x80 (record 1585) is outside the admitted L3CB identity, so
-  that Reaverbot gets no combat profile and holds after the morph.
+- Work +0x0F (record 1585 has 0x80): the only subtype-3 reader is init
+  `0x80102528..0x80102560`, which computes HP = (record byte +8 << 4) ×
+  ((+0F & 0x7F) + 1). Bit 0x80 is masked away and the record is unchanged. The
+  reward (`0x80047228`) and detection (record byte +0F via `0x80036478`) do not
+  read actor +0F. The port now admits context 0x80 as context 0; any low bit
+  still holds.

@@ -1,7 +1,7 @@
 # 0.0.15.16 validation: subtype-0x1F pop-out Reaverbot
 
-Build: `pass-20261020-180335-m2-01516`. `Legends3DS.3dsx` is 1,024,020 B,
-SHA-256 `5c5011ee92b2f0f9afc3fa25c7e5ffbd0f344595de74403ac363e276dce8fa3f`
+Build: `pass-20261020-184551-m2-01516`. `Legends3DS.3dsx` is 1,024,020 B,
+SHA-256 `3aa1e885d85f3739387404e95fdd1e134ce981666cf92ed7f13f841dae0ffdc4`
 (not committed). Host: 156/156 PASS, including the new `class20_1f_popout` and
 L3CB v5. Native: PASS, 0 warnings.
 
@@ -23,5 +23,6 @@ could not start. Host tests cover the cook, the L3CB round trip and the binding.
 
 Not covered:
 - the hit proxy while hidden;
-- record 1585's context byte 0x80;
+- record 1585's context byte 0x80: admitted afterwards from the instructions
+  (bit masked by 0x7F); host-tested only;
 - whether the airborne entrance matches the original (no PCSX-Redux trace).

@@ -97,7 +97,8 @@ std::optional<ActorInitializerProfile> actor_initializer_profile_for(const Stage
 
 std::optional<int16_t> class20_03_initial_hp(uint8_t raw_stats_selector,
                                           uint8_t raw_context_high_byte) {
-    if ((raw_context_high_byte & 0x40u) != 0u) return std::nullopt;
+    // 0x80102528: HP = (byte08 << 4) * ((+0F & 0x7F) + 1). Bit 0x80 is masked.
+    if ((raw_context_high_byte & 0x7fu) != 0u) return std::nullopt;
     return raw_stats_selector == 2 ? int16_t(128) : int16_t(64);
 }
 
@@ -1044,7 +1045,7 @@ bool morph_imported_actor_popout_to_class20_03(ActorAreaRuntime& area, size_t in
     state.previous_angle_5c = state.angle_54;
     state.work_64 = 0;
     Class20_03InitializeInputs input; // parameter 0x40 needs no floor word
-    if (state.flags_0c == 0 && actor.source_context_high_byte == 0) input.source_detection_profile = 4;
+    if (state.flags_0c == 0 && (actor.source_context_high_byte & 0x7fu) == 0) input.source_detection_profile = 4;
     if (class20_03_initialize_scalar_state(state, input) != Class20_03CallbackStatus::SourceBackedPartial)
         return false;
     auto next = actor;
@@ -1155,7 +1156,7 @@ void bind_imported_actor_floor(ImportedActorInstance& actor, int16_t raw_floor_y
         // Both original statistics tables' fresh index0 records select profile4
         // (80036478). This does not establish the HP/global selector. Restrict
         // admission to the source-tested zero context/index inputs.
-        if (actor.source_behavior->flags_0c == 0 && actor.source_context_high_byte == 0)
+        if (actor.source_behavior->flags_0c == 0 && (actor.source_context_high_byte & 0x7fu) == 0)
             input.source_detection_profile = 4;
         // Statistics globals and HP ownership remain unknown. Profile is not
         // inferred here; the initializer binds only independently proved fields.

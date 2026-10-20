@@ -450,6 +450,7 @@ int main() {
     }
     assert(l3::class20_03_initial_hp(0, 0) == 64);
     assert(l3::class20_03_initial_hp(2, 0) == 128);
+    assert(l3::class20_03_initial_hp(1, 0x80) == 64 && !l3::class20_03_initial_hp(1, 0x01) && !l3::class20_03_initial_hp(1, 0x40));
     assert(l3::class20_03_initial_hp(255, 0x80) == 64);
     assert(!l3::class20_03_initial_hp(0, 0x40));
     auto unknown_parameter = stage(1);

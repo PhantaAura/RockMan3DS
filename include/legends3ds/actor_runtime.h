@@ -50,8 +50,8 @@ std::optional<ActorInitializerProfile> actor_initializer_profile_for(
 
 // Fresh class20/03 stats index0 only. The raw global selector at 0x800C1B6B
 // chooses table 0x8008F060 when equal to2, otherwise 0x8008EDC4. Neither input
-// defaults to an assumed game state. Context bit0x40 has additional source
-// arithmetic and remains unsupported; other context bits do not alter this HP.
+// defaults to an assumed game state. 0x80102528 multiplies the HP by
+// ((context & 0x7F) + 1): context 0 and 0x80 are admitted, any low bit holds.
 std::optional<int16_t> class20_03_initial_hp(uint8_t raw_stats_selector,
                                           uint8_t raw_context_high_byte);
 

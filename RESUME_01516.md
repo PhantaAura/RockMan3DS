@@ -14,6 +14,9 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 - RNG caller RA 0x80106378 is admitted.
 - L3CB v5 cooks stats-record byte +0x0B, which action 8 with parameter 0x40
   needs. The pack recipe is now `01516-combat-byte0b-1`.
+- Work +0x0F context 0x80 (record 1585, the first pop-out) is now admitted. The
+  only reader, 0x80102528, masks it with 0x7F, so the HP and record are the same
+  as context 0. Host-tested only.
 - In Azahar, all three corridor pop-outs spring up and turn into subtype 3.
 
 ## Validation
@@ -24,10 +27,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
    against a short PCSX-Redux probe.
-2. Record 1585's work +0x0F = 0x80: trace what the subtype-3 code does with
-   context 0x80, then admit it in L3CB.
-3. The hit proxy for the hidden pop-out (`0x800341BC`, bit 8).
-4. Then, from 0.0.15.15:
+2. The hit proxy for the hidden pop-out (`0x800341BC`, bit 8).
+3. Then, from 0.0.15.15:
    - the `+0x44D` camera writers;
    - tutorial type 16;
    - the top-screen message window and voice.
