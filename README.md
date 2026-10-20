@@ -1,3 +1,14 @@
+# Mega Man Legends 3DS — 0.0.15.13 (enemy attacks)
+
+0.0.15.13: Reaverbots froze when Mega Man got close, and Buster shots could not
+hit them. Their close-range lunge (ST00 action 10) was missing, so they stopped
+updating, hitbox included. The lunge, the hit knockback (action 6) and the
+damaged bounce and self-destruct (action 5) are now ported from the original
+code. Host 153/153 and the native build pass; Azahar pending.
+[Research](docs/research_01513/LATE_ACTIONS_5_6_10.md) · [Resume](RESUME_01513.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.12 (enemy reward pickups)
 
 0.0.15.12: defeated Reaverbots drop the original reward pickups

@@ -5,6 +5,7 @@
 
 namespace l3 {
 struct SourceReactionProfile;
+struct Class20_03MotionWorld;
 
 // Scalar subset of ST00 class20/subtype03 work. Offset names deliberately
 // survive where a full gameplay interpretation has not been established.
@@ -111,6 +112,8 @@ struct Class20_03CallbackState {
     // Reaction actions own these source fields; the actor bridge must retain
     // them with its wall-work velocity and keyed source table identity.
     std::array<int16_t,3> velocity_44{};
+    // Action5 gravity step (+0x4E).
+    int16_t work_4e = 0;
     std::optional<uint32_t> reaction_table_364;
 };
 
@@ -142,7 +145,8 @@ enum class Class20_03CallbackStatus : uint8_t {
     NeedsPlayerHeading,
     NeedsAction4Motion,
     NeedsChildConsumer,
-    NeedsReactionMotion
+    NeedsReactionMotion,
+    NeedsLateActionMotion
 };
 
 enum class Class20_03AnimationOperation : uint8_t { None, Restart, Advance };
@@ -157,6 +161,10 @@ struct Class20_03CallbackResult {
     std::optional<uint16_t> secondary_sound_8001a050;
     std::optional<std::array<uint32_t,2>> sound_pointed_words;
     std::optional<std::array<uint32_t,2>> secondary_sound_pointed_words;
+    std::optional<uint16_t> tertiary_sound_8001a050;
+    std::optional<std::array<uint32_t,2>> tertiary_sound_pointed_words;
+    // Wall wrapper byte74 after an in-body move (actions 5, 6, 10).
+    std::optional<uint8_t> contact_state74;
 };
 
 // Source movement/contact preparation produces these work values after wall
@@ -235,6 +243,8 @@ struct Class20_03CallbackInputs {
         std::optional<int8_t> source_a6;
     };
     std::optional<Action9Motion> prepared_action9;
+    // Actions 5/6/10 move inside the body (class20_03_late_actions.h).
+    const Class20_03MotionWorld* motion_world = nullptr;
     bool release_consumer_ready = false;
     // Exact source defeat tail801027CC..80102848 requires one transaction
     // owning effect allocation, class20 release, reward dispatch and sound161.

@@ -1,4 +1,5 @@
 #include "legends3ds/actor_runtime.h"
+#include "legends3ds/class20_03_late_actions.h"
 #include "legends3ds/child_runtime.h"
 #include "legends3ds/class20_03_behavior.h"
 #include "legends3ds/class20_03_hit.h"
@@ -662,8 +663,23 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
             actor.last_behavior_status=result.status;return result;
         }
     }
+    // Actions 5/6/10 move inside the body with the bridge's own map owners.
+    Class20_03MotionWorld motion_world;
+    if(proxy_tail&&proxy_tail->map&&proxy_tail->references&&actor.floor_bounds){
+        motion_world.map=proxy_tail->map;motion_world.area_index=proxy_tail->area_index;
+        motion_world.references=proxy_tail->references;motion_world.bounds=*actor.floor_bounds;
+        motion_world.object_class=actor.source_class;motion_world.state74=actor.source_contact_state74;
+        if(actor.animation_cursor){
+            const auto raw=actor.animation_cursor->opaque_a6;
+            motion_world.source_a6=raw<128?static_cast<int8_t>(raw):static_cast<int8_t>(int(raw)-256);
+        }
+        source.motion_world=&motion_world;
+    }
     EnemyDefeatDelivery defeat_delivery;
-    const bool defeat_due=(next.behavior.flags_328&0x40u)&&next.defeat_timer_360<=0;
+    // Action5 phase2 expiry stores defeat timer 0 and flags 0x41 inside the
+    // body, so the same callback's tail reaches the defeat owner.
+    const bool action5_expires=next.behavior.action_09==5&&next.behavior.phase_0a==2&&next.behavior.timer_32c<=0;
+    const bool defeat_due=((next.behavior.flags_328&0x40u)&&next.defeat_timer_360<=0)||action5_expires;
     if(defeat_due){
         if(!children||!staged_audio){
             result.status=Class20_03CallbackStatus::NeedsDefeatLifecycle;
@@ -702,7 +718,8 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
             return !id || (staged_audio && produced(enqueue_source_audio_8001a050(*staged_audio,*id,pointed.value_or(words))));
         };
         if(!emit(body.sound_8001a050,body.sound_pointed_words) ||
-           !emit(body.secondary_sound_8001a050,body.secondary_sound_pointed_words)) {
+           !emit(body.secondary_sound_8001a050,body.secondary_sound_pointed_words) ||
+           !emit(body.tertiary_sound_8001a050,body.tertiary_sound_pointed_words)) {
             result.status=Class20_03CallbackStatus::NeedsSoundConsumer;
             actor.last_behavior_status=result.status;return result;
         }
@@ -839,6 +856,10 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
     if(action4 && source.prepared_action4) {
         actor.source_contact_velocity=action4->after_wall.velocity;
         actor.source_contact_state74=action4->after_wall.state74;
+    }
+    if(body.contact_state74){
+        actor.source_contact_velocity=next.velocity_44;
+        actor.source_contact_state74=*body.contact_state74;
     }
     if(source.prepared_reaction&&reaction){
         actor.source_contact_velocity=next.velocity_44;

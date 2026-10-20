@@ -4,6 +4,7 @@
 #include "legends3ds/class20_03_action3.h"
 #include "legends3ds/class20_03_action9.h"
 #include "legends3ds/class20_03_action4.h"
+#include "legends3ds/class20_03_late_actions.h"
 
 namespace l3 {
 namespace {
@@ -471,6 +472,34 @@ Class20_03CallbackResult class20_03_step_state1(
                 result.sound_pointed_words=action.sound_pointed_words;
             }
         }
+    } else if (class20_03_is_late_action(behavior.action_09)) {
+        Class20_03LateActionInputs args;
+        args.world = input.motion_world;
+        if (next.variant_32e == 0) args.combat_record_byte_a = input.combat_record_byte_a;
+        args.target_heading_80031198 = input.action.target_heading_80031198;
+        args.sound_consumer_ready = input.sound_consumer_ready;
+        const auto action = class20_03_step_late_action(next, args);
+        using S = Class20_03LateActionStatus;
+        if (action.status != S::SourceBackedPartial) {
+            auto status = Class20_03CallbackStatus::UnknownAction;
+            switch (action.status) {
+            case S::NeedsCombatProfile: status = Class20_03CallbackStatus::NeedsCombatProfile; break;
+            case S::NeedsTargetHeading: status = Class20_03CallbackStatus::NeedsTargetHeading; break;
+            case S::NeedsAnimationCue: status = Class20_03CallbackStatus::NeedsAnimationCue; break;
+            case S::NeedsSoundConsumer: status = Class20_03CallbackStatus::NeedsSoundConsumer; break;
+            case S::NeedsWorld: case S::UnsupportedBoundary: case S::UnsupportedWall: case S::UnsupportedFloor:
+                status = Class20_03CallbackStatus::NeedsLateActionMotion; break;
+            default: break;
+            }
+            return hold(status);
+        }
+        for (uint8_t i = 0; i < action.sound_count; ++i) {
+            const auto id = action.sounds[i]; const auto words = action.sound_words[i];
+            if (!result.sound_8001a050) { result.sound_8001a050 = id; result.sound_pointed_words = words; }
+            else if (!result.secondary_sound_8001a050) { result.secondary_sound_8001a050 = id; result.secondary_sound_pointed_words = words; }
+            else { result.tertiary_sound_8001a050 = id; result.tertiary_sound_pointed_words = words; }
+        }
+        result.contact_state74 = action.state74_after;
     } else {
         const bool action0_phase2 = behavior.action_09 == 0 && behavior.phase_0a == 2;
         const auto action = class20_03_step_action(behavior, input.action);

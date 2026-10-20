@@ -221,3 +221,11 @@ collect) and collection `0x80046A0C`, which pays money `0x800C1B2C` and energy
 to HP. The 3DS loop expands queued defeat rewards and ticks the pickups. They
 draw as a diagnostic marker until the stage model resource is ported. New
 deterministic test; host 152/152; native build PASS, 0 warnings.
+
+
+# 0.0.15.13 enemy actions 5/6/10
+
+Owner Azahar log of 0.0.15.12: enemies held at action 10 (UnknownAction) once
+close, so their proxies never refreshed and Buster impacts stayed 0. Ported
+ST00 0x80103DFC (lunge), 0x80103554 (knockback) and 0x8010324C (damaged bounce,
+then HP 0 + flags 0x41 into the defeat tail). Host 153/153, native PASS.

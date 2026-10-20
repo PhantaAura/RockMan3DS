@@ -78,6 +78,7 @@ add_library(legends3ds_core STATIC
     src/world/class20_03_action4.cpp
     src/world/retail_rng_tape.cpp
     src/world/class20_03_action9.cpp
+    src/world/class20_03_late_actions.cpp
     src/world/class20_03_action3.cpp
     src/world/actor_runtime.cpp
     src/world/class20_03_behavior.cpp
@@ -1079,3 +1080,8 @@ add_executable(test_map_edge tests/test_map_edge.cpp)
 target_link_libraries(test_map_edge PRIVATE legends3ds_core)
 target_compile_options(test_map_edge PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME map_edge COMMAND test_map_edge)
+
+add_executable(test_class20_03_late_actions tests/test_class20_03_late_actions.cpp)
+target_link_libraries(test_class20_03_late_actions PRIVATE legends3ds_core)
+target_compile_options(test_class20_03_late_actions PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME class20_03_late_actions COMMAND test_class20_03_late_actions)
