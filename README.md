@@ -1,3 +1,15 @@
+# Mega Man Legends 3DS — 0.0.15.15 (tutorial radio)
+
+0.0.15.15: walking down the first corridor now triggers Roll's radio call, as
+in the original. Mega Man stops, a message box on the bottom screen shows her
+lines and the firing and lock-on instructions, and "Read instructions again?"
+offers Yes/No. Choosing No releases him, and the next trigger ("Turn right
+there.") follows. This is the original ST00 tutorial trigger controller,
+ported from the game's own code.
+[Results](docs/validation_01515/RESULTS.md) · [Resume](RESUME_01515.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.14 (Buster shot, combat loop)
 
 0.0.15.14: Buster shots now hit. The port was firing the wrong weapon lane: a

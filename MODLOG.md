@@ -239,3 +239,12 @@ the original: Square fires +171 = subtype 0x81 from the hand. Ported
 0x800437F8/0x80043A8C/0x80043E78/0x80043E00 and effect 0x82. Added the opt-in
 diagnostic_autoplay.txt for unattended Azahar runs. Host 154/154, native PASS,
 Azahar scripted combat/reward/door loop PASS by trace.
+
+
+# 0.0.15.15 tutorial message triggers (E0/06) and message box
+
+Ported the ST00 E0/06 controller 0x80114424 (walker 0x80114504, handlers
+0x8011CB24 types 0-15) with owner-local L3TR lists, a tutorial dialogue mode
+(inline controls, CALL/MULTI/CLOSE) and a bottom-screen message box with
+decoded glyphs. Azahar: the first radio call and the type-2 message match the
+original order.
