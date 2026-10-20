@@ -15,6 +15,13 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.11 (`319893e
 ## Validation
 `docs/validation_01512/RESULTS.md`: host 152/152, native PASS. Azahar pending.
 
+2026-10-20 cloud session (Linux, no Azahar, no devkitARM, no retail data):
+the Azahar run cannot be done there. Host re-check with Clang 18 passes
+151/151; the 152nd test (the renderer guard) only registers when
+`arm-none-eabi-gcc` is found. GCC 13 fails the host build on
+`-Werror=misleading-indentation` / `range-loop-construct` in about 50 test
+files. This is a pre-existing GCC-only style issue, so use Clang on Linux.
+
 ## World Comes Alive status
 | System | Status |
 |---|---|
