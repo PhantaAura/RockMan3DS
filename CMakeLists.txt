@@ -1102,3 +1102,8 @@ add_executable(test_class20_1f_popout tests/test_class20_1f_popout.cpp)
 target_link_libraries(test_class20_1f_popout PRIVATE legends3ds_core)
 target_compile_options(test_class20_1f_popout PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME class20_1f_popout COMMAND test_class20_1f_popout)
+
+add_executable(test_frontend_handedness tests/test_frontend_handedness.cpp)
+target_link_libraries(test_frontend_handedness PRIVATE legends3ds_core)
+target_compile_options(test_frontend_handedness PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME frontend_handedness COMMAND test_frontend_handedness)

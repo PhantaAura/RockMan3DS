@@ -1,8 +1,8 @@
 # 0.0.15.16 validation: subtype-0x1F pop-out Reaverbot
 
-Build: `pass-20261020-184551-m2-01516`. `Legends3DS.3dsx` is 1,024,020 B,
-SHA-256 `3aa1e885d85f3739387404e95fdd1e134ce981666cf92ed7f13f841dae0ffdc4`
-(not committed). Host: 156/156 PASS, including the new `class20_1f_popout` and
+Build: `pass-20261020-185103-m2-01516`. `Legends3DS.3dsx` is 1,023,904 B,
+SHA-256 `e2878cb96eedbf9766e3f75b18ad0aa05f2a768b507dd975c614dcccda91924f`
+(not committed). Host: 157/157 PASS, including the new `class20_1f_popout` and
 L3CB v5. Native: PASS, 0 warnings.
 
 **Azahar 2126.0 (Old 3DS).** Normal boot with `autoplay/popout_corridor.txt`;
@@ -26,3 +26,31 @@ Not covered:
 - record 1585's context byte 0x80: admitted afterwards from the instructions
   (bit masked by 0x7F); host-tested only;
 - whether the airborne entrance matches the original (no PCSX-Redux trace).
+
+## Left-right mirror (gameplay camera)
+
+The gameplay view drew the world mirrored. Vertices are (x, −y, z) and the
+LookAt is a pure rotation, but flipping Y needs a reflection.
+`test_frontend_handedness` shows the gap:
+- At the tutorial start, the port's copy of the original 0x80037FB4 camera plus
+  RTPS (OFX 160, H 384) puts a point 300 units toward −x at sx 248, on the right.
+- The un-flipped LookAt put that point on the left.
+
+The 3DS LookAt path now negates camera-space x (projection column 0). The cutscene
+path (source scene view) already applies diag(1,−1,−1)·R·diag(1,−1,1) and is
+unchanged.
+
+**Azahar check** (same idle start, old vs new build): the top-screen image is
+an exact horizontal mirror of the old one; the bright wall panels at x≈95/365
+moved to ≈527/257.
+
+**Bottom-screen HUD and text:** these are drawn in software to the bottom
+framebuffer, so the flip can't reach them. They read normally in the new build.
+
+**Steering:** D-pad Right sends the original turn mask 0x0800 and raises the yaw
+(trace: 0→108). Facing −z, that turns toward −x, which is the original's
+screen-right, so after the flip Right also turns right on screen. No input
+change was needed.
+
+**Seen but not part of this fix:** in both builds the top screen looks doubled
+and blurry at the idle start, and Mega Man isn't visible.

@@ -3739,6 +3739,13 @@ int main() {
                 throw std::runtime_error("top screen: C3D_FrameDrawOn rejected");
             }
             C3D_BindProgram(&g_shader_program);
+            // World vertices are (x, -y, z) and Mtx_LookAt is a rotation, so the
+            // LookAt path showed the scene mirrored left-right (facing -z the PS1
+            // GTE has screen-right = -x). Negate camera-space x to restore the
+            // GTE's handedness. The source scene view already carries the exact
+            // diag(1,-1,-1)*R*diag(1,-1,1) conversion and is left as is.
+            if(!source_camera_bound)
+                for(auto& row:frame_projection.r)row.x=-row.x;
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_projection,&frame_projection);
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_model_view,&view);
             if(g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly)draw_terrain();

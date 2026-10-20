@@ -19,11 +19,18 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   as context 0. Host-tested only.
 - In Azahar, all three corridor pop-outs spring up and turn into subtype 3.
 
+- The gameplay view was mirrored left-right. The LookAt path now negates
+  camera-space x; `test_frontend_handedness` proves the original puts −x
+  on screen-right. The HUD and steering are unaffected.
+
 ## Validation
-`docs/validation_01516/RESULTS.md`: host 156/156, native PASS, Azahar trace (pop-out
+`docs/validation_01516/RESULTS.md`: host 157/157, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
+0. The top screen looks doubled/blurry at the idle start and Mega Man isn't
+   visible (old and new build alike). Investigate the renderer gate and the
+   player draw.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
    against a short PCSX-Redux probe.

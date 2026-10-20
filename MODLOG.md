@@ -257,3 +257,7 @@ Ported ST00 callback 0x801062EC: init 0x8010648C, wait 0x801066D8, lunge
 into subtype 3 with parameter 0x40. Also added RNG RA 0x80106378 and L3CB v5
 (record byte +0x0B). Azahar: three pop-outs trigger and hand off by trace; the
 byte-0x0B fix is host-only.
+
+Left-right mirror: the gameplay LookAt view over (x, −y, z) vertices was
+mirrored against the original GTE camera. Camera-space x is now negated on
+that path. test_frontend_handedness: 157/157.
