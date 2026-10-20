@@ -15,3 +15,7 @@ Azahar 2126.0, Old 3DS model, keyboard input. Build SHA-256 matches the
 
 Not covered: lock-on with an enemy straight ahead; physical Old 3DS. Logs are
 kept owner-local; they are not committed.
+
+**Follow-up (0.0.15.11):** the shot was spawned. The CSV `projectiles` column
+counts the retired candidate projectile, and the diagnostic ribbon had zero
+length. See `docs/research_01511/BUSTER_SHOT_PRESENTATION.md`.

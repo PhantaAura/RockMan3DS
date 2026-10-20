@@ -20,6 +20,13 @@
 //     run beside phase 2 over the package's render source. Every descriptor
 //     generation change re-plans; both doors must be hidden and restored, and
 //     the open descriptor's primitive count is reported (not a pass gate).
+//  4. Buster (0.0.15.11): the Azahar diagnostic spawn (-334,-1,-5750) heading
+//     0. Three Y presses run the 3DS main.cpp chain: fire admission, integer
+//     pose 0x800325D4, muzzles 0x800331A0, callbacks 0x80017154, then lock-on
+//     0x80034EB8 with the 0x80037FB4 camera and 0x80035724. Each press must
+//     spawn one shot whose registered segment (owner point -> +400/+418
+//     endpoint) is non-zero on all 10 state-1 frames, then release. The
+//     endpoint is still the CANDIDATE forward ray used by main.cpp.
 //   l3door_replay BOOT.mmlpkg TUTORIAL_DIR [--no-init] [--trace]
 // Output contains only counts and coordinates; no retail payload.
 #include "legends3ds/area_package.h"
@@ -30,6 +37,13 @@
 #include "legends3ds/render/area_placement.h"
 #include "legends3ds/render/positive_terrain.h"
 #include "legends3ds/render/terrain_descriptor_patch.h"
+#include "legends3ds/child_runtime.h"
+#include "legends3ds/gameplay_gates.h"
+#include "legends3ds/source_buster_profile.h"
+#include "legends3ds/source_camera.h"
+#include "legends3ds/source_player_buster.h"
+#include "legends3ds/source_player_pose.h"
+#include "legends3ds/source_scene_view.h"
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -132,6 +146,94 @@ struct PatchObserver {
     }
 };
 int16_t lane16(const SourceEventHandoffTransitionIntent& t,size_t at){return int16_t(uint16_t(t.raw[at]|(uint16_t(t.raw[at+1])<<8)));}
+// Phase 4. Mirrors the platform/3ds main.cpp source-actor block for the player
+// only (no imported actors, so the proxy bank stays empty and no target can be
+// selected, as in the Azahar run where broad/window were -1).
+struct BusterReplay {
+    int presses=0,admitted=0,spawned=0,released=0,state1_frames=0,zero_segments=0,drawn_segments=0,final_live=-1;
+    long max_length=0;
+    bool pass=false;
+};
+BusterReplay run_buster(const Inputs& in,Built& b){
+    BusterReplay r;auto& s=*b.session;
+    const auto refs=load_l3reference(read_file(in.root/"reference.l3ref"),true);
+    const auto skeleton=load_l3skeleton(read_file(in.root/"player/main.l3skel"),true);
+    SourceBusterPlayer player;
+    initialize_source_buster_fresh_lanes_80037534(load_source_buster_profile(read_file(in.root/"player/buster.l3bp"),true),player);
+    SourcePlayerTargetProfile target;
+    if(!decode_source_player_target_profile(read_file(in.root/"player/target.l3tg"),target)||!target.image_target_mode_80097d02)
+        throw std::runtime_error("L3TG v2 required");
+    SourceGteRtpsState gte;
+    {SourceProjectionControls pc;source_projection_init_geom_8007a4f0(pc);
+     (void)initialize_source_scene_projection_80011f48(pc,load_source_scene_view_profile(read_file(in.root/"source_scene_view.l3sv")));
+     (void)bind_source_projection_controls(gte,pc);}
+    auto children=std::make_unique<ChildRuntime>();
+    std::optional<uint32_t> mask=0xffu;
+    s.reset_player({-334,-1,-5750},0,100,100);
+    auto track=pbd_main_body_track_begin(b.anim,s.compat_player().bytes[0xAC],s.compat_player().bytes[0xA4]);
+    const auto pack=[](int32_t x,int32_t y,int32_t z){
+        const auto v=[](int32_t n){return uint16_t(int16_t(std::clamp(n,int32_t(INT16_MIN),int32_t(INT16_MAX))));};
+        return std::array<uint32_t,2>{{uint32_t(v(x))|(uint32_t(v(y))<<16),uint32_t(v(z))}};};
+    for(int f=0;f<200;++f){
+        RuntimeInputFrame input{};
+        if(f==60||f==100||f==140){input.fire_pressed=true;input.held_psx_mask=input.pressed_psx_mask=0x0800;++r.presses;}
+        const bool fire=source_buster_fire_admitted(true,input.fire_pressed,s.player_shot_enabled(),s.player_busy_8004324c());
+        r.admitted+=fire;
+        (void)runtime_animation_prepare(b.anim,track,s);s.tick(input);
+        children->reset_frame_queues();
+        const auto& pw=s.compat_player().bytes;
+        SourcePlayerPoseInputs pose;pose.skeleton=&skeleton;pose.reference=&refs;pose.scratch_shift_1f800074=0;
+        pose.limb_pose_selector_106=pw[0x106];
+        std::optional<PbdMainPoseBank> bank;
+        if(const auto* frame=pbd_main_body_track_frame(b.anim,track)){bank=decode_pbd_main_pose_bank(*frame);pose.primary_pose=&*bank;}
+        const auto p=s.player_position();
+        pose.player_position_14={{int16_t(p.x),int16_t(p.y),int16_t(p.z)}};
+        pose.heading_56=uint16_t(pw[0x56]|(uint16_t(pw[0x57])<<8));
+        pose.heading_offset_116=uint16_t(pw[0x116]|(uint16_t(pw[0x117])<<8));
+        const auto muzzle=source_player_muzzles_800331a0(produce_source_player_integer_pose_800325d4(pose));
+        const bool muzzle_bound=bind_source_player_muzzles_80035724(muzzle,player);
+        player.class_01=pw[1];player.heading_56=pose.heading_56;
+        SourceBusterFrameContext ctx;ctx.owner_position_14=pack(p.x,p.y,p.z);
+        if(muzzle_bound){
+            // main.cpp CANDIDATE forward ray (0x800) for +400/+418.
+            const auto& d=refs.trig[pose.heading_56&0x0fffu];
+            const int32_t dx=-int32_t((int64_t(d.sin_q12)*0x800)/4096),dz=-int32_t((int64_t(d.cos_q12)*0x800)/4096);
+            ctx.owner_endpoint_400=pack(int16_t(muzzle.muzzle_3c8_part4[0])+dx,int16_t(muzzle.muzzle_3c8_part4[1]),int16_t(muzzle.muzzle_3c8_part4[2])+dz);
+            ctx.owner_endpoint_418=pack(int16_t(muzzle.muzzle_3e0_part7[0])+dx,int16_t(muzzle.muzzle_3e0_part7[1]),int16_t(muzzle.muzzle_3e0_part7[2])+dz);
+        }
+        std::optional<uint32_t> busy=s.source_buster_busy_198();
+        ctx.owner_busy_198=&busy;ctx.proxy_mask_80098798=&mask;ctx.map_collision_80049c24=false;ctx.audio=&s.source_audio_queue();
+        const auto tick=children->tick_source_busters_80017154(ctx);
+        if(busy)s.set_source_buster_busy_198(*busy);
+        r.released+=tick.released;
+        const auto& camera=s.source_gameplay_camera();
+        if(camera.initialized&&s.camera().owner==RuntimeCameraOwner::Gameplay&&muzzle_bound){
+            SourcePlayerBusterInputs select;select.active=true;select.target_mode_49e=*target.image_target_mode_80097d02;
+            select.fire_flags_174=uint8_t(fire?0x10u:0u);select.player_point_14=pose.player_position_14;
+            select.target_profile_8008994c=target;select.camera_1f800008=camera.camera_1f800008;
+            const auto lock=source_player_select_and_spawn_80034eb8(*children,gte,player,mask,select);
+            if(lock.spawn_attempted[1]&&lock.spawns[1].status==SourceBusterStatus::SourceBackedPartial&&lock.spawns[1].source_identity)++r.spawned;
+        }
+        children->consume_pending_releases();
+        (void)runtime_animation_finish(b.anim,track,s);
+        const auto& pool=children->buster_pool();
+        for(size_t slot=0;slot<source_buster_capacity;++slot){
+            if(!(pool.allocated_800989f0&(0x80000000u>>slot)))continue;
+            const auto& w=pool.slots[slot];
+            if(!(int8_t(w[0])&w[6]&1)||w[2]!=0x80||w[8]!=1)continue;
+            const auto& seg=children->buster_registered_segments()[slot];
+            long length=0;for(size_t a=0;a<3;++a)length+=std::labs(long(seg.first_14[a])-long(seg.second_2c[a]));
+            // The state-0 registration is endpoint to endpoint by design
+            // (one frame per shot); the ten state-1 frames must not be.
+            if(!length)++r.zero_segments;else ++r.drawn_segments;
+            ++r.state1_frames;r.max_length=std::max(r.max_length,length);
+        }
+    }
+    r.final_live=__builtin_popcount(children->buster_pool().allocated_800989f0);
+    r.pass=r.presses==3&&r.admitted==3&&r.spawned==3&&r.released==3&&r.state1_frames==33&&
+        r.zero_segments==3&&r.drawn_segments==30&&r.max_length>0&&r.final_live==0;
+    return r;
+}
 } // namespace
 
 int main(int argc,char** argv){
@@ -219,7 +321,10 @@ int main(int argc,char** argv){
         // Both doors (Area 1, then Area 2 after the rebake) collapse and come back.
         const bool patch_pass=patch.hides>=1&&patch.restores>=1&&patch.changes>=2&&patch.max_overlay_idx==1&&
             !patch.patch.hidden(patch.door_idx);
-        const bool pass=fall_pass&&door_pass&&patch_pass;
+        // Phase 4: Buster fire from the Azahar diagnostic spawn.
+        auto g=build(inputs);
+        const auto buster=run_buster(inputs,g);
+        const bool pass=fall_pass&&door_pass&&patch_pass&&buster.pass;
         std::printf("{\"map_initialization_applied\":%s,\"map_initialization_writes\":%u,\"frames\":40,"
                     "\"floorless_frames\":%d,\"airborne_frames\":%d,\"below_floor_frames\":%d,"
                     "\"door_slab_contacts\":%d,\"first_failure_frame\":%d,\"final\":[%d,%d,%d],\"fall_result\":\"%s\",\n"
@@ -231,6 +336,9 @@ int main(int argc,char** argv){
                     "\"event_frames_after_commit\":%d,\"final\":[%d,%d,%d],\"floorless_frames\":%d,\"result\":\"%s\"},\n"
                     " \"terrain_patch\":{\"generation_changes\":%d,\"hides\":%d,\"restores\":%d,\"max_overlay_idx\":%d,\"max_tracked_idx\":%zu,\"max_spans\":%zu,"
                     "\"last_door_idx\":%u,\"closed_descriptor\":%u,\"open_descriptor\":%u,\"closed_mid_prims\":%zu,\"open_mid_prims\":%zu,\"result\":\"%s\"},\n"
+                    " \"buster\":{\"presses\":%d,\"admitted\":%d,\"spawned\":%d,\"released\":%d,\"state1_frames\":%d,"
+                    "\"zero_length_frames\":%d,\"drawn_segment_frames\":%d,\"max_segment_length\":%ld,\"live_after\":%d,"
+                    "\"endpoint\":\"CANDIDATE_FORWARD_RAY\",\"result\":\"%s\"},\n"
                     " \"result\":\"%s\"}\n",
             b.applied?"true":"false",b.writes,floorless,airborne,below_floor,door_contacts,first_fail,
             last.x,last.y,last.z,fall_pass?"PASS":"FAIL",
@@ -243,7 +351,10 @@ int main(int argc,char** argv){
             event_frames,final_pos.x,final_pos.y,final_pos.z,door_floorless,door_pass?"PASS":"FAIL",
             patch.changes,patch.hides,patch.restores,patch.max_overlay_idx,patch.max_baked,patch.max_spans,unsigned(patch.door_idx),
             unsigned(patch.closed_descriptor),unsigned(patch.open_descriptor),patch.closed_prims,patch.open_prims,
-            patch_pass?"PASS":"FAIL",pass?"PASS":"FAIL");
+            patch_pass?"PASS":"FAIL",
+            buster.presses,buster.admitted,buster.spawned,buster.released,buster.state1_frames,
+            buster.zero_segments,buster.drawn_segments,buster.max_length,buster.final_live,buster.pass?"PASS":"FAIL",
+            pass?"PASS":"FAIL");
         return pass?0:1;
     }catch(const std::exception& e){std::fprintf(stderr,"%s\n",e.what());return 2;}
 }

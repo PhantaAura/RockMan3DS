@@ -1579,21 +1579,26 @@ void draw_projectiles_uv(const l3::RuntimeSession& session) {
     C3D_ImmDrawEnd();
 }
 
-// Native presentation of the live source Buster collision segment (record
-// +2C/+30 owner point to +14/+18 endpoint) during callback state 1. This is a
-// FRONTEND_DIAGNOSTIC ribbon: the original shot sprite/effect renderer is not
-// ported, and the +400/+418 endpoint owner is still a CANDIDATE forward ray.
+// Native presentation of the live source Buster collision segment during
+// callback state 1: the owner point (+2C/+30 as written by 0x800434F0) to the
+// +14/+18 endpoint, as registered through 0x8003430C. It reads the recorded
+// registration because 0x80043708..24 copies +14 over +2C right after it; the
+// work fields alone always give a zero-length segment (0.0.15.0..0.0.15.10).
+// This is a FRONTEND_DIAGNOSTIC ribbon: the original shot sprite/effect
+// renderer is not ported, and the +400/+418 endpoint owner is still a
+// CANDIDATE forward ray.
 size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
     const auto& pool=children.buster_pool();
-    const auto s16=[](const l3::SourceBusterWork& w,size_t o){return float(int16_t(uint16_t(w[o]|(uint16_t(w[o+1])<<8))));};
+    const auto& segments=children.buster_registered_segments();
     size_t drawn=0;
     for(size_t slot=0;slot<l3::source_buster_capacity;++slot){
         if(!(pool.allocated_800989f0&(0x80000000u>>slot)))continue;
         const auto& w=pool.slots[slot];
         if(!(int8_t(w[0])&w[6]&1)||w[2]!=0x80||w[8]!=1)continue;
         if(!drawn){configure_texenv_uv(false);configure_immediate_attributes_uv();++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);}
-        const float ax=s16(w,0x2c),ay=s16(w,0x2e),az=s16(w,0x30);
-        const float bx=s16(w,0x14),by=s16(w,0x16),bz=s16(w,0x18);
+        const auto& segment=segments[slot];
+        const float ax=segment.second_2c[0],ay=segment.second_2c[1],az=segment.second_2c[2];
+        const float bx=segment.first_14[0],by=segment.first_14[1],bz=segment.first_14[2];
         constexpr float h=6.0f;
         send_immediate_uv(ax,ay-h,az,1.0f,0.95f,0.3f);send_immediate_uv(bx,by-h,bz,1.0f,0.95f,0.3f);send_immediate_uv(bx,by+h,bz,1.0f,1.0f,0.6f);
         send_immediate_uv(ax,ay-h,az,1.0f,0.95f,0.3f);send_immediate_uv(bx,by+h,bz,1.0f,1.0f,0.6f);send_immediate_uv(ax,ay+h,az,1.0f,1.0f,0.6f);
@@ -3305,11 +3310,12 @@ int main() {
                                 buster_spawn=g_children.spawn_source_buster_80035724(
                                     source_buster_player,1,-1,source_buster_proxy_mask);
                             if(source_buster_fire_pressed||buster_tick.committed||buster_tick.held)
-                                hardware_test_trace("# source_buster_runtime,frame=%lu,fire_edge=%u,spawn_status=%u,identity=%08lx,callback_status=%u,committed=%u,held=%u,registered=%u,impacts=%u,released=%u,producer=80035724,callback=800433C0,packet=28000008,damage=8,endpoint_owner_400_418=CANDIDATE_FORWARD_RAY,map_bounds_owner_78=UNKNOWN,retail_cadence=false",
+                                hardware_test_trace("# source_buster_runtime,frame=%lu,fire_edge=%u,spawn_status=%u,identity=%08lx,callback_status=%u,committed=%u,held=%u,registered=%u,impacts=%u,released=%u,live=%u,producer=80035724,callback=800433C0,packet=28000008,damage=8,endpoint_owner_400_418=CANDIDATE_FORWARD_RAY,map_bounds_owner_78=UNKNOWN,retail_cadence=false",
                                     (unsigned long)session.frame_counter(),unsigned(source_buster_fire_pressed),
                                     unsigned(buster_spawn.status),(unsigned long)buster_spawn.source_identity,
                                     unsigned(buster_tick.status),unsigned(buster_tick.committed),unsigned(buster_tick.held),
-                                    unsigned(buster_tick.registered),unsigned(buster_tick.impacts),unsigned(buster_tick.released));
+                                    unsigned(buster_tick.registered),unsigned(buster_tick.impacts),unsigned(buster_tick.released),
+                                    unsigned(__builtin_popcount(g_children.buster_pool().allocated_800989f0)));
                             if(lock_on&&(source_buster_fire_pressed||session.frame_counter()%60u==0u))
                                 hardware_test_trace("# source_lock_on,frame=%lu,status=%u,proxy_status=%u,projected=%lu,broad=%ld,window=%ld,player_depth_plus_50=%u,camera=80037FB4,pad_1f8000f2=RETAINED_UNKNOWN,shift=%u,packed_trig_substitutions=%lu,active=CANDIDATE,fire_174=CANDIDATE_Y,target_mode=IMAGE_80097D02_CANDIDATE",
                                     (unsigned long)session.frame_counter(),unsigned(lock_on->status),unsigned(lock_on->proxy_status),
@@ -3486,7 +3492,13 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)submitted,unsigned(source_camera_bound));
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){if(use_uv_renderer())draw_projectiles_uv(session);else draw_projectiles_0143(session);}
-            if(source_combat_active&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All)(void)draw_source_busters_uv(g_children);
+            if(source_combat_active&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) {
+                // The CSV "projectiles" column counts the retired candidate
+                // projectiles; source Buster shots are reported here instead.
+                if(const auto drawn=draw_source_busters_uv(g_children))
+                    hardware_test_trace("# source_buster_draw,frame=%lu,drawn=%lu,segment=8003430C_REGISTRATION,presentation=FRONTEND_DIAGNOSTIC",
+                        (unsigned long)session.frame_counter(),(unsigned long)drawn);
+            }
             const auto scene_overlay=g_source_event_boot&&g_hardware_scene_draw==HardwareSceneDraw::All?session.source_event_scene_overlay():std::nullopt;
             const bool scene_overlay_submitted=scene_overlay&&scene_overlay->subtract_from_scene&&
                 scene_overlay->source_function==0x80100614u&&

@@ -1,3 +1,17 @@
+# Mega Man Legends 3DS — 0.0.15.11 (visible Buster shot)
+
+0.0.15.11: in 0.0.15.10, pressing Y fired a Buster shot, but nothing appeared on
+screen. The shot was spawned, but its diagnostic ribbon always had zero length:
+the original code copies the shot's end point over its start point right after
+registering the hit segment. The ribbon now draws the registered segment, from
+Mega Man to the end of the shot. The shot's length (a fixed forward ray) is
+still CANDIDATE. In Azahar, 5 of 5 presses spawn and draw a shot (trace). On
+screen it is only a short sliver, because the camera sees the ray end-on.
+[Research](docs/research_01511/BUSTER_SHOT_PRESENTATION.md) ·
+[Results](docs/validation_01511/RESULTS.md) · [Resume](RESUME_01511.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.10 (original lock-on)
 
 0.0.15.10: the gameplay camera now also produces its original `0x1F800008`

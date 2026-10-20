@@ -7,7 +7,7 @@ endif
 TOPDIR ?= $(CURDIR)
 include $(DEVKITARM)/3ds_rules
 
-TARGET      := Legends3DS_01510_WorldComesAlive
+TARGET      := Legends3DS_01511_WorldComesAlive
 BUILD       := build_3ds
 SOURCES     := source \
                ../../src/world ../../src/model ../../src/texture ../../src/render \
@@ -24,7 +24,7 @@ ASFLAGS     := -g $(ARCH)
 LDFLAGS     := -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map),--gc-sections
 LIBS        := -lcitro3d -lctru -lm
 LIBDIRS     := $(CTRULIB)
-APP_TITLE   := Legends3DS 0.0.15.10 Source Lock-on
+APP_TITLE   := Legends3DS 0.0.15.11 Buster Shot
 APP_DESCRIPTION := Automatic top-screen diagnostics
 APP_AUTHOR  := Legends3DS Project
 

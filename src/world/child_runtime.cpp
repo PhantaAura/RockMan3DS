@@ -92,6 +92,7 @@ void ChildRuntime::initialize() noexcept {
     initialize_class60_source_pool_8002e8d8(pool_);
     initialize_source_effect_pool_8002e924(effects_);
     initialize_source_buster_pool_8002e7f4(busters_);
+    buster_segments_={};
     rewards_={};
     proxies_.count=0;registry_.count=0;shadows_.count=0;
     owner_identities_.fill(0);owner_points_={};
@@ -197,6 +198,10 @@ SourceBusterBatch ChildRuntime::tick_source_busters_80017154(
         const auto commit_registration=[&](SourceHitProxyCompositeRegistration input) {
             buster_targets_[slot]=target;input.target=&buster_targets_[slot];
             (void)source_hit_proxy_register_composite_8003430c(proxies_,input);
+            const auto point=[](const std::array<uint32_t,2>& words) {
+                return std::array<int16_t,3>{{int16_t(uint16_t(words[0])),int16_t(uint16_t(words[0]>>16)),int16_t(uint16_t(words[1]))}};
+            };
+            buster_segments_[slot]={point(input.first_words),point(input.second_words)};
             write32(next,0xc4,buster_targets_[slot].packet_00);
             write32(next,0xc8,buster_targets_[slot].flags_04);
             for(size_t axis=0;axis<3;++axis)write16(next,0xcc+axis*2,uint16_t(buster_targets_[slot].point_08[axis]));

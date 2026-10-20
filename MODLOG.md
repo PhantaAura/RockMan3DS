@@ -201,3 +201,13 @@ quarter table (L3RF v2); 0.0.15.9 had used the packed RotMatrix table. The 3DS
 loop binds the InitGeom + `0x80011F48` projection and runs lock-on `0x80034EB8`
 with the source camera and the L3TG v2 window/mode. Some inputs are CANDIDATE;
 see docs/research_01510.
+
+## 0.0.15.11
+
+Azahar 0.0.15.10 saw no Buster shot. The host replay shows it was spawned and
+ran its 11 frames. The diagnostic ribbon drew shot +2C → +14, which
+`0x80043708..24` makes equal right after `0x8003430C` (R3000-verified), so it
+was empty since 0.0.15.0. `ChildRuntime` now records the registered segment and
+the ribbon draws it. CSV `projectiles` counts the retired candidate projectile;
+new traces `live=` and `# source_buster_draw` report source shots. Tests:
+`test_child_runtime` segment case, `l3door_replay` phase 4.

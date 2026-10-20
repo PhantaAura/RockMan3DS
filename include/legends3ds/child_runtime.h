@@ -128,6 +128,15 @@ struct SourceBusterSpawn {
     int32_t lease_index=-1;
     bool counter_written=false;
 };
+// The segment the subtype-80 callback last handed to 0x8003430C: first = +14/+18
+// (the endpoint just read from player +400/+418), second = +2C/+30 before
+// 0x80043708..24 copies +14 over it (in state 1, the owner +14 written by
+// 0x800434F0). After that copy both fields are equal, so presentation must read
+// this record, not the work. Native bookkeeping only; gameplay never reads it.
+struct SourceBusterSegment {
+    std::array<int16_t,3> first_14{};
+    std::array<int16_t,3> second_2c{};
+};
 enum class SourceBusterCallbackStatus : uint8_t {
     SourceBackedPartial,Inactive,InvalidPool,UnsupportedSubtype,UnknownState,
     NeedsOwnerPosition,NeedsOwnerEndpoint,NeedsOwnerBusy,NeedsProxyMask,
@@ -168,6 +177,7 @@ public:
     const SourceEnemyRewardQueue& enemy_reward_queue() const noexcept {return rewards_;}
     const SourceBusterPool& buster_pool() const noexcept { return busters_; }
     const std::array<SourceHitProxyTarget,source_buster_capacity>& buster_proxy_targets() const noexcept { return buster_targets_; }
+    const std::array<SourceBusterSegment,source_buster_capacity>& buster_registered_segments() const noexcept { return buster_segments_; }
     // Original80035724 scalar producer + real80031598 allocation and3545C
     // lease. Target comes from this owner's registered proxy bank. Missing
     // admitted player/table fields hold all owners atomically. This does not
@@ -234,6 +244,7 @@ private:
     SourceEnemyRewardQueue rewards_{};
     SourceBusterPool busters_{};
     std::array<SourceHitProxyTarget,source_buster_capacity> buster_targets_{};
+    std::array<SourceBusterSegment,source_buster_capacity> buster_segments_{};
     std::array<SourceHitProxyTarget,class60_pool_capacity> targets_{};
     SourceHitProxyBank proxies_{};
     SourceCollisionRegistry registry_{};

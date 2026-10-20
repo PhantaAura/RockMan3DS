@@ -393,9 +393,53 @@ void buster_normal_hit_chain(){
     require(allocations==allocations_before,"normal Buster callback/hit chain allocated heap");
     std::cout<<"normal80 spawn -> callback -> segment -> enemy packet -> 8HP -> effect84/release PASS\n";
 }
+// 0.0.15.10 Azahar: Y fired but no shot was seen. 0x80043708..24 copies +14
+// over +2C right after 0x8003430C, so the work fields are equal whenever the
+// frontend reads them. The registered segment must keep the 0x800434F0 owner
+// point (+2C) and the +400/+418 endpoint (+14) for every state-1 frame.
+void buster_registered_segment_presentation(){
+    ChildRuntime owner;auto player=authored_buster_player(0,4,0x80);
+    std::optional<uint32_t> mask=0;
+    require(owner.spawn_source_buster_80035724(player,1,-1,mask).status==SourceBusterStatus::SourceBackedPartial,
+        "segment Buster source producer failed");
+    auto audio=authored_audio();std::optional<uint32_t> busy=9;
+    const auto words=[](int16_t x,int16_t y,int16_t z){
+        return std::array<uint32_t,2>{{uint32_t(uint16_t(x))|(uint32_t(uint16_t(y))<<16),uint16_t(z)}};};
+    SourceBusterFrameContext frame;
+    frame.owner_position_14=words(-334,-1,-5750);
+    frame.owner_endpoint_400=words(-370,-77,-7829);frame.owner_endpoint_418=frame.owner_endpoint_400;
+    frame.owner_busy_198=&busy;frame.proxy_mask_80098798=&mask;
+    frame.map_collision_80049c24=false;frame.audio=&audio;
+    const std::array<int16_t,3> endpoint{{-370,-77,-7829}};
+    const auto first=owner.tick_source_busters_80017154(frame);
+    const auto& segment=owner.buster_registered_segments()[0];
+    require(first.registered==1&&owner.buster_pool().slots[0][8]==1&&segment.first_14==endpoint&&segment.second_2c==endpoint,
+        "state0 registration is not endpoint to endpoint");
+    int state1_frames=0;
+    for(int f=0;f<20&&owner.buster_pool().slots[0][8]==1;++f){
+        frame.owner_position_14=words(int16_t(-334),-1,int16_t(-5750+f));
+        const auto tick=owner.tick_source_busters_80017154(frame);
+        if(tick.released){
+            require(owner.buster_pool().pending_release_80098a60==0x80000000u,"timer expiry did not mark release");
+            break;
+        }
+        ++state1_frames;
+        const auto& w=owner.buster_pool().slots[0];
+        require(tick.registered==1&&read32(w,0x2c)==read32(w,0x14)&&read32(w,0x30)==read32(w,0x18),
+            "original 0x80043708 copy of +14 over +2C missing");
+        require(segment.first_14==endpoint&&segment.second_2c==std::array<int16_t,3>{{-334,-1,int16_t(-5750+f)}},
+            "registered segment does not run from the owner point to the endpoint");
+        require(segment.second_2c!=segment.first_14,"registered segment has zero length");
+    }
+    // State 0 sets +0B to 11; state 1 registers on 10 frames, releases on the 11th.
+    require(state1_frames==10,"subtype80 timer frame count differs");
+    owner.consume_pending_releases();
+    require(owner.buster_pool().allocated_800989f0==0,"segment Buster release was not consumed");
+    std::cout<<"normal80 registered segment owner point -> endpoint for 10 state-1 frames PASS\n";
+}
 } // namespace
 
 int main(int argc,char** argv){try{
-    producer_transactions();child_transactions();effect_exhaustion();capacity_and_allocations();proxy_lease_owner();buster_guards_and_owner();buster_normal_hit_chain();
+    producer_transactions();child_transactions();effect_exhaustion();capacity_and_allocations();proxy_lease_owner();buster_guards_and_owner();buster_normal_hit_chain();buster_registered_segment_presentation();
     if(argc>1){floor_fixtures(argv[1]);buster_fixtures(argv[1]);}std::cout<<"PASS bounded class60 child transaction owner\n";return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}
