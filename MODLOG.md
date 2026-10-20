@@ -248,3 +248,12 @@ Ported the ST00 E0/06 controller 0x80114424 (walker 0x80114504, handlers
 (inline controls, CALL/MULTI/CLOSE) and a bottom-screen message box with
 decoded glyphs. Azahar: the first radio call and the type-2 message match the
 original order.
+
+
+# 0.0.15.16 subtype-0x1F pop-out Reaverbot
+
+Ported ST00 callback 0x801062EC: init 0x8010648C, wait 0x801066D8, lunge
+0x8010673C with the +384 ScaleMatrix Z scale, hit 0x80106800, and the rewrite
+into subtype 3 with parameter 0x40. Also added RNG RA 0x80106378 and L3CB v5
+(record byte +0x0B). Azahar: three pop-outs trigger and hand off by trace; the
+byte-0x0B fix is host-only.

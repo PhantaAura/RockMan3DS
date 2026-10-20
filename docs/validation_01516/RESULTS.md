@@ -1,0 +1,27 @@
+# 0.0.15.16 validation: subtype-0x1F pop-out Reaverbot
+
+Build: `pass-20261020-180335-m2-01516`. `Legends3DS.3dsx` is 1,024,020 B,
+SHA-256 `5c5011ee92b2f0f9afc3fa25c7e5ffbd0f344595de74403ac363e276dce8fa3f`
+(not committed). Host: 156/156 PASS, including the new `class20_1f_popout` and
+L3CB v5. Native: PASS, 0 warnings.
+
+**Azahar 2126.0 (Old 3DS).** Normal boot with `autoplay/popout_corridor.txt`;
+trace evidence. This was build `pass-20261020-171602`, which is identical except
+that L3CB v5/byte 0x0B was not in it yet.
+
+| Step | Original (`docs/research_01516/POPOUT_1F.md`) | Port (Azahar) |
+|---|---|---|
+| Wait | action 0 until work80 < 0x4E201 | **match**: triggers at work80 289908 / 314964 / 319252 as Mega Man walks past |
+| Lunge | 9 frames: forward 0x40 ×8 then 0x200, Z scale 0 → 0x1000 | **match**: frames 870→879, x 2560→2624, scale_z 4096 |
+| Hand-off | +2 = 3, +3 = 0x40; subtype-3 init on the next frame | **match**: morph at frame 880/895/911, subtype 3, action 8 |
+| Combat profile | stats record of subtype 3 | pop-outs 2 and 3: HP 64. Pop-out 1 (work +0F = 0x80): **not admitted**, holds |
+| Airborne entrance (action 8, param 0x40) | needs record byte +0x0B | that run: **held** (NeedsCombatProfile; byte 0x0B was not cooked) |
+
+The fix for the last row (L3CB v5 with byte +0x0B) was built afterwards, but it
+is **not validated in Azahar**. The Mac's screen was locked, so the emulator
+could not start. Host tests cover the cook, the L3CB round trip and the binding.
+
+Not covered:
+- the hit proxy while hidden;
+- record 1585's context byte 0x80;
+- whether the airborne entrance matches the original (no PCSX-Redux trace).

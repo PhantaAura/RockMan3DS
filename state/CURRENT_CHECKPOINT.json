@@ -1,6 +1,6 @@
 {
- "version": "0.0.15.15",
- "title": "WCA integration — ST00 E0/06 tutorial message triggers (0x80114424) and an in-game message box",
+ "version": "0.0.15.16",
+ "title": "WCA integration — ST00 subtype-0x1F pop-out Reaverbot (0x801062EC) and L3CB v5 byte 0x0B",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -8,21 +8,21 @@
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 155/155)",
- "host_tests": "155/155 PASS (new source_tutorial_triggers)",
+ "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; host suite 156/156)",
+ "host_tests": "156/156 PASS (new class20_1f_popout; L3CB v5)",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
- "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-*-m2-01515/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
- "native_binary_bytes": 1013900,
- "native_binary_sha256": "1b23aa0d6699d4e0bab64b054920cad1964a62311fb61d84195cba24613d8b1b",
+ "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-*-m2-01516/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
+ "native_binary_bytes": 1024020,
+ "native_binary_sha256": "5c5011ee92b2f0f9afc3fa25c7e5ffbd0f344595de74403ac363e276dce8fa3f",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, scripted, trace): the E0/06 radio call (type 1) freezes at z -5633, block 0 -> CALL -> block 1 Yes/No, No sets flag 1552 and releases; type 2 'Turn right there.' shown without a freeze.",
- "emulator_evidence": "docs/validation_01515/RESULTS.md",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, scripted, trace): three corridor 0x1F pop-outs wait for work80<0x4E201, lunge 9 frames (Z scale 0->0x1000) and morph into subtype 3 param 0x40; action 8 then held for byte 0x0B in that build. The L3CB v5 fix is host-tested only (screen locked).",
+ "emulator_evidence": "docs/validation_01516/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
@@ -30,6 +30,10 @@
  "world_comes_alive_finished": false,
  "usage_reset_used": false,
  "evidence": [
+  "docs/research_01516/POPOUT_1F.md",
+  "docs/validation_01516/RESULTS.md",
+  "src/world/class20_1f_popout.cpp",
+  "tests/test_class20_1f_popout.cpp",
   "docs/research_01514/TUTORIAL_MESSAGE_TRIGGERS.md",
   "docs/validation_01515/RESULTS.md",
   "src/flow/source_tutorial_triggers.cpp",
@@ -72,6 +76,7 @@
   "tools/l3door_replay.cpp"
  ],
  "blockers": [
+  "Pop-out 0.0.15.16: subtype 0x1F ported and validated by trace through the morph; action 8 airborne entrance with L3CB byte 0x0B unvalidated in Azahar; record 1585 context 0x80 unadmitted; hidden hit proxy unregistered; work80 writer CANDIDATE.",
   "Tutorial 0.0.15.15: E0/06 types 0-15 ported; type 16 holds; voice unplayed; message box on bottom screen; area->bank mapping CANDIDATE; +44D camera byte writers unported.",
   "Buster 0.0.15.14: subtype 0x81 ported and Azahar-validated by trace; lock-on homing 0x80033F04 and non-zero aim pitch unported; lock-on never selected a target in scripted runs; loadout +170/+171 measured, writer untraced.",
   "Reward pickups 0.0.15.12: gameplay lifecycle ported, but the pickup model/sparkle rendering (0x8002F9C4 stage resource) is a diagnostic marker, and pickup RNG chronology uses the CANDIDATE shared stream. Not yet validated in Azahar.",
@@ -85,7 +90,7 @@
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.15.14",
-  "source_archive": "git main (commit e111515)"
+  "version": "0.0.15.15",
+  "source_archive": "git main (commit b8b8688)"
  }
 }

@@ -34,7 +34,9 @@ ImportedActorPacketStatus stage_imported_actor_proxy_packet(ImportedActorInstanc
 std::optional<ImportedActorTargetSample> sample_imported_actor_target(
     const ImportedActorInstance& actor, int32_t player_x, int32_t player_z,
     const SourceAngleSteps* steps) noexcept {
-    if (actor.source_class != 0x20 || actor.subtype != 3 ||
+    // Subtype 0x1F reads the same +0x80 distance (0x801066D8); CANDIDATE that
+    // the per-frame writer matches the subtype-3 query.
+    if (actor.source_class != 0x20 || (actor.subtype != 3 && actor.subtype != 0x1F) ||
         player_x < INT16_MIN || player_x > INT16_MAX ||
         player_z < INT16_MIN || player_z > INT16_MAX) return std::nullopt;
     ImportedActorTargetSample sample;
@@ -66,6 +68,19 @@ std::optional<ActorInitializerProfile> actor_initializer_profile_for(const Stage
         // calls0x80048E6C. The fresh current/previous positions are equal.
         p.floor_query_uses_zero_bounds = false;
         p.floor_bounds = RetailPlayerBounds{-60, 60, -60, 60, -128, 0};
+        p.initial_pose_request = 0;
+        return p;
+    }
+    if (o.subtype == 0x1F && o.source_param3 == 0) {
+        // Subtype table 0x8011A4D0, work+4 = 0 -> 0x801062EC; state0 0x8010648C
+        // stores scale 0x200, calls 0x8002F9C4 with a null variant and
+        // requests pose0 (0x800322A8). It never samples a floor.
+        p.source_initializer = 0x8010648C;
+        p.raw_scale = {{512, 512, 512}};
+        p.raw_shade = 0x4210;               // stored by 0x801062EC every frame
+        p.raw_shade_verified = true;
+        p.selects_first_class_subtype_row = true;
+        p.floor_query_required = false;
         p.initial_pose_request = 0;
         return p;
     }
@@ -171,6 +186,26 @@ ActorAreaRuntime spawn_imported_actors(const StageRuntimeArea& stage, const EbdD
                 for(size_t axis=0;axis<3;++axis)actor.source_contact_velocity[axis]=rd_s16(w.data()+0x44+axis*2);
                 actor.source_contact_state74=w[0x74];
                 actor.source_behavior = state;
+            } else if (o.subtype == 0x1F) {
+                const auto& w = input.work->bytes;
+                if (w.size() < 0x64) throw std::runtime_error("actor popout work seed truncated");
+                Class20_1FState state;
+                state.work_00 = w[0];
+                state.heading_56 = actor.heading;
+                for (size_t lane = 0; lane < 4; ++lane) {
+                    state.raw_14[lane] = rd_s16(w.data() + 0x14 + lane * 2);
+                    state.previous_raw_2c[lane] = rd_s16(w.data() + 0x2c + lane * 2);
+                    const auto fixed = rd_u32(w.data() + 0x1c + lane * 4);
+                    const auto prior = rd_u32(w.data() + 0x34 + lane * 4);
+                    state.fixed_1c[lane] = fixed <= INT32_MAX ? static_cast<int32_t>(fixed)
+                        : static_cast<int32_t>(int64_t(fixed) - 0x100000000LL);
+                    state.previous_fixed_34[lane] = prior <= INT32_MAX ? static_cast<int32_t>(prior)
+                        : static_cast<int32_t>(int64_t(prior) - 0x100000000LL);
+                    actor.source_angle_54[lane] = rd_u16(w.data() + 0x54 + lane * 2);
+                }
+                actor.source_work_0c_0e = {{w[0x0c], w[0x0d], w[0x0e]}};
+                for(size_t axis=0;axis<3;++axis)actor.source_contact_velocity[axis]=rd_s16(w.data()+0x44+axis*2);
+                actor.source_popout = state;
             }
             actor.resource = std::move(resource);
             if (profile->initial_pose_request)
@@ -231,15 +266,21 @@ void bind_imported_actor_animation_banks(ActorAreaRuntime& area, const EbdDirect
     size_t added = 0;
     for (size_t i = 0; i < area.actors.size(); ++i) {
         const auto& actor = area.actors[i];
-        if (!actor.source_behavior || !actor.pose_selected_by_retail_state) continue;
-        if (!actor.resource || !actor.pose || actor.pose->record_index != 0 ||
-            actor.animation_bank || actor.request0_pose_cache)
+        if ((!actor.source_behavior && !actor.source_popout) || !actor.pose_selected_by_retail_state) continue;
+        if (actor.animation_bank) continue; // bound earlier (a 0x1F morph rebinds only itself)
+        if (!actor.resource || !actor.pose || actor.pose->record_index != 0 || actor.request0_pose_cache)
             throw std::runtime_error("actor bank requires fresh initializer presentation");
         Bank bank;
         for (const auto& item : shared) if (item.first == actor.row) bank = item.second;
+        for (const auto& other : area.actors)
+            if (!bank && other.animation_bank && other.row == actor.row) bank = other.animation_bank;
         if (!bank) {
+            // 0x801062EC only ever selects request 0 (+AC is written 0).
+            static constexpr uint8_t kPopoutRequests[1] = {0};
+            const bool popout = actor.source_popout.has_value();
             auto decoded = decode_ebd_actor_animation_bank(ebd, actor.row, *actor.resource,
-                requests, request_count, cap - area.decoded_resource_bytes - added);
+                popout ? kPopoutRequests : requests, popout ? 1 : request_count,
+                cap - area.decoded_resource_bytes - added);
             if (decoded.decoded_bytes > cap - area.decoded_resource_bytes - added)
                 throw std::runtime_error("actor animation bank decoded budget exceeded");
             added += decoded.decoded_bytes;
@@ -364,7 +405,8 @@ bool bind_imported_actor_combat_profile(ImportedActorInstance& actor,
     // adds signed variant32E*16; other variants need their own retained record.
     if(state.variant_32e==0){actor.source_combat_byte_c=profile->unsigned_byte0c;
         actor.source_combat_byte09=profile->unsigned_byte09;
-        actor.source_reward_word00=profile->reward_word00;}
+        actor.source_reward_word00=profile->reward_word00;
+        actor.source_combat_byte_b=profile->unsigned_byte0b;}
     return true;
 }
 
@@ -927,6 +969,106 @@ void bind_imported_actor_request0_caches(ActorAreaRuntime& area, const EbdDirect
     area.decoded_pose_cache_bytes += added_bytes;
     area.unique_pose_cache_count += shared.size();
 }
+ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& actor,
+    const ReferenceTables& references, std::optional<uint16_t> random_sample,
+    std::optional<uint32_t> work_80) noexcept {
+    ImportedActorPopoutTick out;
+    if (actor.source_released || !actor.source_popout || actor.source_class != 0x20 ||
+        actor.subtype != 0x1F || actor.initializer != 0x8010648C) return out;
+    if ((actor.source_dispatch_flag0 & actor.source_dispatch_flag6 & 1u) == 0) return out;
+    if (actor.source_popout->morph_to_class20_03) { out.morph_pending = true; return out; }
+    auto next = *actor.source_popout;
+    Class20_1FInputs in;
+    in.references = &references; in.random_sample = random_sample; in.work_80 = work_80;
+    out.result = step_class20_1f_801062ec(next, in);
+    actor.last_popout_status = out.result.status;
+    if (out.result.status != Class20_1FStatus::SourceBackedPartial) return out;
+    // 0x80032488 steps / 0x800322A8 restarts the current request.
+    std::optional<ActorSequenceCursor> cursor = actor.animation_cursor;
+    if (actor.animation_bank && actor.pose && cursor) {
+        const auto animation = out.result.animation == Class20_1FAnimation::Advance &&
+                actor.pose->request == next.animation_ac
+            ? actor_animation_step(*actor.animation_bank, *actor.pose, *cursor)
+            : actor_animation_reset(*actor.animation_bank, next.animation_ac, *actor.pose, *cursor);
+        if (animation.status != ActorAnimationStatus::SourceBackedPartial) return out;
+        out.pose_changed = animation.record_changed;
+    }
+    actor.source_popout = next;
+    actor.animation_cursor = cursor;
+    actor.heading = next.heading_56;
+    for (size_t i = 0; i < actor.source_origin.size(); ++i) actor.source_origin[i] = next.raw_14[i];
+    // +37C {0x1000, 0x1000, +384} scales matrix +208 columns (0x8007ADE8)
+    // while flags bit 0x20 is set; the init scale +158 is 0x200.
+    if (next.flags_348 & 0x20u) {
+        const int64_t z = int64_t(512) * next.scale_z_384 >> 12;
+        actor.raw_scale = {{512, 512, int16_t(z > INT16_MAX ? INT16_MAX : z)}};
+    } else actor.raw_scale = {{512, 512, 512}};
+    actor.pose_selected_by_retail_state = true;
+    out.committed = true;
+    out.morph_pending = next.morph_to_class20_03;
+    return out;
+}
+
+bool morph_imported_actor_popout_to_class20_03(ActorAreaRuntime& area, size_t index,
+    const EbdDirectory& ebd, size_t cap) {
+    if (index >= area.actors.size()) return false;
+    auto& actor = area.actors[index];
+    if (!actor.source_popout || !actor.source_popout->morph_to_class20_03 || actor.source_released)
+        return false;
+    const auto rows = find_ebd_entries(ebd, 0x20, 3);
+    if (rows.empty() || ebd.source_payload.empty()) return false;
+    const auto row = static_cast<uint32_t>(rows.front()); // 0x8002F9C4, null variant
+    std::shared_ptr<const ActorMeshResource> resource;
+    for (const auto& other : area.actors) if (other.resource && other.row == row) resource = other.resource;
+    size_t added = 0;
+    if (!resource) {
+        if (area.decoded_resource_bytes > cap) return false;
+        auto decoded = decode_ebd_actor_mesh(ebd, row, ActorMeshTier::NEAR, cap - area.decoded_resource_bytes);
+        added = decoded.footprint.decoded_bytes;
+        resource = std::make_shared<const ActorMeshResource>(std::move(decoded));
+    }
+    const auto& p = *actor.source_popout;
+    // Work as 0x80102410 finds it: 0x801062EC wrote +2 = 3, +3 = 0x40 and
+    // cleared +8..+B; 0x8010648C had cleared +54/+58 and +64..+67.
+    Class20_03CallbackState state;
+    state.work_00 = p.work_00;
+    state.behavior.parameter_03 = 0x40;
+    state.flags_0c = actor.source_work_0c_0e[0];
+    state.source_delay_0d = actor.source_work_0c_0e[1] < 128 ? int8_t(actor.source_work_0c_0e[1])
+        : int8_t(int(actor.source_work_0c_0e[1]) - 256);
+    state.restore_action_0e = actor.source_work_0c_0e[2];
+    state.behavior.heading_56 = p.heading_56;
+    state.raw_14 = p.raw_14; state.fixed_1c = p.fixed_1c;
+    state.previous_raw_2c = p.previous_raw_2c; state.previous_fixed_34 = p.previous_fixed_34;
+    state.angle_54 = {{0, p.heading_56, 0, actor.source_angle_54[3]}};
+    state.previous_angle_5c = state.angle_54;
+    state.work_64 = 0;
+    Class20_03InitializeInputs input; // parameter 0x40 needs no floor word
+    if (state.flags_0c == 0 && actor.source_context_high_byte == 0) input.source_detection_profile = 4;
+    if (class20_03_initialize_scalar_state(state, input) != Class20_03CallbackStatus::SourceBackedPartial)
+        return false;
+    auto next = actor;
+    next.subtype = 3; next.initializer = 0x80102410; next.row = row;
+    next.resource = std::move(resource);
+    next.raw_scale = {{512, 512, 512}};
+    next.raw_shade = 0; next.raw_shade_verified = false;
+    next.floor_query_required = true; next.floor_query_uses_zero_bounds = false;
+    next.floor_bounds = RetailPlayerBounds{-60, 60, -60, 60, -128, 0};
+    next.floor_sample_available = false;
+    next.source_behavior = state; next.source_behavior_initialized = true;
+    next.last_behavior_status = Class20_03CallbackStatus::SourceBackedPartial;
+    next.source_popout.reset();
+    next.source_combat_byte_a.reset(); next.source_combat_byte_c.reset();
+    next.source_combat_byte09.reset(); next.source_reward_word00.reset();
+    next.source_combat_byte_b.reset();
+    next.source_proxy_bound = false; next.source_proxy_target = {};
+    bind_imported_actor_pose(next, ebd, 0, 0, true); // 0x801025D8 requests pose 0
+    actor = std::move(next);
+    area.decoded_resource_bytes += added;
+    if (added) ++area.unique_resource_count;
+    return true;
+}
+
 bool initialize_imported_actor_fresh_pose_proxy_subset(ImportedActorInstance& actor) noexcept {
     if(actor.source_class!=0x20||actor.subtype!=3||actor.initializer!=0x80102410||
        !actor.source_behavior||actor.original_pool_slot>=16||actor.source_proxy_bound)return false;

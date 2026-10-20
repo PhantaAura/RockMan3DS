@@ -10,6 +10,8 @@ constexpr size_t kSourceRngProfileBytes = 256;
 // Class03 still permits only its sixteen distinct source slots per update.
 constexpr size_t kSourceRngUpdateMaximumCalls = 120;
 constexpr uint32_t kSourceClass03RngCallerRa = 0x801022f8;
+// ST00 subtype 0x1F callback 0x801062EC: jal 0x8007FE50 at 0x80106370.
+constexpr uint32_t kSourceClass1FRngCallerRa = 0x80106378;
 
 enum class SourceRngCaptureScope : uint32_t { WholeBoundedCapture = 1, CompletedCapturePrefix = 2 };
 enum SourceRngWarning : uint32_t {

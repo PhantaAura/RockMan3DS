@@ -1515,7 +1515,7 @@ ActorSourceMetadata load_actor_source_metadata() {
         out.normalization=l3::load_l3normalization_lookup(bytes.data(),bytes.size());});
     load("actor_detection_bounds.l3db",44,[&](const auto& bytes){
         out.bounds=l3::load_actor_detection_segment_bounds(bytes);});
-    load("actor_combat.l3cb",32+l3::kSourceCombatProfileCapacity*l3::kSourceCombatProfileEntryBytes,
+    load("actor_combat.l3cb",32+l3::kSourceCombatProfileCapacity*l3::kSourceCombatProfileV5EntryBytes,
         [&](const auto& bytes){out.combat=l3::load_l3source_combat_profiles(bytes.data(),bytes.size());});
     load("class60_06.l3c6",112,[&](const auto& bytes){out.child6=l3::load_source_profile_class60_06(bytes.data(),bytes.size());});
     load("source_event.l3ep",64+256*4,[&](const auto& bytes){out.event_poll=l3::load_source_event_poll_profile(bytes);});
@@ -3203,6 +3203,61 @@ int main() {
                             const auto target=l3::sample_imported_actor_target(actor,pp.x,pp.z,
                                 actor_angle_steps ? &*actor_angle_steps : nullptr);
                             if(!target)continue;
+                            if(actor.source_popout) {
+                                // ST00 subtype 0x1F (0x801062EC): one shared rand() per
+                                // frame at RA 0x80106378, then the callback. The frame
+                                // after it rewrites itself, subtype-3 state 0 runs.
+                                const size_t index=size_t(&actor-actors.actors.data());
+                                const bool morph_frame=actor.source_popout->morph_to_class20_03;
+                                std::optional<uint16_t> sample;
+                                l3::SourceRngUpdateTransaction popout_rng;
+                                bool rng_begun=false;
+                                if(g_actor_rng.admitted()&&actor.original_pool_slot<16u&&
+                                   (actor.source_dispatch_flag0&actor.source_dispatch_flag6&1u)&&
+                                   l3::begin_source_rng_update(g_actor_rng,popout_rng,
+                                    {session.frame_counter(),g_actor_update_ordinal,l3::SourceRngUpdatePhase::Class03Callbacks})==l3::SourceRngStatus::Ready) {
+                                    rng_begun=true;
+                                    const auto& p=*actor.source_popout;
+                                    // CANDIDATE: the subtype-3 prologue draw (0x801022F8) on its state-0 frame.
+                                    const auto staged=l3::stage_source_rng_class03(popout_rng,
+                                        {morph_frame?l3::kSourceClass03RngCallerRa:l3::kSourceClass1FRngCallerRa,
+                                         0x8009f108u+uint32_t(actor.original_pool_slot)*0x3c0u,
+                                         uint8_t(actor.original_pool_slot),morph_frame?uint8_t(0):p.state_08,
+                                         morph_frame?uint8_t(0):p.action_09,morph_frame?uint8_t(0):p.phase_0a});
+                                    if(staged.status==l3::SourceRngStatus::Ready)sample=staged.sample32a;
+                                }
+                                if(morph_frame) {
+                                    bool morphed=false;
+                                    try {
+                                        morphed=l3::morph_imported_actor_popout_to_class20_03(actors,index,session.active_area().ebd);
+                                        if(morphed) {
+                                            auto& m=actors.actors[index];
+                                            if(actor_metadata.combat)(void)l3::bind_imported_actor_combat_profile(m,*actor_metadata.combat,session.source_stats_selector());
+                                            prepare_actor_animation_banks(actors,session.active_area().ebd);
+                                            if(g_source_actor_proxy)(void)l3::initialize_imported_actor_fresh_pose_proxy_subset(m);
+                                        }
+                                    } catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+                                    if(sample)(void)l3::commit_source_rng_update(g_actor_rng,popout_rng);
+                                    else if(rng_begun)l3::rollback_source_rng_update(popout_rng);
+                                    const auto& m=actors.actors[index];
+                                    hardware_test_trace("# popout_1f,frame=%lu,source_index=%lu,event=morph,ok=%d,subtype=%u,hp=%d,pos=%d:%d:%d",
+                                        (unsigned long)session.frame_counter(),(unsigned long)m.source_index,int(morphed),unsigned(m.subtype),
+                                        m.source_behavior&&m.source_behavior->health_6e?int(*m.source_behavior->health_6e):-1,
+                                        int(m.source_origin[0]),int(m.source_origin[1]),int(m.source_origin[2]));
+                                    continue;
+                                }
+                                const uint8_t before=actor.source_popout->action_09;
+                                const auto popout=l3::tick_imported_actor_popout_1f(actor,refs,sample,target->source_work_80);
+                                if(popout.committed&&sample)(void)l3::commit_source_rng_update(g_actor_rng,popout_rng);
+                                else if(rng_begun)l3::rollback_source_rng_update(popout_rng);
+                                if(popout.committed&&(before!=actor.source_popout->action_09||popout.morph_pending))
+                                    hardware_test_trace("# popout_1f,frame=%lu,source_index=%lu,event=action,action=%u,work80=%lu,scale_z=%ld,pos=%d:%d:%d",
+                                        (unsigned long)session.frame_counter(),(unsigned long)actor.source_index,
+                                        unsigned(actor.source_popout->action_09),(unsigned long)target->source_work_80,
+                                        long(actor.source_popout->scale_z_384),
+                                        int(actor.source_origin[0]),int(actor.source_origin[1]),int(actor.source_origin[2]));
+                                continue;
+                            }
                             l3::Class20_03CallbackInputs source;
                             source.action.work_80=target->source_work_80;
                             if(target->source_heading_80031198 && *target->source_heading_80031198<=4095u)

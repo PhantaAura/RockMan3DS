@@ -23,7 +23,7 @@ class SyntheticOwner:
         self.fields = {1: bytearray(16), 2: bytearray(16)}
         for selector, record in self.fields.items():
             record[:4] = struct.pack('<I', 0x10203040 + selector)
-            record[8], record[9], record[10], record[12], record[15] = 11 + selector, 47 + selector, 23 + selector, 35 + selector, 4
+            record[8], record[9], record[10], record[11], record[12], record[15] = 11 + selector, 47 + selector, 23 + selector, 59 + selector, 35 + selector, 4
         self.bounds = (-9, 9, -11, 11, -13, 13)
 
     def word(self, address):
@@ -52,12 +52,12 @@ class CookActorCombatTests(unittest.TestCase):
                                          'actor_normalization.l3nr', 'actor_detection_bounds.l3db'})
         combat = packages['actor_combat.l3cb']
         self.assertEqual(struct.unpack('<4sHH6I', combat[:32]),
-                         (b'L3CB', 4, 32, 1, 2, 16, 64, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
-        self.assertEqual(combat[32:48], bytes((32,3,1,0,0,0,12,24,4,36,7,48,65,48,32,16)))
-        self.assertEqual(combat[48:64], bytes((32,3,2,1,0,0,13,25,4,37,7,49,66,48,32,16)))
-        self.assertEqual(evidence['combat_format_version'], 4)
+                         (b'L3CB', 5, 32, 1, 2, 20, 72, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
+        self.assertEqual(combat[32:52], bytes((32,3,1,0,0,0,12,24,4,36,15,48,65,48,32,16,60,0,0,0)))
+        self.assertEqual(combat[52:72], bytes((32,3,2,1,0,0,13,25,4,37,15,49,66,48,32,16,61,0,0,0)))
+        self.assertEqual(evidence['combat_format_version'], 5)
         for origin in evidence['selection_origins']:
-            self.assertEqual(origin['retained_offsets'], [0, 8, 9, 10, 12, 15])
+            self.assertEqual(origin['retained_offsets'], [0, 8, 9, 10, 11, 12, 15])
             self.assertEqual(origin['action4_variant32E'], 0)
         self.assertEqual(len(packages['actor_detection.l3dp']), 36)
         self.assertEqual(len(packages['actor_normalization.l3nr']), 416)
@@ -71,15 +71,15 @@ class CookActorCombatTests(unittest.TestCase):
         owner = SyntheticOwner(); owner.fields[1][12] = 0; owner.fields[2][12] = 255
         packages, _ = module.build_metadata(owner)
         combat = packages['actor_combat.l3cb']
-        self.assertEqual(combat[41:44], bytes((0,7,48)))
-        self.assertEqual(combat[57:60], bytes((255,7,49)))
+        self.assertEqual(combat[41:44], bytes((0,15,48)))
+        self.assertEqual(combat[61:64], bytes((255,15,49)))
 
     def test_byte09_zero_and_unsigned_maximum_are_present(self):
         owner = SyntheticOwner(); owner.fields[1][9] = 0; owner.fields[2][9] = 255
         packages, _ = module.build_metadata(owner)
         combat = packages['actor_combat.l3cb']
-        self.assertEqual(combat[42:44], bytes((7,0)))
-        self.assertEqual(combat[58:60], bytes((7,255)))
+        self.assertEqual(combat[42:44], bytes((15,0)))
+        self.assertEqual(combat[62:64], bytes((15,255)))
 
     def test_unknown_detector_profile_and_unordered_bounds_reject(self):
         owner = SyntheticOwner(); owner.fields[2][15] = 5

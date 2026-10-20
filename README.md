@@ -1,3 +1,13 @@
+# Mega Man Legends 3DS — 0.0.15.16 (pop-out Reaverbot)
+
+0.0.15.16: the "small one" Roll warns about is in. As Mega Man walks down the
+first corridor, flat shapes in the floor spring up into Reaverbots, then drop
+into the original airborne entrance. This is the original ST00 subtype-0x1F
+code. The last step (the airborne entrance's record byte) is host-tested only.
+[Results](docs/validation_01516/RESULTS.md) · [Resume](RESUME_01516.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.15 (tutorial radio)
 
 0.0.15.15: walking down the first corridor now triggers Roll's radio call, as

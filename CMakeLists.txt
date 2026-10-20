@@ -79,6 +79,7 @@ add_library(legends3ds_core STATIC
     src/world/retail_rng_tape.cpp
     src/world/class20_03_action9.cpp
     src/world/class20_03_late_actions.cpp
+    src/world/class20_1f_popout.cpp
     src/world/class20_03_action3.cpp
     src/world/actor_runtime.cpp
     src/world/class20_03_behavior.cpp
@@ -1096,3 +1097,8 @@ add_executable(test_source_tutorial_triggers tests/test_source_tutorial_triggers
 target_link_libraries(test_source_tutorial_triggers PRIVATE legends3ds_core)
 target_compile_options(test_source_tutorial_triggers PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_tutorial_triggers COMMAND test_source_tutorial_triggers)
+
+add_executable(test_class20_1f_popout tests/test_class20_1f_popout.cpp)
+target_link_libraries(test_class20_1f_popout PRIVATE legends3ds_core)
+target_compile_options(test_class20_1f_popout PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME class20_1f_popout COMMAND test_class20_1f_popout)

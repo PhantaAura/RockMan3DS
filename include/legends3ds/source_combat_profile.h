@@ -34,6 +34,10 @@ struct SourceCombatProfile {
     // forwards this value unchanged to reward producer80046B34. It is an
     // opaque source descriptor, not a native currency amount.
     std::optional<uint32_t> reward_word00 = std::nullopt;
+    // Original record byte0B: action 8 with parameter 0x40 (the airborne
+    // entrance, e.g. after the ST00 subtype-0x1F pop-out) stores it in work330.
+    // v5 only; never defaulted for older packages.
+    std::optional<uint8_t> unsigned_byte0b = std::nullopt;
     int16_t initial_hp() const noexcept {
         return static_cast<int16_t>(static_cast<uint16_t>(unsigned_byte08) * 16U);
     }
@@ -44,10 +48,11 @@ constexpr size_t kSourceCombatProfileCapacity = 16;
 constexpr size_t kSourceCombatProfileHeaderBytes = 32;
 constexpr size_t kSourceCombatProfileLegacyEntryBytes = 12;
 constexpr size_t kSourceCombatProfileEntryBytes = 16;
+constexpr size_t kSourceCombatProfileV5EntryBytes = 20;
 struct SourceCombatProfiles {
     std::array<SourceCombatProfile, kSourceCombatProfileCapacity> entries{};
     uint32_t count = 0;
-    uint16_t format_version = 4; // Parsed v1/v2/v3 retain their exact version.
+    uint16_t format_version = 5; // Parsed v1/v2/v3 retain their exact version.
 };
 
 // L3CB:32B canonical header and ordered sparse12B records, payloadCRC32.
@@ -55,7 +60,8 @@ struct SourceCombatProfiles {
 // absent byte0C requires row9=zero. No implicit v1→v2 conversion on encode.
 // v3 row11=byte09 and row10 uses bit0=byte0C present, bit1=byte09 present.
 // v4 adds word00 at row12 and row10 bit2. Unknown bits reject; absent values
-// require zero in their payload lanes.
+// require zero in their payload lanes. v5 rows are 20B: byte0B at row16,
+// row10 bit3, rows17..19 zero.
 // No heap ownership or fallback identity. Parsing occurs at package load.
 SourceCombatProfiles load_l3source_combat_profiles(const uint8_t* bytes, size_t size);
 std::vector<uint8_t> encode_l3source_combat_profiles(const SourceCombatProfiles& profiles);

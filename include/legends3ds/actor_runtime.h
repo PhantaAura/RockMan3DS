@@ -19,6 +19,7 @@
 #include "legends3ds/actor_pose_runtime.h"
 #include "legends3ds/class20_03_proxy.h"
 #include "legends3ds/source_actor_consumers.h"
+#include "legends3ds/class20_1f_popout.h"
 #include <array>
 #include <memory>
 #include <optional>
@@ -111,6 +112,12 @@ struct ImportedActorInstance {
     // Native mirror of source80031824 class20 pool release. A released actor
     // remains as an area-local tombstone so it cannot respawn or reward twice.
     bool source_released=false;
+    // ST00 subtype 0x1F (callback 0x801062EC) until it rewrites itself into
+    // subtype 3 parameter 0x40. Work +0C..+0E are kept for that handoff.
+    std::optional<Class20_1FState> source_popout;
+    std::array<uint8_t, 3> source_work_0c_0e{};
+    std::array<uint16_t, 4> source_angle_54{};
+    Class20_1FStatus last_popout_status = Class20_1FStatus::SourceBackedPartial;
 };
 
 struct ActorAreaRuntime {
@@ -307,6 +314,22 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
     ChildRuntime* children = nullptr, const ReferenceTables* child_references = nullptr,
     const ActorReactionContactPreparation* reaction = nullptr,
     const ImportedActorProxyTailContext* proxy_tail = nullptr) noexcept;
+
+struct ImportedActorPopoutTick {
+    Class20_1FResult result;
+    bool committed = false, morph_pending = false, pose_changed = false;
+};
+// One 0x801062EC callback for a subtype-0x1F actor. All-or-nothing; the hit
+// proxy (flags bit 8, 0x800341BC) is reported, not registered. Allocation-free.
+ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& actor,
+    const ReferenceTables& references, std::optional<uint16_t> random_sample,
+    std::optional<uint32_t> work_80) noexcept;
+// The frame after 0x801062EC rewrote work +2/+3/+8, the subtype-3 dispatcher
+// runs state 0 (0x80102410). This performs that init: subtype-3 row, mesh and
+// pose 0, parameter 0x40 (action 8). The caller then binds the combat profile,
+// animation banks and the fresh proxy subset exactly as at area load.
+bool morph_imported_actor_popout_to_class20_03(ActorAreaRuntime& area, size_t index,
+    const EbdDirectory& ebd, size_t decoded_memory_cap = 512 * 1024);
 
 // Opt-in diagnostic admission of original fresh class20 pool clear8002E844
 // and standard shift store8003697C. Caller must own fresh pool chronology;

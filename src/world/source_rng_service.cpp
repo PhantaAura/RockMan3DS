@@ -84,7 +84,8 @@ struct SourceRngAccess {
             out.status = SourceRngStatus::StaleTransaction; return out;
         }
         if (t.context_.phase != SourceRngUpdatePhase::Class03Callbacks ||
-            actor.caller_ra != kSourceClass03RngCallerRa || actor.slot >= 16 ||
+            (actor.caller_ra != kSourceClass03RngCallerRa && actor.caller_ra != kSourceClass1FRngCallerRa) ||
+            actor.slot >= 16 ||
             actor.work != 0x8009f108u + uint32_t(actor.slot) * 0x3c0u) {
             out.status = SourceRngStatus::InvalidContext; return out;
         }

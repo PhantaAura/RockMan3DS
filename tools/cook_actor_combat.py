@@ -63,21 +63,21 @@ def build_metadata(owner):
         if record & 3:
             raise ValueError('Selected source record is unaligned')
         fields = owner.read(record, 16)
-        byte08, byte09, byte0a, byte0c, byte0f = fields[8], fields[9], fields[10], fields[12], fields[15]
+        byte08, byte09, byte0a, byte0b, byte0c, byte0f = fields[8], fields[9], fields[10], fields[11], fields[12], fields[15]
         rows.append(bytes((SOURCE_CLASS, SOURCE_SUBTYPE, selector, variant, 0, 0,
-                           byte08, byte0a, byte0f, byte0c, 7, byte09)) + fields[:4])
+                           byte08, byte0a, byte0f, byte0c, 15, byte09)) + fields[:4] + bytes((byte0b, 0, 0, 0)))
         profile_ids.add(byte0f)
         origins.append({'raw_stats_selector': selector, 'source_variant': variant,
                         'source_class': SOURCE_CLASS, 'subtype': SOURCE_SUBTYPE,
                         'record_index0C': 0, 'context_high0F': 0,
                         'source_table_pointer_slot': hex(slot), 'source_record': hex(record),
-                        'retained_offsets': [0, 8, 9, 10, 12, 15],
+                        'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
                         'action4_variant32E': 0,
                         'retained_values_in_evidence': False})
     if profile_ids != {4}:
         raise ValueError('Selected detector profile outside current proved profile4 contract')
     combat_payload = b''.join(rows)
-    combat = header(b'L3CB', len(rows), 16, combat_payload, version=4) + combat_payload
+    combat = header(b'L3CB', len(rows), 20, combat_payload, version=5) + combat_payload
     detection_payload = b''.join(bytes((profile,)) +
         owner.read(DETECTION_PROFILE_TABLE + profile * 4, 3) for profile in sorted(profile_ids))
     # Preserve the already established L3DP layout exactly (field16 is32).
@@ -96,7 +96,7 @@ def build_metadata(owner):
                 'actor_normalization.l3nr': normalization,
                 'actor_detection_bounds.l3db': bounds_package}
     evidence = {'schema': 'mml-actor-local-metadata-cook/3', 'status': 'SOURCE_BACKED_PARTIAL',
-                'combat_format_version': 4,
+                'combat_format_version': 5,
                 'owner_exe_sha256': OWNER_SHA, 'selection_origins': origins,
                 'initialization_contract': 'Raw selector1 is known only after explicit source fresh boot initialization; unknown restoration invalidates it.',
                 'source_profile_ids': sorted(profile_ids),
@@ -107,7 +107,7 @@ def build_metadata(owner):
                             for name, data in packages.items()},
                 'limits': ['Only class20/subtype03 with index0C0/context0F0 and raw selector1/2 is retained.',
                            'No generic selector, object, restored game or alternate-context fallback.',
-                           'Sparse records preserve original word00 and unsigned fields08/09/A/C/F only.',
+                           'Sparse records preserve original word00 and unsigned fields08/09/A/B/C/F only.',
                            'Action4 byteC is selected for actor variant32E0 only; source_variant tags stats table selection, not actor variant32E.',
                            'All owner-derived sidecars and this local output directory are excluded from source releases.']}
     return packages, evidence

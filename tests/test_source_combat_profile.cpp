@@ -176,7 +176,7 @@ void version3_tests() {
         catch (const std::runtime_error&) { rejected = true; }
         assert(rejected);
     }
-    profiles.format_version=5;bool rejected=false;
+    profiles.format_version=6;bool rejected=false;
     try{(void)l3::encode_l3source_combat_profiles(profiles);}catch(const std::runtime_error&){rejected=true;}
     assert(rejected);
     std::cout << "L3CB v3 byte09 explicit zero/unsigned boundaries/mixed presence/old-version loss guards PASS\n";
@@ -202,6 +202,26 @@ void version4_tests() {
     try{(void)l3::encode_l3source_combat_profiles(profiles);}catch(const std::runtime_error&){rejected=true;}
     assert(rejected);
     std::cout<<"L3CB v4 opaque reward word00 retention/loss guards PASS\n";
+}
+void version5_tests() {
+    l3::SourceCombatProfiles profiles;profiles.count=2;profiles.format_version=5;
+    profiles.entries[0]={{0x20,3,1,0,0,0},7,19,6,uint8_t(0),uint8_t(0),uint32_t(0),uint8_t(0)};
+    profiles.entries[1]={{0x20,3,2,1,0,0},255,211,200,uint8_t(255),uint8_t(255),uint32_t(0xffffffffu),uint8_t(255)};
+    const auto bytes=l3::encode_l3source_combat_profiles(profiles);
+    assert(l3::rd_u16(bytes.data()+4)==5&&l3::rd_u32(bytes.data()+16)==20&&bytes.size()==72);
+    assert(bytes[42]==15&&bytes[48]==0&&bytes[62]==15&&bytes[68]==255);
+    const auto parsed=l3::load_l3source_combat_profiles(bytes.data(),bytes.size());
+    assert(parsed.entries[0].unsigned_byte0b==0&&parsed.entries[1].unsigned_byte0b==255&&
+        parsed.entries[1].reward_word00==0xffffffffu&&l3::encode_l3source_combat_profiles(parsed)==bytes);
+    auto sparse=profiles;sparse.entries[0].unsigned_byte0b.reset();
+    const auto sb=l3::encode_l3source_combat_profiles(sparse);
+    assert(!(sb[42]&8u)&&!l3::load_l3source_combat_profiles(sb.data(),sb.size()).entries[0].unsigned_byte0b);
+    auto bad=bytes;bad[62]&=uint8_t(~8u);repair_crc(bad);assert(rejects(bad));
+    bad=bytes;bad[69]=1;repair_crc(bad);assert(rejects(bad));
+    profiles.format_version=4;bool rejected=false;
+    try{(void)l3::encode_l3source_combat_profiles(profiles);}catch(const std::runtime_error&){rejected=true;}
+    assert(rejected);
+    std::cout<<"L3CB v5 byte0B retention/loss guards PASS\n";
 }
 void owner_package(const char* path, const char* expected_path) {
     std::ifstream file(path, std::ios::binary);
@@ -238,6 +258,7 @@ int main(int argc, char** argv) {
     version2_tests();
     version3_tests();
     version4_tests();
+    version5_tests();
     if (argc == 2 || argc == 3) owner_package(argv[1], argc == 3 ? argv[2] : nullptr);
     else if (argc != 1) throw std::runtime_error("expected optional owner L3CB package and original expected TSV paths");
 }
