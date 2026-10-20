@@ -1629,8 +1629,8 @@ void draw_projectiles_uv(const l3::RuntimeSession& session) {
 // registration because 0x80043708..24 copies +14 over +2C right after it; the
 // work fields alone always give a zero-length segment (0.0.15.0..0.0.15.10).
 // This is a FRONTEND_DIAGNOSTIC ribbon: the original shot sprite/effect
-// renderer is not ported, and the +400/+418 endpoint owner is still a
-// CANDIDATE forward ray.
+// renderer is not ported. 0.0.15.14: the Square shot is subtype 0x81, whose
+// segment is its previous point (+2C) to its current point (+14), 100 units.
 size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
     const auto& pool=children.buster_pool();
     const auto& segments=children.buster_registered_segments();
@@ -1638,7 +1638,7 @@ size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
     for(size_t slot=0;slot<l3::source_buster_capacity;++slot){
         if(!(pool.allocated_800989f0&(0x80000000u>>slot)))continue;
         const auto& w=pool.slots[slot];
-        if(!(int8_t(w[0])&w[6]&1)||w[2]!=0x80||w[8]!=1)continue;
+        if(!(int8_t(w[0])&w[6]&1)||(w[2]!=0x80&&w[2]!=0x81)||w[8]!=1)continue;
         if(!drawn){configure_texenv_uv(false);configure_immediate_attributes_uv();++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);}
         const auto& segment=segments[slot];
         const float ax=segment.second_2c[0],ay=segment.second_2c[1],az=segment.second_2c[2];
