@@ -1,3 +1,15 @@
+# Mega Man Legends 3DS — 0.0.15.14 (Buster shot, combat loop)
+
+0.0.15.14: Buster shots now hit. The port was firing the wrong weapon lane: a
+subtype-0x80 object tied to Mega Man's feet. Running the original game in
+PCSX-Redux showed the real shot is subtype 0x81, fired from the hand, moving
+100 units a frame for 18 frames. That shot and its impact effect are now ported.
+Scripted Azahar runs (trace evidence) show a Reaverbot shot to 0 HP, its reward
+spawning and being collected, and the first door working both ways.
+[Results](docs/validation_01514/RESULTS.md) · [Resume](RESUME_01514.md).
+
+---
+
 # Mega Man Legends 3DS — 0.0.15.13 (enemy attacks)
 
 0.0.15.13: Reaverbots froze when Mega Man got close, and Buster shots could not

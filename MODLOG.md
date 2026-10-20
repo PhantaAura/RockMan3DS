@@ -229,3 +229,13 @@ Owner Azahar log of 0.0.15.12: enemies held at action 10 (UnknownAction) once
 close, so their proxies never refreshed and Buster impacts stayed 0. Ported
 ST00 0x80103DFC (lunge), 0x80103554 (knockback) and 0x8010324C (damaged bounce,
 then HP 0 + flags 0x41 into the defeat tail). Host 153/153, native PASS.
+
+
+# 0.0.15.14 Mega Buster shot subtype 0x81
+
+The port fired weapon lane +170 (subtype 0x80, a foot capsule with a CANDIDATE
+forward ray), so no shot could hit. A pad-driven PCSX-Redux probe measured
+the original: Square fires +171 = subtype 0x81 from the hand. Ported
+0x800437F8/0x80043A8C/0x80043E78/0x80043E00 and effect 0x82. Added the opt-in
+diagnostic_autoplay.txt for unattended Azahar runs. Host 154/154, native PASS,
+Azahar scripted combat/reward/door loop PASS by trace.

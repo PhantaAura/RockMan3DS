@@ -8,21 +8,21 @@
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 153/153)",
- "host_tests": "153/153 PASS (new class20_03_late_actions)",
+ "native_build": "PASS (devkitARM Old 3DS ARMv6K/mpcore, 0 warnings/errors; pipeline host suite 154/154)",
+ "host_tests": "154/154 PASS (new source_buster_shot81; source_buster_profile L3BP/2); owner l3door_replay PASS",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
- "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261020-104738-m2-01513/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
- "native_binary_bytes": 985160,
- "native_binary_sha256": "0d9f469a018c8d338e407e07a26436299490122ec5786080ed1309f60e28f23b",
+ "native_binary": "~/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/work/pass-20261020-122714-m2-01514/sd_out/3ds/Legends3DS/Legends3DS.3dsx (local build artifact; not committed)",
+ "native_binary_bytes": 994696,
+ "native_binary_sha256": "c4164659a6b82a945f91f6ce339bcc88097f1d1b3bda96707c9ad536846f450a",
  "source_archive": null,
  "source_archive_sha256": null,
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PENDING: installed on Azahar's SD; owner test pending. 0.0.15.12 owner test showed enemies freezing at action 10 (fixed here).",
- "emulator_evidence": "docs/validation_01513/RESULTS.md",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, scripted diagnostic_autoplay, CSV trace evidence, no screenshots): Buster 0x81 hits, enemy 64->40->0 defeat, reward spawn + collection (+5), door Area 1->2->1. Lock-on target selection not observed.",
+ "emulator_evidence": "docs/validation_01514/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
@@ -30,6 +30,10 @@
  "world_comes_alive_finished": false,
  "usage_reset_used": false,
  "evidence": [
+  "docs/research_01514/BUSTER_SHOT_81.md",
+  "docs/validation_01514/RESULTS.md",
+  "src/world/child_runtime.cpp",
+  "tests/test_source_buster_shot81.cpp",
   "docs/research_01513/LATE_ACTIONS_5_6_10.md",
   "docs/validation_01513/RESULTS.md",
   "src/world/class20_03_late_actions.cpp",
@@ -64,7 +68,7 @@
   "tools/l3door_replay.cpp"
  ],
  "blockers": [
-  "Enemy actions 5/6/10 0.0.15.13: ported from the ST00 overlay and host-tested; not yet observed in Azahar. Buster impacts were 0 in the 0.0.15.12 owner log (enemies were frozen); hits must be re-checked.",
+  "Buster 0.0.15.14: subtype 0x81 ported and Azahar-validated by trace; lock-on homing 0x80033F04 and non-zero aim pitch unported; lock-on never selected a target in scripted runs; loadout +170/+171 measured, writer untraced.",
   "Reward pickups 0.0.15.12: gameplay lifecycle ported, but the pickup model/sparkle rendering (0x8002F9C4 stage resource) is a diagnostic marker, and pickup RNG chronology uses the CANDIDATE shared stream. Not yet validated in Azahar.",
   "Lock-on 0x80034EB8 now receives the 0x80037FB4 camera matrix (verified against 640 original-code rows) and runs in the 3DS loop with the InitGeom 0x8007A4F0 + 0x80011F48 projection. CANDIDATE inputs: player work+00 bit0 (writer untraced; gameplay-owned player stands in), +0x174 bit 0x10 (Y edge stands in), GP+0x49E target mode 0x80097D02 (EXE image byte; no writer found). Pad 0x1F8000F2 is retained/UNKNOWN and unobservable by GTE/MATRIX users. Not checked in Azahar; no PS1 lock-on trace.",
   "Area 1 door: event 0 (0x800485E4) is ported (phases 0-2, 14 substates, forced walk 0x80048A9C, ST00 door object states 0-5 with the IDX descriptor swap) and Mega Man walks through both doors on the host replay. CANDIDATE: door objects are spawned lazily in the player's door cell (the area object list is not cooked); the load (substates 6-8) counts one frame each; frame order player -> event -> doors. Not ported: camera 0x8001E6C0/0x8001EC0C, door leaf model and its rotation, door/event sounds and the 0x8001F6C4 BGM check, fades. The 3DS terrain now follows the IDX swap (0.0.15.8 patch), but the ST00 door descriptors draw identical geometry open and closed, so the doors still look closed; the door object draw/rotation 0x801126DC is UNKNOWN. Oct 19 camera events at recording 32 s/44 s remain unverified.",
@@ -76,7 +80,7 @@
   "Physical 0.0.14.51 acceptance, device frame pacing, memory peaks and stack high-water remain pending."
  ],
  "parent": {
-  "version": "0.0.15.12",
-  "source_archive": "git main (commit 06a9d35)"
+  "version": "0.0.15.13",
+  "source_archive": "git main (commit 830a9ab)"
  }
 }
