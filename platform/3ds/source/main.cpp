@@ -1174,6 +1174,50 @@ void draw_player_0143(const std::vector<l3::PlayerVisualPrimitive>& local_visual
 
 // Owner-local inspection setup only. Explicit source-area identity and raw
 // coordinates are validated; this is never a retail spawn/save/progression rule.
+// FRONTEND_DIAGNOSTIC unattended input script (diagnostic_autoplay.txt).
+// Lines: "<frames> <3DS key mask hex> <circle x> <circle y>". When present the
+// display probes are skipped and the gameplay loop reads these keys instead
+// of HID; the app exits when the script ends. Never part of normal play.
+struct DiagnosticAutoplayStep { uint32_t frames=0; u32 keys=0; int16_t cx=0, cy=0; };
+// Key mask 0xFFFFF: steer to the first live reward pickup with the tank
+// controls (turn until facing it, then walk); the turn sign is learned.
+constexpr u32 kAutoplaySteerToPickup=0xfffffu;
+// Key mask 0xFFFFE: steer to world point (circle x, circle y) = (x, z).
+constexpr u32 kAutoplaySteerToPoint=0xffffeu;
+struct DiagnosticAutoplay {
+    bool active=false; std::vector<DiagnosticAutoplayStep> steps;
+    size_t index=0; uint32_t used=0; u32 previous=0;
+    int turn_sign=1; int last_gap=-1; bool last_turned=false;
+};
+static DiagnosticAutoplay g_autoplay;
+static void load_diagnostic_autoplay() {
+    FILE* file=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_autoplay.txt","r");
+    if(!file)return;
+    char line[128];
+    while(std::fgets(line,sizeof line,file)) {
+        if(line[0]=='#')continue;
+        unsigned frames=0,keys=0;int cx=0,cy=0;
+        if(std::sscanf(line,"%u %x %d %d",&frames,&keys,&cx,&cy)>=2&&frames)
+            g_autoplay.steps.push_back({frames,u32(keys),int16_t(cx),int16_t(cy)});
+    }
+    std::fclose(file);
+    g_autoplay.active=!g_autoplay.steps.empty();
+}
+// Returns false once the script is exhausted.
+static bool diagnostic_autoplay_frame(u32& down, u32& held, u32& up, circlePosition& cp) {
+    while(g_autoplay.index<g_autoplay.steps.size()&&g_autoplay.used>=g_autoplay.steps[g_autoplay.index].frames) {
+        ++g_autoplay.index;g_autoplay.used=0;
+    }
+    if(g_autoplay.index>=g_autoplay.steps.size())return false;
+    const auto& step=g_autoplay.steps[g_autoplay.index];
+    ++g_autoplay.used;
+    held=step.keys;cp.dx=step.cx;cp.dy=step.cy;
+    // Steering steps are resolved by the caller; their circle fields are a goal.
+    if(held==kAutoplaySteerToPickup||held==kAutoplaySteerToPoint){held=0;cp={};}
+    down=held&~g_autoplay.previous;up=g_autoplay.previous&~held;g_autoplay.previous=held;
+    return true;
+}
+
 void load_diagnostic_spawn(const l3::RuntimeMap& map, const l3::St00RenderSource& render,
                            size_t& area, l3::RuntimeVec3i& spawn, uint16_t& yaw) {
     if (!use_uv_renderer() || !g_sidecars_bound) return;
@@ -1926,8 +1970,10 @@ int main() {
     boot_log(MML_BOOT_GFX, "gfx + bottom console");
 
     hidScanInput();
-    const bool top_screen_probe=MML_CHECKPOINT_DISPLAY_TEST ||
-        (hidKeysHeld()&(KEY_L|KEY_R))==(KEY_L|KEY_R);
+    load_diagnostic_autoplay();
+    if(g_autoplay.active)boot_log(MML_BOOT_GFX,"DIAGNOSTIC_AUTOPLAY=1 scripted input; display probes skipped");
+    const bool top_screen_probe=!g_autoplay.active&&(MML_CHECKPOINT_DISPLAY_TEST ||
+        (hidKeysHeld()&(KEY_L|KEY_R))==(KEY_L|KEY_R));
     mml_renderer_gate_set(&g_renderer_gate, choose_boot_stage(hidKeysHeld()));
     // Optional independent diagnostic gates. SELECT always overrides this file.
     if (!(hidKeysHeld() & KEY_SELECT)) {
@@ -2452,12 +2498,49 @@ int main() {
             const u64 frame_start=svcGetSystemTick();
             g_runtime_diag.draw_calls=0;
             g_submitted_vertices=0;
-            hidScanInput(); const u32 down=hidKeysDown(), held=hidKeysHeld();
+            hidScanInput(); u32 down=hidKeysDown(), held=hidKeysHeld(), up_keys=hidKeysUp();
+            circlePosition autoplay_circle{};
+            if(g_autoplay.active) {
+                const size_t step_before=g_autoplay.index;const uint32_t used_before=g_autoplay.used;
+                if(!diagnostic_autoplay_frame(down,held,up_keys,autoplay_circle)) {
+                    hardware_test_trace("# diagnostic_autoplay_end,frame=%lu,evidence=FRONTEND_DIAGNOSTIC",(unsigned long)session.frame_counter());
+                    break;
+                }
+                const auto& autoplay_step=g_autoplay.steps[g_autoplay.index];
+                if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint) {
+                    const auto pp=session.player_position();
+                    const auto& pw=session.compat_player().bytes;
+                    const int heading=int(uint16_t(pw[0x56]|(uint16_t(pw[0x57])<<8))&0xfff);
+                    u32 steer=0;
+                    std::optional<std::array<int,2>> goal;
+                    if(autoplay_step.keys==kAutoplaySteerToPoint)goal={{int(autoplay_step.cx),int(autoplay_step.cy)}};
+                    else for(const auto& e:g_children.effect_pool().slots)if(e[0]&&e[2]==0x87){
+                        goal={{int(int16_t(uint16_t(e[0x38]|(e[0x39]<<8)))),int(int16_t(uint16_t(e[0x3c]|(e[0x3d]<<8))))}};break;}
+                    if(goal){
+                        const int tx=(*goal)[0]-int(pp.x);
+                        const int tz=(*goal)[1]-int(pp.z);
+                        // Forward motion is (-sin h, -cos h): face atan2(-x, -z).
+                        const int want=int(std::lround(std::atan2(double(-tx),double(-tz))*4096.0/6.283185307179586))&0xfff;
+                        int gap=(want-heading)&0xfff;if(gap>2048)gap-=4096;
+                        const int mag=gap<0?-gap:gap;
+                        if(g_autoplay.last_turned&&g_autoplay.last_gap>=0&&mag>g_autoplay.last_gap+2)g_autoplay.turn_sign=-g_autoplay.turn_sign;
+                        g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>48;
+                        const bool arrived=tx*tx+tz*tz<24*24;
+                        if(!arrived&&mag>48)steer|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
+                        if(!arrived&&mag<128)steer|=KEY_DUP;
+                    }
+                    held=steer;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
+                }
+                if(g_autoplay.index!=step_before||used_before==0)
+                    hardware_test_trace("# diagnostic_autoplay,frame=%lu,step=%lu,keys=%03lx,circle=%d:%d,evidence=FRONTEND_DIAGNOSTIC",
+                        (unsigned long)session.frame_counter(),(unsigned long)g_autoplay.index,(unsigned long)held,
+                        int(autoplay_circle.dx),int(autoplay_circle.dy));
+            }
             if(down&KEY_START) break;
             if(g_render_submissions==1)boot_log(MML_BOOT_FIRST_FRAME,"waiting for first 3D GPU submission");
             const u64 gpu_wait_us=acquire_gpu_frame("gameplay frame");
             if(g_render_submissions==1)boot_log(MML_BOOT_FIRST_FRAME,"first 3D GPU submission synchronized");
-            const u32 released_keys=hidKeysUp();
+            const u32 released_keys=up_keys;
             const bool ui_focus=(held&KEY_SELECT)!=0;
             if(down&KEY_SELECT) {select_ui_used=false;ui_hold_frames=0;}
             if(ui_focus) {
@@ -2634,6 +2717,7 @@ int main() {
             }
 
             circlePosition cp{}; hidCircleRead(&cp);
+            if(g_autoplay.active)cp=autoplay_circle;
             l3::RuntimeInputFrame in{};
             in.held_psx_mask=make_psx_held(held,cp);
             in.pressed_psx_mask=make_psx_held(down,circlePosition{});
@@ -3395,11 +3479,19 @@ int main() {
                             const auto pickups=g_children.tick_reward_pickups(source_reward_profile,refs,g_actor_rng,
                                 session.frame_counter(),reward_world,money,hp,int16_t(session.hp_max()));
                             if(pickups.collected)session.apply_source_reward_collection(money,hp);
-                            if(pickups.collected||pickups.released||(pickups.updated&&session.frame_counter()%60u==0u))
-                                hardware_test_trace("# source_reward_pickups,frame=%lu,updated=%u,held=%u,collected=%u,released=%u,money=%ld,hp=%u,money_awarded=%ld,energy_awarded=%ld",
+                            if(pickups.collected||pickups.released||(pickups.updated&&session.frame_counter()%15u==0u))
+                            {
+                                // First live pickup's +38/3A/3C and state, for placement checks.
+                                int px=0,py=0,pz=0,pst=-1;
+                                for(const auto& e:g_children.effect_pool().slots)if(e[0]&&e[2]==0x87){
+                                    px=int16_t(uint16_t(e[0x38]|(e[0x39]<<8)));py=int16_t(uint16_t(e[0x3a]|(e[0x3b]<<8)));
+                                    pz=int16_t(uint16_t(e[0x3c]|(e[0x3d]<<8)));pst=e[8];break;}
+                                hardware_test_trace("# source_reward_pickups,frame=%lu,updated=%u,held=%u,collected=%u,released=%u,money=%ld,hp=%u,money_awarded=%ld,energy_awarded=%ld,first=%d:%d:%d,state=%d,player=%d:%d:%d",
                                     (unsigned long)session.frame_counter(),unsigned(pickups.updated),unsigned(pickups.held),unsigned(pickups.collected),
                                     unsigned(pickups.released),(long)session.source_money_800c1b2c(),unsigned(session.hp()),
-                                    (long)pickups.money_awarded,(long)pickups.energy_awarded);
+                                    (long)pickups.money_awarded,(long)pickups.energy_awarded,px,py,pz,pst,
+                                    int(reward_world.player[0]),int(reward_world.player[1]),int(reward_world.player[2]));
+                            }
                         }
                         if((effects.committed||effects.held) && session.frame_counter()%60u==0u)
                             hardware_test_trace("# source_effects,frame=%lu,considered=%lu,committed=%lu,held=%lu,retail_playback=false",
