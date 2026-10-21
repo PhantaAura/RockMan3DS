@@ -80,6 +80,7 @@ add_library(legends3ds_core STATIC
     src/world/class20_03_action9.cpp
     src/world/class20_03_late_actions.cpp
     src/world/class20_1f_popout.cpp
+    src/world/class20_19.cpp
     src/world/class20_03_action3.cpp
     src/world/actor_runtime.cpp
     src/world/class20_03_behavior.cpp
@@ -1119,3 +1120,8 @@ add_executable(test_source_gate_e007 tests/test_source_gate_e007.cpp)
 target_link_libraries(test_source_gate_e007 PRIVATE legends3ds_core)
 target_compile_options(test_source_gate_e007 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_gate_e007 COMMAND test_source_gate_e007)
+
+add_executable(test_class20_19 tests/test_class20_19.cpp)
+target_link_libraries(test_class20_19 PRIVATE legends3ds_core)
+target_compile_options(test_class20_19 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME class20_19 COMMAND test_class20_19)

@@ -1374,7 +1374,7 @@ void draw_player_uv(const std::vector<l3::PlayerVisualPrimitive>& local_visuals,
 void draw_imported_actors_uv(const l3::ActorAreaRuntime& area) {
     configure_immediate_attributes_uv();
     for (const auto& actor : area.actors) {
-        if (actor.source_released || !actor.resource || !actor.pose) continue;
+        if (actor.source_released || actor.source_hidden || !actor.resource || !actor.pose) continue;
         const auto pose=l3::build_imported_actor_pose_matrices(actor);
         bool open=false,textured=false;uint32_t active_word=0;
         for (size_t i=0;i<pose.part_count;++i) {
@@ -1602,6 +1602,7 @@ l3::ActorAreaRuntime load_area_actors(const l3::TutorialRuntimeArea& area,
             const auto floor=l3::sample_imported_actor_floor(actor,map,area_index);
             if (floor.floor_y) l3::bind_imported_actor_floor(actor,*floor.floor_y);
             if(metadata.combat)(void)l3::bind_imported_actor_combat_profile(actor,*metadata.combat,selector);
+            if(metadata.combat)(void)l3::bind_imported_actor_reaverbot19_record(actor,*metadata.combat,selector);
         } catch (const std::exception& error) {boot_log(MML_BOOT_DATA,error.what());}
     }
     prepare_actor_animation_banks(actors,area.ebd);
@@ -1625,6 +1626,7 @@ l3::ActorAreaRuntime load_active_actors(const l3::RuntimeSession& session,
             const auto floor=l3::sample_imported_actor_floor(actor,session.active_map(),session.map_area_index());
             if(floor.floor_y)l3::bind_imported_actor_floor(actor,*floor.floor_y);
             if(metadata.combat)(void)l3::bind_imported_actor_combat_profile(actor,*metadata.combat,session.source_stats_selector());
+            if(metadata.combat)(void)l3::bind_imported_actor_reaverbot19_record(actor,*metadata.combat,session.source_stats_selector());
         } catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
     }
     prepare_actor_animation_banks(actors,area.ebd);
@@ -3329,6 +3331,89 @@ int main() {
                             const auto target=l3::sample_imported_actor_target(actor,pp.x,pp.z,
                                 actor_angle_steps ? &*actor_angle_steps : nullptr);
                             if(!target)continue;
+                            if(actor.source_reaverbot19) {
+                                // ST00 subtype 0x19 (0x80104864): rand() at RA 0x801048F0,
+                                // 0x8003648C while flags 0x20, then the callback.
+                                const auto& st=*actor.source_reaverbot19;
+                                std::optional<uint16_t> sample;
+                                l3::SourceRngUpdateTransaction rb_rng;bool rb_begun=false;
+                                if(g_actor_rng.admitted()&&actor.original_pool_slot<16u&&
+                                   (actor.source_dispatch_flag0&actor.source_dispatch_flag6&1u)&&
+                                   l3::begin_source_rng_update(g_actor_rng,rb_rng,
+                                    {session.frame_counter(),g_actor_update_ordinal,l3::SourceRngUpdatePhase::Class03Callbacks})==l3::SourceRngStatus::Ready) {
+                                    rb_begun=true;
+                                    const auto staged=l3::stage_source_rng_class03(rb_rng,
+                                        {l3::kSourceClass19RngCallerRa,0x8009f108u+uint32_t(actor.original_pool_slot)*0x3c0u,
+                                         uint8_t(actor.original_pool_slot),st.state_08,st.action_09,st.phase_0a});
+                                    if(staged.status==l3::SourceRngStatus::Ready)sample=staged.sample32a;
+                                }
+                                const auto detection_before=actor.source_detection19;
+                                std::optional<bool> detected;
+                                if((st.flags_348&0x20u)&&actor_metadata.detection&&
+                                   pp.x>=INT16_MIN&&pp.x<=INT16_MAX&&pp.y>=INT16_MIN&&pp.y<=INT16_MAX&&pp.z>=INT16_MIN&&pp.z<=INT16_MAX) {
+                                    l3::ActorDetectionPreparationInputs prepare;
+                                    prepare.source.distance_work80=target->source_work_80;
+                                    prepare.source.actor_raw={st.raw_14[0],st.raw_14[1],st.raw_14[2]};
+                                    prepare.source.player_raw={static_cast<int16_t>(pp.x),static_cast<int16_t>(pp.y),static_cast<int16_t>(pp.z)};
+                                    prepare.source.heading56=st.heading_56;
+                                    prepare.source.reference=&refs;
+                                    prepare.source.profile=(*actor_metadata.detection)[actor.source_detection19.profile_352];
+                                    prepare.source.global_800bbd96=session.actor_detection_globals().halfword_800bbd96;
+                                    prepare.source.scratch_1f800075=session.active_area().source_render_scratch_75;
+                                    prepare.map=&session.active_map();prepare.area_index=session.map_area_index();
+                                    prepare.normalization_lookup=actor_metadata.normalization?&*actor_metadata.normalization:nullptr;
+                                    prepare.segment_bounds=actor_metadata.bounds;
+                                    const auto prepared=l3::prepare_actor_detection_800364b0(actor.source_detection19,prepare);
+                                    if(prepared.status==l3::ActorDetectionPreparationStatus::Ready){
+                                        detected=prepared.detector.detected;actor.source_detection19=prepared.next;
+                                    }
+                                }
+                                l3::Class20_03MotionWorld world;
+                                world.map=&session.active_map();world.area_index=session.map_area_index();
+                                world.references=&refs;world.bounds={-32,32,-32,32,-32,0};world.object_class=0x20;
+                                l3::Class20_19Inputs in;
+                                in.world=&world;in.random_sample=sample;in.work_80=target->source_work_80;
+                                const auto& pw=session.compat_player().bytes;
+                                const auto rd16=[&](size_t at){return int16_t(uint16_t(pw[at])|(uint16_t(pw[at+1])<<8));};
+                                const auto rd32=[&](size_t at){return int32_t(uint32_t(pw[at])|(uint32_t(pw[at+1])<<8)|(uint32_t(pw[at+2])<<16)|(uint32_t(pw[at+3])<<24));};
+                                in.player_raw={rd16(0x14),rd16(0x16),rd16(0x18)};
+                                in.player_fixed={rd32(0x1c),rd32(0x20),rd32(0x24)};
+                                in.player_heading=uint16_t(rd16(0x56))&0xfffu;
+                                in.angle_steps=actor_angle_steps?&*actor_angle_steps:nullptr;
+                                in.detected_8003648c=detected;
+                                in.wake_flag_set=st.wake_flag_37c?session.story_flag(st.wake_flag_37c):
+                                    (st.state_08==0&&st.raw_14[3]?session.story_flag(uint16_t(st.raw_14[3])):false);
+                                in.sound_consumer_ready=true;
+                                const uint8_t action_before=st.action_09;
+                                const auto rb=l3::tick_imported_actor_reaverbot19(actor,in,refs,
+                                    g_source_actor_proxy?&g_children.hit_proxy_bank():nullptr,0xffu);
+                                if(rb.committed&&sample)(void)l3::commit_source_rng_update(g_actor_rng,rb_rng);
+                                else if(rb_begun)l3::rollback_source_rng_update(rb_rng);
+                                if(!rb.committed)actor.source_detection19=detection_before;
+                                if(rb.committed&&rb.result.defeat_reward_80047148&&actor.source_record19&&actor.source_point_180_known){
+                                    l3::EnemyDefeatDelivery delivery;
+                                    auto& audio=session.source_audio_queue();
+                                    if(g_children.prepare_enemy_defeat_delivery(actor.source_point_180,actor.source_record19->word00_reward,audio,delivery)==
+                                       l3::ChildRuntimeStatus::SourceBackedPartial&&g_children.validate_enemy_defeat_delivery(delivery,audio)){
+                                        audio=delivery.staged_audio();(void)g_children.commit_enemy_defeat_delivery(delivery);
+                                    }
+                                }
+                                if(rb.committed&&(action_before!=actor.source_reaverbot19->action_09||rb.result.released_80031824||
+                                    rb.result.sound_count||session.frame_counter()%120u==0u))
+                                    hardware_test_trace("# reaverbot19,frame=%lu,source_index=%lu,state=%u,action=%u,phase=%u,hp=%d,flags=%04x,hidden=%u,detected=%d,sound=%x,proxy=%u,released=%u,pos=%d:%d:%d",
+                                        (unsigned long)session.frame_counter(),(unsigned long)actor.source_index,
+                                        unsigned(actor.source_reaverbot19->state_08),unsigned(actor.source_reaverbot19->action_09),
+                                        unsigned(actor.source_reaverbot19->phase_0a),
+                                        actor.source_reaverbot19->health_6e?int(*actor.source_reaverbot19->health_6e):-1,
+                                        unsigned(actor.source_reaverbot19->flags_348),unsigned(actor.source_hidden),
+                                        detected?int(*detected):-1,rb.result.sound_count?unsigned(rb.result.sounds[0]):0u,
+                                        unsigned(rb.proxy_registered),unsigned(rb.result.released_80031824),
+                                        int(actor.source_origin[0]),int(actor.source_origin[1]),int(actor.source_origin[2]));
+                                else if(!rb.committed&&session.frame_counter()%120u==0u)
+                                    hardware_test_trace("# reaverbot19_hold,frame=%lu,source_index=%lu,status=%u",
+                                        (unsigned long)session.frame_counter(),(unsigned long)actor.source_index,unsigned(actor.last_reaverbot19_status));
+                                continue;
+                            }
                             if(actor.source_popout) {
                                 // ST00 subtype 0x1F (0x801062EC): one shared rand() per
                                 // frame at RA 0x80106378, then the callback. The frame

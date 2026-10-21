@@ -30,4 +30,10 @@ std::optional<uint32_t> source_heading_80031198(
     int16_t origin_x, int16_t origin_z, int16_t target_x, int16_t target_z,
     const SourceAngleSteps* steps) noexcept;
 
+// Owner800310CC: the same heading over 16.16 fixed positions (+0x1C/+0x24):
+// dz = (target.z - origin.z) >> 12, dx = target.x - origin.x (no shift).
+std::optional<uint32_t> source_heading_800310cc(
+    int32_t origin_x, int32_t origin_z, int32_t target_x, int32_t target_z,
+    const SourceAngleSteps* steps) noexcept;
+
 } // namespace l3

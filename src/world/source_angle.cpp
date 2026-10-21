@@ -99,4 +99,20 @@ std::optional<uint32_t> source_heading_80031198(
     return (UINT32_C(0x1000) - angle) & UINT32_C(0xfff);
 }
 
+std::optional<uint32_t> source_heading_800310cc(
+    int32_t origin_x, int32_t origin_z, int32_t target_x, int32_t target_z,
+    const SourceAngleSteps* steps) noexcept {
+    const int32_t dz = signed_word(static_cast<uint32_t>(target_z) - static_cast<uint32_t>(origin_z)) >> 12;
+    const int32_t dx = signed_word(static_cast<uint32_t>(target_x) - static_cast<uint32_t>(origin_x));
+    if (dz == 0) return dx >= 0 ? UINT32_C(0xc00) : UINT32_C(0x400);
+    if (steps == nullptr) return std::nullopt;
+    if (dz > 0) {
+        if (dz == -1 && dx == INT32_MIN) return std::nullopt;   // the original traps
+        return static_cast<uint32_t>(source_catan_8007a414(dx / dz, *steps)) + UINT32_C(0x800);
+    }
+    if (dx == INT32_MIN) return std::nullopt;
+    const uint32_t angle = static_cast<uint32_t>(source_catan_8007a414((-dx) / dz, *steps));
+    return (UINT32_C(0x1000) - angle) & UINT32_C(0xfff);
+}
+
 } // namespace l3

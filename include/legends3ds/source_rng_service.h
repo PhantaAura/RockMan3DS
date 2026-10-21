@@ -12,6 +12,8 @@ constexpr size_t kSourceRngUpdateMaximumCalls = 120;
 constexpr uint32_t kSourceClass03RngCallerRa = 0x801022f8;
 // ST00 subtype 0x1F callback 0x801062EC: jal 0x8007FE50 at 0x80106370.
 constexpr uint32_t kSourceClass1FRngCallerRa = 0x80106378;
+// ST00 subtype 0x19 callback 0x80104864: jal 0x8007FE50 at 0x801048E8.
+constexpr uint32_t kSourceClass19RngCallerRa = 0x801048f0;
 
 enum class SourceRngCaptureScope : uint32_t { WholeBoundedCapture = 1, CompletedCapturePrefix = 2 };
 enum SourceRngWarning : uint32_t {

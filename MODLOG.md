@@ -271,3 +271,8 @@ Tutorial route: mapped every trigger and the objects that raise its flags.
 Ported trigger type 16 (0x801156C8), the E0/00 defeated flags (0x80111AD4) and
 the E0/07 floor switch/gate (0x80115A4C, IDX 119). Azahar: Area 1 messages
 0-1-2-3-4-6-7 in order. The subtype-0x19 trap-room fight is the next gap.
+
+Subtype 0x19: ported the trap-room Reaverbot (0x80104864; states, six actions,
+selector, hit/stagger/defeat) with L3CB rows and L3DP profile 6. It drops in
+when the switch raises 0x607. Host 160/160 plus a real-map check (1200/1200
+frames). Azahar run pending (screen locked).

@@ -10,7 +10,7 @@ std::array<uint8_t, 6> key(const SourceCombatProfileIdentity& id) noexcept {
              id.record_index_0c, id.context_high_0f}};
 }
 bool admitted(const SourceCombatProfileIdentity& id) noexcept {
-    return id.source_class == 0x20 && id.subtype == 3 &&
+    return id.source_class == 0x20 && (id.subtype == 3 || id.subtype == 0x19) &&
            (id.raw_stats_selector == 1 || id.raw_stats_selector == 2) &&
            id.source_variant == static_cast<uint8_t>(id.raw_stats_selector == 2) &&
            id.record_index_0c == 0 && id.context_high_0f == 0;

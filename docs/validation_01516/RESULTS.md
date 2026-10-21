@@ -1,8 +1,8 @@
 # 0.0.15.16 validation: subtype-0x1F pop-out Reaverbot
 
-Build: `pass-20261020-221703-m2-01516`. `Legends3DS.3dsx` is 1,033,496 B,
-SHA-256 `9679766ef67029632e51f733074c89544ccfc5d0f2081c842c58642ef6a753d9`
-(not committed). Host: 159/159 PASS, including the new `class20_1f_popout` and
+Build: `pass-20261020-224638-m2-01516`. `Legends3DS.3dsx` is 1,050,104 B,
+SHA-256 `51b7e07cc70f8e69ca4ebc91ef83e976c808f0e996ef7e4ded6aa7f9467644ca`
+(not committed). Host: 160/160 PASS, including the new `class20_1f_popout` and
 L3CB v5. Native: PASS, 0 warnings.
 
 **Azahar 2126.0 (Old 3DS).** Normal boot with `autoplay/popout_corridor.txt`;
@@ -89,3 +89,22 @@ See `docs/research_01516/TUTORIAL_ROUTE.md`.
 six subtype-0x19 Reaverbots the original wakes in this room are not ported. The
 gate's close/reopen happened too fast to capture on screen; it is covered by
 the unit test.
+
+## Subtype 0x19 trap-room Reaverbots
+
+**Host:** `class20_19` covers:
+- the dormant drop-in on the wake flag;
+- the idle-to-selector picks;
+- hit sounds 0xA3/0xA0/0xA2;
+- the stagger knockback hop;
+- the lethal countdown into the 0xA1 defeat.
+
+The cook test covers the new L3CB rows and L3DP profile 6.
+
+**Real Area 1 map** (retail trig/angle tables, owner data): both records commit
+1200/1200 frames with no holds. Drop-in 34 frames; they land at y −1; they
+wander/alert, or chase/lunge with detection on. They stay in the room with the
+gate descriptor closed.
+
+**Azahar:** not run. The Mac screen was locked, so the emulator could not
+start.

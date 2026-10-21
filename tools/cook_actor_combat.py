@@ -19,6 +19,10 @@ DETECTOR_BOUNDS_ADDRESS = 0x80097D0C
 DETECTION_PROFILE_TABLE = 0x800899AC
 STATS_TABLES = {1: (0x8008EDC4, 0), 2: (0x8008F060, 1)}
 SOURCE_CLASS, SOURCE_SUBTYPE = 0x20, 3
+# Subtype 0x19 (the ST00 trap-room Reaverbot, 0x80104A08) reads the same
+# tables at its own slot, record index 0.
+SOURCE_SUBTYPES = (3, 0x19)
+PROVED_DETECTION_PROFILES = {3: {4}, 0x19: {6}}
 
 
 def sha(data):
@@ -55,27 +59,28 @@ class OwnerExe:
 
 def build_metadata(owner):
     rows, profile_ids, origins = [], set(), []
-    for selector, (table, variant) in sorted(STATS_TABLES.items()):
+    for subtype, (selector, (table, variant)) in [(t, item) for t in SOURCE_SUBTYPES
+                                                  for item in sorted(STATS_TABLES.items())]:
         # Original80064718 selects the table. Original class03 initializer and
         # action3 index subtype03's pointer, then source record index0C=0.
-        slot = table + SOURCE_SUBTYPE * 4
+        slot = table + subtype * 4
         record = owner.word(slot)
         if record & 3:
             raise ValueError('Selected source record is unaligned')
         fields = owner.read(record, 16)
         byte08, byte09, byte0a, byte0b, byte0c, byte0f = fields[8], fields[9], fields[10], fields[11], fields[12], fields[15]
-        rows.append(bytes((SOURCE_CLASS, SOURCE_SUBTYPE, selector, variant, 0, 0,
+        if byte0f not in PROVED_DETECTION_PROFILES[subtype]:
+            raise ValueError('Selected detector profile outside the proved contract')
+        rows.append(bytes((SOURCE_CLASS, subtype, selector, variant, 0, 0,
                            byte08, byte0a, byte0f, byte0c, 15, byte09)) + fields[:4] + bytes((byte0b, 0, 0, 0)))
         profile_ids.add(byte0f)
         origins.append({'raw_stats_selector': selector, 'source_variant': variant,
-                        'source_class': SOURCE_CLASS, 'subtype': SOURCE_SUBTYPE,
+                        'source_class': SOURCE_CLASS, 'subtype': subtype,
                         'record_index0C': 0, 'context_high0F': 0,
                         'source_table_pointer_slot': hex(slot), 'source_record': hex(record),
                         'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
                         'action4_variant32E': 0,
                         'retained_values_in_evidence': False})
-    if profile_ids != {4}:
-        raise ValueError('Selected detector profile outside current proved profile4 contract')
     combat_payload = b''.join(rows)
     combat = header(b'L3CB', len(rows), 20, combat_payload, version=5) + combat_payload
     detection_payload = b''.join(bytes((profile,)) +
@@ -105,7 +110,7 @@ def build_metadata(owner):
                 'retail_values_embedded_in_source': False, 'retail_parity': False,
                 'outputs': {name: {'bytes': len(data), 'sha256': sha(data)}
                             for name, data in packages.items()},
-                'limits': ['Only class20/subtype03 with index0C0/context0F0 and raw selector1/2 is retained.',
+                'limits': ['Only class20 subtypes 03 and 19 with index0C0/context0F0 and raw selector1/2 are retained.',
                            'No generic selector, object, restored game or alternate-context fallback.',
                            'Sparse records preserve original word00 and unsigned fields08/09/A/B/C/F only.',
                            'Action4 byteC is selected for actor variant32E0 only; source_variant tags stats table selection, not actor variant32E.',

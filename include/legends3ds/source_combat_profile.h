@@ -7,7 +7,7 @@
 
 namespace l3 {
 // Exact source selection identity, not a gameplay/difficulty label. The current
-// proved contract admits class20/subtype03, raw selector1/2, record index0C=0
+// proved contract admits class20 subtypes 03 and 19, raw selector1/2, record index0C=0
 // and context0F=0 only. Unknown/restored session selector must not be defaulted.
 struct SourceCombatProfileIdentity {
     uint8_t source_class = 0;

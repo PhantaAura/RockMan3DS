@@ -36,7 +36,7 @@ std::optional<ImportedActorTargetSample> sample_imported_actor_target(
     const SourceAngleSteps* steps) noexcept {
     // Subtype 0x1F reads the same +0x80 distance (0x801066D8); CANDIDATE that
     // the per-frame writer matches the subtype-3 query.
-    if (actor.source_class != 0x20 || (actor.subtype != 3 && actor.subtype != 0x1F) ||
+    if (actor.source_class != 0x20 || (actor.subtype != 3 && actor.subtype != 0x1F && actor.subtype != 0x19) ||
         player_x < INT16_MIN || player_x > INT16_MAX ||
         player_z < INT16_MIN || player_z > INT16_MAX) return std::nullopt;
     ImportedActorTargetSample sample;
@@ -68,6 +68,21 @@ std::optional<ActorInitializerProfile> actor_initializer_profile_for(const Stage
         // calls0x80048E6C. The fresh current/previous positions are equal.
         p.floor_query_uses_zero_bounds = false;
         p.floor_bounds = RetailPlayerBounds{-60, 60, -60, 60, -128, 0};
+        p.initial_pose_request = 0;
+        return p;
+    }
+    if (o.subtype == 0x19 && (o.source_param3 == 0 || o.source_param3 == 1)) {
+        // Subtype table 0x8011A490 -> 0x80104864; state0 0x80104A08 stores
+        // scale 0x200, shade 0x4210, bounds 0x8011BF50 and pose request 0.
+        // Parameter 0 (and 1 once its wake flag is set) samples the floor.
+        p.source_initializer = 0x80104A08;
+        p.raw_scale = {{512, 512, 512}};
+        p.raw_shade = 0x4210;
+        p.raw_shade_verified = true;
+        p.selects_first_class_subtype_row = true;
+        p.floor_query_required = true;
+        p.floor_query_uses_zero_bounds = false;
+        p.floor_bounds = RetailPlayerBounds{-32, 32, -32, 32, -32, 0};
         p.initial_pose_request = 0;
         return p;
     }
@@ -187,6 +202,28 @@ ActorAreaRuntime spawn_imported_actors(const StageRuntimeArea& stage, const EbdD
                 for(size_t axis=0;axis<3;++axis)actor.source_contact_velocity[axis]=rd_s16(w.data()+0x44+axis*2);
                 actor.source_contact_state74=w[0x74];
                 actor.source_behavior = state;
+            } else if (o.subtype == 0x19) {
+                const auto& w = input.work->bytes;
+                if (w.size() < 0x64) throw std::runtime_error("actor reaverbot19 work seed truncated");
+                Class20_19State state;
+                state.work_00 = w[0]; state.parameter_03 = w[3];
+                state.heading_56 = actor.heading;
+                for (size_t lane = 0; lane < 4; ++lane) {
+                    state.raw_14[lane] = rd_s16(w.data() + 0x14 + lane * 2);
+                    state.previous_raw_2c[lane] = rd_s16(w.data() + 0x2c + lane * 2);
+                    const auto fixed = rd_u32(w.data() + 0x1c + lane * 4);
+                    const auto prior = rd_u32(w.data() + 0x34 + lane * 4);
+                    state.fixed_1c[lane] = fixed <= INT32_MAX ? static_cast<int32_t>(fixed)
+                        : static_cast<int32_t>(int64_t(fixed) - 0x100000000LL);
+                    state.previous_fixed_34[lane] = prior <= INT32_MAX ? static_cast<int32_t>(prior)
+                        : static_cast<int32_t>(int64_t(prior) - 0x100000000LL);
+                }
+                if(w.size()<=0x74)throw std::runtime_error("actor contact work seed truncated");
+                for(size_t axis=0;axis<3;++axis)actor.source_contact_velocity[axis]=rd_s16(w.data()+0x44+axis*2);
+                actor.source_contact_state74=w[0x74];
+                actor.source_reaverbot19 = state;
+                // Hidden until the first callback decides (dormant variant).
+                actor.source_hidden = state.parameter_03 == 1;
             } else if (o.subtype == 0x1F) {
                 const auto& w = input.work->bytes;
                 if (w.size() < 0x64) throw std::runtime_error("actor popout work seed truncated");
@@ -267,7 +304,7 @@ void bind_imported_actor_animation_banks(ActorAreaRuntime& area, const EbdDirect
     size_t added = 0;
     for (size_t i = 0; i < area.actors.size(); ++i) {
         const auto& actor = area.actors[i];
-        if ((!actor.source_behavior && !actor.source_popout) || !actor.pose_selected_by_retail_state) continue;
+        if ((!actor.source_behavior && !actor.source_popout && !actor.source_reaverbot19) || !actor.pose_selected_by_retail_state) continue;
         if (actor.animation_bank) continue; // bound earlier (a 0x1F morph rebinds only itself)
         if (!actor.resource || !actor.pose || actor.pose->record_index != 0 || actor.request0_pose_cache)
             throw std::runtime_error("actor bank requires fresh initializer presentation");
@@ -278,9 +315,13 @@ void bind_imported_actor_animation_banks(ActorAreaRuntime& area, const EbdDirect
         if (!bank) {
             // 0x801062EC only ever selects request 0 (+AC is written 0).
             static constexpr uint8_t kPopoutRequests[1] = {0};
+            // 0x80104864 selects 0/1/2/4/5/7..10 and 12..17 (all present in its row).
+            static constexpr uint8_t kReaverbot19Requests[15] = {0,1,2,4,5,7,8,9,10,12,13,14,15,16,17};
             const bool popout = actor.source_popout.has_value();
+            const bool reaverbot19 = actor.source_reaverbot19.has_value();
             auto decoded = decode_ebd_actor_animation_bank(ebd, actor.row, *actor.resource,
-                popout ? kPopoutRequests : requests, popout ? 1 : request_count,
+                popout ? kPopoutRequests : reaverbot19 ? kReaverbot19Requests : requests,
+                popout ? 1 : reaverbot19 ? 15 : request_count,
                 cap - area.decoded_resource_bytes - added);
             if (decoded.decoded_bytes > cap - area.decoded_resource_bytes - added)
                 throw std::runtime_error("actor animation bank decoded budget exceeded");
@@ -1070,7 +1111,108 @@ bool morph_imported_actor_popout_to_class20_03(ActorAreaRuntime& area, size_t in
     return true;
 }
 
+bool bind_imported_actor_reaverbot19_record(ImportedActorInstance& actor,
+    const SourceCombatProfiles& profiles, std::optional<uint8_t> selector) noexcept {
+    if (!selector || !actor.source_reaverbot19 || actor.source_record19 || actor.initializer != 0x80104A08) return false;
+    const auto* p = find_source_combat_profile(profiles, *selector, 0x20, 0x19, 0, actor.source_context_high_byte);
+    if (!p || !p->reward_word00) return false;
+    Class20_19Record r;
+    r.byte08_hp = p->unsigned_byte08; r.byte0a_attack = p->unsigned_byte0a; r.byte0f_detection = p->unsigned_byte0f;
+    if (!p->unsigned_byte09) return false;
+    r.byte09_stagger = *p->unsigned_byte09; r.word00_reward = *p->reward_word00;
+    actor.source_record19 = r;
+    // 0x80036478(+0x36C, record +0x0F, -0x60).
+    actor.source_detection19 = ActorDetectionWork{};
+    actor.source_detection19.profile_352 = r.byte0f_detection;
+    actor.source_detection19.offset_35b = -6;
+    return true;
+}
+
+ImportedActorReaverbot19Tick tick_imported_actor_reaverbot19(ImportedActorInstance& actor,
+    Class20_19Inputs in, const ReferenceTables& references, SourceHitProxyBank* bank,
+    std::optional<uint32_t> mask) noexcept {
+    ImportedActorReaverbot19Tick out;
+    if (actor.source_released || !actor.source_reaverbot19 || actor.subtype != 0x19 ||
+        actor.initializer != 0x80104A08 || !in.world) return out;
+    if ((actor.source_dispatch_flag0 & actor.source_dispatch_flag6 & 1u) == 0) return out;
+    auto next = *actor.source_reaverbot19;
+    // The bank wrote the previous frame's hit into the +0x35C target.
+    next.packet_35c = actor.source_proxy_target.packet_00;
+    next.hit_point_364 = actor.source_proxy_target.point_08;
+    next.hit_word_36a = actor.source_proxy_target.word_0e;
+    next.velocity_44 = actor.source_contact_velocity;
+    Class20_03MotionWorld world = *in.world;
+    world.state74 = actor.source_contact_state74;
+    if (actor.animation_cursor) {
+        const uint8_t cue = actor.animation_cursor->opaque_a6;
+        world.source_a6 = cue < 128 ? int8_t(cue) : int8_t(int(cue) - 256);
+    } else world.source_a6.reset();
+    in.world = &world;
+    in.record = actor.source_record19;
+    in.floor_sample_80048e6c = actor.source_floor_sample;
+    out.result = step_class20_19_80104864(next, in);
+    actor.last_reaverbot19_status = out.result.status;
+    if (out.result.status != Class20_19Status::SourceBackedPartial) return out;
+    std::optional<ActorSequenceCursor> cursor = actor.animation_cursor;
+    if (actor.animation_bank && actor.pose && cursor) {
+        const auto animation = out.result.animation == Class20_19Animation::Advance &&
+                actor.pose->request == next.animation_ac
+            ? actor_animation_step(*actor.animation_bank, *actor.pose, *cursor)
+            : actor_animation_reset(*actor.animation_bank, next.animation_ac, *actor.pose, *cursor);
+        if (animation.status != ActorAnimationStatus::SourceBackedPartial) {
+            actor.last_reaverbot19_status = Class20_19Status::NeedsAnimationCue; return out;
+        }
+        out.pose_changed = animation.record_changed;
+    }
+    actor.source_reaverbot19 = next;
+    actor.animation_cursor = cursor;
+    actor.heading = next.heading_56;
+    for (size_t i = 0; i < actor.source_origin.size(); ++i) actor.source_origin[i] = next.raw_14[i];
+    actor.source_contact_velocity = next.velocity_44;
+    actor.source_contact_state74 = out.result.state74_after;
+    actor.source_hidden = !(next.work_00 & 2u);
+    actor.raw_shade = next.shade_15e;
+    actor.pose_selected_by_retail_state = true;
+    if (actor.pose) {
+        ActorPoseCollisionInputs pose;
+        pose.reference = &references; pose.heading_56 = next.heading_56;
+        for (size_t axis = 0; axis < 3; ++axis) pose.raw_14[axis] = next.raw_14[axis];
+        pose.scale_158 = actor.raw_scale; pose.root_translation = actor.pose->root_translation;
+        pose.flags_06 = actor.source_dispatch_flag6; pose.scratch_shift_1f800074 = actor.source_pose_scratch_shift;
+        pose.preserved_186 = actor.source_pose_preserved_186;
+        const auto produced = produce_actor_pose_collision_point_8003346c(pose);
+        if (produced.point_180) { actor.source_point_180 = *produced.point_180; actor.source_point_180_known = true; }
+    }
+    if (out.result.register_proxy && bank && actor.source_proxy_bound && actor.source_point_180_known) {
+        SourceHitProxyRegistration registration;
+        const auto& p = actor.source_point_180;
+        registration.pointed_words = {{uint32_t(uint16_t(p[0])) | (uint32_t(uint16_t(p[1])) << 16),
+                                       uint32_t(uint16_t(p[2])) | (uint32_t(uint16_t(p[3])) << 16)}};
+        registration.a1 = 0x30; registration.a2 = 0; registration.a3 = 0x8000;
+        registration.stack10 = uint8_t(0x20u | uint8_t(actor.original_pool_slot));
+        registration.stack18 = out.result.proxy_word_18;
+        registration.stack1c = 0x00800000u; registration.stack20 = 0;
+        registration.target = &actor.source_proxy_target; registration.mask_80098798 = mask;
+        out.proxy_registered = source_hit_proxy_register_800341bc(*bank, registration).status ==
+                               SourceHitProxyStatus::SourceBackedPartial;
+    }
+    actor.source_proxy_target.packet_00 = 0;   // +0x35C cleared at the end of the callback
+    if (out.result.reset_detection) actor.source_detection19.phase_353 = 0;
+    if (out.result.released_80031824) {
+        actor.source_released = true; actor.source_proxy_bound = false; actor.source_proxy_target = {};
+    }
+    out.committed = true;
+    return out;
+}
+
 bool initialize_imported_actor_fresh_pose_proxy_subset(ImportedActorInstance& actor) noexcept {
+    if(actor.source_class==0x20&&actor.subtype==0x19&&actor.initializer==0x80104A08&&
+       actor.source_reaverbot19&&actor.original_pool_slot<16&&!actor.source_proxy_bound){
+        actor.source_pose_scratch_shift=0;actor.source_pose_preserved_186=0;actor.source_shadow_work76=0;
+        actor.source_proxy_target={};
+        actor.source_proxy_target.source_address=0x8009f108u+uint32_t(actor.original_pool_slot)*0x3c0u+0x35cu;
+        actor.source_proxy_bound=true;return true;
+    }
     if(actor.source_class!=0x20||actor.subtype!=3||actor.initializer!=0x80102410||
        !actor.source_behavior||actor.original_pool_slot>=16||actor.source_proxy_bound)return false;
     actor.source_pose_scratch_shift=0;actor.source_pose_preserved_186=0;actor.source_shadow_work76=0;
@@ -1148,8 +1290,14 @@ ImportedActorAnimationTick tick_imported_actor_request0(ActorAreaRuntime& area) 
     return out;
 }
 void bind_imported_actor_floor(ImportedActorInstance& actor, int16_t raw_floor_y) {
-    actor.source_origin[1] = raw_floor_y;
     actor.floor_sample_available = true;
+    if (actor.source_reaverbot19) {
+        // The initializer applies it (and the dormant variant ignores it).
+        actor.source_floor_sample = uint16_t(raw_floor_y);
+        if (actor.source_reaverbot19->parameter_03 != 1) actor.source_origin[1] = raw_floor_y;
+        return;
+    }
+    actor.source_origin[1] = raw_floor_y;
     if (actor.source_behavior && !actor.source_behavior_initialized) {
         Class20_03InitializeInputs input;
         input.source_floor_word = raw_floor_y;
@@ -1168,6 +1316,7 @@ ImportedActorFloorSample sample_imported_actor_floor(const ImportedActorInstance
                                                    const RuntimeMap& map, size_t area) {
     ImportedActorFloorSample out;
     const bool known_initializer = (actor.subtype == 0x35 && actor.initializer == 0x80106974) ||
+                                   (actor.subtype == 0x19 && actor.initializer == 0x80104A08) ||
                                    (actor.subtype == 3 && actor.initializer == 0x80102410);
     if (!known_initializer || !actor.floor_bounds || !actor.floor_query_required ||
         actor.source_class != 0x20 || actor.floor_sample_available) {

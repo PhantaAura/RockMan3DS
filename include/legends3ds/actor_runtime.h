@@ -20,6 +20,7 @@
 #include "legends3ds/class20_03_proxy.h"
 #include "legends3ds/source_actor_consumers.h"
 #include "legends3ds/class20_1f_popout.h"
+#include "legends3ds/class20_19.h"
 #include <array>
 #include <memory>
 #include <optional>
@@ -119,6 +120,15 @@ struct ImportedActorInstance {
     std::array<uint8_t, 3> source_work_0c_0e{};
     std::array<uint16_t, 4> source_angle_54{};
     Class20_1FStatus last_popout_status = Class20_1FStatus::SourceBackedPartial;
+    // ST00 subtype 0x19 (callback 0x80104864): the trap-room Reaverbots.
+    std::optional<Class20_19State> source_reaverbot19;
+    std::optional<Class20_19Record> source_record19;
+    std::optional<uint16_t> source_floor_sample;      // 0x80048E6C at init
+    ActorDetectionWork source_detection19{};          // +0x36C (profile at +0x372)
+    std::array<int16_t,4> source_point_180{};         // last pose point (proxy/reward)
+    bool source_point_180_known = false;
+    bool source_hidden = false;                       // work +0 bit 1 clear
+    Class20_19Status last_reaverbot19_status = Class20_19Status::SourceBackedPartial;
 };
 
 struct ActorAreaRuntime {
@@ -325,6 +335,22 @@ struct ImportedActorPopoutTick {
 ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& actor,
     const ReferenceTables& references, std::optional<uint16_t> random_sample,
     std::optional<uint32_t> work_80) noexcept;
+// Binds the 0x80098844[0x19] record (L3CB subtype 0x19 row) and the
+// 0x80036478 detection profile (record +0x0F, offset -0x60). Fresh only.
+bool bind_imported_actor_reaverbot19_record(ImportedActorInstance& actor,
+    const SourceCombatProfiles& profiles, std::optional<uint8_t> selector) noexcept;
+struct ImportedActorReaverbot19Tick {
+    Class20_19Result result;
+    bool committed = false, proxy_registered = false, pose_changed = false;
+};
+// One 0x80104864 callback for a subtype-0x19 actor: packet intake from the
+// proxy target, reducer, animation step, 0x800341BC registration (radius
+// 0x30) from the 0x8003346C pose point, and the +0x35C clear. Defeat effects
+// and rewards are returned for the caller's child runtime. Allocation-free.
+ImportedActorReaverbot19Tick tick_imported_actor_reaverbot19(ImportedActorInstance& actor,
+    Class20_19Inputs inputs, const ReferenceTables& references, SourceHitProxyBank* bank,
+    std::optional<uint32_t> mask_80098798) noexcept;
+
 // The frame after 0x801062EC rewrote work +2/+3/+8, the subtype-3 dispatcher
 // runs state 0 (0x80102410). This performs that init: subtype-3 row, mesh and
 // pose 0, parameter 0x40 (action 8). The caller then binds the combat profile,

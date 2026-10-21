@@ -24,20 +24,32 @@ class SyntheticOwner:
         for selector, record in self.fields.items():
             record[:4] = struct.pack('<I', 0x10203040 + selector)
             record[8], record[9], record[10], record[11], record[12], record[15] = 11 + selector, 47 + selector, 23 + selector, 59 + selector, 35 + selector, 4
+        # Subtype 0x19 rows (detection profile 6).
+        self.fields19 = {1: bytearray(16), 2: bytearray(16)}
+        for selector, record in self.fields19.items():
+            record[:4] = struct.pack('<I', 0x103)
+            record[8], record[9], record[10], record[15] = 32 * selector, 16 * selector, 16 * selector, 6
         self.bounds = (-9, 9, -11, 11, -13, 13)
 
     def word(self, address):
         for selector, (table, _) in module.STATS_TABLES.items():
             if address == table + 12:
                 return 0x1000 + selector * 0x100
+            if address == table + 0x19 * 4:
+                return 0x2000 + selector * 0x100
         raise ValueError('Unexpected authored pointer read')
 
     def read(self, address, size):
         for selector, data in self.fields.items():
             if address == 0x1000 + selector * 0x100 and size == 16:
                 return bytes(data)
+        for selector, data in self.fields19.items():
+            if address == 0x2000 + selector * 0x100 and size == 16:
+                return bytes(data)
         if address == module.DETECTION_PROFILE_TABLE + 16 and size == 3:
             return bytes((27, 18, 19))
+        if address == module.DETECTION_PROFILE_TABLE + 24 and size == 3:
+            return bytes((40, 20, 21))
         if address == module.NORMALIZATION_ADDRESS and size == 384:
             return struct.pack('<192h', *(i - 96 for i in range(192)))
         if address == module.DETECTOR_BOUNDS_ADDRESS and size == 12:
@@ -52,14 +64,16 @@ class CookActorCombatTests(unittest.TestCase):
                                          'actor_normalization.l3nr', 'actor_detection_bounds.l3db'})
         combat = packages['actor_combat.l3cb']
         self.assertEqual(struct.unpack('<4sHH6I', combat[:32]),
-                         (b'L3CB', 5, 32, 1, 2, 20, 72, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
+                         (b'L3CB', 5, 32, 1, 4, 20, 112, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
         self.assertEqual(combat[32:52], bytes((32,3,1,0,0,0,12,24,4,36,15,48,65,48,32,16,60,0,0,0)))
         self.assertEqual(combat[52:72], bytes((32,3,2,1,0,0,13,25,4,37,15,49,66,48,32,16,61,0,0,0)))
         self.assertEqual(evidence['combat_format_version'], 5)
+        self.assertEqual([o['subtype'] for o in evidence['selection_origins']], [3, 3, 0x19, 0x19])
         for origin in evidence['selection_origins']:
             self.assertEqual(origin['retained_offsets'], [0, 8, 9, 10, 11, 12, 15])
             self.assertEqual(origin['action4_variant32E'], 0)
-        self.assertEqual(len(packages['actor_detection.l3dp']), 36)
+        self.assertEqual(combat[72:92], bytes((32,0x19,1,0,0,0,32,16,6,0,15,16,3,1,0,0,0,0,0,0)))
+        self.assertEqual(len(packages['actor_detection.l3dp']), 40)
         self.assertEqual(len(packages['actor_normalization.l3nr']), 416)
         self.assertEqual(len(packages['actor_detection_bounds.l3db']), 44)
         self.assertFalse(evidence['retail_values_embedded_in_source'])

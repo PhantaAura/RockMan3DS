@@ -32,13 +32,17 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   Ported: trigger type 16, the E0/00 defeated flags (defeated enemies no
   longer respawn), and the E0/07 floor switch and gate in the Area 1 trap room.
 
+- Subtype 0x19 (the trap-room Reaverbots, `0x80104864`) ported. It wakes on
+  the floor switch (0x607), drops in, fights, and is defeated with effect,
+  reward and its E0/00 flag. Host-checked on the real Area 1 map.
+
 ## Validation
-`docs/validation_01516/RESULTS.md`: host 159/159, native PASS, Azahar trace (pop-out
+`docs/validation_01516/RESULTS.md`: host 160/160, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
 0. The objects the rest of the tutorial waits on, in route order:
-   - subtype-0x19 Reaverbots (`0x80104864`, the trap-room fight);
+   - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
    - lock-on target selection (0x60E);
    - E0/08 targets and doors (0x608/0x609);
    - the E0/05 box (0x620);

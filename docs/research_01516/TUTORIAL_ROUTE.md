@@ -53,7 +53,7 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 | Triggers 0–16 | ported (16 added in 0.0.15.16) |
 | E0/00 defeated flags | ported (flags raised the update after release) |
 | E0/07 switch and gate | ported. Sounds, the 0x800398E0 shake, 0x8001B2F0 and the model animation are not |
-| Subtype 0x19 Reaverbots | **not ported**: the trap room clears at once |
+| Subtype 0x19 Reaverbots | ported (`class20_19`); host-checked on the real Area 1 map, Azahar fight not yet run |
 | E0/08 targets/doors, lock-on 0x60E | **not ported** (lock-on never selects a target) |
 | E0/05 box (0x620) | **not ported** |
 | class 40/04, subtype-3 parameter 0xA0 wake | **not checked** |
@@ -62,3 +62,35 @@ Azahar, normal boot and scripted route: Area 1 messages 0 → 1 → 2 → 3 → 
 → 7 in the handler order, and the switch raises 0x607. Message 7 follows
 message 6 at once because no subtype-0x19 is spawned. The original's room
 fight is missing.
+
+## Subtype 0x19 (0x80104864), ported in 0.0.15.16
+- **States:** init `0x80104A08`, active `0x80104BE4`, release.
+- **Actions (`0x8011BF38`):** idle, wander, chase (`0x80031BEC` turn 0x30, forward
+  = animation cue +0xA6), alert/back-off (detection on with flags 0x20),
+  hop/drop-in, lunge (sound 0xBA, parabolic hop; on 0x2000000 it bounces back
+  into the hop).
+- **Selector `0x80105D10`:** weights 4/6/3/3 over rand&15 → alert, wander +0x10,
+  wander +0x10, wander −0x10. Pick 1's zero store is overwritten through the
+  delay slot.
+- **Hit `0x80105DEC`:**
+  - a packet without 0x38000000 → sound 0xA3;
+  - otherwise HP drops and stagger builds against record byte 9 (0xA0 below the
+    limit, 0xA2 at it); a strong hit (0x20000000) or a full stagger turns it
+    from the hit point and starts the knockback hop;
+  - at HP ≤ 0, flags 0x88; four frames later the defeat (effect 5/0x80/0x41,
+    reward from record word 0, sound 0xA1, release).
+- **Trap-room variant:** parameter 1 with +0x1A = 0x607 starts hidden in action 4
+  phase 0xFF; on 0x607 it becomes visible, enables its proxy (flags |= 6) and
+  drops in with rand-driven velocity.
+- **Records (L3CB rows 0x20/0x19):**
+
+  | Selector | HP | Stagger | Attack | Detection | Reward |
+  |---|---|---|---|---|---|
+  | 1 | 32 | 16 | 16 | 6 | 0x103 |
+  | 2 | 64 | 32 | 32 | 6 | 0x103 |
+
+  HP is byte 8 directly. L3DP gains profile 6.
+- **Host check on the real Area 1 map** (`reaverbot19_area1_sim.cpp`, owner
+  data): both records drop from y −200 to the floor (y −1) in 34 frames and
+  commit 1200/1200 frames. Undetected they wander and alert; detected they chase
+  and lunge. With the gate closed (IDX 119 → 19) they stay in the room.
