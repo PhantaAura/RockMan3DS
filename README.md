@@ -4,7 +4,8 @@
 first corridor, flat shapes in the floor spring up into Reaverbots, then drop
 into the original airborne entrance. This is the original ST00 subtype-0x1F
 code. The last step (the airborne entrance's record byte) is host-tested only.
-The gameplay view is no longer mirrored left-right.
+The gameplay view is no longer mirrored left-right, and map walls are
+one-sided as in the original, so Mega Man is visible from the very start.
 [Results](docs/validation_01516/RESULTS.md) · [Resume](RESUME_01516.md).
 
 ---

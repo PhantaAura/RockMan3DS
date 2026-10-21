@@ -58,6 +58,7 @@
 #include "legends3ds/source_camera.h"
 #include "legends3ds/source_player_buster.h"
 #include "mockup_hud.h"
+#include "legends3ds/render/terrain_visibility.h"
 #include "legends3ds/render/frontend_view.h"
 #include "legends3ds/render/ps1_geometry.h"
 #include "legends3ds/render/terrain_geometry_candidate.h"
@@ -106,6 +107,12 @@ struct ProbeVertexUV { float x, y, z, u, v; };
 static_assert(sizeof(ProbeVertexUV) == 20, "enhanced vertex stride must match position3/UV2");
 static_assert(offsetof(ProbeVertexUV, u) == 12 && offsetof(ProbeVertexUV, v) == 16,
     "enhanced UV offsets must remain unchanged");
+// Original raw quad (vertex order as cooked) for the per-frame face test.
+struct TerrainQuadInfo {
+    std::array<int32_t,4> x{}, y{}, z{};
+    uint32_t prefix = 0;
+    bool negative = false;
+};
 struct TerrainBatch {
     uint32_t material_word = 0;
     uint64_t key = 0; // material word | unknown-binding bit 32 (patch span buffer)
@@ -113,6 +120,9 @@ struct TerrainBatch {
     size_t vertex_count = 0;
     C3D_Tex texture{};
     bool texture_ready = false;
+    std::vector<TerrainQuadInfo> quads;   // quad k = vertices 6k..6k+5
+    uint16_t* indices = nullptr;          // linear: [0,6q) drawn, [6q,12q) black
+    size_t black_count = 0;
 };
 struct GpuMaterial {
     uint32_t material_word = 0;
@@ -139,6 +149,7 @@ static size_t g_terrain_vertex_count_0143 = 0;
 static ProbeVertexUV* g_terrain_vbo_uv = nullptr;
 static size_t g_terrain_vertex_count_uv = 0;
 static std::vector<TerrainBatch> g_terrain_batches;
+static bool g_area_primitive_negative = false;
 // 0.0.15.8: IDX descriptor swaps (door object 0x8003AC24) patch the baked
 // terrain: the swapped identity's baked vertices collapse and its live
 // descriptor is drawn from this overlay. Native cache; the original redraws
@@ -602,6 +613,12 @@ void release_terrain_batches() {
             if (g_owned_linear_bytes >= bytes) g_owned_linear_bytes -= bytes;
         }
         b.vbo = nullptr;
+        if (b.indices) {
+            const uint32_t bytes = uint32_t(b.quads.size() * 12u * sizeof(uint16_t));
+            linearFree(b.indices);
+            if (g_owned_linear_bytes >= bytes) g_owned_linear_bytes -= bytes;
+            b.indices = nullptr;
+        }
         release_gpu_texture(b.texture, b.texture_ready);
     }
     std::vector<TerrainBatch>().swap(g_terrain_batches);
@@ -708,6 +725,7 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
     if (area_index >= map.areas.size()) throw std::runtime_error("terrain area outside map");
     const auto& area = map.areas[area_index];
     g_area_primitive_count=0;g_area_min_y=g_area_max_y=0;
+    g_area_primitive_negative=false;
     if (terrain_xyz_active()) {
         // Positive grid entries are visibility aliases, not packed rotations.
         // ROCK_NEO 0x80021834 marks IDX bits; 0x80024bac draws each once using
@@ -737,6 +755,7 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         g_area_primitive_idx = 0xFFFFu;
         // Negative cells carry no IDX descriptor; a swap overlay skips them.
         if (g_area_idx_filter) return;
+        g_area_primitive_negative=true;
         const auto negative = l3::collect_area_negative_placement(map, render, area_index);
         uint32_t unknown_materials = 0;
         for (const auto& instance : negative.instances) {
@@ -874,12 +893,14 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
                              size_t area_index) {
     release_all_render_resources();
     std::map<uint64_t, std::vector<ProbeVertexUV>> cpu;
+    std::map<uint64_t, std::vector<TerrainQuadInfo>> quads;
     g_terrain_patch_recording = true;
     for_each_area_primitive(map, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) {
         const uint64_t key = uint64_t(p.material_word) | (p.texture_binding_known ? 0u : (uint64_t{1} << 32));
         auto& dst = cpu[key];
         const size_t first = dst.size();
         push_quad_uv(dst, p);
+        if (terrain_xyz_active()) quads[key].push_back({p.world_x, p.world_y, p.world_z, p.prefix, g_area_primitive_negative});
         if (g_area_primitive_idx != 0xFFFFu)
             g_terrain_patch.add_span(g_area_primitive_idx, key, uint32_t(first), uint32_t(dst.size() - first));
     });
@@ -903,6 +924,17 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
         // also releases the just-created vertex buffer.
         g_terrain_batches.push_back(batch);
         auto& owned_batch = g_terrain_batches.back();
+        // Face-test index lists need the original quad order (6 vertices each)
+        // and 16-bit indices.
+        auto q = quads.find(kv.first);
+        if (q != quads.end() && q->second.size() * 6u == owned_batch.vertex_count && owned_batch.vertex_count <= 65535u) {
+            const size_t index_bytes = q->second.size() * 12u * sizeof(uint16_t);
+            owned_batch.indices = static_cast<uint16_t*>(linearAlloc(index_bytes));
+            if (owned_batch.indices) {
+                owned_batch.quads = std::move(q->second);
+                g_owned_linear_bytes += uint32_t(index_bytes);
+            }
+        }
         if (terrain_textures_requested() && cache && !(kv.first >> 32)) {
             const auto* e = l3::find_material_cache_entry(*cache, batch.material_word);
             const bool may_upload = all_terrain_textures_requested() || !uploaded_one;
@@ -1701,7 +1733,30 @@ void draw_terrain_overlay() {
     }
 }
 
-void draw_terrain() {
+// 0x2C010101: the original back-face fill modulates the texel by 1/128.
+void configure_texenv_black_uv(bool textured) {
+    C3D_TexEnv* env = C3D_GetTexEnv(0);
+    C3D_TexEnvInit(env);
+    if (textured) {
+        C3D_TexEnvSrc(env, C3D_RGB, GPU_TEXTURE0, GPU_CONSTANT, GPU_PRIMARY_COLOR);
+        C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);
+        C3D_TexEnvSrc(env, C3D_Alpha, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+        C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
+    } else {
+        C3D_TexEnvSrc(env, C3D_RGB, GPU_CONSTANT, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+        C3D_TexEnvFunc(env, C3D_RGB, GPU_REPLACE);
+        C3D_TexEnvSrc(env, C3D_Alpha, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+        C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+    }
+    C3D_TexEnvColor(env, 0xFF020202u);
+}
+
+struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0; };
+static TerrainFaceStats g_terrain_face_stats;
+
+// faces == nullptr keeps the previous draw-everything behaviour.
+void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive_mode = 0) {
+    g_terrain_face_stats = {};
     if (!use_uv_renderer()) {
         configure_texenv_0143();
         configure_terrain_attributes_0143();
@@ -1730,10 +1785,39 @@ void draw_terrain() {
         return;
     }
 
-    for (const auto& batch : g_terrain_batches) {
+    for (auto& batch : g_terrain_batches) {
         configure_terrain_attributes_uv(batch.vbo);
         if (batch.texture_ready) C3D_TexBind(0,const_cast<C3D_Tex*>(&batch.texture));
         configure_texenv_uv(batch.texture_ready);
+        batch.black_count = 0;
+        if (faces && batch.indices) {
+            // Original per-quad face test (0x80025900 / 0x80024F30 family
+            // rules) with the 0x1F800008 camera; see terrain_visibility.h.
+            const size_t q = batch.quads.size();
+            size_t drawn = 0, black = 0;
+            for (size_t k = 0; k < q; ++k) {
+                const auto& quad = batch.quads[k];
+                const auto r = l3::classify_terrain_face(*faces, quad.x, quad.y, quad.z, quad.prefix,
+                    quad.negative, positive_mode, l3::kObservedArea1BackFaceThreshold);
+                uint16_t* out = nullptr;
+                switch (r.face) {
+                case l3::TerrainFace::Draw: out = batch.indices + 6u * drawn++; ++g_terrain_face_stats.drawn; break;
+                case l3::TerrainFace::Unsupported: out = batch.indices + 6u * drawn++; ++g_terrain_face_stats.unsupported; break;
+                case l3::TerrainFace::Black: out = batch.indices + 6u * (q + black++); ++g_terrain_face_stats.black; break;
+                case l3::TerrainFace::Skip: ++g_terrain_face_stats.skipped; break;
+                }
+                if (out) for (unsigned i = 0; i < 6u; ++i) out[i] = uint16_t(6u * k + i);
+            }
+            GSPGPU_FlushDataCache(batch.indices, q * 12u * sizeof(uint16_t));
+            batch.black_count = black;
+            if (drawn) {
+                ++g_runtime_diag.draw_calls;
+                g_submitted_vertices += static_cast<uint32_t>(6u * drawn);
+                C3D_DrawElements(GPU_TRIANGLES, int(6u * drawn), C3D_UNSIGNED_SHORT, batch.indices);
+            }
+            continue;
+        }
+        if (faces) ++g_terrain_face_stats.batches_unclassified;
         for (size_t first=0; first<batch.vertex_count;) {
             size_t n=std::min<size_t>(kDrawBatchVertices,batch.vertex_count-first);
             n-=n%3u; if(n==0)break;
@@ -1741,6 +1825,17 @@ void draw_terrain() {
             g_submitted_vertices+=static_cast<uint32_t>(n);
             C3D_DrawArrays(GPU_TRIANGLES,(int)first,(int)n); first+=n;
         }
+    }
+    // Back faces the original fills with 0x2C010101.
+    for (const auto& batch : g_terrain_batches) {
+        if (!batch.black_count) continue;
+        configure_terrain_attributes_uv(batch.vbo);
+        if (batch.texture_ready) C3D_TexBind(0,const_cast<C3D_Tex*>(&batch.texture));
+        configure_texenv_black_uv(batch.texture_ready);
+        ++g_runtime_diag.draw_calls;
+        g_submitted_vertices += static_cast<uint32_t>(6u * batch.black_count);
+        C3D_DrawElements(GPU_TRIANGLES, int(6u * batch.black_count), C3D_UNSIGNED_SHORT,
+                         batch.indices + 6u * batch.quads.size());
     }
     draw_terrain_overlay();
 }
@@ -3748,7 +3843,22 @@ int main() {
                 for(auto& row:frame_projection.r)row.x=-row.x;
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_projection,&frame_projection);
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_model_view,&view);
-            if(g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly)draw_terrain();
+            if(g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly){
+                // The original drops back faces at NCLIP; only the gameplay
+                // camera has the 0x1F800008 words the face test needs.
+                std::optional<l3::TerrainFaceCamera> faces;
+                const auto mode=session.active_area().source_render_scratch_75;
+                // The camera words use scratch shift 0x1F800074; cooked terrain is unshifted.
+                if(source_follow_view&&!source_camera_bound&&mode&&source_follow.scratch_shift_1f800074==0)
+                    faces=l3::make_terrain_face_camera(source_follow.camera_1f800008);
+                draw_terrain(faces?&*faces:nullptr,mode.value_or(0));
+                if(session.frame_counter()%120u==0u)
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,source=NCLIP_80025900_OBSERVED",
+                        (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
+                        (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
+                        (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
+                        (unsigned long)g_terrain_face_stats.batches_unclassified,int(l3::kObservedArea1BackFaceThreshold));
+            }
             // Independent renderer proof filter. A mixed gameplay/scene image
             // cannot prove which imported owner is visible. It defaults OFF and
             // never acknowledges an original player/actor lifecycle operation.

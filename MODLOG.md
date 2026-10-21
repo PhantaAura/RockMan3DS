@@ -261,3 +261,8 @@ byte-0x0B fix is host-only.
 Left-right mirror: the gameplay LookAt view over (x, −y, z) vertices was
 mirrored against the original GTE camera. Camera-space x is now negated on
 that path. test_frontend_handedness: 157/157.
+
+Map face test: ported the original NCLIP rule (families 0x80024F30/0x80025900/
+0x80021B14). Back faces are culled, and in mode 2 far back faces are filled
+near-black (threshold 522 measured in PCSX-Redux). This fixes the doubled top
+screen and the hidden Mega Man at the start. Host 158/158; Azahar visual PASS.

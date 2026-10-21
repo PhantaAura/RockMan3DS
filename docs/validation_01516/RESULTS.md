@@ -1,8 +1,8 @@
 # 0.0.15.16 validation: subtype-0x1F pop-out Reaverbot
 
-Build: `pass-20261020-185103-m2-01516`. `Legends3DS.3dsx` is 1,023,904 B,
-SHA-256 `e2878cb96eedbf9766e3f75b18ad0aa05f2a768b507dd975c614dcccda91924f`
-(not committed). Host: 157/157 PASS, including the new `class20_1f_popout` and
+Build: `pass-20261020-202353-m2-01516`. `Legends3DS.3dsx` is 1,028,996 B,
+SHA-256 `0b8a9b3dcf8f0d79d3de3806c7ed71ffc97ad9d38852fff4c8987696ad0b25ab`
+(not committed). Host: 158/158 PASS, including the new `class20_1f_popout` and
 L3CB v5. Native: PASS, 0 warnings.
 
 **Azahar 2126.0 (Old 3DS).** Normal boot with `autoplay/popout_corridor.txt`;
@@ -52,5 +52,23 @@ framebuffer, so the flip can't reach them. They read normally in the new build.
 screen-right, so after the flip Right also turns right on screen. No input
 change was needed.
 
-**Seen but not part of this fix:** in both builds the top screen looks doubled
-and blurry at the idle start, and Mega Man isn't visible.
+## Doubled top screen and hidden Mega Man (map face test)
+
+**Cause:** the port drew every map polygon from both sides. The original runs
+NCLIP and drops back faces, and in Area 1 (mode 2) it draws far back faces
+near-black. See `docs/research_01516/TERRAIN_FACES.md`.
+
+**PCSX-Redux at the control start:**
+- mode 2, threshold 522;
+- the start wall's back faces are culled at t0 284/270;
+- 17 farther back faces are drawn black.
+
+**Host check:**
+- `terrain_visibility`: min SZ 284 for the start wall, skipped;
+- retail-trig cross-check: the same four culled faces as the original.
+
+**Azahar (new build):**
+- `# terrain_faces classified=1 drawn=259 black=108 skipped=72 unsupported=158`;
+- the idle start now shows Mega Man from behind with a clean corridor, like the
+  PS1 frame;
+- the radio-call spot also renders cleanly.

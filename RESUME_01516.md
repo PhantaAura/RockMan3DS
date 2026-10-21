@@ -23,14 +23,16 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   camera-space x; `test_frontend_handedness` proves the original puts −x
   on screen-right. The HUD and steering are unaffected.
 
+- The original map face test (NCLIP, back-face cull, near-black back-face fill
+  in mode 2, threshold 522 measured) is ported. This fixed the doubled top
+  screen and the hidden Mega Man at the start. See
+  `docs/research_01516/TERRAIN_FACES.md`.
+
 ## Validation
-`docs/validation_01516/RESULTS.md`: host 157/157, native PASS, Azahar trace (pop-out
+`docs/validation_01516/RESULTS.md`: host 158/158, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-0. The top screen looks doubled/blurry at the idle start and Mega Man isn't
-   visible (old and new build alike). Investigate the renderer gate and the
-   player draw.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
    against a short PCSX-Redux probe.
@@ -41,5 +43,9 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    - the top-screen message window and voice.
 
 ## Blockers
+- The 0x1F8001C0 back-face threshold (522) is measured in Area 1 only. Its
+  writer is untraced.
+- The map draw still has no per-cell visibility or Near LOD, so it draws more
+  black faces than the original (hidden by depth).
 - No physical Old 3DS test.
 - The work80 writer for 0x1F is CANDIDATE.

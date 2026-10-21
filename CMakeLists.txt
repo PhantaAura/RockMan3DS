@@ -103,6 +103,7 @@ add_library(legends3ds_core STATIC
     src/render/area_placement.cpp
     src/render/terrain_descriptor_patch.cpp
     src/render/positive_terrain.cpp
+    src/render/terrain_visibility.cpp
     src/render/negative_terrain.cpp
     src/render/negative_materials.cpp
     src/render/area_inspection.cpp
@@ -1107,3 +1108,8 @@ add_executable(test_frontend_handedness tests/test_frontend_handedness.cpp)
 target_link_libraries(test_frontend_handedness PRIVATE legends3ds_core)
 target_compile_options(test_frontend_handedness PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME frontend_handedness COMMAND test_frontend_handedness)
+
+add_executable(test_terrain_visibility tests/test_terrain_visibility.cpp)
+target_link_libraries(test_terrain_visibility PRIVATE legends3ds_core)
+target_compile_options(test_terrain_visibility PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME terrain_visibility COMMAND test_terrain_visibility)
