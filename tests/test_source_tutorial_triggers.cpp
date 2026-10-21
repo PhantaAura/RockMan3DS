@@ -44,7 +44,7 @@ void controller() {
     assert(t.tick(h, at(2822, -4833)).status == TutorialTriggerStatus::SourceBackedPartial && t.controller_state() == 1);
     // Start cell (5,-10): nothing fires.
     auto r = t.tick(h, at(2822, -4833));
-    assert(h.messages.empty() && h.voices.empty() && r.unsupported_type && *r.unsupported_type == 16);
+    assert(h.messages.empty() && h.voices.empty() && !r.unsupported_type);
     // z -5643 >> 9 = -12: type 0 voices 0 and type 1 opens message 0 frozen.
     (void)t.tick(h, at(2822, -5643));
     assert(t.cell_z() == -12 && h.voices == std::vector<uint32_t>{0});
@@ -86,6 +86,18 @@ void controller() {
     h.flags.erase(0x610); const size_t n = h.messages.size();
     (void)t.tick(h, at(2822, -5643));
     assert(h.messages.size() == n);           // 0x622 blocks type 1 even with 0x610 clear
+    // Type 16 ignores 0x622: the box's 0x620 pulse in the region freezes,
+    // waits 60 frames, then opens message 11; done -> 0x621, resume 0x276.
+    h.flags.insert(0x620); (void)t.tick(h, at(-3000, -4800));
+    assert(!h.flag(0x620) && h.messages.size() == n);   // outside the region: pulse consumed
+    h.flags.insert(0x620); (void)t.tick(h, at(2304, 11904));
+    assert(h.bd == 0x40 && h.pause_mask == 0x256 && !h.flag(0x620));
+    for (int i = 0; i < 60; ++i) (void)t.tick(h, at(2304, 11904));
+    assert(h.messages.size() == n);
+    (void)t.tick(h, at(2304, 11904));
+    assert(h.messages.back() == 11 && h.pause_mask == 0x20);
+    h.active = false; (void)t.tick(h, at(2304, 11904));
+    assert(h.flag(0x621) && h.bd == 0 && h.pause_mask == 0x276 && h.pause == 2);
 }
 
 L3QolSettings instant() { L3QolSettings s{}; l3_qol_settings_defaults(&s); s.text_speed = L3_TEXT_SPEED_INSTANT; return s; }
@@ -137,5 +149,5 @@ void dialogue() {
 int main() {
     controller();
     dialogue();
-    std::cout << "PASS: L3TR, E0/06 handlers 0/1/2/4/6/15 (+16 hold), freeze/pause/flags, tutorial dialogue CALL/MULTI\n";
+    std::cout << "PASS: L3TR, E0/06 handlers 0/1/2/4/6/15/16, freeze/pause/flags, tutorial dialogue CALL/MULTI\n";
 }

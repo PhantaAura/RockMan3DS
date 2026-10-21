@@ -196,8 +196,25 @@ bool SourceTutorialTriggers::run(uint8_t type, const TutorialTriggerRecord& r, R
         if (w.state == 0) { if (in_region(r)) freeze_start(r.message); }
         else if (w.state == 1 && !h.message_active()) { freeze_end(0x61E, std::nullopt); h.set_flag(kTutorialDone); }
         return true;
+    case 16:                                                                    // 0x801156C8
+        // Gated by its own 0x621 only (not 0x622). 0x620 is a one-frame pulse:
+        // state 0 clears it every frame, in the region or not. E0/05 (the
+        // Area 2 box, tail word 0x620) sets it when shot.
+        if (h.flag(0x621)) return true;
+        if (w.state == 0) {
+            if (in_region(r) && h.flag(0x620)) {
+                w.state = 1; bd |= 0x40; h.pause_objects(kPauseMask11, 1); w.timer = 0x3C;
+            }
+            h.clear_flag(0x620);
+        } else if (w.state == 1) {
+            w.timer = int16_t(uint16_t(w.timer) - 1u);
+            if (w.timer < 0) { w.state = 2; h.pause_objects(0x20, 1); h.request_message(r.message); }
+        } else if (w.state == 2 && !h.message_active()) {
+            h.set_flag(0x621); bd &= 0xBF; h.pause_objects(0x276, 2);
+        }
+        return true;
     default:
-        return false;   // type 16 (0x801156C8) is not decompiled yet
+        return false;
     }
 }
 

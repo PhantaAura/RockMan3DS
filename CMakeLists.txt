@@ -115,6 +115,7 @@ add_library(legends3ds_core STATIC
     src/animation/player_pose.cpp
     src/flow/mml_message.cpp
     src/flow/source_tutorial_triggers.cpp
+    src/flow/source_gate_e007.cpp
     src/flow/st00_flow.cpp
     src/flow/st00_event.cpp
     src/flow/source_door_event.cpp
@@ -1113,3 +1114,8 @@ add_executable(test_terrain_visibility tests/test_terrain_visibility.cpp)
 target_link_libraries(test_terrain_visibility PRIVATE legends3ds_core)
 target_compile_options(test_terrain_visibility PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME terrain_visibility COMMAND test_terrain_visibility)
+
+add_executable(test_source_gate_e007 tests/test_source_gate_e007.cpp)
+target_link_libraries(test_source_gate_e007 PRIVATE legends3ds_core)
+target_compile_options(test_source_gate_e007 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_gate_e007 COMMAND test_source_gate_e007)

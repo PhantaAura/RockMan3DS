@@ -27,6 +27,7 @@
 #include "legends3ds/source_event_command_package.h"
 #include "legends3ds/source_door_event.h"
 #include "legends3ds/source_tutorial_triggers.h"
+#include "legends3ds/source_gate_e007.h"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -426,6 +427,8 @@ public:
     // 0.0.15.15 E0/06 tutorial triggers. The catalog is owner-local L3TR data.
     void bind_tutorial_triggers(std::shared_ptr<const TutorialTriggerCatalog> catalog);
     bool tutorial_triggers_active() const { return tutorial_triggers_active_; }
+    // ST00 E0/07 floor switches and gates of the active area (0x80115A4C).
+    const std::vector<SourceE007Object>& e007_objects() const { return e007_objects_; }
     const SourceTutorialTriggers& tutorial_triggers() const { return tutorial_triggers_; }
     const TutorialTriggerTick& tutorial_trigger_tick() const { return tutorial_trigger_tick_; }
     // Live class-0x20 +14/+18 owned by the native actor loop (type 6 reads them).
@@ -460,6 +463,10 @@ public:
     const StageObjectList& conditional_spawn_objects() const { return conditional_spawn_objects_; }
     uint32_t conditional_spawn_revision() const { return conditional_spawn_revision_; }
     int8_t conditional_spawn_qualifier() const { return conditional_spawn_qualifier_; }
+    // 0x80111AD4/0x80111C2C: when a spawned object's pool slot clears, E0/00
+    // sets that record's +20 flag, so a defeated object never respawns.
+    // conditional_index is the object's index in conditional_spawn_objects().
+    void note_conditional_object_released(size_t conditional_index);
     bool conditional_spawn_controller_active() const { return conditional_spawn_active_; }
 
     RuntimeVec3i player_position() const;
@@ -551,6 +558,8 @@ private:
     void update_conditional_spawns();
     void reset_tutorial_triggers();
     void update_tutorial_triggers();
+    void reset_e007_objects();
+    void update_e007_objects();
     void update_gameplay_camera_target();
     std::optional<size_t> nearest_target_index() const;
     bool apply_active_cutscene_completion();
@@ -663,10 +672,12 @@ private:
     std::vector<RuntimeAuxTrigger> aux_triggers_;
     std::array<uint8_t,kL3StoryFlagBytes> story_flags_{};
     StageObjectList conditional_spawn_objects_;
+    std::vector<uint32_t> conditional_spawn_flags_; // record +20, parallel to the objects
     std::optional<size_t> conditional_spawn_pending_;
     int8_t conditional_spawn_qualifier_ = -1;
     std::shared_ptr<const TutorialTriggerCatalog> tutorial_catalog_;
     SourceTutorialTriggers tutorial_triggers_;
+    std::vector<SourceE007Object> e007_objects_;
     bool tutorial_triggers_active_ = false;
     TutorialTriggerTick tutorial_trigger_tick_{};
     std::vector<std::array<int16_t,2>> tutorial_class20_xz_;

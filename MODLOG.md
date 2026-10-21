@@ -266,3 +266,8 @@ Map face test: ported the original NCLIP rule (families 0x80024F30/0x80025900/
 0x80021B14). Back faces are culled, and in mode 2 far back faces are filled
 near-black (threshold 522 measured in PCSX-Redux). This fixes the doubled top
 screen and the hidden Mega Man at the start. Host 158/158; Azahar visual PASS.
+
+Tutorial route: mapped every trigger and the objects that raise its flags.
+Ported trigger type 16 (0x801156C8), the E0/00 defeated flags (0x80111AD4) and
+the E0/07 floor switch/gate (0x80115A4C, IDX 119). Azahar: Area 1 messages
+0-1-2-3-4-6-7 in order. The subtype-0x19 trap-room fight is the next gap.

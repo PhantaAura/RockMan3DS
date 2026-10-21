@@ -1,8 +1,8 @@
 # 0.0.15.16 validation: subtype-0x1F pop-out Reaverbot
 
-Build: `pass-20261020-202353-m2-01516`. `Legends3DS.3dsx` is 1,028,996 B,
-SHA-256 `0b8a9b3dcf8f0d79d3de3806c7ed71ffc97ad9d38852fff4c8987696ad0b25ab`
-(not committed). Host: 158/158 PASS, including the new `class20_1f_popout` and
+Build: `pass-20261020-221703-m2-01516`. `Legends3DS.3dsx` is 1,033,496 B,
+SHA-256 `9679766ef67029632e51f733074c89544ccfc5d0f2081c842c58642ef6a753d9`
+(not committed). Host: 159/159 PASS, including the new `class20_1f_popout` and
 L3CB v5. Native: PASS, 0 warnings.
 
 **Azahar 2126.0 (Old 3DS).** Normal boot with `autoplay/popout_corridor.txt`;
@@ -72,3 +72,20 @@ near-black. See `docs/research_01516/TERRAIN_FACES.md`.
 - the idle start now shows Mega Man from behind with a clean corridor, like the
   PS1 frame;
 - the radio-call spot also renders cleanly.
+
+## Tutorial route: type 16, defeated flags and the E0/07 trap room
+
+See `docs/research_01516/TUTORIAL_ROUTE.md`.
+
+**Host:**
+- type 16 (0x620 pulse, 60-frame wait, message, 0x621);
+- `source_gate_e007` (switch box, gate close/shake/0x61F→0x60A/reopen);
+- real Area 1 data: the gate resolves to IDX 119, descriptor 21 → 19.
+
+**Azahar (`autoplay/trap_room.txt`, normal boot):** messages 0 → 1 → 2 → 3 → 4
+→ 6 → 7 at frames 25/660/1483/1958/2529/3681/3783. The switch raises 0x607.
+
+**Not matched:** message 7 comes about 100 frames after message 6, because the
+six subtype-0x19 Reaverbots the original wakes in this room are not ported. The
+gate's close/reopen happened too fast to capture on screen; it is covered by
+the unit test.

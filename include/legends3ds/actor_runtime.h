@@ -112,6 +112,7 @@ struct ImportedActorInstance {
     // Native mirror of source80031824 class20 pool release. A released actor
     // remains as an area-local tombstone so it cannot respawn or reward twice.
     bool source_released=false;
+    bool source_release_reported=false; // E0/00 defeated flag already raised
     // ST00 subtype 0x1F (callback 0x801062EC) until it rewrites itself into
     // subtype 3 parameter 0x40. Work +0C..+0E are kept for that handoff.
     std::optional<Class20_1FState> source_popout;

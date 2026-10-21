@@ -28,11 +28,21 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   screen and the hidden Mega Man at the start. See
   `docs/research_01516/TERRAIN_FACES.md`.
 
+- Tutorial chain mapped end to end (`docs/research_01516/TUTORIAL_ROUTE.md`).
+  Ported: trigger type 16, the E0/00 defeated flags (defeated enemies no
+  longer respawn), and the E0/07 floor switch and gate in the Area 1 trap room.
+
 ## Validation
-`docs/validation_01516/RESULTS.md`: host 158/158, native PASS, Azahar trace (pop-out
+`docs/validation_01516/RESULTS.md`: host 159/159, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
+0. The objects the rest of the tutorial waits on, in route order:
+   - subtype-0x19 Reaverbots (`0x80104864`, the trap-room fight);
+   - lock-on target selection (0x60E);
+   - E0/08 targets and doors (0x608/0x609);
+   - the E0/05 box (0x620);
+   - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
    against a short PCSX-Redux probe.

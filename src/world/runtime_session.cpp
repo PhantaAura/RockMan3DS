@@ -693,7 +693,30 @@ void RuntimeSession::start_source_tutorial_dialogue(MessageRef ref){
 void RuntimeSession::bind_tutorial_triggers(std::shared_ptr<const TutorialTriggerCatalog> catalog){
     tutorial_catalog_=std::move(catalog);reset_tutorial_triggers();
 }
+void RuntimeSession::reset_e007_objects(){
+    // One object per static E0/07 record, initialized on area load.
+    e007_objects_.clear();
+    if(!map_)return;
+    for(const auto& instance:area_.stage.instances){
+        const auto& o=instance.object;
+        if(o.source_class!=0xE0||o.subtype!=7)continue;
+        if(auto obj=source_e007_init_80115a88(*map_,map_area_index_,o.source_position,o.source_param3,story_flag(0x607)))
+            e007_objects_.push_back(*obj);
+    }
+}
+void RuntimeSession::update_e007_objects(){
+    const std::array<int16_t,3> p{{int16_t(player_position_.x),int16_t(player_position_.y),int16_t(player_position_.z)}};
+    for(auto& o:e007_objects_){
+        const auto step=source_e007_step(o,story_flag(0x607),story_flag(0x61F),p);
+        if(step.set_607)set_story_flag(0x607,true);
+        if(step.set_60a)set_story_flag(0x60A,true);
+        if(step.descriptor_write)write_idx_descriptor(o.idx_cell,*step.descriptor_write);
+        // Sounds 0x119/0x118/0x11E, the 0x800398E0 shake and 0x8001B2F0(0xF)
+        // are not played (no audio/camera-shake owner).
+    }
+}
 void RuntimeSession::reset_tutorial_triggers(){
+    reset_e007_objects();
     // A new E0/06 object (area load) restarts at state 0 (0x80114460).
     tutorial_triggers_.bind(tutorial_catalog_.get());tutorial_triggers_active_=false;
     tutorial_trigger_tick_={};tutorial_pause_mode_=0;
@@ -889,7 +912,7 @@ void RuntimeSession::update_camera(){
 }
 
 void RuntimeSession::reset_conditional_spawns(){
-    conditional_spawn_objects_={};conditional_spawn_pending_.reset();
+    conditional_spawn_objects_={};conditional_spawn_flags_.clear();conditional_spawn_pending_.reset();
     conditional_spawn_qualifier_=-1;conditional_spawn_active_=false;
     ++conditional_spawn_revision_;
     if(!area_.conditional_spawns)return;
@@ -900,6 +923,11 @@ void RuntimeSession::reset_conditional_spawns(){
         if(o.source_class==0xC0 && o.subtype==0x21){conditional_spawn_active_=true;break;}
     }
 }
+void RuntimeSession::note_conditional_object_released(size_t index){
+    if(index>=conditional_spawn_flags_.size())return;
+    const auto flag=conditional_spawn_flags_[index];
+    if(flag!=0&&flag<kL3StoryFlagBytes*8u)set_story_flag(static_cast<uint16_t>(flag),true);
+}
 void RuntimeSession::update_conditional_spawns(){
     if(!conditional_spawn_active_ || !area_.conditional_spawns)return;
     const auto& area=*area_.conditional_spawns;
@@ -907,12 +935,13 @@ void RuntimeSession::update_conditional_spawns(){
         const auto index=*conditional_spawn_pending_;
         const auto& region=area.regions.at(index);
         StageObjectList admitted;
+        std::vector<uint32_t> flags;
         admitted.records.reserve(region.records.size());
         for(const auto& record:region.records){
             if(record.predicate!=0 && story_flag(static_cast<uint16_t>(record.predicate)))continue;
-            admitted.records.push_back(record.object);
+            admitted.records.push_back(record.object);flags.push_back(record.predicate);
         }
-        conditional_spawn_objects_=std::move(admitted);
+        conditional_spawn_objects_=std::move(admitted);conditional_spawn_flags_=std::move(flags);
         conditional_spawn_qualifier_=static_cast<int8_t>(region.qualifier);
         conditional_spawn_pending_.reset();++conditional_spawn_revision_;
         return; // source state2 cannot scan a second gate on this tick.
@@ -920,7 +949,7 @@ void RuntimeSession::update_conditional_spawns(){
     const auto selected=st00_spawn_selection(area,conditional_spawn_qualifier_,
         static_cast<int16_t>(player_position_.x),static_cast<int16_t>(player_position_.z));
     if(selected){
-        conditional_spawn_objects_.records.clear();++conditional_spawn_revision_;
+        conditional_spawn_objects_.records.clear();conditional_spawn_flags_.clear();++conditional_spawn_revision_;
         conditional_spawn_pending_=selected; // source state1 -> state2 next tick.
     }
 }
@@ -1633,6 +1662,8 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     }
     else{update_input_compat({});locked_target_index_.reset();}
     update_conditional_spawns();
+    // Area 1's static list puts E0/07 before E0/06 (pool order, CANDIDATE).
+    update_e007_objects();
     update_tutorial_triggers();
     SourceEventInputs source_event_input;
     source_event_input.flags=&source_event_flags_;

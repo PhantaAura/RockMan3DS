@@ -59,6 +59,7 @@
 #include "legends3ds/source_player_buster.h"
 #include "mockup_hud.h"
 #include "legends3ds/render/terrain_visibility.h"
+#include "legends3ds/source_gate_e007.h"
 #include "legends3ds/render/frontend_view.h"
 #include "legends3ds/render/ps1_geometry.h"
 #include "legends3ds/render/terrain_geometry_candidate.h"
@@ -716,6 +717,19 @@ size_t next_diagnostic_area(const l3::RuntimeMap& map,const l3::St00RenderSource
 bool swappable_descriptor(const l3::RuntimeMap& map, uint16_t descriptor) {
     return descriptor < map.descriptors.size() && (map.descriptors[descriptor].word0 & 0x1000u);
 }
+// IDX cells an E0/07 gate rewrites (0x80115B64/0x80115CA4); tracked by the
+// terrain patch like door cells even though the closed word0 0x40500 has no
+// 0x1000 pair.
+static std::vector<uint16_t> g_extra_swappable_idx;
+void set_e007_gate_cells(const l3::TutorialRuntimeArea& area, const l3::RuntimeMap& map, size_t area_index) {
+    g_extra_swappable_idx.clear();
+    for (const auto& instance : area.stage.instances) {
+        const auto& o = instance.object;
+        if (o.source_class != 0xE0 || o.subtype != 7 || o.source_param3 != 0) continue;
+        if (const auto gate = l3::source_e007_init_80115a88(map, area_index, o.source_position, 0, false))
+            g_extra_swappable_idx.push_back(gate->idx_cell);
+    }
+}
 
 template <typename Fn>
 void for_each_area_primitive(const l3::RuntimeMap& map,
@@ -735,7 +749,8 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         for (const auto& instance : placement.instances) {
             if (g_area_idx_filter && std::find(g_area_idx_filter->begin(), g_area_idx_filter->end(),
                                                instance.idx_index) == g_area_idx_filter->end()) continue;
-            const bool tracked = swappable_descriptor(map, instance.descriptor_index);
+            const bool tracked = swappable_descriptor(map, instance.descriptor_index) ||
+                std::find(g_extra_swappable_idx.begin(), g_extra_swappable_idx.end(), instance.idx_index) != g_extra_swappable_idx.end();
             if (g_terrain_patch_recording && tracked) g_terrain_patch.bake(instance.idx_index, instance.descriptor_index);
             g_area_primitive_idx = tracked ? instance.idx_index : uint16_t(0xFFFFu);
             if (instance.descriptor_index == 0xFFFFu) continue;
@@ -2426,6 +2441,7 @@ int main() {
 
         l3::MaterialCache terrain_materials{};
         l3::MaterialCache player_materials{};
+        set_e007_gate_cells(session.active_area(), map, g_current_area);
         rebuild_current_terrain(map, render, &terrain_materials, &player_materials, g_current_area);
         if(actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
         if(actor_metadata.event_phase2)session.bind_source_event_phase2_package(*actor_metadata.event_phase2);
@@ -2731,6 +2747,7 @@ int main() {
                         // only these bounded CPU actors coexist during staging.
                         next_actors=load_area_actors(*binding,map,next_area,actor_metadata,session.source_stats_selector());
                         resources_changed=true;
+                        set_e007_gate_cells(*binding,map,next_area);
                         rebuild_current_terrain(map,render,&terrain_materials,&player_materials,next_area);
                     }, [&] {
                         // RuntimeSession copies fallible work before changing
@@ -2755,6 +2772,7 @@ int main() {
                             // Old3DS avoids two GPU/cache sets at once. Rebuild
                             // the old view from owner-local data on rejection.
                             try {
+                                set_e007_gate_cells(session.active_area(),map,outgoing_area);
                                 rebuild_current_terrain(map,render,&terrain_materials,&player_materials,outgoing_area);
                             } catch (const std::exception& restore_error) {
                                 restoration_failed=true;
@@ -3294,6 +3312,19 @@ int main() {
                         const auto pp=session.player_position();
                         ++g_actor_update_ordinal;
                         g_children.reset_frame_queues();
+                        // E0/00 sees a cleared pool slot on its next update and
+                        // raises that spawn record's flag (0x80111AD4).
+                        const size_t static_objects=session.active_area().flow.objects.records.size();
+                        for(auto& actor:actors.actors)
+                            if(actor.source_released&&!actor.source_release_reported){
+                                actor.source_release_reported=true;
+                                if(actor.source_index>=static_objects){
+                                    session.note_conditional_object_released(actor.source_index-static_objects);
+                                    hardware_test_trace("# conditional_defeat_flag,frame=%lu,source_index=%lu,record=%lu",
+                                        (unsigned long)session.frame_counter(),(unsigned long)actor.source_index,
+                                        (unsigned long)(actor.source_index-static_objects));
+                                }
+                            }
                         for(auto& actor:actors.actors) {
                             const auto target=l3::sample_imported_actor_target(actor,pp.x,pp.z,
                                 actor_angle_steps ? &*actor_angle_steps : nullptr);
