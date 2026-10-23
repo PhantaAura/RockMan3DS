@@ -22,8 +22,10 @@ struct Source {
     }
 };
 uint32_t descriptor(const EbdDirectory& directory,size_t row) {
+    // Subtypes 5 (box) and 8 (targets/doors) decode with the same single-part
+    // descriptor (CANDIDATE: their draw call 0x80051B68 is not traced).
     if(row>=directory.entries.size()||directory.entries[row].object_class!=0xe0||
-        directory.entries[row].subtype!=3)
+        (directory.entries[row].subtype!=3&&directory.entries[row].subtype!=5&&directory.entries[row].subtype!=8))
         throw std::runtime_error("scene E0 resource class/subtype unsupported");
     const auto span=ebd_resource_span(directory,row,0,0x7c);
     if(span.status!=EbdResourceSpanStatus::AVAILABLE||(span.source_offset&3u))

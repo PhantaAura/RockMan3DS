@@ -60,6 +60,7 @@
 #include "mockup_hud.h"
 #include "legends3ds/render/terrain_visibility.h"
 #include "legends3ds/source_gate_e007.h"
+#include "legends3ds/source_target_e008.h"
 #include "legends3ds/render/frontend_view.h"
 #include "legends3ds/render/ps1_geometry.h"
 #include "legends3ds/render/terrain_geometry_candidate.h"
@@ -728,6 +729,13 @@ void set_e007_gate_cells(const l3::TutorialRuntimeArea& area, const l3::RuntimeM
         if (o.source_class != 0xE0 || o.subtype != 7 || o.source_param3 != 0) continue;
         if (const auto gate = l3::source_e007_init_80115a88(map, area_index, o.source_position, 0, false))
             g_extra_swappable_idx.push_back(gate->idx_cell);
+    }
+    // E0/08 doors with parameter & 0x4F own a cell too (0x80116750).
+    for (const auto& instance : area.stage.instances) {
+        const auto& o = instance.object;
+        if (o.source_class != 0xE0 || o.subtype != 8 || o.source_param3 < 0x80) continue;
+        if (const auto door = l3::source_e008_init_80115eac(map, area_index, o.source_position, o.source_param3, false, false))
+            if (door->idx_cell) g_extra_swappable_idx.push_back(*door->idx_cell);
     }
 }
 
@@ -1415,6 +1423,40 @@ void draw_imported_actors_uv(const l3::ActorAreaRuntime& area) {
 // This diagnostic renderer deliberately leaves texture/CLUT, source camera
 // depth and GTE shade unacknowledged. ABR/STP are gated below; original
 // ordering and PICA quantization are still not accepted as PS1 parity.
+// ST00 E0/08 targets/doors: one opaque, untextured pass tinted by +0x40
+// (FRONTEND_DIAGNOSTIC). Variant 0 is the first (E0,8) row, 1 the second (CANDIDATE).
+static const l3::EbdDirectory* g_e008_mesh_owner=nullptr;
+static std::vector<std::pair<size_t,l3::SceneE0MeshResource>> g_e008_meshes;
+size_t draw_source_e008_uv(const l3::RuntimeSession& session) {
+    if(!use_uv_renderer()||session.e008_objects().empty())return 0;
+    const auto& ebd=session.active_area().ebd;
+    if(g_e008_mesh_owner!=&ebd){g_e008_meshes.clear();g_e008_mesh_owner=&ebd;
+        for(const auto row:l3::find_ebd_entries(ebd,0xE0,8)){
+            try{g_e008_meshes.emplace_back(row,l3::decode_scene_e0_mesh(ebd,row,l3::SceneE0MeshTier::Near));}
+            catch(const std::exception& e){boot_log(MML_BOOT_DATA,e.what());}
+        }}
+    if(g_e008_meshes.empty())return 0;
+    configure_immediate_attributes_uv();configure_texenv_uv(false);
+    size_t drawn=0;
+    for(const auto& o:session.e008_objects()){
+        if(o.released||(o.target&&o.state>3))continue;
+        const auto& mesh=g_e008_meshes[o.target?0:std::min<size_t>(1,g_e008_meshes.size()-1)].second;
+        const float a=float(o.heading_30&0xfff)*6.2831853f/4096.f,cs=std::cos(a),sn=std::sin(a);
+        const float r=float(o.color_40&255u)/255.f,g=float((o.color_40>>8)&255u)/255.f,b=float((o.color_40>>16)&255u)/255.f;
+        const auto vertex=[&](uint8_t index,uint8_t u,uint8_t v){
+            const auto& p=mesh.part.vertices[index];
+            const float x=float(o.position[0])+cs*float(p.x)+sn*float(p.z);
+            const float z=float(o.position[2])-sn*float(p.x)+cs*float(p.z);
+            const auto uv=l3::actor_render_uv(u,v);
+            send_immediate_uv(x,float(o.position[1])+float(p.y),z,r,g,b,uv[0],uv[1]);
+        };
+        ++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);
+        for(const auto& tri:mesh.part.triangles)for(size_t k=0;k<3;++k)vertex(tri.index[k],tri.uv[k*2],tri.uv[k*2+1]);
+        for(const auto& quad:mesh.part.quads)for(auto k:l3::kPs1QuadTriangleIndices)vertex(quad.index[k],quad.uv[k*2],quad.uv[k*2+1]);
+        C3D_ImmDrawEnd();++drawn;
+    }
+    return drawn;
+}
 size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::SceneE0Resources& resources) {
     if(!use_uv_renderer()||!resources.resident_in(session.active_area().ebd))return 0;
     configure_immediate_attributes_uv();configure_texenv_uv(false);
@@ -3314,6 +3356,20 @@ int main() {
                         const auto pp=session.player_position();
                         ++g_actor_update_ordinal;
                         g_children.reset_frame_queues();
+                        // ST00 E0/08 targets register their 0x800341BC proxies
+                        // (radius 0x50, 0x04000000) on the shared hit records.
+                        for(const auto& request:session.e008_proxy_requests()){
+                            l3::SourceHitProxyRegistration registration;
+                            const auto& p=request.point;
+                            registration.pointed_words={{uint32_t(uint16_t(p[0]))|(uint32_t(uint16_t(p[1]))<<16),uint32_t(uint16_t(p[2]))}};
+                            registration.a1=0x50;registration.a2=0;registration.a3=0x8000;
+                            registration.stack10=uint8_t(0xE0u|request.slot);registration.stack18=0x04000000u;
+                            registration.stack1c=0x00800000u;registration.stack20=0;
+                            registration.target=&session.e008_hit_targets()[request.record];registration.mask_80098798=0xffu;
+                            registration.owners_800be478=g_children.proxy_owner_pointers();
+                            (void)l3::source_hit_proxy_register_800341bc(g_children.hit_proxy_bank(),registration);
+                            g_children.publish_proxy_owner_points();
+                        }
                         // E0/00 sees a cleared pool slot on its next update and
                         // raises that spawn record's flag (0x80111AD4).
                         const size_t static_objects=session.active_area().flow.objects.records.size();
@@ -3386,7 +3442,8 @@ int main() {
                                 in.sound_consumer_ready=true;
                                 const uint8_t action_before=st.action_09;
                                 const auto rb=l3::tick_imported_actor_reaverbot19(actor,in,refs,
-                                    g_source_actor_proxy?&g_children.hit_proxy_bank():nullptr,0xffu);
+                                    g_source_actor_proxy?&g_children.hit_proxy_bank():nullptr,0xffu,g_children.proxy_owner_pointers());
+                                g_children.publish_proxy_owner_points();
                                 if(rb.committed&&sample)(void)l3::commit_source_rng_update(g_actor_rng,rb_rng);
                                 else if(rb_begun)l3::rollback_source_rng_update(rb_rng);
                                 if(!rb.committed)actor.source_detection19=detection_before;
@@ -3547,6 +3604,8 @@ int main() {
                             // Preserve the existing diagnostic proxy mask. This
                             // is not a newly recovered retail mask owner.
                             proxy_tail.mask_80098798=0xffu;
+                            // Leased targets need the 0x800BE478 owner table to re-register.
+                            proxy_tail.owners_800be478=g_children.proxy_owner_pointers();
                             const auto* proxy_tail_ptr=g_source_actor_proxy?&proxy_tail:nullptr;
                             const uint32_t pending_actor_packet=actor.source_proxy_target.packet_00;
                             l3::ImportedActorBehaviorTick actor_tick;
@@ -3579,6 +3638,7 @@ int main() {
                                     &session.source_audio_queue(),nullptr,nullptr,nullptr,&g_children,&refs,&reaction,proxy_tail_ptr);
                             } else actor_tick=l3::tick_imported_actor_state1(actor,source,nullptr,
                                 detection?&*detection:nullptr,&session.source_audio_queue(),nullptr,nullptr,nullptr,&g_children,&refs,nullptr,proxy_tail_ptr);
+                            if(proxy_tail_ptr)g_children.publish_proxy_owner_points();
                             const bool packet_consumed=pending_actor_packet&&actor_tick.committed&&actor_tick.proxy_finalized;
                             if(packet_consumed)++actor_packet_commits;
                             if(g_source_actor_proxy&&((packet_consumed&&actor_packet_commits<=3u)||session.frame_counter()%60u==0u))
@@ -3610,7 +3670,9 @@ int main() {
                                     unsigned(actor_tick.reward_enqueued),(unsigned long)g_children.enemy_reward_queue().count,
                                     unsigned(actor_tick.source_audio_queued||actor_tick.source_audio_dropped));
                             if(actor_tick.committed&&g_source_actor_proxy&&!actor_tick.proxy_finalized) {
-                                const auto proxy=l3::tick_imported_actor_pose_proxy(actor,refs,g_children.hit_proxy_bank(),0xffu);
+                                const auto proxy=l3::tick_imported_actor_pose_proxy(actor,refs,g_children.hit_proxy_bank(),0xffu,
+                                    g_children.proxy_owner_pointers());
+                                g_children.publish_proxy_owner_points();
                                 if(session.frame_counter()%60u==0u)
                                     hardware_test_trace("# source_actor_proxy,frame=%lu,slot=%lu,pose=%u,tail=%u,committed=%u,registered=%u,full=%u,point=%d:%d:%d,player_Buster_GTE=UNKNOWN",
                                         (unsigned long)session.frame_counter(),(unsigned long)actor.original_pool_slot,
@@ -4005,6 +4067,22 @@ int main() {
                 if(session.frame_counter()%60u==0u)
                     hardware_test_trace("# source_scene_E0_draw,frame=%lu,instances=%lu,LOD=FRONTEND_NEAR_DIAGNOSTIC,texture=INITIAL_BATCH_DIAGNOSTIC,source_camera_bound=%u,retail_parity=false",
                         (unsigned long)session.frame_counter(),(unsigned long)submitted,unsigned(source_camera_bound));
+            }
+            if(g_hardware_scene_draw==HardwareSceneDraw::All){
+                const auto targets=draw_source_e008_uv(session);
+                if(targets&&session.frame_counter()%30u==0u){
+                    char hp[96];size_t at=0;hp[0]=0;
+                    for(const auto& o:session.e008_objects())if(o.target&&at<80)
+                        at+=size_t(std::snprintf(hp+at,sizeof(hp)-at,"%02x:s%u:hp%u;",unsigned(o.parameter),unsigned(o.state),unsigned(o.hp_0a)));
+                    auto& rec=session.e008_hit_targets();
+                    hardware_test_trace("# e008_targets,frame=%lu,%s,record0=%08lx,record1=%08lx",
+                        (unsigned long)session.frame_counter(),hp,(unsigned long)rec[0].packet_00,(unsigned long)rec[1].packet_00);
+                }
+                if(targets&&session.frame_counter()%120u==0u)
+                    hardware_test_trace("# e008_draw,frame=%lu,drawn=%lu,check_target=%ld,flag608=%u,flag609=%u,flag60e=%u,presentation=FRONTEND_DIAGNOSTIC",
+                        (unsigned long)session.frame_counter(),(unsigned long)targets,
+                        session.player_check_target()?long(*session.player_check_target()):-1L,
+                        unsigned(session.story_flag(0x608)),unsigned(session.story_flag(0x609)),unsigned(session.story_flag(0x60E)));
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){if(use_uv_renderer())draw_projectiles_uv(session);else draw_projectiles_0143(session);}
             if(source_combat_active&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) {

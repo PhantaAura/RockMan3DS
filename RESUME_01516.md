@@ -36,16 +36,20 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   the floor switch (0x607), drops in, fights, and is defeated with effect,
   reward and its E0/00 flag. Host-checked on the real Area 1 map.
 
+- E0/08 targets and doors plus the 0x800411DC action check are ported. In
+  Azahar the check opens Roll's message, both targets break and the doors open.
+- Fixed two Buster bugs: a stale hit packet after the first hit (every later
+  shot died on frame 2), and leased targets could not re-register.
+
 ## Validation
-`docs/validation_01516/RESULTS.md`: host 160/160, native PASS, Azahar trace (pop-out
+`docs/validation_01516/RESULTS.md`: host 162/162, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
 0. The objects the rest of the tutorial waits on, in route order:
    - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
    - lock-on target selection (0x60E);
-   - E0/08 targets and doors (0x608/0x609);
-   - the E0/05 box (0x620);
+   - the E0/05 box (0x620) and its texture/visuals;
    - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing

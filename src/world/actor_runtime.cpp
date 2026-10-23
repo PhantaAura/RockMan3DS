@@ -1130,7 +1130,7 @@ bool bind_imported_actor_reaverbot19_record(ImportedActorInstance& actor,
 
 ImportedActorReaverbot19Tick tick_imported_actor_reaverbot19(ImportedActorInstance& actor,
     Class20_19Inputs in, const ReferenceTables& references, SourceHitProxyBank* bank,
-    std::optional<uint32_t> mask) noexcept {
+    std::optional<uint32_t> mask, std::array<SourceHitProxyOwnerPoint*,24> owners) noexcept {
     ImportedActorReaverbot19Tick out;
     if (actor.source_released || !actor.source_reaverbot19 || actor.subtype != 0x19 ||
         actor.initializer != 0x80104A08 || !in.world) return out;
@@ -1193,6 +1193,7 @@ ImportedActorReaverbot19Tick tick_imported_actor_reaverbot19(ImportedActorInstan
         registration.stack18 = out.result.proxy_word_18;
         registration.stack1c = 0x00800000u; registration.stack20 = 0;
         registration.target = &actor.source_proxy_target; registration.mask_80098798 = mask;
+        registration.owners_800be478 = owners;
         out.proxy_registered = source_hit_proxy_register_800341bc(*bank, registration).status ==
                                SourceHitProxyStatus::SourceBackedPartial;
     }
@@ -1223,7 +1224,7 @@ bool initialize_imported_actor_fresh_pose_proxy_subset(ImportedActorInstance& ac
 }
 ImportedActorPoseProxyTick tick_imported_actor_pose_proxy(ImportedActorInstance& actor,
     const ReferenceTables& references,SourceHitProxyBank& bank,
-    std::optional<uint32_t> source_mask) noexcept {
+    std::optional<uint32_t> source_mask,std::array<SourceHitProxyOwnerPoint*,24> owners) noexcept {
     ImportedActorPoseProxyTick out;
     if(!actor.source_proxy_bound||!actor.source_behavior||!actor.pose)return out;
     // This API is a separate diagnostic tail. It cannot clear a packet that
@@ -1245,6 +1246,7 @@ ImportedActorPoseProxyTick tick_imported_actor_pose_proxy(ImportedActorInstance&
     input.source_work_01=uint8_t(0x20u|uint8_t(actor.original_pool_slot));
     input.producer_330=uint16_t(actor.source_behavior->behavior.work_330);
     input.target_33c=&actor.source_proxy_target;input.mask_80098798=source_mask;
+    input.owners_800be478=owners;
     out.proxy=class20_03_finalize_proxy_80102398(*actor.source_behavior,bank,input);
     out.committed=out.proxy.status==Class20_03ProxyStatus::SourceBackedPartial;
     return out;

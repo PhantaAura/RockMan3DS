@@ -226,6 +226,10 @@ SourceBusterBatch ChildRuntime::tick_source_busters_80017154(
                 if(context.aim_pitch_80039b80!=0){hold(SourceBusterCallbackStatus::UnsupportedAimPitch);continue;}
                 next[0]|=0x2a;next[6]|=0x20;
                 write32(next,0xc4,0);write32(next,0xc8,0);
+                // The proxy target is +0xC4 itself: rebuild it after the clear,
+                // or a reused slot republishes its last hit packet and the new
+                // shot "impacts" on its second frame.
+                target=buster_target(source_buster_base+uint32_t(slot*class60_slot_bytes),next);
                 write32(next,0x78,0x80097da0u);
                 // RotMatrix(pitch 0, heading +64, 0) applied to (0,0,0xF000):
                 // the third column of RotY, exactly -sin / 0 / -cos in q12.
@@ -703,6 +707,25 @@ SourceHitProxyStatus ChildRuntime::release_proxy_lease(std::optional<uint32_t>& 
 }
 void ChildRuntime::clear_proxy_owner(size_t index) noexcept {
     if(index<owner_identities_.size())owner_identities_[index]=0;
+}
+std::array<SourceHitProxyOwnerPoint*,24> ChildRuntime::proxy_owner_pointers() noexcept {
+    std::array<SourceHitProxyOwnerPoint*,24> out{};
+    for(size_t i=0;i<owner_identities_.size();++i){
+        if(!owner_identities_[i])continue;
+        // Aliases of one identity share the first slot's point (source pointer identity).
+        size_t canonical=i;
+        for(size_t prior=0;prior<i;++prior)if(owner_identities_[prior]==owner_identities_[i]){canonical=prior;break;}
+        out[i]=&owner_points_[canonical];
+    }
+    return out;
+}
+void ChildRuntime::publish_proxy_owner_points() noexcept {
+    for(size_t i=0;i<owner_identities_.size();++i){
+        if(!owner_identities_[i])continue;
+        for(size_t prior=0;prior<i;++prior)
+            if(owner_identities_[prior]==owner_identities_[i]){owner_points_[i]=owner_points_[prior];break;}
+    }
+    publish_buster_proxy_points();
 }
 const SourceHitProxyOwnerPoint* ChildRuntime::proxy_owner_point(size_t index) const noexcept {
     return index<owner_identities_.size() && owner_identities_[index]?&owner_points_[index]:nullptr;

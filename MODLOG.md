@@ -276,3 +276,8 @@ Subtype 0x19: ported the trap-room Reaverbot (0x80104864; states, six actions,
 selector, hit/stagger/defeat) with L3CB rows and L3DP profile 6. It drops in
 when the switch raises 0x607. Host 160/160 plus a real-map check (1200/1200
 frames). Azahar run pending (screen locked).
+
+E0/08 + action check: ported the Area 2 targets/doors (0x80115E70) and
+0x800411DC/0x800414F0. Fixed the shot-0x81 stale hit packet and the missing
+owner table on external proxy registrations. Azahar: check → 0x60E message;
+both targets destroyed; doors open. Host 162/162.

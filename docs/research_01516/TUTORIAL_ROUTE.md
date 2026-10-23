@@ -55,7 +55,7 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 | E0/00 defeated flags | ported (flags raised the update after release) |
 | E0/07 switch and gate | ported. Sounds, the 0x800398E0 shake, 0x8001B2F0 and the model animation are not |
 | Subtype 0x19 Reaverbots | ported (`class20_19`); host-checked on the real Area 1 map, Azahar fight not yet run |
-| E0/08 targets/doors, action check 0x60E (`0x800411DC`) | **not ported** |
+| E0/08 targets/doors, action check 0x60E (`0x800411DC`) | ported; Azahar: check → msg 8/9, both targets destroyed, doors open |
 | E0/05 box (0x620) | **not ported** |
 | class 40/04, subtype-3 parameter 0xA0 wake | **not checked** |
 
@@ -114,3 +114,27 @@ fight is missing.
 - **Buster targeting:** separate. `0x80034EB8` picks a proxy per shot inside
   screen windows (x 0x83–0xBD for lane 0). It works in host tests but needs an
   enemy roughly centred ahead.
+
+## E0/08 and the action check, ported in 0.0.15.16
+- **`source_target_e008`:** the target and door states
+  (`0x80115EAC`/`0x801161D4`/`0x801164A8`/`0x80116658`/`0x8011668C`/`0x80116750`/`0x80116A08`)
+  and the shared hit records 0x80122620 + 16 × (parameter & 1). Real Area 2:
+  - targets 0x61 at (−5888, 12032) → 0x609 and 0x60 at (−5888, 13056) → 0x608;
+  - doors 0x81/0xC1 own IDX cell 258 (0x110900 → 0xF0900); 0xA0/0xE0 own cell
+    335 (0x72400 → 0x71400).
+- **`source_action_check_800411dc`:**
+  - E0 candidates only, with zero rotation; probes 0x50/0x80/0xB0 with
+    tolerances 12/24/36; nearest below 208;
+  - CANDIDATE: the integer sqrt (0x8007A578 uses a table), and the 0x8003A13C
+    gate (byte 0x800A3962) is taken as open during gameplay.
+- **Drawing:** the E0 single-part decoder now admits subtypes 5 and 8 (the
+  0x80051B68 draw is CANDIDATE). The meshes are untextured, tinted by +0x40
+  (FRONTEND_DIAGNOSTIC).
+- **Two Buster bugs found along the way:**
+  - The shot-0x81 state 0 republished its slot's last hit packet: the local
+    target was copied from +0xC4 before the clear. So every shot after a hit
+    "impacted" on its second frame. Now rebuilt after the clear (regression
+    test in `source_buster_shot81`).
+  - External proxy registrations now receive the 0x800BE478 owner table
+    (`ChildRuntime::proxy_owner_pointers`), so a target leased by a homing pick
+    can re-register.

@@ -715,8 +715,64 @@ void RuntimeSession::update_e007_objects(){
         // are not played (no audio/camera-shake owner).
     }
 }
+void RuntimeSession::reset_e008_objects(){
+    e008_objects_.clear();e008_slots_.clear();e008_proxy_requests_.clear();
+    e008_hit_targets_={};player_check_target_.reset();player_check_distance_=0;
+    for(size_t i=0;i<e008_hit_targets_.size();++i)e008_hit_targets_[i].source_address=0x80122620u+uint32_t(i)*16u;
+    if(!map_)return;
+    uint8_t slot=0;
+    for(const auto& instance:area_.stage.instances){
+        const auto& o=instance.object;
+        if(o.source_class==0xE0)++slot;
+        if(o.source_class!=0xE0||o.subtype!=8)continue;
+        if(auto obj=source_e008_init_80115eac(*map_,map_area_index_,o.source_position,o.source_param3,
+                                              story_flag(0x608),story_flag(0x609))){
+            e008_objects_.push_back(*obj);e008_slots_.push_back(uint8_t(slot-1));
+        }
+    }
+}
+void RuntimeSession::update_e008_objects(){
+    e008_proxy_requests_.clear();
+    for(size_t i=0;i<e008_objects_.size();++i){
+        auto& o=e008_objects_[i];
+        auto& target=e008_hit_targets_[o.record()];
+        SourceE008HitRecord record{target.packet_00,target.point_08,target.word_0e};
+        SourceE008Inputs in;
+        in.flag_608=story_flag(0x608);in.flag_609=story_flag(0x609);in.flag_61d=story_flag(0x61D);
+        in.checked_by_player=player_check_target_==i;
+        // CANDIDATE: the blink/pulse 0x8007FE50 draws are not on the shared
+        // stream yet; presentation only.
+        const auto step=source_e008_step(o,record,in);
+        target.packet_00=record.packet;
+        if(step.set_608)set_story_flag(0x608,true);
+        if(step.set_609)set_story_flag(0x609,true);
+        if(step.set_60e)set_story_flag(0x60E,true);
+        if(step.clear_player_check&&player_check_target_==i)player_check_target_.reset();
+        if(step.descriptor_write&&o.idx_cell)write_idx_descriptor(*o.idx_cell,*step.descriptor_write);
+        if(step.register_proxy)e008_proxy_requests_.push_back({step.proxy_point,o.record(),e008_slots_[i]});
+    }
+}
+void RuntimeSession::update_action_check_800411dc(){
+    // Gates: 0x8003A13C (byte 0x800A3962 negative; its owner is untraced, so
+    // gameplay-owned follow play stands in, CANDIDATE), +0x174 & 0xC0, +0x177.
+    if((player_.bytes[0x174]&0xC0u)||player_.bytes[0x177])return;
+    if(!reference_tables_)return;
+    const uint16_t held=rd16w(player_,0x11C),action=rd16w(player_,0x136);
+    if(!(held&action)||player_.bytes[0x74]){player_check_target_.reset();return;}
+    std::vector<SourceActionCheckCandidate> candidates;std::vector<size_t> owner;
+    for(size_t i=0;i<e008_objects_.size();++i){
+        const auto& o=e008_objects_[i];
+        if(o.released||!o.check_box)continue;
+        candidates.push_back({o.position,*o.check_box});owner.push_back(i);
+    }
+    const uint16_t heading=uint16_t(player_.bytes[0x56]|(uint16_t(player_.bytes[0x57])<<8))&0xFFFu;
+    const auto r=source_action_check_800411dc(*reference_tables_,
+        {{int16_t(player_position_.x),int16_t(player_position_.y),int16_t(player_position_.z)}},heading,candidates);
+    if(r.index){player_check_target_=owner[*r.index];player_check_distance_=r.distance_182;}
+    else player_check_target_.reset();
+}
 void RuntimeSession::reset_tutorial_triggers(){
-    reset_e007_objects();
+    reset_e007_objects();reset_e008_objects();
     // A new E0/06 object (area load) restarts at state 0 (0x80114460).
     tutorial_triggers_.bind(tutorial_catalog_.get());tutorial_triggers_active_=false;
     tutorial_trigger_tick_={};tutorial_pause_mode_=0;
@@ -1657,6 +1713,8 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         update_source_door_event();
         // CANDIDATE order: event 0 after the player, then the door objects.
         update_source_door_event0();update_source_door_objects();
+        // 0x8003F5D8/0x8003F7F0 call 0x800411DC from the idle/walk states.
+        update_action_check_800411dc();
         if(candidate_combat_enabled_){update_lock_on(in);if(in.fire_pressed)spawn_buster_projectile();}
         else locked_target_index_.reset();
     }
@@ -1664,6 +1722,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     update_conditional_spawns();
     // Area 1's static list puts E0/07 before E0/06 (pool order, CANDIDATE).
     update_e007_objects();
+    update_e008_objects();
     update_tutorial_triggers();
     SourceEventInputs source_event_input;
     source_event_input.flags=&source_event_flags_;

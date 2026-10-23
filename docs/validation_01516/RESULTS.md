@@ -1,8 +1,8 @@
 # 0.0.15.16 validation: subtype-0x1F pop-out Reaverbot
 
-Build: `pass-20261020-224638-m2-01516`. `Legends3DS.3dsx` is 1,050,104 B,
-SHA-256 `51b7e07cc70f8e69ca4ebc91ef83e976c808f0e996ef7e4ded6aa7f9467644ca`
-(not committed). Host: 160/160 PASS, including the new `class20_1f_popout` and
+Build: `pass-20261023-181458-m2-01516` (+ rebuild). `Legends3DS.3dsx` is 1,059,388 B,
+SHA-256 `8c021fc55c3689e2a59bdb2e2ab8349935dd6f7e1097dd91d2b7a21fe72371da`
+(not committed). Host: 162/162 PASS, including the new `class20_1f_popout` and
 L3CB v5. Native: PASS, 0 warnings.
 
 **Azahar 2126.0 (Old 3DS).** Normal boot with `autoplay/popout_corridor.txt`;
@@ -108,3 +108,17 @@ gate descriptor closed.
 
 **Azahar:** not run. The Mac screen was locked, so the emulator could not
 start.
+
+## Area 2 targets, doors and the action check
+
+`autoplay/area2_targets.txt`, diagnostic spawn `2 -5300 -576 12032 1024`, Azahar trace:
+- **Check:** A next to target 0x61 sets 0x60E. Trigger 14 opens message 8, then
+  9 (a Yes/No question); Right+A answers No and it closes at frame 846.
+- **First fix:** before the Buster fix, only the first shot of the run did
+  damage, because every later shot reused a slot with a stale hit packet.
+- **After the fix:**
+  - 0x61 goes 100 → 52 → 4 and breaks apart (0x609);
+  - 0x60 goes 76 → 28 and is destroyed (0x608) at frame 1590;
+  - both doors then open and release (nothing left to draw after frame 1590).
+- **Not checked:** the door IDX swap on screen, and triggers 12/13 (their
+  regions were not entered).

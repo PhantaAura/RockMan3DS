@@ -349,7 +349,8 @@ struct ImportedActorReaverbot19Tick {
 // and rewards are returned for the caller's child runtime. Allocation-free.
 ImportedActorReaverbot19Tick tick_imported_actor_reaverbot19(ImportedActorInstance& actor,
     Class20_19Inputs inputs, const ReferenceTables& references, SourceHitProxyBank* bank,
-    std::optional<uint32_t> mask_80098798) noexcept;
+    std::optional<uint32_t> mask_80098798,
+    std::array<SourceHitProxyOwnerPoint*,24> owners_800be478 = {}) noexcept;
 
 // The frame after 0x801062EC rewrote work +2/+3/+8, the subtype-3 dispatcher
 // runs state 0 (0x80102410). This performs that init: subtype-3 row, mesh and
@@ -373,7 +374,8 @@ struct ImportedActorPoseProxyTick {
 // this separate tail until the complete body transaction is admitted.
 ImportedActorPoseProxyTick tick_imported_actor_pose_proxy(ImportedActorInstance& actor,
     const ReferenceTables& references,SourceHitProxyBank& bank,
-    std::optional<uint32_t> source_mask_80098798) noexcept;
+    std::optional<uint32_t> source_mask_80098798,
+    std::array<SourceHitProxyOwnerPoint*,24> owners_800be478 = {}) noexcept;
 
 // Supported initializers sample a floor before setting work y. Caller uses the
 // area's collision query; this API does not substitute a guessed floor height.

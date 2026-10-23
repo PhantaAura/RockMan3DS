@@ -250,6 +250,12 @@ public:
         uint32_t source_index) noexcept;
     void clear_proxy_owner(size_t table_index) noexcept;
     const SourceHitProxyOwnerPoint* proxy_owner_point(size_t table_index) const noexcept;
+    // The 0x800BE478 owner table for registrations made outside this runtime.
+    // A leased target (flags_04 lease bit) cannot register without it, and
+    // 0x800341BC writes the target's point into each leasing owner. Call
+    // publish_proxy_owner_points() after such registrations.
+    std::array<SourceHitProxyOwnerPoint*,24> proxy_owner_pointers() noexcept;
+    void publish_proxy_owner_points() noexcept;
     SourcePlayerLeaseResult consume_player_leases(SourceGteRtpsState& state,
         std::optional<std::array<uint32_t,8>> source_camera,
         std::optional<uint32_t> source_mask) noexcept;

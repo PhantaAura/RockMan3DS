@@ -28,6 +28,8 @@
 #include "legends3ds/source_door_event.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
+#include "legends3ds/source_target_e008.h"
+#include "legends3ds/source_hit_proxy.h"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -429,6 +431,17 @@ public:
     bool tutorial_triggers_active() const { return tutorial_triggers_active_; }
     // ST00 E0/07 floor switches and gates of the active area (0x80115A4C).
     const std::vector<SourceE007Object>& e007_objects() const { return e007_objects_; }
+    // ST00 E0/08 targets and doors (0x80115E70) and their shared hit records
+    // (0x80122620 + 16 * (parameter & 1)), which the caller registers in the
+    // hit-proxy bank each frame from e008_proxy_requests().
+    const std::vector<SourceE008Object>& e008_objects() const { return e008_objects_; }
+    std::array<SourceHitProxyTarget,2>& e008_hit_targets() { return e008_hit_targets_; }
+    struct E008ProxyRequest { std::array<int16_t,3> point{}; uint8_t record = 0; uint8_t slot = 0; };
+    const std::vector<E008ProxyRequest>& e008_proxy_requests() const { return e008_proxy_requests_; }
+    // Player +0x184 (0x800B5334): the object 0x800411DC picked, as an index
+    // into e008_objects(); +0x182 its distance.
+    std::optional<size_t> player_check_target() const { return player_check_target_; }
+    uint16_t player_check_distance() const { return player_check_distance_; }
     const SourceTutorialTriggers& tutorial_triggers() const { return tutorial_triggers_; }
     const TutorialTriggerTick& tutorial_trigger_tick() const { return tutorial_trigger_tick_; }
     // Live class-0x20 +14/+18 owned by the native actor loop (type 6 reads them).
@@ -560,6 +573,9 @@ private:
     void update_tutorial_triggers();
     void reset_e007_objects();
     void update_e007_objects();
+    void reset_e008_objects();
+    void update_e008_objects();
+    void update_action_check_800411dc();
     void update_gameplay_camera_target();
     std::optional<size_t> nearest_target_index() const;
     bool apply_active_cutscene_completion();
@@ -678,6 +694,12 @@ private:
     std::shared_ptr<const TutorialTriggerCatalog> tutorial_catalog_;
     SourceTutorialTriggers tutorial_triggers_;
     std::vector<SourceE007Object> e007_objects_;
+    std::vector<SourceE008Object> e008_objects_;
+    std::vector<uint8_t> e008_slots_;
+    std::array<SourceHitProxyTarget,2> e008_hit_targets_{};
+    std::vector<E008ProxyRequest> e008_proxy_requests_;
+    std::optional<size_t> player_check_target_;
+    uint16_t player_check_distance_ = 0;
     bool tutorial_triggers_active_ = false;
     TutorialTriggerTick tutorial_trigger_tick_{};
     std::vector<std::array<int16_t,2>> tutorial_class20_xz_;

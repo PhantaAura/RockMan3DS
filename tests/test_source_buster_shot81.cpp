@@ -119,6 +119,14 @@ int main(){
         assert(damage.status==Class20_03HitStatus::SourceBackedPartial&&*enemy_state.health_6e==40);
         const auto impact=rig.owner.tick_source_busters_80017154(rig.frame);
         assert(impact.impacts==1&&impact.map_impacts==0&&impact.released==1);
+        // The next shot reuses slot 0 (whose +0xC4 still holds the hit): it
+        // must fly, not republish the old packet and impact on frame 2.
+        rig.owner.consume_pending_releases();rig.owner.reset_frame_queues();
+        (void)rig.owner.spawn_source_buster_80035724(player,0,-1,rig.mask);
+        (void)rig.owner.tick_source_busters_80017154(rig.frame);
+        rig.owner.reset_frame_queues();
+        const auto second=rig.owner.tick_source_busters_80017154(rig.frame);
+        assert(second.impacts==0&&second.released==0);
         const auto& e=rig.owner.effect_pool().slots[0];
         assert(e[0]==9&&e[2]==0x82&&e[3]==1&&e[0x0c]==0);
         // Effect 0x82: state 0 draws one rand (RA 0x80044B50), then 6 steps.
