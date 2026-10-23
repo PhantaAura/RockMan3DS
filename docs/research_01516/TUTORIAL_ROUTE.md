@@ -21,7 +21,7 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 | 2 | 11 | 3 | −3072..−2049 / 11264..14335 | on landing → 0x61A |
 | 2 | 12 | 5 | −512..−1 / 14336..14847 | skipped once 0x608 and 0x609 → 0x61B |
 | 2 | 13 | 6/7 | −6656..−6145 / 12288..12799 | unless 0x608 and 0x609 → 0x61C |
-| 2 | 14 | 8 | anywhere | on **0x60E** (lock-on) → 0x61D |
+| 2 | 14 | 8 | anywhere | on **0x60E** (action-button check on a target) → 0x61D |
 | 2 | 15 | 10 | −512..−1 / 14848..15359 | → 0x61E, **0x622** (tutorial done) |
 | 2 | 16 | 11 | 2048..5631 / 11776..13311 | **0x620** pulse in the region → 60 frames → msg → 0x621 (ignores 0x622) |
 
@@ -39,7 +39,8 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 - **E0/08 (`0x80115E70`), Area 2:**
   - Targets (parameter < 0x80, 100 HP) set **0x608** (low-5-bit parameter 0)
     or **0x609** when shot.
-  - Selecting one with lock-on (`0x800B5334` == target) sets **0x60E**.
+  - Checking one with the action button sets **0x60E**: player +0x184
+    (`0x800B5334`) equals the target. This is not the Buster lock-on (see below).
   - Parameter ≥ 0x80 is the doors: they release once 0x608 and 0x609 are set.
 - **E0/05 (`0x80113EE0`), Area 2 box** at (5120, −385, 12544): shot → fades
   over 5 frames, drops a reward (`0x80047228`). Parameter low nibble 1/2 sets
@@ -54,7 +55,7 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 | E0/00 defeated flags | ported (flags raised the update after release) |
 | E0/07 switch and gate | ported. Sounds, the 0x800398E0 shake, 0x8001B2F0 and the model animation are not |
 | Subtype 0x19 Reaverbots | ported (`class20_19`); host-checked on the real Area 1 map, Azahar fight not yet run |
-| E0/08 targets/doors, lock-on 0x60E | **not ported** (lock-on never selects a target) |
+| E0/08 targets/doors, action check 0x60E (`0x800411DC`) | **not ported** |
 | E0/05 box (0x620) | **not ported** |
 | class 40/04, subtype-3 parameter 0xA0 wake | **not checked** |
 
@@ -94,3 +95,22 @@ fight is missing.
   data): both records drop from y −200 to the floor (y −1) in 34 frames and
   commit 1200/1200 frames. Undetected they wander and alert; detected they chase
   and lunge. With the gate closed (IDX 119 → 19) they stay in the room.
+
+## Correction: 0x60E is the action-button check, not lock-on
+- **`0x800411DC`** runs from the player idle (`0x8003F5D8`) and walk
+  (`0x8003F7F0`) states.
+- **Gates:** `0x8003A13C`, +0x174 bits 0xC0, +0x177, and pressed (+0x11C) &
+  +0x136 (the action button, Circle).
+- **Scan:**
+  - pools: class 20 (16 × 0x3C0 at 0x8009F108), class 40 (4 × 0x5A4),
+    class 60 (32 × 0x10C) and class E0 (32 × 0x50 at 0x800BF118);
+  - an object is a candidate when work[0] & 3 == 3 and its +0x10 holds check
+    data;
+  - it keeps the one with the lowest `0x800414F0` score under 208, stored in
+    player +0x184 (score in +0x182), and returns 1. The state handler then skips
+    its own input for that frame.
+- **E0/08:** its init sets its check data (+0x10 = 0x8011CD14 / 0x8011CD20). When
+  +0x184 equals it, it sets 0x60E and clears both.
+- **Buster targeting:** separate. `0x80034EB8` picks a proxy per shot inside
+  screen windows (x 0x83–0xBD for lane 0). It works in host tests but needs an
+  enemy roughly centred ahead.
