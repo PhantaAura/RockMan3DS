@@ -122,3 +122,24 @@ start.
   - both doors then open and release (nothing left to draw after frame 1590).
 - **Not checked:** the door IDX swap on screen, and triggers 12/13 (their
   regions were not entered).
+
+## Area 2 box (E0/05)
+
+`autoplay/area2_box.txt`, diagnostic spawn `2 -256 -385 10500 0`. The spawn
+is inside the E0/00 entry gate, so the box group is selected. Azahar trace:
+- The box spawns in slot 15 with 160 HP and draws one RNG sample per frame
+  (status Ready).
+- Mega Man walks the z 12544 corridor to (4929, 12538) and shoots. HP goes
+  160 → 112 → 64 → … → −8, then 4 break frames and release.
+- On the release frame, reward record 1 (word00 0x0302040C) is queued and
+  0x620 is set. Trigger 16 pauses objects; message 11 opens 60 frames later
+  (frame 982).
+- Message 11 ends in a choice. Plain A restarts the text, Right+A closes it.
+  Then 0x621 is set, objects resume (pause 2), and the reward expands
+  into 14 pickups at the box (frame 1455).
+- **Fix found by the run:** the reward was first drained inside the actor
+  tick, which trigger 16's pause skips. It is now queued right after the
+  session tick, like the original's in-callback 0x80047228 call.
+- **Not checked:** the box's look (untextured diagnostic mesh), its sound
+  and the break effect.
+

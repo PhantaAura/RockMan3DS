@@ -10,10 +10,12 @@ std::array<uint8_t, 6> key(const SourceCombatProfileIdentity& id) noexcept {
              id.record_index_0c, id.context_high_0f}};
 }
 bool admitted(const SourceCombatProfileIdentity& id) noexcept {
+    const bool selector_ok = (id.raw_stats_selector == 1 || id.raw_stats_selector == 2) &&
+           id.source_variant == static_cast<uint8_t>(id.raw_stats_selector == 2) && id.context_high_0f == 0;
+    // Class 20 subtypes 03/19 use record 0; class E0/05 (the box) records 0..2.
+    if (id.source_class == 0xE0) return selector_ok && id.subtype == 5 && id.record_index_0c < 3;
     return id.source_class == 0x20 && (id.subtype == 3 || id.subtype == 0x19) &&
-           (id.raw_stats_selector == 1 || id.raw_stats_selector == 2) &&
-           id.source_variant == static_cast<uint8_t>(id.raw_stats_selector == 2) &&
-           id.record_index_0c == 0 && id.context_high_0f == 0;
+           selector_ok && id.record_index_0c == 0;
 }
 void validate(const SourceCombatProfiles& profiles) {
     if (profiles.format_version < 1 || profiles.format_version > 5)

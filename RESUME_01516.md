@@ -41,6 +41,12 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 - Fixed two Buster bugs: a stale hit packet after the first hit (every later
   shot died on frame 2), and leased targets could not re-register.
 
+- E0/05 breakable box (`0x80113EE0`) ported: `source_box_e005`, the
+  RuntimeSession box list from the conditional group, its proxy, the E0 RNG
+  phase (RA 0x80114020), and L3CB E0/05 reward rows (recipe
+  `01516-e005-box-1`). In Azahar the box breaks, 0x620 opens message 11, the
+  answer sets 0x621 and the reward drops pickups.
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 162/162, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
@@ -48,8 +54,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 ## Next
 0. The objects the rest of the tutorial waits on, in route order:
    - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
-   - lock-on target selection (0x60E);
-   - the E0/05 box (0x620) and its texture/visuals;
+   - E0 objects are drawn untextured (diagnostic). The box's break effect
+     (0x80031618), sound and 0x80052528 are not ported;
    - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
@@ -67,3 +73,5 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
   black faces than the original (hidden by depth).
 - No physical Old 3DS test.
 - The work80 writer for 0x1F is CANDIDATE.
+- The box's E0 pool slot (15 = static E0 count + conditional order) is
+  CANDIDATE. It only feeds the RNG work check and the proxy's byte.

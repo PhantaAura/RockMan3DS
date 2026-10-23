@@ -41,7 +41,7 @@ enum class SourceRngStatus : uint8_t {
     Ready, Disabled, NeedsObservedProfile, InvalidProfile, InvalidContext,
     DuplicateCallback, UpdateFull, OrdinalExhausted, StaleTransaction
 };
-enum class SourceRngUpdatePhase : uint8_t { Class03Callbacks = 1, Effect2Callback = 2, SceneEventCallback = 3, PropLiftCallback = 4, Effect34Callback = 5, RewardPickupCallback = 6 };
+enum class SourceRngUpdatePhase : uint8_t { Class03Callbacks = 1, Effect2Callback = 2, SceneEventCallback = 3, PropLiftCallback = 4, Effect34Callback = 5, RewardPickupCallback = 6, E0ObjectCallback = 7 };
 struct SourceRngUpdateContext {
     uint64_t native_frame = 0, native_update_ordinal = 0;
     SourceRngUpdatePhase phase = SourceRngUpdatePhase::Class03Callbacks;
@@ -74,6 +74,13 @@ struct SourceRngEffect34Context {
 // Enemy-reward pickups: 0x80046B34 expansion (work 0 for its first draw) and
 // the subtype-0x87 states. caller_ra must be one of the seven original rand
 // call sites (0x80046BAC/BF0/C30/DD8/E18, 0x80046480, 0x800468EC).
+// ST00 class E0 object callbacks (pool 0x800BF118, stride 0x50). Admitted:
+// E0/05 0x80113FEC (jal 0x8007FE50 at 0x80114018).
+constexpr uint32_t kSourceE005RngCallerRa = 0x80114020;
+struct SourceRngE0Context {
+    uint32_t caller_ra = 0, work = 0;
+    uint8_t slot = 255;
+};
 struct SourceRngRewardContext {
     uint32_t caller_ra=0,work=0;
     uint64_t source_generation=0;
@@ -145,6 +152,7 @@ SourceRngStagedSample stage_source_rng_scene_event(SourceRngUpdateTransaction&, 
 SourceRngStagedSample stage_source_rng_prop_lift(SourceRngUpdateTransaction&, const SourceRngPropLiftContext&) noexcept;
 SourceRngStagedSample stage_source_rng_effect34(SourceRngUpdateTransaction&, const SourceRngEffect34Context&) noexcept;
 SourceRngStagedSample stage_source_rng_reward(SourceRngUpdateTransaction&, const SourceRngRewardContext&) noexcept;
+SourceRngStagedSample stage_source_rng_e0(SourceRngUpdateTransaction&, const SourceRngE0Context&) noexcept;
 SourceRngStatus commit_source_rng_update(SourceRngService&, SourceRngUpdateTransaction&) noexcept;
 void rollback_source_rng_update(SourceRngUpdateTransaction&) noexcept;
 } // namespace l3

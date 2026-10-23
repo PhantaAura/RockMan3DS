@@ -42,9 +42,20 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
   - Checking one with the action button sets **0x60E**: player +0x184
     (`0x800B5334`) equals the target. This is not the Buster lock-on (see below).
   - Parameter ≥ 0x80 is the doors: they release once 0x608 and 0x609 are set.
-- **E0/05 (`0x80113EE0`), Area 2 box** at (5120, −385, 12544): shot → fades
-  over 5 frames, drops a reward (`0x80047228`). Parameter low nibble 1/2 sets
-  its tail-word flag, here **0x620**.
+- **E0/05 (`0x80113EE0`), Area 2 box** at (5120, −385, 12544), parameter 2,
+  from the E0/00 entry-gate group (record flag 1609):
+  - init `0x80113F2C`: flags 0x0E, 160 HP (0x22 when parameter & 0xF0);
+  - every frame it draws rand() into +0x2E (RA `0x80114020`);
+  - hit `0x80114370`: 0xA3 without a damage bit, else HP −= damage (0xA0), and
+    at HP ≤ 0 sound 0xA2 and the break action;
+  - proxy `0x801140BC`: radius 0xA0 at y − 0x80, mode `0x8011CB00[param>>4]`,
+    word `0x8011CAF8[param>>4]`, stack1c 0, stack20 0x80;
+  - break `0x80114170` over 4 frames, then release. Parameter low nibble 1 →
+    reward record 2 plus the flag; 2 → the flag (**0x620**) plus reward record
+    (+0x2E & 1); otherwise the reward only. The reward is `0x80047228` with
+    the L3CB E0/05 row's word00.
+  - The way in is the corridor at z 12288..12799. The cells at z 11776 and
+    12800 next to it are solid.
 - **Area 2 Reaverbots** (subtype 3, parameter 0xA0, tail 0x60B) wake on 0x60B.
   Also in Area 2: class 40/04 (tail 0x60F) and two class-20/35s.
 
@@ -56,7 +67,7 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 | E0/07 switch and gate | ported. Sounds, the 0x800398E0 shake, 0x8001B2F0 and the model animation are not |
 | Subtype 0x19 Reaverbots | ported (`class20_19`); host-checked on the real Area 1 map, Azahar fight not yet run |
 | E0/08 targets/doors, action check 0x60E (`0x800411DC`) | ported; Azahar: check → msg 8/9, both targets destroyed, doors open |
-| E0/05 box (0x620) | **not ported** |
+| E0/05 box (0x620) | ported (`source_box_e005`); Azahar: box breaks → 0x620 → msg 11 (Right+A) → 0x621, reward expands 14 pickups |
 | class 40/04, subtype-3 parameter 0xA0 wake | **not checked** |
 
 Azahar, normal boot and scripted route: Area 1 messages 0 → 1 → 2 → 3 → 4 → 6

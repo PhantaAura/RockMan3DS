@@ -1457,6 +1457,37 @@ size_t draw_source_e008_uv(const l3::RuntimeSession& session) {
     }
     return drawn;
 }
+// ST00 E0/05 boxes: the first (E0,5) row, untextured, tinted by +0x40
+// (FRONTEND_DIAGNOSTIC); hidden once the break action starts.
+static const l3::EbdDirectory* g_e005_mesh_owner=nullptr;
+static std::optional<l3::SceneE0MeshResource> g_e005_mesh;
+size_t draw_source_e005_uv(const l3::RuntimeSession& session) {
+    if(!use_uv_renderer()||session.e005_boxes().empty())return 0;
+    const auto& ebd=session.active_area().ebd;
+    if(g_e005_mesh_owner!=&ebd){g_e005_mesh.reset();g_e005_mesh_owner=&ebd;
+        for(const auto row:l3::find_ebd_entries(ebd,0xE0,5)){
+            try{g_e005_mesh=l3::decode_scene_e0_mesh(ebd,row,l3::SceneE0MeshTier::Near);break;}
+            catch(const std::exception& e){boot_log(MML_BOOT_DATA,e.what());}
+        }}
+    if(!g_e005_mesh)return 0;
+    configure_immediate_attributes_uv();configure_texenv_uv(false);
+    size_t drawn=0;
+    for(const auto& box:session.e005_boxes()){
+        const auto& o=box.object;
+        if(o.released||o.action_09==1)continue;
+        const float r=float(o.color_40&255u)/255.f,g=float((o.color_40>>8)&255u)/255.f,b=float((o.color_40>>16)&255u)/255.f;
+        const auto vertex=[&](uint8_t index,uint8_t u,uint8_t v){
+            const auto& p=g_e005_mesh->part.vertices[index];
+            const auto uv=l3::actor_render_uv(u,v);
+            send_immediate_uv(float(o.position[0])+float(p.x),float(o.position[1])+float(p.y),float(o.position[2])+float(p.z),r,g,b,uv[0],uv[1]);
+        };
+        ++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);
+        for(const auto& tri:g_e005_mesh->part.triangles)for(size_t k=0;k<3;++k)vertex(tri.index[k],tri.uv[k*2],tri.uv[k*2+1]);
+        for(const auto& quad:g_e005_mesh->part.quads)for(auto k:l3::kPs1QuadTriangleIndices)vertex(quad.index[k],quad.uv[k*2],quad.uv[k*2+1]);
+        C3D_ImmDrawEnd();++drawn;
+    }
+    return drawn;
+}
 size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::SceneE0Resources& resources) {
     if(!use_uv_renderer()||!resources.resident_in(session.active_area().ebd))return 0;
     configure_immediate_attributes_uv();configure_texenv_uv(false);
@@ -3101,13 +3132,26 @@ int main() {
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
                 if(session.tutorial_triggers_active()&&(session.dialogue().active!=dialogue_was_active||
                    session.frame_counter()%60u==0u))
-                    hardware_test_trace("# source_tutorial,frame=%lu,status=%u,cell=%d:%d,dialogue=%u,block=%u,choice=%u,pause=%lu,bd=%02x,flag1552=%u,flag1570=%u,unsupported=%d",
+                    hardware_test_trace("# source_tutorial,frame=%lu,status=%u,cell=%d:%d,dialogue=%u,block=%u,choice=%u,pause=%lu,bd=%02x,flag1552=%u,flag1570=%u,unsupported=%d,wait=%u%u%u%u%u",
                         (unsigned long)session.frame_counter(),unsigned(session.tutorial_trigger_tick().status),
                         int(session.tutorial_triggers().cell_x()),int(session.tutorial_triggers().cell_z()),
                         unsigned(session.dialogue().active),unsigned(session.dialogue().ref.block),unsigned(session.dialogue().choice),
                         (unsigned long)session.tutorial_pause_mode(),unsigned(session.compat_player().bytes[0xBD]),
                         unsigned(session.story_flag(0x610)),unsigned(session.story_flag(0x622)),
-                        session.tutorial_trigger_tick().unsupported_type?int(*session.tutorial_trigger_tick().unsupported_type):-1);
+                        session.tutorial_trigger_tick().unsupported_type?int(*session.tutorial_trigger_tick().unsupported_type):-1,
+                        unsigned(session.dialogue().waiting_for_audio),unsigned(session.dialogue().waiting_for_advance),
+                        unsigned(session.dialogue().waiting_for_script),unsigned(session.dialogue().waiting_for_choice),unsigned(session.dialogue().wait_frames!=0));
+                // 0x80047228(this, +0x38, record): the box's L3CB E0/05 row word00. The
+                // box calls it inside its callback, before trigger 16 pauses objects.
+                for(const auto& reward:session.take_e005_reward_requests()){
+                    const auto* profile=actor_metadata.combat&&session.source_stats_selector()
+                        ? l3::find_source_combat_profile(*actor_metadata.combat,*session.source_stats_selector(),0xE0,5,reward.record,0)
+                        : nullptr;
+                    const bool queued=profile&&profile->reward_word00&&g_children.enqueue_reward_80047228(reward.point,*profile->reward_word00);
+                    hardware_test_trace("# e005_reward,frame=%lu,record=%u,word00=%08lx,queued=%u,flag620=%u",
+                        (unsigned long)session.frame_counter(),unsigned(reward.record),
+                        profile&&profile->reward_word00?(unsigned long)*profile->reward_word00:0ul,unsigned(queued),unsigned(session.story_flag(0x620)));
+                }
                 for(const auto clip:session.take_tutorial_voice_requests())
                     if(session.frame_counter()%30u==0u)hardware_test_trace("# source_tutorial_voice,frame=%lu,clip=%lu,playback=UNPORTED",
                         (unsigned long)session.frame_counter(),(unsigned long)clip);
@@ -3366,6 +3410,21 @@ int main() {
                             registration.stack10=uint8_t(0xE0u|request.slot);registration.stack18=0x04000000u;
                             registration.stack1c=0x00800000u;registration.stack20=0;
                             registration.target=&session.e008_hit_targets()[request.record];registration.mask_80098798=0xffu;
+                            registration.owners_800be478=g_children.proxy_owner_pointers();
+                            (void)l3::source_hit_proxy_register_800341bc(g_children.hit_proxy_bank(),registration);
+                            g_children.publish_proxy_owner_points();
+                        }
+                        // ST00 E0/05 boxes: radius 0xA0 at y-0x80, mode/word from
+                        // 0x8011CB00/0x8011CAF8, stack1c 0, stack20 0x80 (0x801140BC).
+                        for(const auto& request:session.e005_proxy_requests()){
+                            auto& box=session.e005_boxes_mutable()[request.box];
+                            l3::SourceHitProxyRegistration registration;
+                            const auto& p=request.point;
+                            registration.pointed_words={{uint32_t(uint16_t(p[0]))|(uint32_t(uint16_t(p[1]))<<16),uint32_t(uint16_t(p[2]))}};
+                            registration.a1=0xA0;registration.a2=0;registration.a3=request.mode;
+                            registration.stack10=uint8_t(0xE0u|box.slot);registration.stack18=request.word;
+                            registration.stack1c=0;registration.stack20=0x80;
+                            registration.target=&box.target;registration.mask_80098798=0xffu;
                             registration.owners_800be478=g_children.proxy_owner_pointers();
                             (void)l3::source_hit_proxy_register_800341bc(g_children.hit_proxy_bank(),registration);
                             g_children.publish_proxy_owner_points();
@@ -4083,6 +4142,16 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)targets,
                         session.player_check_target()?long(*session.player_check_target()):-1L,
                         unsigned(session.story_flag(0x608)),unsigned(session.story_flag(0x609)),unsigned(session.story_flag(0x60E)));
+            }
+            if(g_hardware_scene_draw==HardwareSceneDraw::All){
+                const auto boxes=draw_source_e005_uv(session);
+                if(!session.e005_boxes().empty()&&session.frame_counter()%30u==0u){
+                    const auto& box=session.e005_boxes().front();
+                    hardware_test_trace("# e005_box,frame=%lu,drawn=%lu,slot=%u,hp=%d,action=%u,released=%u,flag620=%u,flag621=%u,rng=%u,no_random=%u,presentation=FRONTEND_DIAGNOSTIC",
+                        (unsigned long)session.frame_counter(),(unsigned long)boxes,unsigned(box.slot),int(box.object.hp_44),
+                        unsigned(box.object.action_09),unsigned(box.object.released),unsigned(session.story_flag(0x620)),unsigned(session.story_flag(0x621)),
+                        unsigned(box.rng_status),unsigned(box.reward_without_random));
+                }
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){if(use_uv_renderer())draw_projectiles_uv(session);else draw_projectiles_0143(session);}
             if(source_combat_active&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) {

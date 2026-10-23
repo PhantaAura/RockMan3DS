@@ -281,3 +281,8 @@ E0/08 + action check: ported the Area 2 targets/doors (0x80115E70) and
 0x800411DC/0x800414F0. Fixed the shot-0x81 stale hit packet and the missing
 owner table on external proxy registrations. Azahar: check → 0x60E message;
 both targets destroyed; doors open. Host 162/162.
+
+E0/05 box: ported the Area 2 breakable box (0x80113EE0) with its proxy, the
+E0 RNG phase (RA 0x80114020) and L3CB E0/05 reward rows. The reward is queued
+right after the session tick, ahead of trigger 16's object pause. Azahar: box
+breaks → 0x620 → message 11 → 0x621, 14 pickups. Host 163/163.

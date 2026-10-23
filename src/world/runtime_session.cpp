@@ -752,6 +752,49 @@ void RuntimeSession::update_e008_objects(){
         if(step.register_proxy)e008_proxy_requests_.push_back({step.proxy_point,o.record(),e008_slots_[i]});
     }
 }
+void RuntimeSession::update_e005_objects(SourceRngService* rng){
+    e005_proxy_requests_.clear();
+    if(e005_revision_!=conditional_spawn_revision_){
+        // A new conditional group allocates fresh objects (state 0 0x80113F2C).
+        e005_revision_=conditional_spawn_revision_;e005_boxes_.clear();
+        uint8_t static_e0=0;
+        for(const auto& instance:area_.stage.instances)if(instance.object.source_class==0xE0)++static_e0;
+        uint8_t e0_order=0;
+        for(size_t i=0;i<conditional_spawn_objects_.records.size();++i){
+            const auto& r=conditional_spawn_objects_.records[i];
+            if(r.object_class!=0xE0)continue;
+            const uint8_t slot=uint8_t(static_e0+e0_order++);   // CANDIDATE pool order
+            if(uint8_t(r.words_02_to_0a[0]&0xFFu)!=5||slot>=32)continue;
+            E005Box box;box.conditional_index=i;box.slot=slot;
+            box.object=source_e005_init_80113f2c({{r.x,r.y,r.z}},uint8_t(r.words_02_to_0a[0]>>8),r.tail_12);
+            box.target.source_address=0x800bf118u+uint32_t(slot)*0x50u+0x30u;
+            e005_boxes_.push_back(box);
+        }
+    }
+    if(e005_boxes_.empty())return;
+    SourceRngUpdateTransaction rng_t;bool rng_begun=false;
+    if(rng&&rng->admitted()&&begin_source_rng_update(*rng,rng_t,{frame_counter_,frame_counter_,SourceRngUpdatePhase::E0ObjectCallback})==SourceRngStatus::Ready)
+        rng_begun=true;
+    bool rng_used=false;
+    for(size_t b=0;b<e005_boxes_.size();++b){
+        auto& box=e005_boxes_[b];
+        if(box.object.released)continue;
+        std::optional<uint16_t> sample;
+        if(rng_begun){
+            const auto staged=stage_source_rng_e0(rng_t,{kSourceE005RngCallerRa,0x800bf118u+uint32_t(box.slot)*0x50u,box.slot});
+            box.rng_status=uint8_t(staged.status);
+            if(staged.status==SourceRngStatus::Ready){sample=staged.sample32a;rng_used=true;}
+        } else box.rng_status=0xFE;
+        const auto step=source_e005_step(box.object,box.target.packet_00,sample);
+        if(step.set_flag&&*step.set_flag<kL3StoryFlagBytes*8u)set_story_flag(*step.set_flag,true);
+        if(step.reward_record)
+            e005_rewards_.push_back({{{box.object.position[0],box.object.position[1],box.object.position[2],0}},*step.reward_record});
+        if(step.reward_needs_random)box.reward_without_random=true;
+        if(step.released)note_conditional_object_released(box.conditional_index);
+        if(step.register_proxy)e005_proxy_requests_.push_back({step.proxy_point,step.proxy_mode,step.proxy_word_18,b});
+    }
+    if(rng_begun){if(rng_used)(void)commit_source_rng_update(*rng,rng_t);else rollback_source_rng_update(rng_t);}
+}
 void RuntimeSession::update_action_check_800411dc(){
     // Gates: 0x8003A13C (byte 0x800A3962 negative; its owner is untraced, so
     // gameplay-owned follow play stands in, CANDIDATE), +0x174 & 0xC0, +0x177.
@@ -1723,6 +1766,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     // Area 1's static list puts E0/07 before E0/06 (pool order, CANDIDATE).
     update_e007_objects();
     update_e008_objects();
+    update_e005_objects(candidate_rng);
     update_tutorial_triggers();
     SourceEventInputs source_event_input;
     source_event_input.flags=&source_event_flags_;

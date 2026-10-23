@@ -23,6 +23,10 @@ SOURCE_CLASS, SOURCE_SUBTYPE = 0x20, 3
 # tables at its own slot, record index 0.
 SOURCE_SUBTYPES = (3, 0x19)
 PROVED_DETECTION_PROFILES = {3: {4}, 0x19: {6}}
+# Class E0 tables chosen by 0x80064718 (stored at 0x8009892C); E0/05 (the box)
+# reads record word 0 of records 0..2 through 0x80047228.
+E0_TABLES = {1: (0x8008F048, 0), 2: (0x8008F2E4, 1)}
+E0_SUBTYPES = ((5, 3),)
 
 
 def sha(data):
@@ -81,6 +85,24 @@ def build_metadata(owner):
                         'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
                         'action4_variant32E': 0,
                         'retained_values_in_evidence': False})
+    for subtype, count in E0_SUBTYPES:
+        for selector, (table, variant) in sorted(E0_TABLES.items()):
+            slot = table + subtype * 4
+            record = owner.word(slot)
+            if record & 3:
+                raise ValueError('Selected source record is unaligned')
+            for index in range(count):
+                fields = owner.read(record + 16 * index, 16)
+                rows.append(bytes((0xE0, subtype, selector, variant, index, 0,
+                                   fields[8], fields[10], fields[15], fields[12], 15, fields[9])) +
+                            fields[:4] + bytes((fields[11], 0, 0, 0)))
+                origins.append({'raw_stats_selector': selector, 'source_variant': variant,
+                                'source_class': 0xE0, 'subtype': subtype,
+                                'record_index0C': index, 'context_high0F': 0,
+                                'source_table_pointer_slot': hex(slot), 'source_record': hex(record + 16 * index),
+                                'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
+                                'action4_variant32E': 0,
+                                'retained_values_in_evidence': False})
     combat_payload = b''.join(rows)
     combat = header(b'L3CB', len(rows), 20, combat_payload, version=5) + combat_payload
     detection_payload = b''.join(bytes((profile,)) +

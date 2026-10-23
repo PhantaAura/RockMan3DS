@@ -29,6 +29,7 @@
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
 #include "legends3ds/source_target_e008.h"
+#include "legends3ds/source_box_e005.h"
 #include "legends3ds/source_hit_proxy.h"
 #include <cstdint>
 #include <memory>
@@ -441,6 +442,20 @@ public:
     // Player +0x184 (0x800B5334): the object 0x800411DC picked, as an index
     // into e008_objects(); +0x182 its distance.
     std::optional<size_t> player_check_target() const { return player_check_target_; }
+    // ST00 E0/05 boxes from the conditional list (0x80113EE0); each owns its
+    // +0x30 hit record. Proxy and reward requests are consumed by the caller.
+    struct E005Box {
+        SourceE005Object object; size_t conditional_index = 0; uint8_t slot = 0;
+        SourceHitProxyTarget target{};
+        uint8_t rng_status = 0xFF;   // last E0 stage status (diagnostic)
+        bool reward_without_random = false;
+    };
+    const std::vector<E005Box>& e005_boxes() const { return e005_boxes_; }
+    std::vector<E005Box>& e005_boxes_mutable() { return e005_boxes_; }
+    struct E005ProxyRequest { std::array<int16_t,3> point{}; uint32_t mode = 0, word = 0; size_t box = 0; };
+    const std::vector<E005ProxyRequest>& e005_proxy_requests() const { return e005_proxy_requests_; }
+    struct E005RewardRequest { std::array<int16_t,4> point{}; uint8_t record = 0; };
+    std::vector<E005RewardRequest> take_e005_reward_requests() { auto out=std::move(e005_rewards_); e005_rewards_.clear(); return out; }
     uint16_t player_check_distance() const { return player_check_distance_; }
     const SourceTutorialTriggers& tutorial_triggers() const { return tutorial_triggers_; }
     const TutorialTriggerTick& tutorial_trigger_tick() const { return tutorial_trigger_tick_; }
@@ -576,6 +591,7 @@ private:
     void reset_e008_objects();
     void update_e008_objects();
     void update_action_check_800411dc();
+    void update_e005_objects(SourceRngService* rng);
     void update_gameplay_camera_target();
     std::optional<size_t> nearest_target_index() const;
     bool apply_active_cutscene_completion();
@@ -699,6 +715,10 @@ private:
     std::array<SourceHitProxyTarget,2> e008_hit_targets_{};
     std::vector<E008ProxyRequest> e008_proxy_requests_;
     std::optional<size_t> player_check_target_;
+    std::vector<E005Box> e005_boxes_;
+    uint32_t e005_revision_ = 0xFFFFFFFFu;
+    std::vector<E005ProxyRequest> e005_proxy_requests_;
+    std::vector<E005RewardRequest> e005_rewards_;
     uint16_t player_check_distance_ = 0;
     bool tutorial_triggers_active_ = false;
     TutorialTriggerTick tutorial_trigger_tick_{};

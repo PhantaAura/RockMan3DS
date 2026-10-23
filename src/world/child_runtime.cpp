@@ -708,6 +708,11 @@ SourceHitProxyStatus ChildRuntime::release_proxy_lease(std::optional<uint32_t>& 
 void ChildRuntime::clear_proxy_owner(size_t index) noexcept {
     if(index<owner_identities_.size())owner_identities_[index]=0;
 }
+bool ChildRuntime::enqueue_reward_80047228(const std::array<int16_t,4>& point, uint32_t word00) noexcept {
+    if(rewards_.count>=rewards_.records.size())return false;
+    SourceEnemyRewardRequest request;request.point_180=point;request.source_descriptor_word00=word00;
+    rewards_.records[rewards_.count++]=request;return true;
+}
 std::array<SourceHitProxyOwnerPoint*,24> ChildRuntime::proxy_owner_pointers() noexcept {
     std::array<SourceHitProxyOwnerPoint*,24> out{};
     for(size_t i=0;i<owner_identities_.size();++i){

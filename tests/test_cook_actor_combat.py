@@ -37,6 +37,9 @@ class SyntheticOwner:
                 return 0x1000 + selector * 0x100
             if address == table + 0x19 * 4:
                 return 0x2000 + selector * 0x100
+        for selector, (table, _) in module.E0_TABLES.items():
+            if address == table + 5 * 4:
+                return 0x3000 + selector * 0x100
         raise ValueError('Unexpected authored pointer read')
 
     def read(self, address, size):
@@ -46,6 +49,10 @@ class SyntheticOwner:
         for selector, data in self.fields19.items():
             if address == 0x2000 + selector * 0x100 and size == 16:
                 return bytes(data)
+        for selector in (1, 2):
+            for index in range(3):
+                if address == 0x3000 + selector * 0x100 + 16 * index and size == 16:
+                    return struct.pack('<I', 0x3020305 + index) + bytes(4) + bytes((10, 64, 10, 34)) + bytes(4)
         if address == module.DETECTION_PROFILE_TABLE + 16 and size == 3:
             return bytes((27, 18, 19))
         if address == module.DETECTION_PROFILE_TABLE + 24 and size == 3:
@@ -64,11 +71,12 @@ class CookActorCombatTests(unittest.TestCase):
                                          'actor_normalization.l3nr', 'actor_detection_bounds.l3db'})
         combat = packages['actor_combat.l3cb']
         self.assertEqual(struct.unpack('<4sHH6I', combat[:32]),
-                         (b'L3CB', 5, 32, 1, 4, 20, 112, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
+                         (b'L3CB', 5, 32, 1, 10, 20, 232, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
         self.assertEqual(combat[32:52], bytes((32,3,1,0,0,0,12,24,4,36,15,48,65,48,32,16,60,0,0,0)))
         self.assertEqual(combat[52:72], bytes((32,3,2,1,0,0,13,25,4,37,15,49,66,48,32,16,61,0,0,0)))
         self.assertEqual(evidence['combat_format_version'], 5)
-        self.assertEqual([o['subtype'] for o in evidence['selection_origins']], [3, 3, 0x19, 0x19])
+        self.assertEqual([o['subtype'] for o in evidence['selection_origins']], [3, 3, 0x19, 0x19, 5, 5, 5, 5, 5, 5])
+        self.assertEqual(combat[112:132], bytes((0xE0,5,1,0,0,0,10,10,0,0,15,64,5,3,2,3,34,0,0,0)))
         for origin in evidence['selection_origins']:
             self.assertEqual(origin['retained_offsets'], [0, 8, 9, 10, 11, 12, 15])
             self.assertEqual(origin['action4_variant32E'], 0)

@@ -255,6 +255,9 @@ public:
     // 0x800341BC writes the target's point into each leasing owner. Call
     // publish_proxy_owner_points() after such registrations.
     std::array<SourceHitProxyOwnerPoint*,24> proxy_owner_pointers() noexcept;
+    // 0x80047228 from an object without the enemy defeat effect (E0/05 box):
+    // queues the reward call operands only. False when the queue is full.
+    bool enqueue_reward_80047228(const std::array<int16_t,4>& point, uint32_t word00) noexcept;
     void publish_proxy_owner_points() noexcept;
     SourcePlayerLeaseResult consume_player_leases(SourceGteRtpsState& state,
         std::optional<std::array<uint32_t,8>> source_camera,
