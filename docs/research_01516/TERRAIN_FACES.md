@@ -29,7 +29,9 @@ How the pieces connect:
 - **t0:** the minimum of the four vertices' SZ (`0x80025D3C..0x80025DA4`).
 
 ## Original measurements (PCSX-Redux, Area 1 control start)
-- `0x1F800075` = 2; `0x1F8001C0` = **522** (writer untraced: OBSERVED).
+- `0x1F800075` = 2; `0x1F8001C0` = **522**. The writer is now traced: it is
+  the player's view depth from `0x800238BC` (see `RENDER_FIDELITY_R1.md`). The
+  port computes it every frame; the start camera gives 521.
 - Per frame, the start wall's back faces (t0 = 284/284/270/270) are culled.
   17 farther back faces (t0 1036..7433 region) are drawn black.
 

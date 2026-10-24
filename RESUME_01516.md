@@ -86,6 +86,14 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   1060/143/71 turns): leased shots now steer toward their target for 9
   frames. Host-tested; not watched in Azahar yet.
 
+- Renderer R1 (`docs/research_01516/RENDER_FIDELITY_R1.md`):
+  - terrain faces now get the original depth cue (DPCS to the area FarColor
+    with SetFogNear DQA/DQB, and the bit-28 rule);
+  - the back-face threshold `0x1F8001C0` is the player's view depth each
+    frame (writer `0x800238BC`);
+  - per-cell visibility, the far table, the CLUT depth ramp and see-through
+    walls are traced but not ported.
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
 Area music in Azahar: request 0 plays in Area 1 in real time with reverb (trace;

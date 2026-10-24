@@ -8,7 +8,8 @@ int16_t lo16(uint32_t v) noexcept { return static_cast<int16_t>(static_cast<uint
 int16_t hi16(uint32_t v) noexcept { return static_cast<int16_t>(static_cast<uint16_t>(v >> 16)); }
 }
 
-TerrainFaceCamera make_terrain_face_camera(const std::array<uint32_t,8>& words) noexcept {
+TerrainFaceCamera make_terrain_face_camera(const std::array<uint32_t,8>& words,
+    const std::array<uint8_t,40>* area) noexcept {
     TerrainFaceCamera c;
     for (size_t i = 0; i < 8; ++i) c.gte.control[i] = words[i];
     // CTC2 R4 keeps only RT33 (the pad halfword never reaches the GTE).
@@ -18,8 +19,23 @@ TerrainFaceCamera make_terrain_face_camera(const std::array<uint32_t,8>& words) 
     source_projection_init_geom_8007a4f0(owner);
     source_projection_offset_8007b118(owner, 160u, 120u);
     source_projection_h_8007b138(owner, 384u);
+    if (area) {
+        const uint32_t distance = uint32_t((*area)[0x24]) | (uint32_t((*area)[0x25]) << 8);
+        if (source_projection_fog_8007a1cc(owner, distance, 384u))
+            c.far_color = source_far_color_8007b0f8({{(*area)[32], (*area)[33], (*area)[34]}});
+    }
     (void)bind_source_projection_controls(c.gte, owner);
     return c;
+}
+
+std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,
+    int16_t x, int16_t y, int16_t z) noexcept {
+    auto gte = camera.gte;
+    gte.data[0] = static_cast<uint16_t>(x) | (static_cast<uint32_t>(static_cast<uint16_t>(y)) << 16);
+    gte.data[1] = static_cast<uint16_t>(z);
+    // RT (MVMVA rotation + translation, sf=1) and RTPS share MAC1..3.
+    if (source_gte_rtps_0180001(gte).status != SourcePlayerProxyStatus::SourceBackedPartial) return std::nullopt;
+    return static_cast<int32_t>(gte.data[27]);
 }
 
 TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
@@ -37,6 +53,13 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
         const auto p = source_gte_rtps_0180001(gte);
         if (p.status != SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return r;
         sx[v] = lo16(p.screen_xy); sy[v] = hi16(p.screen_xy); sz[v] = p.depth;
+        if (v == 3) r.ir0 = static_cast<uint16_t>(gte.data[8]);   // IR0 after RTPS of vertex 3
+    }
+    r.rgb = prefix & 0x00ffffffu;
+    if (camera.far_color && (negative_cell || !(prefix & 0x10000000u))) {
+        SourceDpcsColor out;
+        if (source_dpcs_0780010(prefix & 0x00ffffffu, *camera.far_color, r.ir0, out))
+            r.rgb = out.rgb_code & 0x00ffffffu;
     }
     // NCLIP 0x4B400006 over SXY0..2.
     r.mac0 = int64_t(sx[0]) * sy[1] + int64_t(sx[1]) * sy[2] + int64_t(sx[2]) * sy[0]

@@ -129,6 +129,9 @@ struct TerrainBatch {
     std::vector<TerrainQuadInfo> quads;   // quad k = vertices 6k..6k+5
     uint16_t* indices = nullptr;          // linear: [0,6q) drawn, [6q,12q) black
     size_t black_count = 0;
+    // Per-vertex modulation (RGB/128, PS1 texel*colour/128): the depth cue
+    // DPCS colour of each classified face; 1.0 elsewhere. Linear, 3 floats.
+    float* colors = nullptr;
 };
 struct GpuMaterial {
     uint32_t material_word = 0;
@@ -629,6 +632,12 @@ void release_terrain_batches() {
             if (g_owned_linear_bytes >= bytes) g_owned_linear_bytes -= bytes;
             b.indices = nullptr;
         }
+        if (b.colors) {
+            const uint32_t bytes = uint32_t(b.vertex_count * 3u * sizeof(float));
+            linearFree(b.colors);
+            if (g_owned_linear_bytes >= bytes) g_owned_linear_bytes -= bytes;
+            b.colors = nullptr;
+        }
         release_gpu_texture(b.texture, b.texture_ready);
     }
     std::vector<TerrainBatch>().swap(g_terrain_batches);
@@ -964,6 +973,13 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
             if (owned_batch.indices) {
                 owned_batch.quads = std::move(q->second);
                 g_owned_linear_bytes += uint32_t(index_bytes);
+                const size_t color_bytes = owned_batch.vertex_count * 3u * sizeof(float);
+                owned_batch.colors = static_cast<float*>(linearAlloc(color_bytes));
+                if (owned_batch.colors) {
+                    std::fill(owned_batch.colors, owned_batch.colors + owned_batch.vertex_count * 3u, 1.0f);
+                    GSPGPU_FlushDataCache(owned_batch.colors, color_bytes);
+                    g_owned_linear_bytes += uint32_t(color_bytes);
+                }
             }
         }
         if (terrain_textures_requested() && cache && !(kv.first >> 32)) {
@@ -1091,7 +1107,21 @@ void configure_terrain_attributes_0143(const ProbeVertex0143* vbo = g_terrain_vb
         BufInfo_Add(bi, vbo, sizeof(ProbeVertex0143), 1, 0x0);
 }
 
-void configure_terrain_attributes_uv(const ProbeVertexUV* vbo) {
+void configure_terrain_attributes_uv(const ProbeVertexUV* vbo, const float* colors = nullptr) {
+    if (colors) {
+        // Colour as a second stream: attribute 2 (shader v1) from its own buffer.
+        C3D_AttrInfo* ai = C3D_GetAttrInfo();
+        AttrInfo_Init(ai);
+        AttrInfo_AddLoader(ai, 0, GPU_FLOAT, 3);
+        AttrInfo_AddLoader(ai, 2, GPU_FLOAT, 2);
+        AttrInfo_AddLoader(ai, 1, GPU_FLOAT, 3);
+        C3D_BufInfo* bi = C3D_GetBufInfo();
+        BufInfo_Init(bi);
+        if (!vbo || BufInfo_Add(bi, vbo, sizeof(ProbeVertexUV), 2, 0x10) < 0 ||
+            BufInfo_Add(bi, colors, 3 * sizeof(float), 1, 0x2) < 0)
+            throw std::runtime_error("enhanced terrain colour buffer admission failed");
+        return;
+    }
     C3D_AttrInfo* ai = C3D_GetAttrInfo();
     AttrInfo_Init(ai);
     // Keep fetched slots contiguous: slot0 -> shader v0 (position),
@@ -1948,11 +1978,12 @@ void configure_texenv_black_uv(bool textured) {
     C3D_TexEnvColor(env, 0xFF020202u);
 }
 
-struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0; };
+struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0; };
 static TerrainFaceStats g_terrain_face_stats;
 
 // faces == nullptr keeps the previous draw-everything behaviour.
-void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive_mode = 0) {
+void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive_mode = 0,
+                  int32_t back_face_threshold = l3::kObservedArea1BackFaceThreshold) {
     g_terrain_face_stats = {};
     if (!use_uv_renderer()) {
         configure_texenv_0143();
@@ -1983,7 +2014,8 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
     }
 
     for (auto& batch : g_terrain_batches) {
-        configure_terrain_attributes_uv(batch.vbo);
+        const bool face_colors = faces && batch.indices && batch.colors;
+        configure_terrain_attributes_uv(batch.vbo, face_colors ? batch.colors : nullptr);
         if (batch.texture_ready) C3D_TexBind(0,const_cast<C3D_Tex*>(&batch.texture));
         configure_texenv_uv(batch.texture_ready);
         batch.black_count = 0;
@@ -1995,7 +2027,18 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
             for (size_t k = 0; k < q; ++k) {
                 const auto& quad = batch.quads[k];
                 const auto r = l3::classify_terrain_face(*faces, quad.x, quad.y, quad.z, quad.prefix,
-                    quad.negative, positive_mode, l3::kObservedArea1BackFaceThreshold);
+                    quad.negative, positive_mode, back_face_threshold);
+                if (face_colors) {
+                    // Drawn faces take their depth-cued RGB/128; black and
+                    // unsupported faces stay at unity.
+                    const bool cue = r.face == l3::TerrainFace::Draw;
+                    const float cr = cue ? float(r.rgb & 255u) / 128.f : 1.f;
+                    const float cg = cue ? float((r.rgb >> 8) & 255u) / 128.f : 1.f;
+                    const float cb = cue ? float((r.rgb >> 16) & 255u) / 128.f : 1.f;
+                    float* c = batch.colors + 18u * k;
+                    for (unsigned i = 0; i < 6u; ++i) { c[3*i] = cr; c[3*i+1] = cg; c[3*i+2] = cb; }
+                    if (cue && r.rgb != 0x808080u) ++g_terrain_face_stats.depth_cued;
+                }
                 uint16_t* out = nullptr;
                 switch (r.face) {
                 case l3::TerrainFace::Draw: out = batch.indices + 6u * drawn++; ++g_terrain_face_stats.drawn; break;
@@ -2006,6 +2049,7 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                 if (out) for (unsigned i = 0; i < 6u; ++i) out[i] = uint16_t(6u * k + i);
             }
             GSPGPU_FlushDataCache(batch.indices, q * 12u * sizeof(uint16_t));
+            if (face_colors) GSPGPU_FlushDataCache(batch.colors, q * 18u * sizeof(float));
             batch.black_count = black;
             if (drawn) {
                 ++g_runtime_diag.draw_calls;
@@ -4358,15 +4402,25 @@ int main() {
                 std::optional<l3::TerrainFaceCamera> faces;
                 const auto mode=session.active_area().source_render_scratch_75;
                 // The camera words use scratch shift 0x1F800074; cooked terrain is unshifted.
+                // The area record (0x8011AC54 + area*40) supplies SetFogNear and
+                // FarColor for the depth cue (0x800371A0).
                 if(source_follow_view&&!source_camera_bound&&mode&&source_follow.scratch_shift_1f800074==0)
-                    faces=l3::make_terrain_face_camera(source_follow.camera_1f800008);
-                draw_terrain(faces?&*faces:nullptr,mode.value_or(0));
+                    faces=l3::make_terrain_face_camera(source_follow.camera_1f800008,&session.active_area().flow.setup_blob);
+                // 0x800238BC: 0x1F8001C0 is the player's view depth this frame.
+                int32_t threshold=l3::kObservedArea1BackFaceThreshold;
+                if(faces){
+                    const auto& pw=session.compat_player().bytes;
+                    const auto rd=[&](size_t o){return int16_t(uint16_t(pw[o]|(pw[o+1]<<8)));};
+                    if(const auto d=l3::terrain_view_depth_1f8001c0(*faces,rd(0x14),rd(0x16),rd(0x18)))threshold=*d;
+                }
+                draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold);
                 if(session.frame_counter()%120u==0u)
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,source=NCLIP_80025900_OBSERVED",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,fog=%u,source=NCLIP_80025900+DPCS",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
-                        (unsigned long)g_terrain_face_stats.batches_unclassified,int(l3::kObservedArea1BackFaceThreshold));
+                        (unsigned long)g_terrain_face_stats.batches_unclassified,int(threshold),
+                        (unsigned long)g_terrain_face_stats.depth_cued,unsigned(faces&&faces->far_color.has_value()));
             }
             // Independent renderer proof filter. A mixed gameplay/scene image
             // cannot prove which imported owner is visible. It defaults OFF and

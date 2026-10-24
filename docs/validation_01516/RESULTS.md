@@ -278,3 +278,31 @@ and `# effect_draw`:
 - **Not watched:** the E0/07 camera shake (host-tested only).
 - **Azahar note:** another session's run replaced the shared SD folder halfway
   through one box attempt. The run above is a clean rerun.
+
+## Renderer fidelity R1: terrain depth cue and back-face threshold
+
+See `docs/research_01516/RENDER_FIDELITY_R1.md`.
+
+**Host:** `test_terrain_visibility` covers:
+- the player depth is 511 for the authored start camera (522 measured on PS1);
+- a near face keeps 0x808080;
+- a face about 6000 units ahead gets IR0 4049 and colour (1, 17, 17);
+- bit 28 skips the cue on positive cells; negative cells are always cued;
+- without an area record nothing changes.
+
+Host 166/166, native PASS.
+
+**Azahar:** Area 2 entry, spawn `2 -256 -1 6400 2048`, idle autoplay. Same
+framing for the old build (`dc8b649`) and the new one:
+- **Trace:** the threshold is 521 (was the fixed 522). 397 of 426 drawn faces
+  are depth-cued, with fog on (far colour (0, 16, 16), distance 1280).
+- **Image:** the corridor's far wall and upper panels fade to dark teal. The
+  near walls, the floor and Mega Man are unchanged. The screenshots are kept
+  locally (`3DSPORTS/renderer-shots/r1_area2_corridor_{before,after}.jpg`)
+  because they contain game textures.
+- **Cost:** frame interval 50.1 ms → about 50 ms, render 40.2 → about 41 ms,
+  32 draw calls in both. Command buffer 38% of 512 KiB. Linear memory grows
+  by 12 bytes per terrain vertex.
+- **Not compared:** there is no PS1 reference image of this view, so
+  closeness to retail is shown in code, not in images.
+

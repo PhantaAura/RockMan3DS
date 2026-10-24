@@ -1,4 +1,5 @@
 #pragma once
+#include "legends3ds/render/source_depth_cue.h"
 #include "legends3ds/source_player_proxy.h"
 #include <array>
 #include <cstdint>
@@ -16,22 +17,42 @@ namespace l3 {
 //    negative family 0x80021B14: MAC0 > 0 or bit 30 draws, else skipped.
 // Measured in PCSX-Redux at the Area 1 control start: mode 2, threshold 522;
 // the start wall's back face (min SZ 284/270) is skipped and farther back
-// faces are drawn black. The threshold's writer is untraced (OBSERVED).
+// faces are drawn black. Its writer is 0x800238BC: gte_rt of the player's
+// +0x14 position with the 0x1F800008 camera, stored by stlvnl to 0x1F8001B8,
+// so 0x1F8001C0 is the player's view-space depth (MAC3) each frame
+// (see terrain_view_depth_1f8001c0).
 enum class TerrainFace : uint8_t { Draw, Black, Skip, Unsupported };
 
 constexpr int32_t kObservedArea1BackFaceThreshold = 522; // 0x1F8001C0, OBSERVED
 
 struct TerrainFaceCamera {
-    SourceGteRtpsState gte{}; // matrix/translation 0x1F800008 + OFX/OFY/H
+    SourceGteRtpsState gte{}; // matrix/translation 0x1F800008 + OFX/OFY/H/DQA/DQB
+    // FarColor from the area configuration (0x800371A0 -> 0x8007B0F8), present
+    // only when the area record was supplied: enables the depth cue below.
+    std::optional<SourceFarColorControls> far_color;
 };
-// OFX/OFY 160/120 and H 384 as installed by 0x8007A4F0 + 0x80011F48.
-TerrainFaceCamera make_terrain_face_camera(const std::array<uint32_t,8>& camera_1f800008) noexcept;
+// OFX/OFY 160/120 and H 384 as installed by 0x8007A4F0 + 0x80011F48. With the
+// 40-byte area record (0x8011AC54 + area * 40, cooked as the L3SF setup blob),
+// 0x800371A0 also runs SetFogNear 0x8007A1CC(+0x24, 384) for DQA/DQB and
+// FarColor from bytes +32/+33/+34.
+TerrainFaceCamera make_terrain_face_camera(const std::array<uint32_t,8>& camera_1f800008,
+    const std::array<uint8_t,40>* area_record = nullptr) noexcept;
 
 struct TerrainFaceResult {
     TerrainFace face = TerrainFace::Unsupported;
     int64_t mac0 = 0;
     uint16_t min_sz = 0;
+    // Depth cue: IR0 of the face's last RTPS (vertex 3) and the primitive RGB
+    // after DPCS toward FarColor. Every positive family (0x80023EA8,
+    // 0x80024F30, 0x80025900, 0x80026B04) applies it unless prefix bit 28 is
+    // set; the negative family 0x80021B14 always does. Without a far colour,
+    // rgb is the prefix RGB unchanged.
+    uint16_t ir0 = 0;
+    uint32_t rgb = 0x808080;
 };
+// 0x1F8001C0 for this frame: view-space depth (MAC3) of the player position.
+std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,
+    int16_t x, int16_t y, int16_t z) noexcept;
 // Vertices are raw world coordinates in the primitive's original order.
 // Vertices outside the signed16 range or behind the camera (SZ 0) return
 // Unsupported: the caller keeps drawing them as before.
