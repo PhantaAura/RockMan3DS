@@ -1,6 +1,7 @@
 #include "legends3ds/source_effects.h"
 #include "legends3ds/source_event_phase5.h"
 #include "legends3ds/source_rng_service.h"
+#include "legends3ds/ebd_dynamic_selector.h"
 #include <algorithm>
 namespace l3 {
 namespace {
@@ -44,31 +45,155 @@ SourceEffectTick callback131(SourceEffectWork& w) noexcept {
     }
     result.committed=true;return result;
 }
+// USA tables read for subtype 0x80 (the effect's +0xD row is 0..3):
+// 0x8008A138 [param & 15][+0xD] = {+0x44 velocity, +0x46 acceleration}.
+constexpr std::array<std::array<std::array<int16_t,2>,4>,7> k128_motion{{
+    {{{{55,-5}},{{70,-5}},{{80,-5}},{{40,-5}}}},
+    {{{{55,-5}},{{70,-5}},{{80,-5}},{{40,-5}}}},
+    {{{{70,-5}},{{80,-5}},{{90,-5}},{{50,-5}}}},
+    {{{{0,0}},{{0,0}},{{0,0}},{{0,0}}}},
+    {{{{140,-5}},{{140,-5}},{{140,-5}},{{140,-5}}}},
+    {{{{174,-6}},{{174,-6}},{{174,-6}},{{174,-6}}}},
+    {{{{280,0}},{{280,0}},{{280,0}},{{280,0}}}}}};
+// 0x8008A1A8 [+0xD] (default case): {end below, rebound velocity, full colour above}.
+constexpr std::array<std::array<int16_t,3>,4> k128_default{{{{200,-10,255}},{{300,-15,384}},{{400,-20,512}},{{100,-5,128}}}};
+// 0x8008A1C8 [+0xD] (case 1): fade limit.
+constexpr std::array<int16_t,4> k128_case1{{200,350,500,64}};
+// 0x8008A1E8 [+0xD] (case 2): {fade start, fade step byte}.
+constexpr std::array<std::array<int16_t,2>,4> k128_case2{{{{270,14}},{{400,14}},{{540,14}},{{140,14}}}};
+// 0x80097DE0 [+0xE]: the subtype 0x8002F9C4 sees while resolving +0x14.
+constexpr std::array<uint8_t,4> k128_resource_subtype{{0x80,0x8b,0x8c,0x80}};
+uint32_t grey_word(int32_t c) noexcept {
+    const uint32_t v=uint32_t(c);return v|(v<<8)|0x02000000u|(v<<16);
+}
+// 0x8007BC68 RotMatrixY on rows 0 and 2 of the +0x18 matrix.
+void rot_matrix_y(SourceEffectWork& w,uint32_t angle,const ReferenceTables& refs) noexcept {
+    const auto& t=refs.trig[angle&0xfffu];
+    const int32_t sn=-int32_t(t.sin_q12),cs=t.cos_q12;
+    for(size_t c=0;c<3;++c){
+        const int32_t a=s16(u16(w,0x18+c*2)),b=s16(u16(w,0x24+c*2));
+        put16(w,0x18+c*2,uint16_t(int16_t((cs*a-sn*b)>>12)));
+        put16(w,0x24+c*2,uint16_t(int16_t((sn*a+cs*b)>>12)));
+    }
+}
+// 0x8004441C (state 1, sub-state 0): scale +0x3E driven by +0x44/+0x46,
+// colour +0x40 by parameter & 15, then +0x18 = RotMatrixY(+0xB << 7) * scale.
+void grow_8004441c(SourceEffectWork& w,const ReferenceTables& refs) noexcept {
+    const size_t d=w[0xd];
+    const int16_t velocity=int16_t(s16(u16(w,0x44))+s16(u16(w,0x46)));put16(w,0x44,uint16_t(velocity));
+    const auto add_scale=[&]{const int16_t v=int16_t(s16(u16(w,0x3e))+velocity);put16(w,0x3e,uint16_t(v));return v;};
+    const auto finish=[&]{put16(w,0x3e,0);++w[8];};
+    uint32_t color=0;
+    switch(w[3]&15u){
+    default:{
+        const int16_t scale=add_scale();int32_t c=0x80;
+        if(velocity<1){
+            const auto& t=k128_default[d];
+            if(scale<t[0]){finish();return;}
+            put16(w,0x46,0);put16(w,0x44,uint16_t(t[1]));
+            if(t[2]>=scale)c=(int32_t(scale)-t[0])*0x80/scale;
+        }
+        color=grey_word(c<0?0:c);break;
+    }
+    case 1:{
+        const int16_t scale=add_scale();
+        if(scale<1){finish();return;}
+        const int32_t limit=k128_case1[d];int32_t c=0x80;
+        if(velocity<1&&scale<=limit)c=0x60-(limit-scale)*0x80/limit;
+        if(c>0xff)c=0xff;
+        color=grey_word(c<0?0:c);break;
+    }
+    case 2:{
+        const int16_t scale=add_scale();
+        if(velocity<1){finish();return;}
+        int32_t c=0x80;
+        if(k128_case2[d][0]<scale){w[0xa]=uint8_t(w[0xa]+k128_case2[d][1]);c=w[0xa]<0x81?0x80-w[0xa]:0;}
+        color=grey_word(c);break;
+    }
+    case 4:{
+        const int16_t scale=add_scale();int32_t c=0x80;
+        if(velocity<1){
+            if(scale<100){put16(w,0x3e,0);++w[8];}
+            put16(w,0x46,0);put16(w,0x44,uint16_t(-20));
+            const int32_t now=s16(u16(w,0x3e));c=now>0x400?0x80:(now>>3);
+        }
+        color=grey_word(c);break;
+    }
+    case 5:{
+        (void)add_scale();
+        if(velocity<0x82)++w[0xa];
+        if(w[0xa]>7){w[0xa]=8;++w[8];}
+        const uint32_t i=uint32_t(8-w[0xa]);color=i*0x10u|i*0x1000u|0x02000000u|i*0x100000u;break;
+    }
+    case 6:{
+        const int16_t scale=add_scale();int32_t c=0x80;
+        if(0x800<scale){w[0xa]=uint8_t(w[0xa]+10);c=w[0xa]<0x81?0x80-w[0xa]:0;}
+        color=grey_word(c);
+        if(c==0){put16(w,0x3e,0);++w[8];}
+        break;
+    }
+    }
+    put32(w,0x40,color);
+    std::fill(w.begin()+0x18,w.begin()+0x38,0);
+    ++w[0xb];
+    const uint16_t scale=u16(w,0x3e);put16(w,0x18,scale);put16(w,0x20,scale);put16(w,0x28,scale);
+    rot_matrix_y(w,uint32_t(w[0xb])<<7,refs);
+}
 SourceEffectTick callback128(SourceEffectWork& w,const SourceEffect128Inputs& in) noexcept {
     SourceEffectTick result;
     if(w[8]>2){result.status=SourceEffectStatus::UnknownState;return result;}
     if(w[8]==2){w[0]=0;result.status=SourceEffectStatus::SourceBackedPartial;result.released=true;result.committed=true;return result;}
-    if(w[8]==1){result.status=SourceEffectStatus::NeedsSource128Consumers;return result;}
-    if((w[3]!=2 && w[3]!=66) || w[0xd]!=0 || w[0xe]!=0){result.status=SourceEffectStatus::UnsupportedParameter;return result;}
-    if(!in.floor_8004920c){result.status=SourceEffectStatus::NeedsFloorConsumer;return result;}
-    const uint8_t selector=int64_t(*in.floor_8004920c)-s16(u16(w,0x3a))<30?0:1;
-    if(!in.resource){result.status=SourceEffectStatus::NeedsResourceConsumer;return result;}
-    if(in.resource->selector_8002f9c4!=selector || !in.resource->source_descriptor_14){result.status=SourceEffectStatus::StaleResource;return result;}
-    if(!in.audio || !in.audio->initialized || in.audio->count>in.audio->records.size()){
+    if(w[0xd]>3||w[0xe]>3){result.status=SourceEffectStatus::UnsupportedParameter;return result;}
+    if(w[8]==1){
+        // 0x800441CC: sub-state table 0x8008A214 [+9] = {0x8004441C, nop, nop}.
+        if(w[9]>2){result.status=SourceEffectStatus::UnknownState;return result;}
+        if(w[9]==0){
+            if(!in.references){result.status=SourceEffectStatus::NeedsReferences;return result;}
+            grow_8004441c(w,*in.references);
+        }
+        // +0xE 0 and 1 register the 0x800341BC proxy; 2/3 return first.
+        result.proxy_800341bc_skipped=w[0xe]<2;
+        result.status=SourceEffectStatus::SourceBackedPartial;result.committed=true;return result;
+    }
+    // 0x80043F70. Parameter 0xFE is the silent 0xC2; bit 0x20 spawns the
+    // two helper children (5/0x80/5, 0x45/0x80/6), sound 0xA4 and the 0x1E
+    // shake, which no tutorial producer uses: held.
+    bool sound=true;uint8_t parameter=w[3];
+    if(parameter==0xfe){sound=false;parameter=0xc2;}
+    if(parameter&0x20u && !(parameter&0x80u)){result.status=SourceEffectStatus::UnsupportedParameter;return result;}
+    const auto plan=ebd_selector_plan_80047354(parameter);
+    uint8_t selector=plan.selector;
+    const int16_t y=s16(u16(w,0x3a));
+    if(!plan.selector_is_known){
+        std::optional<int32_t> floor=in.floor_8004920c;
+        if(!floor&&in.floor_query)floor=in.floor_query(in.floor_user,s16(u16(w,0x38)),y,s16(u16(w,0x3c)));
+        if(!floor){result.status=SourceEffectStatus::NeedsFloorConsumer;return result;}
+        selector=ebd_selector_from_probe_80047354(*floor,y);
+    }
+    std::optional<uint32_t> descriptor;
+    if(in.resource){
+        if(in.resource->selector_8002f9c4!=selector || !in.resource->source_descriptor_14){result.status=SourceEffectStatus::StaleResource;return result;}
+        descriptor=in.resource->source_descriptor_14;
+    } else if(in.ebd){
+        descriptor=source_effect_resource_8002fa38(*in.ebd,k128_resource_subtype[w[0xe]],selector);
+    } else {result.status=SourceEffectStatus::NeedsResourceConsumer;return result;}
+    if(sound&&(!in.audio || !in.audio->initialized || in.audio->count>in.audio->records.size())){
         result.status=SourceEffectStatus::NeedsSoundConsumer;return result;
     }
-    // Exact child128 subset80043F70..800441C8. A resource receipt is checked
-    // before any state/audio commit; no resource or floor value is synthesized.
-    w[0xc]=1;w[0]|=2;put16(w,0x44,70);put16(w,0x46,uint16_t(-5));
+    if((parameter&15u)>6){result.status=SourceEffectStatus::UnsupportedParameter;return result;}
+    w[3]=parameter;w[0xc]=sound?1:0;w[0]|=w[0xe]?0x82:2;
+    const auto& motion=k128_motion[parameter&15u][w[0xd]];
+    put16(w,0x44,uint16_t(motion[0]));put16(w,0x46,uint16_t(motion[1]));
     put32(w,0x40,0x02808080u);w[0xa]=0;put16(w,0x3e,0);
-    for(size_t off=0x18;off<=0x34;off+=4)put32(w,off,0);
-    for(size_t off:{size_t(0x18),size_t(0x20),size_t(0x28)})put32(w,off,0x1000u);
-    for(size_t off:{size_t(0x18),size_t(0x20),size_t(0x28)})put16(w,off,0);
-    put32(w,0x14,in.resource->source_descriptor_14);w[2]=128;w[0xb]=0;++w[8];
-    const auto audio=enqueue_source_audio_8001a050(*in.audio,161,{{u32(w,0x38),u32(w,0x3c)}});
-    if(audio==SourceAudioQueueStatus::Queued)result.audio_queued=1;
-    else if(audio==SourceAudioQueueStatus::DroppedFull)result.audio_dropped=1;
-    else {result.status=SourceEffectStatus::NeedsSoundConsumer;return result;}
+    std::fill(w.begin()+0x18,w.begin()+0x38,0);
+    // 0x8002FA38 leaves +0x14 unchanged when no row matches.
+    if(descriptor)put32(w,0x14,*descriptor);
+    w[2]=128;w[0xb]=0;++w[8];
+    if(sound){
+        const auto audio=enqueue_source_audio_8001a050(*in.audio,161,{{u32(w,0x38),u32(w,0x3c)}});
+        if(audio==SourceAudioQueueStatus::Queued)result.audio_queued=1;
+        else if(audio==SourceAudioQueueStatus::DroppedFull)result.audio_dropped=1;
+    }
     result.status=SourceEffectStatus::SourceBackedPartial;result.committed=true;return result;
 }
 }
@@ -167,7 +292,7 @@ SourceEffectBatch tick_source_effect_batch(SourceEffectPool& p,const SourceEffec
     for(size_t slot=0;slot<source_effect_capacity;++slot){
         if(!(p.allocated_80098838[slot/32]&bit(slot)))continue;
         const auto result=tick_source_effect(p,source_effect_base+uint32_t(slot*source_effect_slot_bytes),in);
-        if(result.committed){++batch.committed;if(result.released)++batch.released;}
+        if(result.committed){++batch.committed;if(result.released)++batch.released;if(result.proxy_800341bc_skipped)++batch.proxies_skipped;}
         else if(result.status!=SourceEffectStatus::Inactive){if(batch.held==0)batch.first_hold=result.status;++batch.held;}
     }
     return batch;
@@ -267,5 +392,31 @@ std::optional<Class60_06Primitive> source_effect_primitive(const SourceEffectWor
     p.half_extent=u16(w,0x24);p.clut=u16(w,0x16);p.tpage=u16(w,0x14);
     p.uv={{w[0x22],w[0x23]}};p.color_command=u32(w,0x18);p.source_fog=(w[0]&8u)==0;
     return p;
+}
+std::optional<uint32_t> source_effect_resource_8002fa38(const EbdDirectory& ebd,
+    uint8_t subtype,uint8_t variant) noexcept {
+    for(const auto& row:ebd.entries)
+        if(row.object_class==0x80&&row.subtype==subtype&&row.variant==variant){
+            if(row.resource_offset[0]==UINT32_MAX)return uint32_t(0);
+            return ebd.load_base+row.resource_offset[0];
+        }
+    return std::nullopt;
+}
+std::optional<SourceEffectModelView> source_effect_model_view(const SourceEffectWork& w) noexcept {
+    if(!(w[0]&w[6]&2u)||(w[0]&0x1cu)!=4u||w[2]!=128||!u32(w,0x14))return std::nullopt;
+    SourceEffectModelView v;v.descriptor_14=u32(w,0x14);
+    for(size_t i=0;i<9;++i)v.matrix_18[i]=s16(u16(w,0x18+i*2));
+    for(size_t i=0;i<3;++i)v.position_38[i]=s16(u16(w,0x38+i*2));
+    v.color_40=u32(w,0x40);return v;
+}
+bool write_source_effect_header(SourceEffectPool& p,uint32_t id,uint8_t work00,
+    uint8_t subtype02,uint8_t parameter03,size_t lane_offset,
+    const std::array<int16_t,4>& lanes,uint8_t lane_count) noexcept {
+    const auto slot=source_effect_slot(id);
+    if(!slot||!valid(p)||!(p.allocated_80098838[*slot/32]&bit(*slot))||lane_count>4||
+       lane_offset+size_t(lane_count)*2>source_effect_slot_bytes)return false;
+    auto& w=p.slots[*slot];w[0]=work00;w[2]=subtype02;w[3]=parameter03;
+    for(size_t i=0;i<lane_count;++i)put16(w,lane_offset+i*2,uint16_t(lanes[i]));
+    return true;
 }
 } // namespace l3

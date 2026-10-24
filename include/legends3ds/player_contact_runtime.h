@@ -91,6 +91,15 @@ RuntimePointEmbeddingResult runtime_point_embedded_80049c54(const RuntimeMap& ma
     size_t area_index, int16_t x, int16_t y, int16_t z, RetailPlayerBounds bounds,
     bool skip_flag_8000) noexcept;
 
+// USA 0x8004920C: the floor under a point, used by effects and pickups.
+// The cell is 0x80048C60 of (x, z) only (no neighbours). A cell <= 0 gives
+// -((cell & 0x1F00) >> 1) - 1. Otherwise every primitive of every family-0/1
+// group whose rectangle (zero bounds) holds the point, and whose bottom lies
+// below y, offers its top; the smallest top wins, 0x7FFF when none does.
+// Nullopt when a group needs an unported shape (families 2..5) or interval.
+std::optional<int32_t> runtime_point_floor_8004920c(const RuntimeMap& map,
+    size_t area_index, int16_t x, int16_t y, int16_t z) noexcept;
+
 const char* runtime_contact_status_name(RuntimeContactStatus status);
 
 // Event primitive found by USA 0x800514FC (contact code > 0xFF). Coordinates

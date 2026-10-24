@@ -229,9 +229,12 @@ public:
     // Commit only after all parent consumers succeed, before committing parent
     // state/audio. No queue/audio is overwritten by this final pool-only commit.
     bool commit_parent_delivery(ParentChildDelivery&) noexcept;
+    // The defeat effect copies the actor's +0x14 words (x, y, z, +0x1A) to
+    // its +0x38 (0x801027CC class20/03, 0x80104D44 class20/19).
     ChildRuntimeStatus prepare_enemy_defeat_delivery(
         const std::array<int16_t,4>& point_180,std::optional<uint32_t> reward_word00,
-        const SourceAudioQueue&,EnemyDefeatDelivery&) noexcept;
+        const SourceAudioQueue&,EnemyDefeatDelivery&,
+        const std::array<int16_t,4>& effect_point_14={}) noexcept;
     bool validate_enemy_defeat_delivery(const EnemyDefeatDelivery&,
         const SourceAudioQueue&) const noexcept;
     bool commit_enemy_defeat_delivery(EnemyDefeatDelivery&) noexcept;
@@ -258,6 +261,10 @@ public:
     // 0x80047228 from an object without the enemy defeat effect (E0/05 box):
     // queues the reward call operands only. False when the queue is full.
     bool enqueue_reward_80047228(const std::array<int16_t,4>& point, uint32_t word00) noexcept;
+    // 0x80031618 for a producer outside this runtime (E0/05, E0/08) plus its
+    // header/lane stores. Zero when both masks are full (the producer skips).
+    uint32_t spawn_effect_80031618(uint8_t work00,uint8_t subtype02,uint8_t parameter03,
+        size_t lane_offset,const std::array<int16_t,4>& lanes,uint8_t lane_count) noexcept;
     void publish_proxy_owner_points() noexcept;
     SourcePlayerLeaseResult consume_player_leases(SourceGteRtpsState& state,
         std::optional<std::array<uint32_t,8>> source_camera,
