@@ -1,5 +1,6 @@
 #pragma once
 #include "legends3ds/render/source_depth_cue.h"
+#include "legends3ds/render/terrain_clut_ramp.h"
 #include "legends3ds/source_player_proxy.h"
 #include <array>
 #include <cstdint>
@@ -15,6 +16,8 @@ namespace l3 {
 //    prefix bit 24 is set, otherwise drawn as a 0x2C010101 (near-black) quad.
 //  - Positive modes 0/1/3 (families 0x80023EA8/0x80024F30/0x80026B04) and the
 //    negative family 0x80021B14: MAC0 > 0 or bit 30 draws, else skipped.
+//  - Every positive family skips a bit31-clear face whose max SZ < 0xC1
+//    (near cull, terrain_face_depth_80025900).
 // Measured in PCSX-Redux at the Area 1 control start: mode 2, threshold 522;
 // the start wall's back face (min SZ 284/270) is skipped and farther back
 // faces are drawn black. Its writer is 0x800238BC: gte_rt of the player's
@@ -30,6 +33,10 @@ struct TerrainFaceCamera {
     // FarColor from the area configuration (0x800371A0 -> 0x8007B0F8), present
     // only when the area record was supplied: enables the depth cue below.
     std::optional<SourceFarColorControls> far_color;
+    // Area record (ramp bytes +0..31) and the 0x1F800074 LOD shift, for the
+    // positive-family depth ramp; absent without the record.
+    std::optional<std::array<uint8_t,40>> area_record;
+    uint8_t lod_1f800074 = 0;
 };
 // OFX/OFY 160/120 and H 384 as installed by 0x8007A4F0 + 0x80011F48. With the
 // 40-byte area record (0x8011AC54 + area * 40, cooked as the L3SF setup blob),
@@ -49,6 +56,9 @@ struct TerrainFaceResult {
     // rgb is the prefix RGB unchanged.
     uint16_t ir0 = 0;
     uint32_t rgb = 0x808080;
+    // Positive faces: ordering depth (otz) and CLUT ramp step 0..7.
+    int32_t otz = 0;
+    uint8_t ramp = 0;
 };
 // 0x1F8001C0 for this frame: view-space depth (MAC3) of the player position.
 std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,

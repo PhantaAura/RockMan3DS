@@ -306,3 +306,24 @@ framing for the old build (`dc8b649`) and the new one:
 - **Not compared:** there is no PS1 reference image of this view, so
   closeness to retail is shown in code, not in images.
 
+## Renderer R2: CLUT depth ramp and near cull
+
+**Host:** `test_terrain_clut_ramp` covers:
+- the otz rules for bits 31/27;
+- the near cull at < 0xC1;
+- the ramp step by area bytes, LOD and bit 28;
+- the L3CR fit, round trip and rejection.
+
+Host 167/167 (the pack test expects `--ramp-out`), native PASS. The pack now
+cooks `area_00..04.l3cr` (Area 1/2: 12 words, 644 bytes).
+
+**Azahar** (Area 2 west wing, spawn `2 -7000 -576 12300 3072`): 12 ramp words
+loaded; 327 of 429 drawn faces ramped, 416 depth-cued. Frame interval 49.9 ms
+and render 38.7 ms, the same as R1. 32 draw calls; command buffer 38% of
+512 KiB.
+
+**Not shown in an image:** both test spawns put the follow camera inside a
+wall. The ramp only starts at otz 5120, where the fog is already about 94%
+toward the far colour, so its visible effect in these rooms is small. There
+is no PS1 reference image.
+

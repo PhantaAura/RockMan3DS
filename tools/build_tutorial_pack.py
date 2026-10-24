@@ -342,7 +342,8 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
             for area_index in range(5):
                 area_container=dat/f'ST00_{area_index:02d}.BIN'
                 run(tools,'l3cook_material_cache',stage/'ST00_MAP.MDT',stage/'ST00_MAP.IDX',stage/'ST00.STG',stage/'ST00.HED',
-                    str(area_index),mout/f'area_{area_index:02d}.l3mc',*upload_prefix,area_container,*negative_args)
+                    str(area_index),mout/f'area_{area_index:02d}.l3mc',*upload_prefix,area_container,*negative_args,
+                    '--ramp-out',mout/f'area_{area_index:02d}.l3cr')
                 # Player meshes use their own TPAGE/CLUT words. Cook a parallel
                 # per-area cache so stage-local face/palette uploads can replace
                 # the common player pages with the same last-writer semantics.

@@ -57,12 +57,35 @@ The mode-2 black fill and cull compare each face's minimum SZ with
 `0x1F8001C0`. The fixed 522 measured in Area 1 is replaced by the player's
 per-frame view depth.
 
+## CLUT depth ramp and near cull: ported (R2)
+Every positive family (`0x80023EA8/0x80024F30/0x80025900/0x80026B04`) does
+the following:
+- **Near cull:** a bit-31-clear face with max SZ < 0xC1 is skipped.
+- **Ordering depth (otz):**
+  - bit 31 clear: `(max + (sum >> 2)) >> 1`, or `max − 16` with bit 27;
+  - bit 31 set: max, or SZ0 with bit 27.
+- **Ramp:** unless bit 28 is set, ORs `ramp[(otz >> (9 + LOD)) & 31] << 16`
+  into word 3, moving the CLUT k palettes to the right. The ramp is area
+  record bytes +0..31 (Areas 1–3: 0 ×10, then 1 1 1 2 2 2 3 3 4 4 5 5 6 7 …).
+  So the ramp starts at otz 5120.
+
+**The ramp palettes** (resolved from the original uploads for all Area 1/2
+terrain words) are darker copies of the base palettes:
+- Mean ratios for k = 1..7: 0.86 / 0.77 / 0.66 / 0.57 / 0.43 / 0.39 / 0.28.
+- No single integer rule fits them: (9 − k)/9 floor matches 58% of entries.
+- Some variants also flip STP bits.
+
+The PICA has no palette textures, and a texture page per step would cost
+about 32 × 7 × 256 KiB. So the cooker fits a least-squares RGB scale per word
+and step (L3CR sidecar, `materials/area_NN.l3cr`). The renderer multiplies it
+into the face's depth-cued colour.
+- **CANDIDATE:** mean error 0.67 of a 5-bit step; 74% of entries round
+  exactly.
+- **CANDIDATE:** bit-28 faces reuse the previous face's ramp in the original;
+  0 here.
+- **Not modelled:** STP changes in the variants.
+
 ## Found, not ported (next candidates)
-- **CLUT depth ramp:** `0x80025900` ORs `ramp[(z >> (9 + LOD)) & 31] << 16`
-  into the primitive's CLUT word. The ramp is area record bytes +0..31
-  (Areas 1–3: 0 ×10, then 1 1 1 2 2 2 3 3 4 4 5 5 6 7 …). Distant faces
-  therefore use palettes up to 7 entries to the right in VRAM, presumably
-  darker copies. It needs those palettes cooked into the material caches.
 - **See-through walls:** a front face nearer than the player (max SZ <
   `0x1F8001C0`) whose screen box overlaps x 150..170 / y 120..160 gets
   `0x1F80007C` ORed in. That is 0x02000000 (semi-transparent) when

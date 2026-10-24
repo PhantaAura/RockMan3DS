@@ -132,6 +132,8 @@ struct TerrainBatch {
     // Per-vertex modulation (RGB/128, PS1 texel*colour/128): the depth cue
     // DPCS colour of each classified face; 1.0 elsewhere. Linear, 3 floats.
     float* colors = nullptr;
+    // 0x80025900 depth ramp: this word's per-step RGB scales (L3CR), if cooked.
+    const l3::TerrainClutRampEntry* ramp = nullptr;
 };
 struct GpuMaterial {
     uint32_t material_word = 0;
@@ -927,11 +929,23 @@ bool upload_material_texture(const l3::MaterialCacheEntry* e, C3D_Tex& tex) {
     return true;
 }
 
+// Optional per-area depth-ramp scales (materials/area_NN.l3cr).
+static std::vector<l3::TerrainClutRampEntry> g_terrain_ramp;
+void load_terrain_ramp(size_t area) {
+    g_terrain_ramp.clear();
+    char rel[64];std::snprintf(rel,sizeof(rel),"materials/area_%02lu.l3cr",static_cast<unsigned long>(area));
+    try{
+        const auto bytes=read_binary(data_path(rel),1u<<20);
+        g_terrain_ramp=l3::load_l3clut_ramp(bytes.data(),bytes.size());
+    }catch(const std::exception& e){g_terrain_ramp.clear();boot_log(MML_BOOT_DATA,e.what());}
+}
+
 void rebuild_terrain_batches(const l3::RuntimeMap& map,
                              const l3::St00RenderSource& render,
                              const l3::MaterialCache* cache,
                              size_t area_index) {
     release_all_render_resources();
+    load_terrain_ramp(area_index);
     std::map<uint64_t, std::vector<ProbeVertexUV>> cpu;
     std::map<uint64_t, std::vector<TerrainQuadInfo>> quads;
     g_terrain_patch_recording = true;
@@ -962,6 +976,7 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
 
         // Register ownership before a fallible texture upload so error cleanup
         // also releases the just-created vertex buffer.
+        if (!(kv.first >> 32)) batch.ramp = l3::find_terrain_clut_ramp(g_terrain_ramp, batch.material_word);
         g_terrain_batches.push_back(batch);
         auto& owned_batch = g_terrain_batches.back();
         // Face-test index lists need the original quad order (6 vertices each)
@@ -1978,7 +1993,7 @@ void configure_texenv_black_uv(bool textured) {
     C3D_TexEnvColor(env, 0xFF020202u);
 }
 
-struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0; };
+struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0; };
 static TerrainFaceStats g_terrain_face_stats;
 
 // faces == nullptr keeps the previous draw-everything behaviour.
@@ -2032,9 +2047,14 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                     // Drawn faces take their depth-cued RGB/128; black and
                     // unsupported faces stay at unity.
                     const bool cue = r.face == l3::TerrainFace::Draw;
-                    const float cr = cue ? float(r.rgb & 255u) / 128.f : 1.f;
-                    const float cg = cue ? float((r.rgb >> 8) & 255u) / 128.f : 1.f;
-                    const float cb = cue ? float((r.rgb >> 16) & 255u) / 128.f : 1.f;
+                    // Ramp step k selects the CLUT k palettes to the right; its
+                    // fitted per-channel scale stands in for that palette.
+                    const auto* ks = (cue && batch.ramp && r.ramp) ? &batch.ramp->scale_q12[r.ramp] : nullptr;
+                    const auto scale = [&](unsigned c) { return ks ? float((*ks)[c]) / 4096.f : 1.f; };
+                    const float cr = cue ? float(r.rgb & 255u) / 128.f * scale(0) : 1.f;
+                    const float cg = cue ? float((r.rgb >> 8) & 255u) / 128.f * scale(1) : 1.f;
+                    const float cb = cue ? float((r.rgb >> 16) & 255u) / 128.f * scale(2) : 1.f;
+                    if (ks) ++g_terrain_face_stats.ramped;
                     float* c = batch.colors + 18u * k;
                     for (unsigned i = 0; i < 6u; ++i) { c[3*i] = cr; c[3*i+1] = cg; c[3*i+2] = cb; }
                     if (cue && r.rgb != 0x808080u) ++g_terrain_face_stats.depth_cued;
@@ -4406,6 +4426,7 @@ int main() {
                 // FarColor for the depth cue (0x800371A0).
                 if(source_follow_view&&!source_camera_bound&&mode&&source_follow.scratch_shift_1f800074==0)
                     faces=l3::make_terrain_face_camera(source_follow.camera_1f800008,&session.active_area().flow.setup_blob);
+                if(faces)faces->lod_1f800074=source_follow.scratch_shift_1f800074;
                 // 0x800238BC: 0x1F8001C0 is the player's view depth this frame.
                 int32_t threshold=l3::kObservedArea1BackFaceThreshold;
                 if(faces){
@@ -4415,12 +4436,13 @@ int main() {
                 }
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold);
                 if(session.frame_counter()%120u==0u)
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,fog=%u,source=NCLIP_80025900+DPCS",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,source=NCLIP_80025900+DPCS+RAMP",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
                         (unsigned long)g_terrain_face_stats.batches_unclassified,int(threshold),
-                        (unsigned long)g_terrain_face_stats.depth_cued,unsigned(faces&&faces->far_color.has_value()));
+                        (unsigned long)g_terrain_face_stats.depth_cued,(unsigned long)g_terrain_face_stats.ramped,
+                        (unsigned long)g_terrain_ramp.size(),unsigned(faces&&faces->far_color.has_value()));
             }
             // Independent renderer proof filter. A mixed gameplay/scene image
             // cannot prove which imported owner is visible. It defaults OFF and

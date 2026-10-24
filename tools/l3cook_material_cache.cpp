@@ -2,6 +2,7 @@
 #include "legends3ds/st00_render.h"
 #include "legends3ds/st00_source.h"
 #include "legends3ds/render/negative_materials.h"
+#include "legends3ds/render/terrain_clut_ramp.h"
 #include <algorithm>
 #include <cstdint>
 #include <fstream>
@@ -47,7 +48,13 @@ int main(int argc, char** argv) {
         std::vector<l3::IndexedResource> resources;
         l3::NegativeMaterialTables negative_materials;
         bool negative_option_present = false;
+        std::string ramp_out;
         for (int i = 7; i < argc; ++i) {
+            if (std::string(argv[i]) == "--ramp-out") {
+                if (!ramp_out.empty() || i + 1 >= argc) throw std::runtime_error("ramp-out option duplicated or missing path");
+                ramp_out = argv[++i];
+                continue;
+            }
             if (std::string(argv[i]) == "--negative-materials") {
                 if (negative_option_present || i + 1 >= argc)
                     throw std::runtime_error("negative-materials option duplicated or missing path");
@@ -76,6 +83,29 @@ int main(int argc, char** argv) {
         out.write(reinterpret_cast<const char*>(cooked.data()), static_cast<std::streamsize>(cooked.size()));
         if (!out) throw std::runtime_error("failed writing material cache");
 
+        if (!ramp_out.empty()) {
+            // 0x80025900 depth ramp: the palettes at CLUT + k (k = 1..7) for every
+            // resolved word, fitted to per-channel scales (L3CR).
+            std::vector<uint32_t> variant_words;
+            for (const auto& e : cache.entries)
+                if (e.resolved) for (uint32_t k = 1; k < 8; ++k) variant_words.push_back(e.material_word + (k << 16));
+            const auto variants = l3::build_material_cache(variant_words, resources);
+            std::vector<l3::TerrainClutRampEntry> ramp;
+            for (const auto& e : cache.entries) {
+                if (!e.resolved) continue;
+                std::array<std::vector<uint16_t>,8> pals{};
+                for (uint32_t k = 1; k < 8; ++k) {
+                    const auto* v = l3::find_material_cache_entry(variants, e.material_word + (k << 16));
+                    if (v && v->resolved) pals[k] = v->palette_ps1;
+                }
+                ramp.push_back(l3::fit_terrain_clut_ramp(e.material_word, e.palette_ps1, pals));
+            }
+            const auto ramp_bytes = l3::cook_l3clut_ramp(ramp);
+            std::ofstream rout(ramp_out, std::ios::binary);
+            rout.write(reinterpret_cast<const char*>(ramp_bytes.data()), static_cast<std::streamsize>(ramp_bytes.size()));
+            if (!rout) throw std::runtime_error("failed writing ramp sidecar");
+            std::cout << "ramp_entries=" << ramp.size() << " bytes=" << ramp_bytes.size() << "\n";
+        }
         uint32_t resolved = 0;
         for (const auto& e : cache.entries) {
             if (e.resolved) ++resolved;

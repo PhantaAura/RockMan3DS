@@ -105,6 +105,7 @@ add_library(legends3ds_core STATIC
     src/render/terrain_descriptor_patch.cpp
     src/render/positive_terrain.cpp
     src/render/terrain_visibility.cpp
+    src/render/terrain_clut_ramp.cpp
     src/render/negative_terrain.cpp
     src/render/negative_materials.cpp
     src/render/area_inspection.cpp
@@ -1159,3 +1160,8 @@ add_executable(test_source_music tests/test_source_music.cpp)
 target_link_libraries(test_source_music PRIVATE legends3ds_core)
 target_compile_options(test_source_music PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_music COMMAND test_source_music)
+
+add_executable(test_terrain_clut_ramp tests/test_terrain_clut_ramp.cpp)
+target_link_libraries(test_terrain_clut_ramp PRIVATE legends3ds_core)
+target_compile_options(test_terrain_clut_ramp PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME terrain_clut_ramp COMMAND test_terrain_clut_ramp)

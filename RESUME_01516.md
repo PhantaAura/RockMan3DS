@@ -91,8 +91,12 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
     with SetFogNear DQA/DQB, and the bit-28 rule);
   - the back-face threshold `0x1F8001C0` is the player's view depth each
     frame (writer `0x800238BC`);
-  - per-cell visibility, the far table, the CLUT depth ramp and see-through
-    walls are traced but not ported.
+  - per-cell visibility, the far table and see-through walls are traced but
+    not ported.
+- Renderer R2:
+  - the CLUT depth ramp is ported as fitted per-word/per-step RGB scales
+    (L3CR sidecar, cooked from the real ramp palettes; CANDIDATE);
+  - the positive-family near cull (max SZ < 0xC1) is ported.
 
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
