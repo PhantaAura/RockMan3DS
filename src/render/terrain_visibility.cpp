@@ -73,12 +73,26 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
         r.otz = depth.otz;
         if (camera.area_record) r.ramp = terrain_clut_ramp_step(depth.otz, prefix, *camera.area_record, camera.lod_1f800074);
     }
+    // 0x80024F30 / 0x80025900, after the depth cue: the screen box of SXY0..3
+    // (int16) must overlap the centre region, and the face must lie nearer
+    // than the player (max SZ < 0x1F8001C0).
+    const auto see_through = [&] {
+        if (!(camera.see_through_1f80007c & 0x02000000u)) return false;
+        const bool gate = !(prefix & 0x20000000u) ||
+            (r.min_sz < 0x181 && (mode == 2 || !(prefix & 0x01000000u)));
+        if (!gate || int32_t(prefix) <= 0) return false;
+        if (!(int32_t(*std::max_element(sz.begin(), sz.end())) < threshold)) return false;
+        const auto [x0, x1] = std::minmax_element(sx.begin(), sx.end());
+        const auto [y0, y1] = std::minmax_element(sy.begin(), sy.end());
+        return *x1 > 0x96 && *x0 < 0xaa && *y1 > 0x78 && *y0 < 0xa0;
+    };
     if (negative_cell || mode != 2) {
         r.face = (r.mac0 > 0 || double_sided) ? TerrainFace::Draw : TerrainFace::Skip;
+        r.see_through = !negative_cell && mode == 1 && r.face == TerrainFace::Draw && see_through();
         return r;
     }
     if (r.mac0 == 0) { r.face = TerrainFace::Skip; return r; }
-    if (r.mac0 > 0 || double_sided) { r.face = TerrainFace::Draw; return r; }
+    if (r.mac0 > 0 || double_sided) { r.face = TerrainFace::Draw; r.see_through = see_through(); return r; }
     if (!(threshold < int32_t(r.min_sz)) || (prefix & 0x01000000u)) { r.face = TerrainFace::Skip; return r; }
     r.face = TerrainFace::Black;
     return r;

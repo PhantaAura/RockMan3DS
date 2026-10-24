@@ -359,3 +359,18 @@ each instance run alone):
   - No screenshot was taken, so holes at the screen edges are not checked by
     eye.
 
+
+## Renderer R3: see-through walls
+Rule of `0x80024F30`/`0x80025900`, plus a semi-transparent pass after the
+actors (`docs/research_01516/RENDER_FIDELITY_R1.md`).
+
+Host 167/167 (`test_terrain_visibility` extended), native PASS.
+
+**Azahar** (Area 1 start, idle `3000 0 0 0`, trace only):
+- `see_through=0` and `see_through_held=0`, as expected for this view (the
+  start wall's back face is skipped);
+- other face counts unchanged;
+- command buffer 29%.
+
+No case on screen: screen access was not granted, and a second launch at the
+Area 2 wall spawn did not boot.

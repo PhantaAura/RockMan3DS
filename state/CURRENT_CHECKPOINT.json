@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "Renderer R3 — per-cell terrain visibility (0x80020BB4/0x80021834) on top of R2 ramp and R1 depth cue",
+ "title": "Renderer R3 — per-cell terrain visibility (0x80020BB4/0x80021834) and see-through walls (0x80024F30/0x80025900 + semi-transparent pass), on top of R2 ramp and R1 depth cue",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, trace): cell visibility at the Area 1 start: black faces 108 -> 34 (original 17), cell-culled 443, frame interval 40.8 -> 33.1 ms; Area 2 entry: drawn 426 -> 314, black 204 -> 141, frame interval unchanged (~50 ms). No screenshot.",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, trace): cell visibility at the Area 1 start: black faces 108 -> 34 (original 17), cell-culled 443, frame interval 40.8 -> 33.1 ms; Area 2 entry: drawn 426 -> 314, black 204 -> 141, frame interval unchanged (~50 ms). No screenshot. See-through: PARTIAL (Azahar trace): Area 1 start see_through=0 as expected (start wall back face skipped); no on-screen see-through case yet.",
  "emulator_evidence": "docs/validation_01516/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",

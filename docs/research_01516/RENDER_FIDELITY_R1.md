@@ -107,11 +107,68 @@ into the face's depth-cued colour.
   0 here.
 - **Not modelled:** STP changes in the variants.
 
+## See-through walls: ported (R3)
+Status: **SOURCE_BACKED_PARTIAL**.
+
+**Which families.** Mode table `0x80089890` (positive, negative, ... per mode):
+
+| mode | positive family | see-through rule |
+|---|---|---|
+| 0 | `0x80023EA8` | no |
+| 1 | `0x80024F30` | yes |
+| 2 | `0x80025900` | yes |
+| 3 | `0x80026B04` | no |
+
+`0x80023C08` draws mode 0's near list (`0x8015BD00`, cells with z < 0x400)
+with mode 1, so in mode 0 those faces also use the rule. The port doesn't
+model that list: **UNKNOWN** impact, Area 1 is mode 2.
+
+**Rule** (after the depth cue, on a face that passed NCLIP: MAC0 > 0 or
+double-sided):
+- Gate:
+  - prefix bit 29 clear, or min SZ < 0x181;
+  - mode 1 also needs bit 24 clear with bit 29 set.
+
+  Faces that fail the gate take the other (bit-29) path.
+- Prefix > 0, i.e. bit 31 clear and the word non-zero.
+- Max SZ < `0x1F8001C0`, the player's view depth.
+- The int16 SXY0..3 box overlaps the centre region: max SX > 0x96 and
+  min SX < 0xAA, max SY > 0x78 and min SY < 0xA0.
+
+Then `0x1F80007C` is ORed into the code word. That is 0x02000000 (ABE) while
+event byte `0x800C4C48` is 0, else 0.
+
+**Port:**
+- `classify_terrain_face` sets `see_through`; `TerrainFaceCamera::see_through_1f80007c`
+  follows `source_event_work()` byte 0 when it is known (otherwise the
+  gameplay value, **CANDIDATE**).
+- `draw_terrain` keeps those faces out of the opaque pass (they sit at the
+  back of the drawn index range).
+- `draw_terrain_see_through` draws them after the player, actors and effects
+  through `plan_scene_e0_material`:
+  - STP-0 texels (alpha 255) opaque;
+  - STP texels (alpha 128) blended with the TPAGE ABR (bits 5..6 of the
+    material word), with no depth write.
+
+  On PS1 a semi-transparent textured primitive blends only its STP texels,
+  so how see-through a wall looks depends on its CLUT's STP bits.
+- Without a retained STP mask (untextured batch or alpha gate off) the faces
+  stay opaque and count as `see_through_held`.
+
+**CANDIDATE / caveats:**
+- OT order among semi-transparent primitives is not reproduced.
+- The negative family `0x80021B14` writes `0x1F8001C0 = 0x1F80013C &
+  0xFFFF0000` while it runs; whether that changes the threshold for positive
+  faces drawn after a negative cell is **UNKNOWN**.
+
+**Azahar (Area 1 start, idle autoplay):**
+- `see_through=0`, consistent with the rule: the camera looks at the start
+  wall's back face, which is skipped and never see-through.
+- The rest of the counts are unchanged (259 drawn / 108 black / 72 skipped);
+  command buffer 29% of 512 KiB.
+- The Area 2 wall spawn did not boot, so no on-screen case was seen.
+
 ## Found, not ported (next candidates)
-- **See-through walls:** a front face nearer than the player (max SZ <
-  `0x1F8001C0`) whose screen box overlaps x 150..170 / y 120..160 gets
-  `0x1F80007C` ORed in. That is 0x02000000 (semi-transparent) when
-  `0x800C4C48` is clear.
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near
   faces are subdivided (`0x8002466C`) when SZ > 0x200 and the screen
   size/area exceeds the limits.
