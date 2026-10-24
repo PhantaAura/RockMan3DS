@@ -44,13 +44,17 @@ else
     echo "         The tutorial enemy will hold at its first random draw (it will not move or attack)."
 fi
 
-# Audio (owner-derived, private): effect bank from the DAT VABs, and the
+# Audio (owner-derived, private): effect and music banks from the DAT VABs/SEP, and the
 # message voice clips from the full CUE/BIN when present. Cached by tool hash.
 mkdir -p "$DATA/audio" "$CACHE/audio"
 SFX_KEY="$(shasum -a 256 "$ROOT/tools/cook_sfx_bank.py" | cut -c1-16)"
 SFX="$CACHE/audio/sfx_st00-$SFX_KEY.l3sb"
 [ -f "$SFX" ] || python3 "$ROOT/tools/cook_sfx_bank.py" --exe "$OWNER/ROCK_NEO.EXE" --dat "$OWNER/CDDATA/DAT" --out "$SFX"
 cp "$SFX" "$DATA/audio/sfx_st00.l3sb"
+MUSIC_KEY="$(cat "$ROOT/tools/cook_music_bank.py" "$ROOT/tools/cook_sfx_bank.py" | shasum -a 256 | cut -c1-16)"
+MUSIC="$CACHE/audio/music_st00-$MUSIC_KEY.l3mu"
+[ -f "$MUSIC" ] || python3 "$ROOT/tools/cook_music_bank.py" --exe "$OWNER/ROCK_NEO.EXE" --dat "$OWNER/CDDATA/DAT" --out "$MUSIC"
+cp "$MUSIC" "$DATA/audio/music_st00.l3mu"
 if [ -f "$CUE" ]; then
     VOICE_KEY="$(cat "$ROOT/tools/cook_xa_voice.py" "$ROOT/tools/cook_xa_stream.py" | shasum -a 256 | cut -c1-16)"
     VOICE="$CACHE/audio/voice_st00-$VOICE_KEY.l3vb"

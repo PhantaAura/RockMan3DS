@@ -54,6 +54,8 @@ class SourceSpuEnvelope {
 public:
     void key_on(uint16_t adsr1, uint16_t adsr2) noexcept;
     void key_off() noexcept;
+    // Loop End without Repeat: release with the level forced to zero.
+    void mute() noexcept { phase_ = Phase::Off; level_ = 0; }
     void advance(uint32_t samples) noexcept;
     int16_t level() const noexcept { return level_; }
     bool finished() const noexcept { return phase_ == Phase::Off; }

@@ -121,6 +121,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_box_e005.cpp
     src/world/voice_bank.cpp
     src/world/source_sound.cpp
+    src/world/source_music.cpp
     src/flow/st00_flow.cpp
     src/flow/st00_event.cpp
     src/flow/source_door_event.cpp
@@ -1154,3 +1155,7 @@ add_executable(test_source_sound tests/test_source_sound.cpp)
 target_link_libraries(test_source_sound PRIVATE legends3ds_core)
 target_compile_options(test_source_sound PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_sound COMMAND test_source_sound)
+add_executable(test_source_music tests/test_source_music.cpp)
+target_link_libraries(test_source_music PRIVATE legends3ds_core)
+target_compile_options(test_source_music PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_music COMMAND test_source_music)

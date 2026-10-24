@@ -71,8 +71,21 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   gate's camera shake (0x800398E0 → 0x800A395F) is ported. Azahar: targets
   and box effects spawn, animate, draw textured and release.
 
+- Area music (`docs/research_01516/MUSIC.md`). The tutorial BGM is the
+  m_op01b SEP, not XA:
+  - 0x80019D18 queues request 0 for areas 1/2;
+  - handler 1 (0x8001AC58) plays sequence 0;
+  - the song loops itself with NRPN 20/30.
+  
+  `source_music` ports the game side and the libsnd sequencer and voice
+  manager, and mixes the 15 music voices in software, with stage 0's SPU
+  reverb (Studio Small, out 0x4080). `NativeMusic` streams the mix on NDSP
+  channel 4. The bank is cooked by `cook_music_bank.py` (L3MU, private pack).
+
 ## Validation
-`docs/validation_01516/RESULTS.md`: host 162/162, native PASS, Azahar trace (pop-out
+`docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
+Area music in Azahar: request 0 plays in Area 1 in real time with reverb (trace;
+not listened to yet), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
@@ -80,9 +93,11 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
    - look at the textured E0 objects on screen (audio was listened to and
      sounds right);
-   - sequenced music (SEP) and the E0/08 door-pulse rand draws;
    - effects: the 0x800341BC explosion proxy (bursts do no damage yet), the
      bit-0x20 helper children, the LOD tiers, and a look at them on screen;
+   - listen to the area music in Azahar against the PS1. Gaps: Gaussian
+     interpolation, the reverb FIR, music pausing during area loads;
+   - the E0/08 door-pulse rand draws;
    - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
