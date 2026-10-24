@@ -409,3 +409,6 @@ corridor corner while walking.
   corner. The follow camera stays inside the corridor there, and no front
   face comes between it and Mega Man. Where the original shows this effect
   is still UNKNOWN.
+- **User check (2026-10-24):** after the explanation of the see-through rule,
+  the user reported "yea it works" for the merged R3 build in Azahar
+  (user-observed, no screenshot or location recorded).
