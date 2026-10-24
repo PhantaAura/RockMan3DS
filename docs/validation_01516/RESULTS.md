@@ -194,6 +194,37 @@ Azahar box route, after copying the user's own `dspfirm.cdc` to `sdmc:/3ds/`
   - Without rand() the target beep fired every 2 frames.
 - **Listening check (user, Azahar):** the effects and Roll's voice sound right.
 
+## Area music (libsnd SEP)
+
+See `docs/research_01516/MUSIC.md`. Build `pass-20261024-103151-m2-01516`:
+- `Legends3DS.3dsx` 1,110,304 B, SHA-256 `924135aa…52f7` (not committed);
+- host 166/166 PASS (new `source_music`); native PASS, 0 warnings.
+- Cooked locally: `music_st00.l3mu`, 712,048 B (area row `FFFF 0 0 1 FFFF
+  0`, requests 0/1, m_op01b SEP + VH, 14 VAGs (5 looped), reverb entry
+  `02 40 40`).
+
+Scratch render of the real bank, 3 minutes:
+- 0 errors, up to 15 voices;
+- the NRPN loop wraps about every 51 s;
+- RMS ~1030 dry, ~1400 with reverb; ~570× realtime on the Mac.
+
+**Azahar 2126.0 (Old 3DS).** Normal boot with `autoplay/music_area1.txt`
+(40 s in Area 1), trace evidence:
+- `source_music_open` ready; `source_music_request` area 1 → request 0x0,
+  queued; frame 1: handler 1 dispatched, slot 0 = access 0, volume 127.
+- The reverb is type 2, with output 16512 (0x4080) after the 30-pass wait.
+- Key-ons at frames 300/600/1200: 80/246/638. The host render has 81/249/644
+  at 10/20/40 s, so the sequencer keeps real time.
+- 0 errors; 1 underrun (at start), no more afterwards.
+- Frame interval ~33 ms; the slow frames are render-bound (render 33–39 ms).
+
+Not covered:
+- **No listening check yet**: the trace cannot tell whether it sounds like
+  the PS1.
+- Area 1 → 2 continuity (same request, no restart) is host-tested only.
+- The music stops while an area load blocks the main loop.
+- No PS1 capture comparison (tempo, levels, reverb tail).
+
 ## Full-run attempt (stopped)
 
 `autoplay/tutorial_full.txt` uses new event-driven autoplay steps: talk, wait

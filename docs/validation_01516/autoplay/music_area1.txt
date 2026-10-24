@@ -1,0 +1,2 @@
+# 0.0.15.16 area music (normal boot, no spawn file): stand in Area 1 for ~40 s while the sequence plays and loops once
+1200 0 0 0
