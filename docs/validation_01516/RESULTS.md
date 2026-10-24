@@ -327,3 +327,18 @@ wall. The ramp only starts at otz 5120, where the fog is already about 94%
 toward the far colour, so its visible effect in these rooms is small. There
 is no PS1 reference image.
 
+
+## Renderer R3: see-through walls
+Rule of `0x80024F30`/`0x80025900`, plus a semi-transparent pass after the
+actors (`docs/research_01516/RENDER_FIDELITY_R1.md`).
+
+Host 167/167 (`test_terrain_visibility` extended), native PASS.
+
+**Azahar** (Area 1 start, idle `3000 0 0 0`, trace only):
+- `see_through=0` and `see_through_held=0`, as expected for this view (the
+  start wall's back face is skipped);
+- other face counts unchanged;
+- command buffer 29%.
+
+No case on screen: screen access was not granted, and a second launch at the
+Area 2 wall spawn did not boot.

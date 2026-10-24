@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "Renderer R2 — CLUT depth ramp (fitted L3CR scales) and positive-family near cull, on top of R1 depth cue",
+ "title": "Renderer R3 — see-through walls (0x80024F30/0x80025900 rule + semi-transparent pass), on top of R1/R2",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, trace): Area 2 ramp words 12 loaded, 327/429 drawn faces ramped, frame time unchanged (~50 ms). No usable screenshot (camera inside wall at test spawns); ramp visible effect small under ~94% fog.",
+ "current_emulator_validation": "PARTIAL (Azahar trace): Area 1 start see_through=0 as expected (start wall back face skipped); no on-screen see-through case yet.",
  "emulator_evidence": "docs/validation_01516/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",

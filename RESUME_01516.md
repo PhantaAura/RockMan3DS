@@ -97,6 +97,11 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   - the CLUT depth ramp is ported as fitted per-word/per-step RGB scales
     (L3CR sidecar, cooked from the real ramp palettes; CANDIDATE);
   - the positive-family near cull (max SZ < 0xC1) is ported.
+- Renderer R3: see-through walls (`0x80024F30`/`0x80025900`). A front face
+  nearer than Mega Man over the screen centre is drawn after the actors,
+  semi-transparent with its TPAGE ABR (STP texels only). Host-tested. The
+  Azahar trace shows 0 such faces at the Area 1 start, which is expected;
+  not yet seen on screen. Mode 0's near list is not modelled.
 
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
