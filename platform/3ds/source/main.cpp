@@ -62,6 +62,7 @@
 #include "legends3ds/source_player_buster.h"
 #include "mockup_hud.h"
 #include "legends3ds/render/terrain_visibility.h"
+#include "legends3ds/render/terrain_cell_visibility.h"
 #include "legends3ds/source_gate_e007.h"
 #include "legends3ds/source_target_e008.h"
 #include "legends3ds/player_contact_runtime.h"
@@ -118,6 +119,8 @@ struct TerrainQuadInfo {
     std::array<int32_t,4> x{}, y{}, z{};
     uint32_t prefix = 0;
     bool negative = false;
+    // 0x80021834 visibility key: IDX index (positive) or area-local cell (negative).
+    uint32_t cell = UINT32_MAX;
 };
 struct TerrainBatch {
     uint32_t material_word = 0;
@@ -180,6 +183,7 @@ static std::vector<TerrainOverlay> g_terrain_overlay;
 static uint64_t g_terrain_patch_generation = UINT64_MAX;
 static bool g_terrain_patch_recording = false;
 static uint16_t g_area_primitive_idx = 0xFFFFu;   // 0xFFFF: not tracked for swaps
+static uint32_t g_area_primitive_cell = UINT32_MAX; // TerrainQuadInfo::cell of the current primitive
 static const std::vector<uint16_t>* g_area_idx_filter = nullptr;
 static std::vector<GpuMaterial> g_player_materials;
 static std::vector<GpuMaterial> g_actor_materials;
@@ -780,6 +784,7 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
                 std::find(g_extra_swappable_idx.begin(), g_extra_swappable_idx.end(), instance.idx_index) != g_extra_swappable_idx.end();
             if (g_terrain_patch_recording && tracked) g_terrain_patch.bake(instance.idx_index, instance.descriptor_index);
             g_area_primitive_idx = tracked ? instance.idx_index : uint16_t(0xFFFFu);
+            g_area_primitive_cell = instance.idx_index;
             if (instance.descriptor_index == 0xFFFFu) continue;
             const auto prims = l3::expand_positive_terrain_descriptor_lod(render,
                 instance.descriptor_index, instance.bank, l3::St00Lod::Mid,
@@ -803,6 +808,7 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         for (const auto& instance : negative.instances) {
             const auto* binding = l3::find_negative_material_binding(g_negative_materials, area_index, instance.packed_cell);
             if (!binding) ++unknown_materials;
+            g_area_primitive_cell = instance.local_cell;
             for (const auto& primitive : l3::expand_negative_terrain_mid(render, instance, binding)) {
                 if (!g_area_primitive_count) g_area_min_y=g_area_max_y=primitive.world_y[0];
                 for (int32_t y : primitive.world_y) { g_area_min_y=std::min(g_area_min_y,y); g_area_max_y=std::max(g_area_max_y,y); }
@@ -830,6 +836,7 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         const bool tracked = swappable_descriptor(map, idx.descriptor_index);
         if (g_terrain_patch_recording && tracked) g_terrain_patch.bake(uint16_t(ii), idx.descriptor_index);
         g_area_primitive_idx = tracked ? uint16_t(ii) : uint16_t(0xFFFFu);
+        g_area_primitive_cell = uint32_t(ii);
         if (idx.descriptor_index == 0xFFFFu || idx.descriptor_index >= render.descriptors.size()) continue;
         const uint32_t lx = local % area.width, lz = local / area.width;
         const int32_t gx = int32_t(area.start_x) + int32_t(lx);
@@ -954,7 +961,7 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
         auto& dst = cpu[key];
         const size_t first = dst.size();
         push_quad_uv(dst, p);
-        if (terrain_xyz_active()) quads[key].push_back({p.world_x, p.world_y, p.world_z, p.prefix, g_area_primitive_negative});
+        if (terrain_xyz_active()) quads[key].push_back({p.world_x, p.world_y, p.world_z, p.prefix, g_area_primitive_negative, g_area_primitive_cell});
         if (g_area_primitive_idx != 0xFFFFu)
             g_terrain_patch.add_span(g_area_primitive_idx, key, uint32_t(first), uint32_t(dst.size() - first));
     });
@@ -1993,12 +2000,14 @@ void configure_texenv_black_uv(bool textured) {
     C3D_TexEnvColor(env, 0xFF020202u);
 }
 
-struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0; };
+struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0, cell_culled = 0; };
 static TerrainFaceStats g_terrain_face_stats;
 
 // faces == nullptr keeps the previous draw-everything behaviour.
+// cells (when valid) drops quads whose cell 0x80021834 rejected this frame.
 void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive_mode = 0,
-                  int32_t back_face_threshold = l3::kObservedArea1BackFaceThreshold) {
+                  int32_t back_face_threshold = l3::kObservedArea1BackFaceThreshold,
+                  const l3::TerrainCellVisibility* cells = nullptr) {
     g_terrain_face_stats = {};
     if (!use_uv_renderer()) {
         configure_texenv_0143();
@@ -2041,6 +2050,10 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
             size_t drawn = 0, black = 0;
             for (size_t k = 0; k < q; ++k) {
                 const auto& quad = batch.quads[k];
+                if (cells && cells->valid) {
+                    const auto& bits = quad.negative ? cells->negative_visible : cells->idx_visible;
+                    if (quad.cell < bits.size() && !bits[quad.cell]) { ++g_terrain_face_stats.cell_culled; continue; }
+                }
                 const auto r = l3::classify_terrain_face(*faces, quad.x, quad.y, quad.z, quad.prefix,
                     quad.negative, positive_mode, back_face_threshold);
                 if (face_colors) {
@@ -4434,15 +4447,30 @@ int main() {
                     const auto rd=[&](size_t o){return int16_t(uint16_t(pw[o]|(pw[o+1]<<8)));};
                     if(const auto d=l3::terrain_view_depth_1f8001c0(*faces,rd(0x14),rd(0x16),rd(0x18)))threshold=*d;
                 }
-                draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold);
+                // 0x80020BB4 per-cell visibility with the same camera.
+                static l3::TerrainCellVisibility cells;
+                cells.valid=false;
+                if(faces&&g_current_area==session.map_area_index()){
+                    l3::TerrainCellViewInput cv;
+                    cv.camera_1f800008=source_follow.camera_1f800008;
+                    cv.translation_1f800030=l3::terrain_cell_translation_1f800030(source_follow.camera_1f800008,source_follow.eye_800a39f0);
+                    cv.eye_x_1f800028=int16_t(source_follow.eye_800a39f0[0]);cv.eye_z_1f80002c=int16_t(source_follow.eye_800a39f0[2]);
+                    cv.pitch_800a3a10=source_follow.rotation_800a3a10[0];cv.yaw_800a3a12=source_follow.rotation_800a3a10[1];
+                    cv.target_x_800a39a0=source_follow.target_800a39a0[0];cv.target_z_800a39a8=source_follow.target_800a39a0[2];
+                    cv.lod_1f800074=source_follow.scratch_shift_1f800074;cv.mode_1f800075=mode.value_or(0);
+                    l3::compute_terrain_cell_visibility(session.active_map(),session.map_area_index(),refs,cv,cells);
+                }
+                draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 if(session.frame_counter()%120u==0u)
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,source=NCLIP_80025900+DPCS+RAMP",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
                         (unsigned long)g_terrain_face_stats.batches_unclassified,int(threshold),
                         (unsigned long)g_terrain_face_stats.depth_cued,(unsigned long)g_terrain_face_stats.ramped,
-                        (unsigned long)g_terrain_ramp.size(),unsigned(faces&&faces->far_color.has_value()));
+                        (unsigned long)g_terrain_ramp.size(),unsigned(faces&&faces->far_color.has_value()),
+                        unsigned(cells.valid),(unsigned long)g_terrain_face_stats.cell_culled,
+                        (unsigned long)cells.positive_cells,(unsigned long)cells.negative_cells);
             }
             // Independent renderer proof filter. A mixed gameplay/scene image
             // cannot prove which imported owner is visible. It defaults OFF and
