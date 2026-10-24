@@ -395,3 +395,17 @@ Both R3 branches merged into main. Host 168/168, native PASS
 **Still open:** the see-through pass has not been seen to fire in game. It
 needs a view where a wall sits between the camera and Mega Man, such as a
 corridor corner while walking.
+
+## Clear colour and the see-through corner walk
+- **Clear colour:** `FUN_8001215c` sets both DRAWENVs (`0x800C0C5C`,
+  `0x800C0CEC`) to isbg=1 with r0,g0,b0 = 0, and nothing else in the EXE
+  writes those bytes. The 3DS cleared to navy `0x101820`; it now clears to
+  black. In Azahar the space above the Area 1 walls is black, matching a user
+  PS1 screenshot of the same corridor (SOURCE_BACKED; overlays not searched).
+- **See-through corner walk** (tutorial route: radio, (2816,-5900),
+  (2816,-9500), (1500,-10000), (-256,-10000); reaches (-209,-10020) at frame
+  1440). The trace now logs every 10th frame whenever see-through faces exist.
+  No frame logged any, so the rule did not fire around the first corridor
+  corner. The follow camera stays inside the corridor there, and no front
+  face comes between it and Mega Man. Where the original shows this effect
+  is still UNKNOWN.

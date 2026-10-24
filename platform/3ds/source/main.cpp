@@ -92,7 +92,9 @@ constexpr uint64_t kAreaMaterialDecodedLimit = 8u * 1024u * 1024u;
 constexpr uint32_t kAreaTextureLimit = 8u * 1024u * 1024u;
 constexpr float kWorldScale = l3::kFrontendWorldScale;
 static l3::FrontendViewSettings g_view_settings{};
-constexpr u32 kClearColor = 0x101820FFu;
+// FUN_8001215c sets both DRAWENVs (0x800C0C5C/0x800C0CEC) to isbg=1 with
+// r0,g0,b0 = 0; no other EXE writer of those bytes. The original clears black.
+constexpr u32 kClearColor = 0x000000FFu;
 constexpr size_t kTutorialAreaCount = 5;
 constexpr int kDrawBatchVertices = 60000;
 constexpr uint32_t kTexturePageBytes = uint32_t(l3::kL3MaterialTextureWidth) *
@@ -4532,7 +4534,8 @@ int main() {
                     l3::compute_terrain_cell_visibility(session.active_map(),session.map_area_index(),refs,cv,cells);
                 }
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
-                if(session.frame_counter()%120u==0u)
+                // Every 10th frame while see-through faces exist, so short views are not missed.
+                if(session.frame_counter()%120u==0u||(g_terrain_face_stats.see_through&&session.frame_counter()%10u==0u))
                     hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
