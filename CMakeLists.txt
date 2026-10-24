@@ -105,6 +105,7 @@ add_library(legends3ds_core STATIC
     src/render/terrain_descriptor_patch.cpp
     src/render/positive_terrain.cpp
     src/render/terrain_visibility.cpp
+    src/render/terrain_cell_visibility.cpp
     src/render/terrain_clut_ramp.cpp
     src/render/negative_terrain.cpp
     src/render/negative_materials.cpp
@@ -1121,6 +1122,11 @@ add_executable(test_terrain_visibility tests/test_terrain_visibility.cpp)
 target_link_libraries(test_terrain_visibility PRIVATE legends3ds_core)
 target_compile_options(test_terrain_visibility PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME terrain_visibility COMMAND test_terrain_visibility)
+
+add_executable(test_terrain_cell_visibility tests/test_terrain_cell_visibility.cpp)
+target_link_libraries(test_terrain_cell_visibility PRIVATE legends3ds_core)
+target_compile_options(test_terrain_cell_visibility PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME terrain_cell_visibility COMMAND test_terrain_cell_visibility)
 
 add_executable(test_source_gate_e007 tests/test_source_gate_e007.cpp)
 target_link_libraries(test_source_gate_e007 PRIVATE legends3ds_core)

@@ -14,28 +14,50 @@ used in this pass.
    `0x1F8001BC = 0x1F8001C0 + 0x172`.
 4. `0x80023C08` draws the lists (`0x800267AC` mode 2/3, or `0x80024BAC`).
 
-## Per-cell visibility (0x80020BB4 / 0x80021258 / 0x80021834), not yet ported
-- **Search rectangle:** centred 2·|cos pitch| (q12) ahead of the camera
-  (`0x1F800028/2C`) along its yaw (`0x800A3A12`). Half-size |cos pitch| >> 8
-  cells, clamped to the area bounds (`0x1F800040..43`).
-- **Near window:** the cells around the player (`0x800A39A0/A8`), at
-  ±|sin pitch|/0x160 + 3 cells.
-- **Wedge:** slopes from yaw ± 0x100. The wedge fill uses `0x80021258` or
-  `0x80021548`, chosen by yaw quadrant.
-- **Per-cell test (`0x80021834`):** the cell centre (y from its descriptor) is
-  transformed with RT. The cell is drawn when both hold:
-  - `z/4 < 0x1F800076` (far: `0x80097C78[0x1F800074]`, 3584/1664/768 for
-    LOD 0/1/2; 0 in tutorial gameplay);
-  - `|x| ≤ (106·(z/4) >> 6) + r`, where r = 400 for the wedge and 600 for the
-    near window. 106/64 · ¼ ≈ 0.414 = 160/384, the PS1's horizontal half
-    field of view.
-
-  Negative cells go to `0x8002196C`. Positive cells set a bit in BD00 when
-  `z < 0x1F800004` (0x400 in modes 0/1, 0 in modes 2/3), otherwise in BC00.
-- **Port impact:** at LOD 0 the far cut is 14336 units, beyond every tutorial
-  room. The side cut only removes off-screen cells, and the 3DS's 400-pixel
-  width would need a wider cut anyway (CANDIDATE). These rules are left as
-  documentation, not code.
+## Per-cell visibility (0x80020BB4 / 0x80021258 / 0x80021548 / 0x80021834): ported
+`include/legends3ds/render/terrain_cell_visibility.h`, test
+`tests/test_terrain_cell_visibility.cpp`. Called from `0x800238BC` before the
+terrain families draw. SOURCE_BACKED_PARTIAL: ported from the decompiles and
+the `0x80037FB4` tail instructions; not compared against a PS1 cell list.
+- **Search rectangle:** centred 2·|cos pitch| (q12) ahead of the camera eye
+  (`0x1F800028/2C`) along its yaw (`0x800A3A12`), in cells (truncating /512,
+  + 0x40). Half-size |cos pitch| >> 8 cells, clamped to the area bounds
+  (`0x1F800040..43` = start x/z, start + width/height).
+- **Near window `0x1F800100..106`:** around the camera target
+  (`0x800A39A0/A8`), from −3 − |sin pitch|/0x160 to +3 + that (exclusive),
+  clamped to the area.
+- **Wedge:** slopes `0x1F800108/10A` from yaw ∓ 0x100, stored as halfwords.
+  With `(yaw − 0x200) & 0x400` clear, the slopes are (cos+1)·0x1000 / −(sin+1)
+  and `0x80021258` walks one z run per x column. Otherwise the slopes are
+  (sin+1)·0x1000 / −(cos+1) and `0x80021548` walks one x run per z row
+  (offsets 0x41/0x3E swapped). Both skip the near window and test each
+  non-zero cell with radius 400. The near window is then tested with radius 600.
+- **Scratch `0x1F800075` == 1** uses `0x80020A4C` instead: every cell in the
+  area, radius 800.
+- **Per-cell test (`0x80021834`):** the cell centre (y = IDX +2, or
+  −((packed & 0x1F00) >> 1) for a negative cell) goes through `gte_rt` with
+  the `0x1F800008` rotation and TR = `0x1F800030`. That vector is the
+  `0x80037FB4` tail's ApplyMatrixLV of the matrix on the negated eye
+  (`0x800382CC..F4`), so it equals the `0x1F800008` translation at shift 0.
+  - **Far cut:** `MAC3/4 < 0x1F800076`. The far tables are `0x80097C78` =
+    3584/1664/768 for LOD 0/1/2, and `0x80097C84` = 3456/1568/704 when
+    `0x1F800078` bit 2 is set. That bit's gameplay value is UNKNOWN; the port
+    uses 0.
+  - **Side cut:** `|MAC1| ≤ ((z4·8·15 − z4·14) >> 6) + r` (≈ 160/384 of the depth).
+  - **Result:** a passing positive cell sets its IDX bit in BC00/BD00, so each
+    IDX is drawn once whatever cell aliases it. A passing negative cell is
+    drawn per cell (`0x8002196C`).
+- **CANDIDATE (3DS width):** the 3DS view is 400 pixels at the same focal
+  length 384, so the depth term is widened by 5/4 (200/384) and the radius is
+  unchanged (`TerrainCellViewInput::widen_for_400`, on). With the PS1 cut, the
+  outer 40 pixels on each side would lose cells.
+- **Port behaviour:**
+  - `draw_terrain` drops a quad whose IDX or negative cell was not marked,
+    before the NCLIP/depth-cue/ramp classification, which is unchanged;
+  - a cell outside the area (where the wedge leaves the grid and the original
+    reads past it) counts as empty;
+  - a slope divide by zero (the original traps) disables the cull for that frame;
+  - the door overlay (`g_terrain_overlay`) is always drawn.
 
 ## Depth cue: ported
 Every positive terrain family (`0x80023EA8`, `0x80024F30`, `0x80025900`,

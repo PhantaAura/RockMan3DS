@@ -97,6 +97,12 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   - the CLUT depth ramp is ported as fitted per-word/per-step RGB scales
     (L3CR sidecar, cooked from the real ramp palettes; CANDIDATE);
   - the positive-family near cull (max SZ < 0xC1) is ported.
+- Renderer R3 (branch `claude/cell-visibility-c1fe3c`): per-cell terrain
+  visibility (`0x80020BB4`, wedge `0x80021258`/`0x80021548`, test
+  `0x80021834`) is ported. It is wired into `draw_terrain`, with the side cut
+  widened to 200/384 for the 400-pixel view (CANDIDATE). At the Area 1 start,
+  black faces fall from 108 to 34 (original 17) and the frame interval from
+  40.8 to 33.1 ms in Azahar.
 
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
@@ -130,8 +136,10 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
   EXIT_SUP, and Area 2 inherits ST00_01.
 - The 0x1F8001C0 back-face threshold (522) is measured in Area 1 only. Its
   writer is untraced.
-- The map draw still has no per-cell visibility or Near LOD, so it draws more
-  black faces than the original (hidden by depth).
+- The map draw still has no Near LOD, so it draws more black faces than the
+  original (34 against 17 at the Area 1 start). Per-cell visibility is ported (R3).
+- Cell visibility not yet checked by eye for edge holes. `0x1F800078` bit 2
+  (far table choice) is UNKNOWN.
 - No physical Old 3DS test.
 - The work80 writer for 0x1F is CANDIDATE.
 - The box's E0 pool slot (15 = static E0 count + conditional order) is
