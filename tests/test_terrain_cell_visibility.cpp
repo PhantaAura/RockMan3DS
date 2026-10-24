@@ -22,7 +22,8 @@ RuntimeMap grid(){
     RuntimeMapArea a;a.start_x=0x30;a.start_z=0x30;a.width=32;a.height=32;a.cell_first=0;a.cell_count=1024;
     m.areas.push_back(a);
     m.idx.resize(1025);
-    for(int i=0;i<1024;++i)m.cells.push_back(int16_t(1+i));
+    for(int i=0;i<1024;++i){m.cells.push_back(int16_t(1+i));
+        m.idx[size_t(1+i)].x=int16_t((0x30+i%32)*0x200-0x7F00);m.idx[size_t(1+i)].z=int16_t((0x30+i/32)*0x200-0x7F00);}
     return m;
 }
 int16_t idx_at(int gx,int gz){return int16_t(1+(gz-0x30)*32+(gx-0x30));}
@@ -65,6 +66,14 @@ int main(){
         assert(narrow.positive_cells<=v.positive_cells);
         for(size_t i=0;i<v.idx_visible.size();++i)assert(!narrow.idx_visible[i]||v.idx_visible[i]);
     }
+    // 0x800267AC LOD cuts on the IDX view depth.
+    assert(terrain_lod_800267ac(-5)==0&&terrain_lod_800267ac(0xAF0)==0&&terrain_lod_800267ac(0xAF1)==1);
+    assert(terrain_lod_800267ac(0x1C20)==1&&terrain_lod_800267ac(0x1C21)==2);
+    {TerrainCellVisibility v;compute_terrain_cell_visibility(m,0,r,view(r,0x800),v);
+     const auto lod=[&](std::pair<int,int> c){return v.idx_lod[size_t(idx_at(c.first,c.second))];};
+     assert(lod(cell(r,0x800,0,0))==0);      // the target cell: Near
+     assert(lod(cell(r,0x800,8,0))==1);      // ~4600 ahead: Mid
+     assert(v.idx_lod.size()==m.idx.size());}
     // Mode 1 (0x80020A4C) walks the whole area with radius 800.
     {auto in=view(r,0x800);in.mode_1f800075=1;TerrainCellVisibility v;
      compute_terrain_cell_visibility(m,0,r,in,v);assert(v.valid&&v.cells_tested==1024);}

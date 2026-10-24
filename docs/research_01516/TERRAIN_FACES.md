@@ -41,8 +41,9 @@ How the pieces connect:
   (OFX/OFY 160/120, H 384).
 - **Host check (retail trig):** the four culled faces match exactly (min SZ
   284/270/284/270). The port finds 108 black faces where the original draws 17,
-  because it has no per-cell visibility or Near LOD. The extras are off-screen
-  or behind front faces.
+  because it had no per-cell visibility, Near LOD or off-screen test. With all
+  three (R3/R4), the host replay with the PS1 window gives exactly the
+  original 17 (see `RENDER_FIDELITY_R1.md`).
 - **3DS:** each frame the terrain batches are drawn through per-quad index
   lists (`C3D_DrawElements`), and a second pass draws the black faces as
   texel × 2/255.

@@ -104,6 +104,11 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   widened to 200/384 for the 400-pixel view (CANDIDATE). At the Area 1 start,
   black faces fall from 108 to 34 (original 17) and the frame interval from
   40.8 to 33.1 ms in Azahar.
+- Renderer R4: per-IDX Near/Mid/Far LOD (`0x800267AC`) and the mode-2
+  off-screen test (`0x80025BE8`). The host replay now gives exactly the PS1's
+  17 black faces at the Area 1 start; Azahar shows 25 (8 extra in the 400-px
+  side strips, CANDIDATE). Next: the negative near replay `0x8002235C`, OT
+  order and subdivision `0x8002466C`.
 - Renderer R3 (merged): see-through walls (`0x80024F30`/`0x80025900`). Still
   never seen firing in Azahar (0 in every merged-build trace). A front face
   nearer than Mega Man over the screen centre is drawn after the actors,

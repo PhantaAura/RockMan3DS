@@ -18,6 +18,9 @@ namespace l3 {
 //    negative family 0x80021B14: MAC0 > 0 or bit 30 draws, else skipped.
 //  - Every positive family skips a bit31-clear face whose max SZ < 0xC1
 //    (near cull, terrain_face_depth_80025900).
+//  - Mode 2 also skips a face lying wholly off screen, before the near cull
+//    and the back-face test: no vertex SXY on screen and neither diagonal
+//    midpoint (v0+v3, v1+v2) on screen (0x80025BE8..0x80025D38).
 // Measured in PCSX-Redux at the Area 1 control start: mode 2, threshold 522;
 // the start wall's back face (min SZ 284/270) is skipped and farther back
 // faces are drawn black. Its writer is 0x800238BC: gte_rt of the player's
@@ -45,6 +48,12 @@ struct TerrainFaceCamera {
     uint8_t lod_1f800074 = 0;
     // 0x1F80007C for this frame (terrain_see_through_code_1f80007c).
     uint32_t see_through_1f80007c = 0x02000000u;
+    // On-screen window of the mode-2 off-screen test (0x80025BE8..0x80025D38):
+    // the original keeps SX in [0, 320) and SY in [0, 240) (unsigned compares).
+    // The 3DS top screen is 400 wide at the same OFX-centred projection, so
+    // the port widens SX to [-40, 360) (CANDIDATE, like the cell side cut).
+    int16_t screen_x_min = 0;
+    uint16_t screen_width = 320;
 };
 // OFX/OFY 160/120 and H 384 as installed by 0x8007A4F0 + 0x80011F48. With the
 // 40-byte area record (0x8011AC54 + area * 40, cooked as the L3SF setup blob),
@@ -74,6 +83,8 @@ struct TerrainFaceResult {
     // TPAGE). Faces that take the bit-29 path (bit 29 with min SZ >= 0x181;
     // mode 1 also with bit 24) are excluded. Modes 0/3 never set it.
     bool see_through = false;
+    // Skipped by the mode-2 off-screen test.
+    bool off_screen = false;
 };
 // 0x1F8001C0 for this frame: view-space depth (MAC3) of the player position.
 std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,

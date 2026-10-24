@@ -123,6 +123,9 @@ struct TerrainQuadInfo {
     bool negative = false;
     // 0x80021834 visibility key: IDX index (positive) or area-local cell (negative).
     uint32_t cell = UINT32_MAX;
+    // Descriptor LODs this quad belongs to (bit 0 Near, 1 Mid, 2 Far); a
+    // positive quad is drawn only in its IDX's LOD (0x800267AC).
+    uint8_t lods = 7;
 };
 struct TerrainBatch {
     uint32_t material_word = 0;
@@ -132,6 +135,8 @@ struct TerrainBatch {
     C3D_Tex texture{};
     bool texture_ready = false;
     std::vector<TerrainQuadInfo> quads;   // quad k = vertices 6k..6k+5
+    // Mid-LOD quads come first; unclassified draws use only [0, mid_vertex_count).
+    size_t mid_vertex_count = 0;
     // linear: [0,6q) drawn from the front, see-through from the back; [6q,12q) black
     uint16_t* indices = nullptr;
     size_t black_count = 0;
@@ -189,6 +194,12 @@ static bool g_terrain_patch_recording = false;
 static uint16_t g_area_primitive_idx = 0xFFFFu;   // 0xFFFF: not tracked for swaps
 static uint32_t g_area_primitive_cell = UINT32_MAX; // TerrainQuadInfo::cell of the current primitive
 static const std::vector<uint16_t>* g_area_idx_filter = nullptr;
+// Positive descriptor LOD that for_each_area_primitive expands. A Near/Far pass
+// also skips negatives and IDX whose geometry equals Mid, listing those in
+// g_area_lod_shared so the Mid quads can carry the LOD bit instead.
+static l3::St00Lod g_area_lod = l3::St00Lod::Mid;
+static uint8_t g_area_primitive_lods = 7;
+static std::vector<std::pair<uint16_t,uint8_t>>* g_area_lod_shared = nullptr;
 static std::vector<GpuMaterial> g_player_materials;
 static std::vector<GpuMaterial> g_actor_materials;
 static std::vector<GpuMaterial> g_scene_materials;
@@ -791,8 +802,22 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
             g_area_primitive_cell = instance.idx_index;
             if (instance.descriptor_index == 0xFFFFu) continue;
             const auto prims = l3::expand_positive_terrain_descriptor_lod(render,
-                instance.descriptor_index, instance.bank, l3::St00Lod::Mid,
+                instance.descriptor_index, instance.bank, g_area_lod,
                 instance.origin, 0);
+            g_area_primitive_lods = uint8_t(1u << unsigned(g_area_lod));
+            if (g_area_lod != l3::St00Lod::Mid) {
+                const auto mid = l3::expand_positive_terrain_descriptor_lod(render,
+                    instance.descriptor_index, instance.bank, l3::St00Lod::Mid, instance.origin, 0);
+                const auto same = [](const l3::ExpandedRenderPrimitive& a, const l3::ExpandedRenderPrimitive& b) {
+                    return a.prefix == b.prefix && a.material_word == b.material_word &&
+                        a.texture_binding_known == b.texture_binding_known && a.uv == b.uv &&
+                        a.world_x == b.world_x && a.world_y == b.world_y && a.world_z == b.world_z;
+                };
+                if (std::equal(prims.begin(), prims.end(), mid.begin(), mid.end(), same)) {
+                    if (g_area_lod_shared) g_area_lod_shared->push_back({instance.idx_index, uint8_t(g_area_lod)});
+                    continue;
+                }
+            }
             for (const auto& primitive : prims) {
                 if (!g_area_primitive_count) g_area_min_y=g_area_max_y=primitive.world_y[0];
                 for (int32_t y : primitive.world_y) {
@@ -805,7 +830,9 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         }
         g_area_primitive_idx = 0xFFFFu;
         // Negative cells carry no IDX descriptor; a swap overlay skips them.
-        if (g_area_idx_filter) return;
+        // Only Mid is expanded for them, so it serves every LOD (CANDIDATE).
+        if (g_area_idx_filter || g_area_lod != l3::St00Lod::Mid) return;
+        g_area_primitive_lods = 7;
         g_area_primitive_negative=true;
         const auto negative = l3::collect_area_negative_placement(map, render, area_index);
         uint32_t unknown_materials = 0;
@@ -960,15 +987,39 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
     std::map<uint64_t, std::vector<ProbeVertexUV>> cpu;
     std::map<uint64_t, std::vector<TerrainQuadInfo>> quads;
     g_terrain_patch_recording = true;
-    for_each_area_primitive(map, render, area_index, [&](const l3::ExpandedRenderPrimitive& p) {
+    const auto push = [&](const l3::ExpandedRenderPrimitive& p) {
         const uint64_t key = uint64_t(p.material_word) | (p.texture_binding_known ? 0u : (uint64_t{1} << 32));
         auto& dst = cpu[key];
         const size_t first = dst.size();
         push_quad_uv(dst, p);
-        if (terrain_xyz_active()) quads[key].push_back({p.world_x, p.world_y, p.world_z, p.prefix, g_area_primitive_negative, g_area_primitive_cell});
+        if (terrain_xyz_active()) quads[key].push_back({p.world_x, p.world_y, p.world_z, p.prefix, g_area_primitive_negative,
+            g_area_primitive_cell, g_area_primitive_negative ? uint8_t(7) : g_area_primitive_lods});
         if (g_area_primitive_idx != 0xFFFFu)
             g_terrain_patch.add_span(g_area_primitive_idx, key, uint32_t(first), uint32_t(dst.size() - first));
-    });
+    };
+    for_each_area_primitive(map, render, area_index, push);
+    std::map<uint64_t, size_t> mid_vertices;
+    for (const auto& kv : cpu) mid_vertices[kv.first] = kv.second.size();
+    // 0x800267AC draws each IDX at its Near/Far descriptor too; those passes
+    // add only geometry that differs from Mid.
+    if (terrain_xyz_active()) {
+        std::vector<std::pair<uint16_t,uint8_t>> shared;
+        g_area_lod_shared = &shared;
+        try {
+            for (const auto lod : {l3::St00Lod::Near, l3::St00Lod::Far}) {
+                g_area_lod = lod;
+                for_each_area_primitive(map, render, area_index, push);
+            }
+        } catch (...) { g_area_lod = l3::St00Lod::Mid; g_area_lod_shared = nullptr; throw; }
+        g_area_lod = l3::St00Lod::Mid; g_area_lod_shared = nullptr;
+        std::sort(shared.begin(), shared.end());
+        for (auto& kv : quads)
+            for (auto& q : kv.second)
+                if (!q.negative && q.lods == 2u)
+                    for (uint8_t lod : {uint8_t(0), uint8_t(2)})
+                        if (std::binary_search(shared.begin(), shared.end(), std::make_pair(uint16_t(q.cell), lod)))
+                            q.lods |= uint8_t(1u << lod);
+    }
     g_terrain_patch_recording = false;
     if (cpu.empty()) throw std::runtime_error("selected area produced no material batches");
 
@@ -979,6 +1030,7 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
         batch.material_word = uint32_t(kv.first);
         batch.key = kv.first;
         batch.vertex_count = kv.second.size();
+        batch.mid_vertex_count = mid_vertices[kv.first];
         const size_t bytes = batch.vertex_count * sizeof(ProbeVertexUV);
         batch.vbo = static_cast<ProbeVertexUV*>(linearAlloc(bytes));
         if (!batch.vbo) throw std::runtime_error("linearAlloc failed for terrain batch VBO");
@@ -2005,7 +2057,7 @@ void configure_texenv_black_uv(bool textured) {
 }
 
 struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0,
-    cell_culled = 0, see_through = 0; };
+    cell_culled = 0, see_through = 0, off_screen = 0; uint32_t lod[3] = {0, 0, 0}; };
 static TerrainFaceStats g_terrain_face_stats;
 static uint32_t g_terrain_see_through_held = 0; // previous frame, set by draw_terrain_see_through
 
@@ -2061,6 +2113,12 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                     const auto& bits = quad.negative ? cells->negative_visible : cells->idx_visible;
                     if (quad.cell < bits.size() && !bits[quad.cell]) { ++g_terrain_face_stats.cell_culled; continue; }
                 }
+                // 0x800267AC: one descriptor LOD per IDX (Mid without cell data).
+                if (!quad.negative) {
+                    const unsigned lod = (cells && cells->valid && quad.cell < cells->idx_lod.size()) ? cells->idx_lod[quad.cell] : 1u;
+                    if (!(quad.lods & (1u << lod))) continue;
+                    ++g_terrain_face_stats.lod[lod];
+                }
                 const auto r = l3::classify_terrain_face(*faces, quad.x, quad.y, quad.z, quad.prefix,
                     quad.negative, positive_mode, back_face_threshold);
                 if (face_colors) {
@@ -2088,7 +2146,7 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                     ++g_terrain_face_stats.drawn; break;
                 case l3::TerrainFace::Unsupported: out = batch.indices + 6u * drawn++; ++g_terrain_face_stats.unsupported; break;
                 case l3::TerrainFace::Black: out = batch.indices + 6u * (q + black++); ++g_terrain_face_stats.black; break;
-                case l3::TerrainFace::Skip: ++g_terrain_face_stats.skipped; break;
+                case l3::TerrainFace::Skip: ++g_terrain_face_stats.skipped; if (r.off_screen) ++g_terrain_face_stats.off_screen; break;
                 }
                 if (out) for (unsigned i = 0; i < 6u; ++i) out[i] = uint16_t(6u * k + i);
             }
@@ -2104,8 +2162,8 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
             continue;
         }
         if (faces) ++g_terrain_face_stats.batches_unclassified;
-        for (size_t first=0; first<batch.vertex_count;) {
-            size_t n=std::min<size_t>(kDrawBatchVertices,batch.vertex_count-first);
+        for (size_t first=0; first<batch.mid_vertex_count;) {
+            size_t n=std::min<size_t>(kDrawBatchVertices,batch.mid_vertex_count-first);
             n-=n%3u; if(n==0)break;
             ++g_runtime_diag.draw_calls;
             g_submitted_vertices+=static_cast<uint32_t>(n);
@@ -4508,7 +4566,9 @@ int main() {
                 // FarColor for the depth cue (0x800371A0).
                 if(source_follow_view&&!source_camera_bound&&mode&&source_follow.scratch_shift_1f800074==0)
                     faces=l3::make_terrain_face_camera(source_follow.camera_1f800008,&session.active_area().flow.setup_blob);
-                if(faces)faces->lod_1f800074=source_follow.scratch_shift_1f800074;
+                if(faces){faces->lod_1f800074=source_follow.scratch_shift_1f800074;
+                    // CANDIDATE: the 400-pixel top screen widens the off-screen test like the cell side cut.
+                    faces->screen_x_min=-40;faces->screen_width=400;}
                 // 0x1F80007C: ABE while event byte 0x800C4C48 is 0. An unknown
                 // byte keeps the gameplay value (CANDIDATE).
                 if(faces&&session.source_event_work()&&session.source_event_work()->known[0])
@@ -4536,7 +4596,7 @@ int main() {
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 // Every 10th frame while see-through faces exist, so short views are not missed.
                 if(session.frame_counter()%120u==0u||(g_terrain_face_stats.see_through&&session.frame_counter()%10u==0u))
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
@@ -4545,7 +4605,9 @@ int main() {
                         (unsigned long)g_terrain_ramp.size(),unsigned(faces&&faces->far_color.has_value()),
                         unsigned(cells.valid),(unsigned long)g_terrain_face_stats.cell_culled,
                         (unsigned long)cells.positive_cells,(unsigned long)cells.negative_cells,
-                        (unsigned long)g_terrain_face_stats.see_through,(unsigned long)g_terrain_see_through_held);
+                        (unsigned long)g_terrain_face_stats.see_through,(unsigned long)g_terrain_see_through_held,
+                        (unsigned long)g_terrain_face_stats.off_screen,(unsigned long)g_terrain_face_stats.lod[0],
+                        (unsigned long)g_terrain_face_stats.lod[1],(unsigned long)g_terrain_face_stats.lod[2]);
             }
             // Independent renderer proof filter. A mixed gameplay/scene image
             // cannot prove which imported owner is visible. It defaults OFF and

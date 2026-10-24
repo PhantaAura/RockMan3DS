@@ -62,6 +62,11 @@ struct Walk {
             if (!out.negative_visible[local]) { out.negative_visible[local] = 1; ++out.negative_cells; }
         } else if (!out.idx_visible[size_t(p)]) {
             out.idx_visible[size_t(p)] = 1; ++out.positive_cells;
+            // 0x800267AC / 0x80024BAC: gte_rt of the IDX SVECTOR, MAC3 >> shift.
+            const auto& idx = map.idx[size_t(p)];
+            const int64_t t = int64_t(in.translation_1f800030[2]) * 4096 +
+                int64_t(r[6]) * idx.x + int64_t(r[7]) * idx.y + int64_t(r[8]) * idx.z;
+            out.idx_lod[size_t(p)] = terrain_lod_800267ac(int32_t(t >> 12) >> (in.lod_1f800074 & 31));
         }
     }
     bool in_near(int32_t x, int32_t z) const noexcept {
@@ -127,6 +132,7 @@ void compute_terrain_cell_visibility(const RuntimeMap& map, size_t area_index,
     const auto& area = map.areas[area_index];
     if (size_t(area.cell_first) + size_t(area.width) * area.height > map.cells.size()) return;
     out.idx_visible.assign(map.idx.size(), 0);
+    out.idx_lod.assign(map.idx.size(), 1);
     out.negative_visible.assign(size_t(area.width) * area.height, 0);
     Walk w{map, area, in, out};
     const auto& c = in.camera_1f800008;

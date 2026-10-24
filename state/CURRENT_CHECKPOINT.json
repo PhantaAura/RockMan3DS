@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "Renderer R3 — per-cell terrain visibility (0x80020BB4/0x80021834) and see-through walls (0x80024F30/0x80025900 + semi-transparent pass), on top of R2 ramp and R1 depth cue",
+ "title": "Renderer R4 — per-IDX Near/Mid/Far LOD (0x800267AC) and the mode-2 off-screen test; black faces match PS1 (17) on the host replay",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, merged R3): Area 1 start drawn 116, black 34 (original 17), cell-culled 443; screenshots at the start and mid-turn show no holes; see-through faces 0 in every trace (no qualifying view found yet).",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS): Area 1 start black 25 = PS1's 17 + 8 in the 400-px side strips (host replay with the PS1 window: exactly the probe's 17); Near LOD walls on screen, no holes, 30 FPS. Clear colour black (FUN_8001215c).",
  "emulator_evidence": "docs/validation_01516/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
@@ -111,9 +111,9 @@
   "platform/3ds/source/native_music.cpp"
  ],
  "blockers": [
+  "Renderer: NCLIP/back-face fill, per-cell visibility, per-IDX LOD and off-screen test ported; negative cells Mid-only (near replay 0x8002235C unported); 400-px window widening is CANDIDATE; OT ordering/subdivision 0x8002466C unported.",
   "Effects 0.0.15.16: subtype 0x80/0x83 ported and drawn; the 0x800341BC burst proxy, bit-0x20 helpers, LOD tiers and effect texture upload order (EXIT_SUP common page, Area 2 inherits ST00_01) are CANDIDATE/unported; defeat burst and E0/07 shake not run in Azahar.",
   "Tutorial chain: triggers 0-16, E0/00 flags, E0/07, subtype 0x19 (Azahar fight unverified), E0/08 targets/doors + action check ported; missing E0/05 box (0x620); E0 objects drawn untextured (diagnostic).",
-  "Renderer: mirror fixed; map NCLIP face test ported (mode-2 back-face threshold 522 OBSERVED in Area 1, writer untraced; no per-cell visibility/Near LOD so extra black back faces are drawn behind front faces).",
   "Pop-out 0.0.15.16: subtype 0x1F ported and validated by trace through the morph; action 8 airborne entrance with L3CB byte 0x0B unvalidated in Azahar; record 1585 context 0x80 admitted (masked by 0x7F at 0x80102528, host-only); hidden hit proxy unregistered; work80 writer CANDIDATE.",
   "Tutorial 0.0.15.15: E0/06 types 0-15 ported; type 16 holds; voice unplayed; message box on bottom screen; area->bank mapping CANDIDATE; +44D camera byte writers unported.",
   "Buster 0.0.15.14: subtype 0x81 ported and Azahar-validated by trace; lock-on homing 0x80033F04 and non-zero aim pitch unported; lock-on never selected a target in scripted runs; loadout +170/+171 measured, writer untraced.",

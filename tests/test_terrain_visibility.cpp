@@ -90,9 +90,11 @@ int main(){
     assert(terrain_see_through_code_1f80007c(0)==0x02000000u&&terrain_see_through_code_1f80007c(1)==0);
     auto during_event=start;during_event.see_through_1f80007c=terrain_see_through_code_1f80007c(1);
     assert(!classify_terrain_face(during_event,Xr,Y,Z,0x00808080u,false,2,*depth).see_through);
-    // Off the centre region (wall moved 700 units sideways): opaque.
+    // Off the centre region (wall moved 700 units sideways): opaque. It is
+    // also off the 320-pixel screen, so widen the window to reach the rule.
     const std::array<int32_t,4> Xs{{3772,3260,3772,3260}};
-    f=classify_terrain_face(start,Xs,Y,Z,0x00808080u,false,2,*depth);
+    auto open_window=start;open_window.screen_x_min=-4000;open_window.screen_width=8000;
+    f=classify_terrain_face(open_window,Xs,Y,Z,0x00808080u,false,2,*depth);
     assert(f.face==TerrainFace::Draw&&!f.see_through);
     // Bit 29: kept below min SZ 0x181 (mode 1 also needs bit 24 clear),
     // excluded beyond it.
@@ -102,7 +104,22 @@ int main(){
     f=classify_terrain_face(far,Xr,Y,Z,0x00808080u,false,2,2000);
     assert(f.min_sz>=0x181&&f.see_through);
     assert(!classify_terrain_face(far,Xr,Y,Z,0x20808080u,false,2,2000).see_through);
+    // Mode 2 off-screen test (0x80025BE8..0x80025D38): a narrow wall to
+    // the side of the view (SX about 400..670, unclamped) is skipped before the
+    // back-face test; modes 0/1 keep it.
+    const std::array<int32_t,4> Xo{{3000,3200,3000,3200}};
+    f=classify_terrain_face(start,Xo,Y,Z,0x00808080u,false,2,*depth);
+    assert(f.face==TerrainFace::Skip&&f.off_screen);
+    assert(!classify_terrain_face(start,Xo,Y,Z,0x00808080u,false,1,*depth).off_screen);
+    assert(!classify_terrain_face(start,Xo,Y,Z,0x00808080u,true,2,*depth).off_screen);
+    auto wide=start;wide.screen_x_min=-4000;wide.screen_width=8000;
+    assert(!classify_terrain_face(wide,Xo,Y,Z,0x00808080u,false,2,*depth).off_screen);
+    // A wall spanning the view with every vertex off screen stays by its
+    // diagonal midpoint (unclamped SX; the GTE clamps SX to -1024..1023).
+    const std::array<int32_t,4> Xw{{2629,3149,2629,3149}}; // SX about -100 and 600
+    f=classify_terrain_face(start,Xw,Y,Z,0x00808080u,false,2,*depth);
+    assert(!f.off_screen&&f.face!=TerrainFace::Unsupported);
     std::cout<<"PASS: start wall back face skipped (min SZ "<<classify_terrain_face(start,X,Y,Z,0,false,2,522).min_sz
              <<"), far back face black, bits 24/30, modes, negative cells, player depth "<<*depth
-             <<", depth cue, see-through rule\n";
+             <<", depth cue, see-through rule, off-screen test\n";
 }

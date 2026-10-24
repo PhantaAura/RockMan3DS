@@ -412,3 +412,20 @@ corridor corner while walking.
 - **User check (2026-10-24):** after the explanation of the see-through rule,
   the user reported "yea it works" for the merged R3 build in Azahar
   (user-observed, no screenshot or location recorded).
+
+## Renderer R4: per-IDX Near/Mid/Far LOD and the mode-2 off-screen test
+- **Host:** 168/168. New coverage:
+  - the LOD cuts and `idx_lod` (`test_terrain_cell_visibility`);
+  - the off-screen test: a face to the side, the diagonal midpoint and the
+    widened window (`test_terrain_visibility`).
+- **Host replay, Area 1 start, PS1 window:** 17 black faces, with t0 values
+  identical to the PCSX-Redux probe (5377×4, 5391×4, 6398, 6412, 6909×3,
+  6922×3, 7419). 115 faces pass the screen test, matching the probe's 115
+  hits per frame at `0x80025E70`.
+- **Azahar 2126.0** (Area 1 start, idle):
+  - trace: drawn 135, black 25, off-screen 28, LOD quads 74/84/6, cell-culled
+    1169 (that count now includes the other-LOD copies of visible cells' quads);
+  - 25 is exactly what the host predicts for the CANDIDATE 400-pixel window:
+    the PS1's 17 plus 8 in the extra side strips;
+  - screenshot: the near walls show the Near descriptors' finer stone and band
+    detail, with no holes; 30 FPS.

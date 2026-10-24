@@ -67,6 +67,16 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
            - int64_t(sx[0]) * sy[2] - int64_t(sx[1]) * sy[0] - int64_t(sx[2]) * sy[1];
     r.min_sz = *std::min_element(sz.begin(), sz.end());
     const bool double_sided = (prefix & 0x40000000u) != 0;
+    // 0x80025BE8..0x80025D38 (mode 2, after the MAC0 == 0 skip): unsigned
+    // SX < 320 and SY < 240 for any vertex, else for a diagonal midpoint.
+    if (!negative_cell && mode == 2 && r.mac0 != 0) {
+        const auto on = [&](int32_t x, int32_t y) {
+            return uint32_t(x - camera.screen_x_min) < camera.screen_width && uint32_t(y) < 240u;
+        };
+        const bool visible = on(sx[0], sy[0]) || on(sx[1], sy[1]) || on(sx[2], sy[2]) || on(sx[3], sy[3]) ||
+            on((sx[0] + sx[3]) >> 1, (sy[0] + sy[3]) >> 1) || on((sx[1] + sx[2]) >> 1, (sy[1] + sy[2]) >> 1);
+        if (!visible) { r.face = TerrainFace::Skip; r.off_screen = true; return r; }
+    }
     if (!negative_cell) {
         const auto depth = terrain_face_depth_80025900(sz, prefix);
         if (depth.near_culled) { r.face = TerrainFace::Skip; return r; }

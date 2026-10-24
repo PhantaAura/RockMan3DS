@@ -40,6 +40,7 @@ struct TerrainCellViewInput {
 struct TerrainCellVisibility {
     bool valid = false;                  // false: draw everything (unsupported input)
     std::vector<uint8_t> idx_visible;      // by IDX index (positive packed cell)
+    std::vector<uint8_t> idx_lod;          // by IDX index: 0 Near, 1 Mid, 2 Far (visible IDX only)
     std::vector<uint8_t> negative_visible; // by area-local cell index
     uint32_t cells_tested = 0, positive_cells = 0, negative_cells = 0;
 };
@@ -53,6 +54,14 @@ std::array<int32_t,3> terrain_cell_translation_1f800030(const std::array<uint32_
 // Far cut 0x1F800076: 0x80097C78[lod] (or 0x80097C84[lod] with flag bit 2).
 // Returns 0 for a LOD outside the tables.
 uint16_t terrain_cell_far_1f800076(uint8_t lod_1f800074, uint8_t flags_1f800078) noexcept;
+
+// Descriptor LOD of a positive IDX (0x800267AC / 0x80024BAC) from its view
+// depth (gte_rt of the IDX XYZ, MAC3 >> 0x1F800074): < 0xAF1 Near (+0x18),
+// < 0x1C21 Mid (+0x1C), else Far (+0x20). 0x8002196C uses the same cuts for
+// negative cells, with depth < 0x401 queued for the near replay renderer.
+constexpr uint8_t terrain_lod_800267ac(int32_t depth) noexcept {
+    return depth < 0x1C21 ? (depth > 0xAF0 ? 1 : 0) : 2;
+}
 
 // Fills out (reusing its storage). out.valid is false when the area is out of
 // range or the wedge slope divide would trap; the caller then draws every cell.

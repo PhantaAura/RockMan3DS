@@ -168,6 +168,59 @@ event byte `0x800C4C48` is 0, else 0.
   command buffer 29% of 512 KiB.
 - The Area 2 wall spawn did not boot, so no on-screen case was seen.
 
+## Near LOD and the off-screen test: ported (R4)
+Status: **SOURCE_BACKED_PARTIAL**. At the Area 1 start, the host replay
+reproduces the PCSX-Redux black-face set exactly.
+
+**Per-IDX LOD (`0x800267AC`; mode 0 uses the same body at `0x80024BAC`).**
+- For each IDX bit in BC00/BD00, gte_rt runs on the IDX SVECTOR (x, y, z,
+  raw6). MAC3 is shifted right by `0x1F800074`.
+- Depth < 0xAF1 takes the Near descriptor stream (+0x18), < 0x1C21 Mid
+  (+0x1C), otherwise Far (+0x20). raw6 == 0 adds 3 words (the secondary bank).
+- `0x8002196C` uses the same cuts for negative cells. Depth < 0x401 there
+  queues the cell for the near replay renderer (`0x800BBE50`), and Mid/Far
+  clear bit 15 of the packed cell.
+
+**Off-screen test (`0x80025BE8..0x80025D38`, mode-2 family `0x80025900`).**
+It runs after the MAC0 == 0 skip and the double-sided flip, and before the
+near cull, depth cue and back-face test:
+- a face is kept if any vertex has SX < 320 and SY < 240 (unsigned);
+- otherwise it is kept if the midpoint of v0/v3 or of v1/v2 passes the same
+  compare;
+- otherwise it is skipped (`0x80026220`).
+
+**Host replay, Area 1 start** (retail pack, start camera, cell visibility
+with the PS1 side cut):
+
+| Port step | black | faces past the screen test |
+|---|---|---|
+| Mid only, no screen test | 28 | – |
+| + off-screen test | 18 (adds Mid 7433) | – |
+| + per-IDX LOD | **17** | **115** = 94 drawn + 17 black + 4 culled |
+
+The 17 black t0 values match the PCSX-Redux probe exactly: 5377×4, 5391×4,
+6398, 6412, 6909×3, 6922×3, 7419. The probe also logged 115 hits per frame at
+`0x80025E70`, the same as the 115 faces past the screen test. The 144 faces
+entering NCLIP (`0x80025B28` hits) match as well.
+
+**Port:**
+- `terrain_lod_800267ac` and `TerrainCellVisibility::idx_lod`, filled for
+  each visible IDX.
+- `classify_terrain_face`: the off-screen test for positive mode 2, with
+  `TerrainFaceCamera::screen_x_min/screen_width` (default 0/320). Off-screen
+  faces return `off_screen`.
+- `main.cpp`:
+  - terrain batches hold Mid first, then only the Near/Far geometry that
+    differs from Mid (an equal LOD sets a bit on the Mid quads instead);
+  - each frame a positive quad draws only in its IDX's LOD;
+  - an unclassified draw uses the Mid range only.
+- **CANDIDATE:** the 3DS uses the window SX −40..359 (400 pixels), matching
+  the widened cell side cut. With it the start view has 25 black faces: the
+  PS1's 17 plus 8 in the extra side strips.
+- **Not ported:** negative cells still use only Mid, and the near replay
+  renderer (`0x8002235C`) is not ported. Area 1's negative cells draw no black
+  faces either way.
+
 ## Found, not ported (next candidates)
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near
   faces are subdivided (`0x8002466C`) when SZ > 0x200 and the screen
