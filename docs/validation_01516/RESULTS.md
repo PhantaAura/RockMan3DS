@@ -374,3 +374,24 @@ Host 167/167 (`test_terrain_visibility` extended), native PASS.
 
 No case on screen: screen access was not granted, and a second launch at the
 Area 2 wall spawn did not boot.
+
+## Renderer R3 merged (cell visibility + see-through)
+Both R3 branches merged into main. Host 168/168, native PASS
+(`Legends3DS.3dsx` 1,134,568 bytes, sha256 `cc3a54d2…5da7`).
+
+**Azahar 2126.0** (merged build, seen on screen this time):
+- **Area 1 start**, idle: trace identical to the cell-visibility branch (drawn
+  116, black 34, cell-culled 443, threshold 522, ramped 46, see_through 0).
+  Screenshot: the corridor is complete to the screen edges, with no holes and
+  no visible black faces. 30 FPS.
+- **Area 1, slow spin** (`3000 0 0 0` then `2400 0 -60 0`): the camera sweeps
+  through both corridor walls. No holes in the screenshot taken mid-turn. Every
+  trace sample (every 120 frames) shows see_through=0.
+- **Area 2 west wing** (`2 -7000 -576 12300 3072`): the spawn puts the camera
+  inside the wall, so the wall's front face is behind the camera and
+  see_through=0 is correct. The screen shows that wall's dark back face, which
+  is a spawn artifact.
+
+**Still open:** the see-through pass has not been seen to fire in game. It
+needs a view where a wall sits between the camera and Mega Man, such as a
+corridor corner while walking.

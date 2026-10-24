@@ -97,13 +97,15 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   - the CLUT depth ramp is ported as fitted per-word/per-step RGB scales
     (L3CR sidecar, cooked from the real ramp palettes; CANDIDATE);
   - the positive-family near cull (max SZ < 0xC1) is ported.
-- Renderer R3 (branch `claude/cell-visibility-c1fe3c`): per-cell terrain
+- Renderer R3 (merged into main with the see-through branch; Azahar screenshots
+  at the Area 1 start and mid-turn show no holes): per-cell terrain
   visibility (`0x80020BB4`, wedge `0x80021258`/`0x80021548`, test
   `0x80021834`) is ported. It is wired into `draw_terrain`, with the side cut
   widened to 200/384 for the 400-pixel view (CANDIDATE). At the Area 1 start,
   black faces fall from 108 to 34 (original 17) and the frame interval from
   40.8 to 33.1 ms in Azahar.
-- Renderer R3: see-through walls (`0x80024F30`/`0x80025900`). A front face
+- Renderer R3 (merged): see-through walls (`0x80024F30`/`0x80025900`). Still
+  never seen firing in Azahar (0 in every merged-build trace). A front face
   nearer than Mega Man over the screen centre is drawn after the actors,
   semi-transparent with its TPAGE ABR (STP texels only). Host-tested. The
   Azahar trace shows 0 such faces at the Area 1 start, which is expected;
