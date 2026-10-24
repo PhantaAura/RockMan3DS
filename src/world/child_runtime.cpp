@@ -460,7 +460,8 @@ bool ChildRuntime::commit_parent_delivery(ParentChildDelivery& d) noexcept {
 
 ChildRuntimeStatus ChildRuntime::prepare_enemy_defeat_delivery(
     const std::array<int16_t,4>& point,std::optional<uint32_t> reward_word,
-    const SourceAudioQueue& audio,EnemyDefeatDelivery& d) noexcept {
+    const SourceAudioQueue& audio,EnemyDefeatDelivery& d,
+    const std::array<int16_t,4>& effect_point) noexcept {
     d.prepared_=false;d.owner_=nullptr;
     if(!reward_word)return ChildRuntimeStatus::NeedsRewardProfile;
     if(rewards_.count>rewards_.records.size())return ChildRuntimeStatus::InvalidPool;
@@ -478,6 +479,7 @@ ChildRuntimeStatus ChildRuntime::prepare_enemy_defeat_delivery(
         d.slot_before_=effects_.slots[*d.effect_slot_];
         auto& work=effect_scratch_.slots[*d.effect_slot_];
         work[0]=5;work[2]=128;work[3]=65;
+        for(size_t i=0;i<4;++i){work[0x38+i*2]=uint8_t(effect_point[i]);work[0x39+i*2]=uint8_t(uint16_t(effect_point[i])>>8);}
         d.slot_after_=work;
     }
     d.allocated_after_=effect_scratch_.allocated_80098838;
@@ -803,6 +805,15 @@ bool ChildRuntime::mark_release(uint32_t identity) noexcept {
     const auto slot=class60_source_slot(identity);
     if(!slot || !(pool_.allocated_bitmap&(0x80000000u>>*slot)))return false;
     return class60_mark_release_800318d8(pool_,identity);
+}
+uint32_t ChildRuntime::spawn_effect_80031618(uint8_t work00,uint8_t subtype02,uint8_t parameter03,
+    size_t lane_offset,const std::array<int16_t,4>& lanes,uint8_t lane_count) noexcept {
+    effect_scratch_=effects_;
+    const auto allocation=allocate_source_effect_80031618(effect_scratch_);
+    if(allocation.status!=SourceEffectStatus::SourceBackedPartial||!allocation.source_identity)return 0;
+    if(!write_source_effect_header(effect_scratch_,allocation.source_identity,work00,subtype02,
+        parameter03,lane_offset,lanes,lane_count))return 0;
+    effects_=effect_scratch_;return allocation.source_identity;
 }
 SourceEffectBatch ChildRuntime::tick_effects(const SourceEffect128Inputs& inputs) noexcept {
     return tick_source_effect_batch(effects_,inputs);

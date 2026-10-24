@@ -770,7 +770,7 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
             actor.last_behavior_status=result.status;return result;
         }
         const auto status=children->prepare_enemy_defeat_delivery(next.proxy_position_180,
-            actor.source_reward_word00,*staged_audio,defeat_delivery);
+            actor.source_reward_word00,*staged_audio,defeat_delivery,next.raw_14);
         if(status!=ChildRuntimeStatus::SourceBackedPartial||
            !children->validate_enemy_defeat_delivery(defeat_delivery,*staged_audio)){
             result.status=status==ChildRuntimeStatus::NeedsSoundConsumer?

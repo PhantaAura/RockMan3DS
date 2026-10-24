@@ -41,6 +41,10 @@ struct SourceGameplayCamera {
     // Frames that used the packed RotMatrix table for rsin/rcos because the
     // scalar quarter table was not loaded (L3RF v1). Not source behaviour.
     uint32_t packed_trig_substitutions = 0;
+    // Shake byte 0x800A395F, set by 0x800398E0 (positive arguments only).
+    // The follow tail (0x80038FE4) lifts the target by it, then drops it by
+    // 10 per frame. Not reset by the init (the original never clears it there).
+    uint8_t shake_800a395f = 0;
 };
 
 struct SourceGameplayCameraFrame {
@@ -63,7 +67,7 @@ void source_gameplay_camera_init_80038648(SourceGameplayCamera& camera,
     const ReferenceTables& refs, int16_t player_x, int16_t player_z) noexcept;
 
 // 0x80038894 ordinary follow (controller state 1, mode 0, settled blend,
-// no script/first-person/shake). Reads player work +0x14/+0x18/+0x56/+0x44D.
+// no script/first-person), with the 0x800A395F shake. Reads player work +0x14/+0x18/+0x56/+0x44D.
 void source_gameplay_camera_update_80038894(SourceGameplayCamera& camera,
     const ReferenceTables& refs, const L3PlayerCompatWork& player,
     const RuntimeMap& map, size_t area_index) noexcept;

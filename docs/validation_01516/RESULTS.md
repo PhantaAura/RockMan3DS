@@ -209,3 +209,42 @@ for flag, steer-until, fight, shoot-at, door. Normal boot, Azahar:
 - The run was stopped at the user's request before reaching 0x622. The door
   steps of the script are timing-sensitive, and the Area 2 floor needs a jump.
 
+
+## Break and burst effects (0x80031618)
+
+Build `pass-20261024-102424-m2-01516`: `Legends3DS.3dsx` 1,097,780 B, SHA-256
+`bcd71b5a21063c8630396ec0441f24559c95b2d5921bdf249b6bb59e6dca692a` (not
+committed). Host 165/165 PASS, native PASS with 0 warnings. Research:
+`docs/research_01516/EFFECTS.md`.
+
+Azahar 2126.0, scripted, with trace lines `# effect_spawn`, `# effect_tick`
+and `# effect_draw`:
+
+- **Targets** (`autoplay/area2_targets.txt`, spawn `2 -5300 -576 12032 1024`):
+  - Target 0x61 breaks. At frame 1270, three 1/0x83/2 puffs spawn from
+    0x801165A4 at (−5888, −624, 12032), (−5942, −624, 12066) and
+    (−5997, −624, 12099), 0x40 apart along the heading.
+  - At frame 1279, the 5/0x80/0x82 burst spawns from 0x8011669C at
+    (−5973, −608, 12084).
+  - Drawn textured: 3 sprites and 1 model, 8 passes, none held. The burst is
+    released after 15 frames (the host test predicts 14 grow frames plus
+    release); the puffs are released at frame 1298.
+  - Target 0x60 again fell out of step with the script (state 2 at the end),
+    as before.
+- **Box** (`autoplay/area2_box.txt`, spawn `2 -256 -385 10500 0`):
+  - At frame 963 the 5/0x80/0x42 effect spawns from 0x801141EC at
+    (5120, −513, 12544), which is the box's y − 0x80.
+  - The reward follows at frame 966.
+  - The model is drawn textured (2 passes) and stays frozen while trigger 16
+    pauses the world for message 11. It is released at frame 1541, after the
+    answer.
+  - The chain still ends with 0x621.
+- **Textures:** the Area 2 actor cache now resolves all 7 words, including
+  the burst page 0x3C80002B and the puff page 0x3D48002E (upload order
+  CANDIDATE).
+- **Not run in Azahar:** the Reaverbot defeat burst (5/0x80/0x41, now placed
+  at the actor's +0x14) and the E0/07 camera shake. Both are host-tested only.
+- **Not checked:** how the effects look. The runs were trace-only (the screen
+  was not watched). There is no PCSX-Redux frame comparison.
+- **Azahar note:** another session's run replaced the shared SD folder halfway
+  through one box attempt. The run above is a clean rerun.

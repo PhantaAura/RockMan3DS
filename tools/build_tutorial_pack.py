@@ -349,8 +349,14 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 run(tools,'l3cook_player_material_cache',
                     pout/'body.l3model',pout/'head.l3model',pout/'right.l3model',pout/'left.l3model',pout/'feet.l3model',
                     mout/f'player_area_{area_index:02d}.l3mc',*upload_prefix,area_container)
+                # Effect pages: the subtype-0x83 puff page (TPAGE 0x2E) comes
+                # from the common file loaded at boot (EXIT_SUP; DEMO_DAT holds
+                # the same common bank), the subtype-0x80 burst page (0x2B)
+                # from ST00_01, which Area 2 inherits because the tutorial
+                # reaches it from Area 1 (CANDIDATE upload order).
+                inherited=[dat/'ST00_01.BIN'] if area_index==2 else []
                 run(tools,'l3cook_actor_material_cache',eout/f'area_{area_index:02d}.l3ebd',
-                    mout/f'actor_area_{area_index:02d}.l3mc',*upload_prefix,area_container)
+                    mout/f'actor_area_{area_index:02d}.l3mc',dat/'EXIT_SUP.BIN',*upload_prefix,*inherited,area_container)
             # Independent original E0 material words and ordered initial VRAM
             # snapshot. This is optional/default OFF; it never establishes live
             # animated palette chronology or borrows class20 material rules.

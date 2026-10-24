@@ -459,6 +459,16 @@ public:
     const std::vector<E005ProxyRequest>& e005_proxy_requests() const { return e005_proxy_requests_; }
     struct E005RewardRequest { std::array<int16_t,4> point{}; uint8_t record = 0; };
     std::vector<E005RewardRequest> take_e005_reward_requests() { auto out=std::move(e005_rewards_); e005_rewards_.clear(); return out; }
+    // 0x80031618 calls of the E0 objects (E0/05 break 0x801141EC, E0/08
+    // debris 0x801165A4 and burst 0x8011669C): the header bytes and the
+    // halfwords the caller stores at lane_offset. The effect pool owner
+    // allocates them in order; a full pool drops the request like the original.
+    struct E0EffectRequest {
+        uint8_t work00=0,subtype02=0,parameter03=0,lane_offset=0,lane_count=0;
+        std::array<int16_t,4> lanes{};
+        uint32_t source=0;   // caller address
+    };
+    std::vector<E0EffectRequest> take_e0_effect_requests() { auto out=std::move(e0_effects_); e0_effects_.clear(); return out; }
     uint16_t player_check_distance() const { return player_check_distance_; }
     const SourceTutorialTriggers& tutorial_triggers() const { return tutorial_triggers_; }
     const TutorialTriggerTick& tutorial_trigger_tick() const { return tutorial_trigger_tick_; }
@@ -723,6 +733,7 @@ private:
     uint32_t e005_revision_ = 0xFFFFFFFFu;
     std::vector<E005ProxyRequest> e005_proxy_requests_;
     std::vector<E005RewardRequest> e005_rewards_;
+    std::vector<E0EffectRequest> e0_effects_;
     uint16_t player_check_distance_ = 0;
     bool tutorial_triggers_active_ = false;
     TutorialTriggerTick tutorial_trigger_tick_{};

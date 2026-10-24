@@ -664,6 +664,60 @@ RuntimePointEmbeddingResult runtime_point_embedded_80049c54(const RuntimeMap& ma
     return out;
 }
 
+std::optional<int32_t> runtime_point_floor_8004920c(const RuntimeMap& map,
+    size_t area_index, int16_t x, int16_t y, int16_t z) noexcept {
+    if(area_index>=map.areas.size())return {};
+    const auto& a=map.areas[area_index];
+    // 0x80048C60: off the grid reads as cell 0.
+    int16_t packed=0;std::optional<uint32_t> index;
+    const uint32_t gx=uint32_t((int32_t(x)+0x8000)>>9)-uint32_t(uint16_t(a.start_x));
+    const uint32_t gz=uint32_t((int32_t(z)+0x8000)>>9)-uint32_t(uint16_t(a.start_z));
+    if(gx<a.width&&gz<a.height){
+        const uint64_t ci=uint64_t(a.cell_first)+uint64_t(gz)*a.width+gx;
+        if(ci>=map.cells.size())return {};
+        index=uint32_t(ci);packed=map.cells[static_cast<size_t>(ci)];
+    }
+    if(packed<1)return ~(int32_t(uint16_t(packed)&0x1F00u)>>1);
+    RuntimeCellRef cell;cell.area_index=area_index;cell.cell_index=*index;cell.packed_cell=packed;
+    const auto* idx=runtime_map_cell_idx(map,cell);
+    const auto* list=runtime_map_cell_contact_list(map,cell);
+    if(!idx||!list)return {};
+    // Scratch bounds 0x1F800124..2C are zeroed before the scan.
+    const RetailPlayerBounds zero{0,0,0,0,0,0};
+    int32_t best=0x7fff;
+    for(uint32_t gi=0;gi<list->group_count;++gi){
+        const auto gix=uint64_t(list->group_first)+gi;
+        if(gix>=map.contact_groups.size())return {};
+        const auto& g=map.contact_groups[static_cast<size_t>(gix)];
+        if(!g.primitive_count||g.primitive_first>=map.contact_primitives.size())continue;
+        const auto& first=map.contact_primitives[g.primitive_first];
+        // Dispatcher 0x8008AA24 on the first code: families 0/1 are the
+        // rectangle test; others are not ported here.
+        if((first.code&0xF0u)>=0x20u)return {};
+        if(!inside_xz(rect(*idx,g,first,zero),x,z))continue;
+        for(uint32_t pi=0;pi<g.primitive_count;++pi){
+            const auto pix=uint64_t(g.primitive_first)+pi;
+            if(pix>=map.contact_primitives.size())return {};
+            const auto& p=map.contact_primitives[static_cast<size_t>(pix)];
+            const unsigned code=p.code&0xffu;
+            int32_t top=0,bottom=0;
+            if(code>=8u&&code<=11u){
+                const auto interval=runtime_contact_floor_interval_8004a060(*idx,g,p,zero,x,z);
+                if(!interval)return {};
+                top=interval->y0;bottom=interval->y1;
+            } else if((code>=0x0cu&&code<=0x0eu)||(code>=0x10u&&code<=0x13u)||(code>=0x18u&&code<=0x1bu)||
+                      code==0x24u||code==0x34u||code==0x44u||code==0x54u||
+                      code==0x25u||code==0x35u||code==0x45u||code==0x55u){
+                return {}; // unported 0x8004A060 case
+            } else {
+                top=short_wrap(int32_t(idx->y)+p.y0);bottom=short_wrap(int32_t(idx->y)+p.y1);
+            }
+            if(top<best&&y<bottom)best=top;
+        }
+    }
+    return best;
+}
+
 const char* runtime_contact_status_name(RuntimeContactStatus status) {
     switch(status){
         case RuntimeContactStatus::NoData:return "UNKNOWN";

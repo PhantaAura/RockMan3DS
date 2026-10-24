@@ -718,7 +718,9 @@ void RuntimeSession::update_e007_objects(){
         if(step.set_60a)set_story_flag(0x60A,true);
         if(step.descriptor_write)write_idx_descriptor(o.idx_cell,*step.descriptor_write);
         queue_object_sound(step.sound,o.position);
-        // The 0x800398E0 shake and 0x8001B2F0(0xF) are not ported.
+        // 0x800398E0: a positive argument replaces the camera shake byte.
+        // 0x8001B2F0(0xF) -> 0x80071220 (an Ss library call, UNKNOWN) is not ported.
+        if(step.shake_frames>0)source_gameplay_camera_.shake_800a395f=step.shake_frames;
     }
 }
 void RuntimeSession::reset_e008_objects(){
@@ -767,6 +769,19 @@ void RuntimeSession::update_e008_objects(SourceRngService* rng){
         if(step.descriptor_write&&o.idx_cell)write_idx_descriptor(*o.idx_cell,*step.descriptor_write);
         if(step.register_proxy)e008_proxy_requests_.push_back({step.proxy_point,o.record(),e008_slots_[i]});
         queue_object_sound(step.sound,o.position);
+        if((step.debris_effects||step.burst_effect)&&reference_tables_){
+            const int32_t sn=reference_rsin_8007a060(*reference_tables_,o.heading_30);
+            const int32_t cs=reference_rcos_8007a12c(*reference_tables_,o.heading_30);
+            const auto& q=o.position;
+            // 0x801165A4: three 1/0x83/2 puffs 0x40 apart along the heading, y - 0x10.
+            for(int32_t k=0;k<step.debris_effects;++k)
+                e0_effects_.push_back({1,0x83,2,0x1c,3,{{int16_t(q[0]-int16_t((sn*0x40*k)>>12)),int16_t(q[1]-0x10),
+                    int16_t(q[2]-int16_t((cs*0x40*k)>>12)),0}},0x801165a4u});
+            // 0x8011669C: one 5/0x80/0x82 burst 100 units back along the heading.
+            if(step.burst_effect)
+                e0_effects_.push_back({5,0x80,0x82,0x38,3,{{int16_t(q[0]-int16_t((sn*100)>>12)),q[1],
+                    int16_t(q[2]-int16_t((cs*100)>>12)),0}},0x8011669cu});
+        }
     }
     if(rng_begun){if(rng_used)(void)commit_source_rng_update(*rng,rng_t);else rollback_source_rng_update(rng_t);}
 }
@@ -806,6 +821,10 @@ void RuntimeSession::update_e005_objects(SourceRngService* rng){
         const auto step=source_e005_step(box.object,box.target.packet_00,sample);
         queue_object_sound(step.sound,box.object.position);
         if(step.set_flag&&*step.set_flag<kL3StoryFlagBytes*8u)set_story_flag(*step.set_flag,true);
+        if(step.break_effect){
+            const auto& q=box.object.position;
+            e0_effects_.push_back({5,0x80,0x42,0x38,3,{{q[0],int16_t(q[1]-0x80),q[2],0}},0x801141ecu});
+        }
         if(step.reward_record)
             e005_rewards_.push_back({{{box.object.position[0],box.object.position[1],box.object.position[2],0}},*step.reward_record});
         if(step.reward_needs_random)box.reward_without_random=true;

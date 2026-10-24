@@ -1,6 +1,8 @@
 #include "legends3ds/source_effects.h"
 #include "legends3ds/source_event_phase5.h"
+#include "legends3ds/child_runtime.h"
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -94,6 +96,84 @@ void guards(){
     fresh.pending_release_800988c8[1]=1;const auto invalid=fresh;
     require(allocate_source_effect_80031618(fresh).status==SourceEffectStatus::InvalidPool && fresh.slots==invalid.slots && fresh.allocated_80098838==invalid.allocated_80098838,"invalid pool fabricated exhaustion/mutation");
 }
+// Subtype 0x80 (0x80043F34): init 0x80043F70 for the tutorial parameters,
+// the 0x8004441C grow/fade, the 0x8002F9C4 row and the 0x8004920C probe.
+// Tables are the USA 0x8008A138/0x8008A1C8/0x8008A1E8 rows; counts below are
+// derived by hand from them.
+int32_t floor_calls=0;
+std::optional<int32_t> floor_at(const void* user,int16_t,int16_t,int16_t) noexcept {
+    ++floor_calls;return *static_cast<const int32_t*>(user);
+}
+uint32_t word_at(const SourceEffectWork& w,size_t o){return uint32_t(w[o])|uint32_t(w[o+1])<<8|uint32_t(w[o+2])<<16|uint32_t(w[o+3])<<24;}
+int16_t half_at(const SourceEffectWork& w,size_t o){return int16_t(uint16_t(w[o]|(w[o+1]<<8)));}
+void burst_effects(){
+    ReferenceTables refs;
+    for(size_t i=0;i<refs.trig.size();++i){const double a=double(i)*6.283185307179586/4096.0;
+        refs.trig[i]={int16_t(std::lround(std::sin(a)*4096.0)),int16_t(std::lround(std::cos(a)*4096.0))};}
+    EbdDirectory ebd;ebd.load_base=0x8016c000u;
+    EbdDirectoryEntry e;e.object_class=0x80;e.subtype=0x88;e.variant=0;e.resource_offset[0]=0x50;ebd.entries.push_back(e);
+    e.subtype=0x80;e.resource_offset[0]=0x100;ebd.entries.push_back(e);
+    e.variant=1;e.resource_offset[0]=0x200;ebd.entries.push_back(e);
+    require(source_effect_resource_8002fa38(ebd,0x80,1)==0x8016c200u&&!source_effect_resource_8002fa38(ebd,0x8b,0),"0x8002FA38 row match");
+    SourceAudioQueue audio;initialize_source_audio_queue_80019e14(audio);
+    int32_t floor=0;
+    SourceEffect128Inputs in;in.ebd=&ebd;in.audio=&audio;in.references=&refs;in.floor_query=&floor_at;in.floor_user=&floor;
+    const auto spawn=[&](SourceEffectPool& p,uint8_t parameter,int16_t x,int16_t y,int16_t z){
+        const auto id=allocate_source_effect_80031618(p).source_identity;
+        require(write_source_effect_header(p,id,5,0x80,parameter,0x38,{{x,y,z,0x1234}},4),"producer header rejected");
+        return id;
+    };
+    // 0x41 (Reaverbot defeat): standing on the floor -> selector 0, sound 0xA1.
+    auto p=pool();floor=-1;floor_calls=0;
+    auto id=spawn(p,0x41,100,-1,200);
+    auto r=tick_source_effect(p,id,in);
+    require(r.committed&&r.audio_queued==1&&audio.count==1&&floor_calls==1,"0x41 init held or silent");
+    auto& w=p.slots[0];
+    require(w[0]==7&&w[2]==0x80&&w[8]==1&&w[0xc]==1&&word_at(w,0x14)==0x8016c100u&&word_at(w,0x40)==0x02808080u&&
+        half_at(w,0x44)==55&&half_at(w,0x46)==-5&&half_at(w,0x3e)==0,"0x41 init fields");
+    require(source_effect_model_view(w)&&source_effect_model_view(w)->position_38[0]==100,"0x41 model view hidden");
+    // Grow 50..275, hold, shrink; colour 0x60 at the 200 limit, then fades.
+    size_t ticks=0;uint32_t color_at_200=0,color_at_170=0;
+    while(w[8]==1){
+        const auto t=tick_source_effect(p,id,in);require(t.committed&&t.proxy_800341bc_skipped,"0x41 grow held");++ticks;
+        if(w[8]==1&&half_at(w,0x3e)==200&&half_at(w,0x44)<1)color_at_200=word_at(w,0x40);
+        if(w[8]==1&&half_at(w,0x3e)==170&&half_at(w,0x44)<1)color_at_170=word_at(w,0x40);
+        require(ticks<64,"0x41 never finished");
+    }
+    require(ticks==21&&color_at_200==0x02606060u&&color_at_170==0x024d4d4du&&half_at(w,0x3e)==0,"0x41 case-1 lifecycle");
+    r=tick_source_effect(p,id,in);
+    require(r.released&&p.pending_release_800988c8[0]==0x80000000u&&w[0]==0,"0x41 release");
+    // 0x82 (E0/08 burst): bit 0x80 -> selector 0 without a floor probe.
+    p=pool();floor_calls=0;id=spawn(p,0x82,0,-300,0);
+    require(tick_source_effect(p,id,in).committed&&floor_calls==0&&word_at(p.slots[0],0x14)==0x8016c100u,"0x82 probed the floor");
+    require(tick_source_effect(p,id,in).committed,"0x82 first grow");
+    const auto& b=p.slots[0];const int16_t sn=refs.trig[128].sin_q12,cs=refs.trig[128].cos_q12;
+    require(half_at(b,0x3e)==65&&b[0xb]==1&&half_at(b,0x18)==int16_t((cs*65)>>12)&&half_at(b,0x1c)==int16_t((sn*65)>>12)&&
+        half_at(b,0x24)==int16_t((-sn*65)>>12)&&half_at(b,0x28)==int16_t((cs*65)>>12)&&half_at(b,0x20)==65,"RotMatrixY(+0xB<<7)*scale");
+    ticks=1;uint32_t fade=0;
+    while(p.slots[0][8]==1){require(tick_source_effect(p,id,in).committed,"0x82 grow held");++ticks;
+        if(half_at(p.slots[0],0x3e)==275)fade=word_at(p.slots[0],0x40);}
+    require(ticks==14&&fade==0x02727272u,"0x82 case-2 lifecycle");
+    require(tick_source_effect(p,id,in).released,"0x82 release");
+    // 0x42 (E0/05 box) at y - 0x80 above a floor 128 below -> selector 1.
+    p=pool();floor=-385;id=spawn(p,0x42,5120,-513,12544);
+    require(tick_source_effect(p,id,in).committed&&word_at(p.slots[0],0x14)==0x8016c200u&&half_at(p.slots[0],0x44)==70,"0x42 air burst row");
+    // Holds leave the record untouched.
+    auto held=p;SourceEffect128Inputs bare=in;bare.references=nullptr;
+    require(tick_source_effect(held,id,bare).status==SourceEffectStatus::NeedsReferences&&held.slots==p.slots,"grow without trig mutated");
+    p=pool();id=spawn(p,0x41,0,0,0);bare=in;bare.floor_query=nullptr;held=p;
+    require(tick_source_effect(held,id,bare).status==SourceEffectStatus::NeedsFloorConsumer&&held.slots==p.slots,"probe without floor mutated");
+    p=pool();id=spawn(p,0x21,0,0,0);held=p;
+    require(tick_source_effect(held,id,in).status==SourceEffectStatus::UnsupportedParameter&&held.slots==p.slots,"bit 0x20 helpers admitted");
+    // 0xFE: the silent 0xC2 (no queue needed).
+    p=pool();id=spawn(p,0xfe,0,0,0);bare=in;bare.audio=nullptr;
+    require(tick_source_effect(p,id,bare).committed&&p.slots[0][3]==0xc2&&p.slots[0][0xc]==0,"0xFE silent burst");
+    // ChildRuntime producer entry: header plus +0x1C lanes for a 0x83 puff.
+    ChildRuntime children;
+    const auto puff=children.spawn_effect_80031618(1,0x83,2,0x1c,{{10,-20,30,0}},3);
+    require(puff==source_effect_base&&children.effect_pool().slots[0][2]==0x83&&half_at(children.effect_pool().slots[0],0x1e)==-20,"0x83 producer");
+    require(children.tick_effects(in).committed==1&&source_effect_primitive(children.effect_pool().slots[0]),"0x83 puff not visible");
+}
 bool same_effect_owner(const SourceEventPhase5Context& a,const SourceEventPhase5Context& b){
     if(a.pool80.used!=b.pool80.used||a.pool80_pending_release_800988c8!=b.pool80_pending_release_800988c8)return false;
     for(size_t i=0;i<64;++i)if(a.pool80.slots[i].raw!=b.pool80.slots[i].raw||a.pool80.slots[i].known!=b.pool80.slots[i].known)return false;
@@ -167,4 +247,4 @@ void phase5_fixtures(const std::string& path){
     require(cases==76,"known-lane source case coverage changed");std::cout<<"phase5 effect source read/write cases="<<cases<<'\n';
 }
 }
-int main(int argc,char** argv){try{guards();phase5_guards();if(argc>1)fixtures(argv[1]);if(argc>2)phase5_fixtures(argv[2]);std::cout<<"PASS source effects; bounded64-slot allocator,131 lifecycle,128 explicit receipts,phase5 known-lane sweeps\n";return 0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}
+int main(int argc,char** argv){try{guards();burst_effects();phase5_guards();if(argc>1)fixtures(argv[1]);if(argc>2)phase5_fixtures(argv[2]);std::cout<<"PASS source effects; bounded64-slot allocator,131 lifecycle,128 explicit receipts,phase5 known-lane sweeps\n";return 0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

@@ -14,6 +14,10 @@ int main(int argc,char** argv){
     // last-writer VRAM order).
     const auto e0=l3::collect_admitted_e0_object_material_words(ebd);
     words.insert(words.end(),e0.begin(),e0.end());
+    // Subtype-0x80 burst meshes and the subtype-0x83 puff word draw from the
+    // same VRAM state.
+    const auto fx=l3::collect_admitted_effect_material_words(ebd);
+    words.insert(words.end(),fx.begin(),fx.end());
     std::sort(words.begin(),words.end());words.erase(std::unique(words.begin(),words.end()),words.end());
     if(words.size()>l3::kActorMaterialEntryLimit)throw std::runtime_error("actor material count policy exceeded");
     std::vector<l3::IndexedResource> uploads;

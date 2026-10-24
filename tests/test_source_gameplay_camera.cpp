@@ -102,5 +102,36 @@ int main(){
     // No cell under the point: the original's 0x40000000 counts as blocked.
     const auto off=l3::runtime_point_embedded_80049c54(map,0,0,-187,9000,{-32,32,-32,32,-32,32},true);
     assert(off.status==l3::RuntimePointEmbedding::Embedded&&off.raw==0x40000000u);
-    std::cout<<"PASS: source gameplay camera init/follow/yaw rate/lag clamp/distance and 0x80049C54 eye test\n";
+
+    // 0x800398E0 shake byte: the follow tail lifts the target by it, then
+    // drops it by 10 (0x1E from the E0/07 gate: 30, 20, 10, then settled).
+    l3::SourceGameplayCamera shake_cam;
+    l3::source_gameplay_camera_init_80038648(shake_cam,refs,0,0);
+    put(w,0x14,0);put(w,0x18,0);put(w,0x56,0);w.bytes[0x44D]=0;
+    l3::source_gameplay_camera_update_80038894(shake_cam,refs,w,map,0);
+    const auto rest=shake_cam.eye_800a39f0;
+    shake_cam.shake_800a395f=0x1E;
+    for(int lift:{30,20,10,0}){
+        l3::source_gameplay_camera_update_80038894(shake_cam,refs,w,map,0);
+        assert(shake_cam.target_800a39a0[1]==-0x96-lift&&shake_cam.eye_800a39f0[1]==rest[1]-lift);
+    }
+    assert(shake_cam.shake_800a395f==0&&shake_cam.eye_800a39f0==rest);
+    shake_cam.shake_800a395f=7;   // below 10: one frame, then zero
+    l3::source_gameplay_camera_update_80038894(shake_cam,refs,w,map,0);
+    assert(shake_cam.target_800a39a0[1]==-0x96-7&&shake_cam.shake_800a395f==0);
+    l3::source_gameplay_camera_init_80038648(shake_cam,refs,0,0);
+    shake_cam.shake_800a395f=0x1E;l3::source_gameplay_camera_init_80038648(shake_cam,refs,0,0);
+    assert(shake_cam.shake_800a395f==0x1E);   // the init leaves 0x800A395F alone
+
+    // 0x8004920C point floor: the smallest top among primitives under the
+    // point's cell whose bottom lies below it; 0x7FFF when none.
+    assert(l3::runtime_point_floor_8004920c(map,0,0,-100,0)==0);
+    assert(l3::runtime_point_floor_8004920c(map,0,0,2000,0)==0x7fff);
+    assert(l3::runtime_point_floor_8004920c(walled,0,0,-100,-300)==-2048);
+    assert(l3::runtime_point_floor_8004920c(walled,0,0,-100,300)==0);
+    // Off the grid reads cell 0 (~0 = -1); a negative cell gives -(h)-1.
+    assert(l3::runtime_point_floor_8004920c(map,0,0,-100,9000)==-1);
+    auto sunk=room(false);sunk.cells[0]=int16_t(uint16_t(0x8400));
+    assert(l3::runtime_point_floor_8004920c(sunk,0,-1024,-100,-1024)==-0x201);
+    std::cout<<"PASS: source gameplay camera init/follow/yaw rate/lag clamp/distance, 0x800A395F shake, 0x80049C54 eye test, 0x8004920C floor\n";
 }

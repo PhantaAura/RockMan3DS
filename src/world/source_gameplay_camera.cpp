@@ -103,8 +103,9 @@ void source_gameplay_camera_init_80038648(SourceGameplayCamera& c,
     // Scratch bytes are not camera state: the shift and the retained pad
     // survive a controller reset.
     const auto shift=c.scratch_shift_1f800074;const auto pad=c.retained_pad_1f8000f2;
+    const auto shake=c.shake_800a395f;
     c=SourceGameplayCamera{};
-    c.scratch_shift_1f800074=shift;c.retained_pad_1f8000f2=pad;
+    c.scratch_shift_1f800074=shift;c.retained_pad_1f8000f2=pad;c.shake_800a395f=shake;
     c.initialized=true;
     c.target_800a39a0={player_x,0,player_z};
     c.distance_800a3964=0x200;c.pitch_800a396c=0x30;c.yaw_800a3968=0;
@@ -152,7 +153,10 @@ void source_gameplay_camera_update_80038894(SourceGameplayCamera& c,
         if(c.distance_goal_80097d2c<0x200)c.distance_goal_80097d2c=0x200;
     }
     c.distance_800a3964=c.distance_goal_80097d2c;
+    // 0x80038FE4 (0x800A395A == 0): target y -= shake, produce, shake -= 10.
+    c.target_800a39a0[1]-=c.shake_800a395f;
     produce_80037fb4(c,refs);
+    c.shake_800a395f=c.shake_800a395f<10?0:uint8_t(c.shake_800a395f-10);
 }
 
 } // namespace l3
