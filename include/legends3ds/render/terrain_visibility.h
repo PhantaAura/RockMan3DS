@@ -28,6 +28,12 @@ enum class TerrainFace : uint8_t { Draw, Black, Skip, Unsupported };
 
 constexpr int32_t kObservedArea1BackFaceThreshold = 522; // 0x1F8001C0, OBSERVED
 
+// 0x1F80007C, ORed into the code word of a see-through face: 0x02000000 (ABE,
+// semi-transparent) while the event byte 0x800C4C48 is 0, else 0.
+constexpr uint32_t terrain_see_through_code_1f80007c(uint8_t event_active_800c4c48) noexcept {
+    return event_active_800c4c48 == 0 ? 0x02000000u : 0u;
+}
+
 struct TerrainFaceCamera {
     SourceGteRtpsState gte{}; // matrix/translation 0x1F800008 + OFX/OFY/H/DQA/DQB
     // FarColor from the area configuration (0x800371A0 -> 0x8007B0F8), present
@@ -37,6 +43,8 @@ struct TerrainFaceCamera {
     // positive-family depth ramp; absent without the record.
     std::optional<std::array<uint8_t,40>> area_record;
     uint8_t lod_1f800074 = 0;
+    // 0x1F80007C for this frame (terrain_see_through_code_1f80007c).
+    uint32_t see_through_1f80007c = 0x02000000u;
 };
 // OFX/OFY 160/120 and H 384 as installed by 0x8007A4F0 + 0x80011F48. With the
 // 40-byte area record (0x8011AC54 + area * 40, cooked as the L3SF setup blob),
@@ -59,6 +67,13 @@ struct TerrainFaceResult {
     // Positive faces: ordering depth (otz) and CLUT ramp step 0..7.
     int32_t otz = 0;
     uint8_t ramp = 0;
+    // See-through rule of families 0x80024F30 (mode 1) and 0x80025900 (mode 2):
+    // a drawn face with prefix > 0 (bit 31 clear), max SZ < 0x1F8001C0 and a
+    // screen box overlapping SX 0x97..0xA9 / SY 0x79..0x9F gets 0x1F80007C
+    // ORed into its code word, so it is drawn semi-transparent (ABR from its
+    // TPAGE). Faces that take the bit-29 path (bit 29 with min SZ >= 0x181;
+    // mode 1 also with bit 24) are excluded. Modes 0/3 never set it.
+    bool see_through = false;
 };
 // 0x1F8001C0 for this frame: view-space depth (MAC3) of the player position.
 std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,

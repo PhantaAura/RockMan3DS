@@ -69,7 +69,40 @@ int main(){
     assert(classify_terrain_face(distant,X,Y,Z,0x10808080u,true,2,*depth).rgb==f.rgb);
     // Without the area record the colour is untouched.
     assert(classify_terrain_face(camera_at(r,1000),X,Y,Z,0x00808080u,false,2,*depth).rgb==0x808080u);
+    // See-through (0x80025900 / 0x80024F30): the start wall's front face lies
+    // between the camera and Mega Man (max SZ < his depth) across the screen
+    // centre, so it gets 0x1F80007C = 0x02000000.
+    f=classify_terrain_face(start,Xr,Y,Z,0x00808080u,false,2,*depth);
+    assert(f.face==TerrainFace::Draw&&f.see_through);
+    assert(classify_terrain_face(start,Xr,Y,Z,0x00808080u,false,1,*depth).see_through);
+    // Farther than the player, back faces, bit 31, a zero prefix, modes 0/3
+    // and negative cells: opaque.
+    assert(!classify_terrain_face(start,Xr,Y,Z,0x00808080u,false,2,200).see_through);
+    assert(!classify_terrain_face(start,X,Y,Z,0x00808080u,false,2,*depth).see_through);
+    assert(!classify_terrain_face(start,Xr,Y,Z,0x80808080u,false,2,*depth).see_through);
+    assert(!classify_terrain_face(start,Xr,Y,Z,0,false,2,*depth).see_through);
+    assert(!classify_terrain_face(start,Xr,Y,Z,0x00808080u,false,0,*depth).see_through);
+    assert(!classify_terrain_face(start,Xr,Y,Z,0x00808080u,false,3,*depth).see_through);
+    assert(!classify_terrain_face(start,Xr,Y,Z,0x00808080u,true,2,*depth).see_through);
+    // Double-sided back face drawn: also see-through.
+    assert(classify_terrain_face(start,X,Y,Z,0x40808080u,false,2,*depth).see_through);
+    // 0x1F80007C is 0 while the event byte 0x800C4C48 is set.
+    assert(terrain_see_through_code_1f80007c(0)==0x02000000u&&terrain_see_through_code_1f80007c(1)==0);
+    auto during_event=start;during_event.see_through_1f80007c=terrain_see_through_code_1f80007c(1);
+    assert(!classify_terrain_face(during_event,Xr,Y,Z,0x00808080u,false,2,*depth).see_through);
+    // Off the centre region (wall moved 700 units sideways): opaque.
+    const std::array<int32_t,4> Xs{{3772,3260,3772,3260}};
+    f=classify_terrain_face(start,Xs,Y,Z,0x00808080u,false,2,*depth);
+    assert(f.face==TerrainFace::Draw&&!f.see_through);
+    // Bit 29: kept below min SZ 0x181 (mode 1 also needs bit 24 clear),
+    // excluded beyond it.
+    assert(classify_terrain_face(start,Xr,Y,Z,0x21808080u,false,2,*depth).see_through);
+    assert(!classify_terrain_face(start,Xr,Y,Z,0x21808080u,false,1,*depth).see_through);
+    assert(classify_terrain_face(start,Xr,Y,Z,0x20808080u,false,1,*depth).see_through);
+    f=classify_terrain_face(far,Xr,Y,Z,0x00808080u,false,2,2000);
+    assert(f.min_sz>=0x181&&f.see_through);
+    assert(!classify_terrain_face(far,Xr,Y,Z,0x20808080u,false,2,2000).see_through);
     std::cout<<"PASS: start wall back face skipped (min SZ "<<classify_terrain_face(start,X,Y,Z,0,false,2,522).min_sz
              <<"), far back face black, bits 24/30, modes, negative cells, player depth "<<*depth
-             <<", depth cue IR0 "<<f.ir0<<" rgb "<<std::hex<<f.rgb<<"\n";
+             <<", depth cue, see-through rule\n";
 }
