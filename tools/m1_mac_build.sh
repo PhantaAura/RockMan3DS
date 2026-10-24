@@ -17,6 +17,7 @@ OWNER="${OWNER:-$PROJECT/owner-data/extracted}"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 OUT="${OUT:-$PROJECT/work/pass-$STAMP-m2-01516}"
 CACHE="${CACHE:-$PROJECT/work/mml3ds-cache-01500}"
+CUE="${CUE:-$HOME/Downloads/MML_Discoken/Mega Man Legends (USA).cue}"
 RNG="${RNG:-$PROJECT/work/pass-20261017-worldalive-01447/native-r1/sd_out/3ds/Legends3DS/data/legends3ds/tutorial/source_rng.l3rg}"
 export DEVKITPRO="${DEVKITPRO:-/opt/devkitpro}"
 export DEVKITARM="${DEVKITARM:-$DEVKITPRO/devkitARM}"
@@ -41,6 +42,22 @@ elif [ -f "$RNG" ]; then
 else
     echo "WARNING: no source_rng.l3rg found ($RNG)."
     echo "         The tutorial enemy will hold at its first random draw (it will not move or attack)."
+fi
+
+# Audio (owner-derived, private): effect bank from the DAT VABs, and the
+# message voice clips from the full CUE/BIN when present. Cached by tool hash.
+mkdir -p "$DATA/audio" "$CACHE/audio"
+SFX_KEY="$(shasum -a 256 "$ROOT/tools/cook_sfx_bank.py" | cut -c1-16)"
+SFX="$CACHE/audio/sfx_st00-$SFX_KEY.l3sb"
+[ -f "$SFX" ] || python3 "$ROOT/tools/cook_sfx_bank.py" --exe "$OWNER/ROCK_NEO.EXE" --dat "$OWNER/CDDATA/DAT" --out "$SFX"
+cp "$SFX" "$DATA/audio/sfx_st00.l3sb"
+if [ -f "$CUE" ]; then
+    VOICE_KEY="$(cat "$ROOT/tools/cook_xa_voice.py" "$ROOT/tools/cook_xa_stream.py" | shasum -a 256 | cut -c1-16)"
+    VOICE="$CACHE/audio/voice_st00-$VOICE_KEY.l3vb"
+    [ -f "$VOICE" ] || python3 "$ROOT/tools/cook_xa_voice.py" --cue "$CUE" --exe "$OWNER/ROCK_NEO.EXE" --out "$VOICE" --requests 0x0-0x2d
+    cp "$VOICE" "$DATA/audio/voice_st00.l3vb"
+else
+    echo "WARNING: no CUE at $CUE; Roll's voice clips are not installed (text stays silent)."
 fi
 
 cat <<EOF

@@ -163,6 +163,9 @@ struct RuntimeDialogueState {
     std::vector<std::pair<uint16_t,uint16_t>> call_stack; // 0x99 CALL return points
     bool waiting_for_choice = false;                     // 0x97 MULTI
     bool closing = false;                                // 0x84 CLOSE delay (CANDIDATE: u16 frames)
+    // Message state bits: 0xA1 sets 0x20000000 (no typing blip), 0xA2 clears
+    // it; AUDIO sets 0x40000. Glyphs request 0x84 only with both clear.
+    bool no_char_sfx_20000000 = false, voiced_40000 = false;
     uint8_t choice = 0;
     std::vector<uint8_t> choice_targets;                 // per 0x96 option; 0xFF continues
     std::vector<uint16_t> option_glyph_at;               // visible_glyphs index of each option
@@ -589,9 +592,10 @@ private:
     void reset_e007_objects();
     void update_e007_objects();
     void reset_e008_objects();
-    void update_e008_objects();
+    void update_e008_objects(SourceRngService* rng);
     void update_action_check_800411dc();
     void update_e005_objects(SourceRngService* rng);
+    void queue_object_sound(uint16_t id,const std::array<int16_t,3>& position);
     void update_gameplay_camera_target();
     std::optional<size_t> nearest_target_index() const;
     bool apply_active_cutscene_completion();

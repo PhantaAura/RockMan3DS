@@ -77,6 +77,8 @@ struct SourceRngEffect34Context {
 // ST00 class E0 object callbacks (pool 0x800BF118, stride 0x50). Admitted:
 // E0/05 0x80113FEC (jal 0x8007FE50 at 0x80114018).
 constexpr uint32_t kSourceE005RngCallerRa = 0x80114020;
+// E0/08 target state 1 (0x801161D4): blink reload draw when +9 reaches 0.
+constexpr uint32_t kSourceE008BlinkRngCallerRa = 0x80116244;
 struct SourceRngE0Context {
     uint32_t caller_ra = 0, work = 0;
     uint8_t slot = 255;

@@ -69,6 +69,7 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 | E0/08 targets/doors, action check 0x60E (`0x800411DC`) | ported; Azahar: check → msg 8/9, both targets destroyed, doors open |
 | E0/05 box (0x620) | ported (`source_box_e005`, textured, fade scale); Azahar: box breaks → 0x620 → msg 11 (Right+A) → 0x621, reward expands 14 pickups |
 | class 40/04, subtype-3 parameter 0xA0 wake | **not checked** |
+| Sound effects, Roll's voice, typing blip | ported (`AUDIO.md`); BGM not ported |
 
 Azahar, normal boot and scripted route: Area 1 messages 0 → 1 → 2 → 3 → 4 → 6
 → 7 in the handler order, and the switch raises 0x607. Message 7 follows

@@ -170,3 +170,27 @@ is inside the E0/00 entry gate, so the box group is selected. Azahar trace:
   screenshot could be taken. Shade, OT order and the break effect are still
   UNKNOWN or unported.
 
+## Sound effects and Roll's voice
+
+See `docs/research_01516/AUDIO.md`. Cooked locally:
+- `sfx_st00.l3sb`: 297 requests, 66 samples, 968,798 bytes.
+- `voice_st00.l3vb`: 46 clips, 121.6 s, 4,597,248 bytes.
+
+Azahar box route, after copying the user's own `dspfirm.cdc` to `sdmc:/3ds/`
+(without it `ndspInit` fails and both players stay off). The trace shows:
+- **Roll's voice:** message 2's clips 0x15, 0x16 and 0x17 start on cue
+  (frames 5/34/113).
+- **Shooting the box:** each shot keys 0x9A, each box hit 0xA0, and the break
+  0xA2.
+- **Message 11:** it is unvoiced (0xA2), so it plays the typing blip 0x84 per
+  glyph (235 requests).
+- **Distant objects:** the target beeps 0x11C (2/18-frame rand reload) and the
+  door pulses 0x11A are cut off beyond 5000 units, as in the original gate.
+- **Reaverbots:** 0x9A/0x9B/0x9D/0x9E play near them.
+- The box chain still ends with 0x621 set, with no panic.
+- **Found and fixed during the run:**
+  - The source audio queue was never drained, so it filled at 24 records and
+    dropped the rest.
+  - Without rand() the target beep fired every 2 frames.
+- **Not checked:** how it sounds (headless run, screen locked).
+

@@ -212,7 +212,7 @@ struct SourceRngAccess {
     static SourceRngStagedSample e0(SourceRngUpdateTransaction& t,const SourceRngE0Context& c) noexcept {
         SourceRngStagedSample out;
         if(!t.active_||!t.owner_||!t.owner_->admitted_||t.generation_!=t.owner_->generation_){out.status=SourceRngStatus::StaleTransaction;return out;}
-        if(t.context_.phase!=SourceRngUpdatePhase::E0ObjectCallback||c.caller_ra!=kSourceE005RngCallerRa||
+        if(t.context_.phase!=SourceRngUpdatePhase::E0ObjectCallback||(c.caller_ra!=kSourceE005RngCallerRa&&c.caller_ra!=kSourceE008BlinkRngCallerRa)||
            c.slot>=32||c.work!=0x800bf118u+uint32_t(c.slot)*0x50u){out.status=SourceRngStatus::InvalidContext;return out;}
         if(t.count_>=kSourceRngUpdateMaximumCalls){out.status=SourceRngStatus::UpdateFull;return out;}
         if(t.ordinal_==std::numeric_limits<uint64_t>::max()){out.status=SourceRngStatus::OrdinalExhausted;return out;}

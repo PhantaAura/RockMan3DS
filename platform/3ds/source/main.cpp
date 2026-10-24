@@ -55,6 +55,8 @@
 #include "mml_runtime_diag_v2.h"
 #include "hardware_test.h"
 #include "native_xa_audio.h"
+#include "native_voice.h"
+#include "native_sfx.h"
 #include "legends3ds/source_camera.h"
 #include "legends3ds/source_player_buster.h"
 #include "mockup_hud.h"
@@ -2619,6 +2621,24 @@ int main() {
             }catch(const std::exception& error){release_scene_actor40_materials();boot_log(MML_BOOT_DATA,error.what());}
         }
         NativeXaAudio xa_audio;l3::XaNativeCdState xa_transport;
+        // Message voice clips (opcode 0x8F -> 0x8001D58C), cooked from the owner
+        // disc by tools/cook_xa_voice.py. Optional: absent bank = silent text.
+        NativeVoice voice;
+        // Effect requests (0x8008241C handler 2) with the stage's VAB tones,
+        // cooked by tools/cook_sfx_bank.py. Optional: absent bank = silent.
+        NativeSfx sfx;
+        {
+            char path[256];std::snprintf(path,sizeof(path),"%saudio/sfx_st00.l3sb",kDataRoot);
+            const bool ready=sfx.open(path);
+            hardware_test_trace("# source_sfx_open,ready=%u,requests=%lu,linear=%lu,reason=%s,consumer=0x8001A110,envelope=SPU_ADSR_PER_TICK",
+                unsigned(ready),(unsigned long)sfx.requests(),(unsigned long)sfx.linear_bytes(),sfx.error());
+        }
+        {
+            char path[256];std::snprintf(path,sizeof(path),"%saudio/voice_st00.l3vb",kDataRoot);
+            const bool ready=voice.open(path);
+            hardware_test_trace("# source_voice_open,ready=%u,clips=%lu,linear=%lu,reason=%s,source=0x8001D58C,decoder=COLD_ZERO_CANDIDATE",
+                unsigned(ready),(unsigned long)voice.clips(),(unsigned long)voice.linear_bytes(),voice.error());
+        }
         uint32_t scene_overlay_receipts=0;
         uint32_t last_audio_logged_frame=UINT32_MAX;
         bool source_xa_requested=false;
@@ -3149,6 +3169,13 @@ int main() {
                         session.tutorial_trigger_tick().unsupported_type?int(*session.tutorial_trigger_tick().unsupported_type):-1,
                         unsigned(session.dialogue().waiting_for_audio),unsigned(session.dialogue().waiting_for_advance),
                         unsigned(session.dialogue().waiting_for_script),unsigned(session.dialogue().waiting_for_choice),unsigned(session.dialogue().wait_frames!=0));
+                // Message AUDIO: the original starts the XA clip and continues the
+                // text once the drive reports playback (0x800548C4/0x8001D878).
+                for(const auto& request:session.take_audio_requests()){
+                    const bool started=voice.play(request.command_id);
+                    hardware_test_trace("# source_voice,frame=%lu,request=%lx,started=%u,reason=%s",
+                        (unsigned long)session.frame_counter(),(unsigned long)request.command_id,unsigned(started),voice.error());
+                }
                 // 0x80047228(this, +0x38, record): the box's L3CB E0/05 row word00. The
                 // box calls it inside its callback, before trigger 16 pauses objects.
                 for(const auto& reward:session.take_e005_reward_requests()){
@@ -3972,6 +3999,24 @@ int main() {
                 if (retail_animation_requested()) (void)l3::runtime_animation_finish(animation,player_track,session);
                 if((g_source_loop_replay||g_source_scene_rng_replay)&&session.source_recorded_scene_admitted())
                     (void)session.service_source_main_loop_tail_80011ecc();
+                // 0x8001A110 runs after the main update (0x80011E78): every queued
+                // effect request keys its SPU voices, then the queue resets.
+                if(sfx.ready()){
+                    const auto& work=session.compat_player().bytes;
+                    l3::SourceSoundListener listener;
+                    listener.x=int16_t(uint16_t(work[0x14]|work[0x15]<<8));listener.z=int16_t(uint16_t(work[0x18]|work[0x19]<<8));
+                    listener.heading=uint16_t(work[0x56]|work[0x57]<<8);
+                    char ids[64];size_t at=0;ids[0]=0;
+                    const auto& queue=session.source_audio_queue();
+                    for(size_t i=0;i<queue.count&&at<56;++i)
+                        at+=size_t(std::snprintf(ids+at,sizeof(ids)-at,"%x;",unsigned(queue.records[i].raw[2]|queue.records[i].raw[3]<<8)));
+                    const auto consumed=sfx.consume(session.source_audio_queue(),listener);
+                    if(consumed.key_ons||consumed.unknown||consumed.rejected)
+                        hardware_test_trace("# source_sfx,frame=%lu,ids=%s,key_ons=%lu,unknown=%lu,rejected=%lu,listener=%d:%d:%u,source=0x8001A110",
+                            (unsigned long)session.frame_counter(),ids,(unsigned long)consumed.key_ons,(unsigned long)consumed.unknown,
+                            (unsigned long)consumed.rejected,int(listener.x),int(listener.z),unsigned(listener.heading));
+                    sfx.tick(44100u/30u);
+                } else l3::finish_source_audio_queue_batch_8001a1d0(session.source_audio_queue());
             }
             hardware_test_clock_event(gameplay_clock);
             // An explicit native presentation scheduler pass, independent of

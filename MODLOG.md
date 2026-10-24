@@ -291,3 +291,9 @@ E0 textures: targets, doors and the box use their original TPAGE/CLUT pages
 from the per-area actor cache and the scene E0 material plan (semi-transparent
 door pulse and box fade). Ported the box fade's ScaleMatrix growth. Raised the
 citro3d command buffer to 512 KiB after Area 2 overflowed the default.
+
+Audio: ported the effect queue consumer (0x8001A110, handler 2 VAB tones with
+the 0x8001A834 gate, 0x8001A274 volumes, pitch table and SPU ADSR) and Roll's
+voice (message AUDIO → 0x8001D58C XA clips) plus the typing blip 0x84. The
+queue was never drained before (it filled at 24 records). E0 objects queue
+their positional sounds; the E0/08 beep uses rand() at RA 0x80116244.

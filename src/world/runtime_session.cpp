@@ -704,6 +704,12 @@ void RuntimeSession::reset_e007_objects(){
             e007_objects_.push_back(*obj);
     }
 }
+// E0 objects call 0x8001A050(id, this + 0x38): the pointed words are +0x38
+// (x | y << 16) and +0x3C (z).
+void RuntimeSession::queue_object_sound(uint16_t id,const std::array<int16_t,3>& p){
+    if(id)(void)enqueue_source_audio_8001a050(source_audio_queue_,id,
+        {{uint32_t(uint16_t(p[0]))|(uint32_t(uint16_t(p[1]))<<16),uint32_t(uint16_t(p[2]))}});
+}
 void RuntimeSession::update_e007_objects(){
     const std::array<int16_t,3> p{{int16_t(player_position_.x),int16_t(player_position_.y),int16_t(player_position_.z)}};
     for(auto& o:e007_objects_){
@@ -711,8 +717,8 @@ void RuntimeSession::update_e007_objects(){
         if(step.set_607)set_story_flag(0x607,true);
         if(step.set_60a)set_story_flag(0x60A,true);
         if(step.descriptor_write)write_idx_descriptor(o.idx_cell,*step.descriptor_write);
-        // Sounds 0x119/0x118/0x11E, the 0x800398E0 shake and 0x8001B2F0(0xF)
-        // are not played (no audio/camera-shake owner).
+        queue_object_sound(step.sound,o.position);
+        // The 0x800398E0 shake and 0x8001B2F0(0xF) are not ported.
     }
 }
 void RuntimeSession::reset_e008_objects(){
@@ -731,8 +737,9 @@ void RuntimeSession::reset_e008_objects(){
         }
     }
 }
-void RuntimeSession::update_e008_objects(){
+void RuntimeSession::update_e008_objects(SourceRngService* rng){
     e008_proxy_requests_.clear();
+    SourceRngUpdateTransaction rng_t;bool rng_begun=false,rng_used=false;
     for(size_t i=0;i<e008_objects_.size();++i){
         auto& o=e008_objects_[i];
         auto& target=e008_hit_targets_[o.record()];
@@ -740,8 +747,17 @@ void RuntimeSession::update_e008_objects(){
         SourceE008Inputs in;
         in.flag_608=story_flag(0x608);in.flag_609=story_flag(0x609);in.flag_61d=story_flag(0x61D);
         in.checked_by_player=player_check_target_==i;
-        // CANDIDATE: the blink/pulse 0x8007FE50 draws are not on the shared
-        // stream yet; presentation only.
+        // Target state 1 draws rand() (RA 0x80116244) only when the blink
+        // counter +9 runs out without damage. CANDIDATE: the door pulse draws
+        // (0x80116870/0x80116934/0x80116988) are not on the stream yet.
+        if(o.target&&o.state==1&&!(record.packet&0xFFFFFFu)&&o.blink_09==1&&rng&&rng->admitted()){
+            if(!rng_begun&&begin_source_rng_update(*rng,rng_t,{frame_counter_,frame_counter_,SourceRngUpdatePhase::E0ObjectCallback})==SourceRngStatus::Ready)
+                rng_begun=true;
+            if(rng_begun&&i<e008_slots_.size()){
+                const auto staged=stage_source_rng_e0(rng_t,{kSourceE008BlinkRngCallerRa,0x800bf118u+uint32_t(e008_slots_[i])*0x50u,e008_slots_[i]});
+                if(staged.status==SourceRngStatus::Ready){in.random_sample=staged.sample32a;rng_used=true;}
+            }
+        }
         const auto step=source_e008_step(o,record,in);
         target.packet_00=record.packet;
         if(step.set_608)set_story_flag(0x608,true);
@@ -750,7 +766,9 @@ void RuntimeSession::update_e008_objects(){
         if(step.clear_player_check&&player_check_target_==i)player_check_target_.reset();
         if(step.descriptor_write&&o.idx_cell)write_idx_descriptor(*o.idx_cell,*step.descriptor_write);
         if(step.register_proxy)e008_proxy_requests_.push_back({step.proxy_point,o.record(),e008_slots_[i]});
+        queue_object_sound(step.sound,o.position);
     }
+    if(rng_begun){if(rng_used)(void)commit_source_rng_update(*rng,rng_t);else rollback_source_rng_update(rng_t);}
 }
 void RuntimeSession::update_e005_objects(SourceRngService* rng){
     e005_proxy_requests_.clear();
@@ -786,6 +804,7 @@ void RuntimeSession::update_e005_objects(SourceRngService* rng){
             if(staged.status==SourceRngStatus::Ready){sample=staged.sample32a;rng_used=true;}
         } else box.rng_status=0xFE;
         const auto step=source_e005_step(box.object,box.target.packet_00,sample);
+        queue_object_sound(step.sound,box.object.position);
         if(step.set_flag&&*step.set_flag<kL3StoryFlagBytes*8u)set_story_flag(*step.set_flag,true);
         if(step.reward_record)
             e005_rewards_.push_back({{{box.object.position[0],box.object.position[1],box.object.position[2],0}},*step.reward_record});
@@ -887,10 +906,18 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
     MmlRuntimeEvent ev;
     while(budget--&&dialogue_cursor_->next(ev)){
         switch(ev.kind){
-            case MmlRuntimeEventKind::Glyph: dialogue_.visible_glyphs.push_back(ev.opcode); break;
+            case MmlRuntimeEventKind::Glyph:
+                dialogue_.visible_glyphs.push_back(ev.opcode);
+                // 0x80053D74: 0x8001A008(0x84, 0, 100) for each glyph (CANDIDATE: the
+                // 0x40000000 bit is not modelled; the bits start clear).
+                if(dialogue_.source_controls_inline&&!dialogue_.no_char_sfx_20000000&&!dialogue_.voiced_40000)
+                    (void)enqueue_source_audio_8001a008(source_audio_queue_,0x84,0,100);
+                break;
             case MmlRuntimeEventKind::Newline: dialogue_.visible_glyphs.push_back(0x86); break;
             case MmlRuntimeEventKind::Audio:{const uint32_t id=args_u32le(ev.args);dialogue_.audio_requests.push_back({dialogue_.ref,ev.args,id});
-                // Tutorial messages: no voice player is bound, so text continues.
+                dialogue_.voiced_40000=true;
+                // Tutorial messages: the original continues once the drive reports
+                // the clip started (0x800548C4 / 0x8001D878); the frontend plays it.
                 if(dialogue_.source_controls_inline)break;
                 dialogue_.waiting_for_audio=true;dialogue_.waiting_audio_id=id;return;}
             case MmlRuntimeEventKind::Wait: dialogue_.wait_frames=ev.args.size()>=2?uint16_t(ev.args[0]|(uint16_t(ev.args[1])<<8)):0;if(dialogue_.wait_frames)return;break;
@@ -907,6 +934,8 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
                         stop_dialogue();return;
                     }
                     if(ev.opcode==0x87){dialogue_.visible_glyphs.clear();dialogue_.option_glyph_at.clear();break;} // CLEAR
+                    if(ev.opcode==0xA1){dialogue_.no_char_sfx_20000000=true;break;}   // 0x8005563C
+                    if(ev.opcode==0xA2){dialogue_.no_char_sfx_20000000=false;break;}  // 0x80055660
                     if(ev.opcode==0x96){dialogue_.option_glyph_at.push_back(uint16_t(dialogue_.visible_glyphs.size()));break;} // SEL
                     if(ev.opcode==0x97){ // MULTI: type byte, then one target per SEL
                         dialogue_.choice_targets.assign(ev.args.size()>1?ev.args.begin()+1:ev.args.end(),ev.args.end());
@@ -1765,7 +1794,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     update_conditional_spawns();
     // Area 1's static list puts E0/07 before E0/06 (pool order, CANDIDATE).
     update_e007_objects();
-    update_e008_objects();
+    update_e008_objects(candidate_rng);
     update_e005_objects(candidate_rng);
     update_tutorial_triggers();
     SourceEventInputs source_event_input;

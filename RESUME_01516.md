@@ -53,6 +53,13 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   The box fade's ScaleMatrix growth is ported. The GPU command buffer is
   now 512 KiB (Area 2 overflowed the 256 KiB default).
 
+- Tutorial sound effects and Roll's voice (`docs/research_01516/AUDIO.md`).
+  Effects follow the original's queue consumer, VAB tones, pitch, volume/pan,
+  distance gate and SPU ADSR. Message AUDIO plays the XA clip, and unvoiced
+  messages play the typing blip. The audio is cooked by `cook_sfx_bank.py`
+  and `cook_xa_voice.py` (the latter needs the CUE/BIN; set `CUE=`). Azahar
+  needs the user's own `sdmc:/3ds/dspfirm.cdc`.
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 162/162, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
@@ -60,7 +67,9 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 ## Next
 0. The objects the rest of the tutorial waits on, in route order:
    - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
-   - look at the textured E0 objects on screen (not seen yet: screen locked).
+   - look at the textured E0 objects on screen and listen to the audio (not
+     checked yet: screen locked);
+   - sequenced music (SEP) and the E0/08 door-pulse rand draws;
      The box's break effect (0x80031618), sound and 0x80052528 are not ported;
    - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
