@@ -37,8 +37,9 @@ SourceE005Step source_e005_step(SourceE005Object& o, uint32_t& packet,
     if (o.action_09 == 1) {                                             // 0x80114170
         if (o.phase_0a == 0) {
             o.phase_0a = 1; o.counter_0c = 1; o.color_40 = 0x808080; o.flags_2c &= 0xFFF7u;
-            // 0x80052528 and the 0x80031618 kind 5 / 0x80 / 0x42 effect are not
-            // ported (presentation, CANDIDATE).
+            // 0x80052528 clears ride links (+0x76/+0xC0) that name the box; the
+            // port has none. The 0x80031618 effect goes to the caller.
+            out.break_effect = true;
         }
         if (o.phase_0a == 1) {
             const uint8_t before = o.counter_0c--;

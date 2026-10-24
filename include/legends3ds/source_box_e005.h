@@ -38,6 +38,7 @@ struct SourceE005Step {
     std::optional<uint16_t> set_flag;
     std::optional<uint8_t> reward_record;  // 0x80047228(this, +0x38, record)
     bool reward_needs_random = false;      // released without a +0x2E sample
+    bool break_effect = false;             // phase 0: 0x80031618 5/0x80/0x42 at +0x38, y - 0x80
     bool released = false;
 };
 

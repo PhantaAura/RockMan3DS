@@ -297,3 +297,10 @@ the 0x8001A834 gate, 0x8001A274 volumes, pitch table and SPU ADSR) and Roll's
 voice (message AUDIO → 0x8001D58C XA clips) plus the typing blip 0x84. The
 queue was never drained before (it filled at 24 records). E0 objects queue
 their positional sounds; the E0/08 beep uses rand() at RA 0x80116244.
+
+Effects: ported the subtype-0x80 burst (0x80043F34, tables 0x8008A138..1E8,
+the 0x8002F9C4 EBD row, RotMatrixY) and the 0x8004920C point floor. Wired it
+to the E0/05 box, the E0/08 debris/burst and the class-20 defeats, and drew
+it with the original meshes and sprite page (actor cache now uploads EXIT_SUP
+first; Area 2 inherits ST00_01). E0/07 camera shake ported. Azahar: target
+and box effects spawn, draw textured and release. Host 165/165.

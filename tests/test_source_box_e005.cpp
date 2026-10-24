@@ -15,8 +15,10 @@ int main(){
     for(int i=0;i<6;++i){packet=0x08000018u;s=source_e005_step(b,packet,uint16_t(7));assert(s.sound==0xA0);}
     assert(b.hp_44==16);
     packet=0x08000018u;s=source_e005_step(b,packet,uint16_t(6));      // 16 - 24 <= 0
-    assert(s.sound==0xA2&&b.action_09==1&&!(b.flags_2c&2u));
-    int frames=1;while(!s.released&&frames<10){s=source_e005_step(b,packet,uint16_t(6));++frames;}
+    // Break phase 0 runs in the same callback: one 5/0x80/0x42 effect.
+    assert(s.sound==0xA2&&b.action_09==1&&!(b.flags_2c&2u)&&s.break_effect);
+    int frames=1,effects=1;while(!s.released&&frames<10){s=source_e005_step(b,packet,uint16_t(6));++frames;effects+=s.break_effect;}
+    assert(effects==1);
     assert(s.released&&frames==4&&s.set_flag==uint16_t(0x620)&&s.reward_record==uint8_t(0));  // 6 & 1
     // Fade frames at counters 2, 3, 4: 0x8011CB08 0x1028, 0x1064, 0x10B4 and the
     // cumulative ScaleMatrix diagonal 0x1028 -> 4236 -> 4422; colour 0x2E202020.
@@ -29,5 +31,5 @@ int main(){
     auto d=source_e005_init_80113f2c({{0,0,0}},0x00,0x700);d.action_09=1;
     do{s=source_e005_step(d,packet,std::nullopt);}while(!s.released);
     assert(!s.set_flag&&!s.reward_record&&s.reward_needs_random);
-    std::cout<<"PASS: E0/05 0xA3/0xA0/0xA2, 4-frame break, flag 0x620, reward record by parameter\n";
+    std::cout<<"PASS: E0/05 0xA3/0xA0/0xA2, 4-frame break, one break effect, flag 0x620, reward record by parameter\n";
 }

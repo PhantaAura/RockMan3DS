@@ -24,9 +24,13 @@ struct Source {
 uint32_t descriptor(const EbdDirectory& directory,size_t row) {
     // Subtypes 5 (box) and 8 (targets/doors) decode with the same single-part
     // descriptor (CANDIDATE: their draw call 0x80051B68 is not traced).
-    if(row>=directory.entries.size()||directory.entries[row].object_class!=0xe0||
-        (directory.entries[row].subtype!=3&&directory.entries[row].subtype!=5&&directory.entries[row].subtype!=8))
-        throw std::runtime_error("scene E0 resource class/subtype unsupported");
+    // Class 0x80 subtypes 0x80/0x8B/0x8C (the subtype-0x80 effect's 0x8002F9C4
+    // rows) draw through renderer kind 1, the same 0x8002A160 consumer.
+    if(row>=directory.entries.size())throw std::runtime_error("scene E0 resource row out of range");
+    const auto& entry=directory.entries[row];
+    const bool e0=entry.object_class==0xe0&&(entry.subtype==3||entry.subtype==5||entry.subtype==8);
+    const bool effect=entry.object_class==0x80&&(entry.subtype==0x80||entry.subtype==0x8b||entry.subtype==0x8c);
+    if(!e0&&!effect)throw std::runtime_error("scene E0 resource class/subtype unsupported");
     const auto span=ebd_resource_span(directory,row,0,0x7c);
     if(span.status!=EbdResourceSpanStatus::AVAILABLE||(span.source_offset&3u))
         throw std::runtime_error("scene E0 descriptor unavailable or unaligned");

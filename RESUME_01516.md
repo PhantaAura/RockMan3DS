@@ -60,6 +60,17 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   and `cook_xa_voice.py` (the latter needs the CUE/BIN; set `CUE=`). Azahar
   needs the user's own `sdmc:/3ds/dspfirm.cdc`.
 
+- Break and burst effects (`docs/research_01516/EFFECTS.md`). Subtype 0x80
+  (0x80043F34: init, grow/fade 0x8004441C, RotMatrixY, the 0x8002F9C4 EBD
+  row) and the 0x8004920C point floor are ported. They are fed by:
+  - the E0/05 box break (0x42);
+  - the E0/08 debris (three 0x83 puffs) and burst (0x82);
+  - the class 20/03 and 20/19 defeats (0x41, now at the actor's +0x14).
+
+  Effects are drawn with their original meshes and sprite page. The E0/07
+  gate's camera shake (0x800398E0 → 0x800A395F) is ported. Azahar: targets
+  and box effects spawn, animate, draw textured and release.
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 162/162, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
@@ -70,7 +81,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    - look at the textured E0 objects on screen (audio was listened to and
      sounds right);
    - sequenced music (SEP) and the E0/08 door-pulse rand draws;
-     The box's break effect (0x80031618), sound and 0x80052528 are not ported;
+   - effects: the 0x800341BC explosion proxy (bursts do no damage yet), the
+     bit-0x20 helper children, the LOD tiers, and a look at them on screen;
    - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
@@ -82,6 +94,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    - the top-screen message window and voice.
 
 ## Blockers
+- Effect textures: the upload order is CANDIDATE. The common page comes from
+  EXIT_SUP, and Area 2 inherits ST00_01.
 - The 0x1F8001C0 back-face threshold (522) is measured in Area 1 only. Its
   writer is untraced.
 - The map draw still has no per-cell visibility or Near LOD, so it draws more

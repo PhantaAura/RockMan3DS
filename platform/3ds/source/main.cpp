@@ -63,6 +63,7 @@
 #include "legends3ds/render/terrain_visibility.h"
 #include "legends3ds/source_gate_e007.h"
 #include "legends3ds/source_target_e008.h"
+#include "legends3ds/player_contact_runtime.h"
 #include "legends3ds/render/frontend_view.h"
 #include "legends3ds/render/ps1_geometry.h"
 #include "legends3ds/render/terrain_geometry_candidate.h"
@@ -1561,6 +1562,81 @@ E0ObjectDrawStats draw_source_e0_objects_uv(const l3::RuntimeSession& session) {
     }
     return stats;
 }
+// Class-0x80 effects from the shared pool (0x800A3B40):
+//  - subtype 0x80 (burst): renderer kind 1 (0x8002A160) draws the +0x14 mesh
+//    with the +0x18 matrix at +0x38, modulated by +0x40 (ABE 0x02000000).
+//    Meshes come from the class 0x80 EBD rows; Near tier only (CANDIDATE).
+//  - subtype 0x83 (puff): renderer kind 0 (0x80029C18) draws a camera-facing
+//    32x32 sprite, half size +0x24, UV +0x22, word +0x14, packet +0x18.
+//    Screen-right follows the frontend mirror (CANDIDATE orientation).
+static C3D_Mtx g_frame_view{};
+static bool g_frame_view_mirrored=true;
+struct EffectMesh { uint32_t token=0; l3::SceneE0MeshResource mesh; };
+static std::vector<EffectMesh> g_effect_meshes;
+static const l3::EbdDirectory* g_effect_mesh_owner=nullptr;
+static size_t g_effect_mesh_area=SIZE_MAX;
+static void bind_effect_meshes(const l3::EbdDirectory& ebd,size_t area){
+    if(g_effect_mesh_owner==&ebd&&g_effect_mesh_area==area)return;
+    g_effect_meshes.clear();g_effect_mesh_owner=&ebd;g_effect_mesh_area=area;
+    for(size_t row=0;row<ebd.entries.size();++row){
+        const auto& e=ebd.entries[row];
+        if(e.object_class!=0x80||(e.subtype!=0x80&&e.subtype!=0x8b&&e.subtype!=0x8c)||e.resource_offset[0]==UINT32_MAX)continue;
+        try{g_effect_meshes.push_back({ebd.load_base+e.resource_offset[0],l3::decode_scene_e0_mesh(ebd,row,l3::SceneE0MeshTier::Near)});}
+        catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+    }
+}
+struct EffectDrawStats { size_t models=0,sprites=0,held=0,passes=0; };
+EffectDrawStats draw_source_effects_uv(const l3::ChildRuntime& children,const l3::EbdDirectory& ebd,size_t area){
+    EffectDrawStats stats;
+    if(!use_uv_renderer())return stats;
+    bind_effect_meshes(ebd,area);
+    configure_immediate_attributes_uv();
+    static l3::SceneE0MeshResource sprite;
+    if(sprite.part.vertices.empty()){
+        sprite.part.vertices={{-1,-1,0,0},{1,-1,0,0},{-1,1,0,0},{1,1,0,0}};
+        sprite.part.quads.resize(1);sprite.part.quads[0].index={{0,1,2,3}};
+    }
+    // Screen-right / screen-down in source units (frontend is x, -y, z).
+    const float sign=g_frame_view_mirrored?-1.f:1.f;
+    const std::array<float,3> right{{sign*g_frame_view.r[0].x,-sign*g_frame_view.r[0].y,sign*g_frame_view.r[0].z}};
+    const std::array<float,3> down{{-g_frame_view.r[1].x,g_frame_view.r[1].y,-g_frame_view.r[1].z}};
+    const auto& pool=children.effect_pool();
+    bool semi=false;
+    for(size_t slot=0;slot<l3::source_effect_capacity;++slot){
+        if(!(pool.allocated_80098838[slot/32]&(0x80000000u>>(slot%32))))continue;
+        const auto& w=pool.slots[slot];
+        if(w[2]==0x80){
+            const auto v=l3::source_effect_model_view(w);if(!v)continue;
+            const EffectMesh* found=nullptr;
+            for(const auto& m:g_effect_meshes)if(m.token==v->descriptor_14){found=&m;break;}
+            if(!found){++stats.held;continue;}
+            const auto& m=v->matrix_18;const auto& q=v->position_38;
+            const auto transform=[&](const auto& p)->std::array<float,3>{
+                return {{float(q[0])+(float(m[0])*p.x+float(m[1])*p.y+float(m[2])*p.z)/4096.f,
+                         float(q[1])+(float(m[3])*p.x+float(m[4])*p.y+float(m[5])*p.z)/4096.f,
+                         float(q[2])+(float(m[6])*p.x+float(m[7])*p.y+float(m[8])*p.z)/4096.f}};
+            };
+            if(draw_e0_mesh_planned(found->mesh,g_actor_materials,actor_textures_requested(),v->color_40&0x02ffffffu,
+                transform,stats.passes,semi))++stats.models;
+            else ++stats.held;
+        } else if(w[2]==0x83){
+            const auto p=l3::source_effect_primitive(w);if(!p)continue;
+            sprite.material_word=uint32_t(p->tpage)|(uint32_t(p->clut)<<16);
+            auto& quad=sprite.part.quads[0];const uint8_t u=p->uv[0],v=p->uv[1];
+            quad.uv={{u,v,uint8_t(u+31),v,u,uint8_t(v+31),uint8_t(u+31),uint8_t(v+31)}};
+            const float h=float(p->half_extent);
+            const auto transform=[&](const auto& c)->std::array<float,3>{
+                std::array<float,3> out{};
+                for(size_t i=0;i<3;++i)out[i]=float(p->center[i])+h*(float(c.x)*right[i]+float(c.y)*down[i]);
+                return out;
+            };
+            if(draw_e0_mesh_planned(sprite,g_actor_materials,actor_textures_requested(),p->color_command,
+                transform,stats.passes,semi))++stats.sprites;
+            else ++stats.held;
+        }
+    }
+    return stats;
+}
 size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::SceneE0Resources& resources) {
     if(!use_uv_renderer()||!resources.resident_in(session.active_area().ebd))return 0;
     configure_immediate_attributes_uv();configure_texenv_uv(false);
@@ -1777,6 +1853,12 @@ void draw_projectiles_uv(const l3::RuntimeSession& session) {
 // This is a FRONTEND_DIAGNOSTIC ribbon: the original shot sprite/effect
 // renderer is not ported. 0.0.15.14: the Square shot is subtype 0x81, whose
 // segment is its previous point (+2C) to its current point (+14), 100 units.
+// 0x8004920C for the subtype-0x80 effect init (ground or air burst model).
+struct EffectFloorUser { const l3::RuntimeMap* map=nullptr; size_t area=0; };
+std::optional<int32_t> effect_floor_query(const void* user,int16_t x,int16_t y,int16_t z) noexcept {
+    const auto* f=static_cast<const EffectFloorUser*>(user);
+    return f&&f->map?l3::runtime_point_floor_8004920c(*f->map,f->area,x,y,z):std::nullopt;
+}
 size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
     const auto& pool=children.buster_pool();
     const auto& segments=children.buster_registered_segments();
@@ -3259,6 +3341,14 @@ int main() {
                     hardware_test_trace("# source_voice,frame=%lu,request=%lx,started=%u,reason=%s",
                         (unsigned long)session.frame_counter(),(unsigned long)request.command_id,unsigned(started),voice.error());
                 }
+                // 0x80031618 calls of the E0 objects, in callback order.
+                for(const auto& fx:session.take_e0_effect_requests()){
+                    const uint32_t id=g_children.spawn_effect_80031618(fx.work00,fx.subtype02,fx.parameter03,
+                        fx.lane_offset,fx.lanes,fx.lane_count);
+                    hardware_test_trace("# effect_spawn,frame=%lu,source=%08lx,work0=%u,subtype=%02x,param=%02x,id=%08lx,pos=%d:%d:%d",
+                        (unsigned long)session.frame_counter(),(unsigned long)fx.source,unsigned(fx.work00),unsigned(fx.subtype02),
+                        unsigned(fx.parameter03),(unsigned long)id,int(fx.lanes[0]),int(fx.lanes[1]),int(fx.lanes[2]));
+                }
                 // 0x80047228(this, +0x38, record): the box's L3CB E0/05 row word00. The
                 // box calls it inside its callback, before trigger 16 pauses objects.
                 for(const auto& reward:session.take_e005_reward_requests()){
@@ -3627,7 +3717,7 @@ int main() {
                                 if(rb.committed&&rb.result.defeat_reward_80047148&&actor.source_record19&&actor.source_point_180_known){
                                     l3::EnemyDefeatDelivery delivery;
                                     auto& audio=session.source_audio_queue();
-                                    if(g_children.prepare_enemy_defeat_delivery(actor.source_point_180,actor.source_record19->word00_reward,audio,delivery)==
+                                    if(g_children.prepare_enemy_defeat_delivery(actor.source_point_180,actor.source_record19->word00_reward,audio,delivery,actor.source_reaverbot19->raw_14)==
                                        l3::ChildRuntimeStatus::SourceBackedPartial&&g_children.validate_enemy_defeat_delivery(delivery,audio)){
                                         audio=delivery.staged_audio();(void)g_children.commit_enemy_defeat_delivery(delivery);
                                     }
@@ -4040,7 +4130,14 @@ int main() {
                             effect_inputs.source_generation=session.frame_counter()+1;
                         }
                         effect_inputs.impact82_timers_8008a240=source_buster_profile.impact82_timers_8008a240;
+                        const EffectFloorUser floor_user{&session.active_map(),session.map_area_index()};
+                        effect_inputs.floor_query=&effect_floor_query;effect_inputs.floor_user=&floor_user;
+                        effect_inputs.ebd=&session.active_area().ebd;effect_inputs.references=&refs;
                         const auto effects=g_children.tick_effects(effect_inputs);
+                        if(effects.held||effects.released)
+                            hardware_test_trace("# effect_tick,frame=%lu,committed=%u,released=%u,held=%u,first_hold=%u,proxy_800341bc_skipped=%u",
+                                (unsigned long)session.frame_counter(),unsigned(effects.committed),unsigned(effects.released),
+                                unsigned(effects.held),unsigned(effects.first_hold),unsigned(effects.proxies_skipped));
                         // 0x80047228 -> 0x80046B34, then subtype-0x87 pickups.
                         if(source_reward_profile.loaded&&g_actor_rng.admitted()&&!g_source_scene_rng_replay) {
                             for(int n=0;n<8&&g_children.enemy_reward_queue().count;++n) {
@@ -4216,6 +4313,7 @@ int main() {
                 for(auto& row:frame_projection.r)row.x=-row.x;
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_projection,&frame_projection);
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_model_view,&view);
+            g_frame_view=view;g_frame_view_mirrored=!source_camera_bound;
             if(g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly){
                 // The original drops back faces at NCLIP; only the gameplay
                 // camera has the 0x1F800008 words the face test needs.
@@ -4300,6 +4398,11 @@ int main() {
                     hardware_test_trace("# source_buster_draw,frame=%lu,drawn=%lu,segment=8003430C_REGISTRATION,presentation=FRONTEND_DIAGNOSTIC",
                         (unsigned long)session.frame_counter(),(unsigned long)drawn);
                 (void)draw_source_reward_pickups_uv(g_children);
+                const auto fx=draw_source_effects_uv(g_children,session.active_area().ebd,session.map_area_index());
+                if((fx.models||fx.sprites||fx.held)&&session.frame_counter()%10u==0u)
+                    hardware_test_trace("# effect_draw,frame=%lu,models=%lu,sprites=%lu,held=%lu,passes=%lu,meshes=%lu,tier=NEAR_CANDIDATE",
+                        (unsigned long)session.frame_counter(),(unsigned long)fx.models,(unsigned long)fx.sprites,
+                        (unsigned long)fx.held,(unsigned long)fx.passes,(unsigned long)g_effect_meshes.size());
             }
             const auto scene_overlay=g_source_event_boot&&g_hardware_scene_draw==HardwareSceneDraw::All?session.source_event_scene_overlay():std::nullopt;
             const bool scene_overlay_submitted=scene_overlay&&scene_overlay->subtract_from_scene&&
