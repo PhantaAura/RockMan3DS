@@ -127,8 +127,10 @@ struct TerrainBatch {
     C3D_Tex texture{};
     bool texture_ready = false;
     std::vector<TerrainQuadInfo> quads;   // quad k = vertices 6k..6k+5
-    uint16_t* indices = nullptr;          // linear: [0,6q) drawn, [6q,12q) black
+    // linear: [0,6q) drawn from the front, see-through from the back; [6q,12q) black
+    uint16_t* indices = nullptr;
     size_t black_count = 0;
+    size_t see_through_count = 0;
     // Per-vertex modulation (RGB/128, PS1 texel*colour/128): the depth cue
     // DPCS colour of each classified face; 1.0 elsewhere. Linear, 3 floats.
     float* colors = nullptr;
@@ -1993,8 +1995,10 @@ void configure_texenv_black_uv(bool textured) {
     C3D_TexEnvColor(env, 0xFF020202u);
 }
 
-struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0; };
+struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0,
+    see_through = 0; };
 static TerrainFaceStats g_terrain_face_stats;
+static uint32_t g_terrain_see_through_held = 0; // previous frame, set by draw_terrain_see_through
 
 // faces == nullptr keeps the previous draw-everything behaviour.
 void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive_mode = 0,
@@ -2034,11 +2038,12 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
         if (batch.texture_ready) C3D_TexBind(0,const_cast<C3D_Tex*>(&batch.texture));
         configure_texenv_uv(batch.texture_ready);
         batch.black_count = 0;
+        batch.see_through_count = 0;
         if (faces && batch.indices) {
             // Original per-quad face test (0x80025900 / 0x80024F30 family
             // rules) with the 0x1F800008 camera; see terrain_visibility.h.
             const size_t q = batch.quads.size();
-            size_t drawn = 0, black = 0;
+            size_t drawn = 0, black = 0, see = 0;
             for (size_t k = 0; k < q; ++k) {
                 const auto& quad = batch.quads[k];
                 const auto r = l3::classify_terrain_face(*faces, quad.x, quad.y, quad.z, quad.prefix,
@@ -2061,7 +2066,11 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                 }
                 uint16_t* out = nullptr;
                 switch (r.face) {
-                case l3::TerrainFace::Draw: out = batch.indices + 6u * drawn++; ++g_terrain_face_stats.drawn; break;
+                case l3::TerrainFace::Draw:
+                    // 0x1F80007C faces wait for draw_terrain_see_through.
+                    if (r.see_through) { out = batch.indices + 6u * (q - 1u - see++); ++g_terrain_face_stats.see_through; }
+                    else out = batch.indices + 6u * drawn++;
+                    ++g_terrain_face_stats.drawn; break;
                 case l3::TerrainFace::Unsupported: out = batch.indices + 6u * drawn++; ++g_terrain_face_stats.unsupported; break;
                 case l3::TerrainFace::Black: out = batch.indices + 6u * (q + black++); ++g_terrain_face_stats.black; break;
                 case l3::TerrainFace::Skip: ++g_terrain_face_stats.skipped; break;
@@ -2071,6 +2080,7 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
             GSPGPU_FlushDataCache(batch.indices, q * 12u * sizeof(uint16_t));
             if (face_colors) GSPGPU_FlushDataCache(batch.colors, q * 18u * sizeof(float));
             batch.black_count = black;
+            batch.see_through_count = see;
             if (drawn) {
                 ++g_runtime_diag.draw_calls;
                 g_submitted_vertices += static_cast<uint32_t>(6u * drawn);
@@ -2099,6 +2109,63 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                          batch.indices + 6u * batch.quads.size());
     }
     draw_terrain_overlay();
+}
+
+// Faces with 0x1F80007C (ABE) from the 0x80024F30 / 0x80025900 see-through
+// rule, after the actors so Mega Man shows through. A textured semi-
+// transparent PS1 primitive blends only its STP texels (retained alpha 128)
+// with the TPAGE ABR; STP-0 texels stay opaque. Same two passes as the scene
+// E0 plan. Without the retained STP mask (no texture, alpha gate off) the
+// faces are drawn opaque as before. Original OT order among semi-transparent
+// primitives is not reproduced (CANDIDATE).
+void draw_terrain_see_through(const C3D_Mtx& projection, const C3D_Mtx& view) {
+    g_terrain_see_through_held = 0;
+    if (!use_material_batches()) return;
+    bool bound = false;
+    for (const auto& batch : g_terrain_batches) {
+        if (!batch.see_through_count) continue;
+        if (!bound) {
+            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_projection, &projection);
+            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_model_view, &view);
+            bound = true;
+        }
+        configure_terrain_attributes_uv(batch.vbo, batch.colors);
+        if (batch.texture_ready) C3D_TexBind(0, const_cast<C3D_Tex*>(&batch.texture));
+        configure_texenv_uv(batch.texture_ready);
+        const auto plan = l3::plan_scene_e0_material(0x02808080u, batch.material_word,
+            alpha_requested(), batch.texture_ready, batch.texture_ready);
+        const int count = int(6u * batch.see_through_count);
+        const uint16_t* first = batch.indices + 6u * (batch.quads.size() - batch.see_through_count);
+        if (plan.status != l3::SceneE0MaterialPlanStatus::Ready || !plan.semi_transparent) {
+            g_terrain_see_through_held += uint32_t(batch.see_through_count);
+            ++g_runtime_diag.draw_calls;
+            g_submitted_vertices += uint32_t(count);
+            C3D_DrawElements(GPU_TRIANGLES, count, C3D_UNSIGNED_SHORT, first);
+            continue;
+        }
+        for (size_t pass_index = 0; pass_index < plan.pass_count; ++pass_index) {
+            const auto& pass = plan.passes[pass_index];
+            const bool stp = pass.texels == l3::SceneE0TexelPass::StpOnly;
+            C3D_AlphaTest(true, stp ? GPU_EQUAL : GPU_GREATER, 128);
+            const bool quarter = pass.source == l3::SceneE0BlendFactor::Quarter;
+            C3D_BlendingColor(quarter ? 0x40404040u : 0x80808080u);
+            const auto factor = [](l3::SceneE0BlendFactor value) -> GPU_BLENDFACTOR {
+                switch (value) { case l3::SceneE0BlendFactor::Zero: return GPU_ZERO;
+                case l3::SceneE0BlendFactor::One: return GPU_ONE;
+                default: return GPU_CONSTANT_ALPHA; }
+            };
+            C3D_AlphaBlend(pass.equation == l3::SceneE0BlendEquation::DestinationMinusSource ?
+                GPU_BLEND_REVERSE_SUBTRACT : GPU_BLEND_ADD, GPU_BLEND_ADD,
+                factor(pass.source), factor(pass.destination), GPU_ONE, GPU_ZERO);
+            C3D_DepthTest(true, GPU_GEQUAL, stp ? GPU_WRITE_COLOR : GPU_WRITE_ALL);
+            ++g_runtime_diag.draw_calls;
+            g_submitted_vertices += uint32_t(count);
+            C3D_DrawElements(GPU_TRIANGLES, count, C3D_UNSIGNED_SHORT, first);
+        }
+    }
+    C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO);
+    C3D_BlendingColor(0); C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+    C3D_AlphaTest(alpha_requested(), GPU_GREATER, 0);
 }
 
 uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
@@ -4427,6 +4494,10 @@ int main() {
                 if(source_follow_view&&!source_camera_bound&&mode&&source_follow.scratch_shift_1f800074==0)
                     faces=l3::make_terrain_face_camera(source_follow.camera_1f800008,&session.active_area().flow.setup_blob);
                 if(faces)faces->lod_1f800074=source_follow.scratch_shift_1f800074;
+                // 0x1F80007C: ABE while event byte 0x800C4C48 is 0. An unknown
+                // byte keeps the gameplay value (CANDIDATE).
+                if(faces&&session.source_event_work()&&session.source_event_work()->known[0])
+                    faces->see_through_1f80007c=l3::terrain_see_through_code_1f80007c(session.source_event_work()->raw[0]);
                 // 0x800238BC: 0x1F8001C0 is the player's view depth this frame.
                 int32_t threshold=l3::kObservedArea1BackFaceThreshold;
                 if(faces){
@@ -4436,13 +4507,14 @@ int main() {
                 }
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold);
                 if(session.frame_counter()%120u==0u)
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,source=NCLIP_80025900+DPCS+RAMP",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,see_through=%lu,see_through_held=%lu,source=NCLIP_80025900+DPCS+RAMP+ABE_1F80007C",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
                         (unsigned long)g_terrain_face_stats.batches_unclassified,int(threshold),
                         (unsigned long)g_terrain_face_stats.depth_cued,(unsigned long)g_terrain_face_stats.ramped,
-                        (unsigned long)g_terrain_ramp.size(),unsigned(faces&&faces->far_color.has_value()));
+                        (unsigned long)g_terrain_ramp.size(),unsigned(faces&&faces->far_color.has_value()),
+                        (unsigned long)g_terrain_face_stats.see_through,(unsigned long)g_terrain_see_through_held);
             }
             // Independent renderer proof filter. A mixed gameplay/scene image
             // cannot prove which imported owner is visible. It defaults OFF and
@@ -4518,6 +4590,8 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)fx.models,(unsigned long)fx.sprites,
                         (unsigned long)fx.held,(unsigned long)fx.passes,(unsigned long)g_effect_meshes.size());
             }
+            if(use_uv_renderer()&&g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly)
+                draw_terrain_see_through(frame_projection,view);
             const auto scene_overlay=g_source_event_boot&&g_hardware_scene_draw==HardwareSceneDraw::All?session.source_event_scene_overlay():std::nullopt;
             const bool scene_overlay_submitted=scene_overlay&&scene_overlay->subtract_from_scene&&
                 scene_overlay->source_function==0x80100614u&&
