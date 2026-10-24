@@ -286,3 +286,8 @@ E0/05 box: ported the Area 2 breakable box (0x80113EE0) with its proxy, the
 E0 RNG phase (RA 0x80114020) and L3CB E0/05 reward rows. The reward is queued
 right after the session tick, ahead of trigger 16's object pause. Azahar: box
 breaks → 0x620 → message 11 → 0x621, 14 pickups. Host 163/163.
+
+E0 textures: targets, doors and the box use their original TPAGE/CLUT pages
+from the per-area actor cache and the scene E0 material plan (semi-transparent
+door pulse and box fade). Ported the box fade's ScaleMatrix growth. Raised the
+citro3d command buffer to 512 KiB after Area 2 overflowed the default.

@@ -198,6 +198,10 @@ static bool g_source_event_boot = false;
 // and frontend Near LOD. Main-phase scheduling and source camera depth are held.
 static bool g_source_scene_e0 = false;
 static bool g_source_scene_textures = false;
+// Immediate-mode vertices live in the command buffer. Area 2 (Reaverbots,
+// E0 targets/doors with their two semi-transparent passes, the box) peaked at
+// 93% of the 256 KiB default, so the buffer is 512 KiB of linear memory.
+constexpr size_t kGpuCommandBufferBytes = 0x80000;
 static bool g_source_scene_camera = false;
 static bool g_source_scene_actor40 = false;
 static bool g_source_scene_actor40_only = false;
@@ -1423,70 +1427,123 @@ void draw_imported_actors_uv(const l3::ActorAreaRuntime& area) {
 // This diagnostic renderer deliberately leaves texture/CLUT, source camera
 // depth and GTE shade unacknowledged. ABR/STP are gated below; original
 // ordering and PICA quantization are still not accepted as PS1 parity.
-// ST00 E0/08 targets/doors: one opaque, untextured pass tinted by +0x40
-// (FRONTEND_DIAGNOSTIC). Variant 0 is the first (E0,8) row, 1 the second (CANDIDATE).
-static const l3::EbdDirectory* g_e008_mesh_owner=nullptr;
-static std::vector<std::pair<size_t,l3::SceneE0MeshResource>> g_e008_meshes;
-size_t draw_source_e008_uv(const l3::RuntimeSession& session) {
-    if(!use_uv_renderer()||session.e008_objects().empty())return 0;
-    const auto& ebd=session.active_area().ebd;
-    if(g_e008_mesh_owner!=&ebd){g_e008_meshes.clear();g_e008_mesh_owner=&ebd;
-        for(const auto row:l3::find_ebd_entries(ebd,0xE0,8)){
-            try{g_e008_meshes.emplace_back(row,l3::decode_scene_e0_mesh(ebd,row,l3::SceneE0MeshTier::Near));}
-            catch(const std::exception& e){boot_log(MML_BOOT_DATA,e.what());}
-        }}
-    if(g_e008_meshes.empty())return 0;
-    configure_immediate_attributes_uv();configure_texenv_uv(false);
-    size_t drawn=0;
-    for(const auto& o:session.e008_objects()){
-        if(o.released||(o.target&&o.state>3))continue;
-        const auto& mesh=g_e008_meshes[o.target?0:std::min<size_t>(1,g_e008_meshes.size()-1)].second;
-        const float a=float(o.heading_30&0xfff)*6.2831853f/4096.f,cs=std::cos(a),sn=std::sin(a);
-        const float r=float(o.color_40&255u)/255.f,g=float((o.color_40>>8)&255u)/255.f,b=float((o.color_40>>16)&255u)/255.f;
-        const auto vertex=[&](uint8_t index,uint8_t u,uint8_t v){
-            const auto& p=mesh.part.vertices[index];
-            const float x=float(o.position[0])+cs*float(p.x)+sn*float(p.z);
-            const float z=float(o.position[2])-sn*float(p.x)+cs*float(p.z);
-            const auto uv=l3::actor_render_uv(u,v);
-            send_immediate_uv(x,float(o.position[1])+float(p.y),z,r,g,b,uv[0],uv[1]);
+// One E0 mesh through the scene E0 material plan: +0x40 is the flat 2C/2E
+// packet's modulation (ABE 0x02000000), the mesh word its TPAGE/CLUT. Returns
+// false when the plan holds the draw (semi-transparent without STP/NEAREST).
+template<class Transform>
+bool draw_e0_mesh_planned(const l3::SceneE0MeshResource& mesh,const std::vector<GpuMaterial>& materials,
+    bool textures,uint32_t modulation,const Transform& transform,size_t& submitted_passes,bool& semi) {
+    const GpuMaterial* material=nullptr;
+    if(textures)for(const auto& m:materials)
+        if(m.material_word==mesh.material_word&&m.texture_ready){material=&m;break;}
+    const auto plan=l3::plan_scene_e0_material(modulation,mesh.material_word,
+        alpha_requested(),material!=nullptr,material!=nullptr);
+    if(plan.status!=l3::SceneE0MaterialPlanStatus::Ready)return false;
+    semi=plan.semi_transparent;
+    if(material)C3D_TexBind(0,const_cast<C3D_Tex*>(&material->texture));
+    configure_texenv_uv(material!=nullptr);
+    if(material){C3D_TexEnvScale(C3D_GetTexEnv(0),C3D_RGB,GPU_TEVSCALE_2);
+        C3D_TexEnvScale(C3D_GetTexEnv(0),C3D_Alpha,GPU_TEVSCALE_2);}
+    const float scale=material?256.f:255.f;
+    const float r=float(modulation&255u)/scale;
+    const float g=float((modulation>>8)&255u)/scale;
+    const float b=float((modulation>>16)&255u)/scale;
+    const auto vertex=[&](uint8_t index,uint8_t u,uint8_t source_v) {
+        const auto p=transform(mesh.part.vertices[index]);
+        const auto uv=l3::actor_render_uv(u,source_v);
+        send_immediate_uv(p[0],p[1],p[2],r,g,b,uv[0],uv[1]);
+    };
+    for(size_t pass_index=0;pass_index<plan.pass_count;++pass_index){
+        const auto& pass=plan.passes[pass_index];
+        if(material)C3D_TexEnvScale(C3D_GetTexEnv(0),C3D_Alpha,
+            pass.alpha_tev_scale==1?GPU_TEVSCALE_1:GPU_TEVSCALE_2);
+        switch(pass.texels){
+        case l3::SceneE0TexelPass::OpaqueOnly:C3D_AlphaTest(true,GPU_GREATER,128);break;
+        case l3::SceneE0TexelPass::StpOnly:C3D_AlphaTest(true,GPU_EQUAL,128);break;
+        default:if(material||alpha_requested())C3D_AlphaTest(true,GPU_GREATER,0);break;
+        }
+        // Source ABR fractions are mapped to the nearest representable
+        // PICA constant. RGB5 truncation and original OT ordering remain
+        // separate CANDIDATE raster boundaries, not 1:1 acceptance.
+        const bool quarter=pass.source==l3::SceneE0BlendFactor::Quarter;
+        C3D_BlendingColor(quarter?0x40404040u:0x80808080u);
+        const auto factor=[](l3::SceneE0BlendFactor value)->GPU_BLENDFACTOR {
+            switch(value){case l3::SceneE0BlendFactor::Zero:return GPU_ZERO;
+            case l3::SceneE0BlendFactor::One:return GPU_ONE;
+            default:return GPU_CONSTANT_ALPHA;}
         };
-        ++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);
-        for(const auto& tri:mesh.part.triangles)for(size_t k=0;k<3;++k)vertex(tri.index[k],tri.uv[k*2],tri.uv[k*2+1]);
-        for(const auto& quad:mesh.part.quads)for(auto k:l3::kPs1QuadTriangleIndices)vertex(quad.index[k],quad.uv[k*2],quad.uv[k*2+1]);
-        C3D_ImmDrawEnd();++drawn;
+        C3D_AlphaBlend(pass.equation==l3::SceneE0BlendEquation::DestinationMinusSource?
+            GPU_BLEND_REVERSE_SUBTRACT:GPU_BLEND_ADD,GPU_BLEND_ADD,
+            factor(pass.source),factor(pass.destination),GPU_ONE,GPU_ZERO);
+        const bool stp=pass.texels==l3::SceneE0TexelPass::StpOnly;
+        C3D_DepthTest(true,GPU_GEQUAL,stp?GPU_WRITE_COLOR:GPU_WRITE_ALL);
+        ++submitted_passes;++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);
+        for(const auto& tri:mesh.part.triangles)for(size_t k=0;k<3;++k)
+            vertex(tri.index[k],tri.uv[k*2],tri.uv[k*2+1]);
+        for(const auto& quad:mesh.part.quads)for(auto k:l3::kPs1QuadTriangleIndices)
+            vertex(quad.index[k],quad.uv[k*2],quad.uv[k*2+1]);
+        C3D_ImmDrawEnd();
     }
-    return drawn;
+    C3D_AlphaBlend(GPU_BLEND_ADD,GPU_BLEND_ADD,GPU_ONE,GPU_ZERO,GPU_ONE,GPU_ZERO);
+    C3D_BlendingColor(0);C3D_DepthTest(true,GPU_GEQUAL,GPU_WRITE_ALL);
+    C3D_AlphaTest(alpha_requested(),GPU_GREATER,0);
+    return true;
 }
-// ST00 E0/05 boxes: the first (E0,5) row, untextured, tinted by +0x40
-// (FRONTEND_DIAGNOSTIC); hidden once the break action starts.
-static const l3::EbdDirectory* g_e005_mesh_owner=nullptr;
+// ST00 E0/08 targets/doors and E0/05 boxes use the per-area actor material
+// cache (their mesh words are cooked into actor_area_NN.l3mc). Variant 0 is
+// the first (E0,8) row, 1 the second (CANDIDATE).
+struct E0ObjectDrawStats { size_t drawn=0,textured_words=0,held=0,passes=0; };
+static const l3::EbdDirectory* g_e0_object_mesh_owner=nullptr;
+static std::vector<l3::SceneE0MeshResource> g_e008_meshes;
 static std::optional<l3::SceneE0MeshResource> g_e005_mesh;
-size_t draw_source_e005_uv(const l3::RuntimeSession& session) {
-    if(!use_uv_renderer()||session.e005_boxes().empty())return 0;
-    const auto& ebd=session.active_area().ebd;
-    if(g_e005_mesh_owner!=&ebd){g_e005_mesh.reset();g_e005_mesh_owner=&ebd;
-        for(const auto row:l3::find_ebd_entries(ebd,0xE0,5)){
-            try{g_e005_mesh=l3::decode_scene_e0_mesh(ebd,row,l3::SceneE0MeshTier::Near);break;}
-            catch(const std::exception& e){boot_log(MML_BOOT_DATA,e.what());}
-        }}
-    if(!g_e005_mesh)return 0;
-    configure_immediate_attributes_uv();configure_texenv_uv(false);
-    size_t drawn=0;
-    for(const auto& box:session.e005_boxes()){
-        const auto& o=box.object;
-        if(o.released||o.action_09==1)continue;
-        const float r=float(o.color_40&255u)/255.f,g=float((o.color_40>>8)&255u)/255.f,b=float((o.color_40>>16)&255u)/255.f;
-        const auto vertex=[&](uint8_t index,uint8_t u,uint8_t v){
-            const auto& p=g_e005_mesh->part.vertices[index];
-            const auto uv=l3::actor_render_uv(u,v);
-            send_immediate_uv(float(o.position[0])+float(p.x),float(o.position[1])+float(p.y),float(o.position[2])+float(p.z),r,g,b,uv[0],uv[1]);
-        };
-        ++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);
-        for(const auto& tri:g_e005_mesh->part.triangles)for(size_t k=0;k<3;++k)vertex(tri.index[k],tri.uv[k*2],tri.uv[k*2+1]);
-        for(const auto& quad:g_e005_mesh->part.quads)for(auto k:l3::kPs1QuadTriangleIndices)vertex(quad.index[k],quad.uv[k*2],quad.uv[k*2+1]);
-        C3D_ImmDrawEnd();++drawn;
+static void bind_e0_object_meshes(const l3::EbdDirectory& ebd){
+    if(g_e0_object_mesh_owner==&ebd)return;
+    g_e008_meshes.clear();g_e005_mesh.reset();g_e0_object_mesh_owner=&ebd;
+    for(const auto row:l3::find_ebd_entries(ebd,0xE0,8)){
+        try{g_e008_meshes.push_back(l3::decode_scene_e0_mesh(ebd,row,l3::SceneE0MeshTier::Near));}
+        catch(const std::exception& e){boot_log(MML_BOOT_DATA,e.what());}
     }
-    return drawn;
+    for(const auto row:l3::find_ebd_entries(ebd,0xE0,5)){
+        try{g_e005_mesh=l3::decode_scene_e0_mesh(ebd,row,l3::SceneE0MeshTier::Near);break;}
+        catch(const std::exception& e){boot_log(MML_BOOT_DATA,e.what());}
+    }
+}
+static bool e0_object_textured(const l3::SceneE0MeshResource& mesh){
+    if(!actor_textures_requested())return false;
+    for(const auto& m:g_actor_materials)if(m.material_word==mesh.material_word&&m.texture_ready)return true;
+    return false;
+}
+E0ObjectDrawStats draw_source_e0_objects_uv(const l3::RuntimeSession& session) {
+    E0ObjectDrawStats stats;
+    if(!use_uv_renderer()||(session.e008_objects().empty()&&session.e005_boxes().empty()))return stats;
+    bind_e0_object_meshes(session.active_area().ebd);
+    configure_immediate_attributes_uv();
+    bool semi=false;
+    if(!g_e008_meshes.empty())for(const auto& o:session.e008_objects()){
+        if(o.released||(o.target&&o.state>3))continue;
+        const auto& mesh=g_e008_meshes[o.target?0:std::min<size_t>(1,g_e008_meshes.size()-1)];
+        const float a=float(o.heading_30&0xfff)*6.2831853f/4096.f,cs=std::cos(a),sn=std::sin(a);
+        const auto transform=[&](const auto& p)->std::array<float,3>{
+            return {{float(o.position[0])+cs*float(p.x)+sn*float(p.z),float(o.position[1])+float(p.y),
+                     float(o.position[2])-sn*float(p.x)+cs*float(p.z)}};
+        };
+        if(draw_e0_mesh_planned(mesh,g_actor_materials,actor_textures_requested(),o.color_40,transform,stats.passes,semi)){
+            ++stats.drawn;stats.textured_words+=e0_object_textured(mesh);
+        } else ++stats.held;
+    }
+    if(g_e005_mesh)for(const auto& box:session.e005_boxes()){
+        const auto& o=box.object;
+        if(o.released)continue;
+        // +0x18 is identity scaled by the fade's ScaleMatrix (0x8007ADE8).
+        const float k=float(o.matrix_scale_18)/4096.f;
+        const auto transform=[&](const auto& p)->std::array<float,3>{
+            return {{float(o.position[0])+k*float(p.x),float(o.position[1])+k*float(p.y),float(o.position[2])+k*float(p.z)}};
+        };
+        if(draw_e0_mesh_planned(*g_e005_mesh,g_actor_materials,actor_textures_requested(),o.color_40,transform,stats.passes,semi)){
+            ++stats.drawn;stats.textured_words+=e0_object_textured(*g_e005_mesh);
+        } else ++stats.held;
+    }
+    return stats;
 }
 size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::SceneE0Resources& resources) {
     if(!use_uv_renderer()||!resources.resident_in(session.active_area().ebd))return 0;
@@ -1499,64 +1556,15 @@ size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::Scene
         if(draw.status!=l3::SceneE0Status::Ready)continue;
         const auto& v=draw.view;
         if(v.mesh->part.triangles.empty()&&v.mesh->part.quads.empty())continue;
-        const GpuMaterial* material=nullptr;
-        if(g_source_scene_textures)for(const auto& m:g_scene_materials)
-            if(m.material_word==v.mesh->material_word&&m.texture_ready){material=&m;break;}
-        const auto plan=l3::plan_scene_e0_material(v.modulation_word,v.mesh->material_word,
-            alpha_requested(),material!=nullptr,material!=nullptr);
-        if(plan.status!=l3::SceneE0MaterialPlanStatus::Ready){++held_materials;continue;}
-        if(plan.semi_transparent)++semi_instances;
-        if(material)C3D_TexBind(0,const_cast<C3D_Tex*>(&material->texture));
-        configure_texenv_uv(material!=nullptr);
-        if(material){C3D_TexEnvScale(C3D_GetTexEnv(0),C3D_RGB,GPU_TEVSCALE_2);
-            C3D_TexEnvScale(C3D_GetTexEnv(0),C3D_Alpha,GPU_TEVSCALE_2);}
-        const float scale=material?256.f:255.f;
-        const float r=float(v.modulation_word&255u)/scale;
-        const float g=float((v.modulation_word>>8)&255u)/scale;
-        const float b=float((v.modulation_word>>16)&255u)/scale;
-        const auto vertex=[&](uint8_t index,uint8_t u,uint8_t source_v) {
-            const auto& p=v.mesh->part.vertices[index];
-            const float x=float(v.position[0])+(float(v.rotation[0])*p.x+float(v.rotation[1])*p.y+float(v.rotation[2])*p.z)/4096.f;
-            const float y=float(v.position[1])+(float(v.rotation[3])*p.x+float(v.rotation[4])*p.y+float(v.rotation[5])*p.z)/4096.f;
-            const float z=float(v.position[2])+(float(v.rotation[6])*p.x+float(v.rotation[7])*p.y+float(v.rotation[8])*p.z)/4096.f;
-            const auto uv=l3::actor_render_uv(u,source_v);
-            send_immediate_uv(x,y,z,r,g,b,uv[0],uv[1]);
+        const auto transform=[&](const auto& p)->std::array<float,3>{
+            return {{float(v.position[0])+(float(v.rotation[0])*p.x+float(v.rotation[1])*p.y+float(v.rotation[2])*p.z)/4096.f,
+                     float(v.position[1])+(float(v.rotation[3])*p.x+float(v.rotation[4])*p.y+float(v.rotation[5])*p.z)/4096.f,
+                     float(v.position[2])+(float(v.rotation[6])*p.x+float(v.rotation[7])*p.y+float(v.rotation[8])*p.z)/4096.f}};
         };
-        ++instances;
-        for(size_t pass_index=0;pass_index<plan.pass_count;++pass_index){
-            const auto& pass=plan.passes[pass_index];
-            if(material)C3D_TexEnvScale(C3D_GetTexEnv(0),C3D_Alpha,
-                pass.alpha_tev_scale==1?GPU_TEVSCALE_1:GPU_TEVSCALE_2);
-            switch(pass.texels){
-            case l3::SceneE0TexelPass::OpaqueOnly:C3D_AlphaTest(true,GPU_GREATER,128);break;
-            case l3::SceneE0TexelPass::StpOnly:C3D_AlphaTest(true,GPU_EQUAL,128);break;
-            default:if(material||alpha_requested())C3D_AlphaTest(true,GPU_GREATER,0);break;
-            }
-            // Source ABR fractions are mapped to the nearest representable
-            // PICA constant. RGB5 truncation and original OT ordering remain
-            // separate CANDIDATE raster boundaries, not 1:1 acceptance.
-            const bool quarter=pass.source==l3::SceneE0BlendFactor::Quarter;
-            C3D_BlendingColor(quarter?0x40404040u:0x80808080u);
-            const auto factor=[](l3::SceneE0BlendFactor value)->GPU_BLENDFACTOR {
-                switch(value){case l3::SceneE0BlendFactor::Zero:return GPU_ZERO;
-                case l3::SceneE0BlendFactor::One:return GPU_ONE;
-                default:return GPU_CONSTANT_ALPHA;}
-            };
-            C3D_AlphaBlend(pass.equation==l3::SceneE0BlendEquation::DestinationMinusSource?
-                GPU_BLEND_REVERSE_SUBTRACT:GPU_BLEND_ADD,GPU_BLEND_ADD,
-                factor(pass.source),factor(pass.destination),GPU_ONE,GPU_ZERO);
-            const bool stp=pass.texels==l3::SceneE0TexelPass::StpOnly;
-            C3D_DepthTest(true,GPU_GEQUAL,stp?GPU_WRITE_COLOR:GPU_WRITE_ALL);
-            ++submitted_passes;++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);
-            for(const auto& tri:v.mesh->part.triangles)for(size_t k=0;k<3;++k)
-                vertex(tri.index[k],tri.uv[k*2],tri.uv[k*2+1]);
-            for(const auto& quad:v.mesh->part.quads)for(auto k:l3::kPs1QuadTriangleIndices)
-                vertex(quad.index[k],quad.uv[k*2],quad.uv[k*2+1]);
-            C3D_ImmDrawEnd();
-        }
-        C3D_AlphaBlend(GPU_BLEND_ADD,GPU_BLEND_ADD,GPU_ONE,GPU_ZERO,GPU_ONE,GPU_ZERO);
-        C3D_BlendingColor(0);C3D_DepthTest(true,GPU_GEQUAL,GPU_WRITE_ALL);
-        C3D_AlphaTest(alpha_requested(),GPU_GREATER,0);
+        bool semi=false;
+        if(!draw_e0_mesh_planned(*v.mesh,g_scene_materials,g_source_scene_textures,v.modulation_word,
+            transform,submitted_passes,semi)){++held_materials;continue;}
+        ++instances;if(semi)++semi_instances;
     }
     if(session.frame_counter()%60u==0u)
         hardware_test_trace("# source_E0_material,frame=%lu,instances=%lu,semi_instances=%lu,passes=%lu,held=%lu,alpha_gate=%u,STP_POLICY=REQUIRE_RETAINED_NEAREST,blend_quantization=CANDIDATE,OT_order=UNKNOWN",
@@ -1987,7 +1995,7 @@ void top_screen_gpu_probe() {
     consoleClear();
 }
 void init_gpu_target(bool& gpu_ready) {
-    if (!C3D_Init(C3D_DEFAULT_CMDBUF_SIZE)) throw std::runtime_error("C3D_Init failed");
+    if (!C3D_Init(kGpuCommandBufferBytes)) throw std::runtime_error("C3D_Init failed");
     gpu_ready=true;
     boot_log(MML_BOOT_C3D, "citro3d");
 
@@ -4128,7 +4136,12 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)submitted,unsigned(source_camera_bound));
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){
-                const auto targets=draw_source_e008_uv(session);
+                const auto e0_objects=draw_source_e0_objects_uv(session);
+                const size_t targets=session.e008_objects().empty()?0:e0_objects.drawn;
+                if(e0_objects.drawn+e0_objects.held&&session.frame_counter()%60u==0u)
+                    hardware_test_trace("# e0_object_material,frame=%lu,drawn=%lu,textured=%lu,held=%lu,passes=%lu,material=ACTOR_AREA_CACHE,shade=UNKNOWN,OT_order=UNKNOWN",
+                        (unsigned long)session.frame_counter(),(unsigned long)e0_objects.drawn,(unsigned long)e0_objects.textured_words,
+                        (unsigned long)e0_objects.held,(unsigned long)e0_objects.passes);
                 if(targets&&session.frame_counter()%30u==0u){
                     char hp[96];size_t at=0;hp[0]=0;
                     for(const auto& o:session.e008_objects())if(o.target&&at<80)
@@ -4142,15 +4155,13 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)targets,
                         session.player_check_target()?long(*session.player_check_target()):-1L,
                         unsigned(session.story_flag(0x608)),unsigned(session.story_flag(0x609)),unsigned(session.story_flag(0x60E)));
-            }
-            if(g_hardware_scene_draw==HardwareSceneDraw::All){
-                const auto boxes=draw_source_e005_uv(session);
                 if(!session.e005_boxes().empty()&&session.frame_counter()%30u==0u){
                     const auto& box=session.e005_boxes().front();
-                    hardware_test_trace("# e005_box,frame=%lu,drawn=%lu,slot=%u,hp=%d,action=%u,released=%u,flag620=%u,flag621=%u,rng=%u,no_random=%u,presentation=FRONTEND_DIAGNOSTIC",
-                        (unsigned long)session.frame_counter(),(unsigned long)boxes,unsigned(box.slot),int(box.object.hp_44),
+                    hardware_test_trace("# e005_box,frame=%lu,drawn=%lu,slot=%u,hp=%d,action=%u,released=%u,flag620=%u,flag621=%u,rng=%u,no_random=%u,scale=%ld,color=%08lx",
+                        (unsigned long)session.frame_counter(),(unsigned long)e0_objects.drawn,unsigned(box.slot),int(box.object.hp_44),
                         unsigned(box.object.action_09),unsigned(box.object.released),unsigned(session.story_flag(0x620)),unsigned(session.story_flag(0x621)),
-                        unsigned(box.rng_status),unsigned(box.reward_without_random));
+                        unsigned(box.rng_status),unsigned(box.reward_without_random),
+                        (long)box.object.matrix_scale_18,(unsigned long)box.object.color_40);
                 }
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){if(use_uv_renderer())draw_projectiles_uv(session);else draw_projectiles_0143(session);}
@@ -4174,7 +4185,7 @@ int main() {
             if(!g_first_frame_logged || session.frame_counter()%60u==0u)
                 hardware_test_trace("# top_gpu_submission,frame=%lu,command_fraction=%.5f,command_capacity_bytes=%lu,renderer=%u,source=completed_submission,physical_parity=false",
                     (unsigned long)session.frame_counter(),double(C3D_GetCmdBufUsage()),
-                    (unsigned long)C3D_DEFAULT_CMDBUF_SIZE,unsigned(g_renderer_gate.active));
+                    (unsigned long)kGpuCommandBufferBytes,unsigned(g_renderer_gate.active));
             if(scene_overlay_submitted) {
                 const bool accepted=session.acknowledge_source_event_scene_overlay(scene_overlay->lease);
                 if(accepted)++scene_overlay_receipts;

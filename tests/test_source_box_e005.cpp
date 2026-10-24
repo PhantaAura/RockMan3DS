@@ -18,6 +18,9 @@ int main(){
     assert(s.sound==0xA2&&b.action_09==1&&!(b.flags_2c&2u));
     int frames=1;while(!s.released&&frames<10){s=source_e005_step(b,packet,uint16_t(6));++frames;}
     assert(s.released&&frames==4&&s.set_flag==uint16_t(0x620)&&s.reward_record==uint8_t(0));  // 6 & 1
+    // Fade frames at counters 2, 3, 4: 0x8011CB08 0x1028, 0x1064, 0x10B4 and the
+    // cumulative ScaleMatrix diagonal 0x1028 -> 4236 -> 4422; colour 0x2E202020.
+    assert(b.scale_cb08==0x10B4&&b.matrix_scale_18==4422&&b.color_40==0x2E202020u);
     assert(!source_e005_step(b,packet,uint16_t(1)).register_proxy);
     // Parameter 1: reward record 2 and the flag; parameter 0: reward only, held without a sample.
     auto c=source_e005_init_80113f2c({{0,0,0}},0x01,0x700);c.action_09=1;

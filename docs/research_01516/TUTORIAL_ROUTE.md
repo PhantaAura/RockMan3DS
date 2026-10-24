@@ -67,7 +67,7 @@ the cooked L3TR; objects come from the cooked stage and conditional-spawn lists.
 | E0/07 switch and gate | ported. Sounds, the 0x800398E0 shake, 0x8001B2F0 and the model animation are not |
 | Subtype 0x19 Reaverbots | ported (`class20_19`); host-checked on the real Area 1 map, Azahar fight not yet run |
 | E0/08 targets/doors, action check 0x60E (`0x800411DC`) | ported; Azahar: check → msg 8/9, both targets destroyed, doors open |
-| E0/05 box (0x620) | ported (`source_box_e005`); Azahar: box breaks → 0x620 → msg 11 (Right+A) → 0x621, reward expands 14 pickups |
+| E0/05 box (0x620) | ported (`source_box_e005`, textured, fade scale); Azahar: box breaks → 0x620 → msg 11 (Right+A) → 0x621, reward expands 14 pickups |
 | class 40/04, subtype-3 parameter 0xA0 wake | **not checked** |
 
 Azahar, normal boot and scripted route: Area 1 messages 0 → 1 → 2 → 3 → 4 → 6

@@ -1,5 +1,6 @@
 #include "legends3ds/actor_material.h"
 #include "legends3ds/area_package.h"
+#include "legends3ds/scene_e0.h"
 #include <set>
 #include <stdexcept>
 
@@ -40,6 +41,16 @@ std::vector<uint32_t> collect_admitted_actor_material_words(const EbdDirectory& 
         if(words.size()>kActorMaterialEntryLimit)
             throw std::runtime_error("actor material area count policy exceeded");
     }
+    return {words.begin(),words.end()};
+}
+std::vector<uint32_t> collect_admitted_e0_object_material_words(const EbdDirectory& ebd) {
+    std::set<uint32_t> words;
+    for(const uint8_t subtype:{uint8_t(5),uint8_t(8)})
+        for(const auto row:find_ebd_entries(ebd,0xE0,subtype))
+            for(const auto tier:{SceneE0MeshTier::Near,SceneE0MeshTier::Middle,SceneE0MeshTier::Far})
+                words.insert(decode_scene_e0_mesh(ebd,row,tier).material_word);
+    if(words.size()>kActorMaterialEntryLimit)
+        throw std::runtime_error("E0 object material count policy exceeded");
     return {words.begin(),words.end()};
 }
 MaterialCache load_actor_material_cache(const std::vector<uint8_t>& bytes,uint64_t limit) {

@@ -14,7 +14,9 @@ namespace l3 {
 // (+0x38, +0x3A - 0x80, +0x3C), radius 0xA0, mode 0x8000 / producer 0x04080000
 // (parameter >> 4 == 0). Action 1 0x80114170 breaks it over 4 frames and
 // releases; parameter & 0xF: 1 -> reward record 2 and the flag, 2 -> the flag
-// and reward record (+0x2E & 1), else reward record (+0x2E & 1).
+// and reward record (+0x2E & 1), else reward record (+0x2E & 1). Each fade
+// frame adds counter * 20 to the static scale vector 0x8011CB08 (0x1000 in the
+// overlay image) and applies ScaleMatrix 0x8007ADE8 to the +0x18 matrix.
 struct SourceE005Object {
     uint8_t parameter = 0;
     std::array<int16_t,3> position{};   // +0x38
@@ -23,6 +25,8 @@ struct SourceE005Object {
     int16_t hp_44 = 0;
     uint16_t flag_46 = 0;
     uint32_t color_40 = 0x808080;
+    int32_t scale_cb08 = 0x1000;        // 0x8011CB08 (static; one box per stage, CANDIDATE)
+    int32_t matrix_scale_18 = 0x1000;   // uniform diagonal of the +0x18 matrix
     std::optional<uint16_t> random_2e;
     bool released = false;
 };

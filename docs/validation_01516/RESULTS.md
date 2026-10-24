@@ -143,3 +143,30 @@ is inside the E0/00 entry gate, so the box group is selected. Azahar trace:
 - **Not checked:** the box's look (untextured diagnostic mesh), its sound
   and the break effect.
 
+## E0 object textures (targets, doors, box)
+
+- E0/05 and E0/08 meshes now use their original TPAGE/CLUT pages. Their raw
+  material words (Area 2: 0x3D40002A target, 0x7D80003A door, 0x3DC00026
+  box) are cooked into `actor_area_NN.l3mc` with the same upload order as
+  the Reaverbots. All three resolve in Area 2.
+- The draws go through the scene E0 material plan. +0x40 is the flat-packet
+  modulation, and its 0x02000000 bit makes the door pulse and the box fade
+  semi-transparent (ABR from the TPAGE).
+- The box fade now also scales: 0x8011CB08 starts at 0x1000 and grows by
+  counter × 20, and ScaleMatrix 0x8007ADE8 is applied each frame (host test:
+  4096 → 0x1028 → 4236 → 4422, colour 0x2E202020).
+- **Crash found and fixed:** with the extra semi-transparent passes, Area 2
+  overflowed the 256 KiB citro3d command buffer when the Reaverbots spawned
+  (svcBreak PANIC loop at about frame 27). The buffer is now 512 KiB; peak
+  use was 52% on the box route.
+- **Azahar:**
+  - Box route: 7 E0 objects drawn, all textured, none held. The box fade
+    reached scale 4422, and the 0x620 → message 11 → 0x621 → reward chain
+    still works.
+  - Targets route: target 0x61 still takes hits and breaks. Target 0x60 was
+    not reached because the script's fixed timing went out of step with the
+    dialogue (Mega Man stopped at z 12861), so this is not a render result.
+- **Not checked:** how they look. The Mac screen was locked, so no
+  screenshot could be taken. Shade, OT order and the break effect are still
+  UNKNOWN or unported.
+

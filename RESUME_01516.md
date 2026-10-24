@@ -47,6 +47,12 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   `01516-e005-box-1`). In Azahar the box breaks, 0x620 opens message 11, the
   answer sets 0x621 and the reward drops pickups.
 
+- E0 targets, doors and the box are textured: their mesh pages are cooked into
+  the per-area actor cache (recipe `01516-e0-textures-1`). They draw through
+  the scene E0 material plan, with semi-transparent door pulse and box fade.
+  The box fade's ScaleMatrix growth is ported. The GPU command buffer is
+  now 512 KiB (Area 2 overflowed the 256 KiB default).
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 162/162, native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
@@ -54,8 +60,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 ## Next
 0. The objects the rest of the tutorial waits on, in route order:
    - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
-   - E0 objects are drawn untextured (diagnostic). The box's break effect
-     (0x80031618), sound and 0x80052528 are not ported;
+   - look at the textured E0 objects on screen (not seen yet: screen locked).
+     The box's break effect (0x80031618), sound and 0x80052528 are not ported;
    - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing

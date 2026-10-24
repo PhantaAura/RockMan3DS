@@ -54,7 +54,11 @@ SourceE005Step source_e005_step(SourceE005Object& o, uint32_t& packet,
                     if (o.random_2e) out.reward_record = uint8_t(*o.random_2e & 1u);
                     else out.reward_needs_random = true;
                 }
-            } else o.color_40 -= 0x202020u;
+            } else {
+                o.color_40 += 0xFFDFDFE0u;                              // 0x8011430C
+                o.scale_cb08 += int32_t(o.counter_0c) * 20;
+                o.matrix_scale_18 = (o.matrix_scale_18 * o.scale_cb08) >> 12;   // 0x8007ADE8
+            }
         }
     }
     if (!o.released && (o.flags_2c & 4u)) {

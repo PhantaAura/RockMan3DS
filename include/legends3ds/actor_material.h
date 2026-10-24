@@ -16,6 +16,9 @@ std::vector<uint32_t> collect_actor_material_words(const ActorMeshResource& reso
 // Host-only load-time collection of the resource profiles already admitted by
 // ActorAreaRuntime. Unsupported actors are not assigned guessed material data.
 std::vector<uint32_t> collect_admitted_actor_material_words(const EbdDirectory& ebd);
+// ST00 E0/05 boxes and E0/08 targets/doors drawn by the native runtime: the
+// raw single-part material word of every (E0,5)/(E0,8) row, all three tiers.
+std::vector<uint32_t> collect_admitted_e0_object_material_words(const EbdDirectory& ebd);
 MaterialCache load_actor_material_cache(const std::vector<uint8_t>& bytes,
                                        uint64_t decoded_limit = kActorMaterialDecodedLimit);
 // Same byte UV/pixel-center and bottom-origin conversion as the player renderer.
