@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, scripted, trace, user dspfirm.cdc): voice clips start with their messages; shots/box hits/break/typing blips key their SPU voices; distance gate drops far objects. Not listened to (headless).",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS, scripted, trace, user dspfirm.cdc): voice clips start with their messages; shots/box hits/break/typing blips key their SPU voices; distance gate drops far objects. User listened in Azahar: effects and Roll's voice sound right.",
  "emulator_evidence": "docs/validation_01516/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",

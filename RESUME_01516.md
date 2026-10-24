@@ -67,8 +67,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 ## Next
 0. The objects the rest of the tutorial waits on, in route order:
    - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
-   - look at the textured E0 objects on screen and listen to the audio (not
-     checked yet: screen locked);
+   - look at the textured E0 objects on screen (audio was listened to and
+     sounds right);
    - sequenced music (SEP) and the E0/08 door-pulse rand draws;
      The box's break effect (0x80031618), sound and 0x80052528 are not ported;
    - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.

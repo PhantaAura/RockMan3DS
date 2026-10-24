@@ -1,8 +1,9 @@
 # Tutorial audio: effects and Roll's voice (0.0.15.16)
 
 Status: **SOURCE_BACKED_PARTIAL**. Routing, gating, volumes, pitch and the
-envelope follow the original code below. How it sounds has not been checked
-by ear (the Mac screen was locked; Azahar ran headless).
+envelope follow the original code below. The user listened in Azahar and
+reports that the effects and Roll's voice sound right. There is no
+sample-level comparison with a PS1 capture.
 
 ## Roll's voice (XA)
 - Message opcode **0x8F AUDIO** (handler 0x800548C4) reads a u32 id and calls

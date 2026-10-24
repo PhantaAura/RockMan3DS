@@ -192,5 +192,5 @@ Azahar box route, after copying the user's own `dspfirm.cdc` to `sdmc:/3ds/`
   - The source audio queue was never drained, so it filled at 24 records and
     dropped the rest.
   - Without rand() the target beep fired every 2 frames.
-- **Not checked:** how it sounds (headless run, screen locked).
+- **Listening check (user, Azahar):** the effects and Roll's voice sound right.
 
