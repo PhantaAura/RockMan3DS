@@ -13,7 +13,7 @@ uint32_t crc32(const uint8_t* p, size_t n) {
     return ~c;
 }
 void require(bool ok, const char* what) { if (!ok) throw std::runtime_error(what); }
-constexpr size_t kHeader = 44, kRequest = 8, kSep = 12, kVab = 16, kSample = 16, kPitch = 384;
+constexpr size_t kHeader = 44, kRequest = 8, kSep = 12, kVab = 16, kSample = 16, kPitch = 384 + 72;
 constexpr uint32_t kMaxFrames = 1u << 20;
 constexpr uint16_t kSeqVolume_ad14a = 100;   // 0x80019DE0: 0x800AD14A = 100
 constexpr uint8_t kFadeStep_98840 = 4;       // 0x80019DE0: 0x80098840 = 4
@@ -40,6 +40,10 @@ SourceMusicBank load_l3music_bank(const uint8_t* b, size_t size) {
     SourceMusicBank bank;
     const uint8_t* p = b + kHeader;
     for (size_t i = 0; i < 192; ++i) bank.pitch_table[i] = rd16(p + i * 2);
+    for (size_t i = 0; i < 4; ++i) bank.reverb_entry[i] = p[384 + i];
+    bank.reverb_base = rd32(p + 388);
+    for (size_t i = 0; i < 32; ++i) bank.reverb_regs[i] = rd16(p + 392 + i * 2);
+    require(bank.reverb_entry[0] <= 9 && bank.reverb_base && bank.reverb_base <= 0xFFFE, "L3MU reverb");
     p += kPitch;
     for (uint32_t i = 0; i < na; ++i) bank.area_music.push_back(rd16(p + i * 2));
     p += areas;
@@ -161,6 +165,24 @@ void SourceMusicPlayer::volumes_8001aef0() noexcept {
         if (s.access == -1 || s.type == 0xFF) continue;
         const uint16_t v = uint16_t(int(kSeqVolume_ad14a) * volume_ad152_ / 0x7F);
         sep_set_vol_80070694(owner_id(s.access, s.type == 0 ? 0 : s.sequence), v, v);
+    }
+    // 0x800AD15A state: a new entry sets the type (SsUtSetReverbType, then
+    // SpuSetReverb(1)); 0x1E frames later SsUtSetReverbDepth(depth) and
+    // SsSetRVol(RVol) both write the reverb output volume.
+    const auto& e = bank_->reverb_entry;
+    if (reverb_state_ == 0 && reverb_pending_) {
+        reverb_pending_ = false;
+        reverb_type_ = e[0];
+        reverb_out_ = 0;   // CANDIDATE: a mode change leaves the output at 0 until the depth call
+        reverb_on_ = true;
+        const uint32_t halfwords = (0x80000u - bank_->reverb_base * 8u) / 2u;
+        reverb_buffer_.assign(e[0] ? halfwords : 0, 0);   // CANDIDATE: work area starts cleared
+        reverb_address_ = 0;
+        reverb_wait_ = 0x1E; reverb_state_ = 1;
+    } else if (reverb_state_ == 1 && --reverb_wait_ == 0) {
+        // SsUtSetReverbDepth(depth) is overwritten by SsSetRVol(RVol): same register.
+        if (e[0]) reverb_out_ = int16_t(e[1] * 0x7FFF / 0x7F);
+        reverb_state_ = 0;
     }
 }
 
@@ -570,6 +592,7 @@ void SourceMusicPlayer::key_on_80073100(int16_t owner, uint8_t vab_id, int16_t p
         x.dirty_3940 |= 4;
         // 0x80074398: volume with the scaled velocity, then key on.
         voice_volume(x, scaled, s ? s->vol_l_58 : 0x7F, s ? s->vol_r_5a : 0x7F, pan);
+        x.reg_reverb = (tone[1] & 4) != 0;
         x.key_on = true; x.key_off = false;
         ++key_ons_;
     }
@@ -656,6 +679,7 @@ void SourceMusicPlayer::flush_800725e0() noexcept {
         x.dirty_3940 = 0;
     }
     for (auto& x : voices_) if (x.key_off) { x.envelope.key_off(); x.key_off = false; }
+    for (auto& x : voices_) x.reverb = x.reg_reverb;           // 0x80072D08(8, 0x8009AE44)
     for (auto& x : voices_) {
         if (!x.key_on) continue;
         x.key_on = false;
@@ -676,10 +700,23 @@ size_t SourceMusicPlayer::sounding_voices() const noexcept {
 // interpolation (CANDIDATE: the SPU interpolates with a 4-tap Gaussian),
 // ADSR per sample, volume 0x3FFF = full scale.
 void SourceMusicPlayer::render(int16_t* out, size_t frames) noexcept {
+    const bool reverb = reverb_on_ && !reverb_buffer_.empty();
     while (frames) {
         const size_t n = std::min<size_t>(frames, kSourceMusicFramesPerTick);
         mix_.fill(0);
+        if (reverb) reverb_in_.fill(0);
         if (bank_) for (auto& x : voices_) if (x.sounding) render_voice(x, n);
+        if (reverb) {
+            // CANDIDATE: the SPU decimates/interpolates around its 22050 Hz
+            // reverb with a 39-tap FIR; this averages pairs and holds the output.
+            for (size_t i = 0; i + 1 < n; i += 2) {
+                int32_t l = 0, r = 0;
+                reverb_step((reverb_in_[i * 2] + reverb_in_[i * 2 + 2]) >> 1,
+                            (reverb_in_[i * 2 + 1] + reverb_in_[i * 2 + 3]) >> 1, l, r);
+                mix_[i * 2] += l; mix_[i * 2 + 2] += l;
+                mix_[i * 2 + 1] += r; mix_[i * 2 + 3] += r;
+            }
+        }
         for (size_t i = 0; i < n * 2; ++i) {
             const int32_t v = mix_[i];
             out[i] = int16_t(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
@@ -692,6 +729,7 @@ void SourceMusicPlayer::render_voice(Voice& x, size_t frames) noexcept {
     const auto& smp = bank_->samples[x.sample];
     const uint32_t step = x.pitch > 0x3FFF ? 0x4000u : x.pitch;
     const bool looped = smp.loop_start != 0xFFFFFFFFu;
+    const bool wet = x.reverb && reverb_on_;
     for (size_t i = 0; i < frames; ++i) {
         const int32_t a = smp.pcm[x.position];
         const uint32_t nxt = x.position + 1;
@@ -699,8 +737,9 @@ void SourceMusicPlayer::render_voice(Voice& x, size_t frames) noexcept {
         const int32_t s = a + (((b - a) * int32_t(x.phase)) >> 12);
         x.envelope.advance(1);
         const int32_t e = (s * x.envelope.level()) >> 15;
-        mix_[i * 2] += (e * int32_t(x.vol_l)) >> 14;
-        mix_[i * 2 + 1] += (e * int32_t(x.vol_r)) >> 14;
+        const int32_t l = (e * int32_t(x.vol_l)) >> 14, r = (e * int32_t(x.vol_r)) >> 14;
+        mix_[i * 2] += l; mix_[i * 2 + 1] += r;
+        if (wet) { reverb_in_[i * 2] += l; reverb_in_[i * 2 + 1] += r; }
         x.phase += step;
         x.position += x.phase >> 12;
         x.phase &= 0xFFF;
@@ -710,5 +749,44 @@ void SourceMusicPlayer::render_voice(Voice& x, size_t frames) noexcept {
         }
         if (x.envelope.finished()) { x.sounding = false; return; }
     }
+}
+
+// SPU reverb at 22050 Hz (registers 0x1F801DC0.., addresses in 8-byte units
+// relative to the moving buffer address, "-2" = one halfword earlier).
+void SourceMusicPlayer::reverb_step(int32_t in_l, int32_t in_r, int32_t& out_l, int32_t& out_r) noexcept {
+    const auto& g = bank_->reverb_regs;
+    const int32_t size = int32_t(reverb_buffer_.size());
+    auto at = [&](int32_t units, int32_t back) -> int16_t& {
+        int32_t i = int32_t(reverb_address_) + units * 4 - back;
+        i %= size; if (i < 0) i += size;
+        return reverb_buffer_[size_t(i)];
+    };
+    auto sat = [](int32_t v) { return int16_t(v > 32767 ? 32767 : v < -32768 ? -32768 : v); };
+    auto mul = [](int32_t a, uint16_t v) { return (a * int32_t(int16_t(v))) >> 15; };
+    enum { dAPF1, dAPF2, vIIR, vCOMB1, vCOMB2, vCOMB3, vCOMB4, vWALL, vAPF1, vAPF2, mLSAME, mRSAME,
+           mLCOMB1, mRCOMB1, mLCOMB2, mRCOMB2, dLSAME, dRSAME, mLDIFF, mRDIFF, mLCOMB3, mRCOMB3,
+           mLCOMB4, mRCOMB4, dLDIFF, dRDIFF, mLAPF1, mRAPF1, mLAPF2, mRAPF2, vLIN, vRIN };
+    const int32_t lin = mul(sat(in_l), g[vLIN]), rin = mul(sat(in_r), g[vRIN]);
+    auto wall = [&](int32_t input, uint16_t m, uint16_t d) {
+        const int32_t prev = at(g[m], 1);
+        at(g[m], 0) = sat(mul(input + mul(at(g[d], 0), g[vWALL]) - prev, g[vIIR]) + prev);
+    };
+    wall(lin, mLSAME, dLSAME); wall(rin, mRSAME, dRSAME);
+    wall(lin, mLDIFF, dRDIFF); wall(rin, mRDIFF, dLDIFF);
+    int32_t l = mul(at(g[mLCOMB1], 0), g[vCOMB1]) + mul(at(g[mLCOMB2], 0), g[vCOMB2]) +
+                mul(at(g[mLCOMB3], 0), g[vCOMB3]) + mul(at(g[mLCOMB4], 0), g[vCOMB4]);
+    int32_t r = mul(at(g[mRCOMB1], 0), g[vCOMB1]) + mul(at(g[mRCOMB2], 0), g[vCOMB2]) +
+                mul(at(g[mRCOMB3], 0), g[vCOMB3]) + mul(at(g[mRCOMB4], 0), g[vCOMB4]);
+    auto apf = [&](int32_t v, uint16_t m, uint16_t d, uint16_t vol) {
+        const int32_t delayed = at(int32_t(g[m]) - int32_t(g[d]), 0);
+        const int32_t t = v - mul(delayed, g[vol]);
+        at(g[m], 0) = sat(t);
+        return mul(t, g[vol]) + delayed;
+    };
+    l = apf(l, mLAPF1, dAPF1, vAPF1); r = apf(r, mRAPF1, dAPF1, vAPF1);
+    l = apf(l, mLAPF2, dAPF2, vAPF2); r = apf(r, mRAPF2, dAPF2, vAPF2);
+    out_l = (sat(l) * int32_t(reverb_out_)) >> 15;
+    out_r = (sat(r) * int32_t(reverb_out_)) >> 15;
+    reverb_address_ = (reverb_address_ + 1) % uint32_t(size);
 }
 } // namespace l3

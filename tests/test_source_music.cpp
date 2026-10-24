@@ -28,7 +28,7 @@ std::vector<uint8_t> vh(){
     std::vector<uint8_t> v(0x820+0x200+0x200,0);
     std::memcpy(v.data(),"pBAV",4);v[4]=7;v[0x12]=1;v[0x14]=1;v[0x16]=1;v[0x18]=127;v[0x19]=64;
     uint8_t* prog=v.data()+0x20;prog[0]=1;prog[1]=127;prog[2]=3;prog[4]=64;
-    uint8_t* tone=v.data()+0x820;tone[0]=0;tone[2]=127;tone[3]=64;tone[4]=60;tone[5]=0;tone[6]=0;tone[7]=127;
+    uint8_t* tone=v.data()+0x820;tone[0]=0;tone[1]=4;tone[2]=127;tone[3]=64;tone[4]=60;tone[5]=0;tone[6]=0;tone[7]=127;
     tone[0x10]=0xFF;tone[0x11]=0x80;tone[0x12]=0xCB;tone[0x13]=0x5F;tone[0x16]=1;
     v[0xA20+2]=13;   // VAG 1: 13 blocks
     return v;
@@ -36,6 +36,11 @@ std::vector<uint8_t> vh(){
 std::vector<uint8_t> bank(){
     std::vector<uint8_t> t;
     for(int i=0;i<192;++i)put16(t,uint16_t(0x1000+i));
+    // stage reverb entry [type 2, RVol 0x40, depth 0x20], work area 0xFF00 (0x400 halfwords),
+    // a small authored preset: one comb tap and short all-pass delays.
+    t.push_back(2);t.push_back(0x40);t.push_back(0x20);t.push_back(0);put32(t,0xFF00);
+    const uint16_t regs[32]={1,1,0x4000,0x4000,0,0,0,0,0,0, 0x40,0x40, 0x40,0x40,0,0, 0x20,0x20,0,0,0,0,0,0,0,0, 8,8,4,4, 0x4000,0x4000};
+    for(uint16_t r:regs)put16(t,r);
     for(uint16_t a:{uint16_t(0xFFFF),uint16_t(0),uint16_t(0)})put16(t,a);
     pad4(t);
     put16(t,0);t.push_back(0x54);t.push_back(0x00);t.push_back(0x03);t.push_back(0x00);put16(t,0);  // request 0
@@ -114,6 +119,20 @@ int main(){
     assert(m.slot(0).access==0&&m.volume_ad152()==0x7F);
     m.render_tick(pcm.data());
     assert(m.key_ons()==3);
+
+    // Reverb: type set by the first 0x8001AEF0 after the stage load, output
+    // volume (RVol 0x40 -> 0x4080) 30 passes later; the wet mix then differs.
+    SourceMusicPlayer dry,wet;dry.bind(&b);wet.bind(&b);wet.set_stage_reverb_80019f94();
+    (void)dry.consume_8001a110(request(0));(void)wet.consume_8001a110(request(0));
+    assert(wet.reverb_type()==2&&wet.reverb_out()==0&&dry.reverb_type()==0);
+    for(int i=0;i<29;++i){(void)wet.consume_8001a110(empty());(void)dry.consume_8001a110(empty());}
+    assert(wet.reverb_out()==0);
+    (void)wet.consume_8001a110(empty());(void)dry.consume_8001a110(empty());
+    assert(wet.reverb_out()==0x4080);
+    std::vector<int16_t> a(pcm.size()),c(pcm.size());
+    long diff=0;
+    for(int i=0;i<20;++i){dry.render_tick(a.data());wet.render_tick(c.data());for(size_t k=0;k<a.size();++k)diff+=std::labs(long(a[k])-long(c[k]));}
+    assert(diff>0&&wet.errors()==0);
     std::cout<<"source_music OK\n";
     return 0;
 }

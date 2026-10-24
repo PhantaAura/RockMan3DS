@@ -10,13 +10,18 @@ namespace l3 {
 // L3MU1 (tools/cook_music_bank.py): the stage's area music row (0x80082320),
 // the handler-1 rows of 0x8008241C it names, the raw SEP and VH, the VB
 // decoded to PCM16 at the pitch-0x1000 rate (44100 Hz) and the libsnd pitch
-// table 0x80090C80. The bank keeps pointers into the caller's bytes.
+// table 0x80090C80, plus the stage reverb entry (0x800821F8 + n*4: type, RVol,
+// depth), its libspu work-area start and preset registers. The bank keeps
+// pointers into the caller's bytes.
 struct SourceMusicRequest { uint16_t id = 0; std::array<uint8_t, 4> row{}; };
 struct SourceMusicSep { uint8_t tag = 0, sequences = 0; const uint8_t* data = nullptr; uint32_t bytes = 0; };
 struct SourceMusicVab { uint8_t tag = 0; const uint8_t* vh = nullptr; uint32_t vh_bytes = 0; uint16_t first_sample = 0, samples = 0; };
 struct SourceMusicSample { uint32_t frames = 0, loop_start = 0xFFFFFFFFu; const int16_t* pcm = nullptr; };
 struct SourceMusicBank {
     std::array<uint16_t, 192> pitch_table{};
+    std::array<uint8_t, 4> reverb_entry{};
+    uint32_t reverb_base = 0;                       // 8-byte units (mBASE)
+    std::array<uint16_t, 32> reverb_regs{};         // 0x1F801DC0.. dAPF1 .. vRIN
     std::vector<uint16_t> area_music;
     std::vector<SourceMusicRequest> requests;
     std::vector<SourceMusicSep> seps;
@@ -49,6 +54,9 @@ public:
     void stop_all_8001b33c() noexcept;
     // 0x8001D854(0x10) from the 0x80019C20 transition test: fade 0x800AD152 out.
     void request_fade_out_8001d854() noexcept { if (!fade_mode_) fade_mode_ = 1; }
+    // 0x80019F94 at the stage load: point 0x800AD15C at the stage's reverb
+    // entry; 0x8001AEF0 sets the type at once and depth/RVol 30 frames later.
+    void set_stage_reverb_80019f94() noexcept { reverb_pending_ = bank_ != nullptr; }
     // One SsSeqCalledTbyT tick: flush the voice registers, then the sequences.
     void tick_60hz() noexcept;
     // Mixes `frames` stereo frames (interleaved L,R) of the music voices.
@@ -62,6 +70,8 @@ public:
     uint32_t key_ons() const noexcept { return key_ons_; }
     uint32_t loops() const noexcept { return loops_; }
     uint32_t errors() const noexcept { return errors_; }
+    uint8_t reverb_type() const noexcept { return reverb_type_; }
+    int16_t reverb_out() const noexcept { return reverb_out_; }
 
 private:
     struct Seq {             // libsnd sequence attribute (0x800C4CF0[access] + seq*0xB0)
@@ -88,6 +98,7 @@ private:
         bool key_on = false, key_off = false;
         uint16_t reg_vol_l = 0, reg_vol_r = 0, reg_pitch = 0, reg_adsr1 = 0, reg_adsr2 = 0, reg_sample = 0xFFFF;
         // live SPU voice
+        bool reg_reverb = false, reverb = false;   // 0x8009AE44 (tone mode bit 2)
         uint16_t vol_l = 0, vol_r = 0, pitch = 0, adsr1 = 0, adsr2 = 0, sample = 0xFFFF;
         uint32_t position = 0, phase = 0;
         bool sounding = false;
@@ -126,6 +137,7 @@ private:
     void voice_key_off_800742c8(size_t v) noexcept;
     void flush_800725e0() noexcept;
     void render_voice(Voice& v, size_t frames) noexcept;
+    void reverb_step(int32_t in_l, int32_t in_r, int32_t& out_l, int32_t& out_r) noexcept;
     const SourceMusicVab* vab(uint8_t id) const noexcept;
     const uint8_t* program_attr(uint8_t vab, int16_t program) const noexcept;
     int16_t block(uint8_t vab, int16_t program) const noexcept;
@@ -142,7 +154,13 @@ private:
     uint8_t volume_ad152_ = 0x7F, fade_mode_ = 0;   // 0x800AD152, 0x80098788 bits 4..5
     uint8_t damper_b5168_ = 0;
     std::array<std::array<uint8_t, 128>, 4> program_volume_{}; // VH ProgAtr.mvol, written by CC 11
-    std::array<int32_t, kSourceMusicFramesPerTick * 2> mix_{};
+    std::array<int32_t, kSourceMusicFramesPerTick * 2> mix_{}, reverb_in_{};
+    // SPU reverb (0x8001AEF0 -> SsUtSetReverbType / SpuSetReverb / depth)
+    bool reverb_pending_ = false, reverb_on_ = false;
+    uint8_t reverb_state_ = 0, reverb_wait_ = 0, reverb_type_ = 0;
+    int16_t reverb_out_ = 0;                        // vLOUT = vROUT
+    std::vector<int16_t> reverb_buffer_;
+    uint32_t reverb_address_ = 0;
     uint32_t key_ons_ = 0, loops_ = 0, errors_ = 0;
 };
 } // namespace l3

@@ -10,6 +10,11 @@ Source path, ROCK_NEO.EXE (USA):
 - the SEP is DAT resource type 8 ([type, size, sectors, slot, tag, sequence
   count]); the VAB is type 5 (VB from the next 0x800 sector after the VH).
 - libsnd pitch table 0x80090C80: 12 semitones x 16 fine steps (u16).
+- stage reverb: 0x8001F23C calls 0x80019F94(0x800896D4[stage]), which points
+  0x800AD15C at 0x800821F8 + n*4 = [type, RVol, depth, 0]; 0x8001AEF0 then sets
+  SsUtSetReverbType(type). libspu's preset for the type is 0x80090988 +
+  type*0x44 (mask word, 32 SPU reverb registers from 0x1F801DC0) and its work
+  area starts at 0x80090938[type] (8-byte units).
 
 Output holds the raw SEP, the raw VH and PCM16 decoded from the VB at the
 SPU's pitch-0x1000 rate (44100 Hz). It is owner-derived and MUST stay outside
@@ -31,6 +36,9 @@ from cook_sfx_bank import Exe, decode_vag, load_vab, vag_offsets  # noqa: E402
 TABLE = 0x8008241C
 AREA_MUSIC = 0x80082320
 PITCH_TABLE = 0x80090C80
+STAGE_REVERB = 0x800896D4
+REVERB_ENTRIES = 0x800821F8
+REVERB_PRESETS, REVERB_BASES = 0x80090988, 0x80090938
 STAGE = 0
 STAGE_AREAS = 6           # 0x80082200..0x8008220B; stage 3's row starts at 0x8008220C
 MAGIC = b"L3MU001\0"
@@ -92,7 +100,13 @@ def cook(exe: Exe, dat: Path, output: Path) -> dict:
         for vag in range(1, count + 1):
             samples.append(decode_vag(body, *offsets[vag]))
     pitch = exe.read(PITCH_TABLE, 192 * 2)
-    table = bytearray(pitch)
+    entry = exe.read(REVERB_ENTRIES + struct.unpack("<H", exe.read(STAGE_REVERB + STAGE * 2, 2))[0] * 4, 4)
+    if entry[0] > 9:
+        raise ValueError("Stage reverb type outside the libspu presets")
+    base = exe.word(REVERB_BASES + entry[0] * 4)
+    if not 0 < base <= 0xFFFE:
+        raise ValueError("Reverb work area outside SPU RAM")
+    table = bytearray(pitch + entry + struct.pack("<I", base) + exe.read(REVERB_PRESETS + entry[0] * 0x44 + 4, 64))
     for value in areas:
         table += struct.pack("<H", value)
     table += b"\0" * (-len(table) & 3)
@@ -128,7 +142,7 @@ def cook(exe: Exe, dat: Path, output: Path) -> dict:
         temporary = Path(handle.name)
     os.link(temporary, output)
     temporary.unlink()
-    return {"areas": ",".join(f"{a:#x}" for a in areas), "requests": len(requests),
+    return {"areas": ",".join(f"{a:#x}" for a in areas), "reverb": entry[:3].hex(), "requests": len(requests),
             "seps": len(seps), "vabs": len(vab_rows), "samples": len(samples),
             "looped_samples": sum(1 for _p, loop in samples if loop is not None), "bytes": offset}
 
