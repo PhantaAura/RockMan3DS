@@ -57,6 +57,7 @@
 #include "native_xa_audio.h"
 #include "native_voice.h"
 #include "native_sfx.h"
+#include "native_music.h"
 #include "legends3ds/source_camera.h"
 #include "legends3ds/source_player_buster.h"
 #include "mockup_hud.h"
@@ -2647,6 +2648,27 @@ int main() {
             hardware_test_trace("# source_sfx_open,ready=%u,requests=%lu,linear=%lu,reason=%s,consumer=0x8001A110,envelope=SPU_ADSR_PER_TICK",
                 unsigned(ready),(unsigned long)sfx.requests(),(unsigned long)sfx.linear_bytes(),sfx.error());
         }
+        // Area music (0x80019D18 -> 0x8008241C handler 1, libsnd SEP), cooked
+        // by tools/cook_music_bank.py. Optional: absent bank = no music.
+        NativeMusic music;
+        {
+            char path[256];std::snprintf(path,sizeof(path),"%saudio/music_st00.l3mu",kDataRoot);
+            const bool ready=music.open(path);
+            hardware_test_trace("# source_music_open,ready=%u,bytes=%lu,reason=%s,consumer=0x8001AC58,sequencer=SsSeqCalledTbyT_60Hz,mix=SOFTWARE_SPU_REVERB",
+                unsigned(ready),(unsigned long)music.bank_bytes(),music.error());
+        }
+        // 0x80019D18 at the end of an area load: queue the area's request, or
+        // stop the sequences (0x8001B33C) when the area has none (0xFFFF).
+        auto area_music_80019d18=[&](size_t area){
+            if(!music.ready())return;
+            const uint16_t id=music.area_request(area);
+            if(id==0xFFFF){music.stop_all();hardware_test_trace("# source_music_request,area=%lu,request=none,source=0x80019D18",(unsigned long)area);return;}
+            const auto status=l3::enqueue_source_audio_8001a008(session.source_audio_queue(),id,0,0);
+            hardware_test_trace("# source_music_request,area=%lu,request=0x%x,queued=%u,source=0x80019D18",
+                (unsigned long)area,unsigned(id),unsigned(status==l3::SourceAudioQueueStatus::Queued));
+        };
+        music.stage_loaded();   // 0x8001F23C -> 0x80019F94 stage reverb entry
+        area_music_80019d18(g_current_area);
         {
             char path[256];std::snprintf(path,sizeof(path),"%saudio/voice_st00.l3vb",kDataRoot);
             const bool ready=voice.open(path);
@@ -2893,6 +2915,7 @@ int main() {
                     door_transition?"door_transition_before":"transition_before",g_current_area,0,
                     g_package_bytes,g_package_decoded_estimate,g_package_peak_estimate);
                 const size_t outgoing_area=g_current_area;
+                const uint16_t outgoing_music=music.ready()?music.area_request(outgoing_area):0xFFFF;
                 const size_t outgoing_primitives=g_area_primitive_count;
                 const int32_t outgoing_min_y=g_area_min_y,outgoing_max_y=g_area_max_y;
                 size_t next_area=outgoing_area;
@@ -2988,6 +3011,13 @@ int main() {
                         session.conditional_spawn_revision(),std::nullopt};
                     if(actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
                     g_current_area=next_area;spawn=next_spawn;inspection_yaw=next_yaw;
+                    // 0x80019C20 fades the music when the destination's differs;
+                    // 0x80019D18 then queues it (the same request keeps playing).
+                    if(music.ready()){
+                        const uint16_t incoming=music.area_request(next_area);
+                        if(incoming!=0xFFFF&&incoming!=outgoing_music)music.fade_out();
+                        area_music_80019d18(next_area);
+                    }
                     hardware_test_actor_event(g_current_area,actors);
                     mockup_hud_invalidate();
                     pending_fire=pending_lock=pending_dialogue=false;
@@ -4084,6 +4114,13 @@ int main() {
                     (void)session.service_source_main_loop_tail_80011ecc();
                 // 0x8001A110 runs after the main update (0x80011E78): every queued
                 // effect request keys its SPU voices, then the queue resets.
+                // Handler-1 records (sequenced music) dispatch inside the same
+                // 0x8001A110 pass; the effect consumer below resets the queue.
+                const size_t music_records=music.consume(session.source_audio_queue());
+                if(music_records)
+                    hardware_test_trace("# source_music,frame=%lu,records=%lu,slot0=%d:%u,volume=%u,source=0x8001AC58",
+                        (unsigned long)session.frame_counter(),(unsigned long)music_records,int(music.player().slot(0).access),
+                        unsigned(music.player().slot(0).request),unsigned(music.player().volume_ad152()));
                 if(sfx.ready()){
                     const auto& work=session.compat_player().bytes;
                     l3::SourceSoundListener listener;
@@ -4370,6 +4407,13 @@ int main() {
                         (unsigned long)xa_audio.max_read_us(),observation.ready?(unsigned long)ndspGetDroppedFrames():0ul,xa_audio.error());
                 }
             }
+            music.pump();
+            if(music.ready()&&session.frame_counter()%300==0)
+                hardware_test_trace("# source_music_state,frame=%lu,playing=%u,request=0x%x,key_ons=%lu,loops=%lu,voices=%lu,errors=%lu,underruns=%lu,reverb=%u:%d",
+                    (unsigned long)session.frame_counter(),unsigned(music.player().slot(0).playing),unsigned(music.player().slot(0).request),
+                    (unsigned long)music.player().key_ons(),(unsigned long)music.player().loops(),(unsigned long)music.player().sounding_voices(),
+                    (unsigned long)music.player().errors(),(unsigned long)music.underruns(),
+                    unsigned(music.player().reverb_type()),int(music.player().reverb_out()));
             hardware_test_sample(session,g_runtime_diag,frame_start,held,down,g_current_area);
             hardware_test_actor_target_event(session, actors,
                 actor_angle_steps ? &*actor_angle_steps : nullptr);
