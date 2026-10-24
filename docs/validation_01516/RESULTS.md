@@ -327,3 +327,35 @@ wall. The ramp only starts at otz 5120, where the fog is already about 94%
 toward the far colour, so its visible effect in these rooms is small. There
 is no PS1 reference image.
 
+## Renderer R3: per-cell visibility
+
+**Host:** `test_terrain_cell_visibility` checks:
+- nine yaws covering both wedge walkers;
+- the near window, the cells ahead, the cells behind and to the side, and
+  the side cut;
+- that the widened cut contains the PS1 cut;
+- the mode-1 whole-area walk;
+- that TR `0x1F800030` equals the camera translation.
+
+Host 168/168, native PASS (the 3DS Makefile lists the new source).
+
+**Azahar** (2126.0, idle autoplay `3000 0 0 0`; R2 build before, R3 after;
+each instance run alone):
+
+| View | drawn | black | skipped | unsupported | culled by cell | frame interval | render | draw calls / triangles |
+|---|---|---|---|---|---|---|---|---|
+| Area 1 start, before | 259 | 108 | 72 | 158 | – | 40.8 ms | 31.3 ms | 27 / 2032 |
+| Area 1 start, after | 116 | 34 | 4 | 0 | 443 (53 IDX, 28 negative cells kept) | 33.1 ms | 25.9 ms | 17 / 1282 |
+| Area 2 entry (`2 -256 -1 6400 2048`), before | 426 | 204 | 42 | 16 | – | 50.0 ms | 38.1 ms | 32 / 2588 |
+| Area 2 entry, after | 314 | 141 | 39 | 16 | 178 (145 IDX kept) | 50.6 ms | 39.5 ms | 29 / 2238 |
+
+- Black faces at the Area 1 start fall from 108 to 34. The original draws 17
+  there; the rest is likely the missing Near LOD and the see-through-wall rule.
+- The 158 unsupported faces (vertices behind the camera) at the Area 1 start
+  are all in culled cells.
+- Area 1 frame time improves by about 19%. Area 2 is unchanged within noise.
+- **Caveats:**
+  - Azahar timings are emulator timings, not Old 3DS ones.
+  - No screenshot was taken, so holes at the screen edges are not checked by
+    eye.
+
