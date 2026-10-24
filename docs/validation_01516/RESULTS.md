@@ -273,9 +273,8 @@ and `# effect_draw`:
 - **Textures:** the Area 2 actor cache now resolves all 7 words, including
   the burst page 0x3C80002B and the puff page 0x3D48002E (upload order
   CANDIDATE).
-- **Not run in Azahar:** the Reaverbot defeat burst (5/0x80/0x41, now placed
-  at the actor's +0x14) and the E0/07 camera shake. Both are host-tested only.
-- **Not checked:** how the effects look. The runs were trace-only (the screen
-  was not watched). There is no PCSX-Redux frame comparison.
+- **Visual check (user, Azahar, merged build):** the target, box and
+  Reaverbot break effects look right. There is no PCSX-Redux frame comparison.
+- **Not watched:** the E0/07 camera shake (host-tested only).
 - **Azahar note:** another session's run replaced the shared SD folder halfway
   through one box attempt. The run above is a clean rerun.

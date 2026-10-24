@@ -94,7 +94,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    - look at the textured E0 objects on screen (audio was listened to and
      sounds right);
    - effects: the 0x800341BC explosion proxy (bursts do no damage yet), the
-     bit-0x20 helper children, the LOD tiers, and a look at them on screen;
+     bit-0x20 helper children, the LOD tiers (target/box/Reaverbot effects were
+     checked on screen and look right);
    - listen to the area music in Azahar against the PS1. Gaps: Gaussian
      interpolation, the reverb FIR, music pausing during area loads;
    - the E0/08 door-pulse rand draws;
