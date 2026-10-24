@@ -1245,6 +1245,20 @@ struct DiagnosticAutoplayStep { uint32_t frames=0; u32 keys=0; int16_t cx=0, cy=
 constexpr u32 kAutoplaySteerToPickup=0xfffffu;
 // Key mask 0xFFFFE: steer to world point (circle x, circle y) = (x, z).
 constexpr u32 kAutoplaySteerToPoint=0xffffeu;
+// Event-driven steps (frames = timeout); each ends early on its condition.
+// 0xFFFFD: answer dialogue (A every 12 frames, choices Right then A) until no
+//          message has been open for 20 frames.
+// 0xFFFFC: wait until story flag cx is set.
+// 0xFFFFB: steer to (cx, cy) like 0xFFFFE, answering dialogue on the way;
+//          ends within 64 units.
+// 0xFFFFA: face the nearest visible class-0x20 actor within cx units and fire
+//          (Y) every 8 frames; ends after 60 frames with none in range.
+// 0xFFFF9: face point (cx, cy) and fire every 8 frames for the whole step.
+// 0xFFFF8: door: steer to (cx, cy) like 0xFFFFE and tap A every 16 frames,
+//          until z >= cy or the area changes.
+constexpr u32 kAutoplayTalk=0xffffdu,kAutoplayWaitFlag=0xffffcu,kAutoplaySteerUntil=0xffffbu,kAutoplayFight=0xffffau,
+              kAutoplayShootAt=0xffff9u,kAutoplayDoor=0xffff8u;
+static std::vector<std::array<int,2>> g_autoplay_enemies;
 struct DiagnosticAutoplay {
     bool active=false; std::vector<DiagnosticAutoplayStep> steps;
     size_t index=0; uint32_t used=0; u32 previous=0;
@@ -1274,7 +1288,7 @@ static bool diagnostic_autoplay_frame(u32& down, u32& held, u32& up, circlePosit
     ++g_autoplay.used;
     held=step.keys;cp.dx=step.cx;cp.dy=step.cy;
     // Steering steps are resolved by the caller; their circle fields are a goal.
-    if(held==kAutoplaySteerToPickup||held==kAutoplaySteerToPoint){held=0;cp={};}
+    if(held>=kAutoplayDoor){held=0;cp={};}
     down=held&~g_autoplay.previous;up=g_autoplay.previous&~held;g_autoplay.previous=held;
     return true;
 }
@@ -2734,15 +2748,67 @@ int main() {
                     hardware_test_trace("# diagnostic_autoplay_end,frame=%lu,evidence=FRONTEND_DIAGNOSTIC",(unsigned long)session.frame_counter());
                     break;
                 }
-                const auto& autoplay_step=g_autoplay.steps[g_autoplay.index];
-                if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint) {
+                auto& autoplay_step=g_autoplay.steps[g_autoplay.index];
+                static uint32_t autoplay_quiet=0,autoplay_tick=0;
+                if(used_before==0||g_autoplay.index!=step_before){autoplay_quiet=0;autoplay_tick=0;}
+                ++autoplay_tick;
+                const auto finish_step=[&]{g_autoplay.used=autoplay_step.frames;};
+                // A every 12 frames; on a choice, Right on the 6th frame then A.
+                const auto talk_keys=[&]()->u32{
+                    if(!session.dialogue().active)return 0;
+                    const uint32_t phase=autoplay_tick%12u;
+                    if(session.dialogue().waiting_for_choice&&phase==6)return KEY_DRIGHT;
+                    return phase==0?u32(KEY_A):0u;
+                };
+                static size_t autoplay_area=0;
+                if(used_before==0||g_autoplay.index!=step_before)autoplay_area=session.map_area_index();
+                if(autoplay_step.keys==kAutoplayDoor&&
+                   (session.player_position().z>=autoplay_step.cy||session.map_area_index()!=autoplay_area)){
+                    finish_step();held=0;down=0;up_keys=g_autoplay.previous;g_autoplay.previous=0;
+                } else if(autoplay_step.keys==kAutoplayTalk){
+                    held=talk_keys();
+                    if(session.dialogue().active)autoplay_quiet=0;else if(++autoplay_quiet>=20)finish_step();
+                    down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
+                } else if(autoplay_step.keys==kAutoplayWaitFlag){
+                    held=talk_keys();
+                    if(session.story_flag(uint16_t(autoplay_step.cx)))finish_step();
+                    down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
+                } else if(autoplay_step.keys==kAutoplayFight||autoplay_step.keys==kAutoplayShootAt){
+                    const auto pp=session.player_position();
+                    const auto& pw=session.compat_player().bytes;
+                    const int heading=int(uint16_t(pw[0x56]|(uint16_t(pw[0x57])<<8))&0xfff);
+                    std::optional<std::array<int,2>> best;long best_d=long(autoplay_step.cx)*autoplay_step.cx;
+                    if(autoplay_step.keys==kAutoplayShootAt)best={{int(autoplay_step.cx),int(autoplay_step.cy)}};
+                    else for(const auto& e:g_autoplay_enemies){
+                        const long dx=e[0]-int(pp.x),dz=e[1]-int(pp.z),d=dx*dx+dz*dz;
+                        if(d<=best_d){best_d=d;best=e;}
+                    }
+                    u32 keys=talk_keys();
+                    if(best&&!session.dialogue().active){
+                        autoplay_quiet=0;
+                        const int tx=(*best)[0]-int(pp.x),tz=(*best)[1]-int(pp.z);
+                        const int want=int(std::lround(std::atan2(double(-tx),double(-tz))*4096.0/6.283185307179586))&0xfff;
+                        int gap=(want-heading)&0xfff;if(gap>2048)gap-=4096;
+                        const int mag=gap<0?-gap:gap;
+                        if(g_autoplay.last_turned&&g_autoplay.last_gap>=0&&mag>g_autoplay.last_gap+2)g_autoplay.turn_sign=-g_autoplay.turn_sign;
+                        g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>64;
+                        if(mag>64)keys|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
+                        else if(autoplay_tick%8u<4u)keys|=KEY_Y;
+                    } else if(!best&&++autoplay_quiet>=60)finish_step();
+                    held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
+                } else if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint||autoplay_step.keys==kAutoplaySteerUntil||
+                          autoplay_step.keys==kAutoplayDoor) {
                     const auto pp=session.player_position();
                     const auto& pw=session.compat_player().bytes;
                     const int heading=int(uint16_t(pw[0x56]|(uint16_t(pw[0x57])<<8))&0xfff);
                     u32 steer=0;
                     std::optional<std::array<int,2>> goal;
-                    if(autoplay_step.keys==kAutoplaySteerToPoint)goal={{int(autoplay_step.cx),int(autoplay_step.cy)}};
-                    else for(const auto& e:g_children.effect_pool().slots)if(e[0]&&e[2]==0x87){
+                    if(autoplay_step.keys!=kAutoplaySteerToPickup)goal={{int(autoplay_step.cx),int(autoplay_step.cy)}};
+                    // Door: line up on the door's x first (the action check 0x800411DC
+                    // needs it within 208 units), stepping back south if off-line.
+                    if(autoplay_step.keys==kAutoplayDoor&&std::abs(int(pp.x)-int(autoplay_step.cx))>40)
+                        goal={{int(autoplay_step.cx),int(pp.z)-160}};
+                    if(autoplay_step.keys==kAutoplaySteerToPickup)for(const auto& e:g_children.effect_pool().slots)if(e[0]&&e[2]==0x87){
                         goal={{int(int16_t(uint16_t(e[0x38]|(e[0x39]<<8)))),int(int16_t(uint16_t(e[0x3c]|(e[0x3d]<<8))))}};break;}
                     if(goal){
                         const int tx=(*goal)[0]-int(pp.x);
@@ -2756,6 +2822,13 @@ int main() {
                         const bool arrived=tx*tx+tz*tz<24*24;
                         if(!arrived&&mag>48)steer|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
                         if(!arrived&&mag<128)steer|=KEY_DUP;
+                        if(autoplay_step.keys==kAutoplayDoor){
+                            steer=session.dialogue().active?talk_keys():steer|(autoplay_tick%16u==8u?u32(KEY_A):0u);
+                        }
+                        if(autoplay_step.keys==kAutoplaySteerUntil){
+                            if(session.dialogue().active)steer=talk_keys();
+                            else if(tx*tx+tz*tz<64*64)finish_step();
+                        }
                     }
                     held=steer;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
                 }
@@ -3151,9 +3224,19 @@ int main() {
                 {
                     // E0/06 type 6 reads live class-0x20 +14/+18.
                     std::vector<std::array<int16_t,2>> live;
-                    for(const auto& actor:actors.actors)
-                        if(actor.source_behavior&&!actor.source_released&&actor.source_class==0x20)
-                            live.push_back({{actor.source_behavior->raw_14[0],actor.source_behavior->raw_14[2]}});
+                    g_autoplay_enemies.clear();
+                    // Every live class-0x20 work counts: subtype 3 keeps +14/+18 in its
+                    // behaviour state, 0x19 and 0x1F in source_origin.
+                    for(const auto& actor:actors.actors){
+                        if(actor.source_released||actor.source_class!=0x20)continue;
+                        std::array<int16_t,2> xz{};
+                        if(actor.source_behavior)xz={{actor.source_behavior->raw_14[0],actor.source_behavior->raw_14[2]}};
+                        else if(actor.source_reaverbot19||actor.source_popout)xz={{actor.source_origin[0],actor.source_origin[2]}};
+                        else continue;
+                        live.push_back(xz);
+                        if(g_autoplay.active&&!actor.source_hidden&&actor.subtype!=0x35)
+                            g_autoplay_enemies.push_back({{int(xz[0]),int(xz[1])}});
+                    }
                     session.set_tutorial_class20_positions(std::move(live));
                 }
                 const bool dialogue_was_active=session.dialogue().active;

@@ -194,3 +194,18 @@ Azahar box route, after copying the user's own `dspfirm.cdc` to `sdmc:/3ds/`
   - Without rand() the target beep fired every 2 frames.
 - **Listening check (user, Azahar):** the effects and Roll's voice sound right.
 
+## Full-run attempt (stopped)
+
+`autoplay/tutorial_full.txt` uses new event-driven autoplay steps: talk, wait
+for flag, steer-until, fight, shoot-at, door. Normal boot, Azahar:
+- Area 1 messages 0 → 1 → 2 → 3 → 4 → 6 → 7 → 9 → 10 → 11 in order.
+- **Bug found and fixed:** the live class-0x20 list fed to trigger 6 skipped
+  the subtype-0x19 Reaverbots (they keep +14/+18 in `source_origin`, not in a
+  behaviour state). So 0x61F was set right after message 6 and the trap-room
+  fight was skipped. Now all six drop in and are shot down (0xA2/0xA1, E0/00
+  flags 8..13), and message 7 follows the fight.
+- Both corridor doors and the Area 2 door were passed in one run (Area 2
+  reached at frame ~5200).
+- The run was stopped at the user's request before reaching 0x622. The door
+  steps of the script are timing-sensitive, and the Area 2 floor needs a jump.
+
