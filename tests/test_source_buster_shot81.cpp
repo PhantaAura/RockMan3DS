@@ -150,5 +150,55 @@ int main(){
         do{rig.owner.reset_frame_queues();t=rig.owner.tick_source_busters_80017154(rig.frame);++frames;}while(!t.impacts&&frames<10);
         assert(t.impacts==1&&t.map_impacts==1&&rig.owner.effect_pool().slots[0][0x0c]==1);
     }
-    std::cout<<"PASS: Buster shot 0x81 lane/state0/18-frame flight/enemy 24 damage/map hit/effect 0x82 rand+6 steps\n";
+    // Lock-on homing (0x80043B54): a shot leased to an enemy proxy turns toward
+    // the target point +BC each frame (0x80033F04 with 1060/143/71 by age) and
+    // drops the lease on its ninth frame. Authored inverse-sqrt 0x8007A694 table.
+    {
+        Rig rig;SourceNormalizationLookup lookup{};
+        for(size_t i=0;i<lookup.size();++i)lookup[i]=int16_t(std::lround(32768.0/std::sqrt(double(i+64))));
+        rig.frame.normalization=&lookup;
+        SourceHitProxyTarget enemy;enemy.source_address=0x800b103cu;
+        SourceHitProxyRegistration reg;
+        reg.pointed_words={{uint32_t(uint16_t(1000))|(uint32_t(uint16_t(-80))<<16),uint32_t(uint16_t(-6000))}};
+        reg.a1=80;reg.a3=0x8000;reg.stack10=0x20;reg.stack18=0x04880000;reg.stack1c=0x00800000;reg.target=&enemy;reg.mask_80098798=0;
+        assert(source_hit_proxy_register_800341bc(rig.owner.hit_proxy_bank(),reg).status==SourceHitProxyStatus::SourceBackedPartial);
+        auto player=player_at(0,-80,-5000,0);
+        const auto shot=rig.owner.spawn_source_buster_80035724(player,0,0,rig.mask);
+        assert(shot.status==SourceBusterStatus::SourceBackedPartial&&shot.lease_index>=0);
+        const auto& w=rig.owner.buster_pool().slots[0];
+        assert(w[3]==0x80);
+        // Each frame the leased enemy re-registers through the owner table, which
+        // publishes its point into the shot's +BC/+C0.
+        const auto frame=[&]{
+            rig.owner.reset_frame_queues();
+            auto again=reg;again.owners_800be478=rig.owner.proxy_owner_pointers();again.mask_80098798=rig.mask;
+            (void)source_hit_proxy_register_800341bc(rig.owner.hit_proxy_bank(),again);
+            rig.owner.publish_proxy_owner_points();
+            return rig.owner.tick_source_busters_80017154(rig.frame);
+        };
+        assert(frame().committed==1&&s16(w,0x44)==0);               // state 0: straight -z
+        assert(s16(w,0xbc)==1000&&s16(w,0xc0)==-6000);
+        int16_t vx_prev=0;int turning=0;
+        for(int f=1;f<=12&&w[0];++f){
+            const auto t=frame();
+            assert(t.held==0);
+            if(t.impacts||t.released)break;
+            if(f<=8){assert(w[3]==0x80&&s16(w,0x44)>=vx_prev);if(s16(w,0x44)>vx_prev)++turning;vx_prev=s16(w,0x44);}
+            if(f==9)assert(w[3]==0);                                     // ninth frame: lease dropped
+        }
+        assert(turning>=3&&vx_prev>0);
+        // Without the 0x8007A694 table a leased shot holds instead of flying straight.
+        Rig held;held.frame.normalization=nullptr;
+        assert(source_hit_proxy_register_800341bc(held.owner.hit_proxy_bank(),reg).status==SourceHitProxyStatus::SourceBackedPartial);
+        (void)held.owner.spawn_source_buster_80035724(player,0,0,held.mask);
+        const auto held_frame=[&]{
+            held.owner.reset_frame_queues();
+            auto again=reg;again.owners_800be478=held.owner.proxy_owner_pointers();again.mask_80098798=held.mask;
+            (void)source_hit_proxy_register_800341bc(held.owner.hit_proxy_bank(),again);held.owner.publish_proxy_owner_points();
+            return held.owner.tick_source_busters_80017154(held.frame);
+        };
+        (void)held_frame();                                             // state 0 keeps the lease
+        assert(held_frame().status==SourceBusterCallbackStatus::NeedsNormalization);
+    }
+    std::cout<<"PASS: Buster shot 0x81 lane/state0/18-frame flight/enemy 24 damage/map hit/effect 0x82 rand+6 steps/lock-on homing\n";
 }

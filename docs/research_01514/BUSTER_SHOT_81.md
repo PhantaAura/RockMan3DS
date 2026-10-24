@@ -63,8 +63,34 @@ nothing near Mega Man could be hit.
   admitted effect-pool caller.
 - `main.cpp` fires lane 0 (bit 0x20 / stack10 0) with the measured loadout.
 
+Lock-on homing (0.0.15.16, SOURCE_BACKED_PARTIAL), 0x80043B54..0x80043D24.
+A shot with +3 bit 7 (a lease from 0x8003545C) steers each flight frame:
+1. If the target point (+BC/+C0 words) is zero, release the lease and clear
+   +3.
+2. Otherwise compute d = target (+BC/+BE/+C0) − position (+14/+16/+18). If any
+   component is beyond ±26750, shift all three right by 2.
+3. Normalize with `0x8007A694`.
+4. Call `0x80033F04(n, +A4 direction, turn, threshold)`. +0B has already been
+   advanced, so the arguments depend on the age:
+
+   | Age | Turn | Threshold |
+   |---|---|---|
+   | < 4 | 1060 | 0x0F746EA4 |
+   | < 9 | 143 | 0x0FFD813C |
+   | otherwise | 71 | 0x0FFF604C |
+
+   In the last case the lease is also released (0x80043C98) and +3 cleared, so
+   homing ends there.
+5. Store the result at +A4, and the velocity +44 = dir × `0x80097DD4[+4FE]` >> 4
+   (the shot speed).
+
+The detector's `source_detection_interpolate_80033f04` is now the general
+`source_interpolate_80033f04` with turn 357 / threshold 0x0FF069DA. Without
+the `0x8007A694` table, a leased shot holds (`NeedsNormalization`). Host test:
+an authored table steers a shot toward an enemy at +x and drops the lease on
+frame 9. Not yet watched in Azahar.
+
 UNKNOWN / not ported:
-- Lock-on homing `0x80033F04`: leased shots fly straight.
 - Non-zero aim pitch: holds with `UnsupportedAimPitch`.
 - `0x8003777C` breakable-cell damage, and the `0x8004B414` work update after a
   map hit (the shot is released in the same frame).

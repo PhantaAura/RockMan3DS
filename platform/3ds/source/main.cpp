@@ -4067,6 +4067,7 @@ int main() {
                             // player's +4FC/+4FE levels; its own wall test reads the map.
                             buster_frame.map=&session.active_map();buster_frame.area_index=session.map_area_index();
                             buster_frame.references=&refs;
+                            buster_frame.normalization=actor_metadata.normalization?&*actor_metadata.normalization:nullptr;
                             buster_frame.shot81=l3::source_buster_shot81_stats(source_buster_profile,
                                 int8_t(player_work[0x4fc]),int8_t(player_work[0x4fe]));
                             const auto buster_tick=g_children.tick_source_busters_80017154(buster_frame);
@@ -4110,7 +4111,7 @@ int main() {
                                 buster_spawn=g_children.spawn_source_buster_80035724(
                                     source_buster_player,0,-1,source_buster_proxy_mask);
                             if(source_buster_fire_pressed||buster_tick.committed||buster_tick.held)
-                                hardware_test_trace("# source_buster_runtime,frame=%lu,fire_edge=%u,spawn_status=%u,identity=%08lx,callback_status=%u,committed=%u,held=%u,registered=%u,impacts=%u,map_impacts=%u,released=%u,live=%u,producer=80035724,lane=171,callback=800437A8,damage=%d,range=%d,homing=UNPORTED,retail_cadence=false",
+                                hardware_test_trace("# source_buster_runtime,frame=%lu,fire_edge=%u,spawn_status=%u,identity=%08lx,callback_status=%u,committed=%u,held=%u,registered=%u,impacts=%u,map_impacts=%u,released=%u,live=%u,producer=80035724,lane=171,callback=800437A8,damage=%d,range=%d,homing=0x80043B80,retail_cadence=false",
                                     (unsigned long)session.frame_counter(),unsigned(source_buster_fire_pressed),
                                     unsigned(buster_spawn.status),(unsigned long)buster_spawn.source_identity,
                                     unsigned(buster_tick.status),unsigned(buster_tick.committed),unsigned(buster_tick.held),

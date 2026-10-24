@@ -281,9 +281,34 @@ SourceBusterBatch ChildRuntime::tick_source_busters_80017154(
                 previous_from_current();
                 const uint8_t age=next[0x0b];++next[0x0b];
                 if(int32_t(age)<int32_t(stats.range_80037634)){
-                    // Lock-on homing (+3 bit7 with a target point at +BC/+C0,
-                    // 0x80033F04) is not ported: such shots fly straight.
-                    if(next[3]>0x7f&&read32(next,0xbc)==0&&read32(next,0xc0)==0){release_lease();next[3]=0;}
+                    // 0x80043B54: a leased shot (+3 bit 7) steers toward the target
+                    // point +BC/+BE/+C0, or drops the lease when it is zero.
+                    if(next[3]>0x7f){
+                        if(read32(next,0xbc)==0&&read32(next,0xc0)==0){release_lease();next[3]=0;}
+                        else {
+                            if(!context.normalization){hold(SourceBusterCallbackStatus::NeedsNormalization);continue;}
+                            std::array<int32_t,3> d{};
+                            bool far=false;
+                            for(size_t i=0;i<3;++i){
+                                d[i]=int32_t(signed16(read16(next,0xbc+i*2)))-signed16(read16(next,0x14+i*2));
+                                far=far||uint32_t(d[i]+26750)>53500u;
+                            }
+                            if(far)for(auto& v:d)v>>=2;                 // 0x80043BDC
+                            const auto unit=source_normalize_8007a694(d,context.normalization);
+                            const std::array<int16_t,3> previous{{signed16(read16(next,0xa4)),signed16(read16(next,0xa6)),signed16(read16(next,0xa8))}};
+                            // +0B was already advanced: ages 1..3, 4..8, then 9+ (last turn).
+                            const uint8_t aged=next[0x0b];
+                            const int16_t turn=aged<4?1060:aged<9?143:71;
+                            const uint32_t limit=aged<4?0x0F746EA4u:aged<9?0x0FFD813Cu:0x0FFF604Cu;
+                            const auto steered=unit?source_interpolate_80033f04(*unit,previous,turn,limit,context.normalization):std::nullopt;
+                            if(!steered){hold(SourceBusterCallbackStatus::NeedsNormalization);continue;}
+                            if(aged>=9){release_lease();next[3]=0;}          // 0x80043C98
+                            for(size_t i=0;i<3;++i){
+                                write16(next,0xa4+i*2,uint16_t((*steered)[i]));
+                                write16(next,0x44+i*2,uint16_t(int16_t((int32_t((*steered)[i])*int32_t(stats.speed))>>4)));
+                            }
+                        }
+                    }
                     for(size_t i=0;i<3;++i){
                         const int32_t v=signed16(read16(next,0x44+i*2));
                         write32(next,0x1c+i*4,read32(next,0x1c+i*4)+uint32_t(v*0x100));

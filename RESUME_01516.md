@@ -82,6 +82,10 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   reverb (Studio Small, out 0x4080). `NativeMusic` streams the mix on NDSP
   channel 4. The bank is cooked by `cook_music_bank.py` (L3MU, private pack).
 
+- Buster lock-on homing (0x80043B54, `0x80033F04` with the shot's
+  1060/143/71 turns): leased shots now steer toward their target for 9
+  frames. Host-tested; not watched in Azahar yet.
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
 Area music in Azahar: request 0 plays in Area 1 in real time with reverb (trace;

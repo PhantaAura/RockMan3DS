@@ -1,4 +1,5 @@
 #pragma once
+#include "legends3ds/actor_detection_math.h"
 #include "legends3ds/source_actor_consumers.h"
 #include "legends3ds/source_audio_queue.h"
 #include "legends3ds/source_hit_proxy.h"
@@ -142,7 +143,7 @@ enum class SourceBusterCallbackStatus : uint8_t {
     SourceBackedPartial,Inactive,InvalidPool,UnsupportedSubtype,UnknownState,
     NeedsOwnerPosition,NeedsOwnerEndpoint,NeedsOwnerBusy,NeedsProxyMask,
     NeedsMapCollision,NeedsSoundConsumer,ProxyHeld,EffectHeld,
-    NeedsShotProfile,UnsupportedAimPitch
+    NeedsShotProfile,UnsupportedAimPitch,NeedsNormalization
 };
 // Subtype-0x81 Mega Buster shot (weapon row 1). Damage/range from the
 // PTR_DAT_80089EAC row at player +0x4FC/+0x4FE, radius 0x80097DCC, speed
@@ -168,6 +169,8 @@ struct SourceBusterFrameContext {
     const ReferenceTables* references=nullptr;
     std::optional<SourceBusterShot81Stats> shot81;
     uint16_t aim_pitch_80039b80=0;
+    // 0x8007A694 table, needed by the lock-on homing step (0x80043B80).
+    const SourceNormalizationLookup* normalization=nullptr;
 };
 struct SourceBusterBatch {
     SourceBusterCallbackStatus status=SourceBusterCallbackStatus::SourceBackedPartial;

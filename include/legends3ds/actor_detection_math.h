@@ -24,4 +24,11 @@ std::optional<std::array<int16_t, 3>> source_normalize_8007a694(
 std::optional<std::array<int16_t, 3>> source_detection_interpolate_80033f04(
     const std::array<int16_t, 3>& normalized, const std::array<int16_t, 3>& previous,
     const SourceNormalizationLookup* lookup) noexcept;
+// 0x80033F04 with explicit arguments: a3 `turn` (the candidates' sine
+// component) and the stack word `threshold` (dot limit; its high half is the
+// candidates' cosine). The Buster shot passes 1060/0x0F746EA4, 143/0x0FFD813C
+// and 71/0x0FFF604C (0x80043C38/0x80043C68/0x80043C90).
+std::optional<std::array<int16_t, 3>> source_interpolate_80033f04(
+    const std::array<int16_t, 3>& normalized, const std::array<int16_t, 3>& previous,
+    int16_t turn, uint32_t threshold, const SourceNormalizationLookup* lookup) noexcept;
 } // namespace l3

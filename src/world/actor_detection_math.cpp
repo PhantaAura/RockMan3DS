@@ -72,9 +72,13 @@ std::optional<std::array<int16_t, 3>> source_normalize_8007a694(
 std::optional<std::array<int16_t, 3>> source_detection_interpolate_80033f04(
     const std::array<int16_t, 3>& normalized, const std::array<int16_t, 3>& previous,
     const SourceNormalizationLookup* lookup) noexcept {
+    return source_interpolate_80033f04(normalized, previous, 357, UINT32_C(0x0ff069da), lookup);
+}
+std::optional<std::array<int16_t, 3>> source_interpolate_80033f04(
+    const std::array<int16_t, 3>& normalized, const std::array<int16_t, 3>& previous,
+    int16_t turn_a3, uint32_t threshold, const SourceNormalizationLookup* lookup) noexcept {
     const std::array<int32_t, 3> n{{normalized[0], normalized[1], normalized[2]}};
     const std::array<int32_t, 3> v{{previous[0], previous[1], previous[2]}};
-    constexpr uint32_t threshold = UINT32_C(0x0ff069da);
     if (word(static_cast<uint32_t>(dot(normalized, v)) << 4) >= word(threshold)) return normalized;
     const auto perpendicular = cross(n, v);
     const auto secondary = cross(v, perpendicular);
@@ -87,8 +91,8 @@ std::optional<std::array<int16_t, 3>> source_detection_interpolate_80033f04(
         }
         return out;
     };
-    const auto positive = candidate(357), negative = candidate(-357);
-    // Original candidates are (+/-357,0,threshold>>16), so matrix
+    const auto positive = candidate(turn_a3), negative = candidate(int16_t(-turn_a3));
+    // Original candidates are (+/-turn,0,threshold>>16), so matrix
     // column0 is the secondary cross vector and column1 contributes zero.
     const auto& selected = dot(normalized, negative) < dot(normalized, positive) ? positive : negative;
     return source_normalize_8007a694(selected, lookup);
