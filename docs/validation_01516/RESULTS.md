@@ -219,8 +219,8 @@ Scratch render of the real bank, 3 minutes:
 - Frame interval ~33 ms; the slow frames are render-bound (render 33–39 ms).
 
 Not covered:
-- **No listening check yet**: the trace cannot tell whether it sounds like
-  the PS1.
+- **Listening check (user, Azahar, merged build):** the area music plays.
+  There is no side-by-side comparison with the PS1 yet.
 - Area 1 → 2 continuity (same request, no restart) is host-tested only.
 - The music stops while an area load blocks the main loop.
 - No PS1 capture comparison (tempo, levels, reverb tail).

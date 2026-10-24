@@ -85,7 +85,7 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
 Area music in Azahar: request 0 plays in Area 1 in real time with reverb (trace;
-not listened to yet), native PASS, Azahar trace (pop-out
+the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
