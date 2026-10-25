@@ -2128,7 +2128,8 @@ static PsxTranslatorStats g_psx_stats;
 static PsxTranslatorStats g_psx_last_stats;
 // Gate C frame split, accumulated per frame and averaged into the trace
 // every 120 frames (CPU ticks; GPU execution itself is not measurable here).
-struct FrameSplit { u64 frames = 0, gpu_wait_us = 0, render_cpu = 0, update = 0, terrain = 0, models = 0, flush = 0; };
+struct FrameSplit { u64 frames = 0, gpu_wait_us = 0, render_cpu = 0, update = 0, terrain = 0, models = 0, flush = 0,
+    player = 0, actors = 0, e0 = 0, fx = 0; };
 static FrameSplit g_frame_split;
 static u64 g_models_start = 0;   // after the terrain draw; 0 when no terrain this frame
 struct PsxResolved {
@@ -5289,6 +5290,7 @@ int main() {
                 use_uv_renderer()&&scene_actor40&&scene_actor40_prefix_ready&&scene_actor40_pose_ready&&
                 session.source_event_phase5_resources().resident_in(session.active_area().ebd);
             const bool draw_legacy_player=!isolate_scene_actor&&g_hardware_scene_draw!=HardwareSceneDraw::TerrainOnly;
+            const u64 player_start=svcGetSystemTick();
             if(draw_legacy_player) {
                 if (use_uv_renderer())
                     draw_player_uv(local_visuals,player_material_words,player_pose_storage,skeleton,fallback_action,animation,player_track,refs,session);
@@ -5297,7 +5299,9 @@ int main() {
             if(session.frame_counter()%60u==0u&&scene_actor40)
                 hardware_test_trace("# source_actor40_visibility_filter,frame=%lu,isolate_selected=%u,legacy_player_drawn=%u,retail_actor_identity=UNKNOWN",
                     (unsigned long)session.frame_counter(),unsigned(g_source_scene_actor40_only),unsigned(draw_legacy_player));
+            const u64 actors_start=svcGetSystemTick();g_frame_split.player+=actors_start-player_start;
             if (use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) draw_imported_actors_uv(actors);
+            const u64 e0_start=svcGetSystemTick();g_frame_split.actors+=e0_start-actors_start;
             if(scene_e0&&(!scene_e0->resident_in(session.active_area().ebd)||!session.source_event_phase5_resources().resident_in(session.active_area().ebd))){scene_e0.reset();release_scene_materials();}
             if(g_hardware_scene_draw==HardwareSceneDraw::All&&scene_actor40&&scene_actor40_prefix_ready&&scene_actor40_pose_ready&&session.source_event_phase5_resources().resident_in(session.active_area().ebd)) {
                 const auto count=draw_source_scene_actor40_uv(session,*scene_actor40,refs);
@@ -5342,6 +5346,7 @@ int main() {
                         (long)box.object.matrix_scale_18,(unsigned long)box.object.color_40);
                 }
             }
+            const u64 fx_start=svcGetSystemTick();g_frame_split.e0+=fx_start-e0_start;
             if(g_hardware_scene_draw==HardwareSceneDraw::All){if(use_uv_renderer())draw_projectiles_uv(session);else draw_projectiles_0143(session);}
             if(source_combat_active&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) {
                 // The CSV "projectiles" column counts the retired candidate
@@ -5358,7 +5363,7 @@ int main() {
             }
             // The OT holds terrain, Mega Man, class-20 actors and E0 meshes:
             // opaque packets now, semi-transparent ones in the see-through pass.
-            const u64 flush_start=svcGetSystemTick();
+            const u64 flush_start=svcGetSystemTick();g_frame_split.fx+=flush_start-fx_start;
             if (g_models_start) { g_frame_split.models+=flush_start-g_models_start; g_models_start=0; }
             if (g_psx_camera) psx_draw_ot(false);
             if(use_uv_renderer()&&g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly)
@@ -5390,10 +5395,11 @@ int main() {
             ++g_frame_split.frames;g_frame_split.gpu_wait_us+=gpu_wait_us;g_frame_split.render_cpu+=svcGetSystemTick()-render_start;
             if(session.frame_counter()%120u==0u&&g_frame_split.frames){
                 const double n=double(g_frame_split.frames),t=double(CPU_TICKS_PER_USEC);
-                hardware_test_trace("# frame_split,frame=%lu,frames=%lu,gpu_wait_us=%.0f,render_cpu_us=%.0f,update_us=%.0f,terrain_us=%.0f,models_us=%.0f,ot_flush_us=%.0f",
+                hardware_test_trace("# frame_split,frame=%lu,frames=%lu,gpu_wait_us=%.0f,render_cpu_us=%.0f,update_us=%.0f,terrain_us=%.0f,models_us=%.0f,ot_flush_us=%.0f,player_us=%.0f,actors_us=%.0f,e0_us=%.0f,fx_us=%.0f",
                     (unsigned long)session.frame_counter(),(unsigned long)g_frame_split.frames,double(g_frame_split.gpu_wait_us)/n,
                     double(g_frame_split.render_cpu)/t/n,double(g_frame_split.update)/t/n,double(g_frame_split.terrain)/t/n,
-                    double(g_frame_split.models)/t/n,double(g_frame_split.flush)/t/n);
+                    double(g_frame_split.models)/t/n,double(g_frame_split.flush)/t/n,
+                    double(g_frame_split.player)/t/n,double(g_frame_split.actors)/t/n,double(g_frame_split.e0)/t/n,double(g_frame_split.fx)/t/n);
                 g_frame_split={};
             }
 
