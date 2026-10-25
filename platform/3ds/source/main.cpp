@@ -3791,7 +3791,9 @@ int main() {
                         const int mag=gap<0?-gap:gap;
                         if(g_autoplay.last_turned&&g_autoplay.last_gap>=0&&mag>g_autoplay.last_gap+2)g_autoplay.turn_sign=-g_autoplay.turn_sign;
                         g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>48;
-                        const bool arrived=tx*tx+tz*tz<24*24;
+                        // A door step ends only when z passes cy (or the area changes);
+                        // stopping inside the arrival radius left Mega Man short of it.
+                        const bool arrived=autoplay_step.keys!=kAutoplayDoor&&tx*tx+tz*tz<24*24;
                         if(!arrived&&mag>48)steer|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
                         if(!arrived&&mag<128)steer|=KEY_DUP;
                         if(autoplay_step.keys==kAutoplayDoor){
