@@ -128,13 +128,14 @@ class TutorialOutputTests(unittest.TestCase):
             record[2048:2057] = b'synthetic'
             common += record
         (self.dat/'ST00.BIN').write_bytes(common)
-        for name in ('texture','palette','material_cache','player_material_cache','actor_material_cache','negative_materials','scene_e0_material'):
+        for name in ('texture','palette','material_cache','player_material_cache','actor_material_cache','negative_materials','scene_e0_material','frontend_materials'):
             (self.tools/('l3cook_'+name)).write_text('synthetic fixture\n')
         calls = []
         output_index = {'l3cook_st00':5,'l3cook_render':5,'l3cook_map_init':7,'l3cook_st00_flow':2,'l3cook_st00_spawn':2,
             'l3cook_pbd':2,'l3cook_player_comp':6,'l3cook_anim':5,'l3cook_skeleton':3,
             'l3cook_msg':2,'l3cook_ebd':3,'l3cook_negative_materials':2,
-            'l3cook_material_cache':6,'l3cook_player_material_cache':6,'l3cook_actor_material_cache':2,'l3cook_scene_e0_material':3}
+            'l3cook_material_cache':6,'l3cook_player_material_cache':6,'l3cook_actor_material_cache':2,'l3cook_scene_e0_material':3,
+            'l3cook_frontend_materials':2}
         def fake_run(tools,*args):
             calls.append(args)
             Path(args[output_index[args[0]]]).write_bytes(b'synthetic cooked output')

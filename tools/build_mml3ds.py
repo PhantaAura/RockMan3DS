@@ -29,7 +29,7 @@ from mml_pipeline import build, encoded, sha
 from owner_data_intake import normalize_owner_directory, prepare_owner_input
 
 ROOT = Path(__file__).resolve().parents[1]
-TUTORIAL_RECIPE = "tutorial-install/01516-l3nm-near-2"
+TUTORIAL_RECIPE = "tutorial-install/01516-frontend-1"
 TUTORIAL_SCRIPTS = (
     "build_tutorial_pack.py", "cook_reference_tables.py", "mml_pipeline.py",
     "build_stage_catalog.py", "build_stage_object_catalog.py", "cook_actor_combat.py",
@@ -42,7 +42,7 @@ TUTORIAL_TOOLS = (
     "l3cook_st00", "l3cook_render", "l3cook_map_init", "l3cook_st00_flow", "l3cook_st00_spawn", "l3cook_pbd",
     "l3cook_player_comp", "l3cook_anim", "l3cook_skeleton", "l3cook_msg",
     "l3cook_ebd", "l3cook_texture", "l3cook_palette", "l3cook_material_cache",
-    "l3cook_player_material_cache", "l3cook_actor_material_cache", "l3cook_negative_materials", "l3cook_scene_e0_material",
+    "l3cook_player_material_cache", "l3cook_actor_material_cache", "l3cook_negative_materials", "l3cook_scene_e0_material", "l3cook_frontend_materials",
 )
 
 

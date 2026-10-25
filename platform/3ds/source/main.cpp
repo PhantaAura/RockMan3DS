@@ -42,6 +42,7 @@
 #include "legends3ds/source_buster_profile.h"
 #include "legends3ds/runtime_session.h"
 #include "legends3ds/runtime_animation.h"
+#include "legends3ds/frontend_title.h"
 #include "legends3ds/gameplay_clock.h"
 #include "legends3ds/actor_runtime.h"
 #include "legends3ds/actor_detection_preparation.h"
@@ -207,6 +208,7 @@ static std::vector<std::pair<uint32_t,uint8_t>>* g_area_lod_shared = nullptr;
 static std::vector<GpuMaterial> g_player_materials;
 static std::vector<GpuMaterial> g_actor_materials;
 static std::vector<GpuMaterial> g_scene_materials;
+static std::vector<GpuMaterial> g_frontend_materials;   // title logo / PRESS START / menu
 static std::vector<GpuMaterial> g_scene_actor40_materials;
 static size_t g_current_area = 0;
 
@@ -2165,6 +2167,8 @@ const PsxResolved& psx_resolve(uint16_t clut, uint16_t tpage) {
     auto it = g_psx_resolved.find(word);
     if (it != g_psx_resolved.end()) return it->second;
     PsxResolved r;
+    for (const auto& m : g_frontend_materials)
+        if (m.material_word == word) { r.found = true; r.texture = m.texture_ready ? &m.texture : nullptr; r.base_word = word; break; }
     // Pass 0 needs a fitted scale for k > 0; pass 1 accepts the page's own
     // palette (scale 1) when the ramp palette was never fitted (counted).
     for (int pass = 0; pass < 2 && !r.found; ++pass)
@@ -2897,6 +2901,111 @@ void draw_terrain_see_through(const C3D_Mtx& projection, const C3D_Mtx& view) {
     C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO);
     C3D_BlendingColor(0); C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
     C3D_AlphaTest(alpha_requested(), GPU_GREATER, 0);
+}
+
+// Title screen and menu (ROCK_NEO front end 0x80013420, frontend_title.cpp)
+// before the game starts. The 2D packets go through the GP0 translator with
+// the title pages from DEMO_DAT (materials/frontend.l3mc). Not ported yet
+// (FRONTEND_TITLE.md): the ruin/Servbot scene behind the logo, the fades
+// (0x80017C30: requests are logged, the fade counter reads 0), title sounds,
+// CONTINUE / OPTION and the attract demo, which return to the title.
+// Diagnostic: the top framebuffer (BGR8, 240x400 column-major) to the SD
+// card, so an unattended Azahar run can be looked at afterwards.
+void dump_top_framebuffer(const char* tag, uint32_t frame) {
+    u16 w = 0, h = 0;
+    const u8* fb = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, &w, &h);
+    if (!fb || !w || !h) return;
+    // The GPU wrote it: drop stale CPU cache lines before reading.
+    GSPGPU_InvalidateDataCache(const_cast<u8*>(fb), u32(w) * h * 3u);
+    char path[128];
+    std::snprintf(path, sizeof(path), "sdmc:/3ds/Legends3DS/shot_%s_%05lu_%ux%u.bgr", tag, (unsigned long)frame, unsigned(w), unsigned(h));
+    if (FILE* f = std::fopen(path, "wb")) { std::fwrite(fb, 1, size_t(w) * h * 3u, f); std::fclose(f); }
+}
+
+bool run_frontend_title(bool scripted) {
+    const auto path = data_path("materials/frontend.l3mc");
+    if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
+    else { boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=0 frontend.l3mc absent"); return false; }
+    const auto cache = l3::load_l3material_cache(read_binary(path), true);
+    for (const auto& e : cache.entries) {
+        if (!e.resolved) continue;
+        GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
+        auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
+    }
+    psx_resolver_reset();
+    boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=1 state machine 0x80013420; scene/fade/sound/CONTINUE/OPTION/attract not ported");
+    l3::FrontendState state;
+    uint8_t last_state = 0xFF, last_sub = 0xFF;
+    uint32_t frame = 0;
+    bool new_game = false;
+    while (aptMainLoop() && !new_game) {
+        hidScanInput();
+        u32 down = hidKeysDown();
+        if (scripted) {
+            u32 held = 0, up = 0; circlePosition cp{};
+            if (!diagnostic_autoplay_frame(down, held, up, cp)) break;
+        }
+        l3::FrontendInput in;
+        if (down & KEY_START) in.pressed |= 0x0008u;
+        if (down & KEY_B) in.pressed |= 0x4000u;      // Cross
+        if (down & KEY_A) in.pressed |= 0x4000u;      // 3DS confirm
+        if (down & KEY_X) in.pressed |= 0x1000u;      // Triangle (back)
+        if (down & KEY_DUP) in.pressed |= 0x0010u;
+        if (down & KEY_DDOWN) in.pressed |= 0x0040u;
+        if (down & KEY_DLEFT) in.pressed |= 0x0080u;
+        if (down & KEY_DRIGHT) in.pressed |= 0x0020u;
+        const auto f = l3::frontend_step_80013420(state, in);
+        if (state.state != last_state || state.substate != last_sub || f.result != l3::FrontendResult::None) {
+            hardware_test_trace("# frontend,frame=%lu,state=%u,substate=%u,selection=%d,result=%u,fades=%u,sounds=%u,draws=%u",
+                (unsigned long)frame, unsigned(state.state), unsigned(state.substate), int(state.selection),
+                unsigned(f.result), unsigned(f.fades.size()), unsigned(f.sounds.size()), unsigned(f.draws.size()));
+            last_state = state.state; last_sub = state.substate;
+            char label[160];
+            std::snprintf(label, sizeof(label), "frontend frame=%lu state=%u sub=%u sel=%d result=%u prev_packets=%lu unresolved=%lu runs=%lu",
+                (unsigned long)frame, unsigned(state.state), unsigned(state.substate), int(state.selection), unsigned(f.result),
+                (unsigned long)g_psx_last_stats.packets, (unsigned long)g_psx_last_stats.unresolved, (unsigned long)g_psx_last_stats.runs);
+            boot_log(MML_BOOT_DATA, label);
+            if (scripted) dump_top_framebuffer("title", frame);   // previous frame on screen
+        }
+        (void)acquire_gpu_frame("front end");
+        C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
+        if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("front end: C3D_FrameDrawOn rejected");
+        psx_begin_frame();
+        // AddPrim to one bucket: the last packet added draws first, so add in
+        // reverse to keep the original submission order on screen.
+        for (size_t i = f.draws.size(); i-- > 0;) {
+            const uint32_t packet = g_psx_prims.allocate(9, 12);
+            l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), f.draws[i]);
+            float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + 9);
+            for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
+            g_psx_ot.add_prim(g_psx_prims, 0, packet);
+        }
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
+        psx_draw_ot(false);
+        g_psx_xy_from_gte = xy;
+        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+        submit_gpu_frame();
+        ++frame;
+        switch (f.result) {
+            case l3::FrontendResult::NewGame: new_game = true; break;
+            case l3::FrontendResult::Attract:
+            case l3::FrontendResult::Continue:
+            case l3::FrontendResult::Option:
+                hardware_test_trace("# frontend_unported,frame=%lu,result=%u,returning_to_title=1",
+                    (unsigned long)frame, unsigned(f.result));
+                state = l3::FrontendState{};
+                break;
+            default: break;
+        }
+    }
+    // The last title frame may still be queued: finish it before the pages go.
+    (void)acquire_gpu_frame("front end release"); submit_gpu_frame(false);
+    require_gpu_idle_for_release();
+    for (auto& m : g_frontend_materials) release_gpu_texture(m.texture, m.texture_ready);
+    std::vector<GpuMaterial>().swap(g_frontend_materials);
+    psx_resolver_reset();
+    return new_game;
 }
 
 uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
@@ -3683,6 +3792,14 @@ int main() {
                 hardware_test_trace("# source_scene_rng_profile,status=%u,bound=%u,records=%lu,scope=RECORDED_OPENBIOS_SCENE,retail_chronology=false",
                     unsigned(status),unsigned(bound),(unsigned long)profile.record_count);
             }catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+        }
+        // Title and menu first, unless a diagnostic autoplay/spawn run. With
+        // diagnostic_title.txt the autoplay script drives the title too.
+        if(g_sidecars_bound&&use_uv_renderer()){
+            bool spawn_file=false,title_file=false;
+            if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt","r")){std::fclose(f);spawn_file=true;}
+            if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_title.txt","r")){std::fclose(f);title_file=true;}
+            if(!spawn_file&&(!g_autoplay.active||title_file))(void)run_frontend_title(g_autoplay.active);
         }
         l3::GameplayClock gameplay_clock;
         u64 previous_update_clock=svcGetSystemTick();

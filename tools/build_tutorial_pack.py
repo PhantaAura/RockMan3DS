@@ -170,7 +170,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_frontend_materials']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -370,6 +370,13 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 'snapshot':'INITIAL_UPLOAD_BATCH','chronology':'SOURCE_BACKED_PARTIAL',
                 'live_palette':'UNKNOWN','path':str(scene_path.relative_to(out)),
                 'uploads':[{'name':path.name,'sha256':sha256(path)} for path in scene_uploads]}
+            # Title screen (front end, docs/research_01516/FRONTEND_TITLE.md):
+            # the logo / PRESS START / menu pages from DEMO_DAT.BIN.
+            if (dat/'DEMO_DAT.BIN').is_file():
+                run(tools,'l3cook_frontend_materials',dat/'DEMO_DAT.BIN',mout/'frontend.l3mc')
+                manifest['frontend_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((mout/'frontend.l3mc').relative_to(out)),
+                    'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U; words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C'}
             manifest['actor_materials']={'format':1,'optional':True,'runtime_gate':'ACTOR_TEXTURES=1',
                 'default_enabled':False,'shade':'UNKNOWN','status':'SOURCE_BACKED_PARTIAL',
                 'upload_order':'inherited ordered VRAM resources; live original VRAM comparison pending'}
