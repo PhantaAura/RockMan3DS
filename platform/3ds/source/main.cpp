@@ -4174,6 +4174,30 @@ int main() {
                 }
                 const bool dialogue_was_active=session.dialogue().active;
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                // WCA collision evidence: the first few wall contacts per area dump
+                // the live candidate cells (packed, IDX, raw6, descriptor, contact
+                // list and its group count) so they can be compared with the
+                // cooked map.
+                {
+                    static size_t wall_area=SIZE_MAX;static unsigned wall_dumps=0;
+                    if(wall_area!=session.map_area_index()){wall_area=session.map_area_index();wall_dumps=0;}
+                    const auto& pc=session.player_contact();
+                    if(pc.wall_contact&&wall_dumps<4){
+                        ++wall_dumps;
+                        const auto pos=session.player_position();
+                        for(int dz2=-1;dz2<=1;dz2+=2)for(int dx2=-1;dx2<=1;dx2+=2){
+                            const auto cell=l3::runtime_map_find_cell(session.active_map(),session.map_area_index(),pos.x+dx2*256,pos.z+dz2*256);
+                            if(!cell)continue;
+                            const auto* idx=l3::runtime_map_cell_idx(session.active_map(),*cell);
+                            const auto* list=l3::runtime_map_cell_contact_list(session.active_map(),*cell);
+                            const auto li=l3::runtime_map_cell_contact_list_index(session.active_map(),*cell);
+                            hardware_test_trace("# wall_cell,frame=%lu,pos=%d:%d:%d,cell=%lu,grid=%u:%u,packed=%d,idx_y=%d,raw6=%d,desc=%d,list=%d,groups=%lu,result=%ld",
+                                (unsigned long)session.frame_counter(),int(pos.x),int(pos.y),int(pos.z),(unsigned long)cell->cell_index,
+                                unsigned(cell->grid_x),unsigned(cell->grid_z),int(cell->packed_cell),idx?int(idx->y):-99999,idx?int(idx->raw6):-1,
+                                idx?int(idx->descriptor_index):-1,li?int(*li):-1,list?(unsigned long)list->group_count:0ul,long(pc.result));
+                        }
+                    }
+                }
                 // Every change of the tutorial story flags 0x600..0x62F, with
                 // where Mega Man stood (WCA route evidence).
                 {
