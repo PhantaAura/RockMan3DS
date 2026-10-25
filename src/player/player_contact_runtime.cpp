@@ -166,16 +166,24 @@ bool deep_overlap_80050400(const Rect& r,L3RetailContactScratch& p,
 // the branch with both horizontal axes eligible records h.x/h.z; every Y
 // push records h.y except that branch in mode 3 (0x8004F7B0). Every response
 // restarts the candidate scan.
-bool generic_rectangle_response(Rect r, L3RetailContactScratch& p,
-                                int16_t& before_x,int16_t& before_y,int16_t& before_z,
-                                int16_t dx,int16_t dy,int16_t dz,uint8_t& blocked,
-                                unsigned mode,History& hist,RuntimePlayerContact& out) {
+// 0x8004F44C proper: returns its result without a dispatcher tail. Mode
+// bit 0x10 replaces the X test 0x80050808 by 0x80050A24 (delta nonzero and
+// the direction not blocked, no magnitude limit), 0x20 the Z test 0x800508BC
+// by 0x80050A90, 0x40 the Y test 0x80050970 (& mode) by 0x80050B68 (the
+// correction is nonzero). The slope cases call it with 0x43 | 0x10/0x20.
+bool rectangle_response_8004f44c(const Rect& r, L3RetailContactScratch& p,
+                                 int16_t& before_x,int16_t& before_y,int16_t& before_z,
+                                 int16_t dx,int16_t dy,int16_t dz,uint8_t& blocked,
+                                 unsigned mode,History& hist,RuntimePlayerContact& out) {
     const int16_t cx=short_wrap((dx<0?r.x1:r.x0)-p.x);
     const int16_t cy=short_wrap((dy<0&&!(mode&2u)?r.y1:r.y0)-p.y);
     const int16_t cz=short_wrap((dz<0?r.z1:r.z0)-p.z);
-    const bool ex=eligible(cx,dx,blocked,2,1);
-    const bool ez=eligible(cz,dz,blocked,8,4);
-    const bool ey=eligible(cy,dy,blocked,32,16);
+    const auto relaxed=[&](int16_t c,int16_t d,uint8_t positive,uint8_t negative){
+        return d!=0&&(blocked&(c>0?positive:negative))==0;
+    };
+    const bool ex=(mode&0x10u)?relaxed(cx,dx,2,1):eligible(cx,dx,blocked,2,1);
+    const bool ez=(mode&0x20u)?relaxed(cz,dz,8,4):eligible(cz,dz,blocked,8,4);
+    const bool ey=(mode&0x40u)?cy!=0:(eligible(cy,dy,blocked,32,16)&&(mode&1u));
     bool result=false;
     if (!ex && !ez && !ey) {
         result=deep_overlap_80050400(r,p,before_x,before_y,before_z,mode,blocked,hist,out);
@@ -198,6 +206,13 @@ bool generic_rectangle_response(Rect r, L3RetailContactScratch& p,
             if(!result)out.ceiling_contact=true;
         }
     }
+    return result;
+}
+bool generic_rectangle_response(Rect r, L3RetailContactScratch& p,
+                                int16_t& before_x,int16_t& before_y,int16_t& before_z,
+                                int16_t dx,int16_t dy,int16_t dz,uint8_t& blocked,
+                                unsigned mode,History& hist,RuntimePlayerContact& out) {
+    const bool result=rectangle_response_8004f44c(r,p,before_x,before_y,before_z,dx,dy,dz,blocked,mode,hist,out);
     // 0x8004BDC8 case 1 reaches LAB_8004C144 and returns true after every
     // 0x8004F44C response, so 0x8004B6AC (LAB_8004BB24) restarts the whole
     // candidate scan. Through 0.0.14.51 a wall/ceiling push ended the pass,
@@ -206,6 +221,85 @@ bool generic_rectangle_response(Rect r, L3RetailContactScratch& p,
     response_tail(result,mode==1u,false,dy,p,hist);
     return true;
 }
+// 0x8004BDC8 cases 8..11: slope primitives whose top is at the rectangle's
+// +Z side (8), -Z side (9), -X side (10) and +X side (11); the Area 2 entry
+// ramp is code 8 (walking +Z climbs it to y -0xC1).
+// r is the dispatcher rectangle as the port builds it: X/Z expanded by the
+// player bounds in place by the family-0/1 classifier 0x8004E304 (and copied
+// to 0x1F8000F0/F8/F4/FC), Y expanded (raw y0 - b.y1, y1 - b.y0).
+//  - Guard: airborne (contact_state != 0), or the slope's own blocked bit
+//    (8: 8, 9: 4, 10: 1, 11: 2) clear, or more than 0x1F below the top;
+//    otherwise the post-switch slab test below applies.
+//  - Surface height at the player (truncating MIPS divisions) with a lower
+//    bound at the raw top; uVar7 = the player's distance from the rising
+//    face; when the player is below the surface line, that face is moved by
+//    the overshoot (the copy passed to 0x8004F44C).
+//  - LAB_8004E1B8: above the surface (or under the slab) -> no contact.
+//    Grounded, within 0x20 and closer to the top than uVar7 -> snap onto the
+//    surface (u.y cleared). Otherwise 0x8004F44C(top = surface, bottom = r.y1,
+//    mode 0x43 | 0x20 (8/9) or 0x10 (10/11)); a nonzero result clears u; when
+//    not moving up, contact_state = 0 (0x1F8000F6 = 0x100).
+// Returns nullopt on a division trap (the original breaks).
+std::optional<bool> slope_response(uint16_t code,const Rect& r,L3RetailContactScratch& p,
+                                   int16_t& before_x,int16_t& before_y,int16_t& before_z,
+                                   int16_t dx,int16_t dy,int16_t dz,const RetailPlayerBounds& b,
+                                   uint8_t& blocked,History& hist,RuntimePlayerContact& out) {
+    const int32_t Y0=int32_t(r.y0)+b.y1, Y1=int32_t(r.y1)+b.y0;   // raw y
+    const int32_t py=p.y;
+    static constexpr uint8_t kGuardBit[4]={8,4,1,2};
+    const bool along_z=code==8u||code==9u;
+    if(p.contact_state!=0||(blocked&kGuardBit[code-8u])==0||0x1f<py-int32_t(r.y0)){
+        Rect f=r;
+        const int32_t lo=along_z?r.z0:r.x0, hi=along_z?r.z1:r.x1;
+        const int32_t span=hi-lo;
+        const int32_t foot=along_z?int32_t(b.z1)-b.z0:int32_t(b.x1)-b.x0;
+        if(span==0)return std::nullopt;
+        const int32_t t=Y0-((Y1-Y0)*foot)/span;
+        const int32_t h=Y1-t;
+        if(h==0)return std::nullopt;
+        const int32_t pc=along_z?p.z:p.x;
+        // 8 and 11 measure from the high face, 9 and 10 from the low face.
+        const bool from_hi=code==8u||code==11u;
+        int32_t surface=t+(h*(from_hi?hi-pc:pc-lo))/span;
+        if(surface<Y0)surface=Y0;
+        int32_t room=0;   // uVar7
+        switch(code){
+            case 8: room=pc-f.z0; break;
+            case 9: room=f.z1-pc; break;
+            case 10: room=f.x1-pc; break;
+            default: room=pc-f.x0; break;
+        }
+        const int32_t overshoot=(span*(Y1-py))/h;
+        if(overshoot>0){
+            switch(code){
+                case 8: f.z0=short_wrap(int32_t(f.z0)+overshoot); break;
+                case 9: f.z1=short_wrap(int32_t(f.z1)-overshoot); break;
+                case 10: f.x1=short_wrap(int32_t(f.x1)-overshoot); break;
+                default: f.x0=short_wrap(int32_t(f.x0)+overshoot); break;
+            }
+        }
+        // LAB_8004E1B8
+        const int32_t top=surface-b.y1;
+        if(py<=top||int32_t(r.y1)<=py)return false;
+        if(p.contact_state==0&&py-top<0x20&&py-int32_t(r.y0)<room){
+            p.y=short_wrap(top);hist.u[1]=0;return true;
+        }
+        f.y0=short_wrap(top);
+        const unsigned mode=(along_z?0x20u:0x10u)|0x43u;
+        if(rectangle_response_8004f44c(f,p,before_x,before_y,before_z,dx,dy,dz,blocked,mode,hist,out))
+            clear_pending(hist);
+        if(dy>=0)p.contact_state=0;
+        return true;
+    }
+    // After the switch (0x8004E1F4..): inside the slab -> onto its top,
+    // blocked = 0x20, u.y = 0. CANDIDATE: u.x/u.z take 0x1F800112/116, copies
+    // that feed only the unported x5 diagonal fallback; taken as 0 here.
+    if(int32_t(r.y0)<py&&py<int32_t(r.y1)){
+        hist.u={};blocked=0x20;p.y=r.y0;return true;
+    }
+    return false;
+}
+
 bool diagonal_project_8004ff14(const Rect& r,L3RetailContactScratch& p,
                                int16_t dy,uint8_t& blocked,unsigned mode,
                                History& hist,RuntimePlayerContact& out) {
@@ -464,6 +558,12 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                         if(diagonal_response(p.code,r,out.scratch,before_x,before_y,before_z,dx,dy,dz,
                             int32_t(g.x1)-g.x0,int32_t(g.z1)-g.z0,b,blocked,hist,out))repeat=true;
                         else {++out.unsupported_primitives;if(!out.unsupported_code)out.unsupported_code=uint16_t(p.code|0x100u);}
+                        continue;
+                    }
+                    if((first_code&0xF0u)<0x20u && p.code>=8u && p.code<=11u){
+                        const auto res=slope_response(p.code,r,out.scratch,before_x,before_y,before_z,dx,dy,dz,b,blocked,hist,out);
+                        if(!res){++out.unsupported_primitives;if(!out.unsupported_code)out.unsupported_code=p.code;continue;}
+                        if(*res)repeat=true;
                         continue;
                     }
                     if((first_code&0xF0u)>=0x20u || (p.code!=1u&&p.code!=3u&&p.code!=15u)){

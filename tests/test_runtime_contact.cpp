@@ -38,6 +38,24 @@ l3::RuntimeSession session(l3::RuntimeMap m){
     l3::TutorialRuntimeArea a;a.area_index=0;L3QolSettings q{};l3_qol_settings_defaults(&q);
     l3::RuntimeSession s(std::move(m),std::move(a),{},q);s.set_reference_tables(refs());s.reset_player({},0,100,100);return s;
 }
+// 0x8004BDC8 cases 8/9: a grounded walk up a slope primitive follows its
+// surface to the top (raw y0) without an Unsupported status.
+void slope_climb(uint16_t code,int16_t start_z,int16_t step){
+    auto m=map_with_floor(code,-192);m.contact_primitives[0].y1=0;
+    int16_t x=0,y=0,z=start_z;uint8_t cs=0;int16_t top=0;
+    for(int f=0;f<60;++f){
+        L3PlayerCompatWork w{};
+        put(w,0x2C,x);put(w,0x2E,y);put(w,0x30,z);
+        put(w,0x14,x);put(w,0x16,int16_t(y+8));put(w,0x18,int16_t(z+step));w.bytes[0x74]=cs;
+        const auto c=l3::runtime_player_contact_step(m,0,w);
+        assert(c.status==l3::RuntimeContactStatus::SourceBackedPartial&&c.unsupported_code==0);
+        x=c.scratch.x;y=c.scratch.y;z=c.scratch.z;cs=c.scratch.contact_state;
+        assert(y<=0&&y>=-192);
+        if(y<top)top=y;
+        if((step>0&&z>=400)||(step<0&&z<=-400))break;
+    }
+    assert(top<=-180&&cs==0);   // reached the raised end, still grounded
+}
 void contact_response_and_bounds(){
     auto m=map_with_floor();L3PlayerCompatWork w{};
     put(w,0x16,10);put(w,0x2E,-10);w.bytes[0x74]=1;
@@ -307,9 +325,9 @@ void source_floor_interval_and_unknown_movement(){
     put(player,0x16,155);put(player,0x2E,155);
     const auto contact=l3::runtime_player_contact_step(map,0,player);
     assert(contact.floor_y==155);
-    assert(contact.status==l3::RuntimeContactStatus::Unsupported && !contact.grounded.has_value());
-    // Knowing the source floor interval does not prove the slope movement,
-    // obstruction-cache response, or full player grounding contract.
+    // The 0x8004BDC8 slope cases now answer the movement step too.
+    assert(contact.status==l3::RuntimeContactStatus::SourceBackedPartial && contact.unsupported_code==0 &&
+           contact.grounded.has_value());
 }
 void source_floor_fixture(const char* path){
     std::ifstream in(path);assert(in);std::string line;unsigned cases=0;
@@ -408,7 +426,7 @@ void deep_overlap_recovery_80050400(){
     assert(s.player_contact().status==RuntimeContactStatus::SourceBackedPartial);
     assert(s.player_contact().deep_overlap_recoveries==1&&s.player_position().x==-32);
 }
-int main(int argc,char** argv){deep_overlap_recovery_80050400();contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
+int main(int argc,char** argv){deep_overlap_recovery_80050400();slope_climb(8,-400,24);slope_climb(9,400,-24);contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
     assert(argc==1 || argc==2);if(argc==2)source_floor_fixture(argv[1]);
     std::cout<<"PASS: source-backed contact subset, ordinary action2 forward/reverse/release/turn, bounded retail scalar window, diagnostic seed, animation-gated jump and zero-allocation ticks; PHYSICS_1TO1=false\n";
 }
