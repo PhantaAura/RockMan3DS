@@ -179,8 +179,9 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
 0. Front end, then the boss (user order, 2026-10-25):
-   - title backdrop: the DEMO_DAT.EBD scene (ruin wall, Servbots) behind the
-     logo, NTITLE3U (row 0x1F2), fades 0x80017C30, title sounds (ee_title.vab);
+   - title backdrop done (wall, strip, gradient, menu box), fade 2/10, title
+     sounds (sfx_title.l3sb). Left: the Servbot parade (0x80015428 ->
+     0x800153EC, class-20 draw), fades 1/9/22;
    - New Game -> opening: ST00 event 1 (Area 0 scene, phases 0..7, partly
      ported behind SOURCE_EVENT_BOOT) instead of `opening_scene=SKIPPED`;
    - intro (ST01 event 71) and the attract demo;

@@ -74,6 +74,27 @@ PRESS START (0x80014394) draws two packets: the text, then the copyright
 lines at (32,208)-(288,232), uv (0,176)-(255,200). The fourth menu row
 (0x800C1B28 set) is the difficulty (EASY/NORMAL/HARD).
 
+## Title backdrop (ported) and the Servbot parade (not yet)
+GP0 capture of an original menu frame (psxrecomp `gpu_frame_capture.py`)
+and a RAM write trace on the packet buffer show 0x80013FB8 writes:
+logo (OT list 0x800A4F50, linked at entry 32); the NTITLE3U wall as two
+POLY_FT4 halves x 0-160 / 160-320 (uv mirrored), TPAGE GetTPage(1,2,576,256),
+CLUT row 0x1F2 (entry 35); a POLY_G4 | 2 strip (0,144)-(320,160) black to
+white with an E1 SetDrawMode(GetTPage(1,2,0,0)) after it (ABR 2, B-F)
+(entry 34); a POLY_G4 gradient (0,162)-(320,240) black to (192,255,224)
+(entry 35); then 0x800137D4 (scene draw). The menu adds a POLY_F4 | 2 box
+(96,144)-(224,200) (216 with the difficulty row), black, after its rows,
+blending with the logo's ABR 0. Ported; packets in `frontend_title.cpp`.
+
+Servbots: 0x80015428 (called with the front-end state) spawns 16 class-20
+actors through 0x80031418 (pool 0x8009F108, 0x3C0 bytes), work +0 = 1,
++3 = index, +0x0C = wave (+8); waits 300 frames (+6), plays 0x8002EE90(2,
+0x80), next wave (wraps after 8). Class callbacks: scratch 0x1F800058 =
+0x800808A4 -> table 0x800808A0, entry 0 = 0x800153EC, which dispatches on
+work +8 through 0x80082104 with a1 = work + 0x348. Model texture EM0A00
+(ST01, VRAM (704,0), CLUT (128,246)); drawn by the class-20 renderer
+(packet writer 0x800295CC). Not ported yet.
+
 ## Port plan
 1. Cook ST01 (map, EBD, TIMs) into the pack.
 2. Port the front-end state machine (states 0..6, substates) as a host-tested
