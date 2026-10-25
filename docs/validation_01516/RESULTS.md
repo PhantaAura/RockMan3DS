@@ -521,3 +521,18 @@ corridor corner while walking.
     2.9 px), but the screen showed mostly black and the A/B screenshot
     failed (capture error).
   - **E0 meshes are not verified by eye.**
+
+## Black top screen at the Area 2 target spawn: camera height bug (fixed)
+- **A/B** (same source, both translator switches off): the screen was just
+  as black, so the packet build did not cause it.
+- **Trace:** follow-camera target (-5300, **-150**, 12032) while Mega Man
+  stood at y **-576**. The eye (y -187) sat inside the raised ledge, looking
+  at its back faces (152 black faces).
+- **Cause:** `0x80038894` sets the target y to player +0x16 − `0x800A39B4`
+  (0x96 after init; 0xD2 in a scripted mode). The 0.0.15.9 port read it as a
+  fixed −0x96, which was invisible on the y ≈ 0 floors of Area 1.
+- **Fix:** `SourceGameplayCamera::height_800a39b4`, and target y = player y −
+  height. New host test at y = −576.
+- **Azahar (heading 1024):** target y −727, eye y −764. Screenshot: Mega Man
+  on the ledge, Area 2 walls, and the E0/08 target (club emblem) drawn
+  textured through the OT. **E0 meshes are now verified on screen.**

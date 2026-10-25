@@ -125,7 +125,9 @@ void source_gameplay_camera_update_80038894(SourceGameplayCamera& c,
     const int32_t heading=rd16(player,0x56);
     c.target_800a39a0[0]=rd16(player,0x14);
     c.target_800a39a0[2]=rd16(player,0x18);
-    c.target_800a39a0[1]=-0x96;   // -0x800A39B4, a fixed height in this mode
+    // Player +0x16 - 0x800A39B4 (0x800B51C4 upper half): the target follows
+    // the player's height.
+    c.target_800a39a0[1]=rd16(player,0x16)-c.height_800a39b4;
     const int32_t goal=heading+0x800;
     if(c.follow_frames_80098668==1){
         c.yaw_800a3968=goal;

@@ -45,6 +45,9 @@ struct SourceGameplayCamera {
     // The follow tail (0x80038FE4) lifts the target by it, then drops it by
     // 10 per frame. Not reset by the init (the original never clears it there).
     uint8_t shake_800a395f = 0;
+    // 0x800A39B4: target height above the player. The init paths write 0x96;
+    // a scripted mode (0xD2) is not ported.
+    int32_t height_800a39b4 = 0x96;
 };
 
 struct SourceGameplayCameraFrame {

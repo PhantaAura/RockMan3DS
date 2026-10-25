@@ -11,7 +11,9 @@ the eye tail of `0x80037FB4`, and `0x8002FE74`. Constants were read from the EXE
   player `+0x44D` (`0x800B55FD`).
 - **`0x80038894`, the per-frame update, ordinary path.** This needs state 1, no
   first-person mode, mode 0 and a settled blend.
-  - Target is player X/Z at a fixed Y of −0x96.
+  - Target is player X/Z and player Y (+0x16) − `0x800A39B4` (0x96 after
+    init). Corrected 2026-10-25: this was first read as a fixed −0x96, which
+    only matched because the player stood at y ≈ 0 when it was measured.
   - Frame 1 snaps the yaw to heading + 0x800. After that the rate is
     `gap/4`, clamped to at least 0x18 while the gap is under 0x200, otherwise
     0x80.

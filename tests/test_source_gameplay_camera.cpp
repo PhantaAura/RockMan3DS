@@ -55,6 +55,14 @@ int main(){
     assert(cam.target_800a39a0[1]==-0x96&&cam.target_800a39a0[0]==100&&cam.target_800a39a0[2]==-200);
     const auto e=l3::source_camera_eye_80037fb4(refs,cam.target_800a39a0,0x200,0x900,0x30);
     assert(cam.eye_800a39f0==e&&e[1]==int16_t(-((((0x200*sp)>>12))+0x96)));
+    // The target follows the player's height: y - 0x800A39B4 (0x96).
+    {
+        l3::SourceGameplayCamera high;
+        L3PlayerCompatWork hw{};put(hw,0x14,100);put(hw,0x16,-576);put(hw,0x18,-200);put(hw,0x56,0);
+        l3::source_gameplay_camera_init_80038648(high,refs,100,-200);
+        l3::source_gameplay_camera_update_80038894(high,refs,hw,map,0);
+        assert(high.height_800a39b4==0x96&&high.target_800a39a0[1]==-576-0x96);
+    }
     // Small turn: gap 0x100 -> rate 0x40 per frame until the gap is < 0x60
     // (rate floor 0x18), never overshooting.
     put(w,0x56,0x200);
