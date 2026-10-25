@@ -1496,7 +1496,11 @@ void draw_player_material_group(const std::vector<l3::PosedPlayerVisualPrimitive
     if(open)C3D_ImmDrawEnd();
 }
 
-bool psx_emit_player(const std::vector<l3::PosedPlayerVisualPrimitive>& posed, const l3::RuntimeSession& session);
+struct FrameSplit { u64 frames = 0, gpu_wait_us = 0, render_cpu = 0, update = 0, terrain = 0, models = 0, flush = 0,
+    player = 0, actors = 0, e0 = 0, fx = 0, player_emit = 0; };
+static FrameSplit g_frame_split;
+bool psx_emit_player(const std::vector<l3::PlayerVisualPrimitive>& local_visuals, const l3::PlayerPoseMatrices& matrices,
+                     const l3::RuntimeSession& session);
 void draw_player_uv(const std::vector<l3::PlayerVisualPrimitive>& local_visuals,
                     const std::vector<uint32_t>& material_words,
                     std::vector<l3::PosedPlayerVisualPrimitive>& posed,
@@ -1511,9 +1515,14 @@ void draw_player_uv(const std::vector<l3::PlayerVisualPrimitive>& local_visuals,
     const auto& channels = frame ? *frame : fallback_probe_frame(fallback_action, session);
     const auto bank = l3::decode_pbd_main_pose_bank(channels);
     const auto matrices = l3::build_player_pose_matrices(skeleton, bank);
+    // Through the GP0 translator when the frame has the face camera; it poses
+    // and projects each shared vertex once, so the posed list is only needed
+    // by the fallback draw.
+    const u64 emit_start = svcGetSystemTick();
+    const bool emitted = psx_emit_player(local_visuals, matrices, session);
+    g_frame_split.player_emit += svcGetSystemTick() - emit_start;
+    if (emitted) return;
     l3::pose_player_visuals_into(local_visuals, matrices, posed);
-    // Through the GP0 translator when the frame has the face camera.
-    if (psx_emit_player(posed, session)) return;
 
     for (uint32_t word : material_words) {
         // Two bounded opcode groups, no frame allocation and no empty draws.
@@ -2128,9 +2137,6 @@ static PsxTranslatorStats g_psx_stats;
 static PsxTranslatorStats g_psx_last_stats;
 // Gate C frame split, accumulated per frame and averaged into the trace
 // every 120 frames (CPU ticks; GPU execution itself is not measurable here).
-struct FrameSplit { u64 frames = 0, gpu_wait_us = 0, render_cpu = 0, update = 0, terrain = 0, models = 0, flush = 0,
-    player = 0, actors = 0, e0 = 0, fx = 0; };
-static FrameSplit g_frame_split;
 static u64 g_models_start = 0;   // after the terrain draw; 0 when no terrain this frame
 struct PsxResolved {
     const C3D_Tex* texture = nullptr;   // nullptr: no uploaded page
@@ -2494,7 +2500,40 @@ void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool
     ++g_psx_stats.actor_packets;
 }
 
-bool psx_emit_player(const std::vector<l3::PosedPlayerVisualPrimitive>& posed, const l3::RuntimeSession& session) {
+// The player mesh as (bone, local vertex) pairs shared between primitives,
+// so each corner is posed and projected once per frame like the per-part
+// vertex pass of 0x80027F78. Built once per mesh.
+struct PlayerVertexTable {
+    const l3::PlayerVisualPrimitive* data = nullptr;
+    size_t size = 0;
+    std::vector<std::pair<uint8_t, l3::PbdVertex>> unique;
+    std::vector<std::array<uint16_t,4>> corner;
+};
+const PlayerVertexTable& player_vertex_table(const std::vector<l3::PlayerVisualPrimitive>& visuals) {
+    static PlayerVertexTable t;
+    if (t.data == visuals.data() && t.size == visuals.size()) return t;
+    t = {};
+    t.data = visuals.data(); t.size = visuals.size();
+    std::map<std::array<int32_t,4>, uint16_t> seen;
+    t.corner.resize(visuals.size());
+    for (size_t i = 0; i < visuals.size(); ++i) {
+        const auto& p = visuals[i];
+        for (unsigned k = 0; k < p.vertex_count && k < 4; ++k) {
+            const auto& v = p.position[k];
+            const std::array<int32_t,4> key{{p.transform_id, v.x, v.y, v.z}};
+            auto it = seen.find(key);
+            if (it == seen.end()) {
+                it = seen.emplace(key, uint16_t(t.unique.size())).first;
+                t.unique.push_back({p.transform_id, v});
+            }
+            t.corner[i][k] = it->second;
+        }
+    }
+    return t;
+}
+
+bool psx_emit_player(const std::vector<l3::PlayerVisualPrimitive>& local_visuals, const l3::PlayerPoseMatrices& matrices,
+                     const l3::RuntimeSession& session) {
     if (!g_psx_actors || !g_psx_camera || !g_psx_ot.size()) return false;
     const auto& cam = *g_psx_camera;
     const auto pos = session.player_position();
@@ -2506,15 +2545,22 @@ bool psx_emit_player(const std::vector<l3::PosedPlayerVisualPrimitive>& posed, c
     const uint16_t source_0116 = uint16_t(work[0x116]) | (uint16_t(work[0x117]) << 8u);
     const auto actor_matrix = l3::build_player_actor_render_matrix(
         {float(pos.x), float(pos.y), float(pos.z)}, session.player_yaw(), source_0116);
-    for (const auto& p : posed) {
+    const auto& table = player_vertex_table(local_visuals);
+    static std::vector<PsxVert> verts;
+    verts.resize(table.unique.size());
+    for (size_t u = 0; u < table.unique.size(); ++u) {
+        const auto& [bone, v] = table.unique[u];
+        if (bone >= matrices.world.size()) return false;
+        // Same two float transforms as posing then placing the actor.
+        const auto posed = l3::player_pose_transform_point(matrices.world[bone], {float(v.x), float(v.y), float(v.z)});
+        const auto w = l3::player_pose_transform_point(actor_matrix, posed);
+        verts[u] = psx_project_vert({{w.x, w.y, w.z}});
+    }
+    for (size_t i = 0; i < local_visuals.size(); ++i) {
+        const auto& p = local_visuals[i];
         const unsigned n = p.vertex_count == 3 ? 3u : 4u;
-        std::array<PsxVert,4> pv{};
         std::array<const PsxVert*,4> v{};
-        for (unsigned k = 0; k < n; ++k) {
-            const auto w = l3::player_pose_transform_point(actor_matrix, p.position[k]);
-            pv[k] = psx_project_vert({{w.x, w.y, w.z}});
-            v[k] = &pv[k];
-        }
+        for (unsigned k = 0; k < n; ++k) v[k] = &verts[table.corner[i][k]];
         if (n == 3) v[3] = v[2];
         std::array<uint8_t,8> uv{};
         for (unsigned k = 0; k < 4; ++k) { uv[2 * k] = p.uv[k][0]; uv[2 * k + 1] = p.uv[k][1]; }
@@ -5395,11 +5441,11 @@ int main() {
             ++g_frame_split.frames;g_frame_split.gpu_wait_us+=gpu_wait_us;g_frame_split.render_cpu+=svcGetSystemTick()-render_start;
             if(session.frame_counter()%120u==0u&&g_frame_split.frames){
                 const double n=double(g_frame_split.frames),t=double(CPU_TICKS_PER_USEC);
-                hardware_test_trace("# frame_split,frame=%lu,frames=%lu,gpu_wait_us=%.0f,render_cpu_us=%.0f,update_us=%.0f,terrain_us=%.0f,models_us=%.0f,ot_flush_us=%.0f,player_us=%.0f,actors_us=%.0f,e0_us=%.0f,fx_us=%.0f",
+                hardware_test_trace("# frame_split,frame=%lu,frames=%lu,gpu_wait_us=%.0f,render_cpu_us=%.0f,update_us=%.0f,terrain_us=%.0f,models_us=%.0f,ot_flush_us=%.0f,player_us=%.0f,player_emit_us=%.0f,actors_us=%.0f,e0_us=%.0f,fx_us=%.0f",
                     (unsigned long)session.frame_counter(),(unsigned long)g_frame_split.frames,double(g_frame_split.gpu_wait_us)/n,
                     double(g_frame_split.render_cpu)/t/n,double(g_frame_split.update)/t/n,double(g_frame_split.terrain)/t/n,
                     double(g_frame_split.models)/t/n,double(g_frame_split.flush)/t/n,
-                    double(g_frame_split.player)/t/n,double(g_frame_split.actors)/t/n,double(g_frame_split.e0)/t/n,double(g_frame_split.fx)/t/n);
+                    double(g_frame_split.player)/t/n,double(g_frame_split.player_emit)/t/n,double(g_frame_split.actors)/t/n,double(g_frame_split.e0)/t/n,double(g_frame_split.fx)/t/n);
                 g_frame_split={};
             }
 
