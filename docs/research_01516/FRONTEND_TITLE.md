@@ -1,0 +1,72 @@
+# Front end: intro, title, menu and New Game (research, 2026-10-25)
+
+Status: research. Sources: ROCK_NEO.EXE disassembly, R3_ST01.BIN decompiled
+with Ghidra headless (owner-local, not committed), and the psxrecomp oracle
+(phase/event bytes and screenshots). Nothing ported yet.
+
+## Flow observed in the oracle
+| Screen | main phase / sub (0x800C1B10/11) | stage 0x800C1B60 | event 0x800C4C48 (act, id, phase) |
+|---|---|---|---|
+| Capcom logo (CAPCOM20.STR) | 0 / 0 | 0 | — |
+| now loading | 1 / 0, 2 / 1, 3 / 0 | 1 | — |
+| Intro "In a world covered by endless water…" | 3 / 2 | 1 (ST01) | 1, 71, 3 → 5 |
+| Start during the intro | 3 / 2 | 1 | 71 → phase 10, then inactive |
+| Title (logo, Servbots, PRESS START) | 3 / 2 | 1 | none |
+| Menu NEW GAME / CONTINUE / OPTION | 3 / 2 | 0 (next stage) | none |
+| No input: attract demo | 3 / 2 | 7 (ST07) | 1, 10, 0 → 2 |
+| New Game: opening | 3 / 2 | 0 (ST00) | 1, 1, … 6 (Area 0 scene) → 7 (hand-off 0x80101274) |
+| Control | 2 / 0 → 3 / 2 | 0 | — ; Mega Man at Area 1 (2822, -1, -4833) |
+
+## ST01 (intro and title stage)
+ST01.BIN uses the ST00 container. Resources: `R3_ST01.BIN` (code, 0x1B5C bytes
+at 0x80100000), `ST01_MAP.IDX/MDT` (a small map), `ST01.STG/HED`,
+`ST01_00.EBD`, `EM0A00.TIM` (from ST00/AR04), `OPENG0..3.TIM`,
+`ST01BG00..02.TIM`.
+- Header: word 0x14 then ten entry pointers (0x801004D8…0x801005D0).
+- 0x80100098: stage area init (camera block 0x80100F1C/F30, actor tables
+  0x80100D5C/D88/DA4, area record copy 0x800371A0).
+- 0x8010049C: intro event (71) phases 0..10. Phase 4 builds the scripted
+  scene (0x8001E6C0, 0x8001EAE8); 5 waits for the script or Start
+  (0x8001DE84); at 10 it ends with `0x80012F78(0x80013420)` and bumps
+  0x80098AA8 (front-end state).
+- 0x80100920 / 0x80100A70: the sky/sea gradient, one POLY_FT4 line per call
+  (16 + 144 + 16 lines, CLUT 0x7C00 row).
+- 0x801006A8: the airship actor's path; 0x8010080C its class init.
+
+## Front-end state machine (ROCK_NEO.EXE)
+Thread 0x80013420 (started by 0x80012F78): resets 0x1F800001 = 2, stage
+bytes, then loops: `state = *(s8*)0x80098AA8`; Start or Cross (0x800C0C2A &
+0x4008) while state 2 plays sound 130, sets byte +1 from the save checks
+(0x80098A72/70) and state 4; dispatch table 0x80080950; then 0x80031AA4 and
+0x80012E98(1) (frame wait).
+
+| State | Function | Role (CANDIDATE where marked) |
+|---|---|---|
+| 0 | 0x80013578 | attract: toggles +3, stage = 1 (intro) or 7 (demo), thread 0x800155A4 |
+| 1 | 0x800135DC | title setup: 0x8002E7A8(1), 0x8003697C, 0x8002CFA4, area record 0x800808D0/A8, scratch 0x1F800058 = 0x800808A4; then 0x80015428, fade 0x80017C30(2), state 2 |
+| 2 | 0x800136B8 | title, substates via 0x80010070: fade, 0x80053A30, timer +4 = 900, logo 0x80013FB8, PRESS START 0x80014394 (blinks by timer), then attract |
+| 3 | 0x80013890 | state = 0 |
+| 4 | 0x8001389C | menu (CANDIDATE: NEW GAME / CONTINUE / OPTION), draws 0x8001456C |
+| 5 | 0x80013CA0 | CANDIDATE: CONTINUE (memory card, 0x80062368) |
+| 6 | 0x80013E0C | CANDIDATE: OPTION; Start (0x800C0C2A & 8) → sound 0x83, state 4 |
+
+Scene draw for the title: 0x800137D4 (0x800175D8, 0x80015428, E0 sweep
+0x80016FD4, camera 0x80038370(0x800979DC, 0x800979EC), 0x800175FC, class-20
+draw 0x80028DE0, OT link at 0x800A4D40/0x800A8D3C).
+
+2D packets (POLY_FT4, code 0x2C, 9 words, rgb 0x808080):
+- logo 0x80013FB8: TPAGE GetTPage(1,0,320,256), CLUT GetClut(0,0x1F0),
+  xy (32,8)-(287,168), uv (0,0)-(255,160);
+- PRESS START 0x80014394: TPAGE GetTPage(0,0,320,256), CLUT (0,0x1F1),
+  xy (56,176)-(264,192), uv (0,160)-(208,176);
+- menu strip 0x8001456C(sel): TPAGE (0,0,320,256), CLUT (sel ? 16 : 32, 0x1F1),
+  xy (104,148)-(216,164), uv (0,200)-(112,216).
+
+## Port plan
+1. Cook ST01 (map, EBD, TIMs) into the pack.
+2. Port the front-end state machine (states 0..6, substates) as a host-tested
+   module; New Game hands over to the existing ST00 boot.
+3. Draw the title: ST01 scene (map + Servbot actors) and the three 2D packets
+   through the GP0 translator.
+4. Then the intro (event 71) and the opening (ST00 event 1, partly ported
+   behind SOURCE_EVENT_BOOT).
