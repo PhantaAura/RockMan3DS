@@ -3,6 +3,15 @@
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
+- **Title screen and menu (3DS).** The build now boots into the original
+  title (logo, PRESS START, copyright) and the NEW GAME / CONTINUE / OPTION
+  menu: ROCK_NEO front end 0x80013420 (`frontend_title.cpp`, host test), the
+  original POLY_FT4 packets, DEMO_DAT pages (`materials/frontend.l3mc`). NEW
+  GAME starts the existing game. Missing: the ruin/Servbot backdrop
+  (DEMO_DAT.EBD scene), fades, title sounds, CONTINUE/OPTION, attract demo.
+  Research: `docs/research_01516/FRONTEND_TITLE.md`.
+- **Tutorial exit.** After 0x622 the far door loads ST00 Area 3, the boss
+  room (oracle); the port enters it, but the boss is not spawned yet.
 - **World Comes Alive (Gate A), Azahar.** One continuous normal-boot run
   (no spawn file, scripted pad, no forced flags) reaches every tutorial flag
   through **0x622** (frame 10925; again at 13690 on the faster build). Flag
@@ -169,12 +178,14 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-0. Tutorial exit past 0x622 (`NEXT_1_0_STEP.md`): watch it in the psxrecomp
-   oracle, trace the 0x622 owner in the ST00 overlay, port only the hand-off.
-   Then the opening scene, title screen and New Game.
-   Still open from WCA: box 0x620/0x621 and 0x60E; terrain cost (largest
-   remaining, 6-15 ms); effects (0x800341BC explosion proxy, bit-0x20 children);
-   music gaps (Gaussian interpolation, reverb FIR, pause during loads).
+0. Front end, then the boss (user order, 2026-10-25):
+   - title backdrop: the DEMO_DAT.EBD scene (ruin wall, Servbots) behind the
+     logo, NTITLE3U (row 0x1F2), fades 0x80017C30, title sounds (ee_title.vab);
+   - New Game -> opening: ST00 event 1 (Area 0 scene, phases 0..7, partly
+     ported behind SOURCE_EVENT_BOOT) instead of `opening_scene=SKIPPED`;
+   - intro (ST01 event 71) and the attract demo;
+   - then the Area 3 boss (spawn, AI, defeat) and what follows it.
+   Still open: box 0x620/0x621, 0x60E; terrain cost; effects; music gaps.
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
    against a short PCSX-Redux probe.

@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "WCA complete in Azahar: normal boot reaches 0x622 (ledge grab, pool release, +75 mirror); player draw 9.3 -> 2.7 ms",
+ "title": "Title screen + menu on the 3DS (ROCK_NEO front end); WCA to 0x622 in Azahar; far door enters Area 3 (boss not spawned)",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -9,7 +9,7 @@
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
  "native_build": "PASS (devkitARM Old 3DS)",
- "host_tests": "169/169 PASS",
+ "host_tests": "170/170 PASS",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
@@ -30,6 +30,7 @@
  "world_comes_alive_finished": true,
  "usage_reset_used": false,
  "evidence": [
+  "docs/research_01516/FRONTEND_TITLE.md",
   "docs/validation_01516/NEXT_1_0_STEP.md",
   "docs/research_01516/LEDGE_GRAB.md",
   "docs/research_01516/RENDER_FIDELITY_R1.md",
@@ -139,5 +140,6 @@
   "st00_native": false
  },
  "world_comes_alive_scope": "Azahar emulator only; physical Old 3DS PENDING",
- "performance": "Azahar route average 24.5 FPS (was 20.1); player draw 2.7 ms (was 9.3); 30 FPS not reached"
+ "performance": "Azahar route average 24.5 FPS (was 20.1); player draw 2.7 ms (was 9.3); 30 FPS not reached",
+ "frontend": "Title/menu state machine 0x80013420 ported (SOURCE_BACKED_PARTIAL); backdrop scene, fades, sounds, CONTINUE/OPTION, attract, opening scene not ported"
 }
