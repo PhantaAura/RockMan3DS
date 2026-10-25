@@ -129,5 +129,11 @@
  "parent": {
   "version": "0.0.15.15",
   "source_archive": "git main (commit b8b8688)"
+ },
+ "reference_oracle": {
+  "tool": "psxrecomp (US SLUS-00603, local, not committed)",
+  "status": "VERIFIED boots + fntrace/read_ram over TCP 4370",
+  "doc": "docs/research_01516/PSXRECOMP_ORACLE.md",
+  "st00_native": false
  }
 }

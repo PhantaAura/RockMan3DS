@@ -136,6 +136,12 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   Azahar trace shows 0 such faces at the Area 1 start, which is expected;
   not yet seen on screen. Mode 0's near list is not modelled.
 
+- Reference oracle: a psxrecomp static recompile of our US disc now runs on
+  the Mac with a TCP debug server (`fntrace` per call with ra/a0–a3/frame,
+  `read_ram`, write traces). It is verified as US, and ROCK_NEO is native. ST00 is not
+  native yet. Local only, never committed. See
+  `docs/research_01516/PSXRECOMP_ORACLE.md` and `tools/psxrecomp_dbg.py`.
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
 Area music in Azahar: request 0 plays in Area 1 in real time with reverb (trace;
@@ -158,7 +164,10 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
    against a short PCSX-Redux probe.
 2. The hit proxy for the hidden pop-out (`0x800341BC`, bit 8).
-3. Then, from 0.0.15.15:
+3. psxrecomp oracle trial: reach gameplay over TCP pad input, record a ledge
+   grab (`0x80040818`) and diff it against the port in a host test. Then
+   capture and compile ST00 so tutorial functions are traceable.
+4. Then, from 0.0.15.15:
    - the `+0x44D` camera writers;
    - tutorial type 16;
    - the top-screen message window and voice.
