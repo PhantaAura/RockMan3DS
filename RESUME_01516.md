@@ -1,8 +1,28 @@
-# Resume 0.0.15.16 (WCA — pop-out Reaverbot)
+# Resume 0.0.15.16 (WCA complete in Azahar: tutorial to 0x622)
 
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
+- **World Comes Alive (Gate A), Azahar.** One continuous normal-boot run
+  (no spawn file, scripted pad, no forced flags) reaches every tutorial flag
+  through **0x622** (frame 10925; again at 13690 on the faster build). Flag
+  table: `docs/validation_01516/RESULTS.md` ("Gate A"). Fixes it needed:
+  - ledge grab `0x80040818` + action 13 hang/pull-up `0x8003EB08`/`0x80040178`,
+    wall finder `0x800497CC` (`docs/research_01516/LEDGE_GRAB.md`);
+  - action-3 phase-5 pool release `0x80031824` (Area 2 Reaverbots, param 0xA0,
+    charge once and release themselves);
+  - `+75 = +74`, `+77 = +76` mirrors at `0x8003C920` (walk-off fall after a climb);
+  - slope codes 8..11 (`0x8004BDC8`, earlier this checkpoint);
+  - route script and autoplay door steps (Area 2 loop through walkable cells).
+  Not exercised: box 0x620/0x621, the 0x60E action check. Boot still starts at
+  the hand-off with `opening_scene=SKIPPED`.
+- **Gate C.** Mega Man's draw poses and projects each shared vertex once:
+  9.3 -> 2.7 ms per frame; route average 20.1 -> 24.5 FPS in Azahar (CPU-tick
+  proportions, not hardware). Next largest costs: terrain 6-15 ms, OT flush
+  3-6 ms, actors up to 5 ms.
+- **Gate D.** `docs/validation_01516/HARDWARE_CHECKLIST.md` (PENDING).
+- **Gate E.** `docs/validation_01516/NEXT_1_0_STEP.md`: next is the tutorial
+  exit past 0x622, observed first in the psxrecomp oracle.
 - ST00 subtype 0x1F (`0x801062EC`), the "small one" Roll points out:
   - init, the work80 wait, and the 9-frame lunge, with its ScaleMatrix Z growth
     (`0x8007ADE8`);
@@ -149,17 +169,12 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-0. The objects the rest of the tutorial waits on, in route order:
-   - run the trap-room fight in Azahar (subtype 0x19 is ported; screen was locked);
-   - look at the textured E0 objects on screen (audio was listened to and
-     sounds right);
-   - effects: the 0x800341BC explosion proxy (bursts do no damage yet), the
-     bit-0x20 helper children, the LOD tiers (target/box/Reaverbot effects were
-     checked on screen and look right);
-   - listen to the area music in Azahar against the PS1. Gaps: Gaussian
-     interpolation, the reverb FIR, music pausing during area loads;
-   - the E0/08 door-pulse rand draws;
-   - checks of the Area 2 subtype-3 parameter-0xA0 wake (0x60B) and class 40/04.
+0. Tutorial exit past 0x622 (`NEXT_1_0_STEP.md`): watch it in the psxrecomp
+   oracle, trace the 0x622 owner in the ST00 overlay, port only the hand-off.
+   Then the opening scene, title screen and New Game.
+   Still open from WCA: box 0x620/0x621 and 0x60E; terrain cost (largest
+   remaining, 6-15 ms); effects (0x800341BC explosion proxy, bit-0x20 children);
+   music gaps (Gaussian interpolation, reverb FIR, pause during loads).
 1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
    against a short PCSX-Redux probe.
@@ -177,11 +192,10 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
   EXIT_SUP, and Area 2 inherits ST00_01.
 - The 0x1F8001C0 back-face threshold (522) is measured in Area 1 only. Its
   writer is untraced.
-- The map draw still has no Near LOD, so it draws more black faces than the
-  original (34 against 17 at the Area 1 start). Per-cell visibility is ported (R3).
 - Cell visibility not yet checked by eye for edge holes. `0x1F800078` bit 2
   (far table choice) is UNKNOWN.
-- No physical Old 3DS test.
+- No physical Old 3DS test (checklist ready, PENDING).
+- Azahar runs about 24 FPS on the route; 30 FPS not reached yet.
 - The work80 writer for 0x1F is CANDIDATE.
 - The box's E0 pool slot (15 = static E0 count + conditional order) is
   CANDIDATE. It only feeds the RNG work check and the proxy's byte.

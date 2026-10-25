@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "Camera fix: follow target y = player y - 0x800A39B4 (0x80038894); Area 2 ledge views render; E0 meshes verified through the OT",
+ "title": "WCA complete in Azahar: normal boot reaches 0x622 (ledge grab, pool release, +75 mirror); player draw 9.3 -> 2.7 ms",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -8,8 +8,8 @@
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PASS (devkitARM Old 3DS; R3 cell visibility + see-through merged)",
- "host_tests": "169/169 PASS (new test_psx_gpu)",
+ "native_build": "PASS (devkitARM Old 3DS)",
+ "host_tests": "169/169 PASS",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
@@ -21,15 +21,17 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS): Area 2 target spawn now renders (camera target follows player height); E0/08 target textured via OT; Reaverbots via OT verified earlier.",
- "emulator_evidence": "docs/validation_01516/RESULTS.md",
+ "current_emulator_validation": "PASS for WCA in Azahar 2126.0 Old 3DS: continuous normal-boot run reaches 0x622 (frame 10925, and 13690 on the faster build). Box 0x620/0x621 and 0x60E not exercised; opening scene skipped at boot (pre-existing).",
+ "emulator_evidence": "docs/validation_01516/RESULTS.md (Gate A table, Gate C baseline)",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
  "hardware_evidence": "docs/validation_01444/hardware-01443.json",
  "PHYSICS_1TO1": false,
- "world_comes_alive_finished": false,
+ "world_comes_alive_finished": true,
  "usage_reset_used": false,
  "evidence": [
+  "docs/validation_01516/NEXT_1_0_STEP.md",
+  "docs/research_01516/LEDGE_GRAB.md",
   "docs/research_01516/RENDER_FIDELITY_R1.md",
   "tests/test_source_gameplay_camera.cpp",
   "src/player/player_contact_runtime.cpp",
@@ -135,5 +137,7 @@
   "status": "VERIFIED boots + fntrace/read_ram over TCP 4370",
   "doc": "docs/research_01516/PSXRECOMP_ORACLE.md",
   "st00_native": false
- }
+ },
+ "world_comes_alive_scope": "Azahar emulator only; physical Old 3DS PENDING",
+ "performance": "Azahar route average 24.5 FPS (was 20.1); player draw 2.7 ms (was 9.3); 30 FPS not reached"
 }
