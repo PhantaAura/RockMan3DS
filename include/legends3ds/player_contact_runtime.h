@@ -101,6 +101,21 @@ RuntimePointEmbeddingResult runtime_point_embedded_80049c54(const RuntimeMap& ma
 std::optional<int32_t> runtime_point_floor_8004920c(const RuntimeMap& map,
     size_t area_index, int16_t x, int16_t y, int16_t z) noexcept;
 
+// USA 0x8004976C -> 0x800497CC: the nearest wall in a facing quadrant
+// ((+0x56 - +0x116 + 0x200) >> 10 & 3), as the bounds-expanded face the
+// work position would touch: 0 -> largest z1 with z0 < z, 1 -> largest x1
+// with x0 < x, 2 -> smallest z0 with z < z1, 3 -> smallest x0 with x < x1,
+// over every primitive whose expanded Y range holds y, in groups whose other
+// axis span holds the position. No wall: -0x7FFF (0/1) or 0x7FFF (2/3).
+// Unsupported when a primitive needs an unported 0x8004A060 case.
+struct RuntimeWallDistance {
+    RuntimeContactStatus status = RuntimeContactStatus::NoData;
+    int32_t wall = 0;
+    uint16_t unsupported_code = 0;
+};
+RuntimeWallDistance runtime_player_wall_800497cc(const RuntimeMap& map, size_t area_index,
+    const L3PlayerCompatWork& player, RetailPlayerBounds bounds, unsigned quadrant);
+
 const char* runtime_contact_status_name(RuntimeContactStatus status);
 
 // Event primitive found by USA 0x800514FC (contact code > 0xFF). Coordinates

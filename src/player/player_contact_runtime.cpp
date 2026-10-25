@@ -437,15 +437,35 @@ void find_floor(const RuntimeMap& map,size_t area,const L3PlayerCompatWork& w,
 }
 } // namespace
 
+namespace {
+std::optional<RuntimeContactFloorInterval> y_range_8004a060(
+    const RuntimeMapIdx& idx, const RuntimeContactGroup& group,
+    const RuntimeContactPrimitive& primitive, RetailPlayerBounds bounds,
+    int16_t query_x, int16_t query_z);
+} // namespace
+
 std::optional<RuntimeContactFloorInterval> runtime_contact_floor_interval_8004a060(
     const RuntimeMapIdx& idx, const RuntimeContactGroup& group,
     const RuntimeContactPrimitive& primitive, RetailPlayerBounds bounds,
     int16_t query_x, int16_t query_z) {
     const auto code=primitive.code;
     if(code!=1u && code!=3u && code!=15u && (code<8u || code>11u))return {};
+    if(!inside_xz(rect(idx,group,primitive,bounds),query_x,query_z))return {};
+    return y_range_8004a060(idx,group,primitive,bounds,query_x,query_z);
+}
+
+namespace {
+std::optional<RuntimeContactFloorInterval> y_range_8004a060(
+    const RuntimeMapIdx& idx, const RuntimeContactGroup& group,
+    const RuntimeContactPrimitive& primitive, RetailPlayerBounds bounds,
+    int16_t query_x, int16_t query_z) {
+    const unsigned code=primitive.code&0xffu;
     auto r=rect(idx,group,primitive,bounds);
-    if(!inside_xz(r,query_x,query_z))return {};
-    if(code<8u || code==15u)return RuntimeContactFloorInterval{r.y0,r.y1};
+    if((code>=0x0cu&&code<=0x0eu)||(code>=0x10u&&code<=0x13u)||(code>=0x18u&&code<=0x1bu)||
+       code==0x24u||code==0x34u||code==0x44u||code==0x54u||
+       code==0x25u||code==0x35u||code==0x45u||code==0x55u)return {}; // unported 0x8004A060 case
+    // 0x8004A060 default: the bounds-expanded Y range.
+    if(code<8u || code>11u)return RuntimeContactFloorInterval{r.y0,r.y1};
 
     // MIPS MULT retains its low signed 32 bits. AD(D)U also wraps before the
     // subsequent signed division. Preserve those operations explicitly rather
@@ -472,6 +492,56 @@ std::optional<RuntimeContactFloorInterval> runtime_contact_floor_interval_8004a0
     if(!interpolation)return {};
     const int32_t floor=std::max(raw_y0,wrap32(int64_t(adjusted_y0)+*interpolation));
     return RuntimeContactFloorInterval{short_wrap(wrap32(int64_t(floor)-bounds.y1)),r.y1};
+}
+} // namespace
+
+RuntimeWallDistance runtime_player_wall_800497cc(const RuntimeMap& map,size_t area,
+    const L3PlayerCompatWork& w,RetailPlayerBounds b,unsigned quadrant) {
+    // Start at -0x7FFF (quadrants 0/1) or +0x7FFF (2/3); scratch C0/C2/C4 is
+    // the work position, the bounds come from +0x78 (0x8004B3C0).
+    RuntimeWallDistance out;
+    quadrant&=3u;
+    out.wall=(quadrant&2u)?0x7fff:-0x7fff;
+    const int16_t x=rd(w,0x14),y=rd(w,0x16),z=rd(w,0x18);
+    const auto c=gather(map,area,x,z);
+    out.status=RuntimeContactStatus::SourceBackedPartial;
+    // local_30 = (group bits == 0) << 15; a primitive is skipped when
+    // flags & (local_30 ^ 0x8000) is nonzero.
+    const uint16_t skip=l3_obj_group_bits_8002fe74(w.bytes[1])==0?0:0x8000;
+    for(uint8_t rev=c.size;rev>0;--rev){
+        const auto& cell=c.cells[rev-1];
+        if(cell.packed_cell<1)continue;   // 0x80048CEC < 1: no IDX
+        const auto* idx=runtime_map_cell_idx(map,cell);
+        const auto* list=runtime_map_cell_contact_list(map,cell);
+        if(!idx||!list)continue;
+        for(uint32_t gi=0;gi<list->group_count;++gi){
+            const auto gix=uint64_t(list->group_first)+gi;
+            if(gix>=map.contact_groups.size()){out.status=RuntimeContactStatus::Unsupported;return out;}
+            const auto& g=map.contact_groups[static_cast<size_t>(gix)];
+            if(!g.primitive_count)continue;
+            const RuntimeContactPrimitive none{};
+            const Rect r=rect(*idx,g,none,b);
+            // Quadrants 0/2 test the group's expanded X span, 1/3 its Z span.
+            if((quadrant&1u)==0){if(!(r.x0<x&&x<r.x1))continue;}
+            else if(!(r.z0<z&&z<r.z1))continue;
+            for(uint32_t pi=0;pi<g.primitive_count;++pi){
+                const auto pix=uint64_t(g.primitive_first)+pi;
+                if(pix>=map.contact_primitives.size()){out.status=RuntimeContactStatus::Unsupported;return out;}
+                const auto& p=map.contact_primitives[static_cast<size_t>(pix)];
+                if(p.flags&skip)continue;
+                const auto yr=y_range_8004a060(*idx,g,p,b,x,z);
+                if(!yr){out.status=RuntimeContactStatus::Unsupported;out.unsupported_code=p.code;return out;}
+                if(!(yr->y0<y&&y<yr->y1))continue;
+                switch(quadrant){
+                    case 0:if(out.wall<r.z1&&r.z0<z)out.wall=r.z1;break;
+                    case 1:if(out.wall<r.x1&&r.x0<x)out.wall=r.x1;break;
+                    case 2:if(r.z0<out.wall&&z<r.z1)out.wall=r.z0;break;
+                    default:if(r.x0<out.wall&&x<r.x1)out.wall=r.x0;break;
+                }
+            }
+        }
+    }
+    return out;
 }
 
 RuntimePlayerContact runtime_player_floor_query(const RuntimeMap& map,size_t area,

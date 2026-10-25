@@ -316,6 +316,125 @@ void RuntimeSession::update_airborne_motion(){
     }
 }
 
+namespace {
+// 0x80048EA4(point, NULL bounds, dy 0, class): the floor under a point.
+std::optional<int32_t> ledge_point_floor(const RuntimeMap& map,size_t area,const L3PlayerCompatWork& work,
+                                         int32_t x,int32_t y,int32_t z){
+    L3PlayerCompatWork probe=work;
+    const auto put=[&](size_t at,int32_t v){const auto u=uint16_t(v);probe.bytes[at]=uint8_t(u);probe.bytes[at+1]=uint8_t(u>>8);};
+    put(0x14,x);put(0x16,y);put(0x18,z);put(0x2E,y);
+    const auto f=runtime_player_floor_query(map,area,probe,RetailPlayerBounds{0,0,0,0,0,0});
+    if(f.status==RuntimeContactStatus::Unsupported||f.unsupported_primitives)return {};
+    return f.floor_y?int32_t(*f.floor_y):32767;
+}
+} // namespace
+
+bool RuntimeSession::player_ledge_grab_80040818(){
+    // USA 0x80040818: falling past a ledge top that is 0x68..0x98 above the
+    // feet, with a wall within 0x40 in the facing quadrant and the same floor
+    // height at both bounds corners just past that wall.
+    if(!map_||player_.bytes[0x74]==0||rds16w(player_,0x46)<=0)return false;
+    const RetailPlayerBounds b{};
+    const int32_t x=rds16w(player_,0x14),y=rds16w(player_,0x16),z=rds16w(player_,0x18);
+    const auto under=runtime_player_floor_query(*map_,map_area_index_,player_,b);
+    const int32_t floor=under.floor_y?int32_t(*under.floor_y):32767;
+    if(y>floor-0x30-b.y1)return false;
+    const int32_t q=(int32_t(rds16w(player_,0x56))-rds16w(player_,0x116)+0x200)>>10;
+    const auto wall=runtime_player_wall_800497cc(*map_,map_area_index_,player_,b,unsigned(q)&3u);
+    if(wall.status!=RuntimeContactStatus::SourceBackedPartial)return false;
+    const auto s16=[](int32_t v){return int32_t(int16_t(uint16_t(v)));};
+    int32_t dx=0,dz=0,dist=0,p1x=x+b.x0,p2x=x+b.x1,p1z=z+b.z0,p2z=z+b.z1;
+    if((q&1)==0){
+        dist=wall.wall-z;dz=s16(dist);
+        p1z=p2z=s16(z+((q&2)?b.z1+1:b.z0-1)+dz);
+    }else{
+        dist=wall.wall-x;dx=s16(dist);
+        p1x=p2x=s16(x+((q&2)?b.x1+1:b.x0-1)+dx);
+    }
+    if(std::abs(dist)>=0x41)return false;
+    const auto top1=ledge_point_floor(*map_,map_area_index_,player_,s16(p1x),s16(y-0x98),s16(p1z));
+    const auto top2=ledge_point_floor(*map_,map_area_index_,player_,s16(p2x),s16(y-0x98),s16(p2z));
+    if(!top1||!top2||*top1!=*top2)return false;
+    const int32_t top=*top1;
+    if(!(top<y-0x68 && y-0x98<top))return false;
+    // Only raw X/Z move; fixed +1C/+24 keep the pre-grab pose (source quirk).
+    wr16w(player_,0x14,uint16_t(x+dx));
+    wr16w(player_,0x16,uint16_t(top+0x98));wr32w(player_,0x20,(top+0x98)*65536);
+    wr16w(player_,0x56,uint16_t((q&3)<<10));
+    wr16w(player_,0x116,0);player_.bytes[0x112]=0;
+    wr16w(player_,0x18,uint16_t(z+dz));
+    // 0x80039A38(&0x80097D9C) camera request: not ported (UNKNOWN).
+    player_.bytes[0x09]=13;player_.bytes[0x0A]=0;player_.bytes[0x0B]=uint8_t(q&3);
+    player_position_={rds16w(player_,0x14),rds16w(player_,0x16),rds16w(player_,0x18)};
+    return true;
+}
+
+void RuntimeSession::release_ledge_8003ee68(){
+    player_.bytes[0x09]=7;player_.bytes[0x0A]=4;player_.bytes[0x0B]=0;
+    player_.bytes[0x75]=1;player_.bytes[0x74]=1;
+    l3_pl00_shot_enable_on(&player_);l3_pl00_anim_request_80041ddc(&player_,18,0,1);
+}
+
+void RuntimeSession::update_ledge_motion_8003eb08(){
+    // USA 0x8003EB08, action 13 (ledge hang and pull-up). The table at
+    // 0x80010C34 holds phases 0..6; integrate_player_motion is 0x80041E90
+    // with the work's own +44/+46/+48, which each phase sets first.
+    const uint16_t held=rd16w(player_,0x11C);
+    const bool done=static_cast<int8_t>(player_.bytes[0xA7])==-1;
+    switch(player_.bytes[0x0A]){
+        case 0:
+            l3_pl00_shot_enable_off(&player_);l3_pl00_anim_request_80041ddc(&player_,29,0,0);
+            (void)enqueue_source_audio_8001a008(source_audio_queue_,159,0,0);
+            player_.bytes[0x44A]=0;wr16w(player_,0xB4,0);player_.bytes[0x44D]=0;
+            ++player_.bytes[0x0A];return;
+        case 1:
+            if(!done)return;
+            l3_pl00_anim_request_80041ddc(&player_,30,0,0);++player_.bytes[0x0A];return;
+        case 2:{
+            if(held&rd16w(player_,0x126)){player_.bytes[0x0A]=6;return;}
+            const RetailPlayerBounds b{};
+            int32_t x=rds16w(player_,0x14),z=rds16w(player_,0x18);
+            const int32_t y=rds16w(player_,0x16);
+            const int32_t q=(int32_t(rds16w(player_,0x56))-rds16w(player_,0x116)+0x200)>>10;
+            if(q&1)x+=(q&2)?b.x1+1:b.x0-1;
+            else z+=(q&2)?b.z1+1:b.z0-1;
+            const auto top=map_?ledge_point_floor(*map_,map_area_index_,player_,int16_t(x),int16_t(y-152),int16_t(z)):std::nullopt;
+            if(!top){release_ledge_8003ee68();return;}
+            const int32_t hang=int32_t(int16_t(uint16_t(*top+152)));
+            if(std::abs(y-hang)>=32){release_ledge_8003ee68();return;}
+            wr16w(player_,0x16,uint16_t(hang));wr32w(player_,0x20,hang*65536);
+            player_position_.y=hang;
+            if((held&rd16w(player_,0x124))==0)return;
+            player_.bytes[0x75]=2;player_.bytes[0x74]=2;player_.bytes[0x76]=0;
+            wr16w(player_,0x44,0);wr16w(player_,0x48,0);
+            wr16w(player_,0x46,uint16_t(((rds16w(player_,0x16)-rds16w(player_,0x2E))<<5)-144));
+            ++player_.bytes[0x0A];
+            l3_pl00_anim_request_80041ddc(&player_,31,0,0);return;
+        }
+        case 3:
+            integrate_player_motion();
+            if(static_cast<int8_t>(player_.bytes[0xA6])==1)++player_.bytes[0x0A];
+            return;
+        case 4:
+            wr16w(player_,0x44,80);wr16w(player_,0x46,uint16_t(int16_t(-432)));wr16w(player_,0x48,0);
+            integrate_player_motion();++player_.bytes[0x0A];return;
+        case 5:
+            wr16w(player_,0x46,uint16_t(rds16w(player_,0x46)+48));
+            integrate_player_motion();
+            if(player_.bytes[0x74]==0){
+                l3_pl00_anim_request_80041ddc(&player_,19,0,1);
+                (void)enqueue_source_audio_8001a008(source_audio_queue_,147,0,0);
+                player_.bytes[0x09]=8;player_.bytes[0x0A]=6;
+            }
+            if(static_cast<int8_t>(player_.bytes[0xA7])==-1)release_ledge_8003ee68();
+            return;
+        case 6:
+            wr16w(player_,0x44,uint16_t(int16_t(-42)));wr16w(player_,0x46,0);wr16w(player_,0x48,0);
+            integrate_player_motion();release_ledge_8003ee68();return;
+        default:return;
+    }
+}
+
 void RuntimeSession::update_running_player_motion(){
     // USA action2 0x8003CD4C. Ordinary direction0/2 and the four direction
     // initialization rows are scalar translations, not guessed acceleration.
@@ -469,6 +588,22 @@ void RuntimeSession::update_player_motion(){
     const uint16_t held=rd16w(player_,0x11C);
     const uint16_t forward_mask=rd16w(player_,0x124);
 
+    // Decision 0x800400B8 (actions 7/8) runs 0x80040818 first; the motion
+    // handler of the action it leaves runs the same frame (0x8003CA68..CA8C).
+    if(player_.bytes[0x09]==7 || player_.bytes[0x09]==8)(void)player_ledge_grab_80040818();
+    if(player_.bytes[0x09]==13){
+        // Decision 0x80040178: while the grab animation plays, a floor within
+        // 32 of the feet drops Mega Man (action 7 phase 4, forward -42).
+        if(player_.bytes[0x0A]==1 && map_){
+            const auto f=runtime_player_floor_query(*map_,map_area_index_,player_);
+            const int32_t floor=f.floor_y?int32_t(*f.floor_y):32767;
+            if(floor-32-RetailPlayerBounds{}.y1<int32_t(rds16w(player_,0x16))){
+                release_ledge_8003ee68();
+                wr16w(player_,0x44,uint16_t(int16_t(-42)));wr16w(player_,0x46,0);wr16w(player_,0x48,0);
+            }
+        }
+        if(player_.bytes[0x09]==13){update_ledge_motion_8003eb08();return;}
+    }
     if(player_.bytes[0x09]==7){
         switch(player_.bytes[0x0A]){
             case 0: // 0x8003DA74 initialization; animation owns launch readiness.

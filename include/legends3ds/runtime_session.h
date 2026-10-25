@@ -588,6 +588,9 @@ private:
         return door_map_&&map_.get()==door_map_.get()?door_map_source_:map_;
     }
     void update_airborne_motion();
+    bool player_ledge_grab_80040818();
+    void update_ledge_motion_8003eb08();
+    void release_ledge_8003ee68();
     void reset_player_contact();
     void update_input_compat(const RuntimeInputFrame& input);
     void update_lock_on(const RuntimeInputFrame& input);

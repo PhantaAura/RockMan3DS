@@ -426,7 +426,42 @@ void deep_overlap_recovery_80050400(){
     assert(s.player_contact().status==RuntimeContactStatus::SourceBackedPartial);
     assert(s.player_contact().deep_overlap_recoveries==1&&s.player_position().x==-32);
 }
-int main(int argc,char** argv){deep_overlap_recovery_80050400();slope_climb(8,-400,24);slope_climb(9,400,-24);contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
+// 0x80040818 / action 13 (0x8003EB08): a standing jump in front of a
+// 192-unit block grabs its edge on the way down, hangs with the feet 0x98
+// below the top, and the forward pull-up ends standing on the block.
+void ledge_grab_and_pull_up(){
+    auto m=map_with_floor();
+    m.contact_lists[0].group_count=2;
+    m.contact_groups.push_back({-512,512,-512,-200,1,1});
+    m.contact_primitives.push_back({-192,0,1,0});
+    auto s=session(std::move(m));s.reset_player({0,0,-150},0,100,100);s.tick({});
+    assert(s.player_contact().grounded==true);
+    l3::RuntimeInputFrame jump;jump.held_psx_mask=0x4000;
+    s.tick(jump);s.tick(jump);assert(s.submit_player_animation_record(16,0,1,0,-1));
+    bool grabbed=false;
+    for(unsigned i=0;i<40&&!grabbed;++i){s.tick(jump);grabbed=s.compat_player().bytes[0x09]==13;}
+    assert(grabbed);
+    // Snap: feet at top + 0x98, against the expanded face z1 - z0 = -168.
+    assert(s.player_position().y==-192+0x98&&s.player_position().z==-168);
+    assert(s.compat_player().bytes[0xAC]==29&&s.compat_player().bytes[0x0B]==0);
+    s.tick({});assert(s.compat_player().bytes[0x0A]==2&&s.compat_player().bytes[0xAC]==30);
+    s.tick({});s.tick({});
+    assert(s.compat_player().bytes[0x09]==13&&s.player_position().y==-40);
+    l3::RuntimeInputFrame forward;forward.held_psx_mask=0x10;
+    s.tick(forward);
+    assert(s.compat_player().bytes[0x0A]==3&&s.compat_player().bytes[0x74]==2&&s.compat_player().bytes[0xAC]==31);
+    assert(get(s.compat_player(),0x46)==-144);
+    for(unsigned i=0;i<4;++i)s.tick({});
+    assert(s.submit_player_animation_record(31,0,1,1,0));
+    bool on_top=false;
+    for(unsigned i=0;i<60&&!on_top;++i){
+        s.tick({});
+        if(i==20)(void)s.submit_player_animation_record(s.compat_player().bytes[0xAC],0,1,0,-1);
+        on_top=s.player_contact().grounded.value_or(false)&&s.player_position().y==-192;
+    }
+    assert(on_top&&s.player_position().z<-168);
+}
+int main(int argc,char** argv){ledge_grab_and_pull_up();deep_overlap_recovery_80050400();slope_climb(8,-400,24);slope_climb(9,400,-24);contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
     assert(argc==1 || argc==2);if(argc==2)source_floor_fixture(argv[1]);
     std::cout<<"PASS: source-backed contact subset, ordinary action2 forward/reverse/release/turn, bounded retail scalar window, diagnostic seed, animation-gated jump and zero-allocation ticks; PHYSICS_1TO1=false\n";
 }
