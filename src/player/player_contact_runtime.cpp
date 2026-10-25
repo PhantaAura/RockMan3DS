@@ -463,11 +463,11 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                     if(diagonal){
                         if(diagonal_response(p.code,r,out.scratch,before_x,before_y,before_z,dx,dy,dz,
                             int32_t(g.x1)-g.x0,int32_t(g.z1)-g.z0,b,blocked,hist,out))repeat=true;
-                        else ++out.unsupported_primitives;
+                        else {++out.unsupported_primitives;if(!out.unsupported_code)out.unsupported_code=uint16_t(p.code|0x100u);}
                         continue;
                     }
                     if((first_code&0xF0u)>=0x20u || (p.code!=1u&&p.code!=3u&&p.code!=15u)){
-                        ++out.unsupported_primitives;continue;
+                        ++out.unsupported_primitives;if(!out.unsupported_code)out.unsupported_code=p.code;continue;
                     }
                     if(p.code==3u){
                         if(dy>=0 || out.scratch.contact_state==0){out.scratch.y=r.y0;out.scratch.contact_state=0;clear_pending(hist);repeat=true;}

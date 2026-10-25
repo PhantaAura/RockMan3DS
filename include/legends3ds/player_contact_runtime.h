@@ -48,6 +48,7 @@ struct RuntimePlayerContact {
     uint32_t groups_tested = 0;
     uint32_t primitives_tested = 0;
     uint32_t unsupported_primitives = 0;
+    uint16_t unsupported_code = 0;        // first primitive code that was not handled (0: none or structural)
     uint32_t deep_overlap_recoveries = 0; // 0x80050400 responses this step
     uint8_t iterations = 0;
     bool wall_contact = false;
