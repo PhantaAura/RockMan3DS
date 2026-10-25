@@ -370,8 +370,9 @@ Class20_03CallbackResult class20_03_step_state1(
             }
             return hold(status);
         }
-        // Release effects belong to the real allocator, never the scalar body.
-        if(action.release_80031824)return hold(Class20_03CallbackStatus::NeedsReleaseConsumer);
+        // Release effects belong to the real allocator, never the scalar body;
+        // action3 only reaches here with release_consumer_ready acknowledged.
+        if(action.release_80031824)result.release_80031824=true;
         if(action.sound_8001a050) {
             if(result.sound_8001a050)result.secondary_sound_8001a050=action.sound_8001a050;
             else result.sound_8001a050=action.sound_8001a050;

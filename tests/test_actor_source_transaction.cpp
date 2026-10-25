@@ -418,9 +418,12 @@ void action3_transaction_tests(const l3::RuntimeMap& map, const l3::ReferenceTab
         inputs.release_consumer_ready = caller_ready; queue = authored_queue();
         before = snapshot(actor, queue);
         result = l3::tick_imported_actor_state1(actor, inputs, nullptr, nullptr, &queue);
-        require(!result.committed && result.status == l3::Class20_03CallbackStatus::NeedsReleaseConsumer,
-                "excluded allocator release was fabricated");
-        require_held(actor, queue, before, "unknown pool release cleared live source work");
+        // The state1 transaction owns the 0x80031824 release (source_released),
+        // whatever the caller passes.
+        require(result.committed && result.released_80031824 && actor.source_released &&
+                actor.source_behavior->work_00 == 0 && !actor.source_proxy_bound,
+                "action3 phase5 pool release was not committed");
+        (void)before;
     }
     inputs.release_consumer_ready = false;
 

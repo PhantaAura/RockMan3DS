@@ -157,6 +157,8 @@ struct Class20_03CallbackResult {
     bool effect_8002c8cc = false;
     bool proxy_800341bc = false;
     bool defeat_801027cc = false;
+    // Action3 phase5 parameter mask20: the 0x80031824 class20 pool release.
+    bool release_80031824 = false;
     std::optional<uint16_t> sound_8001a050;
     std::optional<uint16_t> secondary_sound_8001a050;
     std::optional<std::array<uint32_t,2>> sound_pointed_words;

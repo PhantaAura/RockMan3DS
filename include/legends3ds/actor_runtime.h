@@ -234,6 +234,7 @@ struct ImportedActorBehaviorTick {
     bool shadow_appended = false;
     bool defeated=false,defeat_effect_allocated=false,defeat_effect_exhausted=false;
     bool reward_enqueued=false;
+    bool released_80031824=false;   // action3 phase5 parameter mask20 pool release
     std::optional<SourceConsumerStatus> shadow_status;
     std::optional<Class20_03ProxyStatus> proxy_status;
     uint8_t source_audio_queued = 0, source_audio_dropped = 0;

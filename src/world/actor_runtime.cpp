@@ -586,6 +586,9 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
     std::optional<SourceAudioQueue> staged_audio;
     if(audio && audio->initialized && audio->count<=kSourceAudioQueueCapacity)staged_audio=*audio;
     source.sound_consumer_ready=staged_audio.has_value();
+    // The release consumer is this transaction: 0x80031824 frees the pool
+    // slot (work00 = 0), committed below as source_released.
+    source.release_consumer_ready=true;
     uint8_t queued=0,dropped=0;
     const auto produced=[&](SourceAudioQueueStatus status) noexcept {
         if(status==SourceAudioQueueStatus::Queued){++queued;return true;}
@@ -956,6 +959,10 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
     actor.heading = next.behavior.heading_56;
     for (size_t i = 0; i < actor.source_origin.size(); ++i) actor.source_origin[i] = next.raw_14[i];
     actor.pose_selected_by_retail_state = true;
+    if(body.release_80031824){
+        actor.source_released=true;actor.source_proxy_bound=false;actor.source_proxy_target={};
+        result.released_80031824=true;
+    }
     if(body.defeat_801027cc){
         actor.source_released=true;actor.source_proxy_bound=false;
         actor.source_proxy_target={};
