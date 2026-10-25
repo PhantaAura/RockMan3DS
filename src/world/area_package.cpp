@@ -546,8 +546,10 @@ LoadedAreaPackage load_area_package(const std::string& path, const AreaPackageLi
     }
     if (negative_material_section != count) {
         const auto& section = result.directory[negative_material_section];
-        const uint64_t expected_bytes = 16u + uint64_t(result.map.areas.size()) * 32u * 8u;
-        require(section.size == expected_bytes, "negative material section area count/size mismatch");
+        // L3NM v1 rows are 8 bytes, v2 rows (with the near-LOD tiles) 12.
+        const uint64_t rows = uint64_t(result.map.areas.size()) * 32u;
+        require(section.size == 16u + rows * 8u || section.size == 16u + rows * 12u,
+                "negative material section area count/size mismatch");
         const uint64_t resident = vector_bytes(result.map.areas.size(), sizeof(NegativeMaterialTable));
         const uint64_t decoded = add(result.diagnostics.decoded_estimated_bytes, resident);
         const uint64_t peak = add(add(decoded, working), vector_bytes(section.size, 1));
@@ -556,7 +558,7 @@ LoadedAreaPackage load_area_package(const std::string& path, const AreaPackageLi
         // Reject a forged header count before allocating decoded tables. The
         // section size is already bounded by the admitted map's area count.
         require(bytes.size() >= 16 && rd_u32(bytes.data()) == 0x4d4e334cu &&
-                rd_u16(bytes.data() + 4) == 1 && rd_u16(bytes.data() + 6) == result.map.areas.size() &&
+                (rd_u16(bytes.data() + 4) == 1 || rd_u16(bytes.data() + 4) == 2) && rd_u16(bytes.data() + 6) == result.map.areas.size() &&
                 rd_u32(bytes.data() + 8) == bytes.size(),
                 "negative material header or area count mismatch");
         result.negative_materials = load_l3negative_materials(bytes, true);

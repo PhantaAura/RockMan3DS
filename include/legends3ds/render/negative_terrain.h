@@ -41,6 +41,11 @@ std::optional<size_t> next_area_with_mid_terrain(const RuntimeMap& map,
 // from positive unsigned-height XYZ records. Only the established Mid path is
 // bound here; original near subdivision/UV behavior is not invented. HD2 proves
 // special geometry identity, while its material state remains explicitly unknown.
+// Same at a descriptor LOD (0x8002196C / 0x800221E0): Near keeps packed
+// bit 15, so its UVs are the stream UVs with the binding's near tiles.
+std::vector<ExpandedRenderPrimitive> expand_negative_terrain_lod(
+    const St00RenderSource& render, const AreaNegativeRenderInstance& instance,
+    const NegativeMaterialBinding* binding, St00Lod lod);
 std::vector<ExpandedRenderPrimitive> expand_negative_terrain_mid(
     const St00RenderSource& render, const AreaNegativeRenderInstance& instance,
     const NegativeMaterialBinding* binding);

@@ -202,7 +202,8 @@ static const std::vector<uint16_t>* g_area_idx_filter = nullptr;
 // g_area_lod_shared so the Mid quads can carry the LOD bit instead.
 static l3::St00Lod g_area_lod = l3::St00Lod::Mid;
 static uint8_t g_area_primitive_lods = 7;
-static std::vector<std::pair<uint16_t,uint8_t>>* g_area_lod_shared = nullptr;
+// Key: IDX index, or area-local cell | 0x80000000 for a negative cell.
+static std::vector<std::pair<uint32_t,uint8_t>>* g_area_lod_shared = nullptr;
 static std::vector<GpuMaterial> g_player_materials;
 static std::vector<GpuMaterial> g_actor_materials;
 static std::vector<GpuMaterial> g_scene_materials;
@@ -819,7 +820,7 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
                         a.world_x == b.world_x && a.world_y == b.world_y && a.world_z == b.world_z;
                 };
                 if (std::equal(prims.begin(), prims.end(), mid.begin(), mid.end(), same)) {
-                    if (g_area_lod_shared) g_area_lod_shared->push_back({instance.idx_index, uint8_t(g_area_lod)});
+                    if (g_area_lod_shared) g_area_lod_shared->push_back({uint32_t(instance.idx_index), uint8_t(g_area_lod)});
                     continue;
                 }
             }
@@ -835,9 +836,9 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
         }
         g_area_primitive_idx = 0xFFFFu;
         // Negative cells carry no IDX descriptor; a swap overlay skips them.
-        // Only Mid is expanded for them, so it serves every LOD (CANDIDATE).
-        if (g_area_idx_filter || g_area_lod != l3::St00Lod::Mid) return;
-        g_area_primitive_lods = 7;
+        // They get the same LOD passes (0x8002196C cuts on the cell depth).
+        if (g_area_idx_filter) return;
+        g_area_primitive_lods = uint8_t(1u << unsigned(g_area_lod));
         g_area_primitive_negative=true;
         const auto negative = l3::collect_area_negative_placement(map, render, area_index);
         uint32_t unknown_materials = 0;
@@ -845,7 +846,20 @@ void for_each_area_primitive(const l3::RuntimeMap& map,
             const auto* binding = l3::find_negative_material_binding(g_negative_materials, area_index, instance.packed_cell);
             if (!binding) ++unknown_materials;
             g_area_primitive_cell = instance.local_cell;
-            for (const auto& primitive : l3::expand_negative_terrain_mid(render, instance, binding)) {
+            const auto prims = l3::expand_negative_terrain_lod(render, instance, binding, g_area_lod);
+            if (g_area_lod != l3::St00Lod::Mid) {
+                const auto mid = l3::expand_negative_terrain_lod(render, instance, binding, l3::St00Lod::Mid);
+                const auto same = [](const l3::ExpandedRenderPrimitive& a, const l3::ExpandedRenderPrimitive& b) {
+                    return a.prefix == b.prefix && a.material_word == b.material_word &&
+                        a.texture_binding_known == b.texture_binding_known && a.uv == b.uv &&
+                        a.world_x == b.world_x && a.world_y == b.world_y && a.world_z == b.world_z;
+                };
+                if (std::equal(prims.begin(), prims.end(), mid.begin(), mid.end(), same)) {
+                    if (g_area_lod_shared) g_area_lod_shared->push_back({instance.local_cell | 0x80000000u, uint8_t(g_area_lod)});
+                    continue;
+                }
+            }
+            for (const auto& primitive : prims) {
                 if (!g_area_primitive_count) g_area_min_y=g_area_max_y=primitive.world_y[0];
                 for (int32_t y : primitive.world_y) { g_area_min_y=std::min(g_area_min_y,y); g_area_max_y=std::max(g_area_max_y,y); }
                 fn(primitive); ++g_area_primitive_count;
@@ -998,7 +1012,7 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
         const size_t first = dst.size();
         push_quad_uv(dst, p);
         if (terrain_xyz_active()) quads[key].push_back({p.world_x, p.world_y, p.world_z, p.prefix, g_area_primitive_negative,
-            g_area_primitive_cell, g_area_primitive_negative ? uint8_t(7) : g_area_primitive_lods, p.uv});
+            g_area_primitive_cell, g_area_primitive_lods, p.uv});
         if (g_area_primitive_idx != 0xFFFFu)
             g_terrain_patch.add_span(g_area_primitive_idx, key, uint32_t(first), uint32_t(dst.size() - first));
     };
@@ -1008,7 +1022,7 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
     // 0x800267AC draws each IDX at its Near/Far descriptor too; those passes
     // add only geometry that differs from Mid.
     if (terrain_xyz_active()) {
-        std::vector<std::pair<uint16_t,uint8_t>> shared;
+        std::vector<std::pair<uint32_t,uint8_t>> shared;
         g_area_lod_shared = &shared;
         try {
             for (const auto lod : {l3::St00Lod::Near, l3::St00Lod::Far}) {
@@ -1020,9 +1034,10 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
         std::sort(shared.begin(), shared.end());
         for (auto& kv : quads)
             for (auto& q : kv.second)
-                if (!q.negative && q.lods == 2u)
+                if (q.lods == 2u)
                     for (uint8_t lod : {uint8_t(0), uint8_t(2)})
-                        if (std::binary_search(shared.begin(), shared.end(), std::make_pair(uint16_t(q.cell), lod)))
+                        if (std::binary_search(shared.begin(), shared.end(),
+                                std::make_pair(q.negative ? (q.cell | 0x80000000u) : q.cell, lod)))
                             q.lods |= uint8_t(1u << lod);
     }
     g_terrain_patch_recording = false;
@@ -2088,7 +2103,7 @@ static bool g_psx_xy_from_gte = true;
 static bool g_psx_terrain = true;
 struct PsxTranslatorStats {
     uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0, subdivided = 0,
-        negative = 0, negative_triangles = 0, negative_3d = 0, unfitted_ramp = 0, negative_near_3d = 0;
+        negative = 0, negative_triangles = 0, negative_3d = 0, unfitted_ramp = 0, negative_near = 0, near_stream_end = 0;
     float max_xy_error_px = 0.f;   // GTE SXY vs the 3D camera, worst vertex this frame
 };
 static PsxTranslatorStats g_psx_stats;
@@ -2389,7 +2404,7 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
     if (faces) psx_begin_frame();
     for (auto& batch : g_terrain_batches) {
         const bool face_colors = faces && batch.indices && batch.colors;
-        uint32_t previous_packet = 0, previous_negative = 0;
+        uint32_t previous_packet = 0, previous_negative = 0, ended_cell = UINT32_MAX;
         configure_terrain_attributes_uv(batch.vbo, face_colors ? batch.colors : nullptr);
         if (batch.texture_ready) C3D_TexBind(0,const_cast<C3D_Tex*>(&batch.texture));
         configure_texenv_uv(batch.texture_ready);
@@ -2406,12 +2421,19 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                     const auto& bits = quad.negative ? cells->negative_visible : cells->idx_visible;
                     if (quad.cell < bits.size() && !bits[quad.cell]) { ++g_terrain_face_stats.cell_culled; continue; }
                 }
-                // 0x800267AC: one descriptor LOD per IDX (Mid without cell data).
-                if (!quad.negative) {
-                    const unsigned lod = (cells && cells->valid && quad.cell < cells->idx_lod.size()) ? cells->idx_lod[quad.cell] : 1u;
+                // 0x800267AC: one descriptor LOD per IDX; 0x8002196C: per
+                // negative cell from its centre depth (Mid without cell data).
+                const bool neg_depth = quad.negative && cells && cells->valid && quad.cell < cells->negative_depth.size();
+                const bool near_replay = neg_depth && cells->negative_depth[quad.cell] < 0x401;
+                {
+                    unsigned lod = 1u;
+                    if (!quad.negative && cells && cells->valid && quad.cell < cells->idx_lod.size()) lod = cells->idx_lod[quad.cell];
+                    if (neg_depth) lod = l3::terrain_lod_800267ac(cells->negative_depth[quad.cell]);
                     if (!(quad.lods & (1u << lod))) continue;
                     ++g_terrain_face_stats.lod[lod];
                 }
+                // 0x8002235C: a back face without bit 30 or 29 ends the cell's stream.
+                if (near_replay && quad.cell == ended_cell) continue;
                 const auto r = l3::classify_terrain_face(*faces, quad.x, quad.y, quad.z, quad.prefix,
                     quad.negative, positive_mode, back_face_threshold);
                 if (face_colors) {
@@ -2433,12 +2455,17 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                 // Negative-cell faces (0x80021B14): drawn faces with a known
                 // CLUT/TPAGE binding become packets; special (bit-7) cells
                 // have none and stay 3D.
-                // Cells with centre depth < 0x401 belong to the near replay
-                // renderer 0x8002235C (unported): they stay 3D.
-                const bool near_replay = quad.negative && cells && cells->valid &&
-                    quad.cell < cells->negative_depth.size() && cells->negative_depth[quad.cell] < 0x401;
-                if (near_replay && r.face == l3::TerrainFace::Draw) ++g_psx_stats.negative_near_3d;
-                if (g_psx_terrain && quad.negative && !near_replay && r.face == l3::TerrainFace::Draw) {
+                // Cells with centre depth < 0x401 go through the near replay
+                // renderer 0x8002235C (0x800221E0): the same packets from the
+                // Near descriptor, but a back face without bit 30 or bit 29
+                // ends the cell's stream. Special (bit-7) near cells use the
+                // subdivider 0x80022A94 (unported) and stay 3D.
+                if (quad.negative && r.face == l3::TerrainFace::Skip && r.mac0 <= 0 && !(quad.prefix & 0x40000000u)) {
+                    if (near_replay && !(quad.prefix & 0x20000000u)) { ended_cell = quad.cell; ++g_psx_stats.near_stream_end; continue; }
+                    if (!(quad.prefix & 0x10000000u)) previous_negative = 0;   // s1 / t1 = 0
+                }
+                if (near_replay && r.face == l3::TerrainFace::Draw) ++g_psx_stats.negative_near;
+                if (g_psx_terrain && quad.negative && r.face == l3::TerrainFace::Draw) {
                     if (!(batch.key >> 32)) {
                         uint8_t ramp = 0;
                         if (cells && cells->valid && faces->area_record && quad.cell < cells->negative_depth.size())
@@ -4927,7 +4954,7 @@ int main() {
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 // Every 10th frame while see-through faces exist, so short views are not missed.
                 if(session.frame_counter()%120u==0u||(g_terrain_face_stats.see_through&&session.frame_counter()%10u==0u))
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_subdivided=%lu,gp0_negative=%lu,gp0_negative_tri=%lu,gp0_negative_3d=%lu,gp0_negative_near_3d=%lu,gp0_unfitted_ramp=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_subdivided=%lu,gp0_negative=%lu,gp0_negative_tri=%lu,gp0_negative_3d=%lu,gp0_negative_near=%lu,gp0_near_stream_end=%lu,gp0_unfitted_ramp=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158+NEG_80021B14+NEAR_8002235C",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
@@ -4943,7 +4970,7 @@ int main() {
                         (unsigned long)g_psx_stats.runs,(unsigned long)g_psx_stats.unresolved,(unsigned long)g_psx_stats.chained,
                         (unsigned long)g_psx_stats.subdivide_fallback,(unsigned long)g_psx_stats.subdivided,
                         (unsigned long)g_psx_stats.negative,(unsigned long)g_psx_stats.negative_triangles,(unsigned long)g_psx_stats.negative_3d,
-                        (unsigned long)g_psx_stats.negative_near_3d,
+                        (unsigned long)g_psx_stats.negative_near,(unsigned long)g_psx_stats.near_stream_end,
                         (unsigned long)g_psx_stats.unfitted_ramp,
                         double(g_psx_stats.max_xy_error_px));
             }

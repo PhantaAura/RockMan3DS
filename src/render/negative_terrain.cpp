@@ -104,11 +104,17 @@ std::optional<size_t> next_area_with_mid_terrain(const RuntimeMap& map,
 std::vector<ExpandedRenderPrimitive> expand_negative_terrain_mid(
     const St00RenderSource& render, const AreaNegativeRenderInstance& instance,
     const NegativeMaterialBinding* binding) {
+    return expand_negative_terrain_lod(render, instance, binding, St00Lod::Mid);
+}
+
+std::vector<ExpandedRenderPrimitive> expand_negative_terrain_lod(
+    const St00RenderSource& render, const AreaNegativeRenderInstance& instance,
+    const NegativeMaterialBinding* binding, St00Lod lod) {
     require(instance.packed_cell & 0x8000u, "negative expansion requires a negative cell");
     require(instance.descriptor_index < render.descriptors.size(),
             "negative expansion descriptor outside render");
     const auto ri = render.descriptors[instance.descriptor_index]
-        .record_indices[st00_descriptor_slot(St00RenderBank::Primary, St00Lod::Mid)];
+        .record_indices[st00_descriptor_slot(St00RenderBank::Primary, lod)];
     if (ri == 0xFFFFu) return {};
     require(ri < render.records.size(), "negative expansion record outside render");
     const auto& record = render.records[ri];
@@ -118,7 +124,8 @@ std::vector<ExpandedRenderPrimitive> expand_negative_terrain_mid(
         const auto& stream = render.streams[si];
         require(stream.base_shift <= 15, "negative expansion shift invalid");
         require(stream.material_slot < record.materials.size(), "negative material slot invalid");
-        for (const auto& source : stream.primitives) {
+        for (size_t face = 0; face < stream.primitives.size(); ++face) {
+            const auto& source = stream.primitives[face];
             const auto local = positive_terrain_consecutive_xyz(source);
             ExpandedRenderPrimitive primitive;
             primitive.prefix = source.prefix;
@@ -126,7 +133,16 @@ std::vector<ExpandedRenderPrimitive> expand_negative_terrain_mid(
             // must not lend its palette/UV state to the special branch.
             primitive.texture_binding_known = !(instance.packed_cell & 0x80u) && binding && binding->known;
             primitive.material_word = primitive.texture_binding_known ? binding->material_word : 0;
-            primitive.uv = primitive.texture_binding_known ? negative_material_quad_uv(*binding) : source.uv;
+            // Mid/Far clear packed bit 15 (0x8002196C): the fixed atlas tile.
+            // Near keeps it: stream UVs plus per-face tiles, which need the v2
+            // near tiles; without them the face has no known texture.
+            if (primitive.texture_binding_known && lod == St00Lod::Near) {
+                primitive.texture_binding_known = binding->near_known;
+                if (!primitive.texture_binding_known) primitive.material_word = 0;
+            }
+            primitive.uv = !primitive.texture_binding_known ? source.uv
+                : lod == St00Lod::Near ? negative_material_near_uv(*binding, source.uv, face, stream.primitives.size())
+                : negative_material_quad_uv(*binding);
             for (size_t v = 0; v < 4; ++v) {
                 const auto xz = legends_tile_transform_xz(wrap16(instance.origin.x),
                     wrap16(instance.origin.z), local.x[v], local.z[v], stream.base_shift,

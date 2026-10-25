@@ -345,10 +345,42 @@ Status: **SOURCE_BACKED_PARTIAL**. Decompiled with GhidraMCP.
   binding) and near-replay cells (depth < 0x401, `0x8002235C` unported) stay
   3D. Drawing the near cells as single affine quads smeared the floor next to
   Mega Man, which the near renderer avoids on the PS1.
-- **CANDIDATE:** negative geometry is still the Mid descriptor for every
-  cell, and the bit-28 "previous" is per batch walk.
+- **CANDIDATE:** the bit-28 "previous" is per batch walk. Negative LODs are
+  ported in R8.
 - The resolver falls back to the page's own palette when a ramp CLUT has no
   fitted L3CR scale (`gp0_unfitted_ramp`; 0 at the Area 1 start).
+
+## Near replay `0x8002235C` and negative LODs (R8)
+Status: **SOURCE_BACKED_PARTIAL**. Decompiled with GhidraMCP; `0x800221E0`'s
+third argument was checked against the instructions (the decompiler dropped
+it).
+
+**What the original does:**
+- `0x8002196C` picks a negative cell's descriptor from its centre depth
+  (MAC3, unshifted): < 0xAF1 Near (+0x18), < 0x1C21 Mid, otherwise Far.
+  Mid/Far clear packed bit 15.
+- Depth < 0x401 queues the cell at `0x800BBE50`. `0x800221E0` later replays
+  it through `0x8002235C` with the Near descriptor, the ramp
+  `0x800C0DC0[(depth/512) & 31]` and TR `0x1F80001C`.
+- `0x8002235C` writes the same FT4/FT3 packets as `0x80021B14`, with two
+  differences:
+  - a back face with neither bit 30 nor bit 29 **ends the stream**;
+  - special (bit-7) cells go to the subdivider `0x80022A94`, which is
+    unported (those cells stay 3D).
+- **Near UVs (bit 15 kept).** Stream UVs plus a tile offset ((t & 7)·32 in u,
+  (t >> 3)·32 in v). Face i of n uses byte `0x1F800187 − (n−1−i)` while
+  n−1−i > 3: the four bytes of `0x800BADB4`, the second word of the
+  `0x800BADB0` row, copied to `0x1F800180`. Later faces use the row's tile
+  byte. Mid/Far use the fixed 0..31 tile UVs.
+
+**Port:**
+- L3NM v2 stores the four near tiles per row; the loader still accepts v1;
+  recipe `tutorial-install/01516-l3nm-near-2`.
+- `negative_material_near_uv` and `expand_negative_terrain_lod`.
+- Negative cells join the Near/Far batch passes (sharing Mid where the
+  geometry is equal) and pick their LOD per frame from `negative_depth`.
+- Near-replay cells are packets; the stream-end rule is ported; a skipped
+  face without bit 28 clears the chain, as in both families.
 
 ## Found, not ported (next candidates)
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near

@@ -260,8 +260,8 @@ void exercise_negative_package(const std::filesystem::path& path,
     malformed(changed);
     changed = original; changed[4].second[12] ^= 1; malformed(changed);
     for (const auto& field : std::vector<std::pair<size_t, uint8_t>>{
-             {0, 0}, {4, 2}, {8, 0}, {16 + 8 + 4, 64}, {16 + 8 + 5, 2},
-             {16 + 8 + 6, 1}, {16 + 8, 0}, {16, 1}, {16 + 4, 1}}) {
+             {0, 0}, {4, 3}, {8, 0}, {16 + 12 + 4, 64}, {16 + 12 + 5, 4},
+             {16 + 12 + 6, 1}, {16 + 12, 0}, {16, 1}, {16 + 4, 1}}) {
         changed = original; changed[4].second[field.first] = field.second;
         negative_material_crc(changed[4].second); malformed(changed);
     }

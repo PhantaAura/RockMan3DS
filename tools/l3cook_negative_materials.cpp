@@ -37,6 +37,10 @@ int main(int argc, char** argv) {
                 auto& binding = tables[area][slot];
                 binding.material_word = (word & 0xffff0000u) | 0x1du;
                 binding.atlas_tile = static_cast<uint8_t>(word & 0xffu);
+                // 0x800BADB4: near-LOD tiles of the first faces (copied to 0x1F800180).
+                const uint32_t near = l3::rd_u32(overlay.data() + kTableOffset + (selector + slot) * 8u + 4u);
+                for (size_t i = 0; i < 4; ++i) binding.near_tiles[i] = static_cast<uint8_t>(near >> (8 * i));
+                binding.near_known = true;
                 binding.known = true;
                 ++known_rows;
             }

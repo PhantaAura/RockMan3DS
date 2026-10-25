@@ -104,6 +104,9 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   widened to 200/384 for the 400-pixel view (CANDIDATE). At the Area 1 start,
   black faces fall from 108 to 34 (original 17) and the frame interval from
   40.8 to 33.1 ms in Azahar.
+- Renderer R8: near replay `0x8002235C` and negative LODs (L3NM v2 near
+  tiles). All default terrain at the Area 1 start is packets. Next: actors into
+  the OT; special-cell subdivider `0x80022A94`.
 - Renderer R7: negative cells (`0x80021B14`) are packets too (FT4/FT3, cell
   ramp from `0x800C0DC0`). Near-replay cells (<0x401, `0x8002235C`) stay 3D.
   Next: port `0x8002235C`, then actors into the OT.

@@ -474,3 +474,15 @@ corridor corner while walking.
     to Mega Man smeared diagonally (affine) and FPS fell to 28;
   - with those cells kept in 3D, the near floor is clean, the next cell out
     shows a mild affine bend, and the walls are unchanged.
+
+## Renderer R8: near replay 0x8002235C and negative LODs
+- **Host:** 169/169. New coverage:
+  - `test_negative_material`: L3NM v2 round trip, near UV tile rule, a v1
+    pack still loads;
+  - `test_area_package`: v2 sizes and the malformed-field table.
+- **Azahar 2126.0, Area 1 start, idle:**
+  - 266 packets, 50 of them negative (4 triangles), 10 near-replay faces;
+  - 0 negative faces left in 3D, 0 unresolved, 0 unfitted ramps, 42 runs;
+  - LOD faces 122/105/7, drawn 157, black 25.
+- **Not verified by eye:** window capture failed, so no screenshot of the
+  near floor. The instance was left running for the user to look at.
