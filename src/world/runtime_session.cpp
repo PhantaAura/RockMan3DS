@@ -584,6 +584,10 @@ void RuntimeSession::update_player_motion(){
     // USA 0x8003C89C saves rollback mirrors even on stationary frames.
     l3_pl00_snapshot_collision_pose(&player_);
     player_.bytes[0xAD]=player_.bytes[0xAC]; // 0x8003C918: last-request mirror.
+    // 0x8003C920/C924: last-frame contact mirrors +75 = +74, +77 = +76. The
+    // ledge release/pull-up write +75 directly; without this copy it stayed
+    // nonzero and the walk-off fall (0x8003C4EC, +75 == 0) never started.
+    player_.bytes[0x75]=player_.bytes[0x74];player_.bytes[0x77]=player_.bytes[0x76];
     player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]&0xF7u); // 0x8003C90C..C92C clears bit 8.
     const uint16_t held=rd16w(player_,0x11C);
     const uint16_t forward_mask=rd16w(player_,0x124);

@@ -460,6 +460,14 @@ void ledge_grab_and_pull_up(){
         on_top=s.player_contact().grounded.value_or(false)&&s.player_position().y==-192;
     }
     assert(on_top&&s.player_position().z<-168);
+    // 0x8003C920: +75 mirrors last frame's +74, so the pull-up's +75 = 2 does
+    // not outlive it and block the later walk-off fall (0x8003C4EC).
+    for(unsigned i=0;i<60&&(s.compat_player().bytes[0x09]==13||s.compat_player().bytes[0x74]!=0);++i){
+        (void)s.submit_player_animation_record(s.compat_player().bytes[0xAC],0,1,0,-1);s.tick({});
+    }
+    s.tick({});
+    assert(s.compat_player().bytes[0x09]!=13&&s.compat_player().bytes[0x74]==0&&s.compat_player().bytes[0x75]==0);
+    assert(s.player_position().y==-192);
 }
 int main(int argc,char** argv){ledge_grab_and_pull_up();deep_overlap_recovery_80050400();slope_climb(8,-400,24);slope_climb(9,400,-24);contact_response_and_bounds();floor_adhesion_precedes_geometry_response();diagonal_response_does_not_publish_false_adhesion();diagonal_wall_source_vectors();iteration_failure_consumes_source_rollback();runtime_jump_is_animation_gated();ordinary_running_jump_and_land();adhesion_lifecycle_and_unknowns();zero_allocation_contact_ticks();ordinary_locomotion_source_and_retail_window();bounded_diagnostic_replay_seed();source_floor_interval_and_unknown_movement();
     assert(argc==1 || argc==2);if(argc==2)source_floor_fixture(argv[1]);
