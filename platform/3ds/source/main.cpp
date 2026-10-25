@@ -2126,6 +2126,11 @@ static PsxTranslatorStats g_psx_stats;
 // The previous frame's complete stats (traced; the trace line is written
 // before this frame's actors and OT flush).
 static PsxTranslatorStats g_psx_last_stats;
+// Gate C frame split, accumulated per frame and averaged into the trace
+// every 120 frames (CPU ticks; GPU execution itself is not measurable here).
+struct FrameSplit { u64 frames = 0, gpu_wait_us = 0, render_cpu = 0, update = 0, terrain = 0, models = 0, flush = 0; };
+static FrameSplit g_frame_split;
+static u64 g_models_start = 0;   // after the terrain draw; 0 when no terrain this frame
 struct PsxResolved {
     const C3D_Tex* texture = nullptr;   // nullptr: no uploaded page
     bool found = false;
@@ -3668,10 +3673,16 @@ int main() {
                 ++autoplay_tick;
                 const auto finish_step=[&]{g_autoplay.used=autoplay_step.frames;};
                 // A every 12 frames; on a choice, Right on the 6th frame then A.
+                // A choice is always answered with its last option (radio "No",
+                // "Read instructions again?" "No", box message 11). Right is pressed
+                // until it is selected, then A: pressing A first could pick an
+                // option that replays the message forever.
                 const auto talk_keys=[&]()->u32{
                     if(!session.dialogue().active)return 0;
                     const uint32_t phase=autoplay_tick%12u;
-                    if(session.dialogue().waiting_for_choice&&phase==6)return KEY_DRIGHT;
+                    const auto& dlg=session.dialogue();
+                    if(dlg.waiting_for_choice&&size_t(dlg.choice)+1<dlg.choice_targets.size())
+                        return phase%6u==3u?u32(KEY_DRIGHT):0u;
                     return phase==0?u32(KEY_A):0u;
                 };
                 static size_t autoplay_area=0;
@@ -4163,6 +4174,21 @@ int main() {
                 }
                 const bool dialogue_was_active=session.dialogue().active;
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                // Every change of the tutorial story flags 0x600..0x62F, with
+                // where Mega Man stood (WCA route evidence).
+                {
+                    static std::array<uint8_t,48> seen{};static bool seeded=false;
+                    const auto pos=session.player_position();
+                    for(uint16_t i=0;i<48;++i){
+                        const uint8_t now=session.story_flag(uint16_t(0x600+i))?1:0;
+                        if(seeded&&now!=seen[i])
+                            hardware_test_trace("# story_flag,frame=%lu,flag=0x%03x,value=%u,area=%u,pos=%d:%d:%d,dialogue=%u",
+                                (unsigned long)session.frame_counter(),unsigned(0x600+i),unsigned(now),unsigned(g_current_area),
+                                int(pos.x),int(pos.y),int(pos.z),unsigned(session.dialogue().active));
+                        seen[i]=now;
+                    }
+                    seeded=true;
+                }
                 if(session.tutorial_triggers_active()&&(session.dialogue().active!=dialogue_was_active||
                    session.frame_counter()%60u==0u))
                     hardware_test_trace("# source_tutorial,frame=%lu,status=%u,cell=%d:%d,dialogue=%u,block=%u,choice=%u,pause=%lu,bd=%02x,flag1552=%u,flag1570=%u,unsupported=%d,wait=%u%u%u%u%u",
@@ -5061,6 +5087,7 @@ int main() {
                 }
             }
             mml_diag_phase(&g_runtime_diag,MML_PHASE_UPDATE,static_cast<uint32_t>((svcGetSystemTick()-update_start)/CPU_TICKS_PER_USEC));
+            g_frame_split.update+=svcGetSystemTick()-update_start;
 
             const auto cell_position=session.player_position();
             if(l3::runtime_map_find_cell(session.active_map(),session.map_area_index(),cell_position.x,cell_position.z)) last_valid=cell_position;
@@ -5203,7 +5230,10 @@ int main() {
                 // drawn after the player (opaque) and after the actors (semi).
                 psx_begin_frame();
                 g_psx_camera = faces;
+                const u64 terrain_start=svcGetSystemTick();
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
+                g_frame_split.terrain+=svcGetSystemTick()-terrain_start;
+                g_models_start=svcGetSystemTick();   // closed at the OT flush
                 // Every 10th frame while see-through faces exist, so short views are not missed.
                 if(session.frame_counter()%120u==0u||(g_terrain_face_stats.see_through&&session.frame_counter()%10u==0u))
                     hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_prev_frame=1,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_subdivided=%lu,gp0_negative=%lu,gp0_negative_tri=%lu,gp0_negative_3d=%lu,gp0_negative_near=%lu,gp0_near_stream_end=%lu,gp0_unfitted_ramp=%lu,gp0_actor=%lu,gp0_actor_culled=%lu,gp0_actor_3d=%lu,gp0_class20=%lu,gp0_e0_meshes=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158+NEG_80021B14+NEAR_8002235C",
@@ -5304,9 +5334,12 @@ int main() {
             }
             // The OT holds terrain, Mega Man, class-20 actors and E0 meshes:
             // opaque packets now, semi-transparent ones in the see-through pass.
+            const u64 flush_start=svcGetSystemTick();
+            if (g_models_start) { g_frame_split.models+=flush_start-g_models_start; g_models_start=0; }
             if (g_psx_camera) psx_draw_ot(false);
             if(use_uv_renderer()&&g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly)
                 draw_terrain_see_through(frame_projection,view);
+            g_frame_split.flush+=svcGetSystemTick()-flush_start;
             const auto scene_overlay=g_source_event_boot&&g_hardware_scene_draw==HardwareSceneDraw::All?session.source_event_scene_overlay():std::nullopt;
             const bool scene_overlay_submitted=scene_overlay&&scene_overlay->subtract_from_scene&&
                 scene_overlay->source_function==0x80100614u&&
@@ -5330,6 +5363,15 @@ int main() {
             }
             // Render timing includes the synchronization wait, not GPU execution time alone.
             mml_diag_phase(&g_runtime_diag,MML_PHASE_RENDER,static_cast<uint32_t>(gpu_wait_us+(svcGetSystemTick()-render_start)/CPU_TICKS_PER_USEC));
+            ++g_frame_split.frames;g_frame_split.gpu_wait_us+=gpu_wait_us;g_frame_split.render_cpu+=svcGetSystemTick()-render_start;
+            if(session.frame_counter()%120u==0u&&g_frame_split.frames){
+                const double n=double(g_frame_split.frames),t=double(CPU_TICKS_PER_USEC);
+                hardware_test_trace("# frame_split,frame=%lu,frames=%lu,gpu_wait_us=%.0f,render_cpu_us=%.0f,update_us=%.0f,terrain_us=%.0f,models_us=%.0f,ot_flush_us=%.0f",
+                    (unsigned long)session.frame_counter(),(unsigned long)g_frame_split.frames,double(g_frame_split.gpu_wait_us)/n,
+                    double(g_frame_split.render_cpu)/t/n,double(g_frame_split.update)/t/n,double(g_frame_split.terrain)/t/n,
+                    double(g_frame_split.models)/t/n,double(g_frame_split.flush)/t/n);
+                g_frame_split={};
+            }
 
             if (!g_first_frame_logged) {
                 g_first_frame_logged = true;
