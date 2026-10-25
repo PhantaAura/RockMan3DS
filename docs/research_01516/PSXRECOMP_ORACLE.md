@@ -70,3 +70,14 @@ traces no longer need PCSX-Redux captures.
   diff against `test_*` host tests.
 - Capture and compile ST00 so tutorial-area functions are native and traceable
   per function.
+
+## Driving it (2026-10-25)
+- Pad: `set_input buttons=<0xFFFF & ~mask>` (active-low PS1 bits: Start 0x8,
+  Up 0x10, L1 0x400, R1 0x800, Circle 0x2000, Cross 0x4000, Square 0x8000),
+  `clear_input` to release; `turbo enabled=1` for fast-forward.
+- RAM: story flags are the bit array at `0x800BE378` (bit `0x80 >> (n & 7)`,
+  0x8001DA58); the player work is `0x800B51B0` (+0x14 x/y/z, +0x56 heading,
+  +9 action, +0x0A phase).
+- `savestate op=save|load slot=N` works in this run (a load returned ok).
+- `present_shot path=…` for screenshots.
+The driver script stays outside the repo (scratchpad); it only wraps these.
