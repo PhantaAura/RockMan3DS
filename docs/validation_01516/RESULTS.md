@@ -536,3 +536,49 @@ corridor corner while walking.
 - **Azahar (heading 1024):** target y −727, eye y −764. Screenshot: Mega Man
   on the ledge, Area 2 walls, and the E0/08 target (club emblem) drawn
   textured through the OT. **E0 meshes are now verified on screen.**
+
+## Gate A: World Comes Alive normal-boot run (2026-10-25)
+
+Build `pass-20261025-102417-m2-01516` (commit 7b2b73b + route script 673dcfc),
+`Legends3DS.3dsx` 1,190,332 B, SHA-256
+`1ed399fe5dafac563103bf952c8e5e782c7c8286060f60677d96dafb4056ea21` (not committed). Host 169/169.
+
+**Azahar 2126.0, Old 3DS, normal boot** (no `diagnostic_spawn_01414.txt`), input
+from `autoplay/tutorial_full.txt` (FRONTEND_DIAGNOSTIC scripted pad, no forced
+flags, no teleports). One continuous run, 11,278 frames:
+
+| Frame | Flag | Where |
+|---|---|---|
+| 606 / 804 / 1010 / 1377 | 0x610 / 0x612 / 0x613 / 0x614 | Area 1 radio and corridor |
+| 1585 | **0x607**, 0x615 | trap room |
+| 2093 / 2094 | **0x61F** / **0x60A** | trap-room Reaverbots defeated, gate |
+| 2960 / 3413 | 0x616 / 0x617 | Area 1 doors |
+| 4939 | 0x60B, 0x618 | Area 2, top of the first ledge (ledge grab) |
+| 5157 / 6960 | 0x619 / 0x61A | charging Reaverbots released; z 14080 corridor |
+| 8751 / 9539 | **0x609** / **0x608** | targets (second ledge grab into the room) |
+| 10925 | 0x61E, **0x622** | far door: tutorial complete |
+
+Result: **0x622 reached authentically** in Azahar. Not covered: the optional box
+(0x620/0x621) and the 0x60E action check were not exercised; the boot starts at
+the source hand-off 0x80101274 with `opening_scene=SKIPPED` (the opening
+cutscene is not ported; pre-existing). Physical hardware: PENDING.
+
+Fixes this needed (each with a host test):
+- ledge grab 0x80040818 + action 13 (`docs/research_01516/LEDGE_GRAB.md`);
+- action-3 phase-5 pool release 0x80031824 for the Area 2 Reaverbots;
+- +75/+77 per-frame mirrors (0x8003C920) so the walk-off fall works after a climb;
+- route script: Area 1 door target, Area 2 loop through walkable cells, B to jump.
+
+### Gate C baseline (same run, Azahar CPU ticks: proportions, not hardware)
+
+| Segment | render CPU | terrain | models (player) | OT flush | GPU wait |
+|---|---|---|---|---|---|
+| Area 1 corridor | 27.0 ms | 6.4 | 13.9 (8.7) | 2.9 | 7.5 |
+| Trap room | 30.9 ms | 10.9 | 14.8 (9.3) | 4.7 | 9.5 |
+| Area 1 doors | 34.1 ms | 14.5 | 13.2 (9.3) | 5.9 | 8.0 |
+| Area 2 | 27.3 ms | 9.6 | 12.7 (9.3) | 4.5 | 7.8 |
+
+Frame interval 49.8 ms average (about 20 FPS), 84% of samples above 34 ms.
+Peak 312 draw calls, 1,605 triangles, command buffer 26% of 512 KiB; linear
+free never below 23.6 MB (no leak). Largest fixed cost: Mega Man's draw,
+9.3 ms every frame.
