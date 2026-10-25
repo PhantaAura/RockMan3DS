@@ -34,6 +34,7 @@ add_library(legends3ds_core STATIC
     src/world/child_runtime.cpp
     src/world/source_rng_service.cpp
     src/flow/source_fade.cpp
+    src/flow/frontend_title.cpp
     src/flow/source_event_phase5.cpp
     src/flow/source_event_phase6.cpp
     src/flow/source_event_random_effect.cpp
@@ -460,6 +461,8 @@ else()
   target_compile_options(test_area_inspection PRIVATE /UNDEBUG)
 endif()
 add_executable(l3cook_negative_materials tools/l3cook_negative_materials.cpp)
+add_executable(l3cook_frontend_materials tools/l3cook_frontend_materials.cpp)
+target_link_libraries(l3cook_frontend_materials PRIVATE legends3ds_core)
 target_link_libraries(l3cook_negative_materials PRIVATE legends3ds_core)
 add_executable(l3area_inspection_probe tools/l3area_inspection_probe.cpp)
 target_link_libraries(l3area_inspection_probe PRIVATE legends3ds_core)
@@ -1176,3 +1179,7 @@ add_executable(test_psx_gpu tests/test_psx_gpu.cpp)
 target_link_libraries(test_psx_gpu PRIVATE legends3ds_core)
 target_compile_options(test_psx_gpu PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME psx_gpu COMMAND test_psx_gpu)
+add_executable(test_frontend_title tests/test_frontend_title.cpp)
+target_link_libraries(test_frontend_title PRIVATE legends3ds_core)
+target_compile_options(test_frontend_title PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME frontend_title COMMAND test_frontend_title)

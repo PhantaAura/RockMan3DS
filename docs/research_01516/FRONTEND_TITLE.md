@@ -62,6 +62,18 @@ draw 0x80028DE0, OT link at 0x800A4D40/0x800A8D3C).
 - menu strip 0x8001456C(sel): TPAGE (0,0,320,256), CLUT (sel ? 16 : 32, 0x1F1),
   xy (104,148)-(216,164), uv (0,200)-(112,216).
 
+## Title assets (DEMO_DAT.BIN, not ST01)
+The title graphics are in `DEMO_DAT.BIN` (the front-end package): `NTITLEU.TIM`
+256x256 8 bpp at VRAM (320,256), CLUT row 496 (256 entries, the logo);
+`NTITLE5U.TIM` 256x96 4 bpp at (320,416) with 9 palettes on row 497 (PRESS
+START, copyright, menu text incl. EASY/NORMAL/HARD); `NTITLE3U.TIM` 192x160
+8 bpp at (576,256), row 498 (not yet placed); `DEMO_DAT.EBD`; `ee_title.vab`.
+`l3cook_frontend_materials DEMO_DAT.BIN OUT.l3mc` resolves the four words
+fully (logo 0x7C000095, PRESS START 0x7C400015, menu 0x7C410015/0x7C420015).
+PRESS START (0x80014394) draws two packets: the text, then the copyright
+lines at (32,208)-(288,232), uv (0,176)-(255,200). The fourth menu row
+(0x800C1B28 set) is the difficulty (EASY/NORMAL/HARD).
+
 ## Port plan
 1. Cook ST01 (map, EBD, TIMs) into the pack.
 2. Port the front-end state machine (states 0..6, substates) as a host-tested
