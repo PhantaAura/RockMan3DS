@@ -128,6 +128,39 @@ uint8_t actor_ramp_80027f78(int32_t sz_quarter, const std::array<uint8_t,40>& ar
     return area_record[size_t((d >> 7) & 0x1F)];
 }
 
+namespace {
+PolyFt4 model_packet(uint32_t code, uint16_t clut, uint16_t tpage,
+    const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept {
+    PolyFt4 p;
+    p.code_rgb = code;
+    for (size_t k = 0; k < 4; ++k) {
+        p.x[k] = sx[k]; p.y[k] = sy[k];
+        p.u[k] = uv[2 * k]; p.v[k] = uv[2 * k + 1];
+    }
+    p.clut = clut; p.tpage = tpage;
+    return p;
+}
+}
+
+PolyFt4 mesh_packet_8002a6e8(uint32_t code_rgb, bool quad, uint32_t material_word, uint16_t ramp_bits,
+    const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept {
+    return model_packet((code_rgb & 0x02FFFFFFu) | (quad ? 0x2C000000u : 0x24000000u),
+        uint16_t(uint16_t(material_word >> 16) | ramp_bits), uint16_t(material_word), uv, sx, sy);
+}
+
+uint16_t e0_ramp_8002a3ec(uint8_t flags, int32_t sz_quarter, const std::array<uint8_t,40>& area_record) noexcept {
+    if (flags & 0x08u) return 0;
+    const int32_t d = sz_quarter < 0 ? sz_quarter + 0x7F : sz_quarter;
+    const uint8_t r = area_record[size_t((d >> 7) & 0x1F)];
+    return (flags & 0x80u) ? uint16_t(((r >> 2) << 6) + (r & 3u)) : r;
+}
+
+PolyFt4 class20_packet_800289a0(uint32_t colour_code, bool quad, uint32_t material_word, uint8_t ramp,
+    const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept {
+    return model_packet(colour_code | (quad ? 0x2C000000u : 0x24000000u),
+        uint16_t(uint16_t(material_word >> 16) | ramp), uint16_t(uint16_t(material_word) | 0x20u), uv, sx, sy);
+}
+
 bool terrain_needs_subdivision_8002602c(int64_t mac0, const std::array<int16_t,4>& sx,
     const std::array<int16_t,4>& sy) noexcept {
     const int64_t area = mac0 < 0 ? -mac0 : mac0;

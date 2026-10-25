@@ -430,6 +430,56 @@ store was checked against the instructions.
     bucket only);
   - the damage flash/semi branches and the far clip are not modelled.
 
+## Class-20 actors and E0 meshes in the OT (R10)
+Status: **SOURCE_BACKED_PARTIAL**. Decompiled with GhidraMCP; the colour
+source was read from the instructions.
+
+**Class-20 actors (Reaverbots).**
+- `0x80028DE0` walks the 16 × 0x3C0 pool, calling `0x8002831C` (and
+  `0x80028F90` for a second pass) on each actor.
+- **`0x8002831C`:**
+  - RTPS of work +0x14; draws only if SZ/4 is within [0x30 >> LOD,
+    `0x1F800006`] and the screen point is inside the box (or flag 0x40);
+  - ramp `0x800C0DC0[(SZ/4 >> 7) & 31]`;
+  - mesh tier: < 0x2BD → +0x70, < 0x709 → +0x74 (or +0x78 with
+    `0x1F800078` bit 3), otherwise +0x78;
+  - colour `0x1F8000E4` from work +0x15E, a 15-bit BGR value
+    (`0x80028540`); bit 15 becomes 0x02000000. It is depth-cued with the
+    actor's IR0.
+  - Parts: +0xF9 gives the count, and +0xF8 + 4i holds the mesh index (a
+    negative +0xFB hides the part). Each part uses bone +0x1E8 (or +0x240)
+    and offset +0x180 with the camera.
+- **`0x800289A0` (and `0x80029608`):**
+  - projects all part vertices first;
+  - NCLIP > 0;
+  - code `0x1F8000E4 | 0x24/0x2C`;
+  - CLUT | ramp, TPAGE | 0x20 (ABR 1);
+  - bucket AVSZ OTZ >> 1, linked only below bucket 2048
+    (`0x80029608` has no limit).
+
+**E0 / effect meshes (`0x8002A160` → `0x8002A6E8`).**
+- Modulation is work +0x2C & 0x02FFFFFF.
+- The ramp (`0x8002A3EC`) depends on the work flags: flag 8 none, flag 0x80
+  `((r >> 2) << 6) + (r & 3)`, otherwise r.
+- DPCS per primitive (IR0 after vertex 2) unless flag 8; NCLIP unless flag
+  0x40; bucket AVSZ OTZ >> 1.
+
+**Port:**
+- `class20_packet_800289a0`, `class20_colour_8002831c`,
+  `mesh_packet_8002a6e8`, `e0_ramp_8002a3ec`;
+- `psx_emit_class20` (from `draw_imported_actors_uv`) and `psx_emit_e0_mesh`
+  (from `draw_e0_mesh_planned`), which covers scene E0 meshes, the E0/05
+  box, the E0/08 targets and effect meshes;
+- each part vertex is projected once (`PsxVert`);
+- the resolver finds actor and scene pages, with the ramp ORed into the CLUT;
+- the opaque OT is flushed after all actors, before the see-through pass.
+- **CANDIDATE:**
+  - actor point = pose root;
+  - mesh tier = the loaded one;
+  - visibility/far tests not modelled;
+  - E0 work flags taken as 0;
+  - E0 ramp from the mesh's vertex 0.
+
 ## Found, not ported (next candidates)
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near
   faces are subdivided (`0x8002466C`) when SZ > 0x200 and the screen

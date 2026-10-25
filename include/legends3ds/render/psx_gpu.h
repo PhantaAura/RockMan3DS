@@ -136,6 +136,27 @@ PolyFt4 player_packet_80027be0(uint32_t code_word, bool quad, uint32_t material_
 // 0x80028018), dividing toward zero.
 uint8_t actor_ramp_80027f78(int32_t sz_quarter, const std::array<uint8_t,40>& area_record) noexcept;
 
+// E0 / effect mesh packets of 0x8002A6E8: code = modulation (work +0x2C &
+// 0x02FFFFFF, after DPCS unless flag 0x08) | 0x24 / 0x2C; uv0 word = CLUT |
+// uv0 | ramp (0x1F8000E0); uv1 word = TPAGE | uv1. Bucket AVSZ OTZ >> 1;
+// NCLIP > 0 unless flag 0x40.
+PolyFt4 mesh_packet_8002a6e8(uint32_t code_rgb, bool quad, uint32_t material_word, uint16_t ramp_bits,
+    const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept;
+// 0x8002A3EC: the E0 ramp bits. Flag 0x08: none; flag 0x80: the CLUT-row
+// form ((r >> 2) << 6) + (r & 3); otherwise r = 0x800C0DC0[(SZ/4 >> 7) & 31].
+uint16_t e0_ramp_8002a3ec(uint8_t flags, int32_t sz_quarter, const std::array<uint8_t,40>& area_record) noexcept;
+// Class-20 actor packets of 0x800289A0 / 0x80029608: code = 0x1F8000E4 |
+// 0x24 / 0x2C; uv0 word = CLUT | uv0 | ramp; uv1 word = TPAGE | uv1 | 0x20
+// (ABR 1). 0x800289A0 links only buckets below 2048.
+PolyFt4 class20_packet_800289a0(uint32_t colour_code, bool quad, uint32_t material_word, uint8_t ramp,
+    const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept;
+// 0x80028540..0x8002857C: work +0x15E (15-bit BGR, bit 15 = semi) to the
+// 0x1F8000E4 colour word (before DPCS).
+constexpr uint32_t class20_colour_8002831c(uint16_t c) noexcept {
+    return (uint32_t(c & 0x1Fu) << 3) | (uint32_t(c & 0x3E0u) << 6) | (uint32_t(c & 0x7C00u) << 9) |
+           (uint32_t(c & 0x8000u) << 10);
+}
+
 // Bucket of 0x800261A4: otz >> 3 (OT base 0x1F80003C). A back face uses its
 // max SZ (0x80025EBC), a drawn face the 0x80025900 otz.
 constexpr size_t terrain_ot_bucket(int32_t otz) noexcept { return otz <= 0 ? 0u : size_t(otz) >> 3; }

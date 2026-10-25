@@ -689,12 +689,14 @@ void release_player_materials() {
 }
 
 void release_actor_materials() {
+    psx_resolver_reset();
     require_gpu_idle_for_release();
     for(auto& m:g_actor_materials)release_gpu_texture(m.texture,m.texture_ready);
     std::vector<GpuMaterial>().swap(g_actor_materials);
 }
 
 void release_scene_materials() {
+    psx_resolver_reset();
     require_gpu_idle_for_release();
     for(auto& m:g_scene_materials)release_gpu_texture(m.texture,m.texture_ready);
     std::vector<GpuMaterial>().swap(g_scene_materials);
@@ -1533,11 +1535,15 @@ void draw_player_uv(const std::vector<l3::PlayerVisualPrimitive>& local_visuals,
 // Owner page/CLUT and original byte UVs are optionally bound. White unlit
 // modulation is a diagnostic, not recovered original shade. Missing cache or
 // CLUT retains the existing flat gray path;0143 never enters this function.
+bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::ImportedActorPoseMatrices& pose);
+template<class Transform>
+bool psx_emit_e0_mesh(const l3::SceneE0MeshResource& mesh, uint32_t modulation, const Transform& transform);
 void draw_imported_actors_uv(const l3::ActorAreaRuntime& area) {
     configure_immediate_attributes_uv();
     for (const auto& actor : area.actors) {
         if (actor.source_released || actor.source_hidden || !actor.resource || !actor.pose) continue;
         const auto pose=l3::build_imported_actor_pose_matrices(actor);
+        if (psx_emit_class20(actor, pose)) continue;   // through the GP0 OT
         bool open=false,textured=false;uint32_t active_word=0;
         for (size_t i=0;i<pose.part_count;++i) {
             if (!pose.draw_enabled[i]) continue;
@@ -1583,6 +1589,7 @@ void draw_imported_actors_uv(const l3::ActorAreaRuntime& area) {
 template<class Transform>
 bool draw_e0_mesh_planned(const l3::SceneE0MeshResource& mesh,const std::vector<GpuMaterial>& materials,
     bool textures,uint32_t modulation,const Transform& transform,size_t& submitted_passes,bool& semi) {
+    if(psx_emit_e0_mesh(mesh,modulation,transform)){semi=(modulation&0x02000000u)!=0;++submitted_passes;return true;}
     const GpuMaterial* material=nullptr;
     if(textures)for(const auto& m:materials)
         if(m.material_word==mesh.material_word&&m.texture_ready){material=&m;break;}
@@ -2112,7 +2119,7 @@ static std::optional<l3::TerrainFaceCamera> g_psx_camera;
 struct PsxTranslatorStats {
     uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0, subdivided = 0,
         negative = 0, negative_triangles = 0, negative_3d = 0, unfitted_ramp = 0, negative_near = 0, near_stream_end = 0,
-        actor_packets = 0, actor_culled = 0, actor_unsupported = 0;
+        actor_packets = 0, actor_culled = 0, actor_unsupported = 0, class20_actors = 0, e0_meshes = 0;
     float max_xy_error_px = 0.f;   // GTE SXY vs the 3D camera, worst vertex this frame
 };
 static PsxTranslatorStats g_psx_stats;
@@ -2162,6 +2169,19 @@ const PsxResolved& psx_resolve(uint16_t clut, uint16_t tpage) {
                 break;
             }
         }
+    // Class-20 / E0 pages: the ramp is ORed into the CLUT (0x800289A0,
+    // 0x8002A6E8), so a page whose CLUT bits are a subset stands in (scale 1).
+    for (const auto* list : {&g_actor_materials, &g_scene_materials}) {
+        if (r.found) break;
+        for (const auto& m : *list) {
+            const uint16_t mc = uint16_t(m.material_word >> 16);
+            if (uint16_t(m.material_word) != tpage || (clut & mc) != mc || (clut ^ mc) >= 0x400u) continue;
+            if (r.found && mc != clut) continue;
+            r.found = true; r.texture = m.texture_ready ? &m.texture : nullptr;
+            r.base_word = m.material_word; r.unfitted_ramp = mc != clut;
+            if (mc == clut) break;
+        }
+    }
     if (!r.found)
         for (const auto& m : g_player_materials) {
             if (uint16_t(m.material_word) != tpage || (uint16_t(m.material_word >> 16) & 0xFFF8u) != (clut & 0xFFF8u)) continue;
@@ -2397,28 +2417,84 @@ void psx_emit_negative_face(const TerrainQuadInfo& q, const l3::TerrainFaceResul
 // 0x80027F78: colour 0x24808080 depth-cued at the player point, ramp from
 // SZ/4; the damage flash/semi branches (0x8005EBC4/0x8005EBD4) and the far
 // clip 0x1F800006 are not modelled.
+// Shared model helpers: RTPS with the frame camera, and one FT3/FT4 packet
+// linked at AVSZ OTZ >> 1 (all model writers use this bucket).
+bool psx_rtps(int32_t x, int32_t y, int32_t z, int16_t& sx, int16_t& sy, uint16_t& sz, uint16_t* ir0) {
+    if (!g_psx_camera) return false;
+    if (x < INT16_MIN || x > INT16_MAX || y < INT16_MIN || y > INT16_MAX || z < INT16_MIN || z > INT16_MAX) return false;
+    auto gte = g_psx_camera->gte;
+    gte.data[0] = (uint32_t(x) & 0xffffu) | (uint32_t(y) << 16);
+    gte.data[1] = uint32_t(z) & 0xffffu;
+    const auto p = l3::source_gte_rtps_0180001(gte);
+    if (p.status != l3::SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return false;
+    sx = int16_t(uint16_t(p.screen_xy)); sy = int16_t(uint16_t(p.screen_xy >> 16)); sz = p.depth;
+    if (ir0) *ir0 = uint16_t(gte.data[8]);
+    return true;
+}
+// DPCS of a code word's rgb toward FarColor at ir0 (code byte kept).
+uint32_t psx_depth_cue(uint32_t code, uint16_t ir0) {
+    if (!g_psx_camera || !g_psx_camera->far_color) return code;
+    l3::SourceDpcsColor out;
+    if (!l3::source_dpcs_0780010(code & 0xFFFFFFu, *g_psx_camera->far_color, ir0, out)) return code;
+    return (code & 0xFF000000u) | (out.rgb_code & 0xFFFFFFu);
+}
+// A model vertex projected once (GTE SXY/SZ/IR0 with the frame camera, and
+// the 3D camera's depth/xy for the packet extra), like the per-part RTPT
+// pass of 0x800289A0.
+struct PsxVert {
+    std::array<int32_t,3> pt{};
+    int16_t sx = 0, sy = 0;
+    uint16_t sz = 0, ir0 = 0;
+    float depth = 0.f, nx = 0.f, ny = 0.f;
+    bool ok = false, done = false;
+};
+PsxVert psx_project_vert(const std::array<float,3>& w) {
+    PsxVert v;
+    v.done = true;
+    v.pt = {{int32_t(std::lround(w[0])), int32_t(std::lround(w[1])), int32_t(std::lround(w[2]))}};
+    v.ok = psx_rtps(v.pt[0], v.pt[1], v.pt[2], v.sx, v.sy, v.sz, &v.ir0);
+    if (!v.ok) return v;
+    const auto q = world_vertex_uv(float(v.pt[0]), float(v.pt[1]), float(v.pt[2]));
+    const C3D_FVec e = Mtx_MultiplyFVec4(&g_frame_view, FVec4_New(q.x, q.y, q.z, 1.f));
+    const C3D_FVec c = Mtx_MultiplyFVec4(&g_frame_projection, e);
+    const float inv = c.w != 0.f ? 1.f / c.w : 0.f;
+    v.depth = c.z * inv; v.nx = c.x * inv; v.ny = c.y * inv;
+    return v;
+}
+// One primitive from projected vertices: NCLIP (unless two-sided), AVSZ
+// bucket >> 1 below bucket_limit, make(sx, sy, ir0 of vertex 2) -> packet.
+template <class Make>
+void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool two_sided, size_t bucket_limit, Make&& make) {
+    for (unsigned k = 0; k < n; ++k) if (!v[k]->ok) { ++g_psx_stats.actor_unsupported; return; }
+    std::array<int16_t,4> sx{}, sy{};
+    for (unsigned k = 0; k < 4; ++k) { const auto* q = v[k < n ? k : 2]; sx[k] = q->sx; sy[k] = q->sy; }
+    const int64_t mac0 = int64_t(sx[0]) * sy[1] + int64_t(sx[1]) * sy[2] + int64_t(sx[2]) * sy[0]
+                       - int64_t(sx[0]) * sy[2] - int64_t(sx[1]) * sy[0] - int64_t(sx[2]) * sy[1];
+    if (!two_sided && mac0 <= 0) { ++g_psx_stats.actor_culled; return; }
+    const uint16_t otz = n == 4 ? l3::psxgpu::gte_avsz4(v[0]->sz, v[1]->sz, v[2]->sz, v[3]->sz)
+                                : l3::psxgpu::gte_avsz3(v[0]->sz, v[1]->sz, v[2]->sz);
+    if (size_t(otz >> 1) >= bucket_limit) { ++g_psx_stats.actor_culled; return; }
+    const auto poly = make(sx, sy, v[2]->ir0);
+    const uint8_t len = n == 4 ? 9 : 7;
+    const uint32_t packet = g_psx_prims.allocate(len, 12);
+    if (n == 4) l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), poly);
+    else l3::psxgpu::write_poly_ft3(g_psx_prims.payload(packet), poly);
+    float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + len);
+    for (unsigned k = 0; k < 4; ++k) {
+        const auto* q = v[k < n ? k : 2];
+        extra[k] = q->depth; extra[4 + 2 * k] = q->nx; extra[5 + 2 * k] = q->ny;
+    }
+    g_psx_ot.add_prim(g_psx_prims, size_t(otz >> 1), packet);
+    ++g_psx_stats.actor_packets;
+}
+
 bool psx_emit_player(const std::vector<l3::PosedPlayerVisualPrimitive>& posed, const l3::RuntimeSession& session) {
     if (!g_psx_actors || !g_psx_camera || !g_psx_ot.size()) return false;
     const auto& cam = *g_psx_camera;
-    const auto rtps = [&](int32_t x, int32_t y, int32_t z, int16_t& sx, int16_t& sy, uint16_t& sz, uint16_t* ir0) {
-        if (x < INT16_MIN || x > INT16_MAX || y < INT16_MIN || y > INT16_MAX || z < INT16_MIN || z > INT16_MAX) return false;
-        auto gte = cam.gte;
-        gte.data[0] = (uint32_t(x) & 0xffffu) | (uint32_t(y) << 16);
-        gte.data[1] = uint32_t(z) & 0xffffu;
-        const auto p = l3::source_gte_rtps_0180001(gte);
-        if (p.status != l3::SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return false;
-        sx = int16_t(uint16_t(p.screen_xy)); sy = int16_t(uint16_t(p.screen_xy >> 16)); sz = p.depth;
-        if (ir0) *ir0 = uint16_t(gte.data[8]);
-        return true;
-    };
     const auto pos = session.player_position();
     int16_t px = 0, py = 0; uint16_t psz = 0, pir0 = 0;
-    if (!rtps(pos.x, pos.y, pos.z, px, py, psz, &pir0)) return false;
-    uint32_t code = 0x24808080u;
-    if (cam.far_color) {
-        l3::SourceDpcsColor out;
-        if (l3::source_dpcs_0780010(0x808080u, *cam.far_color, pir0, out)) code = 0x24000000u | (out.rgb_code & 0xFFFFFFu);
-    }
+    if (!psx_rtps(pos.x, pos.y, pos.z, px, py, psz, &pir0)) return false;
+    const uint32_t code = psx_depth_cue(0x24808080u, pir0);
     const uint8_t ramp = cam.area_record ? l3::psxgpu::actor_ramp_80027f78(int32_t(psz) >> 2, *cam.area_record) : 0;
     const auto& work = session.compat_player().bytes;
     const uint16_t source_0116 = uint16_t(work[0x116]) | (uint16_t(work[0x117]) << 8u);
@@ -2426,33 +2502,113 @@ bool psx_emit_player(const std::vector<l3::PosedPlayerVisualPrimitive>& posed, c
         {float(pos.x), float(pos.y), float(pos.z)}, session.player_yaw(), source_0116);
     for (const auto& p : posed) {
         const unsigned n = p.vertex_count == 3 ? 3u : 4u;
-        std::array<std::array<int32_t,3>,4> pts{};
-        std::array<int16_t,4> sx{}, sy{};
-        std::array<uint16_t,4> sz{};
-        bool ok = true;
-        for (unsigned k = 0; k < n && ok; ++k) {
+        std::array<PsxVert,4> pv{};
+        std::array<const PsxVert*,4> v{};
+        for (unsigned k = 0; k < n; ++k) {
             const auto w = l3::player_pose_transform_point(actor_matrix, p.position[k]);
-            pts[k] = {{int32_t(std::lround(w.x)), int32_t(std::lround(w.y)), int32_t(std::lround(w.z))}};
-            ok = rtps(pts[k][0], pts[k][1], pts[k][2], sx[k], sy[k], sz[k], nullptr);
+            pv[k] = psx_project_vert({{w.x, w.y, w.z}});
+            v[k] = &pv[k];
         }
-        if (!ok) { ++g_psx_stats.actor_unsupported; continue; }
-        if (n == 3) { pts[3] = pts[2]; sx[3] = sx[2]; sy[3] = sy[2]; }
-        const int64_t mac0 = int64_t(sx[0]) * sy[1] + int64_t(sx[1]) * sy[2] + int64_t(sx[2]) * sy[0]
-                           - int64_t(sx[0]) * sy[2] - int64_t(sx[1]) * sy[0] - int64_t(sx[2]) * sy[1];
-        if (mac0 <= 0) { ++g_psx_stats.actor_culled; continue; }
-        const uint16_t otz = n == 4 ? l3::psxgpu::gte_avsz4(sz[0], sz[1], sz[2], sz[3])
-                                    : l3::psxgpu::gte_avsz3(sz[0], sz[1], sz[2]);
+        if (n == 3) v[3] = v[2];
         std::array<uint8_t,8> uv{};
         for (unsigned k = 0; k < 4; ++k) { uv[2 * k] = p.uv[k][0]; uv[2 * k + 1] = p.uv[k][1]; }
-        const auto poly = l3::psxgpu::player_packet_80027be0(code, n == 4, (uint32_t(p.clut) << 16) | p.tpage, ramp, uv, sx, sy);
-        const uint8_t len = n == 4 ? 9 : 7;
-        const uint32_t packet = g_psx_prims.allocate(len, 12);
-        if (n == 4) l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), poly);
-        else l3::psxgpu::write_poly_ft3(g_psx_prims.payload(packet), poly);
-        psx_packet_extra(packet, len, pts);
-        g_psx_ot.add_prim(g_psx_prims, size_t(otz >> 1), packet);
-        ++g_psx_stats.actor_packets;
+        psx_emit_model_prim(v, n, false, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+            return l3::psxgpu::player_packet_80027be0(code, n == 4, (uint32_t(p.clut) << 16) | p.tpage, ramp, uv, sx, sy);
+        });
     }
+    return true;
+}
+
+// Class-20 actors through the OT (0x80028DE0 -> 0x8002831C -> 0x800289A0).
+// Colour: work +0x15E (class 03 work_15e / class 19 shade_15e, else 0x4210)
+// depth-cued at the actor point; ramp from its SZ/4. CANDIDATE: the actor
+// point is the pose root, the mesh tier (+0x70/+0x74/+0x78 by SZ/4) is the
+// loaded one, and the screen/depth visibility test is not modelled.
+bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::ImportedActorPoseMatrices& pose) {
+    if (!g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
+    ++g_psx_stats.class20_actors;
+    const auto& cam = *g_psx_camera;
+    const auto& root = pose.world[0];
+    int16_t ax = 0, ay = 0; uint16_t asz = 0, air0 = 0;
+    if (!psx_rtps(int32_t(std::lround(root.m[3])), int32_t(std::lround(root.m[7])), int32_t(std::lround(root.m[11])),
+                  ax, ay, asz, &air0)) return false;
+    uint16_t c15 = 0x4210;
+    if (actor.source_behavior) c15 = actor.source_behavior->work_15e;
+    else if (actor.source_reaverbot19) c15 = actor.source_reaverbot19->shade_15e;
+    const uint32_t colour = psx_depth_cue(l3::psxgpu::class20_colour_8002831c(c15), air0);
+    const uint8_t ramp = cam.area_record ? l3::psxgpu::actor_ramp_80027f78(int32_t(asz) >> 2, *cam.area_record) : 0;
+    static std::vector<PsxVert> verts;
+    for (size_t i = 0; i < pose.part_count; ++i) {
+        if (!pose.draw_enabled[i]) continue;
+        const auto& part = actor.resource->model.parts[i];
+        const uint32_t word = actor.resource->bindings[i].material_word;
+        verts.assign(part.vertices.size(), PsxVert{});
+        const auto vert = [&](uint8_t index) -> const PsxVert* {
+            auto& pv = verts[index];
+            if (!pv.done) {
+                const auto& src = part.vertices[index];
+                const auto w = l3::player_pose_transform_point(pose.world[i], {float(src.x), float(src.y), float(src.z)});
+                pv = psx_project_vert({{w.x, w.y, w.z}});
+            }
+            return &pv;
+        };
+        for (const auto& tri : part.triangles) {
+            std::array<const PsxVert*,4> v{{vert(tri.index[0]), vert(tri.index[1]), vert(tri.index[2]), nullptr}};
+            v[3] = v[2];
+            std::array<uint8_t,8> uv{};
+            for (unsigned k = 0; k < 6; ++k) uv[k] = tri.uv[k];
+            psx_emit_model_prim(v, 3, false, 2048, [&](const auto& sx, const auto& sy, uint16_t) {
+                return l3::psxgpu::class20_packet_800289a0(colour, false, word, ramp, uv, sx, sy);
+            });
+        }
+        for (const auto& quad : part.quads) {
+            const std::array<const PsxVert*,4> v{{vert(quad.index[0]), vert(quad.index[1]), vert(quad.index[2]), vert(quad.index[3])}};
+            psx_emit_model_prim(v, 4, false, 2048, [&](const auto& sx, const auto& sy, uint16_t) {
+                return l3::psxgpu::class20_packet_800289a0(colour, true, word, ramp, quad.uv, sx, sy);
+            });
+        }
+    }
+    return true;
+}
+
+// One E0 / effect mesh through the OT (0x8002A160 -> 0x8002A6E8): flat
+// modulation & 0x02FFFFFF depth-cued per primitive (IR0 after vertex 2),
+// NCLIP > 0, bucket AVSZ OTZ >> 1. CANDIDATE: work flags taken as 0 (no
+// 0x40 two-sided / 0x08 no-cue / 0x80 ramp form); ramp from the mesh
+// origin's SZ/4; the mesh tier is the caller's.
+template<class Transform>
+bool psx_emit_e0_mesh(const l3::SceneE0MeshResource& mesh, uint32_t modulation, const Transform& transform) {
+    if (!g_psx_actors || !g_psx_camera || !g_psx_ot.size() || mesh.part.vertices.empty()) return false;
+    const auto& cam = *g_psx_camera;
+    static std::vector<PsxVert> verts;
+    verts.assign(mesh.part.vertices.size(), PsxVert{});
+    const auto vert = [&](uint8_t index) -> const PsxVert* {
+        auto& pv = verts[index];
+        if (!pv.done) {
+            const auto p = transform(mesh.part.vertices[index]);
+            pv = psx_project_vert({{float(p[0]), float(p[1]), float(p[2])}});
+        }
+        return &pv;
+    };
+    const auto* origin = vert(0);
+    if (!origin->ok) return false;
+    const uint16_t ramp = cam.area_record ? l3::psxgpu::e0_ramp_8002a3ec(0, int32_t(origin->sz) >> 2, *cam.area_record) : 0;
+    for (const auto& tri : mesh.part.triangles) {
+        std::array<const PsxVert*,4> v{{vert(tri.index[0]), vert(tri.index[1]), vert(tri.index[2]), nullptr}};
+        v[3] = v[2];
+        std::array<uint8_t,8> uv{};
+        for (unsigned k = 0; k < 6; ++k) uv[k] = tri.uv[k];
+        psx_emit_model_prim(v, 3, false, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t ir0) {
+            return l3::psxgpu::mesh_packet_8002a6e8(psx_depth_cue(modulation, ir0), false, mesh.material_word, ramp, uv, sx, sy);
+        });
+    }
+    for (const auto& quad : mesh.part.quads) {
+        const std::array<const PsxVert*,4> v{{vert(quad.index[0]), vert(quad.index[1]), vert(quad.index[2]), vert(quad.index[3])}};
+        psx_emit_model_prim(v, 4, false, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t ir0) {
+            return l3::psxgpu::mesh_packet_8002a6e8(psx_depth_cue(modulation, ir0), true, mesh.material_word, ramp, quad.uv, sx, sy);
+        });
+    }
+    ++g_psx_stats.e0_meshes;
     return true;
 }
 
@@ -5050,7 +5206,7 @@ int main() {
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 // Every 10th frame while see-through faces exist, so short views are not missed.
                 if(session.frame_counter()%120u==0u||(g_terrain_face_stats.see_through&&session.frame_counter()%10u==0u))
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_prev_frame=1,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_subdivided=%lu,gp0_negative=%lu,gp0_negative_tri=%lu,gp0_negative_3d=%lu,gp0_negative_near=%lu,gp0_near_stream_end=%lu,gp0_unfitted_ramp=%lu,gp0_actor=%lu,gp0_actor_culled=%lu,gp0_actor_3d=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158+NEG_80021B14+NEAR_8002235C",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_prev_frame=1,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_subdivided=%lu,gp0_negative=%lu,gp0_negative_tri=%lu,gp0_negative_3d=%lu,gp0_negative_near=%lu,gp0_near_stream_end=%lu,gp0_unfitted_ramp=%lu,gp0_actor=%lu,gp0_actor_culled=%lu,gp0_actor_3d=%lu,gp0_class20=%lu,gp0_e0_meshes=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158+NEG_80021B14+NEAR_8002235C",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
@@ -5069,6 +5225,7 @@ int main() {
                         (unsigned long)g_psx_last_stats.negative_near,(unsigned long)g_psx_last_stats.near_stream_end,
                         (unsigned long)g_psx_last_stats.unfitted_ramp,(unsigned long)g_psx_last_stats.actor_packets,
                         (unsigned long)g_psx_last_stats.actor_culled,(unsigned long)g_psx_last_stats.actor_unsupported,
+                        (unsigned long)g_psx_last_stats.class20_actors,(unsigned long)g_psx_last_stats.e0_meshes,
                         double(g_psx_last_stats.max_xy_error_px));
             }
             // Independent renderer proof filter. A mixed gameplay/scene image
@@ -5083,7 +5240,6 @@ int main() {
                     draw_player_uv(local_visuals,player_material_words,player_pose_storage,skeleton,fallback_action,animation,player_track,refs,session);
                 else draw_player_0143(local_visuals,skeleton,fallback_action,refs,session);
             }
-            if (g_psx_camera) psx_draw_ot(false);
             if(session.frame_counter()%60u==0u&&scene_actor40)
                 hardware_test_trace("# source_actor40_visibility_filter,frame=%lu,isolate_selected=%u,legacy_player_drawn=%u,retail_actor_identity=UNKNOWN",
                     (unsigned long)session.frame_counter(),unsigned(g_source_scene_actor40_only),unsigned(draw_legacy_player));
@@ -5146,6 +5302,9 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)fx.models,(unsigned long)fx.sprites,
                         (unsigned long)fx.held,(unsigned long)fx.passes,(unsigned long)g_effect_meshes.size());
             }
+            // The OT holds terrain, Mega Man, class-20 actors and E0 meshes:
+            // opaque packets now, semi-transparent ones in the see-through pass.
+            if (g_psx_camera) psx_draw_ot(false);
             if(use_uv_renderer()&&g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly)
                 draw_terrain_see_through(frame_projection,view);
             const auto scene_overlay=g_source_event_boot&&g_hardware_scene_draw==HardwareSceneDraw::All?session.source_event_scene_overlay():std::nullopt;

@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "Renderer R9 — Mega Man drawn through the GP0 OT (0x80027F78/0x8002786C/0x80027BE0/0x80027D94), on top of all-terrain packets",
+ "title": "Renderer R10 — class-20 actors (0x8002831C/0x800289A0) and E0 meshes (0x8002A6E8) drawn through the GP0 OT, with terrain and Mega Man",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS): Area 1 start 401 packets / 50 runs incl. 135 Mega Man (181 NCLIP-culled), 0 unresolved; no screenshot (capture failed).",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS): door room 3 Reaverbots + Mega Man as packets, screenshot matches PS1 look, timing equal to the 3D A/B; Area 2 target E0 meshes as packets by trace only (screen black at that spawn, A/B unconfirmed).",
  "emulator_evidence": "docs/validation_01516/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
@@ -111,7 +111,7 @@
   "platform/3ds/source/native_music.cpp"
  ],
  "blockers": [
-  "Renderer: terrain and Mega Man through the GP0 translator; class-20 actors, E0 meshes (0x8002A6E8 decoded) and effects still 3D; player per-part GTE matrices, damage flash and far clip CANDIDATE/unported; 400-px widescreen deliberate.",
+  "Renderer: terrain, Mega Man, class-20 actors and E0/effect meshes through the GP0 OT; E0 meshes unverified on screen; Area 2 target spawn shows a black top screen (camera in wall, pre-existing at heading 1024); sprites (0x80029C18) and HUD not packets; 400-px widescreen deliberate.",
   "Effects 0.0.15.16: subtype 0x80/0x83 ported and drawn; the 0x800341BC burst proxy, bit-0x20 helpers, LOD tiers and effect texture upload order (EXIT_SUP common page, Area 2 inherits ST00_01) are CANDIDATE/unported; defeat burst and E0/07 shake not run in Azahar.",
   "Tutorial chain: triggers 0-16, E0/00 flags, E0/07, subtype 0x19 (Azahar fight unverified), E0/08 targets/doors + action check ported; missing E0/05 box (0x620); E0 objects drawn untextured (diagnostic).",
   "Pop-out 0.0.15.16: subtype 0x1F ported and validated by trace through the morph; action 8 airborne entrance with L3CB byte 0x0B unvalidated in Azahar; record 1585 context 0x80 admitted (masked by 0x7F at 0x80102528, host-only); hidden hit proxy unregistered; work80 writer CANDIDATE.",

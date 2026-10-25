@@ -106,6 +106,23 @@ int main() {
         assert(actor_ramp_80027f78(130 * 4 / 4, area) == 1 && actor_ramp_80027f78(-1, area) == 0);
     }
 
+    // E0 meshes 0x8002A6E8, class-20 actors 0x800289A0.
+    {
+        const std::array<uint8_t,8> uv{{1,2,3,4,5,6,7,8}};
+        const std::array<int16_t,4> mx{{1,2,3,4}}, my{{5,6,7,8}};
+        auto m = mesh_packet_8002a6e8(0x4E806040u, true, 0x7A400024u, 3, uv, mx, my);
+        assert(m.code_rgb == 0x2E806040u && m.clut == 0x7A43 && m.tpage == 0x24);
+        m = mesh_packet_8002a6e8(0x00806040u, false, 0x7A400024u, 0, uv, mx, my);
+        assert(m.code_rgb == 0x24806040u);
+        std::array<uint8_t,40> area{};
+        area[3] = 13;   // (13 >> 2) << 6 + (13 & 3) = 193
+        assert(e0_ramp_8002a3ec(0x08, 400, area) == 0 && e0_ramp_8002a3ec(0x00, 400, area) == 13);
+        assert(e0_ramp_8002a3ec(0x80, 400, area) == 193);
+        auto c = class20_packet_800289a0(class20_colour_8002831c(0x4210), true, 0x7A400004u, 2, uv, mx, my);
+        assert(c.code_rgb == 0x2C808080u && c.clut == 0x7A42 && c.tpage == 0x24);
+        assert(class20_colour_8002831c(0xFFFF) == 0x02F8F8F8u);
+    }
+
     // Subdivision: small faces never, big faces always, mid faces unless
     // they are near parallelograms.
     const std::array<int16_t,4> sx{{0, 40, 0, 40}}, sy{{0, 0, 30, 30}};

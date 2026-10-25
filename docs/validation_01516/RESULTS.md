@@ -500,3 +500,24 @@ corridor corner while walking.
   rerun of the same build passed frame 2640. Cause unknown; possibly the
   window was closed.
 - **Not verified by eye:** window capture failed.
+- **User check (2026-10-25):** Mega Man (R9) looks right in Azahar.
+
+## Renderer R10: Reaverbots and E0 meshes in the OT
+- **Host:** 169/169. New coverage in `test_psx_gpu`: the 0x8002A6E8 packet,
+  the E0 ramp flags, the class-20 packet (TPAGE | 0x20, CLUT | ramp) and the
+  colour expansion.
+- **Azahar, door room (`1 -334 -1 -5750 0`):**
+  - 3 class-20 actors and Mega Man as 285 packets, 0 unresolved;
+  - screenshot: Reaverbots textured with their pale-green shade, as in the
+    user's PS1 screenshot;
+  - frame interval 48–65 ms, the same as an A/B build with actors in 3D
+    (48–56 ms). This room was already about 20 FPS in Azahar.
+- **Azahar, Area 2 targets** (`2 -5300 -576 12032 1024` / `3072`): 4 and 2 E0
+  meshes as packets, 0 unresolved.
+  - The top screen is black at heading 1024 in both the packet build and
+    the A/B build: the spawn camera is inside a wall, which predates this
+    work.
+  - At heading 3072 the trace is valid (271 terrain faces, SXY error
+    2.9 px), but the screen showed mostly black and the A/B screenshot
+    failed (capture error).
+  - **E0 meshes are not verified by eye.**
