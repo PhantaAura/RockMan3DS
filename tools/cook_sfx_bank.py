@@ -128,13 +128,18 @@ def decode_vag(body: bytes, offset: int, size: int) -> tuple[list[int], int | No
     return samples, None
 
 
-def cook(exe: Exe, dat: Path, output: Path) -> dict:
+# Title (front end): common.vab is tag 0 and ee_title.vab tag 2, both from
+# DEMO_DAT.BIN; the 0x8001456C confirms (166..168) use tag 2.
+TITLE_BANKS = {0: ("DEMO_DAT.BIN", 0x4E000), 2: ("DEMO_DAT.BIN", 0x73800)}
+
+
+def cook(exe: Exe, dat: Path, output: Path, bank_map: dict = TUTORIAL_BANKS) -> dict:
     if output.exists():
         raise ValueError("Refusing to overwrite cooked sound bank")
     if output.resolve().is_relative_to(Path(__file__).resolve().parents[1]):
         raise ValueError("Owner-derived audio output must be outside source tree")
     banks = {}
-    for tag, (name, offset) in TUTORIAL_BANKS.items():
+    for tag, (name, offset) in bank_map.items():
         vh, body, found = load_vab(dat / name, offset)
         if found != tag:
             raise ValueError(f"{name}: bank tag {found} != {tag}")
@@ -202,8 +207,9 @@ def main() -> int:
     parser.add_argument("--exe", required=True, type=Path)
     parser.add_argument("--dat", required=True, type=Path, help="owner CDDATA/DAT folder")
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--title", action="store_true", help="title-screen banks (DEMO_DAT tags 0 and 2)")
     args = parser.parse_args()
-    report = cook(Exe(args.exe.read_bytes()), args.dat, args.out)
+    report = cook(Exe(args.exe.read_bytes()), args.dat, args.out, TITLE_BANKS if args.title else TUTORIAL_BANKS)
     print(" ".join(f"{k}={v}" for k, v in report.items()))
     return 0
 

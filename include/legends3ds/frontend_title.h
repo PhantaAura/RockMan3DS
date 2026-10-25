@@ -19,13 +19,25 @@ constexpr uint16_t psx_get_tpage(unsigned tp, unsigned abr, unsigned x, unsigned
 constexpr uint16_t psx_get_clut(unsigned x, unsigned y) noexcept { return uint16_t((y << 6) | (x >> 4)); }
 constexpr uint32_t psx_material_word(uint16_t clut, uint16_t tpage) noexcept { return (uint32_t(clut) << 16) | tpage; }
 
-// Logo, PRESS START, menu row, selected menu row.
-constexpr std::array<uint32_t, 4> kFrontendMaterialWords{{
+// Logo, PRESS START, menu row, selected menu row, ruin wall (NTITLE3U).
+constexpr std::array<uint32_t, 5> kFrontendMaterialWords{{
     psx_material_word(psx_get_clut(0, 0x1F0), psx_get_tpage(1, 0, 320, 256)),
     psx_material_word(psx_get_clut(0, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(16, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(32, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
+    psx_material_word(psx_get_clut(0, 0x1F2), psx_get_tpage(1, 2, 576, 256)),
 }};
+
+// One GP0 packet as the front end adds it: words, payload length and the
+// original ordering-table entry (DAT_80098934 base): 30 text/menu (+0x78),
+// 32 the logo list 0x800A4F50, 34 the wall-shadow strip (+0x88), 35 the wall
+// and gradient (+0x8C). Adding packets in this order to a PsyQ OT reproduces
+// the original draw order.
+struct FrontendPacket {
+    std::array<uint32_t, 9> words{};
+    uint8_t length = 0;
+    uint16_t bucket = 0;
+};
 
 // The POLY_FT4 packets (code 0x2C, rgb 0x808080, semi-transparency off).
 psxgpu::PolyFt4 frontend_logo_80013fb8() noexcept;
@@ -34,6 +46,11 @@ std::array<psxgpu::PolyFt4, 2> frontend_press_start_80014394() noexcept;
 // Rows 0..2 of 0x8001456C (NEW GAME, CONTINUE, OPTION); the selected row
 // uses CLUT x 32, the others 16.
 psxgpu::PolyFt4 frontend_menu_row_8001456c(unsigned row, int selection) noexcept;
+
+// 0x80013FB8: logo, wall (two mirrored halves), shadow strip (Gouraud,
+// semi-transparent, drawn with the E1 draw mode ABR 2 that follows it),
+// gradient. The original then calls the scene draw 0x800137D4 (Servbots).
+std::vector<FrontendPacket> frontend_backdrop_80013fb8();
 
 enum class FrontendResult : uint8_t { None, NewGame, Continue, Option, Attract };
 
@@ -44,9 +61,10 @@ struct FrontendInput {
 };
 
 struct FrontendFrame {
-    std::vector<psxgpu::PolyFt4> draws;     // in submission order
+    std::vector<FrontendPacket> packets;    // in AddPrim order
     std::vector<uint8_t> fades;             // 0x80017C30 arguments
-    std::vector<uint8_t> sounds;            // 0x8001A008 first argument
+    // 0x8001A008(id, a1, 0): {id, a1} (129..131 pass a1 = 1, 166..168 a1 = 0).
+    std::vector<std::array<uint8_t, 2>> sounds;
     uint8_t calls_80053a30 = 0;
     FrontendResult result = FrontendResult::None;
 };

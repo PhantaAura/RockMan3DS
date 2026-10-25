@@ -2211,7 +2211,7 @@ const PsxResolved& psx_resolve(uint16_t clut, uint16_t tpage) {
 // Walks the table and draws the opaque (semi == false) or the
 // semi-transparent packets. Leaves the projection/model-view uniforms at the
 // frame camera.
-void psx_draw_ot(bool semi) {
+void psx_draw_ot(bool semi, bool in_order = false) {
     if (!use_material_batches() || !g_psx_ot.size()) return;
     if (!g_psx_vbo) {
         g_psx_vbo = static_cast<PsxVertex*>(linearAlloc(kPsxVertexCapacity * sizeof(PsxVertex)));
@@ -2219,13 +2219,19 @@ void psx_draw_ot(bool semi) {
         g_owned_linear_bytes += uint32_t(kPsxVertexCapacity * sizeof(PsxVertex));
     }
     C3D_Mtx tilt; Mtx_OrthoTilt(&tilt, 0.f, 400.f, 240.f, 0.f, -1.f, 1.f, true);
-    struct Run { size_t first = 0, count = 0; const PsxResolved* res = nullptr; uint32_t code = 0; bool textured = false, raw = false; };
+    struct Run { size_t first = 0, count = 0; const PsxResolved* res = nullptr; uint32_t code = 0; bool textured = false, raw = false; uint8_t abr = 0; bool semi = false; };
     std::vector<Run> runs;
     const size_t start = g_psx_vertices;
+    // GPU texpage state: an E1 draw-mode word or a textured polygon's TPAGE
+    // sets the blend (ABR) that untextured semi-transparent packets use.
+    uint8_t abr_state = 0;
     g_psx_ot.draw(g_psx_prims, [&](uint32_t packet) {
         const uint8_t len = l3::psxgpu::PrimitiveBuffer::length(g_psx_prims.tag(packet));
+        const uint32_t w0 = len ? g_psx_prims.payload(packet)[0] : 0u;
+        if ((w0 >> 24) == 0xE1u) { abr_state = uint8_t((w0 >> 5) & 3u); return; }
         const auto p = l3::psxgpu::decode_gp0_polygon(g_psx_prims.payload(packet), len);
-        if (!p || p->semi_transparent != semi) return;
+        if (p && p->textured) abr_state = uint8_t((p->tpage >> 5) & 3u);
+        if (!p || (!in_order && p->semi_transparent != semi)) return;
         const unsigned tris = p->vertices == 4 ? 2u : 1u;
         if (g_psx_vertices + 3u * tris > kPsxVertexCapacity) return;
         const PsxResolved* res = p->textured ? &psx_resolve(p->clut, p->tpage) : nullptr;
@@ -2240,7 +2246,8 @@ void psx_draw_ot(bool semi) {
             g_psx_stats.max_xy_error_px = std::max(g_psx_stats.max_xy_error_px,
                 std::max(std::fabs(t.x - x) * 120.f, std::fabs(t.y - y) * 200.f));
             if (g_psx_xy_from_gte) { x = t.x; y = t.y; }
-            const float sc = p->raw_texture ? 1.f : 1.f / 128.f;
+            // Untextured colours are direct (255 = full); textured ones modulate (128 = 1).
+            const float sc = !p->textured ? 1.f / 255.f : (p->raw_texture ? 1.f : 1.f / 128.f);
             const uint32_t c = p->rgb[k];
             const auto& s3 = res ? res->scale : std::array<float,3>{{1.f, 1.f, 1.f}};
             v4[k] = {x, y, depth[k], (float(p->u[k]) + 0.5f) / 256.f, 1.f - (float(p->v[k]) + 0.5f) / 256.f,
@@ -2255,11 +2262,13 @@ void psx_draw_ot(bool semi) {
         const C3D_Tex* tex = res ? res->texture : nullptr;
         if (!runs.empty() && (runs.back().res ? runs.back().res->texture : nullptr) == tex &&
             runs.back().textured == p->textured &&
-            runs.back().raw == p->raw_texture && (!semi || ((runs.back().code ^ code) >> 24) == 0) &&
+            runs.back().raw == p->raw_texture && runs.back().abr == abr_state &&
+            runs.back().semi == p->semi_transparent &&
+            (!p->semi_transparent || ((runs.back().code ^ code) >> 24) == 0) &&
             runs.back().first + runs.back().count == first)
             runs.back().count += 3u * tris;
-        else runs.push_back({first, 3u * tris, res, code, p->textured, p->raw_texture});
-        ++g_psx_stats.packets; ++(semi ? g_psx_stats.semi : g_psx_stats.opaque);
+        else runs.push_back({first, 3u * tris, res, code, p->textured, p->raw_texture, abr_state, p->semi_transparent});
+        ++g_psx_stats.packets; ++(p->semi_transparent ? g_psx_stats.semi : g_psx_stats.opaque);
     });
     if (runs.empty()) return;
     GSPGPU_FlushDataCache(g_psx_vbo + start, (g_psx_vertices - start) * sizeof(PsxVertex));
@@ -2279,7 +2288,22 @@ void psx_draw_ot(bool semi) {
         if (textured) C3D_TexBind(0, const_cast<C3D_Tex*>(r.res->texture));
         configure_texenv_uv(textured);
         ++g_psx_stats.runs;
-        if (!semi) {
+        if (!r.semi) {
+            if (in_order) {   // back to plain writes after a blended run
+                C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO);
+                C3D_BlendingColor(0); C3D_AlphaTest(alpha_requested(), GPU_GREATER, 0);
+            }
+            ++g_runtime_diag.draw_calls; g_submitted_vertices += uint32_t(r.count);
+            C3D_DrawArrays(GPU_TRIANGLES, int(r.first), int(r.count));
+            continue;
+        }
+        if (!r.textured) {
+            // Untextured semi-transparent: the whole primitive blends with the
+            // current ABR (0: B/2+F/2, 1: B+F, 2: B-F, 3: B+F/4).
+            C3D_BlendingColor(r.abr == 0 ? 0x80808080u : r.abr == 3 ? 0x40404040u : 0xFFFFFFFFu);
+            const GPU_BLENDFACTOR src = r.abr == 1 || r.abr == 2 ? GPU_ONE : GPU_CONSTANT_ALPHA;
+            const GPU_BLENDFACTOR dst = r.abr == 0 ? GPU_CONSTANT_ALPHA : GPU_ONE;
+            C3D_AlphaBlend(r.abr == 2 ? GPU_BLEND_REVERSE_SUBTRACT : GPU_BLEND_ADD, GPU_BLEND_ADD, src, dst, GPU_ONE, GPU_ZERO);
             ++g_runtime_diag.draw_calls; g_submitted_vertices += uint32_t(r.count);
             C3D_DrawArrays(GPU_TRIANGLES, int(r.first), int(r.count));
             continue;
@@ -2311,7 +2335,7 @@ void psx_draw_ot(bool semi) {
             C3D_DrawArrays(GPU_TRIANGLES, int(r.first), int(r.count));
         }
     }
-    if (semi) {
+    if (semi || in_order) {
         C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO);
         C3D_BlendingColor(0); C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
         C3D_AlphaTest(alpha_requested(), GPU_GREATER, 0);
@@ -2934,6 +2958,24 @@ bool run_frontend_title(bool scripted) {
     }
     psx_resolver_reset();
     boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=1 state machine 0x80013420; scene/fade/sound/CONTINUE/OPTION/attract not ported");
+    // Fades 0x80017C30 types 2 (title in) and 10 (title out), callback
+    // 0x80017E94, subtract tile: the ported source_fade module. 0x80013420
+    // stores 0x1F800001 = 2, the callback's endpoint hold. Boot leaves no
+    // fade running (0x80098A70/72 = 0). Types 1, 9 and 22 are not ported yet.
+    l3::SourceFadeContext fade;
+    for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
+    l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
+    l3::SourceFadeCallbackState fade_callback;
+    std::optional<l3::SourceFadeStartupProfile> fade_profile;
+    try { fade_profile = l3::load_source_fade_startup_profile(read_binary(data_path("source_fade.l3fd"), 4096)); }
+    catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+    constexpr uint8_t kEndpointHold1f800001 = 2;
+    // Title sounds (0x8001A008 -> 0x8001A110): common.vab + ee_title.vab.
+    NativeSfx title_sfx;
+    { char sfx_path[256]; std::snprintf(sfx_path, sizeof(sfx_path), "%saudio/sfx_title.l3sb", kDataRoot);
+      const bool ready = title_sfx.open(sfx_path);
+      boot_log(MML_BOOT_DATA, ready ? "FRONTEND_SFX=1 sfx_title.l3sb" : "FRONTEND_SFX=0 sfx_title.l3sb absent"); }
+    l3::SourceAudioQueue title_audio; l3::initialize_source_audio_queue_80019e14(title_audio);
     l3::FrontendState state;
     uint8_t last_state = 0xFF, last_sub = 0xFF;
     uint32_t frame = 0;
@@ -2954,11 +2996,30 @@ bool run_frontend_title(bool scripted) {
         if (down & KEY_DDOWN) in.pressed |= 0x0040u;
         if (down & KEY_DLEFT) in.pressed |= 0x0080u;
         if (down & KEY_DRIGHT) in.pressed |= 0x0020u;
+        in.fade_80098a72 = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
         const auto f = l3::frontend_step_80013420(state, in);
+        for (const uint8_t type : f.fades) {
+            l3::SourceFadeStartupResult started;
+            if (type == 2) started = l3::consume_source_fade_startup_80017c30_type2(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents);
+            else if (type == 10) started = l3::consume_source_fade_startup_80017c30_type10(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents);
+            hardware_test_trace("# frontend_fade,frame=%lu,type=%u,status=%u,ported=%u",
+                (unsigned long)frame, unsigned(type), unsigned(started.status), unsigned(type == 2 || type == 10));
+        }
+        for (const auto& sound : f.sounds)
+            (void)l3::enqueue_source_audio_8001a008(title_audio, sound[0], sound[1], 0);
+        if (title_sfx.ready()) {
+            (void)title_sfx.consume(title_audio, l3::SourceSoundListener{});
+            title_sfx.tick(44100u / 60u);
+        } else l3::finish_source_audio_queue_batch_8001a1d0(title_audio);
+        // The fade callback thread: one pass per frame.
+        if (fade_intents.count && !fade_callback.running)
+            (void)l3::acknowledge_source_fade_scheduler_intent(fade, fade_intents, fade_callback, kEndpointHold1f800001);
+        else if (fade_callback.running)
+            (void)l3::advance_source_fade_callback(fade, fade_callback, kEndpointHold1f800001);
         if (state.state != last_state || state.substate != last_sub || f.result != l3::FrontendResult::None) {
-            hardware_test_trace("# frontend,frame=%lu,state=%u,substate=%u,selection=%d,result=%u,fades=%u,sounds=%u,draws=%u",
+            hardware_test_trace("# frontend,frame=%lu,state=%u,substate=%u,selection=%d,result=%u,fades=%u,sounds=%u,packets=%u",
                 (unsigned long)frame, unsigned(state.state), unsigned(state.substate), int(state.selection),
-                unsigned(f.result), unsigned(f.fades.size()), unsigned(f.sounds.size()), unsigned(f.draws.size()));
+                unsigned(f.result), unsigned(f.fades.size()), unsigned(f.sounds.size()), unsigned(f.packets.size()));
             last_state = state.state; last_sub = state.substate;
             char label[160];
             std::snprintf(label, sizeof(label), "frontend frame=%lu state=%u sub=%u sel=%d result=%u prev_packets=%lu unresolved=%lu runs=%lu",
@@ -2971,19 +3032,20 @@ bool run_frontend_title(bool scripted) {
         C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
         if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("front end: C3D_FrameDrawOn rejected");
         psx_begin_frame();
-        // AddPrim to one bucket: the last packet added draws first, so add in
-        // reverse to keep the original submission order on screen.
-        for (size_t i = f.draws.size(); i-- > 0;) {
-            const uint32_t packet = g_psx_prims.allocate(9, 12);
-            l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), f.draws[i]);
-            float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + 9);
+        // Packets in the original AddPrim order and OT entries.
+        for (const auto& fp : f.packets) {
+            const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
+            for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
+            float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
             for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
-            g_psx_ot.add_prim(g_psx_prims, 0, packet);
+            g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
         }
         C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
         const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
-        psx_draw_ot(false);
+        psx_draw_ot(false, true);   // one walk in OT order: semi packets keep their place
         g_psx_xy_from_gte = xy;
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
         C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
         submit_gpu_frame();
         ++frame;
