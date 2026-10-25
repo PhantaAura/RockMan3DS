@@ -55,7 +55,12 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
         if (p.status != SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return r;
         sx[v] = lo16(p.screen_xy); sy[v] = hi16(p.screen_xy); sz[v] = p.depth;
         if (v == 3) r.ir0 = static_cast<uint16_t>(gte.data[8]);   // IR0 after RTPS of vertex 3
+        // A bit-29 negative face is a triangle (0x80021E74): RTPT only, so its
+        // depth cue uses IR0 after vertex 2.
+        if (v == 2 && negative_cell && (prefix & 0x20000000u)) { r.ir0 = static_cast<uint16_t>(gte.data[8]); break; }
     }
+    const bool triangle = negative_cell && (prefix & 0x20000000u);
+    if (triangle) { sx[3] = sx[2]; sy[3] = sy[2]; sz[3] = sz[2]; }
     r.rgb = prefix & 0x00ffffffu;
     if (camera.far_color && (negative_cell || !(prefix & 0x10000000u))) {
         SourceDpcsColor out;

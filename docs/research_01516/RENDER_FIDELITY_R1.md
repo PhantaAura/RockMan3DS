@@ -309,6 +309,47 @@ were read from the EXE.
 it by 1–5 px on near faces at the Area 1 start and during a spin, and by up
 to 50 px for a vertex at the camera, where the GTE saturates as on the PS1.
 
+## Negative family `0x80021B14` as packets (R7)
+Status: **SOURCE_BACKED_PARTIAL**. Decompiled with GhidraMCP.
+
+**Packet writer (`0x80021EA0..0x80022100`):**
+- **Face test.** NCLIP ≥ 1 draws. NCLIP < 1 draws only with bit 30
+  (flipped); a skipped face without bit 28 clears the chain pointer s1.
+- **Code word.**
+  - Bit 29 gives a POLY_FT3: RTPT only, `(prefix & 0x03FFFFFF) | 0x24000000`,
+    the depth cue from IR0 after vertex 2.
+  - Otherwise RTPS of vertex 3 and a POLY_FT4 with `| 0x2C000000`.
+  - DPCS always runs and keeps the code byte, so bit 24 (raw texture) and
+    bit 25 (semi-transparent) survive.
+- **Bucket.** max SZ >> 3 (3 or 4 values). It is OT +8000 bytes when
+  `0x1F800078` bit 0 is set and the cell y ≥ 0; that flag is UNKNOWN and
+  taken as 0. Bit 28 chains after s1.
+- **UV/CLUT/TPAGE.**
+  - Special cells (packed bit 7) take the stream UVs and the descriptor word
+    before the record.
+  - Other cells take table `0x800BADB0` (CLUT, TPAGE 0x1D, UV offset byte)
+    with the fixed 0..31 UVs plus offset. Near LOD with packed bit 15 uses
+    the stream UVs plus per-face offsets.
+  - uv0 word = uv0 | CLUT (`0x1F8001C0`) | ramp (`0x1F800138`); uv1 word =
+    uv1 | TPAGE (`0x1F8001C4`).
+- **Ramp (`0x8002196C`).** `0x800C0DC0[(cell depth / 512) & 31]`;
+  `0x800C0DC0` is the area-record copy made by `0x800371A0`. Cells with
+  depth < 0x401 go to the near replay renderer `0x8002235C` instead.
+
+**Port:**
+- `terrain_negative_packet_80021b14`, `terrain_negative_ramp_8002196c`;
+- `TerrainCellVisibility::negative_depth`;
+- triangle handling in `classify_terrain_face`;
+- `psx_emit_negative_face`.
+- Default negative cells with a known binding are packets. Special cells (no
+  binding) and near-replay cells (depth < 0x401, `0x8002235C` unported) stay
+  3D. Drawing the near cells as single affine quads smeared the floor next to
+  Mega Man, which the near renderer avoids on the PS1.
+- **CANDIDATE:** negative geometry is still the Mid descriptor for every
+  cell, and the bit-28 "previous" is per batch walk.
+- The resolver falls back to the page's own palette when a ramp CLUT has no
+  fitted L3CR scale (`gp0_unfitted_ramp`; 0 at the Area 1 start).
+
 ## Found, not ported (next candidates)
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near
   faces are subdivided (`0x8002466C`) when SZ > 0x200 and the screen

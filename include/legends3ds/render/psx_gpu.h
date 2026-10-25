@@ -97,6 +97,21 @@ struct TerrainPacketInput {
 };
 PolyFt4 terrain_poly_ft4_80026158(const TerrainPacketInput& in) noexcept;
 
+// Negative-cell packet of 0x80021B14 (0x80021EA0..0x80022100):
+//  code word = (prefix & 0x03FFFFFF) | 0x2C000000, or | 0x24000000 (POLY_FT3,
+//    vertices 0..2) for prefix bit 29; the depth cue (always applied) replaces
+//    the rgb and keeps the code byte, so bit 24 (raw) and bit 25 (semi) stay;
+//  uv0 word = uv0 | CLUT << 16 (0x1F8001C0) | ramp << 16 (0x1F800138);
+//  uv1 word = uv1 | TPAGE << 16 (0x1F8001C4).
+// The bucket is max SZ >> 3 (all four, or three for the triangle).
+struct NegativePacket { PolyFt4 poly; bool triangle = false; };
+NegativePacket terrain_negative_packet_80021b14(uint32_t prefix, uint32_t rgb, uint32_t material_word,
+    uint8_t ramp, const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx,
+    const std::array<int16_t,4>& sy) noexcept;
+// 0x8002196C: the cell's ramp byte, 0x800C0DC0 (the area record copy made by
+// 0x800371A0)[(cell depth / 512) & 31], the division truncating toward zero.
+uint8_t terrain_negative_ramp_8002196c(int32_t cell_depth, const std::array<uint8_t,40>& area_record) noexcept;
+
 // Bucket of 0x800261A4: otz >> 3 (OT base 0x1F80003C). A back face uses its
 // max SZ (0x80025EBC), a drawn face the 0x80025900 otz.
 constexpr size_t terrain_ot_bucket(int32_t otz) noexcept { return otz <= 0 ? 0u : size_t(otz) >> 3; }

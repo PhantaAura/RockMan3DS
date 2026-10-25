@@ -74,6 +74,21 @@ int main() {
     assert(t.code_rgb == 0x2E010101u);
     assert(terrain_ot_bucket(5391) == 673 && terrain_ot_bucket(-5) == 0);
 
+    // Negative packet 0x80021B14: bits 24/25 stay in the code byte, bit 29 makes
+    // a POLY_FT3; CLUT + ramp, TPAGE.
+    {
+        const std::array<uint8_t,8> uv{{0,0, 31,0, 0,31, 31,31}};
+        const std::array<int16_t,4> nx{{1,2,3,4}}, ny{{5,6,7,8}};
+        auto n = terrain_negative_packet_80021b14(0x437E7E7Eu, 0x101112u, 0x7B00001Du, 2, uv, nx, ny);
+        assert(!n.triangle && n.poly.code_rgb == 0x2F101112u && n.poly.clut == 0x7B02 && n.poly.tpage == 0x1D);
+        n = terrain_negative_packet_80021b14(0x207E7E7Eu, 0x101112u, 0x7B00001Du, 0, uv, nx, ny);
+        assert(n.triangle && n.poly.code_rgb == 0x24101112u);
+        std::array<uint8_t,40> area{};
+        for (size_t i = 0; i < 32; ++i) area[i] = uint8_t(i * 2);
+        assert(terrain_negative_ramp_8002196c(5000, area) == 18 && terrain_negative_ramp_8002196c(-100, area) == 0);
+        assert(terrain_negative_ramp_8002196c(-600, area) == 62);   // (-600 + 511) >> 9 = -1 -> & 31 = 31
+    }
+
     // Subdivision: small faces never, big faces always, mid faces unless
     // they are near parallelograms.
     const std::array<int16_t,4> sx{{0, 40, 0, 40}}, sy{{0, 0, 30, 30}};

@@ -2087,11 +2087,12 @@ static bool g_psx_xy_from_gte = true;
 // Positive terrain through the translator (false: the 0.0.15.16 index path).
 static bool g_psx_terrain = true;
 struct PsxTranslatorStats {
-    uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0, subdivided = 0;
+    uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0, subdivided = 0,
+        negative = 0, negative_triangles = 0, negative_3d = 0, unfitted_ramp = 0, negative_near_3d = 0;
     float max_xy_error_px = 0.f;   // GTE SXY vs the 3D camera, worst vertex this frame
 };
 static PsxTranslatorStats g_psx_stats;
-struct PsxResolved { int batch = -1; std::array<float,3> scale{{1.f, 1.f, 1.f}}; uint32_t base_word = 0; };
+struct PsxResolved { int batch = -1; std::array<float,3> scale{{1.f, 1.f, 1.f}}; uint32_t base_word = 0; bool unfitted_ramp = false; };
 static std::unordered_map<uint32_t, PsxResolved> g_psx_resolved;
 void psx_resolver_reset() { g_psx_resolved.clear(); }
 
@@ -2109,17 +2110,22 @@ const PsxResolved& psx_resolve(uint16_t clut, uint16_t tpage) {
     auto it = g_psx_resolved.find(word);
     if (it != g_psx_resolved.end()) return it->second;
     PsxResolved r;
-    for (int k = 0; k < 32 && r.batch < 0; ++k) {
-        const uint32_t base = (uint32_t(uint16_t(clut - k)) << 16) | tpage;
-        for (size_t i = 0; i < g_terrain_batches.size(); ++i) {
-            const auto& b = g_terrain_batches[i];
-            if ((b.key >> 32) || b.material_word != base) continue;
-            if (k && (!b.ramp || size_t(k) >= b.ramp->scale_q12.size())) continue;
-            r.batch = int(i); r.base_word = base;
-            if (k) for (unsigned c = 0; c < 3; ++c) r.scale[c] = float(b.ramp->scale_q12[size_t(k)][c]) / 4096.f;
-            break;
+    // Pass 0 needs a fitted scale for k > 0; pass 1 accepts the page's own
+    // palette (scale 1) when the ramp palette was never fitted (counted).
+    for (int pass = 0; pass < 2 && r.batch < 0; ++pass)
+        for (int k = 0; k < 32 && r.batch < 0; ++k) {
+            if (pass && !k) continue;
+            const uint32_t base = (uint32_t(uint16_t(clut - k)) << 16) | tpage;
+            for (size_t i = 0; i < g_terrain_batches.size(); ++i) {
+                const auto& b = g_terrain_batches[i];
+                if ((b.key >> 32) || b.material_word != base) continue;
+                const bool fitted = b.ramp && size_t(k) < b.ramp->scale_q12.size();
+                if (k && !pass && !fitted) continue;
+                r.batch = int(i); r.base_word = base; r.unfitted_ramp = k && !fitted;
+                if (k && fitted) for (unsigned c = 0; c < 3; ++c) r.scale[c] = float(b.ramp->scale_q12[size_t(k)][c]) / 4096.f;
+                break;
+            }
         }
-    }
     return g_psx_resolved.emplace(word, r).first->second;
 }
 
@@ -2145,6 +2151,7 @@ void psx_draw_ot(bool semi) {
         if (g_psx_vertices + 3u * tris > kPsxVertexCapacity) return;
         const PsxResolved* res = p->textured ? &psx_resolve(p->clut, p->tpage) : nullptr;
         if (p->textured && res->batch < 0) { ++g_psx_stats.unresolved; return; }
+        if (res && res->unfitted_ramp) ++g_psx_stats.unfitted_ramp;
         const float* depth = reinterpret_cast<const float*>(g_psx_prims.payload(packet) + len);
         const float* ndc_xy = depth + 4;   // the 3D camera's x/y per vertex
         PsxVertex v4[4];
@@ -2313,6 +2320,33 @@ void psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult
     else previous = sub ? chain[3] : chain[0];
 }
 
+// One negative-cell face as the 0x80021B14 packet: POLY_FT4, or POLY_FT3 for
+// prefix bit 29; bucket max SZ >> 3, or after the previous packet of this
+// family for bit 28 (CANDIDATE: previous within the port's batch walk). The
+// 0x1F800078 bit-0 far bucket (+8000 bytes) is not taken: that flag's
+// gameplay value is UNKNOWN (0).
+void psx_emit_negative_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult& r, uint32_t material_word,
+                            uint8_t ramp, uint32_t& previous) {
+    const auto n = l3::psxgpu::terrain_negative_packet_80021b14(q.prefix, r.rgb, material_word, ramp, q.uv, r.sx, r.sy);
+    const uint8_t len = n.triangle ? 7 : 9;
+    const uint32_t packet = g_psx_prims.allocate(len, 12);
+    if (n.triangle) l3::psxgpu::write_poly_ft3(g_psx_prims.payload(packet), n.poly);
+    else l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), n.poly);
+    std::array<std::array<int32_t,3>,4> pts{};
+    for (unsigned k = 0; k < 4; ++k) pts[k] = {{q.x[k], q.y[k], q.z[k]}};
+    if (n.triangle) pts[3] = pts[2];
+    psx_packet_extra(packet, len, pts);
+    if ((q.prefix & 0x10000000u) && previous) {
+        l3::psxgpu::OrderingTable::insert_after(g_psx_prims, previous, packet);
+        ++g_psx_stats.chained;
+    } else {
+        g_psx_ot.add_prim(g_psx_prims, l3::psxgpu::terrain_ot_bucket(int32_t(r.max_sz)), packet);
+        if (!(q.prefix & 0x10000000u)) previous = packet;
+    }
+    ++g_psx_stats.negative;
+    if (n.triangle) ++g_psx_stats.negative_triangles;
+}
+
 struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0,
     cell_culled = 0, see_through = 0, off_screen = 0; uint32_t lod[3] = {0, 0, 0}; };
 static TerrainFaceStats g_terrain_face_stats;
@@ -2355,7 +2389,7 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
     if (faces) psx_begin_frame();
     for (auto& batch : g_terrain_batches) {
         const bool face_colors = faces && batch.indices && batch.colors;
-        uint32_t previous_packet = 0;
+        uint32_t previous_packet = 0, previous_negative = 0;
         configure_terrain_attributes_uv(batch.vbo, face_colors ? batch.colors : nullptr);
         if (batch.texture_ready) C3D_TexBind(0,const_cast<C3D_Tex*>(&batch.texture));
         configure_texenv_uv(batch.texture_ready);
@@ -2395,6 +2429,25 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                     float* c = batch.colors + 18u * k;
                     for (unsigned i = 0; i < 6u; ++i) { c[3*i] = cr; c[3*i+1] = cg; c[3*i+2] = cb; }
                     if (cue && r.rgb != 0x808080u) ++g_terrain_face_stats.depth_cued;
+                }
+                // Negative-cell faces (0x80021B14): drawn faces with a known
+                // CLUT/TPAGE binding become packets; special (bit-7) cells
+                // have none and stay 3D.
+                // Cells with centre depth < 0x401 belong to the near replay
+                // renderer 0x8002235C (unported): they stay 3D.
+                const bool near_replay = quad.negative && cells && cells->valid &&
+                    quad.cell < cells->negative_depth.size() && cells->negative_depth[quad.cell] < 0x401;
+                if (near_replay && r.face == l3::TerrainFace::Draw) ++g_psx_stats.negative_near_3d;
+                if (g_psx_terrain && quad.negative && !near_replay && r.face == l3::TerrainFace::Draw) {
+                    if (!(batch.key >> 32)) {
+                        uint8_t ramp = 0;
+                        if (cells && cells->valid && faces->area_record && quad.cell < cells->negative_depth.size())
+                            ramp = l3::psxgpu::terrain_negative_ramp_8002196c(cells->negative_depth[quad.cell], *faces->area_record);
+                        psx_emit_negative_face(quad, r, batch.material_word, ramp, previous_negative);
+                        ++g_terrain_face_stats.drawn;
+                        continue;
+                    }
+                    ++g_psx_stats.negative_3d;
                 }
                 // Positive drawn/black faces go out as 0x80026158 POLY_FT4
                 // packets through the GP0 translator, unless the original
@@ -4874,7 +4927,7 @@ int main() {
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 // Every 10th frame while see-through faces exist, so short views are not missed.
                 if(session.frame_counter()%120u==0u||(g_terrain_face_stats.see_through&&session.frame_counter()%10u==0u))
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_subdivided=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_subdivided=%lu,gp0_negative=%lu,gp0_negative_tri=%lu,gp0_negative_3d=%lu,gp0_negative_near_3d=%lu,gp0_unfitted_ramp=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
@@ -4889,6 +4942,9 @@ int main() {
                         (unsigned long)g_psx_stats.packets,(unsigned long)g_psx_stats.opaque,(unsigned long)g_psx_stats.semi,
                         (unsigned long)g_psx_stats.runs,(unsigned long)g_psx_stats.unresolved,(unsigned long)g_psx_stats.chained,
                         (unsigned long)g_psx_stats.subdivide_fallback,(unsigned long)g_psx_stats.subdivided,
+                        (unsigned long)g_psx_stats.negative,(unsigned long)g_psx_stats.negative_triangles,(unsigned long)g_psx_stats.negative_3d,
+                        (unsigned long)g_psx_stats.negative_near_3d,
+                        (unsigned long)g_psx_stats.unfitted_ramp,
                         double(g_psx_stats.max_xy_error_px));
             }
             // Independent renderer proof filter. A mixed gameplay/scene image

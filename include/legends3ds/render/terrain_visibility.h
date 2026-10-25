@@ -86,7 +86,9 @@ struct TerrainFaceResult {
     // Skipped by the mode-2 off-screen test.
     bool off_screen = false;
     // GTE screen coordinates (SXY0..3, OFX/OFY 160/120) and max SZ, set once
-    // all four vertices projected; the packet writer 0x80026158 uses them.
+    // all four vertices projected; the packet writers 0x80026158/0x80021B14
+    // use them. A bit-29 negative face is a triangle: vertex 3 is not
+    // projected (its slot repeats vertex 2) and ir0/rgb come from vertex 2.
     std::array<int16_t,4> sx{}, sy{};
     uint16_t max_sz = 0;
 };

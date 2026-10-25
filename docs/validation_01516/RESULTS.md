@@ -461,3 +461,16 @@ corridor corner while walking.
   fallback. A vertex at the camera gives up to 50 px of SXY saturation.
   Faces with a vertex behind the camera (unsupported, up to 162 while the
   camera is inside a wall) stay 3D.
+
+## Renderer R7: negative cells as GP0 packets
+- **Host:** 169/169. New coverage in `test_psx_gpu`: the negative packet
+  (bits 24/25 kept, bit 29 → FT3, CLUT + ramp) and the ramp lookup.
+- **Azahar 2126.0, Area 1 start, idle:**
+  - 242 packets: 216 positive and 26 negative, 0 triangles, 0 unresolved,
+    0 unfitted ramps, 30 runs;
+  - 2 near-replay cells drawn in 3D; 30 FPS.
+- **Screenshots:**
+  - the first build drew the near-replay cells as packets: the floor next
+    to Mega Man smeared diagonally (affine) and FPS fell to 28;
+  - with those cells kept in 3D, the near floor is clean, the next cell out
+    shows a mild affine bend, and the walls are unchanged.

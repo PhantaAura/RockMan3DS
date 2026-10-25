@@ -59,7 +59,10 @@ struct Walk {
         if (mx < -side || mx > side) return;
         if (p < 0) {
             const uint32_t local = uint32_t(z - z0) * area.width + uint32_t(x - x0);
-            if (!out.negative_visible[local]) { out.negative_visible[local] = 1; ++out.negative_cells; }
+            if (!out.negative_visible[local]) {
+                out.negative_visible[local] = 1; ++out.negative_cells;
+                out.negative_depth[local] = mz;   // 0x8002196C repeats this gte_rt
+            }
         } else if (!out.idx_visible[size_t(p)]) {
             out.idx_visible[size_t(p)] = 1; ++out.positive_cells;
             // 0x800267AC / 0x80024BAC: gte_rt of the IDX SVECTOR, MAC3 >> shift.
@@ -134,6 +137,7 @@ void compute_terrain_cell_visibility(const RuntimeMap& map, size_t area_index,
     out.idx_visible.assign(map.idx.size(), 0);
     out.idx_lod.assign(map.idx.size(), 1);
     out.negative_visible.assign(size_t(area.width) * area.height, 0);
+    out.negative_depth.assign(size_t(area.width) * area.height, 0);
     Walk w{map, area, in, out};
     const auto& c = in.camera_1f800008;
     w.r = {{lo16(c[0]), hi16(c[0]), lo16(c[1]), hi16(c[1]), lo16(c[2]), hi16(c[2]), lo16(c[3]), hi16(c[3]), lo16(c[4])}};

@@ -89,6 +89,27 @@ PolyFt4 terrain_poly_ft4_80026158(const TerrainPacketInput& in) noexcept {
     return p;
 }
 
+NegativePacket terrain_negative_packet_80021b14(uint32_t prefix, uint32_t rgb, uint32_t material_word,
+    uint8_t ramp, const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx,
+    const std::array<int16_t,4>& sy) noexcept {
+    NegativePacket out;
+    out.triangle = (prefix & 0x20000000u) != 0;
+    out.poly.code_rgb = (((prefix & 0x03FFFFFFu) | (out.triangle ? 0x24000000u : 0x2C000000u)) & 0xFF000000u) |
+                        (rgb & 0xFFFFFFu);
+    for (size_t k = 0; k < 4; ++k) {
+        out.poly.x[k] = sx[k]; out.poly.y[k] = sy[k];
+        out.poly.u[k] = uv[2 * k]; out.poly.v[k] = uv[2 * k + 1];
+    }
+    out.poly.clut = uint16_t((material_word >> 16) + ramp);
+    out.poly.tpage = uint16_t(material_word);
+    return out;
+}
+
+uint8_t terrain_negative_ramp_8002196c(int32_t cell_depth, const std::array<uint8_t,40>& area_record) noexcept {
+    const int32_t d = cell_depth < 0 ? cell_depth + 0x1FF : cell_depth;
+    return area_record[size_t((d >> 9) & 0x1F)];
+}
+
 bool terrain_needs_subdivision_8002602c(int64_t mac0, const std::array<int16_t,4>& sx,
     const std::array<int16_t,4>& sy) noexcept {
     const int64_t area = mac0 < 0 ? -mac0 : mac0;

@@ -41,6 +41,7 @@ struct TerrainCellVisibility {
     bool valid = false;                  // false: draw everything (unsupported input)
     std::vector<uint8_t> idx_visible;      // by IDX index (positive packed cell)
     std::vector<uint8_t> idx_lod;          // by IDX index: 0 Near, 1 Mid, 2 Far (visible IDX only)
+    std::vector<int32_t> negative_depth;   // by area-local cell: centre MAC3 (0x8002196C), visible cells only
     std::vector<uint8_t> negative_visible; // by area-local cell index
     uint32_t cells_tested = 0, positive_cells = 0, negative_cells = 0;
 };
