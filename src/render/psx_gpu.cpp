@@ -110,6 +110,24 @@ uint8_t terrain_negative_ramp_8002196c(int32_t cell_depth, const std::array<uint
     return area_record[size_t((d >> 9) & 0x1F)];
 }
 
+PolyFt4 player_packet_80027be0(uint32_t code_word, bool quad, uint32_t material_word, uint8_t ramp,
+    const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept {
+    PolyFt4 p;
+    p.code_rgb = quad ? (code_word | 0x08000000u) : code_word;
+    for (size_t k = 0; k < 4; ++k) {
+        p.x[k] = sx[k]; p.y[k] = sy[k];
+        p.u[k] = uv[2 * k]; p.v[k] = uv[2 * k + 1];
+    }
+    p.clut = uint16_t((uint16_t(material_word >> 16) & 0xFFF8u) | ramp);
+    p.tpage = uint16_t(material_word);
+    return p;
+}
+
+uint8_t actor_ramp_80027f78(int32_t sz_quarter, const std::array<uint8_t,40>& area_record) noexcept {
+    const int32_t d = sz_quarter < 0 ? sz_quarter + 0x7F : sz_quarter;
+    return area_record[size_t((d >> 7) & 0x1F)];
+}
+
 bool terrain_needs_subdivision_8002602c(int64_t mac0, const std::array<int16_t,4>& sx,
     const std::array<int16_t,4>& sy) noexcept {
     const int64_t area = mac0 < 0 ? -mac0 : mac0;

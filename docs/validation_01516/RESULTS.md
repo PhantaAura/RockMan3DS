@@ -486,3 +486,17 @@ corridor corner while walking.
   - LOD faces 122/105/7, drawn 157, black 25.
 - **Not verified by eye:** window capture failed, so no screenshot of the
   near floor. The instance was left running for the user to look at.
+- **User check (2026-10-24):** the R8 floor next to Mega Man looks right in
+  Azahar.
+
+## Renderer R9: Mega Man through the OT
+- **Host:** 169/169. New coverage in `test_psx_gpu`: AVSZ3/AVSZ4 with ZSF
+  341/256, the player packet (quad bit, CLUT ramp bits), the actor ramp.
+- **Azahar 2126.0, Area 1 start, idle** (previous-frame stats):
+  - 401 packets in 50 runs: 135 Mega Man, 50 negative, the rest positive;
+  - 181 player faces culled by NCLIP, 0 player faces on the 3D path,
+    0 unresolved.
+- **Run stops:** one run stopped near frame 1200 with no error logged; a
+  rerun of the same build passed frame 2640. Cause unknown; possibly the
+  window was closed.
+- **Not verified by eye:** window capture failed.

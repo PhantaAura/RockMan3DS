@@ -112,6 +112,30 @@ NegativePacket terrain_negative_packet_80021b14(uint32_t prefix, uint32_t rgb, u
 // 0x800371A0)[(cell depth / 512) & 31], the division truncating toward zero.
 uint8_t terrain_negative_ramp_8002196c(int32_t cell_depth, const std::array<uint8_t,40>& area_record) noexcept;
 
+// GTE AVSZ3 / AVSZ4 with the ZSF3 = 341 / ZSF4 = 256 that InitGeom
+// (0x8007A520..0x8007A530) installs: OTZ = average SZ / 4, saturated to 16 bits.
+constexpr uint16_t gte_avsz3(uint32_t sz1, uint32_t sz2, uint32_t sz3) noexcept {
+    const uint64_t v = (uint64_t(341) * (sz1 + sz2 + sz3)) >> 12;
+    return uint16_t(v > 0xFFFFu ? 0xFFFFu : v);
+}
+constexpr uint16_t gte_avsz4(uint32_t sz0, uint32_t sz1, uint32_t sz2, uint32_t sz3) noexcept {
+    const uint64_t v = (uint64_t(256) * (sz0 + sz1 + sz2 + sz3)) >> 12;
+    return uint16_t(v > 0xFFFFu ? 0xFFFFu : v);
+}
+
+// Mega Man's packets (0x80027BE0 triangles / 0x80027D94 quads, pre-built in the
+// mesh and patched each frame):
+//  word 1 = the player code word 0x1F8000E4 (0x80027F78: 0x24808080 after DPCS,
+//    | 0x02000000 while 0x8005EBD4 is nonzero), | 0x08000000 for a quad;
+//  uv0 word: CLUT bits 0..2 replaced by the actor ramp 0x1F8000E0;
+//  bucket = AVSZ OTZ >> 1 (the 512-entry player OT 0x8009BF88 is spliced two
+//    entries per main bucket by 0x80027F78).
+PolyFt4 player_packet_80027be0(uint32_t code_word, bool quad, uint32_t material_word, uint8_t ramp,
+    const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept;
+// 0x80027F78: 0x800C0DC0[(SZ3/4 >> 7) & 31] (the stored SZ is SZ3 >> 2,
+// 0x80028018), dividing toward zero.
+uint8_t actor_ramp_80027f78(int32_t sz_quarter, const std::array<uint8_t,40>& area_record) noexcept;
+
 // Bucket of 0x800261A4: otz >> 3 (OT base 0x1F80003C). A back face uses its
 // max SZ (0x80025EBC), a drawn face the 0x80025900 otz.
 constexpr size_t terrain_ot_bucket(int32_t otz) noexcept { return otz <= 0 ? 0u : size_t(otz) >> 3; }

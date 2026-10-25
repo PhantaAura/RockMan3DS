@@ -382,6 +382,54 @@ it).
 - Near-replay cells are packets; the stream-end rule is ported; a skipped
   face without bit 28 clears the chain, as in both families.
 
+## Actors in the OT: Mega Man (R9)
+Status: **SOURCE_BACKED_PARTIAL**. Decompiled with GhidraMCP; the SZ
+store was checked against the instructions.
+
+**How the original draws:**
+- **Frame order (`0x80027678`).** Player `0x800B51B0` and a second player
+  slot `0x800B57A4`: `0x80027F78`, then `0x8002786C`. Then the E0/effect
+  sweeps `0x80029A38`, `0x80029B10` and `0x80029B94`, then `0x8002CB18` and
+  `0x8002D50C`.
+- **`0x80027F78`:**
+  - RTPS of the player point (+0x3A8); the stored value is SZ3 >> 2
+    (`0x80028018`);
+  - colour `0x1F8000E4` = 0x24808080 after DPCS, with a damage flash from
+    `0x800BBCF8` and | 0x02000000 while `0x8005EBD4` is nonzero;
+  - ramp `0x1F8000E0` = `0x800C0DC0[(SZ/4 >> 7) & 31] << 16`;
+  - returns 0 (not drawn) beyond `0x1F800006`;
+  - splices the 512-entry player OT (`0x8009BF88` + frame·0x800, OTZ ±256)
+    into the main OT `0x800A4D40` (4096 buckets), two entries per bucket.
+- **`0x8002786C`.** Five part groups (tables `0x800898EC` / `0x80089928` by
+  player +0x170/+0x171). Per part it composes the camera with the bone at
+  +0x1C8 + i·0x20 and the offset +0x3A8 + i·8, then calls `0x80027BE0` (tris)
+  and `0x80027D94` (quads).
+- **Packet writers.** They patch packets pre-built in the mesh, one set per
+  frame buffer (68-byte FT3 and 84-byte FT4 records):
+  - NCLIP > 0 only;
+  - word 1 = `0x1F8000E4` (| 0x08000000 for a quad);
+  - CLUT bits 0..2 = ramp;
+  - bucket = AVSZ3/AVSZ4 OTZ minus the player OT base.
+  - InitGeom sets ZSF3 = 341 and ZSF4 = 256, so OTZ = average SZ / 4, and the
+    main bucket = OTZ / 2 (the same scale as terrain's z >> 3).
+- **E0/effect mesh writer `0x8002A6E8`** (decoded, not yet routed):
+  - FT3/FT4 with code modulation | 0x24/0x2C;
+  - flag 0x40 skips NCLIP and flag 0x08 skips the depth cue;
+  - bucket AVSZ OTZ >> 1; CLUT | ramp `0x1F8000E0`.
+
+**Port:**
+- `gte_avsz3/4`, `player_packet_80027be0`, `actor_ramp_80027f78`;
+- `psx_emit_player`, which projects the posed world points with the frame's
+  GTE camera;
+- the resolver also finds player pages (CLUT & ~7);
+- the OT is flushed after the player.
+- **CANDIDATE:**
+  - projection of rounded posed world points instead of per-part composed
+    GTE matrices;
+  - player OT sub-order and the splice position are not reproduced (main
+    bucket only);
+  - the damage flash/semi branches and the far clip are not modelled.
+
 ## Found, not ported (next candidates)
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near
   faces are subdivided (`0x8002466C`) when SZ > 0x200 and the screen

@@ -104,6 +104,9 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   widened to 200/384 for the 400-pixel view (CANDIDATE). At the Area 1 start,
   black faces fall from 108 to 34 (original 17) and the frame interval from
   40.8 to 33.1 ms in Azahar.
+- Renderer R9: Mega Man is drawn through the OT (one colour word, CLUT ramp,
+  NCLIP, AVSZ bucket). Next: E0 meshes (`0x8002A6E8`, decoded) and class-20
+  actors.
 - Renderer R8: near replay `0x8002235C` and negative LODs (L3NM v2 near
   tiles). All default terrain at the Area 1 start is packets. Next: actors into
   the OT; special-cell subdivider `0x80022A94`.

@@ -89,6 +89,23 @@ int main() {
         assert(terrain_negative_ramp_8002196c(-600, area) == 62);   // (-600 + 511) >> 9 = -1 -> & 31 = 31
     }
 
+    // AVSZ with InitGeom's ZSF3/ZSF4: OTZ = average SZ / 4.
+    assert(gte_avsz3(400, 400, 400) == 99 && gte_avsz4(400, 400, 400, 400) == 100);
+    assert(gte_avsz4(0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF) == 16383);
+    // Player packets 0x80027BE0 / 0x80027D94: one code word, quad bit, CLUT
+    // low bits = actor ramp.
+    {
+        const std::array<uint8_t,8> uv{{1,2,3,4,5,6,7,8}};
+        const std::array<int16_t,4> px{{1,2,3,4}}, py{{5,6,7,8}};
+        auto pq = player_packet_80027be0(0x24606060u, true, 0x7A0F0024u, 5, uv, px, py);
+        assert(pq.code_rgb == 0x2C606060u && pq.clut == 0x7A0D && pq.tpage == 0x24 && pq.u[2] == 5);
+        pq = player_packet_80027be0(0x26606060u, false, 0x7A0F0024u, 0, uv, px, py);
+        assert(pq.code_rgb == 0x26606060u && pq.clut == 0x7A08);
+        std::array<uint8_t,40> area{};
+        for (size_t i = 0; i < 32; ++i) area[i] = uint8_t(i);
+        assert(actor_ramp_80027f78(130 * 4 / 4, area) == 1 && actor_ramp_80027f78(-1, area) == 0);
+    }
+
     // Subdivision: small faces never, big faces always, mid faces unless
     // they are near parallelograms.
     const std::array<int16_t,4> sx{{0, 40, 0, 40}}, sy{{0, 0, 30, 30}};
