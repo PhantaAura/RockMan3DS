@@ -62,6 +62,8 @@
 #include "legends3ds/source_player_buster.h"
 #include "mockup_hud.h"
 #include "legends3ds/render/terrain_visibility.h"
+#include "legends3ds/render/psx_gpu.h"
+#include <unordered_map>
 #include "legends3ds/render/terrain_cell_visibility.h"
 #include "legends3ds/source_gate_e007.h"
 #include "legends3ds/source_target_e008.h"
@@ -126,6 +128,7 @@ struct TerrainQuadInfo {
     // Descriptor LODs this quad belongs to (bit 0 Near, 1 Mid, 2 Far); a
     // positive quad is drawn only in its IDX's LOD (0x800267AC).
     uint8_t lods = 7;
+    std::array<uint8_t,8> uv{};   // texture-page UV per vertex (POLY_FT4 packets)
 };
 struct TerrainBatch {
     uint32_t material_word = 0;
@@ -639,7 +642,9 @@ void release_terrain_uv_flat() {
     g_terrain_vertex_count_uv = 0;
 }
 
+void psx_resolver_reset();
 void release_terrain_batches() {
+    psx_resolver_reset();
     for (auto& b : g_terrain_batches) {
         if (b.vbo) {
             const uint32_t bytes = uint32_t(b.vertex_count * sizeof(ProbeVertexUV));
@@ -993,7 +998,7 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
         const size_t first = dst.size();
         push_quad_uv(dst, p);
         if (terrain_xyz_active()) quads[key].push_back({p.world_x, p.world_y, p.world_z, p.prefix, g_area_primitive_negative,
-            g_area_primitive_cell, g_area_primitive_negative ? uint8_t(7) : g_area_primitive_lods});
+            g_area_primitive_cell, g_area_primitive_negative ? uint8_t(7) : g_area_primitive_lods, p.uv});
         if (g_area_primitive_idx != 0xFFFFu)
             g_terrain_patch.add_span(g_area_primitive_idx, key, uint32_t(first), uint32_t(dst.size() - first));
     };
@@ -1679,6 +1684,7 @@ E0ObjectDrawStats draw_source_e0_objects_uv(const l3::RuntimeSession& session) {
 //    32x32 sprite, half size +0x24, UV +0x22, word +0x14, packet +0x18.
 //    Screen-right follows the frontend mirror (CANDIDATE orientation).
 static C3D_Mtx g_frame_view{};
+static C3D_Mtx g_frame_projection{};
 static bool g_frame_view_mirrored=true;
 struct EffectMesh { uint32_t token=0; l3::SceneE0MeshResource mesh; };
 static std::vector<EffectMesh> g_effect_meshes;
@@ -2056,6 +2062,213 @@ void configure_texenv_black_uv(bool textured) {
     C3D_TexEnvColor(env, 0xFF020202u);
 }
 
+
+// ---- PS1 GPU packet translator (GP0 -> citro3d) --------------------------
+// The renderers write original-format packets into g_psx_prims and link them
+// into g_psx_ot (psx_gpu.h). psx_draw_ot walks the table in PS1 order,
+// decodes each GP0 polygon, resolves its TPAGE/CLUT to an uploaded texture
+// page, and draws same-state runs from one vertex buffer. Vertices are
+// written pre-projected with w = 1, so the PICA interpolates UVs linearly in
+// screen space: the PS1's affine texture mapping. Each packet carries its
+// per-vertex depth (from the 3D camera) as an extra so actors still occlude.
+struct PsxVertex { float x, y, z, u, v, r, g, b; };
+static_assert(sizeof(PsxVertex) == 32, "translator vertex stride");
+constexpr size_t kPsxVertexCapacity = 16384;
+constexpr size_t kPsxOtBuckets = 4096;        // CANDIDATE: covers otz >> 3 up to 32767
+static PsxVertex* g_psx_vbo = nullptr;
+static size_t g_psx_vertices = 0;
+static l3::psxgpu::PrimitiveBuffer g_psx_prims;
+static l3::psxgpu::OrderingTable g_psx_ot;
+// true: x/y from the packet's GTE SXY (PS1 screen, OFX 160 + 40 for the
+// deliberate 400-px widescreen); false: from the 3D camera. Whole-pixel SXY
+// next to faces still drawn in 3D (those the original subdivides,
+// 0x8002466C, unported) leaves seams, so the 3D camera is used until every
+// face goes through packets; the SXY error is still traced.
+static bool g_psx_xy_from_gte = false;
+// Positive terrain through the translator (false: the 0.0.15.16 index path).
+static bool g_psx_terrain = true;
+struct PsxTranslatorStats {
+    uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0;
+    float max_xy_error_px = 0.f;   // GTE SXY vs the 3D camera, worst vertex this frame
+};
+static PsxTranslatorStats g_psx_stats;
+struct PsxResolved { int batch = -1; std::array<float,3> scale{{1.f, 1.f, 1.f}}; uint32_t base_word = 0; };
+static std::unordered_map<uint32_t, PsxResolved> g_psx_resolved;
+void psx_resolver_reset() { g_psx_resolved.clear(); }
+
+void psx_begin_frame() {
+    g_psx_prims.clear();
+    g_psx_ot.clear_r(kPsxOtBuckets);
+    g_psx_vertices = 0;
+    g_psx_stats = {};
+}
+
+// CLUT | TPAGE -> uploaded page. A CLUT k rows past a terrain page's own CLUT
+// is that page's depth-ramp palette k (L3CR fitted scale, CANDIDATE).
+const PsxResolved& psx_resolve(uint16_t clut, uint16_t tpage) {
+    const uint32_t word = (uint32_t(clut) << 16) | tpage;
+    auto it = g_psx_resolved.find(word);
+    if (it != g_psx_resolved.end()) return it->second;
+    PsxResolved r;
+    for (int k = 0; k < 32 && r.batch < 0; ++k) {
+        const uint32_t base = (uint32_t(uint16_t(clut - k)) << 16) | tpage;
+        for (size_t i = 0; i < g_terrain_batches.size(); ++i) {
+            const auto& b = g_terrain_batches[i];
+            if ((b.key >> 32) || b.material_word != base) continue;
+            if (k && (!b.ramp || size_t(k) >= b.ramp->scale_q12.size())) continue;
+            r.batch = int(i); r.base_word = base;
+            if (k) for (unsigned c = 0; c < 3; ++c) r.scale[c] = float(b.ramp->scale_q12[size_t(k)][c]) / 4096.f;
+            break;
+        }
+    }
+    return g_psx_resolved.emplace(word, r).first->second;
+}
+
+// Walks the table and draws the opaque (semi == false) or the
+// semi-transparent packets. Leaves the projection/model-view uniforms at the
+// frame camera.
+void psx_draw_ot(bool semi) {
+    if (!use_material_batches() || !g_psx_ot.size()) return;
+    if (!g_psx_vbo) {
+        g_psx_vbo = static_cast<PsxVertex*>(linearAlloc(kPsxVertexCapacity * sizeof(PsxVertex)));
+        if (!g_psx_vbo) throw std::runtime_error("linearAlloc failed for the GP0 translator");
+        g_owned_linear_bytes += uint32_t(kPsxVertexCapacity * sizeof(PsxVertex));
+    }
+    C3D_Mtx tilt; Mtx_OrthoTilt(&tilt, 0.f, 400.f, 240.f, 0.f, -1.f, 1.f, true);
+    struct Run { size_t first = 0, count = 0; int batch = -1; uint32_t code = 0; bool textured = false, raw = false; };
+    std::vector<Run> runs;
+    const size_t start = g_psx_vertices;
+    g_psx_ot.draw(g_psx_prims, [&](uint32_t packet) {
+        const uint8_t len = l3::psxgpu::PrimitiveBuffer::length(g_psx_prims.tag(packet));
+        const auto p = l3::psxgpu::decode_gp0_polygon(g_psx_prims.payload(packet), len);
+        if (!p || p->semi_transparent != semi) return;
+        const unsigned tris = p->vertices == 4 ? 2u : 1u;
+        if (g_psx_vertices + 3u * tris > kPsxVertexCapacity) return;
+        const PsxResolved* res = p->textured ? &psx_resolve(p->clut, p->tpage) : nullptr;
+        if (p->textured && res->batch < 0) { ++g_psx_stats.unresolved; return; }
+        const float* depth = reinterpret_cast<const float*>(g_psx_prims.payload(packet) + len);
+        const float* ndc_xy = depth + 4;   // the 3D camera's x/y per vertex
+        PsxVertex v4[4];
+        for (unsigned k = 0; k < p->vertices; ++k) {
+            float x = ndc_xy[2 * k], y = ndc_xy[2 * k + 1];
+            const C3D_FVec t = Mtx_MultiplyFVec4(&tilt, FVec4_New(float(p->x[k]) + 40.f, float(p->y[k]), 0.f, 1.f));
+            g_psx_stats.max_xy_error_px = std::max(g_psx_stats.max_xy_error_px,
+                std::max(std::fabs(t.x - x) * 120.f, std::fabs(t.y - y) * 200.f));
+            if (g_psx_xy_from_gte) { x = t.x; y = t.y; }
+            const float sc = p->raw_texture ? 1.f : 1.f / 128.f;
+            const uint32_t c = p->rgb[k];
+            const auto& s3 = res ? res->scale : std::array<float,3>{{1.f, 1.f, 1.f}};
+            v4[k] = {x, y, depth[k], (float(p->u[k]) + 0.5f) / 256.f, 1.f - (float(p->v[k]) + 0.5f) / 256.f,
+                p->raw_texture ? 1.f : float(c & 255u) * sc * s3[0],
+                p->raw_texture ? 1.f : float((c >> 8) & 255u) * sc * s3[1],
+                p->raw_texture ? 1.f : float((c >> 16) & 255u) * sc * s3[2]};
+        }
+        static constexpr unsigned kStrip[6] = {0, 1, 2, 1, 3, 2};
+        const size_t first = g_psx_vertices;
+        for (unsigned i = 0; i < 3u * tris; ++i) g_psx_vbo[g_psx_vertices++] = v4[kStrip[i]];
+        const int batch = res ? res->batch : -1;
+        const uint32_t code = (uint32_t(p->code) << 24) | (p->rgb[0] & 0xFFFFFFu);
+        if (!runs.empty() && runs.back().batch == batch && runs.back().textured == p->textured &&
+            runs.back().raw == p->raw_texture && (!semi || ((runs.back().code ^ code) >> 24) == 0) &&
+            runs.back().first + runs.back().count == first)
+            runs.back().count += 3u * tris;
+        else runs.push_back({first, 3u * tris, batch, code, p->textured, p->raw_texture});
+        ++g_psx_stats.packets; ++(semi ? g_psx_stats.semi : g_psx_stats.opaque);
+    });
+    if (runs.empty()) return;
+    GSPGPU_FlushDataCache(g_psx_vbo + start, (g_psx_vertices - start) * sizeof(PsxVertex));
+    C3D_Mtx identity; Mtx_Identity(&identity);
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_projection, &identity);
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_model_view, &identity);
+    C3D_AttrInfo* ai = C3D_GetAttrInfo();
+    AttrInfo_Init(ai);
+    AttrInfo_AddLoader(ai, 0, GPU_FLOAT, 3);   // v0 position
+    AttrInfo_AddLoader(ai, 2, GPU_FLOAT, 2);   // v2 uv
+    AttrInfo_AddLoader(ai, 1, GPU_FLOAT, 3);   // v1 colour
+    C3D_BufInfo* bi = C3D_GetBufInfo();
+    BufInfo_Init(bi);
+    BufInfo_Add(bi, g_psx_vbo, sizeof(PsxVertex), 3, 0x210);
+    for (const auto& r : runs) {
+        const TerrainBatch* b = r.batch >= 0 ? &g_terrain_batches[size_t(r.batch)] : nullptr;
+        const bool textured = r.textured && b && b->texture_ready;
+        if (textured) C3D_TexBind(0, const_cast<C3D_Tex*>(&b->texture));
+        configure_texenv_uv(textured);
+        ++g_psx_stats.runs;
+        if (!semi) {
+            ++g_runtime_diag.draw_calls; g_submitted_vertices += uint32_t(r.count);
+            C3D_DrawArrays(GPU_TRIANGLES, int(r.first), int(r.count));
+            continue;
+        }
+        // Semi-transparent: the TPAGE ABR blend on STP texels (as draw_terrain_see_through).
+        const auto plan = l3::plan_scene_e0_material(r.code, b ? b->material_word : 0u,
+            alpha_requested(), textured, textured);
+        if (plan.status != l3::SceneE0MaterialPlanStatus::Ready || !plan.semi_transparent) {
+            ++g_runtime_diag.draw_calls; g_submitted_vertices += uint32_t(r.count);
+            C3D_DrawArrays(GPU_TRIANGLES, int(r.first), int(r.count));
+            continue;
+        }
+        for (size_t pass_index = 0; pass_index < plan.pass_count; ++pass_index) {
+            const auto& pass = plan.passes[pass_index];
+            const bool stp = pass.texels == l3::SceneE0TexelPass::StpOnly;
+            C3D_AlphaTest(true, stp ? GPU_EQUAL : GPU_GREATER, 128);
+            const bool quarter = pass.source == l3::SceneE0BlendFactor::Quarter;
+            C3D_BlendingColor(quarter ? 0x40404040u : 0x80808080u);
+            const auto factor = [](l3::SceneE0BlendFactor value) -> GPU_BLENDFACTOR {
+                switch (value) { case l3::SceneE0BlendFactor::Zero: return GPU_ZERO;
+                case l3::SceneE0BlendFactor::One: return GPU_ONE;
+                default: return GPU_CONSTANT_ALPHA; }
+            };
+            C3D_AlphaBlend(pass.equation == l3::SceneE0BlendEquation::DestinationMinusSource ?
+                GPU_BLEND_REVERSE_SUBTRACT : GPU_BLEND_ADD, GPU_BLEND_ADD,
+                factor(pass.source), factor(pass.destination), GPU_ONE, GPU_ZERO);
+            C3D_DepthTest(true, GPU_GEQUAL, stp ? GPU_WRITE_COLOR : GPU_WRITE_ALL);
+            ++g_runtime_diag.draw_calls; g_submitted_vertices += uint32_t(r.count);
+            C3D_DrawArrays(GPU_TRIANGLES, int(r.first), int(r.count));
+        }
+    }
+    if (semi) {
+        C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_ONE, GPU_ZERO, GPU_ONE, GPU_ZERO);
+        C3D_BlendingColor(0); C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+        C3D_AlphaTest(alpha_requested(), GPU_GREATER, 0);
+    }
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_projection, &g_frame_projection);
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_model_view, &g_frame_view);
+}
+
+// One positive terrain face as the 0x80026158 POLY_FT4, linked like the
+// original: bucket otz >> 3, or right after the previous packet for prefix
+// bit 28 (CANDIDATE: "previous" is the previous packet of this batch walk,
+// not of the original descriptor stream). Extra words: depth[4], ndc xy[8].
+uint32_t psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult& r, uint32_t material_word,
+                               uint32_t see_through_code, uint32_t& previous) {
+    l3::psxgpu::TerrainPacketInput in;
+    in.prefix = q.prefix; in.rgb = r.rgb; in.material_word = material_word;
+    in.black = r.face == l3::TerrainFace::Black;
+    in.see_through_code = (!in.black && r.see_through) ? see_through_code : 0u;
+    in.ramp = in.black ? 0 : r.ramp;
+    in.uv = q.uv; in.sx = r.sx; in.sy = r.sy;
+    const auto ft4 = l3::psxgpu::terrain_poly_ft4_80026158(in);
+    const uint32_t packet = g_psx_prims.allocate(9, 12);
+    l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), ft4);
+    float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + 9);
+    for (unsigned k = 0; k < 4; ++k) {
+        const auto w = world_vertex_uv(float(q.x[k]), float(q.y[k]), float(q.z[k]));
+        const C3D_FVec e = Mtx_MultiplyFVec4(&g_frame_view, FVec4_New(w.x, w.y, w.z, 1.f));
+        const C3D_FVec c = Mtx_MultiplyFVec4(&g_frame_projection, e);
+        const float inv = c.w != 0.f ? 1.f / c.w : 0.f;
+        extra[k] = c.z * inv;
+        extra[4 + 2 * k] = c.x * inv; extra[5 + 2 * k] = c.y * inv;
+    }
+    if ((q.prefix & 0x10000000u) && previous) {
+        l3::psxgpu::OrderingTable::insert_after(g_psx_prims, previous, packet);
+        ++g_psx_stats.chained;
+    } else {
+        g_psx_ot.add_prim(g_psx_prims, l3::psxgpu::terrain_ot_bucket(in.black ? int32_t(r.max_sz) : r.otz), packet);
+        previous = packet;
+    }
+    return packet;
+}
+
 struct TerrainFaceStats { uint32_t drawn = 0, black = 0, skipped = 0, unsupported = 0, batches_unclassified = 0, depth_cued = 0, ramped = 0,
     cell_culled = 0, see_through = 0, off_screen = 0; uint32_t lod[3] = {0, 0, 0}; };
 static TerrainFaceStats g_terrain_face_stats;
@@ -2095,8 +2308,10 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
         return;
     }
 
+    if (faces) psx_begin_frame();
     for (auto& batch : g_terrain_batches) {
         const bool face_colors = faces && batch.indices && batch.colors;
+        uint32_t previous_packet = 0;
         configure_terrain_attributes_uv(batch.vbo, face_colors ? batch.colors : nullptr);
         if (batch.texture_ready) C3D_TexBind(0,const_cast<C3D_Tex*>(&batch.texture));
         configure_texenv_uv(batch.texture_ready);
@@ -2136,6 +2351,19 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
                     float* c = batch.colors + 18u * k;
                     for (unsigned i = 0; i < 6u; ++i) { c[3*i] = cr; c[3*i+1] = cg; c[3*i+2] = cb; }
                     if (cue && r.rgb != 0x808080u) ++g_terrain_face_stats.depth_cued;
+                }
+                // Positive drawn/black faces go out as 0x80026158 POLY_FT4
+                // packets through the GP0 translator, unless the original
+                // would subdivide them (0x8002466C, not ported: kept 3D).
+                if (g_psx_terrain && !quad.negative && !(batch.key >> 32) &&
+                    (r.face == l3::TerrainFace::Draw || r.face == l3::TerrainFace::Black)) {
+                    if (!l3::psxgpu::terrain_needs_subdivision_8002602c(r.mac0, r.sx, r.sy)) {
+                        psx_emit_terrain_face(quad, r, batch.material_word, faces->see_through_1f80007c, previous_packet);
+                        if (r.face == l3::TerrainFace::Black) ++g_terrain_face_stats.black;
+                        else { ++g_terrain_face_stats.drawn; if (r.see_through) ++g_terrain_face_stats.see_through; }
+                        continue;
+                    }
+                    ++g_psx_stats.subdivide_fallback;
                 }
                 uint16_t* out = nullptr;
                 switch (r.face) {
@@ -2181,6 +2409,7 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
         C3D_DrawElements(GPU_TRIANGLES, int(6u * batch.black_count), C3D_UNSIGNED_SHORT,
                          batch.indices + 6u * batch.quads.size());
     }
+    if (faces) psx_draw_ot(false);
     draw_terrain_overlay();
 }
 
@@ -2194,6 +2423,7 @@ void draw_terrain(const l3::TerrainFaceCamera* faces = nullptr, uint8_t positive
 void draw_terrain_see_through(const C3D_Mtx& projection, const C3D_Mtx& view) {
     g_terrain_see_through_held = 0;
     if (!use_material_batches()) return;
+    psx_draw_ot(true);   // semi-transparent terrain packets, in OT order
     bool bound = false;
     for (const auto& batch : g_terrain_batches) {
         if (!batch.see_through_count) continue;
@@ -4555,7 +4785,7 @@ int main() {
                 for(auto& row:frame_projection.r)row.x=-row.x;
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_projection,&frame_projection);
             C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,g_u_model_view,&view);
-            g_frame_view=view;g_frame_view_mirrored=!source_camera_bound;
+            g_frame_view=view;g_frame_projection=frame_projection;g_frame_view_mirrored=!source_camera_bound;
             if(g_hardware_scene_draw!=HardwareSceneDraw::PlayerOnly){
                 // The original drops back faces at NCLIP; only the gameplay
                 // camera has the 0x1F800008 words the face test needs.
@@ -4596,7 +4826,7 @@ int main() {
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 // Every 10th frame while see-through faces exist, so short views are not missed.
                 if(session.frame_counter()%120u==0u||(g_terrain_face_stats.see_through&&session.frame_counter()%10u==0u))
-                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC",
+                    hardware_test_trace("# terrain_faces,frame=%lu,classified=%u,mode75=%d,drawn=%lu,black=%lu,skipped=%lu,unsupported=%lu,unclassified_batches=%lu,threshold=%d,depth_cued=%lu,ramped=%lu,ramp_words=%lu,fog=%u,cells=%u,cell_culled=%lu,idx_visible=%lu,neg_visible=%lu,see_through=%lu,see_through_held=%lu,off_screen=%lu,lod=%lu/%lu/%lu,gp0_packets=%lu,gp0_opaque=%lu,gp0_semi=%lu,gp0_runs=%lu,gp0_unresolved=%lu,gp0_chained=%lu,gp0_subdivide_3d=%lu,gp0_xy_error_px=%.2f,source=NCLIP_80025900+DPCS+RAMP+CELLS_80021834+ABE_1F80007C+LOD_800267AC+GP0_80026158",
                         (unsigned long)session.frame_counter(),unsigned(faces.has_value()),mode?int(*mode):-1,
                         (unsigned long)g_terrain_face_stats.drawn,(unsigned long)g_terrain_face_stats.black,
                         (unsigned long)g_terrain_face_stats.skipped,(unsigned long)g_terrain_face_stats.unsupported,
@@ -4607,7 +4837,10 @@ int main() {
                         (unsigned long)cells.positive_cells,(unsigned long)cells.negative_cells,
                         (unsigned long)g_terrain_face_stats.see_through,(unsigned long)g_terrain_see_through_held,
                         (unsigned long)g_terrain_face_stats.off_screen,(unsigned long)g_terrain_face_stats.lod[0],
-                        (unsigned long)g_terrain_face_stats.lod[1],(unsigned long)g_terrain_face_stats.lod[2]);
+                        (unsigned long)g_terrain_face_stats.lod[1],(unsigned long)g_terrain_face_stats.lod[2],
+                        (unsigned long)g_psx_stats.packets,(unsigned long)g_psx_stats.opaque,(unsigned long)g_psx_stats.semi,
+                        (unsigned long)g_psx_stats.runs,(unsigned long)g_psx_stats.unresolved,(unsigned long)g_psx_stats.chained,
+                        (unsigned long)g_psx_stats.subdivide_fallback,double(g_psx_stats.max_xy_error_px));
             }
             // Independent renderer proof filter. A mixed gameplay/scene image
             // cannot prove which imported owner is visible. It defaults OFF and

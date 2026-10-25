@@ -107,6 +107,7 @@ add_library(legends3ds_core STATIC
     src/render/terrain_visibility.cpp
     src/render/terrain_cell_visibility.cpp
     src/render/terrain_clut_ramp.cpp
+    src/render/psx_gpu.cpp
     src/render/negative_terrain.cpp
     src/render/negative_materials.cpp
     src/render/area_inspection.cpp
@@ -1171,3 +1172,7 @@ add_executable(test_terrain_clut_ramp tests/test_terrain_clut_ramp.cpp)
 target_link_libraries(test_terrain_clut_ramp PRIVATE legends3ds_core)
 target_compile_options(test_terrain_clut_ramp PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME terrain_clut_ramp COMMAND test_terrain_clut_ramp)
+add_executable(test_psx_gpu tests/test_psx_gpu.cpp)
+target_link_libraries(test_psx_gpu PRIVATE legends3ds_core)
+target_compile_options(test_psx_gpu PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME psx_gpu COMMAND test_psx_gpu)

@@ -429,3 +429,19 @@ corridor corner while walking.
     the PS1's 17 plus 8 in the extra side strips;
   - screenshot: the near walls show the Near descriptors' finer stone and band
     detail, with no holes; 30 FPS.
+
+## Renderer R5: GP0 packet translator (terrain)
+- **Host:** 169/169 (new `test_psx_gpu`: OT order, bit-28 chaining, GP0
+  decode, the 0x80026158 terrain packet, subdivision rule).
+- **Azahar 2126.0** (Area 1 start, idle):
+  - 113 positive faces drawn as POLY_FT4 packets in 3 runs, 0 unresolved
+    CLUT/TPAGE;
+  - 19 faces the original subdivides stay on the 3D path; black 25
+    (unchanged); packet SXY vs the 3D camera at most 1.19 px.
+- **Screenshots:**
+  - with x/y from the GTE SXY, Mega Man, the walls and the depth were
+    correct, but thin dark seams showed where packet faces meet the 3D-drawn
+    subdivided faces;
+  - the build now takes x/y from the 3D camera. Its trace is the same, but
+    no screenshot could be taken (Azahar window capture failed), so the seam
+    fix is **not verified by eye**.

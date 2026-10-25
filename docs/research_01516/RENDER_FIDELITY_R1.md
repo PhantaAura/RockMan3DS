@@ -214,12 +214,63 @@ entering NCLIP (`0x80025B28` hits) match as well.
     differs from Mid (an equal LOD sets a bit on the Mid quads instead);
   - each frame a positive quad draws only in its IDX's LOD;
   - an unclassified draw uses the Mid range only.
-- **CANDIDATE:** the 3DS uses the window SX −40..359 (400 pixels), matching
-  the widened cell side cut. With it the start view has 25 black faces: the
+- **Deliberate port feature (not a gap):** the 3DS uses the window SX
+  −40..359 (400 pixels), matching the widened cell side cut. With it the start view has 25 black faces: the
   PS1's 17 plus 8 in the extra side strips.
 - **Not ported:** negative cells still use only Mid, and the near replay
   renderer (`0x8002235C`) is not ported. Area 1's negative cells draw no black
   faces either way.
+
+## GP0 packet translator: terrain routed through PS1 packets (R5)
+Status: **SOURCE_BACKED_PARTIAL**. This is the StarHaven-style layer: the
+port writes original GPU packets and a citro3d translator draws them.
+
+**Original packet writer (`0x80026158..0x80026218`, mode-2 family):**
+- **POLY_FT4, 40 bytes.**
+  - Word 1 = `(prefix & 0x02FFFFFF) | 0x2C000000` after DPCS (bit 25 keeps the
+    semi-transparent code bit); `0x2C010101` for a back face; OR `0x1F80007C`
+    for a see-through face.
+  - Word 3 = uv0 | CLUT << 16 (`0x1F800158`) | ramp << 16 (`0x1F800148`).
+  - Word 5 = uv1 | TPAGE (`0x1F80015C`); words 7 and 9 = uv2 and uv3.
+- **Linking.**
+  - Bucket `otz >> 3` from the OT base pointer `0x1F80003C` (AddPrim
+    prepend). A back face uses its max SZ (`0x80025EBC`).
+  - Prefix bit 28 inserts the packet right after the previous packet (s4)
+    instead. The 40-byte primitive pointer is `0x1F800070`.
+- **Subdivision (`0x8002602C`).** |MAC0| ≥ 2049, or 513..2048 with
+  (x0+x3−x1−x2)/2 or (y0+y3−y1−y2)/2 outside −3..3, goes to `0x8002466C`
+  instead of one packet.
+
+**Port** (`include/legends3ds/render/psx_gpu.h`):
+- **Library:**
+  - `PrimitiveBuffer`, and `OrderingTable` with ClearOTagR / AddPrim /
+    DrawOTag order (far buckets first; last added first within a bucket) and
+    the bit-28 `insert_after`;
+  - `decode_gp0_polygon` for codes 0x20..0x3F;
+  - `terrain_poly_ft4_80026158`, `terrain_ot_bucket`,
+    `terrain_needs_subdivision_8002602c`;
+  - host test `test_psx_gpu`.
+- **3DS translator (`main.cpp`, `psx_draw_ot`).**
+  - Walks the OT, decodes each packet and resolves CLUT|TPAGE to an uploaded
+    page. A CLUT k rows past a page's own CLUT is ramp palette k, which uses
+    the L3CR scale.
+  - Draws same-state runs from one vertex buffer, with vertices pre-projected
+    at w = 1, so UVs interpolate affinely like the PS1 GPU.
+  - Depth comes from the 3D camera (a port-side extra after the packet), so
+    actors still occlude.
+  - Semi-transparent packets (prefix bit 25 or see-through) draw after the
+    actors, in OT order, with the TPAGE ABR blend.
+- **Terrain routing.** Positive Draw/Black faces become packets. Negative
+  cells, unsupported faces and faces the original would subdivide stay on the
+  3D index path.
+- **Widescreen.** The 400-pixel top screen is a deliberate port feature (no
+  pillarbox; user decision 2026-10-24). Packet SX gets +40.
+- **CANDIDATE:**
+  - OT size 4096;
+  - bit-28 "previous packet" is the previous packet of the port's batch walk;
+  - vertex x/y currently come from the 3D camera, not the packet's SXY.
+    Whole-pixel SXY next to the 3D-drawn subdivided faces left visible
+    seams. The SXY↔camera error is traced (1.19 px max at the Area 1 start).
 
 ## Found, not ported (next candidates)
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near

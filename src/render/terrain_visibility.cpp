@@ -66,6 +66,8 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
     r.mac0 = int64_t(sx[0]) * sy[1] + int64_t(sx[1]) * sy[2] + int64_t(sx[2]) * sy[0]
            - int64_t(sx[0]) * sy[2] - int64_t(sx[1]) * sy[0] - int64_t(sx[2]) * sy[1];
     r.min_sz = *std::min_element(sz.begin(), sz.end());
+    r.max_sz = *std::max_element(sz.begin(), sz.end());
+    for (size_t v = 0; v < 4; ++v) { r.sx[v] = int16_t(sx[v]); r.sy[v] = int16_t(sy[v]); }
     const bool double_sided = (prefix & 0x40000000u) != 0;
     // 0x80025BE8..0x80025D38 (mode 2, after the MAC0 == 0 skip): unsigned
     // SX < 320 and SY < 240 for any vertex, else for a diagonal midpoint.

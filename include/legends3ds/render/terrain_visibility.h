@@ -85,6 +85,10 @@ struct TerrainFaceResult {
     bool see_through = false;
     // Skipped by the mode-2 off-screen test.
     bool off_screen = false;
+    // GTE screen coordinates (SXY0..3, OFX/OFY 160/120) and max SZ, set once
+    // all four vertices projected; the packet writer 0x80026158 uses them.
+    std::array<int16_t,4> sx{}, sy{};
+    uint16_t max_sz = 0;
 };
 // 0x1F8001C0 for this frame: view-space depth (MAC3) of the player position.
 std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,

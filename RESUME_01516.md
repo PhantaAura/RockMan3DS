@@ -104,6 +104,11 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   widened to 200/384 for the 400-pixel view (CANDIDATE). At the Area 1 start,
   black faces fall from 108 to 34 (original 17) and the frame interval from
   40.8 to 33.1 ms in Azahar.
+- Renderer R5: GP0 packet translator (`psx_gpu.h` + `psx_draw_ot`). Positive
+  terrain faces are 0x80026158 POLY_FT4 packets in a PsyQ OT, drawn affine at
+  w = 1. Next: port the subdivider 0x8002466C so every face is a packet, then
+  switch xy to the GTE SXY; then the negative family and actors. Widescreen
+  400 px is a deliberate feature (user).
 - Renderer R4: per-IDX Near/Mid/Far LOD (`0x800267AC`) and the mode-2
   off-screen test (`0x80025BE8`). The host replay now gives exactly the PS1's
   17 black faces at the Area 1 start; Azahar shows 25 (8 extra in the 400-px
