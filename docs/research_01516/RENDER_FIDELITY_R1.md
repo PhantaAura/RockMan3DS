@@ -272,6 +272,43 @@ port writes original GPU packets and a citro3d translator draws them.
     Whole-pixel SXY next to the 3D-drawn subdivided faces left visible
     seams. The SXY↔camera error is traced (1.19 px max at the Area 1 start).
 
+## Subdivider `0x8002466C`: ported (R6)
+Status: **SOURCE_BACKED_PARTIAL**. Decompiled with GhidraMCP; the tables
+were read from the EXE.
+
+**What it does:** one level of subdivision, with no recursion.
+- **Midpoints.** It halves the world SVECTORs at `0x1F800198..0x1F8001B7`:
+  m01, m02, m13, then m23 and the centre = (m02 + m13) / 2.
+  - Two RTPTs store the SXY at `0x1F800170..0x1F800183`, after the four
+    corners at `0x1F800160`.
+  - UVs halve the same way into `0x1F800190..0x1F800199`, but the centre UV
+    = (uv m01 + uv m23) / 2.
+- **Four POLY_FT4.** Index table `0x80097C90` (copied to `0x1F800120` by
+  `0x800176DC` at `0x80023860` and `0x80023BA8`): {0,4,5,6}, {4,1,6,7},
+  {5,6,2,8}, {6,7,8,3}. Points 4..8 are m01, m02, centre, m13, m23.
+  Code word `0x1F800154`, CLUT|ramp, TPAGE.
+- **Edge POLY_FT3s.** Table `0x80097CA0`: {0,1,4}, {1,3,7}, {3,2,8},
+  {2,0,5}. Code `0x1F800150` = code & ~0x08. Each is written only when its
+  NCLIP > 0, i.e. the projected midpoint bulges past the straight edge; this
+  fills cracks against unsplit neighbours.
+- **Linking.** The packets are chained contiguously and the chain is added
+  at the OT entry `0x1F80013C` (bucket otz >> 3, or s4 for prefix bit 28).
+  It returns the last quad, which the caller keeps as s4 unless bit 28 is set.
+
+**Port:**
+- `terrain_subdivide_8002466c` (`terrain_visibility`) and `write_poly_ft3`
+  (`psx_gpu`);
+- `psx_emit_terrain_face` writes the 4 + n chain;
+- every positive face is now a packet, so packet x/y is the GTE SXY again,
+  which restores the PS1's whole-pixel vertex snapping;
+- host tests cover the midpoints, the UV rule, the corner SXY and the NCLIP
+  rule; on a flat wall, rounding gives NCLIP up to about 33 and the PS1 would
+  draw those slivers too.
+
+**Caveat:** actors are still drawn by the 3D camera. Packet SXY differs from
+it by 1–5 px on near faces at the Area 1 start and during a spin, and by up
+to 50 px for a vertex at the camera, where the GTE saturates as on the PS1.
+
 ## Found, not ported (next candidates)
 - **Ordering and subdivision:** ordering-table bucket z >> 3; large near
   faces are subdivided (`0x8002466C`) when SZ > 0x200 and the screen

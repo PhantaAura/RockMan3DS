@@ -64,6 +64,17 @@ void write_poly_ft4(uint32_t* w, const PolyFt4& p) noexcept {
     }
 }
 
+void write_poly_ft3(uint32_t* w, const PolyFt4& p) noexcept {
+    w[0] = p.code_rgb;
+    for (size_t k = 0; k < 3; ++k) {
+        w[1 + 2 * k] = uint32_t(uint16_t(p.x[k])) | (uint32_t(uint16_t(p.y[k])) << 16);
+        uint32_t uv = uint32_t(p.u[k]) | (uint32_t(p.v[k]) << 8);
+        if (k == 0) uv |= uint32_t(p.clut) << 16;
+        if (k == 1) uv |= uint32_t(p.tpage) << 16;
+        w[2 + 2 * k] = uv;
+    }
+}
+
 PolyFt4 terrain_poly_ft4_80026158(const TerrainPacketInput& in) noexcept {
     PolyFt4 p;
     p.code_rgb = in.black ? 0x2C010101u

@@ -101,4 +101,26 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
     uint32_t prefix, bool negative_cell, uint8_t positive_mode_1f800075,
     int32_t back_face_threshold_1f8001c0) noexcept;
 
+// 0x8002466C: one-level subdivision of a large positive face (chosen by
+// terrain_needs_subdivision_8002602c). Nine points: corners 0..3, then
+// m01 (4), m02 (5), centre (6) = (m02 + m13) / 2, m13 (7), m23 (8), each a
+// signed halving of the world SVECTORs, projected by RTPT with the face
+// camera. UVs halve the same way, except the centre UV = (uv m01 + uv m23) / 2.
+// The original writes four POLY_FT4 (table 0x80097C90, copied to 0x1F800120)
+// and, for each edge triangle of table 0x80097CA0 whose NCLIP > 0, a POLY_FT3
+// (code & ~0x08); they are chained in that order and added at the parent's
+// bucket. tri_drawn holds that NCLIP test.
+constexpr std::array<std::array<uint8_t,4>,4> kSubdivisionQuads80097C90{{{{0,4,5,6}},{{4,1,6,7}},{{5,6,2,8}},{{6,7,8,3}}}};
+constexpr std::array<std::array<uint8_t,3>,4> kSubdivisionTris80097CA0{{{{0,1,4}},{{1,3,7}},{{3,2,8}},{{2,0,5}}}};
+struct TerrainSubdivision {
+    std::array<int16_t,9> sx{}, sy{};
+    std::array<uint8_t,9> u{}, v{};
+    std::array<std::array<int32_t,3>,9> world{};
+    std::array<bool,4> tri_drawn{};
+};
+// nullopt when a midpoint cannot be projected (the caller keeps the face 3D).
+std::optional<TerrainSubdivision> terrain_subdivide_8002466c(const TerrainFaceCamera& camera,
+    const std::array<int32_t,4>& x, const std::array<int32_t,4>& y, const std::array<int32_t,4>& z,
+    const std::array<uint8_t,8>& uv, const TerrainFaceResult& face) noexcept;
+
 } // namespace l3

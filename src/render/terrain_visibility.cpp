@@ -110,4 +110,43 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
     return r;
 }
 
+std::optional<TerrainSubdivision> terrain_subdivide_8002466c(const TerrainFaceCamera& camera,
+    const std::array<int32_t,4>& x, const std::array<int32_t,4>& y, const std::array<int32_t,4>& z,
+    const std::array<uint8_t,8>& uv, const TerrainFaceResult& face) noexcept {
+    TerrainSubdivision s;
+    for (size_t k = 0; k < 4; ++k) {
+        s.world[k] = {{x[k], y[k], z[k]}};
+        s.sx[k] = face.sx[k]; s.sy[k] = face.sy[k];
+        s.u[k] = uv[2 * k]; s.v[k] = uv[2 * k + 1];
+    }
+    // SVECTOR halving: short inputs, int sum, arithmetic shift, short result.
+    const auto half = [](int32_t a, int32_t b) { return int32_t(int16_t((int32_t(int16_t(a)) + int32_t(int16_t(b))) >> 1)); };
+    const auto mid = [&](size_t a, size_t b) {
+        return std::array<int32_t,3>{{half(s.world[a][0], s.world[b][0]), half(s.world[a][1], s.world[b][1]),
+                                       half(s.world[a][2], s.world[b][2])}};
+    };
+    s.world[4] = mid(0, 1); s.world[5] = mid(0, 2); s.world[7] = mid(1, 3); s.world[8] = mid(2, 3);
+    s.world[6] = mid(5, 7);
+    const auto huv = [](uint8_t a, uint8_t b) { return uint8_t((unsigned(a) + unsigned(b)) >> 1); };
+    s.u[4] = huv(s.u[0], s.u[1]); s.v[4] = huv(s.v[0], s.v[1]);
+    s.u[5] = huv(s.u[0], s.u[2]); s.v[5] = huv(s.v[0], s.v[2]);
+    s.u[7] = huv(s.u[1], s.u[3]); s.v[7] = huv(s.v[1], s.v[3]);
+    s.u[8] = huv(s.u[2], s.u[3]); s.v[8] = huv(s.v[2], s.v[3]);
+    s.u[6] = huv(s.u[4], s.u[8]); s.v[6] = huv(s.v[4], s.v[8]);
+    for (size_t k = 4; k < 9; ++k) {
+        auto gte = camera.gte;
+        gte.data[0] = (static_cast<uint32_t>(s.world[k][0]) & 0xffffu) | (static_cast<uint32_t>(s.world[k][1]) << 16);
+        gte.data[1] = static_cast<uint32_t>(s.world[k][2]) & 0xffffu;
+        const auto p = source_gte_rtps_0180001(gte);
+        if (p.status != SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return std::nullopt;
+        s.sx[k] = lo16(p.screen_xy); s.sy[k] = hi16(p.screen_xy);
+    }
+    for (size_t t = 0; t < 4; ++t) {
+        const auto& i = kSubdivisionTris80097CA0[t];
+        const int64_t x0 = s.sx[i[0]], y0 = s.sy[i[0]], x1 = s.sx[i[1]], y1 = s.sy[i[1]], x2 = s.sx[i[2]], y2 = s.sy[i[2]];
+        s.tri_drawn[t] = x0 * y1 + x1 * y2 + x2 * y0 - x0 * y2 - x1 * y0 - x2 * y1 > 0;
+    }
+    return s;
+}
+
 } // namespace l3

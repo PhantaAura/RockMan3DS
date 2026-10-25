@@ -45,6 +45,14 @@ int main() {
     uint32_t fill[3] = {0x02000000u, 0, 0};
     assert(!decode_gp0_polygon(fill, 3));
 
+    // POLY_FT3 (the subdivider's edge triangles, code & ~0x08).
+    PolyFt4 tri = q; tri.code_rgb = 0x24405060u;
+    uint32_t w3[7];
+    write_poly_ft3(w3, tri);
+    const auto t3 = decode_gp0_polygon(w3, 7);
+    assert(t3 && t3->vertices == 3 && t3->textured && !t3->semi_transparent && t3->clut == 0x7A12 && t3->tpage == 0x2D);
+    assert(t3->x[2] == -40 && t3->y[2] == 200 && t3->u[1] == 63 && t3->v[2] == 31);
+
     // Gouraud triangle: colours per vertex.
     const uint32_t g3[6] = {0x30111111u, 0x00010002u, 0x00222222u, 0x00030004u, 0x00333333u, 0x00050006u};
     const auto g = decode_gp0_polygon(g3, 6);

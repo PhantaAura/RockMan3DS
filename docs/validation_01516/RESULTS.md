@@ -445,3 +445,19 @@ corridor corner while walking.
   - the build now takes x/y from the 3D camera. Its trace is the same, but
     no screenshot could be taken (Azahar window capture failed), so the seam
     fix is **not verified by eye**.
+- **User check (2026-10-24):** the R5 build's walls look clean in Azahar (no
+  seams).
+
+## Renderer R6: subdivider 0x8002466C, every positive face a packet
+- **Host:** 169/169. New coverage: `test_terrain_visibility` (midpoints, UV
+  centre rule, corner SXY, NCLIP rule) and `test_psx_gpu` (FT3 round trip).
+- **Azahar 2126.0, Area 1 start, idle:**
+  - 216 packets in 3 runs, 19 faces subdivided, 0 left on the 3D path,
+    drawn 135, black 25;
+  - SXY vs the 3D camera at most 3.35 px.
+  - Screenshot: no seams, near walls show the affine texture bend, Mega Man
+    aligned.
+- **Spin:** up to 43 subdivided faces per frame, 0 unresolved, no 3D
+  fallback. A vertex at the camera gives up to 50 px of SXY saturation.
+  Faces with a vertex behind the camera (unsupported, up to 162 while the
+  camera is inside a wall) stay 3D.

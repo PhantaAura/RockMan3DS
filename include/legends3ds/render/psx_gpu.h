@@ -79,6 +79,8 @@ struct PolyFt4 {
     uint16_t clut = 0, tpage = 0;
 };
 void write_poly_ft4(uint32_t* payload, const PolyFt4& p) noexcept;
+// POLY_FT3 (code 0x24..0x27): 7 payload words; the first three vertices of p.
+void write_poly_ft3(uint32_t* payload, const PolyFt4& p) noexcept;
 
 // Positive mode-2 terrain packet of 0x80026158..0x80026218:
 //  word 1 = code word: (prefix & 0x02FFFFFF) | 0x2C000000 after the depth cue

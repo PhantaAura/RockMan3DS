@@ -5,6 +5,7 @@
 #include "legends3ds/render/terrain_visibility.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include <cassert>
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -119,6 +120,30 @@ int main(){
     const std::array<int32_t,4> Xw{{2629,3149,2629,3149}}; // SX about -100 and 600
     f=classify_terrain_face(start,Xw,Y,Z,0x00808080u,false,2,*depth);
     assert(!f.off_screen&&f.face!=TerrainFace::Unsupported);
+    // 0x8002466C subdivision of the start wall seen from farther back.
+    {
+        const auto face=classify_terrain_face(far,Xr,Y,Z,0x00808080u,false,2,*depth);
+        const std::array<uint8_t,8> uv{{0,0, 63,0, 0,31, 63,31}};
+        const auto sub=terrain_subdivide_8002466c(far,Xr,Y,Z,uv,face);
+        assert(sub);
+        // m01 = (3072+2560)/2, m13 = (2560+2560)/2 ... centre = (m02 + m13) / 2.
+        assert(sub->world[4][0]==2816&&sub->world[4][1]==-192&&sub->world[5][0]==3072&&sub->world[5][1]==-96);
+        assert(sub->world[6][0]==2816&&sub->world[6][1]==-96&&sub->world[8][1]==0);
+        assert(sub->u[4]==31&&sub->v[5]==15&&sub->u[8]==31&&sub->v[7]==15&&sub->u[6]==31&&sub->v[6]==15);
+        for(int k=0;k<4;++k)assert(sub->sx[size_t(k)]==face.sx[size_t(k)]&&sub->sy[size_t(k)]==face.sy[size_t(k)]);
+        // A flat wall: midpoints project between their corners, no edge bulges.
+        assert(sub->sx[6]>std::min(face.sx[0],face.sx[1])&&sub->sx[6]<std::max(face.sx[0],face.sx[1]));
+        // A flat wall: the edge midpoints sit on their projected edges up to
+        // SXY rounding (|NCLIP| about one pixel times the edge length); the
+        // triangle is drawn exactly when NCLIP > 0, as on the PS1.
+        for(size_t t=0;t<4;++t){
+            const auto& i=kSubdivisionTris80097CA0[t];
+            const int64_t x0=sub->sx[i[0]],y0=sub->sy[i[0]],x1=sub->sx[i[1]],y1=sub->sy[i[1]],x2=sub->sx[i[2]],y2=sub->sy[i[2]];
+            const int64_t n=x0*y1+x1*y2+x2*y0-x0*y2-x1*y0-x2*y1;
+            assert(sub->tri_drawn[t]==(n>0)&&n<64&&n>-64);
+        }
+        assert(kSubdivisionQuads80097C90[3][3]==3&&kSubdivisionTris80097CA0[3][2]==5);
+    }
     std::cout<<"PASS: start wall back face skipped (min SZ "<<classify_terrain_face(start,X,Y,Z,0,false,2,522).min_sz
              <<"), far back face black, bits 24/30, modes, negative cells, player depth "<<*depth
              <<", depth cue, see-through rule, off-screen test\n";

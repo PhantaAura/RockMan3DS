@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "Renderer R5 — GP0 packet translator: positive terrain drawn as 0x80026158 POLY_FT4 packets through a PsyQ OT (StarHaven-style), on top of R4 LOD/off-screen",
+ "title": "Renderer R6 — subdivider 0x8002466C ported; every positive terrain face is a GP0 packet (GTE SXY, affine), on top of the R5 translator",
  "created_utc": "2026-10-19T00:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS): Area 1 start 113 terrain packets in 3 runs, 0 unresolved, 19 subdivide faces on the 3D path, black 25; GTE-SXY build showed seams at the 3D boundary, the 3D-camera xy build is unverified by eye (capture failed).",
+ "current_emulator_validation": "PARTIAL (Azahar 2126.0 Old 3DS): Area 1 start 216 packets / 3 runs, 19 subdivided, 0 on the 3D path, black 25; screenshot clean (no seams; user confirmed R5 walls clean). Actors still 3D-camera (packet SXY within 1-5 px near).",
  "emulator_evidence": "docs/validation_01516/RESULTS.md",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
@@ -111,7 +111,7 @@
   "platform/3ds/source/native_music.cpp"
  ],
  "blockers": [
-  "Renderer: terrain goes through the GP0 translator (positive faces); subdivision 0x8002466C unported (19 faces at the Area 1 start stay 3D, and packet xy uses the 3D camera until then); negative cells and actors not yet packets; 400-px widescreen is deliberate.",
+  "Renderer: positive terrain fully through the GP0 translator (OT, 0x80026158 packets, 0x8002466C subdivision, affine); negative cells and actors still 3D (next: negative family 0x80021B14 packets, then actor packets); 400-px widescreen is deliberate.",
   "Effects 0.0.15.16: subtype 0x80/0x83 ported and drawn; the 0x800341BC burst proxy, bit-0x20 helpers, LOD tiers and effect texture upload order (EXIT_SUP common page, Area 2 inherits ST00_01) are CANDIDATE/unported; defeat burst and E0/07 shake not run in Azahar.",
   "Tutorial chain: triggers 0-16, E0/00 flags, E0/07, subtype 0x19 (Azahar fight unverified), E0/08 targets/doors + action check ported; missing E0/05 box (0x620); E0 objects drawn untextured (diagnostic).",
   "Pop-out 0.0.15.16: subtype 0x1F ported and validated by trace through the morph; action 8 airborne entrance with L3CB byte 0x0B unvalidated in Azahar; record 1585 context 0x80 admitted (masked by 0x7F at 0x80102528, host-only); hidden hit proxy unregistered; work80 writer CANDIDATE.",
