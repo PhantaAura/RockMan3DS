@@ -582,3 +582,15 @@ Frame interval 49.8 ms average (about 20 FPS), 84% of samples above 34 ms.
 Peak 312 draw calls, 1,605 triangles, command buffer 26% of 512 KiB; linear
 free never below 23.6 MB (no leak). Largest fixed cost: Mega Man's draw,
 9.3 ms every frame.
+
+### Confirmation runs (same day)
+| Build | Change | 0x617 | 0x622 | Avg frame |
+|---|---|---|---|---|
+| `pass-20261025-102417` | WCA fixes | 3413 | 10925 | 49.8 ms (20.1 FPS) |
+| `pass-20261025-111802` | player vertices posed/projected once | 6801 (door step stalled) | 13690 | 40.8 ms (24.5 FPS) |
+| `pass-20261025-112935` | + autoplay door-step fix | 3445 | **10273** | 40.7 ms (24.6 FPS) |
+
+Last build: `Legends3DS.3dsx` 1,194,144 B, SHA-256
+`39ab213735098717e539c8997c7bd8a692e88036ad7954210fc2e00b50f731a7`. All three are
+continuous normal-boot runs; every one reaches 0x622. SD folder cleaned
+(no autoplay or spawn file left).
