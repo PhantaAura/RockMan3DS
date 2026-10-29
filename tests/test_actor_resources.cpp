@@ -342,8 +342,115 @@ void request0_cache_checks() {
     l3::unload_imported_actors(area);
     assert(lifetime.expired() && area.decoded_pose_cache_bytes == 0 && area.unique_pose_cache_count == 0);
 }
+void area3_boss_owner_checks(){
+    l3::StageRuntimeArea stage;
+    auto none=l3::source_area3_boss_spawn_spec_801076e8(stage);
+    assert(none.status==l3::SourceArea3BossStatus::NoEventOwner&&!none.spec);
+    l3::StageRuntimeInstance event;
+    event.object.source_index=37;event.object.id=3;event.object.source_class=0;
+    event.object.family=l3::StageObjectFamily::Class00;
+    stage.instances.push_back(event);
+    const auto owned=l3::source_area3_boss_spawn_spec_801076e8(stage);
+    assert(owned.status==l3::SourceArea3BossStatus::SourceBackedPresentation&&owned.spec);
+    assert(owned.spec->event_source_index==37&&owned.spec->object_class==0x40&&
+        owned.spec->subtype==2&&owned.spec->parameter==1);
+    assert(owned.spec->callback==0x801076e8u&&owned.spec->initializer==0x801078b8u);
+    const std::array<int16_t,3> spawn_position{{-256,-385,1001}};
+    const std::array<int16_t,3> observed_scale{{512,512,512}};
+    assert(owned.spec->spawn_position==spawn_position);
+    assert(owned.spec->heading==0&&owned.spec->scale==observed_scale);
+    assert(owned.spec->shade==0x4210&&owned.spec->hp==1024&&owned.spec->action==1&&
+        owned.spec->phase==0&&owned.spec->substate==1&&owned.spec->pose_request==0&&
+        owned.spec->pose_record==0);
+    l3::ActorAreaRuntime wrong_area;
+    const auto rejected=l3::append_source_area3_boss_801076e8(
+        wrong_area,stage,l3::EbdDirectory{},1);
+    assert(rejected.status==l3::SourceArea3BossStatus::NoEventOwner&&
+        wrong_area.actors.empty());
+    stage.instances.push_back(event);
+    const auto duplicate=l3::source_area3_boss_spawn_spec_801076e8(stage);
+    assert(duplicate.status==l3::SourceArea3BossStatus::DuplicateEventOwner&&!duplicate.spec);
+}
+std::shared_ptr<const l3::ActorAnimationBank> area3_intro_bank(){
+    l3::ActorAnimationBank bank;bank.source_row=0;
+    for(const uint8_t request:{uint8_t(0),uint8_t(1),uint8_t(2),uint8_t(3),uint8_t(11),uint8_t(12),uint8_t(13)}){
+        l3::ActorAnimationRequestCache cache;cache.request=request;
+        l3::ActorSequenceRecord record{{request,1,1,0x80,0,0,0,0}};
+        l3::ActorPoseResource pose;pose.request=request;pose.record_index=0;
+        pose.frame_index=request;pose.countdown=1;pose.next_control=-128;
+        pose.sequencing_record=record;pose.base_translation.push_back({{0,0,0}});
+        cache.sequence.records.push_back(record);cache.sequence.poses.push_back(pose);
+        bank.requests.push_back(std::move(cache));
+    }
+    return std::make_shared<const l3::ActorAnimationBank>(std::move(bank));
+}
+void area3_boss_intro_checks(){
+    using l3::source_area3_boss_action1_select_80107b48;
+    auto select=source_area3_boss_action1_select_80107b48(1024,1,5,7,0,false);
+    assert(!select.handler_complete&&select.substate==1&&select.phase==5);
+    select=source_area3_boss_action1_select_80107b48(1024,0,5,7,1,false);
+    assert(select.handler_complete&&select.substate==3&&select.saved_substate==1&&
+        select.phase==0&&!(select.flags_4e0&1));
+    select=source_area3_boss_action1_select_80107b48(1024,4,5,7,0x21,false);
+    assert(select.substate==3&&select.saved_substate==1);
+    select=source_area3_boss_action1_select_80107b48(1024,3,5,4,1,false);
+    assert(select.substate==4);
+    select=source_area3_boss_action1_select_80107b48(1024,2,5,7,1,false);
+    assert(select.substate==1);
+    select=source_area3_boss_action1_select_80107b48(1024,1,5,7,0x21,false);
+    assert(select.substate==1);
+    select=source_area3_boss_action1_select_80107b48(1024,1,5,7,1,false);
+    assert(select.substate==0);
+    select=source_area3_boss_action1_select_80107b48(0,2,5,7,1,false);
+    assert(select.substate==0&&select.death_started&&(select.flags_4e0&0x40));
+    select=source_area3_boss_action1_select_80107b48(0,2,5,7,0x41,false);
+    assert(!select.death_started&&(select.flags_4e0&0x40));
+    select=source_area3_boss_action1_select_80107b48(0,2,5,7,1,true);
+    assert(!select.death_started&&!(select.flags_4e0&0x40));
+    l3::ImportedActorInstance boss;boss.source_class=0x40;boss.subtype=2;
+    boss.initializer=0x801078b8u;boss.source_origin={{-256,-385,1001}};
+    boss.source_area3_boss.emplace();auto& state=*boss.source_area3_boss;
+    state.hp=1024;state.action=1;state.phase=0;state.substate=1;
+    boss.animation_bank=area3_intro_bank();boss.pose=boss.animation_bank->requests[0].sequence.poses[0];
+    boss.animation_cursor=l3::actor_sequence_begin(0,boss.pose->sequencing_record);
+    assert(l3::source_area3_boss_forces_player_entry(boss,-1920));
+    assert(l3::source_area3_boss_forces_player_entry(boss,-1632));
+    const size_t allocations=allocation_count;
+    auto tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1920);
+    assert(tick.committed&&!tick.state_changed&&state.intro_leg==0&&boss.source_origin[2]==1001);
+    tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(tick.committed&&tick.state_changed&&state.intro_leg==1&&state.phase==3&&
+        state.phase_ticks==12&&boss.pose->request==3);
+    for(unsigned i=0;i<12;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.intro_leg==2&&state.phase==1&&boss.pose->request==1&&boss.source_origin[2]==1001);
+    for(unsigned i=0;i<83;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.intro_leg==3&&state.phase==2&&boss.pose->request==2&&boss.source_origin[2]==-327);
+    for(unsigned i=0;i<28;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.intro_leg==4&&state.phase==1&&state.substate==0&&boss.source_origin[2]==-1223);
+    tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(tick.status==l3::SourceArea3BossTickStatus::SourceBackedCombatPresentation&&
+        state.intro_leg==5&&state.action==6&&state.phase==0&&state.phase_ticks==80&&
+        boss.pose->request==2);
+    tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.phase==1&&state.phase_ticks==12&&boss.pose->request==11);
+    for(unsigned i=0;i<12;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.phase==2&&state.phase_ticks==9&&boss.pose->request==11);
+    for(unsigned i=0;i<9;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.phase==3&&state.phase_ticks==19&&boss.pose->request==12);
+    for(unsigned i=0;i<19;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.phase==4&&state.phase_ticks==9&&boss.pose->request==12);
+    for(unsigned i=0;i<9;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(state.phase==5&&state.phase_ticks==14&&boss.pose->request==13);
+    for(unsigned i=0;i<14;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
+    assert(tick.status==l3::SourceArea3BossTickStatus::CombatReady&&state.intro_leg==6&&
+        state.action==1&&state.phase==0&&state.phase_ticks==UINT16_MAX&&
+        boss.pose->request==13&&allocation_count==allocations);
+    assert(!l3::source_area3_boss_forces_player_entry(boss,-1632));
+}
 }
 int main() {
+    area3_boss_owner_checks();
+    area3_boss_intro_checks();
     request0_cache_checks();
     transactional_reload_checks();
     const auto source = fixture();

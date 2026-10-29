@@ -80,6 +80,11 @@ struct RuntimeInputFrame {
     // Platform-delivered button edges retained between fixed gameplay updates.
     // This feeds the original +11E field without pretending the key is held.
     uint16_t pressed_psx_mask = 0;
+    // A source event may commit an authored player position while its camera
+    // is active. The original ST00 event-3 entry does this with a neutral pad;
+    // it is not ordinary locomotion and intentionally bypasses map collision.
+    // Dialogue, cutscene and the source player's update gate still win.
+    std::optional<RuntimeVec3i> source_event_player_position;
 };
 
 struct RuntimeTarget {

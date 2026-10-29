@@ -3,6 +3,25 @@
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
+- **Area 3 boss intro (SOURCE_BACKED_PARTIAL).** PSXRecomp proves Area 3
+  event 3 dynamically owns class `40/02` (not a placed actor), wrapper
+  `0x801076E8`, initializer `0x801078B8`. A clean original Area 3 replay proves
+  fresh spawn `(-256,-385,1001)`, HP 1024, action/phase/substate `1/0/1`,
+  request 0, the forced player endpoint z `-1632`, and the intro path through
+  phases 3/1/2/1 to action 6 at boss z `-1223`, plus its first presentation
+  cycle (requests 11/12/13 and countdowns 12/9/19/9/14). The native room now
+  decodes the original 12-part model and resident requests 0/1/2/3/11/12/13,
+  owns the entry position through the recovered presentation, and executes
+  that deterministic zero-allocation slice.
+  Boss ownership is restricted to source Area 3; event ID 3 is reused in the
+  earlier tutorial rooms. Attacks,
+  hit proxy, boss HUD, damage, defeat, camera and post-win progression remain
+  unimplemented. Host/native integration is validated (170/170 and Old 3DS
+  build PASS). A final uninterrupted Old-3DS-mode Azahar run reached `0x622`
+  at frame 9772, entered Area 3, reached CombatReady at frame 10090, retained
+  Mega Man at `(-256,-385,-1632)` through frame 10800, and unloaded cleanly at
+  frame 10854. Research and exact next boundary:
+  `docs/research_01516/AREA3_BOSS_SOURCE_SLICE.md`.
 - **Title screen and menu (3DS).** The build now boots into the original
   title (logo, PRESS START, copyright) and the NEW GAME / CONTINUE / OPTION
   menu: ROCK_NEO front end 0x80013420 (`frontend_title.cpp`, host test), the
@@ -10,8 +29,9 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   GAME starts the existing game. Missing: the ruin/Servbot backdrop
   (DEMO_DAT.EBD scene), fades, title sounds, CONTINUE/OPTION, attract demo.
   Research: `docs/research_01516/FRONTEND_TITLE.md`.
-- **Tutorial exit.** After 0x622 the far door loads ST00 Area 3, the boss
-  room (oracle); the port enters it, but the boss is not spawned yet.
+- **Tutorial exit.** After 0x622 the far door loads ST00 Area 3. Event 3 now
+  spawns the original boss resource and advances its recovered intro to the
+  first combat action; the fight itself is not yet implemented.
 - **World Comes Alive (Gate A), Azahar.** One continuous normal-boot run
   (no spawn file, scripted pad, no forced flags) reaches every tutorial flag
   through **0x622** (frame 10925; again at 13690 on the faster build). Flag
@@ -172,29 +192,40 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   `docs/research_01516/PSXRECOMP_ORACLE.md` and `tools/psxrecomp_dbg.py`.
 
 ## Validation
-`docs/validation_01516/RESULTS.md`: host 166/166 after merging effects and music, earlier 162/162.
+`docs/validation_01516/RESULTS.md`: current Area 3 build
+`pass-20261027-174140-m2-01516`, host **170/170** (5.70 s), Old 3DS native
+PASS. `.3dsx` 1,214,496 B, SHA-256
+`af7188eeeaad889e07d229ef1b433dbcaa3fd74f7900327d1a28dee15e2050eb`,
+installed byte-identically in Azahar's configured SD card. Continuous trace
+`hardware_01516_4002111785105.csv` reaches `0x622`, executes the recovered
+intro/presentation, retains the player endpoint, and exits cleanly.
 Area music in Azahar: request 0 plays in Area 1 in real time with reverb (trace;
 the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-0. Front end, then the boss (user order, 2026-10-25):
+0. Continue the Area 3 boss (current user order):
+   - bind the recovered `0x80107B48` chooser to original `+0x504` detection
+     ownership and the work `+0x80` writer, then port `0x80107FAC` movement;
+   - bind the original hit proxy, Buster reaction, HP +0x6E and boss gauge;
+   - then attacks, player damage/game over, defeat and post-win event.
+   Do not fake defeat or skip the unknown state handlers.
+1. Then finish the front end/opening:
    - title backdrop done (wall, strip, gradient, menu box), fade 2/10, title
      sounds (sfx_title.l3sb). Left: the Servbot parade (0x80015428 ->
      0x800153EC, class-20 draw), fades 1/9/22;
    - New Game -> opening: ST00 event 1 (Area 0 scene, phases 0..7, partly
      ported behind SOURCE_EVENT_BOOT) instead of `opening_scene=SKIPPED`;
    - intro (ST01 event 71) and the attract demo;
-   - then the Area 3 boss (spawn, AI, defeat) and what follows it.
    Still open: box 0x620/0x621, 0x60E; terrain cost; effects; music gaps.
-1. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
+2. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
    screen unlocked. Confirm action 8 leaves phase 0, and check the landing
-   against a short PCSX-Redux probe.
-2. The hit proxy for the hidden pop-out (`0x800341BC`, bit 8).
-3. psxrecomp oracle trial: reach gameplay over TCP pad input, record a ledge
+   against a short PSXRecomp trace.
+3. The hit proxy for the hidden pop-out (`0x800341BC`, bit 8).
+4. PSXRecomp oracle trial: record a ledge
    grab (`0x80040818`) and diff it against the port in a host test. Then
    capture and compile ST00 so tutorial functions are traceable.
-4. Then, from 0.0.15.15:
+5. Then, from 0.0.15.15:
    - the `+0x44D` camera writers;
    - tutorial type 16;
    - the top-screen message window and voice.

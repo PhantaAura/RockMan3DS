@@ -1921,6 +1921,11 @@ l3::ActorAreaRuntime load_area_actors(const l3::TutorialRuntimeArea& area,
                                     const ActorSourceMetadata& metadata,
                                     std::optional<uint8_t> selector) {
     auto actors=l3::spawn_imported_actors(area.stage,area.ebd);
+    const auto area3_boss=l3::append_source_area3_boss_801076e8(
+        actors,area.stage,area.ebd,area.area_index);
+    if(area3_boss.status!=l3::SourceArea3BossStatus::NoEventOwner)
+        hardware_test_trace("# source_area3_boss_load,status=%u,actor=%lu,event=3,class=40,subtype=02,callback=801076E8,initializer=801078B8,behavior=SOURCE_BACKED_PARTIAL",
+            unsigned(area3_boss.status),(unsigned long)area3_boss.actor_index);
     for (auto& actor:actors.actors) {
         try {
             if (!actor.pose) l3::bind_imported_actor_pose(actor,area.ebd,0,0,false);
@@ -1945,6 +1950,11 @@ l3::ActorAreaRuntime load_active_actors(const l3::RuntimeSession& session,
     // bounded across static and conditional records, not separately per list.
     auto stage=l3::build_fresh_stage_runtime_area(records,area.ebd);
     auto actors=l3::spawn_imported_actors(stage,area.ebd);
+    const auto area3_boss=l3::append_source_area3_boss_801076e8(
+        actors,stage,area.ebd,area.area_index);
+    if(area3_boss.status!=l3::SourceArea3BossStatus::NoEventOwner)
+        hardware_test_trace("# source_area3_boss_reload,status=%u,actor=%lu,event=3,class=40,subtype=02,callback=801076E8,behavior=SOURCE_BACKED_PARTIAL",
+            unsigned(area3_boss.status),(unsigned long)area3_boss.actor_index);
     for(auto& actor:actors.actors){
         try {
             if(!actor.pose)l3::bind_imported_actor_pose(actor,area.ebd,0,0,false);
@@ -2605,7 +2615,9 @@ bool psx_emit_player(const std::vector<l3::PlayerVisualPrimitive>& local_visuals
 // point is the pose root, the mesh tier (+0x70/+0x74/+0x78 by SZ/4) is the
 // loaded one, and the screen/depth visibility test is not modelled.
 bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::ImportedActorPoseMatrices& pose) {
-    if (!g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
+    // Dynamic class40 owners share the presentation container, but their
+    // original draw path is 0x80028F90 rather than this class20 packet path.
+    if (actor.source_class != 0x20 || !g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
     ++g_psx_stats.class20_actors;
     const auto& cam = *g_psx_camera;
     const auto& root = pose.world[0];
@@ -4219,6 +4231,23 @@ int main() {
                         session.tutorial_pause_mode()!=1&&!session.cutscene_active()&&
                         session.camera().owner==l3::RuntimeCameraOwner::Gameplay;
                 };
+                // ST00 event3 writes the scripted entry position while its
+                // camera owns presentation. PSXRecomp slot-2 frames 7354..7382
+                // keep the pad neutral (FFFF) while z advances 16 units/fixed
+                // update to -1632, then remains there. Keep event ownership
+                // through the recovered presentation cycle: handing the player
+                // back earlier lets the still-live door-arrival state restore
+                // the room spawn on the following update.
+                in.source_event_player_position.reset();
+                for(const auto& actor:actors.actors)
+                    if(l3::source_area3_boss_forces_player_entry(actor,session.player_position().z)){
+                        auto scripted=session.player_position();
+                        scripted.z=std::min<int32_t>(-1632,scripted.z+16);
+                        in.held_psx_mask=in.pressed_psx_mask=0;
+                        in.source_event_player_position=scripted;
+                        in.fire_pressed=in.lock_pressed=in.advance_dialogue=false;
+                        in.dialogue_left=in.dialogue_right=false;break;
+                    }
                 const bool actor_tick_admitted=(retail_actor_animation_requested()||actor_state_fields_requested())&&actor_gameplay_owned();
                 if (retail_animation_requested()) (void)l3::runtime_animation_prepare(animation,player_track,session);
                 if(source_xa_requested&&session.source_event_command_result().pending_request){
@@ -4402,6 +4431,21 @@ int main() {
                 }
                 const bool dialogue_was_active=session.dialogue().active;
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                // The Area 3 boss is normal gameplay content, not a diagnostic
+                // actor-state gate. Advance its recovered intro and first
+                // bounded action-6 presentation cycle on every resident fixed
+                // update. Player/camera ownership only gates the event position above.
+                for(auto& actor:actors.actors)if(actor.source_area3_boss){
+                    const auto boss_tick=l3::tick_source_area3_boss_intro_80107b48(
+                        actor,session.player_position().z);
+                    if(boss_tick.state_changed)
+                        hardware_test_trace("# source_area3_boss_intro,frame=%lu,status=%u,action=%u,phase=%u,substate=%u,leg=%u,pos=%d:%d:%d,hp=%d,pose=%u,behavior=SOURCE_BACKED_PARTIAL",
+                            (unsigned long)session.frame_counter(),unsigned(boss_tick.status),
+                            unsigned(actor.source_area3_boss->action),unsigned(actor.source_area3_boss->phase),
+                            unsigned(actor.source_area3_boss->substate),unsigned(actor.source_area3_boss->intro_leg),
+                            int(actor.source_origin[0]),int(actor.source_origin[1]),int(actor.source_origin[2]),
+                            int(actor.source_area3_boss->hp),actor.pose?unsigned(actor.pose->request):255u);
+                }
                 // WCA collision evidence: the first few wall contacts per area dump
                 // the live candidate cells (packed, IDX, raw6, descriptor, contact
                 // list and its group count) so they can be compared with the

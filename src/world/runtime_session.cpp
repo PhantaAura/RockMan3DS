@@ -1931,13 +1931,22 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     }
     const auto source_player_gate=source_event_consumers_bound_
         ?source_player_update_gate_8003c07c(player_,source_event_player_known_):std::optional<bool>{};
-    const bool gameplay_owned=!(dialogue_.active&&dialogue_.gates_gameplay)&&camera_.owner==RuntimeCameraOwner::Gameplay&&!active_cutscene_id_
+    const bool gameplay_owned=!(dialogue_.active&&dialogue_.gates_gameplay)&&
+        (camera_.owner==RuntimeCameraOwner::Gameplay||in.source_event_player_position.has_value())&&
+        !active_cutscene_id_
         &&(!source_player_gate||*source_player_gate);
     if(gameplay_owned){
-        update_input_compat(in);
+        RuntimeInputFrame selected=in;
+        if(in.source_event_player_position)selected.held_psx_mask=selected.pressed_psx_mask=0;
+        update_input_compat(selected);
         // 0x8003C07C: +0xBD 0x40 zeroes the pad, 0x20 takes event 0's 0x800C0F96.
         (void)source_player_input_select_8003c07c(player_,source_door_event0_.forced_pad);
-        if(player_.bytes[8]==3&&source_door_event0_.active){source_player_state3_80041b8c(player_);sync_primary_position_from_fixed();}
+        if(in.source_event_player_position){
+            player_position_=*in.source_event_player_position;
+            sync_primary_position_to_compat();
+            player_contact_={};
+        }
+        else if(player_.bytes[8]==3&&source_door_event0_.active){source_player_state3_80041b8c(player_);sync_primary_position_from_fixed();}
         else if(player_.bytes[8]==0)source_player_state0_8003c7b0(player_);
         else{update_player_motion();update_player_contact();}
         update_source_door_event();

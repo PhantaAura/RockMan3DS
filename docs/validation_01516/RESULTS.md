@@ -594,3 +594,66 @@ Last build: `Legends3DS.3dsx` 1,194,144 B, SHA-256
 `39ab213735098717e539c8997c7bd8a692e88036ad7954210fc2e00b50f731a7`. All three are
 continuous normal-boot runs; every one reaches 0x622. SD folder cleaned
 (no autoplay or spawn file left).
+
+## ST00 Area 3 boss source slice (2026-10-27)
+
+Status: **SOURCE_BACKED_PARTIAL**, not a completed encounter.
+
+- Final host/native build: `pass-20261027-174140-m2-01516`.
+- Host CTest: **170/170 PASS** (5.70 s).
+- Old 3DS build: **PASS**; `Legends3DS.3dsx` 1,214,496 B, SHA-256
+  `af7188eeeaad889e07d229ef1b433dbcaa3fd74f7900327d1a28dee15e2050eb`.
+- The same hash is installed at Azahar's configured
+  `sdmc/3ds/Legends3DS/Legends3DS.3dsx`.
+- Real-package probe: event 3 admits exactly one class40/02 owner from Area 3
+  EBD row 0; 12 parts, HP 1024, action/phase/substate 1/0/1, spawn z 1001,
+  bounded decoded footprint 46,398 B.
+- Host regressions cover area-local event ownership, fresh constants, requests
+  0/1/2/3/11/12/13, the complete admitted intro and first action-6 presentation
+  cycle, zero tick-time allocations, and the pure `0x80107B48` post-dispatch
+  chooser including HP-zero/death-bit behavior.
+
+Earlier continuous Azahar Old-3DS-mode diagnostic runs found and corrected native
+integration faults rather than being recorded as false passes:
+
+1. `hardware_01516_4002075587792.csv` reached `0x622` at frame 10,193 and
+   loaded the Area 3 owner, but the callback remained tied to player/camera
+   ownership and did not tick.
+2. `hardware_01516_4002076225105.csv` reached `0x622` at frame 10,175 and
+   loaded the Area 3 owner only in Area 3, but a remaining pause/dialogue gate
+   still held the callback. The route averaged 41.55 ms/sample (24.07 FPS),
+   consistent with the existing emulator baseline; this is not physical-hardware
+   evidence and the sparse Area 3 samples are not a performance result.
+3. `hardware_01516_4002111246033.csv` reached `0x622` at frame 9,883 and the
+   boss reached CombatReady at frame 10,205, but ordinary player state restored
+   Mega Man from the event endpoint to z `-1984`. This is negative integration
+   evidence, not a pass.
+
+The resident Area 3 event callback is now advanced on every fixed update. The
+scripted entry position is explicitly event-owned, so it advances with neutral
+pad while the event camera owns presentation, bypasses only the authored
+doorway contact, and remains at z `-1632` through intro leg 5 without weakening
+dialogue, cutscene, or source-player gates; `runtime_transactions` covers that
+ownership boundary.
+
+Final continuous trace `hardware_01516_4002111785105.csv` is **PASS for this
+partial slice**:
+
+- `0x622` set in Area 2 at frame 9,772;
+- Area 3 dynamically admits the single event-3 class40/02 owner;
+- phase/request movement reaches boss z `-1223`, then requests 11/12/13;
+- CombatReady/action 1/phase 0 occurs at frame 10,090 with HP 1024;
+- Mega Man remains at `(-256,-385,-1632)` through frame 10,800;
+- diagnostic route ends and Area 3 unloads cleanly at frame 10,854.
+
+The autoplay file was moved intact to
+`/private/tmp/diagnostic_autoplay-area3-player-retain-20261027.txt` after the
+run. This does not validate attack AI, damage, HUD, defeat, post-win progression
+or physical Old 3DS performance. Physical Old 3DS testing remains **PENDING**.
+
+### 2026-10-28 takeover baseline
+
+Existing Area 3 intro changes were preserved and rebuilt before extension.
+`tools/m1_mac_build.sh` PASS in owner-local `pass-20261028-222004-m2-01516`;
+full host suite 170/170 PASS and native Old 3DS build PASS.
+No new Azahar or physical-device result is claimed by this rebuild.

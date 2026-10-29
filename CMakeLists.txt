@@ -542,6 +542,8 @@ endif()
 
 add_executable(l3probe_actor_resources tools/l3probe_actor_resources.cpp)
 target_link_libraries(l3probe_actor_resources PRIVATE legends3ds_core)
+add_executable(l3probe_area3_boss tools/l3probe_area3_boss.cpp)
+target_link_libraries(l3probe_area3_boss PRIVATE legends3ds_core)
 add_executable(l3probe_actor_class20_03 tools/l3probe_actor_class20_03.cpp)
 target_link_libraries(l3probe_actor_class20_03 PRIVATE legends3ds_core)
 add_executable(test_gameplay_clock tests/test_gameplay_clock.cpp)

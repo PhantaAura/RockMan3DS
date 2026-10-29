@@ -271,6 +271,24 @@ void test_save_restore_transaction() {
     assert(rejected); assert_same_scene(session, before);
 }
 
+void test_source_event_player_position() {
+    RuntimeSession blocked(make_map(11), make_area(11), {queued_message()}, settings());
+    blocked.reset_player({0, -1, 0}, 0, 63, 80);
+    blocked.start_script_camera({{400, -300, 500}, {50, -40, 30}, 0x123}, 100);
+    RuntimeInputFrame input{}; input.held_psx_mask = 0x10;
+    blocked.tick(input);
+    assert(blocked.compat_player().bytes[0x11C] == 0);
+    assert(blocked.player_position().z == 0);
+
+    RuntimeSession event_owned(make_map(11), make_area(11), {queued_message()}, settings());
+    event_owned.reset_player({0, -1, 0}, 0, 63, 80);
+    event_owned.start_script_camera({{400, -300, 500}, {50, -40, 30}, 0x123}, 100);
+    input.source_event_player_position=RuntimeVec3i{0,-1,16};
+    event_owned.tick(input);
+    assert(event_owned.compat_player().bytes[0x11C] == 0);
+    assert(event_owned.player_position().z == 16);
+}
+
 void write16(L3PlayerCompatWork& work, size_t at, int16_t value) {
     const uint16_t bits = static_cast<uint16_t>(value);
     work.bytes[at] = static_cast<uint8_t>(bits);
@@ -397,6 +415,7 @@ void test_cutscene_completion_transaction() {
 int main() {
     test_message_copy_lifetime();
     test_save_restore_transaction();
+    test_source_event_player_position();
     test_diagnostic_recovery_preserves_scene();
     test_cutscene_completion_transaction();
     std::cout << "runtime transactions: copied dialogue lifetime, atomic save/scene cleanup, diagnostic recovery and cutscene completion PASS\n";
