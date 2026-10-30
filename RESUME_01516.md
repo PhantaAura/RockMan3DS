@@ -26,8 +26,10 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   title (logo, PRESS START, copyright) and the NEW GAME / CONTINUE / OPTION
   menu: ROCK_NEO front end 0x80013420 (`frontend_title.cpp`, host test), the
   original POLY_FT4 packets, DEMO_DAT pages (`materials/frontend.l3mc`). NEW
-  GAME starts the existing game. Missing: the ruin/Servbot backdrop
-  (DEMO_DAT.EBD scene), fades, title sounds, CONTINUE/OPTION, attract demo.
+  GAME starts the existing game. Backdrop (wall, strip, gradient, menu box),
+  fades 2/10 and title sounds are done. Missing: the Servbot parade (logic in
+  `frontend_servbots.cpp`, host-built, not yet drawn or tested), fades
+  1/9/22, CONTINUE/OPTION, attract demo.
   Research: `docs/research_01516/FRONTEND_TITLE.md`.
 - **Tutorial exit.** After 0x622 the far door loads ST00 Area 3. Event 3 now
   spawns the original boss resource and advances its recovered intro to the
@@ -213,7 +215,9 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 1. Then finish the front end/opening:
    - title backdrop done (wall, strip, gradient, menu box), fade 2/10, title
      sounds (sfx_title.l3sb). Left: the Servbot parade (0x80015428 ->
-     0x800153EC, class-20 draw), fades 1/9/22;
+     0x800153EC; spawner, script reader and motion ported in
+     `frontend_servbots.cpp`, scripts cooked by `tools/cook_title_servbots.py`;
+     still needed: host test, oracle trace, class-20 draw on the title), fades 1/9/22;
    - New Game -> opening: ST00 event 1 (Area 0 scene, phases 0..7, partly
      ported behind SOURCE_EVENT_BOOT) instead of `opening_scene=SKIPPED`;
    - intro (ST01 event 71) and the attract demo;

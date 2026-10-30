@@ -35,6 +35,7 @@ add_library(legends3ds_core STATIC
     src/world/source_rng_service.cpp
     src/flow/source_fade.cpp
     src/flow/frontend_title.cpp
+    src/flow/frontend_servbots.cpp
     src/flow/source_event_phase5.cpp
     src/flow/source_event_phase6.cpp
     src/flow/source_event_random_effect.cpp
