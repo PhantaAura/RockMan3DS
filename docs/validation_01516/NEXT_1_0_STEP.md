@@ -1,7 +1,9 @@
 # After World Comes Alive: first small 1.0 step (plan)
 
-Status: ACTIVE ROADMAP. Version 1.0 is the complete main campaign; the next
-contiguous milestone remains the tutorial boss and its post-victory event.
+Status: ACTIVE ROADMAP. 1.0 scope is New Game → the first Tron Bonne fight
+(milestones M1–M3), nothing past it (user, 2026-10-30). M4+ and the full
+campaign follow as 1.x releases. The next milestone remains the tutorial boss
+and its post-victory event.
 
 ## Where the boot path stands (2026-10-25)
 - Power-on reaches a hardware-test start menu, not the original title screen.
@@ -53,6 +55,8 @@ Area 2 were reached with two oracle-only RAM teleports (noted, not a route).
 3. Then stage by stage toward the first Tron Bonne fight.
 
 ## Contiguous campaign milestones
+M1–M3 make up 1.0; M4+ and Final are post-1.0 (1.x).
+
 
 - **M1 — Tutorial boss:** start after `0x622`; Area 3 event 3, scripted entry,
   class `40/02` AI/attacks/collision, 1024-HP gauge, Buster reactions, death,
@@ -65,10 +69,10 @@ Area 2 were reached with two oracle-only RAM teleports (noted, not a route).
 - **M3 — First Tron Bonne encounter:** add each required area, NPC, mission,
   transition and boss in story order. Accept from M2's end through that fight,
   with save/restart progression checked.
-- **M4+ — Remaining main route:** one contiguous story segment per checkpoint;
+- **M4+ — Remaining main route (1.x):** one contiguous story segment per checkpoint;
   each names its start/end flags, required areas, interactions, boss, host
   tests, Azahar result and known deviations before the next segment begins.
-- **Final — Campaign/release:** final boss, ending/credits, Continue/save/load,
+- **Final — Campaign release (post-1.0):** final boss, ending/credits, Continue/save/load,
   game-over/retry, remaining mandatory systems, optional-content ledger, broad
   regression, bounded memory, and physical Old 3DS performance validation.
 
