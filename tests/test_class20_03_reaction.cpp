@@ -252,4 +252,32 @@ void actor_bridge(){
     measured=false;require(ok&&allocations==0,"native reaction hot loop held or allocated");
 }
 }
-int main(int argc,char** argv){try{profile_format();guards();contact();actor_bridge();if(argc>1)differential(argv[1]);if(argc>2)contact_differential(argv[2]);std::cout<<"PASS source reaction actions7/8\n";return 0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}
+// Every request actions 7/8 select through their landings and phase3 must be
+// in the runtime bank; a missing one held the pop-out's action8 in the air.
+void bank_covers_reaction_requests(){
+    const auto p=profile();
+    auto in_bank=[](uint8_t id){for(auto r:l3::kClass20_03AnimationRequests)if(r==id)return true;return false;};
+    for(auto [action,parameter]:{std::pair<uint8_t,uint8_t>{8,0x40},{8,0},{7,0}}){
+        State s;s.behavior.action_09=action;s.behavior.parameter_03=parameter;s.health_6e=128;s.behavior.heading_56=0;
+        l3::Class20_03ReactionInputs in;in.profile=&p;in.combat_byte_b=231;in.combat_record_variant=0;
+        in.target_heading_80031198=0;in.sound_consumer_ready=true;
+        size_t landings=0;bool recovery=false;
+        for(int frame=0;frame<64&&!recovery;++frame){
+            const auto plan=l3::class20_03_plan_reaction(s,in);
+            require(plan.status==Status::SourceBackedPartial&&plan.moves,"reaction did not move before recovery");
+            l3::Class20_03PreparedReaction m;m.entry_raw_14=s.raw_14;m.entry_fixed_1c=s.fixed_1c;
+            m.raw_14=s.raw_14;m.fixed_1c=s.fixed_1c;m.heading=s.behavior.heading_56;
+            m.forward=plan.forward;m.vertical=plan.vertical;
+            m.velocity_before_wall=plan.velocity_before_wall;m.velocity_after_wall=plan.velocity_before_wall;
+            m.contact_word=frame?0x1000u:0u;in.motion=m; // airborne once, then land every frame
+            require(l3::class20_03_step_reaction(s,in).status==Status::SourceBackedPartial,"reaction landing held");
+            require(in_bank(s.behavior.animation_ac),"reaction selects a request the class03 bank lacks");
+            landings+=frame!=0;recovery=s.behavior.phase_0a==3;
+            if(!frame)require(s.behavior.animation_ac==(action==8?12:7),"reaction start request differs");
+        }
+        require(recovery&&landings==5&&s.behavior.animation_ac==17,"reaction did not reach phase3 after four bounces");
+        require(action==7||s.reaction_table_364==(parameter?0x8011bef8u:0x8011beecu),"action8 table owner differs");
+    }
+    std::cout<<"class03 bank covers reaction requests 7..17 PASS\n";
+}
+int main(int argc,char** argv){try{profile_format();guards();contact();actor_bridge();bank_covers_reaction_requests();if(argc>1)differential(argv[1]);if(argc>2)contact_differential(argv[2]);std::cout<<"PASS source reaction actions7/8\n";return 0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

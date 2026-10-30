@@ -476,7 +476,7 @@ void load_actor_rng_candidate_gate() {
 }
 void prepare_actor_animation_banks(l3::ActorAreaRuntime& actors,const l3::EbdDirectory& ebd) {
     if(actor_state_fields_requested()) {
-        constexpr std::array<uint8_t,8> requests{{0,1,2,3,4,6,21,22}};
+        const auto& requests=l3::kClass20_03AnimationRequests;
         try {
             l3::bind_imported_actor_animation_banks(actors,ebd,requests.data(),requests.size());
             char label[192];std::snprintf(label,sizeof(label),
