@@ -410,12 +410,17 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
 struct ImportedActorPopoutTick {
     Class20_1FResult result;
     bool committed = false, morph_pending = false, pose_changed = false;
+    bool proxy_registered = false;
 };
-// One 0x801062EC callback for a subtype-0x1F actor. All-or-nothing; the hit
-// proxy (flags bit 8, 0x800341BC) is reported, not registered. Allocation-free.
+// One 0x801062EC callback for a subtype-0x1F actor. All-or-nothing. While
+// flags bit 8 is set (always, from 0x2C) the tail 0x80106410..0x80106468
+// registers the hit proxy 0x800341BC on the +0x180 root point, radius 0x50,
+// into +0x35C; the packet is cleared afterwards. Allocation-free.
 ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& actor,
     const ReferenceTables& references, std::optional<uint16_t> random_sample,
-    std::optional<uint32_t> work_80) noexcept;
+    std::optional<uint32_t> work_80, SourceHitProxyBank* bank = nullptr,
+    std::optional<uint32_t> mask_80098798 = std::nullopt,
+    std::array<SourceHitProxyOwnerPoint*,24> owners_800be478 = {}) noexcept;
 // Binds the 0x80098844[0x19] record (L3CB subtype 0x19 row) and the
 // 0x80036478 detection profile (record +0x0F, offset -0x60). Fresh only.
 bool bind_imported_actor_reaverbot19_record(ImportedActorInstance& actor,

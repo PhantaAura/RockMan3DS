@@ -1231,7 +1231,8 @@ void bind_imported_actor_request0_caches(ActorAreaRuntime& area, const EbdDirect
 }
 ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& actor,
     const ReferenceTables& references, std::optional<uint16_t> random_sample,
-    std::optional<uint32_t> work_80) noexcept {
+    std::optional<uint32_t> work_80, SourceHitProxyBank* bank,
+    std::optional<uint32_t> mask, std::array<SourceHitProxyOwnerPoint*,24> owners) noexcept {
     ImportedActorPopoutTick out;
     if (actor.source_released || !actor.source_popout || actor.source_class != 0x20 ||
         actor.subtype != 0x1F || actor.initializer != 0x8010648C) return out;
@@ -1240,6 +1241,8 @@ ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& act
     auto next = *actor.source_popout;
     Class20_1FInputs in;
     in.references = &references; in.random_sample = random_sample; in.work_80 = work_80;
+    // The bank wrote the previous frame's hit into the +0x35C target.
+    if (actor.source_proxy_bound) in.packet_35c = actor.source_proxy_target.packet_00;
     out.result = step_class20_1f_801062ec(next, in);
     actor.last_popout_status = out.result.status;
     if (out.result.status != Class20_1FStatus::SourceBackedPartial) return out;
@@ -1264,6 +1267,35 @@ ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& act
         actor.raw_scale = {{512, 512, int16_t(z > INT16_MAX ? INT16_MAX : z)}};
     } else actor.raw_scale = {{512, 512, 512}};
     actor.pose_selected_by_retail_state = true;
+    if (actor.pose) {
+        // +0x180 root point (0x8003346C) as for 0x19; +158 stays 0x200 (the
+        // +37C Z scale only scales matrix +208).
+        ActorPoseCollisionInputs pose;
+        pose.reference = &references; pose.heading_56 = next.heading_56;
+        for (size_t axis = 0; axis < 3; ++axis) pose.raw_14[axis] = next.raw_14[axis];
+        pose.scale_158 = {{512, 512, 512}}; pose.root_translation = actor.pose->root_translation;
+        pose.flags_06 = actor.source_dispatch_flag6; pose.scratch_shift_1f800074 = actor.source_pose_scratch_shift;
+        pose.preserved_186 = actor.source_pose_preserved_186;
+        const auto produced = produce_actor_pose_collision_point_8003346c(pose);
+        if (produced.point_180) { actor.source_point_180 = *produced.point_180; actor.source_point_180_known = true; }
+    }
+    // 0x80106410: +0x180 is copied to +0x354, then 0x800341BC(+0x354, 0x50, 0,
+    // 0x8000, work+1, +0x35C, 0x04880000 | +0x350, 0x00800000, 0x80).
+    if (out.result.proxy_800341bc && bank && actor.source_proxy_bound && actor.source_point_180_known) {
+        SourceHitProxyRegistration registration;
+        const auto& p = actor.source_point_180;
+        registration.pointed_words = {{uint32_t(uint16_t(p[0])) | (uint32_t(uint16_t(p[1])) << 16),
+                                       uint32_t(uint16_t(p[2])) | (uint32_t(uint16_t(p[3])) << 16)}};
+        registration.a1 = 0x50; registration.a2 = 0; registration.a3 = 0x8000;
+        registration.stack10 = uint8_t(0x20u | uint8_t(actor.original_pool_slot));
+        registration.stack18 = 0x04880000u | next.work_350;
+        registration.stack1c = 0x00800000u; registration.stack20 = 0x80;
+        registration.target = &actor.source_proxy_target; registration.mask_80098798 = mask;
+        registration.owners_800be478 = owners;
+        out.proxy_registered = source_hit_proxy_register_800341bc(*bank, registration).status ==
+                               SourceHitProxyStatus::SourceBackedPartial;
+    }
+    actor.source_proxy_target.packet_00 = 0;   // 0x80106470: +0x35C cleared
     out.committed = true;
     out.morph_pending = next.morph_to_class20_03;
     return out;
@@ -1425,6 +1457,13 @@ ImportedActorReaverbot19Tick tick_imported_actor_reaverbot19(ImportedActorInstan
 }
 
 bool initialize_imported_actor_fresh_pose_proxy_subset(ImportedActorInstance& actor) noexcept {
+    if(actor.source_class==0x20&&actor.subtype==0x1F&&actor.initializer==0x8010648C&&
+       actor.source_popout&&actor.original_pool_slot<16&&!actor.source_proxy_bound){
+        actor.source_pose_scratch_shift=0;actor.source_pose_preserved_186=0;actor.source_shadow_work76=0;
+        actor.source_proxy_target={};
+        actor.source_proxy_target.source_address=0x8009f108u+uint32_t(actor.original_pool_slot)*0x3c0u+0x35cu;
+        actor.source_proxy_bound=true;return true;
+    }
     if(actor.source_class==0x20&&actor.subtype==0x19&&actor.initializer==0x80104A08&&
        actor.source_reaverbot19&&actor.original_pool_slot<16&&!actor.source_proxy_bound){
         actor.source_pose_scratch_shift=0;actor.source_pose_preserved_186=0;actor.source_shadow_work76=0;
