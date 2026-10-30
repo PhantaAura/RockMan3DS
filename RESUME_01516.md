@@ -193,6 +193,14 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   native yet. Local only, never committed. See
   `docs/research_01516/PSXRECOMP_ORACLE.md` and `tools/psxrecomp_dbg.py`.
 
+- **Reaverbots/camera (branch reaverbot-camera-fix,
+  `docs/research_01516/REAVERBOT_CAMERA_FIX.md`).** Fixes the floating
+  pop-out: the class 20/03 bank lacked requests 7..17, so action 8 (and the
+  action 7 knockback) held every frame. Registers the hidden pop-out's hit
+  proxy (0x80106410). Host 170/170, native PASS, landing checked on the real
+  map in a host sim; Azahar not run. The follow camera matches 0x80038894; the
+  close aim camera of action 14 is unported.
+
 ## Validation
 `docs/validation_01516/RESULTS.md`: current Area 3 build
 `pass-20261027-174140-m2-01516`, host **170/170** (5.70 s), Old 3DS native
@@ -222,10 +230,12 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
      ported behind SOURCE_EVENT_BOOT) instead of `opening_scene=SKIPPED`;
    - intro (ST01 event 71) and the attract demo;
    Still open: box 0x620/0x621, 0x60E; terrain cost; effects; music gaps.
-2. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` with the
-   screen unlocked. Confirm action 8 leaves phase 0, and check the landing
-   against a short PSXRecomp trace.
-3. The hit proxy for the hidden pop-out (`0x800341BC`, bit 8).
+2. Re-run `docs/validation_01516/autoplay/popout_corridor.txt` in Azahar (on a
+   normal desktop Space, see Blockers). Action 8 should now leave phase 0 and
+   land; compare with a PSXRecomp trace once ST00 is native there.
+3. Player action 14 (`0x8003EEC0`, lock-on/aim stance) and its close camera
+   `0x80039630` (distance 400, height 0xD2, aim pitch); see
+   `docs/research_01516/REAVERBOT_CAMERA_FIX.md`.
 4. PSXRecomp oracle trial: record a ledge
    grab (`0x80040818`) and diff it against the port in a host test. Then
    capture and compile ST00 so tutorial functions are traceable.
@@ -235,6 +245,8 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    - the top-screen message window and voice.
 
 ## Blockers
+- Azahar `-w` stalls before boot while the Mac's current Space is a full-screen
+  app (2026-10-30).
 - Effect textures: the upload order is CANDIDATE. The common page comes from
   EXIT_SUP, and Area 2 inherits ST00_01.
 - The 0x1F8001C0 back-face threshold (522) is measured in Area 1 only. Its
