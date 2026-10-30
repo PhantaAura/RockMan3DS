@@ -23,15 +23,24 @@ std::optional<uint32_t> TitleServbotScripts::script(uint8_t wave, uint8_t index)
 }
 
 TitleServbotScripts load_title_servbot_scripts(const std::vector<uint8_t>& bytes) {
-    if (bytes.size() < 20 || std::memcmp(bytes.data(), "L3TS0001", 8) != 0) throw std::runtime_error("not L3TS");
+    if (bytes.size() < 20) throw std::runtime_error("not L3TS");
+    const bool v2 = std::memcmp(bytes.data(), "L3TS0002", 8) == 0;
+    if (!v2 && std::memcmp(bytes.data(), "L3TS0001", 8) != 0) throw std::runtime_error("not L3TS");
     const auto rd = [&](size_t at) { return uint32_t(bytes[at]) | (uint32_t(bytes[at + 1]) << 8) |
                                              (uint32_t(bytes[at + 2]) << 16) | (uint32_t(bytes[at + 3]) << 24); };
     TitleServbotScripts out;
     out.base = rd(8);
-    const uint32_t size = rd(12);
-    if (bytes.size() != 20u + size) throw std::runtime_error("L3TS size mismatch");
-    out.data.assign(bytes.begin() + 20, bytes.end());
-    if (crc32(out.data.data(), out.data.size()) != rd(16)) throw std::runtime_error("L3TS CRC mismatch");
+    const size_t size = rd(12), camera_bytes = v2 ? 24 : 0;
+    if (size > bytes.size() || bytes.size() != 20u + size + camera_bytes) throw std::runtime_error("L3TS size mismatch");
+    if (crc32(bytes.data() + 20, size + camera_bytes) != rd(16)) throw std::runtime_error("L3TS CRC mismatch");
+    out.data.assign(bytes.begin() + 20, bytes.begin() + 20 + std::ptrdiff_t(size));
+    if (v2) {
+        TitleServbotCamera c;
+        const size_t at = 20 + size;
+        for (unsigned a = 0; a < 3; ++a) c.target[a] = int32_t(rd(at + a * 4));
+        c.distance = int32_t(rd(at + 12)); c.yaw = int32_t(rd(at + 16)); c.pitch = int32_t(rd(at + 20));
+        out.camera = c;
+    }
     return out;
 }
 
@@ -39,7 +48,9 @@ void title_servbot_spawn_80015428(TitleServbotParade& p, uint8_t frontend_state,
                                   int16_t fade_80098a72, TitleServbotFrame& out) {
     if (p.phase_0a == 1) {
         if (p.timer_06 != 0) { --p.timer_06; return; }
-        ++out.music_8002ee90;                       // 0x8002EE90(2, 0x80)
+        // 0x8002EE90(2, 0x80): bit 2 sweeps the class-20 pool; flag 0x80
+        // unlinks (0x80052528) and releases (0x80031824) every live slot.
+        for (auto& s : p.slots) if (s.active) { s.active = false; ++out.released_8002ee90; }
         if (++p.wave_08 >= 9) p.wave_08 = 0;
         ++p.phase_0a;
         return;
@@ -56,8 +67,16 @@ void title_servbot_spawn_80015428(TitleServbotParade& p, uint8_t frontend_state,
         TitleServbot* slot = nullptr;
         for (auto& s : p.slots) if (!s.active) { slot = &s; break; }
         if (!slot) continue;
+        // The spawner writes +0/+2..+4/+0x0C only and 0x80014AC0 leaves the
+        // position: a reused slot keeps its previous occupant's +0x14/+0x1C
+        // (oracle: an unscripted slot reports it in its one state-2 update).
+        const auto raw = slot->raw; const auto fixed = slot->fixed;
         *slot = TitleServbot{};
-        slot->active = true; slot->index = i; slot->state = 0;
+        slot->raw = raw; slot->fixed = fixed;
+        // Oracle: the title setup's spawn (state 1, 0x800135DC) first runs
+        // its callbacks on the next update; later spawns (states 2/4 through
+        // 0x800137D4) run them in the same update. CANDIDATE mechanism.
+        slot->active = true; slot->fresh = frontend_state == 1; slot->index = i; slot->state = 0;
         slot->wave = uint8_t(p.wave_08);
     }
     p.timer_06 = 300;
@@ -119,9 +138,9 @@ void run_800150e0(TitleServbot& s, const TitleServbotScripts& scripts, const Ref
                   size_t slot, TitleServbotFrame& out) {
     s.anim_ad = s.anim_ac;
     s.byte_14 = s.byte_13;
+    // No state test follows the reader: the frame that reads 27 still moves.
     if (s.delay == 0) read_script_80014bcc(s, scripts);
     else --s.delay;
-    if (s.state == 2) return;
     for (unsigned a = 0; a < 3; ++a) s.velocity[a] = int16_t(uint16_t(s.velocity[a] + s.acceleration[a]));
     if (s.world_motion) {
         for (unsigned a = 0; a < 3; ++a) {
@@ -164,6 +183,7 @@ void title_servbot_update_800153ec(TitleServbotParade& p, const TitleServbotScri
     for (size_t i = 0; i < p.slots.size(); ++i) {
         auto& s = p.slots[i];
         if (!s.active) continue;
+        if (s.fresh) { s.fresh = false; continue; }
         switch (s.state) {
             case 0: {
                 // 0x80014AC0: scale 0x400 x3, zero motion, the wave's script.
