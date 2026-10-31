@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "legends3ds/scene_e0.h"
 #include "legends3ds/source_event_pipeline.h"
 #include "legends3ds/runtime_session.h"
@@ -337,5 +338,74 @@ void owner_sequence(const char* phase5,const char* ebd,const char* references,co
     std::cout<<"100 unchanged original E0 sweeps / 1500 full selected owner records / allocation-free updates PASS\n";
 }
 }
-int main(int argc,char** argv){try{if(argc==1){authored();session_integration();behavior_authored();attachment_session_integration();}else if(argc==2){authored();session_integration();behavior_authored();attachment_session_integration();fixture(argv[1]);}else if(argc==3&&std::string(argv[1])=="--fixture")fixture(argv[2]);else if(argc==4&&std::string(argv[1])=="--behavior-fixture")behavior_fixture(argv[2],argv[3]);else if(argc==6&&std::string(argv[1])=="--owner-sequence")owner_sequence(argv[2],argv[3],argv[4],argv[5]);else if(argc==3)owner(argv[1],argv[2]);else throw std::runtime_error("usage: test_scene_e0 [owner.l3p5 owner.l3ebd]");return 0;}
+
+// 0x801133B4 / 0x80113600 / 0x801136A4 / 0x80113A6C: falling blocks and slide
+// with debris/impact family-80 children, camera+0x0C jolts and E0 rand().
+l3::SourceRngProfile block_rng_profile(uint32_t seed){
+    l3::SourceRngProfile p;
+    const auto digest=[](const char* hex){l3::SourceRngDigest d{};for(size_t i=0;i<32;++i){unsigned v=0;std::sscanf(hex+i*2,"%2x",&v);d[i]=uint8_t(v);}return d;};
+    p.bios_sha256=digest("713ea2aed58606282b3ff5e91d77f8c5892ea36f5adcd279d2c7dd26604a625d");
+    p.exe_sha256=digest("10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0");
+    p.overlay_sha256=digest("9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c");
+    p.trace_sha256.fill(23);p.validated_prefix_sha256=p.trace_sha256;
+    p.scope=l3::SourceRngCaptureScope::WholeBoundedCapture;p.warnings=3;
+    p.origin_seed32=seed;p.origin_game_entry_count=1;p.origin_vsync=1062;
+    p.actual_rand_returns=1;p.trace_rows=5;p.validated_prefix_rows=5;
+    p.captured_bytes=1200;p.validated_prefix_bytes=1200;p.final_rand_ordinal=1;p.observed_consumer_count=1;
+    return p;
+}
+uint16_t block_lcg(uint32_t& s){s=s*1103515245u+12345u;return uint16_t((s>>16)&0x7fffu);}
+void behavior_blocks(){
+    using Status=l3::SceneE0Status;const auto directory=l3::parse_ebd_directory(payload(),0x8016c000);const auto p=profile();
+    const auto witness=l3::bind_source_event_phase5_resources(p,directory);const auto cache=l3::load_scene_e0_resources(directory,p,witness);
+    auto context=constructor(p,witness);l3::ReferenceTables refs;l3::SourceEventWork event;event.known.fill(1);
+    context.pool80.used[0]=0x80000000u;context.pool80.used[1]=0;   // slot 0 busy: children go to slot 1, 2
+    for(size_t i=0;i<64;++i){context.pool80.slots[i].raw[1]=uint8_t(0x80|i);context.pool80.slots[i].known[1]=1;}
+    for(size_t i=0;i<4;++i){context.camera_800bc738.raw[0x0c+i]=0;context.camera_800bc738.known[0x0c+i]=1;}
+    const size_t slot=7;const uint32_t identity=0x800bf118u+uint32_t(slot)*80u;
+    l3::SceneE0UpdateInputs inputs;inputs.references=&refs;inputs.event_work=&event;inputs.pool=&context.pool_e0;
+    inputs.scene_context=&context;inputs.prop_identity=identity;
+    auto& work=context.pool_e0.slots[slot];
+    const auto set16=[&](size_t at,int v){work.raw[at]=uint8_t(v);work.raw[at+1]=uint8_t(v>>8);work.known[at]=work.known[at+1]=1;};
+    const auto get16=[&](const auto& b,size_t at){return int16_t(uint16_t(b.raw[at]|(b.raw[at+1]<<8)));};
+    const auto set32=[&](size_t at,uint32_t v){for(size_t i=0;i<4;++i){work.raw[at+i]=uint8_t(v>>(8*i));work.known[at+i]=1;}};
+    work.raw[3]=3;work.raw[8]=1;work.raw[9]=1;work.raw[10]=1;set16(56,100);set16(58,-400);set16(60,-50);set32(68,0);
+    // No E0 rand() channel: hold without stores (existing contract).
+    {const auto before=work;const auto r=l3::update_scene_e0_80112b9c(work,cache,directory,inputs);
+     require(!r.committed&&r.status==Status::NeedsRngOrChildOwner&&work.raw==before.raw,"block without rng mutated");}
+    l3::SourceRngService rng;const uint32_t seed=0x2468u;
+    require(l3::install_source_rng_service(rng,block_rng_profile(seed),l3::SourceRngMode::CandidateOpenBios)==l3::SourceRngStatus::Ready,"rng install");
+    uint32_t mirror=seed;size_t frames=0,debris=0;
+    // Falling: +44 += 0x14E80, +3A += +44>>16 until >0; rand()&3==0 spawns 0x80113C98 debris.
+    while(work.raw[10]==1&&frames<64){
+        l3::SourceRngUpdateTransaction t;require(l3::begin_source_rng_update(rng,t,{frames,frames,l3::SourceRngUpdatePhase::E0ObjectCallback})==l3::SourceRngStatus::Ready,"begin");
+        inputs.e0_rng=&t;const uint32_t vel=uint32_t(work.raw[68]|(work.raw[69]<<8)|(work.raw[70]<<16)|(uint32_t(work.raw[71])<<24))+0x14e80u;
+        const int16_t y=int16_t(get16(work,58)+int16_t(vel>>16));const auto used_before=*context.pool80.used[0];
+        const auto r=l3::update_scene_e0_80112b9c(work,cache,directory,inputs);
+        require(r.committed&&l3::commit_source_rng_update(rng,t)==l3::SourceRngStatus::Ready,"falling block commit");
+        require(get16(work,58)==y,"falling y integration");
+        if(y>0){require(work.raw[10]==2&&context.camera_800bc738.raw[0x0e]==0x10,"landing jolt / substate");
+            const auto& impact=context.pool80.slots[size_t(__builtin_clz(~used_before))];
+            require(impact.raw[2]==4&&impact.raw[12]==4&&get16(impact,28)==100&&get16(impact,30)==0&&get16(impact,32)==-50,"landing impact 0x80113C30");}
+        else{const uint16_t v=block_lcg(mirror);
+            if((v&3u)==0){++debris;const size_t c=size_t(__builtin_clz(~used_before));
+                const auto& child=context.pool80.slots[c];
+                (void)block_lcg(mirror);   // 0x80113CC8: drawn, result unused
+                require(child.raw[2]==3&&child.raw[12]==3&&child.raw[15]==0&&child.raw[0]==1&&child.raw[6]==3,"debris header");
+                const uint16_t sx=block_lcg(mirror),sy=block_lcg(mirror),sz=block_lcg(mirror);
+                require(get16(child,28)==int16_t(100+((sx&1u)?-386:386))&&get16(child,30)==int16_t(y+(sy&511)-207)&&
+                    get16(child,32)==int16_t(-50+((sz&1u)?-64:64)),"debris placement");
+                context.pool80.used[0]=used_before;}   // free it again for the next frame
+        }
+        ++frames;
+    }
+    require(work.raw[10]==2&&frames>1,"block never landed");
+    // Landing impact child (subtype 4) at x/z, y 0.
+    // Next state 0x801136A4 undoes the jolt.
+    {l3::SourceRngUpdateTransaction t;require(l3::begin_source_rng_update(rng,t,{99,99,l3::SourceRngUpdatePhase::E0ObjectCallback})==l3::SourceRngStatus::Ready,"begin2");
+     inputs.e0_rng=&t;require(l3::update_scene_e0_80112b9c(work,cache,directory,inputs).committed,"jolt undo");l3::rollback_source_rng_update(t);
+     require(work.raw[10]==3&&context.camera_800bc738.raw[0x0e]==0&&context.camera_800bc738.raw[0x0f]==0,"jolt undo value");}
+    std::cout<<"E0 falling block 0x80113600/0x801136A4: integration, debris 0x80113C98 placement ("<<debris<<"), landing jolt PASS\n";
+}
+int main(int argc,char** argv){try{if(argc==1){authored();session_integration();behavior_authored();behavior_blocks();attachment_session_integration();}else if(argc==2){authored();session_integration();behavior_authored();attachment_session_integration();fixture(argv[1]);}else if(argc==3&&std::string(argv[1])=="--fixture")fixture(argv[2]);else if(argc==4&&std::string(argv[1])=="--behavior-fixture")behavior_fixture(argv[2],argv[3]);else if(argc==6&&std::string(argv[1])=="--owner-sequence")owner_sequence(argv[2],argv[3],argv[4],argv[5]);else if(argc==3)owner(argv[1],argv[2]);else throw std::runtime_error("usage: test_scene_e0 [owner.l3p5 owner.l3ebd]");return 0;}
 catch(const std::exception& error){std::cerr<<error.what()<<'\n';return 1;}}

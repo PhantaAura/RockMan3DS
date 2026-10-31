@@ -80,6 +80,9 @@ struct SceneE0UpdateInputs {
     SourcePropForeignReleaseOwner* prop_release_owner=nullptr;
     SourcePropLiftInputs lift;
     const SourcePropLiftCandidateRng* lift_candidate=nullptr;
+    // E0-object rand() channel for the block/slide states, begun by the caller
+    // (SourceRngUpdatePhase::E0ObjectCallback) and committed only on commit.
+    SourceRngUpdateTransaction* e0_rng=nullptr;
 
 };
 // Bounded80112B9C/80113EA4 consumer for the selected subtype3 variants0..7.

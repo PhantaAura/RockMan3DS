@@ -58,6 +58,76 @@ bool known(const SourceEventPhase5Bytes<80>& work,size_t offset,size_t count,
     for(size_t i=0;i<count;++i)if(!work.known[offset+i]){missing=uint16_t(offset+i);return false;}
     return true;
 }
+// Staged side effects of the ST00 block/slide states: family-80 children
+// (0x80031618 header, then the spawner's stores), camera+0x0C jolts, and
+// rand() draws on the caller's E0 channel. Applied only when the leaf commits.
+struct BlockEffects {
+    SourceEventPhase5Context* scene=nullptr;SourceRngUpdateTransaction* rng=nullptr;
+    uint32_t work_identity=0;uint8_t slot=255;
+    std::array<uint32_t,2> used{};uint8_t children=0;
+    std::array<std::pair<size_t,SourceEventPhase5Bytes<72>>,2> child{};
+    int32_t camera_delta=0;bool failed=false;
+    bool ready() noexcept {
+        if(!scene||!rng||!scene->pool80.used[0]||!scene->pool80.used[1])return false;
+        for(size_t i=0x0c;i<0x10;++i)if(!scene->camera_800bc738.known[i])return false;
+        used={{*scene->pool80.used[0],*scene->pool80.used[1]}};return true;
+    }
+    std::optional<uint16_t> draw(uint32_t ra) noexcept {
+        const auto staged=stage_source_rng_e0(*rng,{ra,work_identity,slot});
+        if(staged.status!=SourceRngStatus::Ready){failed=true;return std::nullopt;}
+        return uint16_t(staged.sample32a);
+    }
+    // 0x80031618: first free slot MSB-first; nullptr when the pool is full.
+    SourceEventPhase5Bytes<72>* allocate() noexcept {
+        for(size_t i=0;i<64;++i){const uint32_t bit=0x80000000u>>(i&31u);if(used[i/32]&bit)continue;
+            const auto& slot80=scene->pool80.slots[i];
+            if(!slot80.known[1]||slot80.raw[1]!=uint8_t(0x80|i)){failed=true;return nullptr;}
+            used[i/32]|=bit;auto& c=child[children++];c.first=i;c.second=slot80;
+            auto* p=&c.second;const auto set=[&](size_t at,size_t n,uint32_t v){for(size_t k=0;k<n;++k){p->raw[at+k]=uint8_t(v>>(8*k));p->known[at+k]=1;}};
+            set(2,2,0);set(4,4,0);set(8,4,0);set(12,4,0);set(16,4,0);set(6,1,3);
+            return p;
+        }
+        return nullptr;
+    }
+    void commit() noexcept {
+        scene->pool80.used[0]=used[0];scene->pool80.used[1]=used[1];
+        for(uint8_t i=0;i<children;++i)scene->pool80.slots[child[i].first]=child[i].second;
+        if(camera_delta){auto& cam=scene->camera_800bc738;uint32_t v=0;
+            for(size_t k=0;k<4;++k)v|=uint32_t(cam.raw[0x0c+k])<<(8*k);v+=uint32_t(camera_delta);
+            for(size_t k=0;k<4;++k)cam.raw[0x0c+k]=uint8_t(v>>(8*k));}
+    }
+};
+void child_set(SourceEventPhase5Bytes<72>& c,size_t at,size_t n,uint32_t v) noexcept {
+    for(size_t k=0;k<n;++k){c.raw[at+k]=uint8_t(v>>(8*k));c.known[at+k]=1;}
+}
+// 0x80113C30 impact (subtype 4), 0x80113C98 / 0x80113D64 / 0x80113E10 debris (subtype 3).
+bool spawn_block_child(BlockEffects& fx,const SourceEventPhase5Bytes<80>& w,uint32_t spawner) noexcept {
+    auto* c=fx.allocate();if(fx.failed)return false;if(!c)return true;
+    const auto x=uint16_t(half(w,56)),y=uint16_t(half(w,58)),z=uint16_t(half(w,60));
+    if(spawner==0x80113c30u){
+        child_set(*c,0,1,1);child_set(*c,2,1,4);child_set(*c,3,1,0);child_set(*c,12,1,4);child_set(*c,13,1,0);
+        child_set(*c,30,2,0);child_set(*c,28,2,x);child_set(*c,8,1,0);child_set(*c,9,1,0);child_set(*c,32,2,z);return true;
+    }
+    if(spawner==0x80113e10u){
+        child_set(*c,0,1,1);child_set(*c,2,1,3);child_set(*c,3,1,0);child_set(*c,12,1,3);child_set(*c,13,1,0);child_set(*c,15,1,1);
+        const auto r=fx.draw(0x80113e54u);if(!r)return false;
+        child_set(*c,28,2,uint16_t(x+(*r&255u)-127u));child_set(*c,30,2,y);
+        child_set(*c,8,1,0);child_set(*c,9,1,0);child_set(*c,32,2,z);return true;
+    }
+    const bool wide=spawner==0x80113c98u;
+    if(!fx.draw(wide?0x80113cc8u:0x80113d94u))return false;   // result unused
+    child_set(*c,0,1,1);child_set(*c,2,1,3);child_set(*c,3,1,0);child_set(*c,12,1,3);child_set(*c,13,1,0);child_set(*c,15,1,0);
+    const auto rx=fx.draw(wide?0x80113cf4u:0x80113dc0u);if(!rx)return false;
+    const int dx=wide?386:128;
+    child_set(*c,28,2,uint16_t(int(int16_t(x))+((*rx&1u)?-dx:dx)));
+    if(wide){
+        const auto ry=fx.draw(0x80113d0cu);if(!ry)return false;
+        child_set(*c,30,2,uint16_t(y+(*ry&511u)-207u));
+        const auto rz=fx.draw(0x80113d2cu);if(!rz)return false;
+        child_set(*c,32,2,uint16_t(int(int16_t(z))+((*rz&1u)?-64:64)));
+    }else{child_set(*c,30,2,uint16_t(y-32u));child_set(*c,32,2,z);}
+    child_set(*c,8,1,0);child_set(*c,9,1,0);return true;
+}
 }
 SceneE0MeshTier scene_e0_tier_for_source_depth(int32_t depth) noexcept {
     return depth>=1801?SceneE0MeshTier::Far:depth>=701?SceneE0MeshTier::Middle:SceneE0MeshTier::Near;
@@ -213,6 +283,13 @@ SceneE0Result update_scene_e0_80112b9c(SourceEventPhase5Bytes<80>& work,
         return slot<32 && &work==&inputs.scene_context->pool_e0.slots[slot]&&
             inputs.pool==&inputs.scene_context->pool_e0;
     };
+    BlockEffects fx;
+    const auto block_ready=[&]() noexcept {
+        if(!current_prop())return false;
+        fx.scene=inputs.scene_context;fx.rng=inputs.e0_rng;fx.work_identity=*inputs.prop_identity;
+        fx.slot=uint8_t((*inputs.prop_identity-0x800bf118u)/80u);return fx.ready();
+    };
+    const auto block_done=[&]() noexcept {fx.commit();return done();};
     switch(work.raw[3]){
     case 0:
         if(selector>3)return hold(Status::UnsupportedBehaviorState,0x80113010);
@@ -285,7 +362,14 @@ SceneE0Result update_scene_e0_80112b9c(SourceEventPhase5Bytes<80>& work,
         if(!need(10,1))return out;
         if(work.raw[10]==0){out.source_function=0x80113390;if(!need(58,2))return out;
             put(next,12,1,18);put(next,68,4,uint32_t(uint16_t(half(next,58)))<<16u);increment(10);return done();}
-        if(work.raw[10]==1)return hold(Status::NeedsRngOrChildOwner,0x801133b4);
+        if(work.raw[10]==1){out.source_function=0x801133b4;
+            if(!need(56,6)||!need(68,4))return out;
+            if(!block_ready())return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            put(next,68,4,word(next,68)+0x00014000u);put(next,58,2,word(next,68)>>16);
+            const auto r=fx.draw(0x801133e4u);if(!r)return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            if(*r%6u==0&&!spawn_block_child(fx,next,0x80113e10u))return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            if(half(next,58)>0)increment(10);
+            return block_done();}
         if(work.raw[10]==2){out.source_function=0x8011344c;return bob(out.source_function,true);}
         return hold(Status::UnsupportedBehaviorState,0x801134a8);
     case 3:
@@ -293,8 +377,22 @@ SceneE0Result update_scene_e0_80112b9c(SourceEventPhase5Bytes<80>& work,
         if(selector!=1)return hold(Status::UnsupportedBehaviorState,0x80113768);
         if(!need(10,1))return out;
         if(work.raw[10]==0){out.source_function=0x801135e4;put(next,12,1,18);put(next,68,4,0);increment(10);return done();}
-        if(work.raw[10]==1)return hold(Status::NeedsRngOrChildOwner,0x80113600);
-        if(work.raw[10]==2)return hold(Status::NeedsLinkedOwner,0x801136a4);
+        if(work.raw[10]==1){out.source_function=0x80113600;
+            if(!need(56,6)||!need(68,4))return out;
+            if(!block_ready())return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            put(next,68,4,word(next,68)+0x00014e80u);
+            put(next,58,2,uint16_t(uint16_t(half(next,58))+uint16_t(word(next,68)>>16)));
+            if(half(next,58)>0){
+                if(!spawn_block_child(fx,next,0x80113c30u))return hold(Status::NeedsRngOrChildOwner,out.source_function);
+                fx.camera_delta=0x00100000;increment(10);
+            }else{
+                const auto r=fx.draw(0x8011367cu);if(!r)return hold(Status::NeedsRngOrChildOwner,out.source_function);
+                if((*r&3u)==0&&!spawn_block_child(fx,next,0x80113c98u))return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            }
+            return block_done();}
+        if(work.raw[10]==2){out.source_function=0x801136a4;
+            if(!block_ready())return hold(Status::NeedsLinkedOwner,out.source_function);
+            fx.camera_delta=-0x00100000;increment(10);return block_done();}
         if(work.raw[10]==3){out.source_function=0x801136d0;return bob(out.source_function,true);}
         if(work.raw[10]==4){out.source_function=0x80113724;return done(false);}
         return hold(Status::UnsupportedBehaviorState,0x8011372c);
@@ -306,8 +404,18 @@ SceneE0Result update_scene_e0_80112b9c(SourceEventPhase5Bytes<80>& work,
         if(work.raw[10]==1){out.source_function=0x8011381c;if(!need(13,1))return out;
             if(uint8_t(next.raw[13]+1)==3)return hold(Status::NeedsResourceMutation,out.source_function);
             increment(13);return done();}
-        if(work.raw[10]==2)return hold(Status::NeedsRngOrChildOwner,0x80113a6c);
-        if(work.raw[10]==3)return hold(Status::NeedsLinkedOwner,0x80113b00);
+        if(work.raw[10]==2){out.source_function=0x80113a6c;
+            if(!need(13,1)||!need(56,6))return out;
+            if(!block_ready())return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            increment(13);
+            if(int8_t(next.raw[13])==7){put(next,13,1,0);increment(10);fx.camera_delta=0x00100000;}
+            put(next,60,2,uint16_t(uint16_t(half(next,60))-73u));
+            const auto r=fx.draw(0x80113ad8u);if(!r)return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            if((*r&3u)==0&&!spawn_block_child(fx,next,0x80113d64u))return hold(Status::NeedsRngOrChildOwner,out.source_function);
+            return block_done();}
+        if(work.raw[10]==3){out.source_function=0x80113b00;
+            if(!block_ready())return hold(Status::NeedsLinkedOwner,out.source_function);
+            fx.camera_delta=-0x00100000;increment(10);return block_done();}
         if(work.raw[10]==4){out.source_function=0x80113b2c;if(!need(13,1)||!need(60,2))return out;
             increment(13);if(next.raw[13]==2)increment(10);put(next,60,2,uint16_t(uint16_t(half(next,60))+32));return done();}
         if(work.raw[10]==5){out.source_function=0x80113b70;return done(false);}

@@ -1683,7 +1683,19 @@ SceneE0FirstUpdatePass RuntimeSession::service_diagnostic_scene_e0_updates(const
         inputs.prop_release_owner=&release.owner;
         auto& prop=source_event_phase5_context_.pool_e0.slots[i];
         const auto before=prop;
+        // Falling-block/slide states draw rand() on the E0 channel (opening).
+        SourceRngUpdateTransaction e0_rng;bool e0_rng_open=false;
+        if(candidate_rng&&candidate_rng->admitted()&&!source_scene_rng_tape_.admitted()&&prop.known[3]&&prop.known[9]&&
+           ((prop.raw[3]==2&&prop.raw[9]==3)||(prop.raw[3]==3&&prop.raw[9]==1)||(prop.raw[3]==4&&prop.raw[9]==1)))
+            e0_rng_open=begin_source_rng_update(*candidate_rng,e0_rng,{frame_counter_,frame_counter_,SourceRngUpdatePhase::E0ObjectCallback})==SourceRngStatus::Ready;
+        inputs.e0_rng=e0_rng_open?&e0_rng:nullptr;
         result=update_scene_e0_80112b9c(prop,resources,area_.ebd,inputs);
+        inputs.e0_rng=nullptr;
+        if(e0_rng_open){
+            if(result.committed){if(commit_source_rng_update(*candidate_rng,e0_rng)!=SourceRngStatus::Ready){
+                prop=before;result.committed=false;result.status=SceneE0Status::NeedsRngOrChildOwner;}}
+            else rollback_source_rng_update(e0_rng);
+        }
         if(result.foreign_release_committed &&
             !commit_source_prop_foreign_release(source_prop_foreign_globals_,release,true)){
             // Synchronous one-use publication: preserve the entire record if
