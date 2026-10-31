@@ -43,6 +43,8 @@
 #include "legends3ds/runtime_session.h"
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/frontend_title.h"
+#include "legends3ds/frontend_servbots.h"
+#include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/gameplay_clock.h"
 #include "legends3ds/actor_runtime.h"
 #include "legends3ds/actor_detection_preparation.h"
@@ -2958,6 +2960,77 @@ void dump_top_framebuffer(const char* tag, uint32_t frame) {
     if (FILE* f = std::fopen(path, "wb")) { std::fwrite(fb, 1, size_t(w) * h * 3u, f); std::fclose(f); }
 }
 
+// The title Servbot parade (docs/research_01516/FRONTEND_TITLE.md): the
+// DEMO_DAT.EBD class-20 model, scripts and camera from servbots.l3ts, drawn
+// through the class-20 OT path into the scene OT that 0x800137D4 splices
+// into front-end entry 32 ahead of the logo.
+struct TitleServbotScene {
+    l3::EbdDirectory ebd;
+    l3::TitleServbotScripts scripts;
+    l3::ReferenceTables refs;
+    l3::TerrainFaceCamera camera;
+    l3::TitleServbotParade parade;
+    std::shared_ptr<const l3::ActorMeshResource> mesh;
+    std::shared_ptr<const l3::ActorAnimationBank> bank;
+    std::array<l3::ImportedActorInstance, 16> actors;
+    std::array<bool, 16> drawn{};
+};
+
+std::unique_ptr<TitleServbotScene> load_title_servbot_scene() {
+    auto s = std::make_unique<TitleServbotScene>();
+    s->ebd = l3::load_l3ebd_directory(read_binary(data_path("frontend/title.l3ebd")), true);
+    s->scripts = l3::load_title_servbot_scripts(read_binary(data_path("frontend/servbots.l3ts")));
+    if (!s->scripts.camera) throw std::runtime_error("servbots.l3ts has no camera block");
+    s->refs = l3::load_l3reference(read_binary(data_path("reference.l3ref")), true);
+    const auto rows = l3::find_ebd_entries(s->ebd, 0x20, 0);
+    if (rows.size() != 1) throw std::runtime_error("title.l3ebd: expected one class 0x20/0 row");
+    s->mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(s->ebd, rows[0]));
+    static constexpr uint8_t kRequests[] = {0, 1, 2, 9};   // the scripts' command-5 requests
+    s->bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+        s->ebd, rows[0], *s->mesh, kRequests, sizeof(kRequests), 256 * 1024));
+    const auto pose = l3::decode_ebd_actor_pose(s->ebd, rows[0], *s->mesh, 0, 0);
+    // 0x80038370 (cooked) -> 0x80037FB4: the camera words at 0x1F800008.
+    const auto& c = *s->scripts.camera;
+    const auto view = l3::source_gameplay_camera_80037fb4(s->refs, c.target, c.distance, c.yaw, c.pitch, 0, 0);
+    s->camera = l3::make_terrain_face_camera(view.camera_1f800008, nullptr);
+    s->camera.screen_x_min = -40; s->camera.screen_width = 400;   // 400-px top screen
+    for (size_t i = 0; i < s->actors.size(); ++i) {
+        auto& a = s->actors[i];
+        a.original_pool_slot = i; a.source_class = 0x20; a.subtype = 0; a.row = uint32_t(rows[0]);
+        a.floor_query_required = false; a.pose_selected_by_retail_state = true;
+        a.resource = s->mesh; a.animation_bank = s->bank; a.pose = pose;
+        a.animation_cursor = l3::actor_sequence_begin(0, pose.sequencing_record);
+    }
+    return s;
+}
+
+// One update of the parade inside 0x800137D4's order: the spawner, then the
+// draw (0x80028DE0) of what the previous callbacks left, then the class
+// callbacks (0x80031AA4) and their animation requests (0x800322A8/0x80032488).
+void step_title_servbots(TitleServbotScene& s, uint8_t frontend_state, int16_t fade,
+                         l3::SourceAudioQueue& audio) {
+    l3::TitleServbotFrame out;
+    l3::title_servbot_spawn_80015428(s.parade, frontend_state, fade, out);
+    for (size_t i = 0; i < s.actors.size(); ++i) {
+        const auto& slot = s.parade.slots[i];
+        // Work +0 bit 1 (set by the init) gates the draw: a slot spawned this
+        // update is not drawn yet. CANDIDATE: the draw path's own tests.
+        s.drawn[i] = slot.active && slot.state != 0;
+        if (!s.drawn[i]) continue;
+        auto& a = s.actors[i];
+        a.source_origin = slot.raw; a.heading = uint16_t(slot.heading & 0xFFF); a.raw_scale = slot.scale;
+    }
+    l3::title_servbot_update_800153ec(s.parade, s.scripts, s.refs, out);
+    for (const uint8_t id : out.sounds) (void)l3::enqueue_source_audio_8001a008(audio, id, 0, 0);
+    for (size_t i = 0; i < s.actors.size(); ++i) {
+        const auto& slot = s.parade.slots[i];
+        auto& a = s.actors[i];
+        if (!slot.active || slot.anim_ac == 0xFF || !a.pose || !a.animation_cursor) continue;
+        if (out.animation_restart[i]) (void)l3::actor_animation_reset(*s.bank, slot.anim_ac, *a.pose, *a.animation_cursor);
+        else (void)l3::actor_animation_step(*s.bank, *a.pose, *a.animation_cursor);
+    }
+}
+
 bool run_frontend_title(bool scripted) {
     const auto path = data_path("materials/frontend.l3mc");
     if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
@@ -2988,10 +3061,23 @@ bool run_frontend_title(bool scripted) {
       const bool ready = title_sfx.open(sfx_path);
       boot_log(MML_BOOT_DATA, ready ? "FRONTEND_SFX=1 sfx_title.l3sb" : "FRONTEND_SFX=0 sfx_title.l3sb absent"); }
     l3::SourceAudioQueue title_audio; l3::initialize_source_audio_queue_80019e14(title_audio);
+    std::unique_ptr<TitleServbotScene> servbots;
+    try { servbots = load_title_servbot_scene(); boot_log(MML_BOOT_DATA, "FRONTEND_SERVBOTS=1 title.l3ebd servbots.l3ts"); }
+    catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "FRONTEND_SERVBOTS=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
     l3::FrontendState state;
     uint8_t last_state = 0xFF, last_sub = 0xFF;
-    uint32_t frame = 0;
+    uint32_t frame = 0;   // front-end updates
     bool new_game = false;
+    // The front end updates once per two VBlanks like gameplay (oracle: the
+    // title's work changes every second frame); each 3DS frame redraws the
+    // last update's packets. Presses wait for the next update.
+    l3::GameplayClock clock;
+    u64 last_tick = svcGetSystemTick();
+    uint16_t pending = 0;
+    l3::FrontendFrame f;
     while (aptMainLoop() && !new_game) {
         hidScanInput();
         u32 down = hidKeysDown();
@@ -2999,17 +3085,22 @@ bool run_frontend_title(bool scripted) {
             u32 held = 0, up = 0; circlePosition cp{};
             if (!diagnostic_autoplay_frame(down, held, up, cp)) break;
         }
+        if (down & KEY_START) pending |= 0x0008u;
+        if (down & KEY_B) pending |= 0x4000u;      // Cross
+        if (down & KEY_A) pending |= 0x4000u;      // 3DS confirm
+        if (down & KEY_X) pending |= 0x1000u;      // Triangle (back)
+        if (down & KEY_DUP) pending |= 0x0010u;
+        if (down & KEY_DDOWN) pending |= 0x0040u;
+        if (down & KEY_DLEFT) pending |= 0x0080u;
+        if (down & KEY_DRIGHT) pending |= 0x0020u;
+        const u64 now = svcGetSystemTick();
+        clock.advance((now - last_tick) / CPU_TICKS_PER_USEC, false);
+        last_tick = now;
+        while (!new_game && clock.consume()) {
         l3::FrontendInput in;
-        if (down & KEY_START) in.pressed |= 0x0008u;
-        if (down & KEY_B) in.pressed |= 0x4000u;      // Cross
-        if (down & KEY_A) in.pressed |= 0x4000u;      // 3DS confirm
-        if (down & KEY_X) in.pressed |= 0x1000u;      // Triangle (back)
-        if (down & KEY_DUP) in.pressed |= 0x0010u;
-        if (down & KEY_DDOWN) in.pressed |= 0x0040u;
-        if (down & KEY_DLEFT) in.pressed |= 0x0080u;
-        if (down & KEY_DRIGHT) in.pressed |= 0x0020u;
+        in.pressed = pending; pending = 0;
         in.fade_80098a72 = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
-        const auto f = l3::frontend_step_80013420(state, in);
+        f = l3::frontend_step_80013420(state, in);
         for (const uint8_t type : f.fades) {
             l3::SourceFadeStartupResult started;
             if (type == 2) started = l3::consume_source_fade_startup_80017c30_type2(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents);
@@ -3019,11 +3110,15 @@ bool run_frontend_title(bool scripted) {
         }
         for (const auto& sound : f.sounds)
             (void)l3::enqueue_source_audio_8001a008(title_audio, sound[0], sound[1], 0);
+        // The scene (0x800137D4) runs with the backdrop packet 0x80013FB8.
+        const bool scene = std::any_of(f.packets.begin(), f.packets.end(),
+                                       [](const l3::FrontendPacket& p) { return p.bucket == 35; });
+        if (servbots && scene) step_title_servbots(*servbots, state.state, in.fade_80098a72, title_audio);
         if (title_sfx.ready()) {
             (void)title_sfx.consume(title_audio, l3::SourceSoundListener{});
-            title_sfx.tick(44100u / 60u);
+            title_sfx.tick(44100u / 30u);
         } else l3::finish_source_audio_queue_batch_8001a1d0(title_audio);
-        // The fade callback thread: one pass per frame.
+        // The fade callback thread: one pass per update.
         if (fade_intents.count && !fade_callback.running)
             (void)l3::acknowledge_source_fade_scheduler_intent(fade, fade_intents, fade_callback, kEndpointHold1f800001);
         else if (fade_callback.running)
@@ -3040,26 +3135,13 @@ bool run_frontend_title(bool scripted) {
             boot_log(MML_BOOT_DATA, label);
             if (scripted) dump_top_framebuffer("title", frame);   // previous frame on screen
         }
-        (void)acquire_gpu_frame("front end");
-        C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
-        if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("front end: C3D_FrameDrawOn rejected");
-        psx_begin_frame();
-        // Packets in the original AddPrim order and OT entries.
-        for (const auto& fp : f.packets) {
-            const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
-            for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
-            float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
-            for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
-            g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+        if (servbots && frame % 60u == 0u) {
+            unsigned live = 0, drawn = 0;
+            for (size_t i = 0; i < servbots->actors.size(); ++i) { live += servbots->parade.slots[i].active; drawn += servbots->drawn[i]; }
+            hardware_test_trace("# frontend_servbots,frame=%lu,wave=%d,phase=%d,timer=%d,live=%u,drawn=%u,class20_last=%lu",
+                (unsigned long)frame, int(servbots->parade.wave_08), int(servbots->parade.phase_0a),
+                int(servbots->parade.timer_06), live, drawn, (unsigned long)g_psx_last_stats.class20_actors);
         }
-        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
-        const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
-        psx_draw_ot(false, true);   // one walk in OT order: semi packets keep their place
-        g_psx_xy_from_gte = xy;
-        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
-        draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
-        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
-        submit_gpu_frame();
         ++frame;
         switch (f.result) {
             case l3::FrontendResult::NewGame: new_game = true; break;
@@ -3072,6 +3154,45 @@ bool run_frontend_title(bool scripted) {
                 break;
             default: break;
         }
+        }
+        (void)acquire_gpu_frame("front end");
+        C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
+        if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("front end: C3D_FrameDrawOn rejected");
+        psx_begin_frame();
+        // Three walks keep the original order: front-end entries 35..33, the
+        // spliced scene OT (far to near), then entry 32 (logo) down to 30.
+        const auto add_packets = [&](bool behind_scene) {
+            for (const auto& fp : f.packets) {
+                if ((fp.bucket > 32) != behind_scene) continue;
+                const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
+                for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
+                float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
+                for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
+                g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+            }
+        };
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
+        add_packets(true);
+        psx_draw_ot(false, true);   // one walk in OT order: semi packets keep their place
+        if (servbots && std::any_of(f.packets.begin(), f.packets.end(),
+                                    [](const l3::FrontendPacket& p) { return p.bucket == 35; })) {
+            g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+            g_psx_camera = servbots->camera;
+            for (size_t i = 0; i < servbots->actors.size(); ++i)
+                if (servbots->drawn[i])
+                    (void)psx_emit_class20(servbots->actors[i], l3::build_imported_actor_pose_matrices(servbots->actors[i]));
+            psx_draw_ot(false, true);
+            g_psx_camera.reset();
+        }
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        add_packets(false);
+        psx_draw_ot(false, true);
+        g_psx_xy_from_gte = xy;
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
+        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+        submit_gpu_frame();
     }
     // The last title frame may still be queued: finish it before the pages go.
     (void)acquire_gpu_frame("front end release"); submit_gpu_frame(false);

@@ -27,9 +27,12 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   menu: ROCK_NEO front end 0x80013420 (`frontend_title.cpp`, host test), the
   original POLY_FT4 packets, DEMO_DAT pages (`materials/frontend.l3mc`). NEW
   GAME starts the existing game. Backdrop (wall, strip, gradient, menu box),
-  fades 2/10 and title sounds are done. Missing: the Servbot parade (logic in
-  `frontend_servbots.cpp`, host-built, not yet drawn or tested), fades
-  1/9/22, CONTINUE/OPTION, attract demo.
+  fades 2/10 and title sounds are done. The Servbot parade logic matches
+  the oracle (0 mismatches on the title wave; see FRONTEND_TITLE.md) and is
+  drawn on the 3DS title (Azahar: textured, animated, walking). Open: the
+  Servbots look larger than expected (scale/projection CANDIDATE, needs an
+  oracle frame mid-wave). The front end now runs at 30 Hz (it ran at 60).
+  Missing: fades 1/9/22, CONTINUE/OPTION, attract demo.
   Research: `docs/research_01516/FRONTEND_TITLE.md`.
 - **Tutorial exit.** After 0x622 the far door loads ST00 Area 3. Event 3 now
   spawns the original boss resource and advances its recovered intro to the
