@@ -13,6 +13,11 @@ from cook_actor_combat import OwnerExe, build_metadata
 from cook_source_fade import cook as cook_source_fade
 from cook_source_event_phase5 import cook as cook_source_event_phase5
 from cook_source_event_phase6 import cook as cook_source_event_phase6
+from cook_source_event_poll import cook as cook_source_event_poll
+from cook_source_event_phase2 import cook as cook_source_event_phase2
+from cook_source_event_command import cook as cook_source_event_command
+from cook_source_prop_lift import cook as cook_source_prop_lift
+from cook_source_effect_dispatch import cook as cook_source_effect_dispatch
 from source_player_head import select_fresh_player_head
 from cook_source_scene_view import cook as cook_source_scene_view
 from cook_hit_proxy import build_metadata as cook_hit_proxy_rules
@@ -170,7 +175,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_frontend_materials']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_frontend_materials']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -257,6 +262,23 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         # E0/06 tutorial message-trigger lists (0x8011CC9C), neutral L3TR/1.
         subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_tutorial_triggers.py')),
                         '--overlay',str(stage/'R3_ST00.BIN'),'--out',str(runtime/'st00.l3tr')],check=True)
+        # New Game opening, ST00 event 1 (0x801010C4): the flag poll table
+        # (0x8011ADF8), phase-2 sound/command records (0x8001B33C/0x8001D58C),
+        # the command's cold CD metadata, and the scene's lift/effect windows.
+        # Read by main.cpp's optional actor-metadata loader.
+        overlay_bytes=(stage/'R3_ST00.BIN').read_bytes()
+        exe_bytes=(dat.parent.parent/'ROCK_NEO.EXE').read_bytes()
+        (runtime/'source_event.l3ep').write_bytes(cook_source_event_poll(overlay_bytes))
+        (runtime/'source_event_phase2.l3eq').write_bytes(cook_source_event_phase2(exe_bytes)[0])
+        (runtime/'source_event_command.l3ec').write_bytes(cook_source_event_command(exe_bytes)[0])
+        (runtime/'source_prop_lift.l3pl').write_bytes(cook_source_prop_lift(overlay_bytes))
+        (runtime/'source_effect_dispatch.l3f2').write_bytes(cook_source_effect_dispatch(overlay_bytes))
+        for key,name in (('source_prop_lift','source_prop_lift.l3pl'),('source_effect_dispatch','source_effect_dispatch.l3f2')):
+            manifest[key]={'format':1,'optional':True,'default_enabled':False,'runtime_gate':'SOURCE_EVENT_BOOT=1',
+                'status':'SOURCE_BACKED_PARTIAL','path':'legends3ds/tutorial/'+name}
+        manifest['opening_event1']={'status':'SOURCE_BACKED_PARTIAL',
+            'paths':[f'legends3ds/tutorial/{n}' for n in ('source_event.l3ep','source_event_phase2.l3eq',
+                'source_event_command.l3ec','source_prop_lift.l3pl','source_effect_dispatch.l3f2')]}
 
         # Exact fixed-point reference table used by the original movement path.
         # The EXE is inferred from the normal extraction layout
@@ -365,6 +387,15 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
             scene_path=mout/'scene_e0_initial.l3sm'
             run(tools,'l3cook_scene_e0_material',runtime/'source_event_phase5.l3p5',
                 eout/'area_00.l3ebd',scene_path,*scene_uploads)
+            # The opening's class-40 actor (event+24) material pages, same
+            # initial upload batch as the E0 snapshot.
+            run(tools,'l3cook_scene_actor40_material',runtime/'source_event_phase5.l3p5',
+                eout/'area_00.l3ebd',mout/'scene_actor40_initial.l3sm',*scene_uploads)
+            manifest['scene_actor40_materials']={'format':1,'optional':True,
+                'runtime_gate':'SOURCE_SCENE_TEXTURES=1','default_enabled':False,
+                'snapshot':'INITIAL_UPLOAD_BATCH','chronology':'SOURCE_BACKED_PARTIAL',
+                'live_palette':'UNKNOWN','path':str((mout/'scene_actor40_initial.l3sm').relative_to(out)),
+                'uploads':[{'name':path.name,'sha256':sha256(path)} for path in scene_uploads]}
             manifest['scene_materials']={'format':1,'optional':True,
                 'runtime_gate':'SOURCE_SCENE_TEXTURES=1','default_enabled':False,
                 'snapshot':'INITIAL_UPLOAD_BATCH','chronology':'SOURCE_BACKED_PARTIAL',

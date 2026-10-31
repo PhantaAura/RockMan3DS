@@ -29,7 +29,7 @@ from mml_pipeline import build, encoded, sha
 from owner_data_intake import normalize_owner_directory, prepare_owner_input
 
 ROOT = Path(__file__).resolve().parents[1]
-TUTORIAL_RECIPE = "tutorial-install/01516-frontend-1"
+TUTORIAL_RECIPE = "tutorial-install/01516-opening-1"
 TUTORIAL_SCRIPTS = (
     "build_tutorial_pack.py", "cook_reference_tables.py", "mml_pipeline.py",
     "build_stage_catalog.py", "build_stage_object_catalog.py", "cook_actor_combat.py",
@@ -37,12 +37,14 @@ TUTORIAL_SCRIPTS = (
     "source_player_head.py", "cook_source_scene_view.py", "cook_source_buster_profile.py", "cook_source_tutorial_triggers.py",
     "cook_hit_proxy.py", "cook_class60_06.py", "cook_reaction_profile.py", "cook_actor_angle.py",
     "cook_source_player_target.py", "cook_source_reward_profile.py",
+    "cook_source_event_poll.py", "cook_source_event_phase2.py", "cook_source_event_command.py",
+    "cook_source_prop_lift.py", "cook_source_effect_dispatch.py",
 )
 TUTORIAL_TOOLS = (
     "l3cook_st00", "l3cook_render", "l3cook_map_init", "l3cook_st00_flow", "l3cook_st00_spawn", "l3cook_pbd",
     "l3cook_player_comp", "l3cook_anim", "l3cook_skeleton", "l3cook_msg",
     "l3cook_ebd", "l3cook_texture", "l3cook_palette", "l3cook_material_cache",
-    "l3cook_player_material_cache", "l3cook_actor_material_cache", "l3cook_negative_materials", "l3cook_scene_e0_material", "l3cook_frontend_materials",
+    "l3cook_player_material_cache", "l3cook_actor_material_cache", "l3cook_negative_materials", "l3cook_scene_e0_material", "l3cook_scene_actor40_material", "l3cook_frontend_materials",
 )
 
 

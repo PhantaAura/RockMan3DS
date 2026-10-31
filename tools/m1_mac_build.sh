@@ -63,6 +63,15 @@ if [ -f "$CUE" ]; then
     VOICE="$CACHE/audio/voice_st00-$VOICE_KEY.l3vb"
     [ -f "$VOICE" ] || python3 "$ROOT/tools/cook_xa_voice.py" --cue "$CUE" --exe "$OWNER/ROCK_NEO.EXE" --out "$VOICE" --requests 0x0-0x2d
     cp "$VOICE" "$DATA/audio/voice_st00.l3vb"
+    # Opening (ST00 event 1 phase 2, 0x8001D58C(0x20000003)): the XA stream its
+    # CD command plays, named by the command id in source_event_command.l3ec.
+    if [ -f "$DATA/source_event_command.l3ec" ]; then
+        XA_ID="$(python3 -c 'import struct,sys;print(struct.unpack_from("<I",open(sys.argv[1],"rb").read(),64)[0])' "$DATA/source_event_command.l3ec")"
+        XA_KEY="$(shasum -a 256 "$ROOT/tools/cook_xa_stream.py" | cut -c1-16)"
+        XA="$CACHE/audio/stream_$XA_ID-$XA_KEY.l3xa"
+        [ -f "$XA" ] || python3 "$ROOT/tools/cook_xa_stream.py" --cue "$CUE" --exe "$OWNER/ROCK_NEO.EXE" --out "$XA" > /dev/null
+        cp "$XA" "$DATA/audio/stream_$XA_ID.l3xa"
+    fi
 else
     echo "WARNING: no CUE at $CUE; Roll's voice clips are not installed (text stays silent)."
 fi
