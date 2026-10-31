@@ -2221,7 +2221,7 @@ const PsxResolved& psx_resolve(uint16_t clut, uint16_t tpage) {
         }
     // Class-20 / E0 pages: the ramp is ORed into the CLUT (0x800289A0,
     // 0x8002A6E8), so a page whose CLUT bits are a subset stands in (scale 1).
-    for (const auto* list : {&g_actor_materials, &g_scene_materials}) {
+    for (const auto* list : {&g_actor_materials, &g_scene_materials, &g_scene_actor40_materials}) {
         if (r.found) break;
         for (const auto& m : *list) {
             const uint16_t mc = uint16_t(m.material_word >> 16);
