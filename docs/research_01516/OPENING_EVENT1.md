@@ -77,6 +77,13 @@ event+10 in record 0 and 2943 + event+10 in record 10 (2286 = records 0..9).
 The port now binds 657 at phase-6 entry and runs the 0x80011ECC tail
 (CANDIDATE; the real value depends on boot/title time). Not re-run yet.
 
+## Azahar re-run (build pass-opening-203335, counter fix)
+Timeline now runs through record 19 (0x80100D34 @2583, 0x80100D6C @2609,
+0x80100E9C @2659, 0x80100ECC @3029). At 3072 (record 19 local frame 44, the
+original end condition) the type-10 fade startup returned NeedsProfile: the
+pack's L3FD was decoder 1 and lacks 0x80097A46. The pack now cooks the
+decoder-2 profile (build pass-opening-211127); not re-run yet.
+
 ## Open
 - Re-run the opening in Azahar with the counter fix (build
   pass-opening-203335): records 10..19, phase 7, Area 1 control at
