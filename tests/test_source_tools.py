@@ -128,14 +128,14 @@ class TutorialOutputTests(unittest.TestCase):
             record[2048:2057] = b'synthetic'
             common += record
         (self.dat/'ST00.BIN').write_bytes(common)
-        for name in ('texture','palette','material_cache','player_material_cache','actor_material_cache','negative_materials','scene_e0_material','scene_actor40_material','frontend_materials'):
+        for name in ('texture','palette','material_cache','player_material_cache','actor_material_cache','negative_materials','scene_e0_material','scene_actor40_material','palette_bank','frontend_materials'):
             (self.tools/('l3cook_'+name)).write_text('synthetic fixture\n')
         calls = []
         output_index = {'l3cook_st00':5,'l3cook_render':5,'l3cook_map_init':7,'l3cook_st00_flow':2,'l3cook_st00_spawn':2,
             'l3cook_pbd':2,'l3cook_player_comp':6,'l3cook_anim':5,'l3cook_skeleton':3,
             'l3cook_msg':2,'l3cook_ebd':3,'l3cook_negative_materials':2,
             'l3cook_material_cache':6,'l3cook_player_material_cache':6,'l3cook_actor_material_cache':2,'l3cook_scene_e0_material':3,
-            'l3cook_scene_actor40_material':3,'l3cook_frontend_materials':2}
+            'l3cook_scene_actor40_material':3,'l3cook_palette_bank':1,'l3cook_frontend_materials':2}
         def fake_run(tools,*args):
             calls.append(args)
             Path(args[output_index[args[0]]]).write_bytes(b'synthetic cooked output')
@@ -160,6 +160,7 @@ class TutorialOutputTests(unittest.TestCase):
              patch.object(cooker,'cook_source_event_command',return_value=(b'authored command profile',{})), \
              patch.object(cooker,'cook_source_prop_lift',return_value=b'authored lift profile'), \
              patch.object(cooker,'cook_source_effect_dispatch',return_value=b'authored effect profile'), \
+             patch.object(cooker,'cook_source_palette_c0',return_value=b'authored palette profile'), \
              patch.object(cooker,'cook_hit_proxy_rules',return_value=b'authored proxy rules'), \
              patch.object(cooker,'cook_class60_06',return_value=b'authored child profile'), \
              patch.object(cooker,'cook_reaction_profile',return_value=b'authored reaction profile'), \
@@ -173,6 +174,9 @@ class TutorialOutputTests(unittest.TestCase):
                 self.assertEqual(Path(call[5]).suffix,'.l3map' if call[0] == 'l3cook_st00' else '.l3render')
                 self.assertEqual(Path(call[6]).name,'ST00.HD2')
             elif call[0] == 'l3cook_material_cache':
+                # Area 0 (C0/03 palette object) adds --runtime-palettes.
+                self.assertEqual(call[-1] == '--runtime-palettes',int(call[5]) == 0)
+                if call[-1] == '--runtime-palettes': call=call[:-1]
                 self.assertEqual(call[-2],'--ramp-out')
                 self.assertEqual(Path(call[-1]).name,f'area_{int(call[5]):02d}.l3cr')
                 self.assertEqual(call[-4],'--negative-materials')

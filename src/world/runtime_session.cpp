@@ -1906,6 +1906,12 @@ bool RuntimeSession::initialize_fresh_source_event_subset_st00() noexcept {
     // does not establish retail position or camera-update cadence parity.
     initialize_source_event_scene_from_executable_boot_80068000(source_event_phase5_context_);
     initialize_source_event_phase5_pools_8002e88c(source_event_phase5_context_);
+    // The area loader (0x8002ED6C) spawns the area's family-C0 records into the
+    // reset pool; area 0's single record is the C0/03 palette object.
+    for(const auto& record:area_.flow.objects.records)
+        if((record.raw[1]&0xE0u)==0xC0u){std::array<uint8_t,20> raw{};
+            std::copy(record.raw.begin(),record.raw.begin()+20,raw.begin());
+            (void)spawn_source_c0_record_8002ed6c(source_event_phase5_context_.pool_c0,raw);}
     auto camera_known=source_event_player_known_;
     for(size_t i=0x14;i<0x1a;++i)camera_known[i]=1;
     (void)initialize_source_event_phase5_camera_80038674(source_event_phase5_context_,player_,camera_known);

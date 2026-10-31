@@ -38,6 +38,7 @@ add_library(legends3ds_core STATIC
     src/flow/frontend_servbots.cpp
     src/flow/source_event_phase5.cpp
     src/flow/source_event_phase6.cpp
+    src/flow/source_palette_c0.cpp
     src/flow/source_event_random_effect.cpp
     src/flow/source_event_random_tape.cpp
     src/world/scene_e0.cpp
@@ -1190,3 +1191,10 @@ add_executable(test_source_scene_tracked_camera tests/test_source_scene_tracked_
 target_link_libraries(test_source_scene_tracked_camera PRIVATE legends3ds_core)
 target_compile_options(test_source_scene_tracked_camera PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_scene_tracked_camera COMMAND test_source_scene_tracked_camera)
+add_executable(l3cook_palette_bank tools/l3cook_palette_bank.cpp)
+target_link_libraries(l3cook_palette_bank PRIVATE legends3ds_core)
+target_compile_options(l3cook_palette_bank PRIVATE -Wall -Wextra -Wpedantic -Werror)
+add_executable(test_source_palette_c0 tests/test_source_palette_c0.cpp)
+target_link_libraries(test_source_palette_c0 PRIVATE legends3ds_core)
+target_compile_options(test_source_palette_c0 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_palette_c0 COMMAND test_source_palette_c0)

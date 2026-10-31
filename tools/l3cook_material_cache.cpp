@@ -16,7 +16,7 @@
 int main(int argc, char** argv) {
     try {
         if (argc < 8) {
-            std::cerr << "usage: l3cook_material_cache ST00_MAP.MDT ST00_MAP.IDX ST00.STG ST00.HED AREA_INDEX OUT.l3mc CONTAINER.BIN... [--negative-materials bindings.l3nm]\n";
+            std::cerr << "usage: l3cook_material_cache ST00_MAP.MDT ST00_MAP.IDX ST00.STG ST00.HED AREA_INDEX OUT.l3mc CONTAINER.BIN... [--negative-materials bindings.l3nm] [--runtime-palettes]\n";
             return 2;
         }
         const auto mdt = l3::read_file(argv[1]);
@@ -49,7 +49,9 @@ int main(int argc, char** argv) {
         l3::NegativeMaterialTables negative_materials;
         bool negative_option_present = false;
         std::string ramp_out;
+        bool runtime_palettes = false;   // area spawns family-C0 palette objects
         for (int i = 7; i < argc; ++i) {
+            if (std::string(argv[i]) == "--runtime-palettes") { runtime_palettes = true; continue; }
             if (std::string(argv[i]) == "--ramp-out") {
                 if (!ramp_out.empty() || i + 1 >= argc) throw std::runtime_error("ramp-out option duplicated or missing path");
                 ramp_out = argv[++i];
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
         }
         const std::vector<uint32_t> ordered_words(words.begin(), words.end());
         std::vector<l3::MaterialVramDiagnostics> diagnostics;
-        const auto cache = l3::build_material_cache(ordered_words, resources, &diagnostics);
+        const auto cache = l3::build_material_cache(ordered_words, resources, &diagnostics, runtime_palettes);
         const auto cooked = l3::cook_l3material_cache(cache);
         std::ofstream out(argv[6], std::ios::binary);
         out.write(reinterpret_cast<const char*>(cooked.data()), static_cast<std::streamsize>(cooked.size()));

@@ -18,6 +18,7 @@ from cook_source_event_phase2 import cook as cook_source_event_phase2
 from cook_source_event_command import cook as cook_source_event_command
 from cook_source_prop_lift import cook as cook_source_prop_lift
 from cook_source_effect_dispatch import cook as cook_source_effect_dispatch
+from cook_source_palette_c0 import cook as cook_source_palette_c0
 from source_player_head import select_fresh_player_head
 from cook_source_scene_view import cook as cook_source_scene_view
 from cook_hit_proxy import build_metadata as cook_hit_proxy_rules
@@ -175,7 +176,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_frontend_materials']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -275,6 +276,7 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         (runtime/'source_event_command.l3ec').write_bytes(cook_source_event_command(exe_bytes)[0])
         (runtime/'source_prop_lift.l3pl').write_bytes(cook_source_prop_lift(overlay_bytes))
         (runtime/'source_effect_dispatch.l3f2').write_bytes(cook_source_effect_dispatch(overlay_bytes))
+        (runtime/'source_palette_c0.l3c0').write_bytes(cook_source_palette_c0(overlay_bytes))
         for key,name in (('source_prop_lift','source_prop_lift.l3pl'),('source_effect_dispatch','source_effect_dispatch.l3f2')):
             manifest[key]={'format':1,'optional':True,'default_enabled':False,'runtime_gate':'SOURCE_EVENT_BOOT=1',
                 'status':'SOURCE_BACKED_PARTIAL','path':'legends3ds/tutorial/'+name}
@@ -367,7 +369,10 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 area_container=dat/f'ST00_{area_index:02d}.BIN'
                 run(tools,'l3cook_material_cache',stage/'ST00_MAP.MDT',stage/'ST00_MAP.IDX',stage/'ST00.STG',stage/'ST00.HED',
                     str(area_index),mout/f'area_{area_index:02d}.l3mc',*upload_prefix,area_container,*negative_args,
-                    '--ramp-out',mout/f'area_{area_index:02d}.l3cr')
+                    '--ramp-out',mout/f'area_{area_index:02d}.l3cr',
+                    # Area 0's object list spawns the C0/03 palette object (0x8002ED6C):
+                    # its CLUT rows are written at runtime, keep those pages' indices.
+                    *(['--runtime-palettes'] if area_index==0 else []))
                 # Player meshes use their own TPAGE/CLUT words. Cook a parallel
                 # per-area cache so stage-local face/palette uploads can replace
                 # the common player pages with the same last-writer semantics.
@@ -389,6 +394,8 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
             scene_path=mout/'scene_e0_initial.l3sm'
             run(tools,'l3cook_scene_e0_material',runtime/'source_event_phase5.l3p5',
                 eout/'area_00.l3ebd',scene_path,*scene_uploads)
+            # Family-C0 palette bank (0x800AD168 rows 0..31) for the same batch.
+            run(tools,'l3cook_palette_bank',mout/'palette_bank_00.l3pb',*scene_uploads)
             # The opening's class-40 actor (event+24) material pages, same
             # initial upload batch as the E0 snapshot.
             run(tools,'l3cook_scene_actor40_material',runtime/'source_event_phase5.l3p5',

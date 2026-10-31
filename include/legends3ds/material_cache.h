@@ -70,7 +70,12 @@ MaterialResolution resolve_material_word_last_writer(
 MaterialCache build_material_cache(
     const std::vector<uint32_t>& material_words,
     const std::vector<IndexedResource>& upload_order,
-    std::vector<MaterialVramDiagnostics>* diagnostics = nullptr);
+    std::vector<MaterialVramDiagnostics>* diagnostics = nullptr, bool keep_runtime_palettes = false);
+// The 32-row CPU palette bank the original loader fills (0x8001BE10/0x8001BF44)
+// for the same ordered uploads, with the rows it dirtied.
+struct PaletteBankSnapshot { std::vector<uint16_t> words; std::vector<uint8_t> written; uint32_t dirty = 0; };
+PaletteBankSnapshot compose_palette_bank(const std::vector<IndexedResource>& resources);
+bool palette_bank_row(uint16_t vram_x, uint16_t vram_y) noexcept;
 
 const MaterialCacheEntry* find_material_cache_entry(const MaterialCache& cache, uint32_t material_word);
 

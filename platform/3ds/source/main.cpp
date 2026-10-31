@@ -1,5 +1,6 @@
 #include "checkpoint_version.h"
 #include "legends3ds/gameplay_gates.h"
+#include "legends3ds/source_palette_c0.h"
 #include <3ds.h>
 #include <citro3d.h>
 #include <algorithm>
@@ -973,10 +974,59 @@ void rebuild_terrain_uv_flat(const l3::RuntimeMap& map, const l3::St00RenderSour
     g_owned_linear_bytes += uint32_t(bytes);
 }
 
+// Pages whose CLUT lies in the 0x800AD168 mirror rows (VRAM y 240..255 /
+// 496..511): the family-C0 palette objects rewrite those colours at runtime,
+// so each page keeps its indices in CTR tile order for re-colouring.
+struct RuntimePalettePage { uint32_t word = 0; uint16_t clut_x = 0, clut_y = 0, entries = 0; std::vector<uint8_t> tiled; };
+static std::vector<RuntimePalettePage> g_runtime_palette_pages;
+static std::optional<l3::SourcePaletteC0Profile> g_palette_c0;
+static l3::SourcePaletteBuffer g_palette_buffer;
+void register_runtime_palette_page(const l3::MaterialCacheEntry& e) {
+    const uint16_t clut = uint16_t(e.material_word >> 16);
+    const uint16_t x = uint16_t((clut & 0x3Fu) * 16u), y = uint16_t(clut >> 6);
+    if (!e.resolved || !l3::palette_bank_row(x, y)) return;
+    for (const auto& p : g_runtime_palette_pages) if (p.word == e.material_word) return;
+    RuntimePalettePage page; page.word = e.material_word; page.clut_x = x; page.clut_y = y; page.entries = e.palette_entries;
+    // Tile order of the index plane: run the RGBA tiler with the index in R.
+    std::vector<uint8_t> linear(e.indices.size() * 4u, 0);
+    for (size_t i = 0; i < e.indices.size(); ++i) linear[i * 4u] = e.indices[i];
+    const auto tiled = l3::ctr_rgba8_tiled_abgr(linear, l3::kL3MaterialTextureWidth, l3::kL3MaterialTextureHeight);
+    page.tiled.resize(e.indices.size());
+    for (size_t i = 0; i < page.tiled.size(); ++i) page.tiled[i] = tiled[i * 4u + 3u];
+    g_runtime_palette_pages.push_back(std::move(page));
+}
+// Re-colour every uploaded copy of the pages whose mirror row changed, with
+// material_page_rgba8's rules (word 0 transparent, STP alpha 0x80).
+void recolour_runtime_palette_pages(uint64_t rows) {
+    for (const auto& page : g_runtime_palette_pages) {
+        const size_t row = page.clut_y < 256u ? 32u + (page.clut_y - 240u) : 48u + (page.clut_y - 496u);
+        if (!((rows >> row) & 1u)) continue;
+        std::array<uint32_t,256> lut{};
+        bool complete = true;
+        for (size_t i = 0; i < page.entries; ++i) {
+            const size_t at = row * l3::kSourcePaletteRowWords + page.clut_x + i;
+            if (at >= g_palette_buffer.words.size() || !g_palette_buffer.known[at]) { complete = false; break; }
+            const uint16_t c = g_palette_buffer.words[at];
+            const auto e5 = [](uint16_t v) { v &= 31u; return uint32_t((v << 3) | (v >> 2)); };
+            const uint32_t a = c == 0 ? 0u : ((c & 0x8000u) ? 0x80u : 0xFFu);
+            lut[i] = a | (e5(c >> 10) << 8) | (e5(c >> 5) << 16) | (e5(c) << 24);   // A,B,G,R bytes
+        }
+        if (!complete) continue;
+        const auto paint = [&](C3D_Tex& tex) {
+            auto* d = static_cast<uint32_t*>(tex.data);
+            if (!d) return;
+            for (size_t k = 0; k < page.tiled.size(); ++k) d[k] = lut[page.tiled[k]];
+            GSPGPU_FlushDataCache(d, uint32_t(page.tiled.size() * 4u));
+        };
+        for (auto& b : g_terrain_batches) if (b.texture_ready && !(b.key >> 32) && b.material_word == page.word) paint(b.texture);
+        for (auto& m : g_scene_materials) if (m.texture_ready && m.material_word == page.word) paint(m.texture);
+    }
+}
 bool upload_material_texture(const l3::MaterialCacheEntry* e, C3D_Tex& tex) {
     if (!e || !e->resolved) return false;
     if (g_owned_texture_bytes > kAreaTextureLimit - kTexturePageBytes)
         throw std::runtime_error("area combined terrain/player GPU texture policy exceeded");
+    register_runtime_palette_page(*e);
     const auto rgba = l3::material_page_rgba8(*e);
     if (rgba.size() != size_t(kTexturePageBytes))
         throw std::runtime_error("material RGBA page size mismatch");
@@ -3765,6 +3815,16 @@ int main() {
                 g_new_game_opening=true;g_source_event_boot=true;
                 g_source_scene_e0=g_source_scene_actor40=g_source_scene_textures=g_source_scene_camera=true;
             }
+            if(g_new_game_opening){
+                try{
+                    l3::SourcePaletteC0Profile profile;
+                    if(present(data_path("source_palette_c0.l3c0").c_str())&&present(data_path("materials/palette_bank_00.l3pb").c_str())&&
+                       l3::load_source_palette_c0_profile(read_binary(data_path("source_palette_c0.l3c0"),4096),profile)&&
+                       l3::load_source_palette_bank(read_binary(data_path("materials/palette_bank_00.l3pb"),32768),g_palette_buffer))
+                        g_palette_c0=profile;
+                }catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+                boot_log(MML_BOOT_DATA,g_palette_c0?"PALETTE_C0=1 0x80017478 subtypes 3/4, buffer 0x800AD168":"PALETTE_C0=0 profile/bank absent");
+            }
             boot_log(MML_BOOT_DATA,g_new_game_opening?"NEW_GAME_OPENING=1 ST00 event1 0x801010C4 phases0..7 then handoff 0x80101274"
                 :assets?"NEW_GAME_OPENING=0 direct handoff":"NEW_GAME_OPENING=0 event1 assets absent; direct handoff");
         }
@@ -4567,6 +4627,10 @@ int main() {
                                 (unsigned long)pass.initialized_count,(unsigned long)pass.updated_count,(unsigned long)pass.held_count);
                     }
                 }
+                if(g_palette_c0){const auto pass=session.service_source_palette_c0(g_palette_buffer,*g_palette_c0);
+                    if(session.frame_counter()%60u==0u)
+                        hardware_test_trace("# source_palette_c0,frame=%lu,updated=%u,released=%u,held=%u,source=80017478",
+                            (unsigned long)session.frame_counter(),unsigned(pass.updated),unsigned(pass.released),unsigned(pass.held));}
                 if(g_source_event_boot){const auto pass=session.service_diagnostic_scene_effects();
                     if(pass.updated||pass.released||session.frame_counter()%60u==0u)
                         hardware_test_trace("# source_scene_effect80_update,frame=%lu,status=%u,committed=%u,updated=%u,released=%u,chronology=CANDIDATE",
@@ -5624,6 +5688,7 @@ int main() {
             C3D_Mtx view{};Mtx_LookAt(&view,eye,at,up,false);
             C3D_Mtx frame_projection=g_projection;
             bool source_camera_bound=false;
+            if(g_palette_c0&&g_palette_buffer.changed_rows){recolour_runtime_palette_pages(g_palette_buffer.changed_rows);g_palette_buffer.changed_rows=0;}
             g_scene_view_frame.reset();
             if(g_source_event_boot&&g_source_scene_camera&&use_uv_renderer()&&actor_metadata.scene_view&&
                session.source_event_phase5_resources().resident_in(session.active_area().ebd)) {
