@@ -64,12 +64,14 @@ void differential(const std::string& folder){
         require(current.raw==before.raw&&current.known==before.known&&allocations==allocated,"caller changed event phase/counter or allocated");
         if(type10)require(!observed.committed&&observed.status==Status::NeedsType10FadeConsumer&&observed.next_consumer==0x80017c30&&
             same_state(context,previous),"unproved type10 fade or phase advance acknowledged");
-        else if(enabled){require(observed.committed&&observed.status==Status::AwaitingSceneOverlayConsumer&&context.scene_overlay_pending&&
+        else if(enabled){
+            // 0x80101310 publishes this frame's overlay and the caller completes
+            // without waiting for the GPU.
+            require(observed.committed&&observed.status==Status::CallerConsumed&&context.scene_overlay_pending&&
                 context.scene_overlay_pending->r==64&&context.scene_overlay_pending->g==128&&context.scene_overlay_pending->b==255&&
-                context.awaiting_caller_801011e8,"source color tail not queued accurately");
+                !context.awaiting_caller_801011e8,"source color tail not published accurately");
             require(!acknowledge_source_event_scene_overlay_80100614(context,seed+2)&&context.scene_overlay_pending,"stale overlay serial accepted");
-            require(acknowledge_source_event_scene_overlay_80100614(context,seed+1)&&!context.awaiting_caller_801011e8&&
-                !context.scene_overlay_pending,"exact overlay receipt did not release caller");
+            require(acknowledge_source_event_scene_overlay_80100614(context,seed+1)&&context.scene_overlay_pending,"draw receipt changed the overlay");
         }else {require(observed.committed&&observed.status==Status::CallerConsumed&&!context.awaiting_caller_801011e8,
                 "disabled source overlay required renderer/fabricated completion");}
         ++count;
@@ -109,7 +111,7 @@ void guards(){
     auto context=state();require(consume_source_event1_caller_801011e8(current,scene,context,&bank,0,9).committed,"pending overlay fixture failed");
     const auto allocated=allocations;const auto previous=context;
     for(unsigned i=0;i<4096;++i){const auto observed=consume_source_event1_caller_801011e8(current,scene,context,nullptr,std::nullopt,i+10);
-        require(!observed.committed&&observed.status==Status::AwaitingSceneOverlayConsumer&&same_state(previous,context),"queued overlay repeated caller/predicate");}
+        require(!observed.committed&&observed.status==Status::AwaitingCallerConsumer&&same_state(previous,context),"completed caller repeated caller/predicate");}
     require(allocations==allocated,"overlay hold allocated per frame");std::cout<<"10 atomic guards/4096 allocation-free holds PASS; ";
 }
 EbdDirectory directory(){std::vector<uint8_t> bytes(232);for(size_t i=0;i<bytes.size();++i)bytes[i]=uint8_t(i*7+3);put(bytes.data(),14);
@@ -141,19 +143,18 @@ RuntimeSession session(){RuntimeMap map;RuntimeMapArea area;area.start_x=area.st
 void leases(){
     auto original=session();const auto first=*original.source_event_scene_overlay();
     require(first.lease.native_owner==&original&&first.lease.serial!=0,"presentation native lease not bound");
+    // The scene update never waits for a draw receipt (0x80101310 just adds
+    // the overlay to the OT): each tick advances the counter and republishes.
     const auto counter=original.source_event_work()->raw[0x10];original.tick({});
-    require(original.source_event_work()->raw[0x10]==counter&&original.source_event_scene_overlay()->lease.serial==first.lease.serial,
-        "missing renderer receipt reran original scene update");
+    const auto second=*original.source_event_scene_overlay();
+    require(original.source_event_work()->raw[0x10]==uint8_t(counter+1)&&second.lease.serial>first.lease.serial,
+        "scene update waited for a renderer receipt");
     auto copy=original;const auto copied=*copy.source_event_scene_overlay();
-    require(!copy.acknowledge_source_event_scene_overlay(first.lease)&&!original.acknowledge_source_event_scene_overlay(copied.lease),
+    require(!copy.acknowledge_source_event_scene_overlay(second.lease)&&!original.acknowledge_source_event_scene_overlay(copied.lease),
         "copied session accepted another owner's renderer receipt");
     require(copy.acknowledge_source_event_scene_overlay(copied.lease)&&original.source_event_scene_overlay(),"copy receipt altered original");
-    const RuntimeSession* alias=&original;original=*alias;
-    require(original.acknowledge_source_event_scene_overlay(first.lease)&&!original.source_event_scene_overlay(),"self-copy lost valid receipt");
-    require(!original.acknowledge_source_event_scene_overlay(first.lease),"duplicate presentation receipt accepted");
-    original.tick({});const auto next=*original.source_event_scene_overlay();
-    require(next.lease.serial>first.lease.serial&&original.source_event_work()->raw[0x10]==uint8_t(counter+1),"renderer receipt did not resume next source update");
-    for(unsigned i=0;i<40;++i){const auto present=*original.source_event_scene_overlay();require(original.acknowledge_source_event_scene_overlay(present.lease),"repeat scene overlay failed");original.tick({});}
+    require(!original.acknowledge_source_event_scene_overlay(first.lease),"superseded presentation receipt accepted");
+    for(unsigned i=0;i<40;++i){original.tick({});require(original.source_event_scene_overlay().has_value(),"overlay lost while 0x80122428 set");}
     require(original.source_event_work()->phase04()==6,"repeated source updates fabricated phase completion");
     auto replacement=session();const auto stale=original.source_event_scene_overlay()->lease;original=replacement;
     require(!original.acknowledge_source_event_scene_overlay(stale),"same-address assignment reused presentation serial");

@@ -406,7 +406,6 @@ SourceEventPhase6Result consume_source_event1_caller_801011e8(
     if(!known(work,0,2)||!known(work,4,1))return out;
     if(work.active00()==0||work.event01()!=1||(work.phase04()!=6&&work.phase04()!=7)){out.status=SourceEventPhase6Status::WrongEventPhase;return out;}
     if(!context.awaiting_caller_801011e8){out.status=SourceEventPhase6Status::AwaitingCallerConsumer;return out;}
-    if(context.scene_overlay_pending){out.status=SourceEventPhase6Status::AwaitingSceneOverlayConsumer;out.next_consumer=0x80100614u;return out;}
     if(!busy){out.status=SourceEventPhase6Status::NeedsCallerBusy;return out;}
     if(work.phase04()==7&&*busy==0){out.status=SourceEventPhase6Status::NeedsHandoffConsumer;out.next_consumer=0x80101260u;return out;}
     if(work.phase04()==6&&*busy==0){
@@ -430,9 +429,12 @@ SourceEventPhase6Result consume_source_event1_color_tail_80101310(
     const SourceEventPhase5Context& scene,SourceEventPhase6Context& context,uint64_t serial) noexcept {
     SourceEventPhase6Result out;out.next_consumer=0x80100614u;
     if(!context.awaiting_caller_801011e8){out.status=SourceEventPhase6Status::AwaitingCallerConsumer;return out;}
-    if(context.scene_overlay_pending){out.status=SourceEventPhase6Status::AwaitingSceneOverlayConsumer;return out;}
+    // 0x80101310 adds the 0x80100614 overlay packets to this frame's OT while
+    // 0x80122428 is set; nothing waits for the GPU. The presentation is the
+    // current frame's state, replaced every tick and cleared when the byte is 0.
     if(!scene.byte_80122428){out.status=SourceEventPhase6Status::NeedsSceneOverlayControl;return out;}
     if(*scene.byte_80122428==0){
+        context.scene_overlay_pending.reset();
         context.awaiting_caller_801011e8=false;out.committed=true;out.status=SourceEventPhase6Status::CallerConsumed;out.next_consumer=0;return out;
     }
     if(!context.byte_8012242c||!context.byte_80122430||!context.byte_80122434||!context.byte_80122438){
@@ -442,8 +444,8 @@ SourceEventPhase6Result consume_source_event1_color_tail_80101310(
     if(serial==0){out.status=SourceEventPhase6Status::NeedsSceneOverlayLease;return out;}
     SourceEventSceneOverlayPresentation presentation;presentation.lease.serial=serial;
     presentation.r=*context.byte_8012242c;presentation.g=*context.byte_80122430;presentation.b=*context.byte_80122434;
-    context.scene_overlay_pending=presentation;
-    out.committed=true;out.status=SourceEventPhase6Status::AwaitingSceneOverlayConsumer;return out;
+    context.scene_overlay_pending=presentation;context.awaiting_caller_801011e8=false;
+    out.committed=true;out.status=SourceEventPhase6Status::CallerConsumed;out.next_consumer=0;return out;
 }
 SourceEventPhase6Result consume_source_event1_type10_fade_8010122c(
     SourceEventWork& work,SourceEventPhase6Context& context,SourceFadeContext& fade,
@@ -452,7 +454,7 @@ SourceEventPhase6Result consume_source_event1_type10_fade_8010122c(
     SourceEventPhase6Result out;out.next_consumer=0x80017c30u;
     if(!known(work,0,2)||!known(work,4,1))return out;
     if(!work.active00()||work.event01()!=1||work.phase04()!=6){out.status=SourceEventPhase6Status::WrongEventPhase;return out;}
-    if(!context.awaiting_caller_801011e8||context.scene_overlay_pending){out.status=SourceEventPhase6Status::AwaitingCallerConsumer;return out;}
+    if(!context.awaiting_caller_801011e8){out.status=SourceEventPhase6Status::AwaitingCallerConsumer;return out;}
     const auto& raw=fade.work_80098a68;
     if(!raw.known[10]||!raw.known[11]){out.status=SourceEventPhase6Status::NeedsCallerBusy;return out;}
     if(get16(raw.raw.data()+10)!=0){out.status=SourceEventPhase6Status::HandoffConditionFalse;return out;}
@@ -580,7 +582,7 @@ SourceEventPhase6Result consume_source_event1_handoff_80101260(
     SourceEventPhase6Result out;out.next_consumer=0x80101260u;
     if(!known(work,0,2)||!known(work,4,1))return out;
     if(!work.active00()||work.event01()!=1||work.phase04()!=7){out.status=SourceEventPhase6Status::WrongEventPhase;return out;}
-    if(!context.awaiting_caller_801011e8||context.scene_overlay_pending){out.status=SourceEventPhase6Status::AwaitingCallerConsumer;return out;}
+    if(!context.awaiting_caller_801011e8){out.status=SourceEventPhase6Status::AwaitingCallerConsumer;return out;}
     const auto& raw=fade.work_80098a68;
     if(!raw.known[10]||!raw.known[11]){out.status=SourceEventPhase6Status::NeedsCallerBusy;return out;}
     if(get16(raw.raw.data()+10)!=0){out.status=SourceEventPhase6Status::HandoffConditionFalse;out.next_consumer=0x80100614u;return out;}
@@ -639,8 +641,7 @@ SourceEventPhase6Result consume_source_event1_handoff_80101260(
     out.next_consumer=0x80100614u;return out;
 }
 bool acknowledge_source_event_scene_overlay_80100614(SourceEventPhase6Context& context,uint64_t serial) noexcept {
-    if(!context.awaiting_caller_801011e8||!context.scene_overlay_pending||serial==0||
-        context.scene_overlay_pending->lease.serial!=serial)return false;
-    context.scene_overlay_pending.reset();context.awaiting_caller_801011e8=false;return true;
+    // Draw receipt only; the event never waits for it (see 0x80101310).
+    return context.scene_overlay_pending&&serial!=0&&context.scene_overlay_pending->lease.serial==serial;
 }
 } // namespace l3
