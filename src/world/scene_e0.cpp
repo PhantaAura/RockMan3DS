@@ -93,7 +93,8 @@ struct BlockEffects {
         scene->pool80.used[0]=used[0];scene->pool80.used[1]=used[1];
         for(uint8_t i=0;i<children;++i)scene->pool80.slots[child[i].first]=child[i].second;
         if(camera_delta){auto& cam=scene->camera_800bc738;uint32_t v=0;
-            for(size_t k=0;k<4;++k)v|=uint32_t(cam.raw[0x0c+k])<<(8*k);v+=uint32_t(camera_delta);
+            for(size_t k=0;k<4;++k)v|=uint32_t(cam.raw[0x0c+k])<<(8*k);
+            v+=uint32_t(camera_delta);
             for(size_t k=0;k<4;++k)cam.raw[0x0c+k]=uint8_t(v>>(8*k));}
     }
 };
