@@ -228,6 +228,7 @@ static bool g_retail_actor_animation = false;
 static bool g_actor_state_fields = false;
 static bool g_actor_rng_candidate = false;
 static bool g_source_event_boot = false;
+static bool g_new_game_opening = false;   // NEW GAME plays ST00 event 1
 // Exact first E0 callback stores, with an explicitly diagnostic native sweep
 // and frontend Near LOD. Main-phase scheduling and source camera depth are held.
 static bool g_source_scene_e0 = false;
@@ -3597,6 +3598,27 @@ int main() {
         auto local_visuals=l3::build_player_visuals(models,composition,nullptr);
         // Retain only the source head-part UV templates. Actual native draw
         // primitives are reset when the original phase-7 caller requests it.
+        // NEW GAME -> opening. The original menu starts stage 0 with flag 1540,
+        // whose ST00 poll entry starts event 1 (0x801010C4): Area 0 scene,
+        // phases 0..6, then the phase-7 hand-off 0x80101274 into Area 1. When
+        // the title will run and every cooked event-1 asset is present, boot
+        // the same source event path SOURCE_EVENT_BOOT=1 selects, with its
+        // scene owners, instead of the direct hand-off spawn. opening_skip.txt
+        // keeps the old direct hand-off (tutorial-route tests).
+        bool title_will_run=false;
+        if(g_sidecars_bound&&use_uv_renderer()){
+            const auto present=[](const char* p){FILE* f=std::fopen(p,"r");if(!f)return false;std::fclose(f);return true;};
+            title_will_run=!present("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt")&&
+                (!g_autoplay.active||present("sdmc:/3ds/Legends3DS/diagnostic_title.txt"));
+            const bool assets=actor_metadata.event_poll&&actor_metadata.event_phase2&&actor_metadata.event_command&&
+                actor_metadata.fade_startup&&actor_metadata.event_phase5&&actor_metadata.event_phase6;
+            if(title_will_run&&assets&&!present("sdmc:/3ds/Legends3DS/opening_skip.txt")&&!g_source_event_boot){
+                g_new_game_opening=true;g_source_event_boot=true;
+                g_source_scene_e0=g_source_scene_actor40=g_source_scene_textures=g_source_scene_camera=true;
+            }
+            boot_log(MML_BOOT_DATA,g_new_game_opening?"NEW_GAME_OPENING=1 ST00 event1 0x801010C4 phases0..7 then handoff 0x80101274"
+                :assets?"NEW_GAME_OPENING=0 direct handoff":"NEW_GAME_OPENING=0 event1 assets absent; direct handoff");
+        }
         const auto head_uv_baseline=g_source_event_boot?l3::capture_source_event_head_uv_baseline(
             models[static_cast<size_t>(l3::PlayerComponentSlot::Head)],local_visuals):
             std::optional<l3::SourceEventHeadUvBaseline>{};
@@ -3810,6 +3832,7 @@ int main() {
             unsigned enabled=0;char trailing=0;
             source_xa_requested=!extra&&!std::memchr(data,0,n)&&std::sscanf(data,"SOURCE_XA_AUDIO=%u %c",&enabled,&trailing)==1&&enabled==1;
         }
+        if(g_new_game_opening)source_xa_requested=true;   // phase 2 CD command needs its XA receipts
         if(source_xa_requested&&actor_metadata.event_command){
             char path[256];std::snprintf(path,sizeof(path),"%saudio/stream_%lu.l3xa",kDataRoot,
                 (unsigned long)actor_metadata.event_command->profile.id);
@@ -5342,6 +5365,17 @@ int main() {
                 if (retail_animation_requested()) (void)l3::runtime_animation_finish(animation,player_track,session);
                 if((g_source_loop_replay||g_source_scene_rng_replay)&&session.source_recorded_scene_admitted())
                     (void)session.service_source_main_loop_tail_80011ecc();
+                else if(g_new_game_opening) {
+                    // 0x1F800002: main-loop counter, +1 per loop at 0x80011ECC.
+                    // Its value depends on boot/title time; the phase-6 shake
+                    // (0x8010102C, bit 1) reads it. Bound once when phase 6
+                    // begins, to the oracle's 657 there (counter = 657 +
+                    // event+10 in record 0, 2943 + event+10 in record 10). CANDIDATE.
+                    if(session.source_event_phase6_context().scratch_half_1f800002)
+                        (void)session.service_source_main_loop_tail_80011ecc();
+                    else if(session.source_event_work()&&session.source_event_work()->phase04()==6)
+                        session.bind_source_main_loop_half_snapshot_1f800002(657);
+                }
                 // 0x8001A110 runs after the main update (0x80011E78): every queued
                 // effect request keys its SPU voices, then the queue resets.
                 // Handler-1 records (sequenced music) dispatch inside the same
