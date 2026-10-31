@@ -36,6 +36,7 @@ struct SourcePaletteC0Profile {
     std::array<std::array<uint16_t,2>,4> sub3_destination{};
     std::array<SourcePaletteTimeline,6> sub4{};
     std::array<std::array<uint16_t,3>,6> sub4_record{};
+    std::array<std::array<uint8_t,2>,6> e0_uv_frames{};   // 0x8011CA94 (E0 variant 4)
 };
 bool load_source_palette_c0_profile(const std::vector<uint8_t>& bytes, SourcePaletteC0Profile& out);
 

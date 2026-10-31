@@ -31,6 +31,10 @@ public:
     bool resident_in(const EbdDirectory& directory) const noexcept;
     const SceneE0MeshResource* find(uint32_t resource_token,uint8_t variant,
         SceneE0MeshTier tier) const noexcept;
+    // 0x8002D22C hands out the shared mesh's primitive records; variant-4
+    // UV animation (0x8011381C) rewrites them in place.
+    SceneE0MeshResource* find_mutable(uint32_t resource_token,uint8_t variant,SceneE0MeshTier tier) noexcept {
+        return const_cast<SceneE0MeshResource*>(find(resource_token,variant,tier));}
     size_t resource_count() const noexcept { return meshes_.size(); }
     size_t decoded_bytes() const noexcept { return decoded_bytes_; }
 private:
@@ -55,8 +59,12 @@ enum class SceneE0Status : uint8_t {
     NeedsCameraOwner,NeedsResourceMutation,NeedsRngOrChildOwner,UnsupportedBehaviorState,
     NeedsPropCurves,NeedsPropFrame,NeedsForeignReleaseOwner
 };
+// 0x8011381C: the two Near-mesh quads (0x8002D22C ids 0x10001, 0x10000 =
+// part 0, quad list, records 1 and 0) get these UV bytes 0..7.
+struct SceneE0UvWrite { uint32_t resource_token=0;uint8_t variant=0;std::array<std::array<uint8_t,8>,2> quad1_quad0{}; };
 struct SceneE0Result {
     SceneE0Status status=SceneE0Status::NeedsFields;
+    std::optional<SceneE0UvWrite> uv_write;
     bool committed=false,foreign_release_committed=false;
     std::optional<uint16_t> missing_offset;
     uint32_t source_function=0;
@@ -83,6 +91,8 @@ struct SceneE0UpdateInputs {
     // E0-object rand() channel for the block/slide states, begun by the caller
     // (SourceRngUpdatePhase::E0ObjectCallback) and committed only on commit.
     SourceRngUpdateTransaction* e0_rng=nullptr;
+    // 0x8011CA94: six (u, v) frame bases for the variant-4 UV animation.
+    const std::array<std::array<uint8_t,2>,6>* uv_frames=nullptr;
 
 };
 // Bounded80112B9C/80113EA4 consumer for the selected subtype3 variants0..7.

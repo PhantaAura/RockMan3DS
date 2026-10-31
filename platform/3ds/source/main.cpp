@@ -3843,6 +3843,7 @@ int main() {
         // This native entry is a fresh diagnostic session, not a restored retail
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
+        if(g_palette_c0)session.bind_scene_e0_uv_frames(&g_palette_c0->e0_uv_frames);
         session.set_reference_tables(refs);
         // 0.0.15.15: ST00 E0/06 tutorial message triggers (owner-local L3TR).
         if(g_sidecars_bound){
@@ -4598,6 +4599,11 @@ int main() {
                     else {
                         const auto prop_rng_before=g_actor_rng.native_global_ordinal();
                         const auto pass=session.service_diagnostic_scene_e0_updates(*scene_e0,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                        // 0x8011381C rewrites the shared Near mesh's quad UVs in place.
+                        for(const auto& r:pass.slots)if(r.committed&&r.uv_write)
+                            if(auto* mesh=scene_e0->find_mutable(r.uv_write->resource_token,r.uv_write->variant,l3::SceneE0MeshTier::Near))
+                                for(size_t q=0;q<2&&q<mesh->part.quads.size();++q)
+                                    mesh->part.quads[1-q].uv=r.uv_write->quad1_quad0[q];
                         if(g_actor_rng.native_global_ordinal()!=prop_rng_before&&session.frame_counter()%60u==0u)
                             hardware_test_trace("# source_prop_rng_candidate,frame=%lu,ordinal_before=%llu,ordinal_after=%llu,scope=SHARED_OPENBIOS_CANDIDATE,retail_chronology=false",
                                 (unsigned long)session.frame_counter(),(unsigned long long)prop_rng_before,

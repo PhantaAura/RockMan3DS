@@ -403,8 +403,17 @@ SceneE0Result update_scene_e0_80112b9c(SourceEventPhase5Bytes<80>& work,
         if(!need(10,1))return out;
         if(work.raw[10]==0){out.source_function=0x80113804;put(next,14,1,0);put(next,13,1,0);increment(10);return done();}
         if(work.raw[10]==1){out.source_function=0x8011381c;if(!need(13,1))return out;
-            if(uint8_t(next.raw[13]+1)==3)return hold(Status::NeedsResourceMutation,out.source_function);
-            increment(13);return done();}
+            if(uint8_t(next.raw[13]+1)!=3){increment(13);return done();}
+            if(!inputs.uv_frames||!need(14,1)||!need(20,4))return hold(Status::NeedsResourceMutation,out.source_function);
+            const int frame=int8_t(next.raw[14]);
+            if(frame<0||frame>5)return hold(Status::UnsupportedBehaviorState,out.source_function);
+            const uint8_t u=(*inputs.uv_frames)[size_t(frame)][0],v=(*inputs.uv_frames)[size_t(frame)][1];
+            SceneE0UvWrite uv;uv.resource_token=word(next,20);uv.variant=next.raw[3];
+            uv.quad1_quad0[0]={{uint8_t(u+1),uint8_t(v+47),uint8_t(u+1),uint8_t(v+16),uint8_t(u+31),uint8_t(v+62),uint8_t(u+31),uint8_t(v+1)}};
+            uv.quad1_quad0[1]={{uint8_t(u+31),uint8_t(v+62),uint8_t(u+31),uint8_t(v+1),uint8_t(u+62),uint8_t(v+47),uint8_t(u+62),uint8_t(v+16)}};
+            put(next,13,1,0);increment(14);
+            if(int8_t(next.raw[14])==6){put(next,13,1,0);increment(10);}
+            out.uv_write=uv;return done();}
         if(work.raw[10]==2){out.source_function=0x80113a6c;
             if(!need(13,1)||!need(56,6))return out;
             if(!block_ready())return hold(Status::NeedsRngOrChildOwner,out.source_function);

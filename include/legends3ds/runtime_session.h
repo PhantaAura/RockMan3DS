@@ -318,6 +318,7 @@ public:
 
     bool bind_source_event_phase6_profile(SourceEventPhase6Profile profile) noexcept;
     // Family-C0 palette objects: 0x80017478 sweep over the scene C0 pool.
+    void bind_scene_e0_uv_frames(const std::array<std::array<uint8_t,2>,6>* frames) noexcept { scene_e0_uv_frames_=frames; }
     SourcePaletteC0Pass service_source_palette_c0(SourcePaletteBuffer& buffer,const SourcePaletteC0Profile& profile) noexcept {
         return update_source_palette_c0_80017478(source_event_phase5_context_.pool_c0,buffer,profile);}
     // 0x8001E5BC tracked-camera store, run just before the view (0x8001E550).
@@ -669,6 +670,7 @@ private:
     SourcePropForeignGlobals source_prop_foreign_globals_;
     SourceEffectDispatchLease source_effect_dispatch_lease_;
     SourceEventPhase6Context source_event_phase6_context_{};
+    const std::array<std::array<uint8_t,2>,6>* scene_e0_uv_frames_=nullptr;
     std::optional<SourceEventHandoffDisplayReceipt> source_handoff_display_;
     SourceSceneActor40InitializerGlobals source_scene_actor40_initializer_globals_{};
     std::optional<SourceLoopSnapshot> source_loop_snapshot_;

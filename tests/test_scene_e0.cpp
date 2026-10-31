@@ -405,6 +405,18 @@ void behavior_blocks(){
     {l3::SourceRngUpdateTransaction t;require(l3::begin_source_rng_update(rng,t,{99,99,l3::SourceRngUpdatePhase::E0ObjectCallback})==l3::SourceRngStatus::Ready,"begin2");
      inputs.e0_rng=&t;require(l3::update_scene_e0_80112b9c(work,cache,directory,inputs).committed,"jolt undo");l3::rollback_source_rng_update(t);
      require(work.raw[10]==3&&context.camera_800bc738.raw[0x0e]==0&&context.camera_800bc738.raw[0x0f]==0,"jolt undo value");}
+    // 0x8011381C: every 3rd frame writes the two Near quads' UVs from 0x8011CA94
+    // and steps the frame; frame 6 moves to the slide (sub 2).
+    {const std::array<std::array<uint8_t,2>,6> frames{{{{0,0}},{{64,0}},{{128,0}},{{0,64}},{{64,64}},{{128,64}}}};
+     auto in=inputs;in.uv_frames=&frames;auto w4=work;w4.raw[3]=4;w4.raw[9]=1;w4.raw[10]=1;w4.raw[13]=1;w4.raw[14]=1;
+     auto r=l3::update_scene_e0_80112b9c(w4,cache,directory,in);
+     require(r.committed&&!r.uv_write&&w4.raw[13]==2,"UV animation counts to 3");
+     r=l3::update_scene_e0_80112b9c(w4,cache,directory,in);
+     require(r.committed&&r.uv_write&&w4.raw[13]==0&&w4.raw[14]==2,"UV write at 3");
+     const std::array<uint8_t,8> q1{{65,47,65,16,95,62,95,1}},q0{{95,62,95,1,126,47,126,16}};
+     require(r.uv_write->quad1_quad0[0]==q1&&r.uv_write->quad1_quad0[1]==q0,"UV bytes 0x10001/0x10000");
+     w4.raw[13]=2;w4.raw[14]=5;r=l3::update_scene_e0_80112b9c(w4,cache,directory,in);
+     require(r.committed&&w4.raw[14]==6&&w4.raw[10]==2&&w4.raw[13]==0,"frame 6 starts the slide");}
     std::cout<<"E0 falling block 0x80113600/0x801136A4: integration, debris 0x80113C98 placement ("<<debris<<"), landing jolt PASS\n";
 }
 int main(int argc,char** argv){try{if(argc==1){authored();session_integration();behavior_authored();behavior_blocks();attachment_session_integration();}else if(argc==2){authored();session_integration();behavior_authored();attachment_session_integration();fixture(argv[1]);}else if(argc==3&&std::string(argv[1])=="--fixture")fixture(argv[2]);else if(argc==4&&std::string(argv[1])=="--behavior-fixture")behavior_fixture(argv[2],argv[3]);else if(argc==6&&std::string(argv[1])=="--owner-sequence")owner_sequence(argv[2],argv[3],argv[4],argv[5]);else if(argc==3)owner(argv[1],argv[2]);else throw std::runtime_error("usage: test_scene_e0 [owner.l3p5 owner.l3ebd]");return 0;}

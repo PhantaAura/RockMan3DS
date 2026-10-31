@@ -15,7 +15,7 @@ bool header(const std::vector<uint8_t>& b, const char* magic, size_t payload) no
            rd32(&b[12]) == crc32(b.data() + 16, payload);
 }
 constexpr size_t kTimelineBytes = 8 + 4 * kSourcePaletteTimelineCapacity;
-constexpr size_t kC0Payload = 32 + 10 * kTimelineBytes + 16 + 36;
+constexpr size_t kC0Payload = 32 + 10 * kTimelineBytes + 16 + 36 + 12;
 constexpr size_t kBankWords = 32 * kSourcePaletteRowWords;
 constexpr size_t kBankPayload = 4 + 2 * kBankWords + kBankWords;
 
@@ -114,6 +114,7 @@ bool load_source_palette_c0_profile(const std::vector<uint8_t>& b, SourcePalette
     for (auto& t : out.sub4) if (!timeline(t)) return false;
     for (auto& d : out.sub3_destination) { d = {{rd16(p), rd16(p + 2)}}; p += 4; }
     for (auto& r : out.sub4_record) { r = {{rd16(p), rd16(p + 2), rd16(p + 4)}}; p += 6; }
+    for (auto& f : out.e0_uv_frames) { f = {{p[0], p[1]}}; p += 2; }
     out.loaded = true;
     return true;
 }

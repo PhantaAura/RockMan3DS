@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Cook the ST00 family-C0 palette tables (subtypes 3/4) into neutral L3C0.
+"""Cook the ST00 family-C0 palette tables (subtypes 3/4) and the E0 variant-4
+UV frame table (0x8011CA94) into neutral L3C0.
 
 Reads the hash-guarded owner overlay: subtype-3 timelines 0x8011CF28[v] and
 destination/mode pairs 0x8011CF38[v]; subtype-4 timelines 0x8011D10C[v] and
@@ -39,7 +40,9 @@ def cook(overlay):
     payload += b''.join(timeline(word(0x8011D10C + 4 * v)) for v in range(6))
     payload += b''.join(struct.pack('<HH', half(0x8011CF38 + 4 * v), half(0x8011CF3A + 4 * v)) for v in range(4))
     payload += b''.join(struct.pack('<HHH', half(0x8011D178 + 6 * v), half(0x8011D17A + 6 * v), half(0x8011D17C + 6 * v)) for v in range(6))
-    assert len(payload) == 32 + 10 * (8 + 4 * CAPACITY) + 16 + 36
+    # 0x8011CA94: six (u, v) frame bases of the E0 variant-4 UV animation 0x8011381C.
+    payload += overlay[0x8011CA94 - BASE:0x8011CA94 - BASE + 12]
+    assert len(payload) == 32 + 10 * (8 + 4 * CAPACITY) + 16 + 36 + 12
     return b'L3C0' + struct.pack('<HHII', 1, 16, 16 + len(payload), zlib.crc32(payload) & 0xffffffff) + payload
 
 

@@ -1649,6 +1649,7 @@ SceneE0FirstUpdatePass RuntimeSession::service_diagnostic_scene_e0_updates(const
     inputs.event_work=source_event_work_?&*source_event_work_:nullptr;inputs.pool=&source_event_phase5_context_.pool_e0;
     inputs.scratch_half_1f800002=source_event_phase6_context_.scratch_half_1f800002;
     inputs.scene_context=&source_event_phase5_context_;
+    inputs.uv_frames=scene_e0_uv_frames_;
     SourcePropLiftActorFrameReceipt frame;
     if(inputs.event_work){
         const auto& event=*inputs.event_work;bool pointer_known=true;uint32_t actor_id=0;
