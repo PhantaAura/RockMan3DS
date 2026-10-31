@@ -72,6 +72,16 @@ Checked against `0x80038894` (decompile plus instruction-level reads at
 | projection | H 384, OFY 120, 240 lines | vertical FOV 34.708° = 2·atan(120/384), 400×240 | VERIFIED_1TO1 vertically; wider horizontally by design |
 | yaw/pitch offsets 0x800A3974/78 | added in the 0x80037FB4 call; written only by scene setter 0x80039CA0; 0 in the oracle | omitted | CANDIDATE (event scenes only) |
 
+**Oracle check (VERIFIED_1TO1).** In psxrecomp at the Area 1 start, at rest the
+original has distance 512, pitch 48, height 150 and target y −151. While
+running, +0x44D = 1 and the distance grows 10 per update (512 → 622 → 672).
+When Mega Man stops, +0x44D = 0 and the distance holds. The port's
+`source_camera_eye_80037fb4` with the real trig tables reproduces the
+original eye exactly at all four sampled frames:
+(2822,−188,−4322), (2822,−188,−4642), (2822,−196,−4884), (2822,−200,−4962).
+The pop-out was not traced in the oracle: the tutorial message boxes blocked
+movement and the run was cut short.
+
 So in normal follow, the distance, height and vertical framing are the
 original's. In an open corridor both games grow the distance to 0x300; the
 port's trace shows 768 there.
