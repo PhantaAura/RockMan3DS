@@ -64,11 +64,25 @@ state after its hand-off.
 - `docs/validation_01516/autoplay/opening_newgame.txt`: title → NEW GAME →
   7000 idle frames (use with `diagnostic_title.txt`).
 
+## Azahar (Old 3DS mode, build pass-opening-200909, before the counter fix)
+Cold boot → title → NEW GAME (`opening_newgame.txt` + `diagnostic_title.txt`):
+`NEW_GAME_OPENING=1`; event 1 phase 1 at frame 1, 4 at 13, 5 at 68, 6 at 69;
+timeline callbacks in table order: 0x80100738 @70, 0x801007F0 @585,
+0x8010086C @936, 0x8010089C @1181, 0x801008A4 @1371, 0x801008D4 @1461,
+0x80100920 @1511, 0x801009B0 @1656 … through record 9 (record lengths match
+the table tick for tick). Then held at record 10 local frame 50: callback
+0x80100A94 sets 0x80122424 = 1 at frame 49, and 0x8010102C's shake needs
+main-loop counter 0x1F800002 (unknown owner). Oracle: counter = 657 +
+event+10 in record 0 and 2943 + event+10 in record 10 (2286 = records 0..9).
+The port now binds 657 at phase-6 entry and runs the 0x80011ECC tail
+(CANDIDATE; the real value depends on boot/title time). Not re-run yet.
+
 ## Open
-- **No Azahar run yet.** `azahar -w` stalls at the game list while the Mac's
-  current Space is a full-screen app (also seen by the Reaverbot session).
-  Needed: the opening run (phases 0..7 → Area 1 control, compare flags above),
-  then the tutorial route to `0x622` from that start.
+- Re-run the opening in Azahar with the counter fix (build
+  pass-opening-203335): records 10..19, phase 7, Area 1 control at
+  (2822,-1,-4833), flags vs the oracle list above; then the tutorial route to
+  `0x622` from that start. `azahar -w` stalls at the game list while the
+  Mac's current Space is a full-screen app.
 - The 01444 diagnostic run stopped at frame 689 inside timeline record 1 (it
   was not a deadlock: record 0 is 515 ticks). Lower-80 subtype 2 callback
   `0x80116E68` was held then and may still hold.
