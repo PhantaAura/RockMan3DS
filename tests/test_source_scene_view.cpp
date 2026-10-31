@@ -1,4 +1,5 @@
 #include "legends3ds/source_scene_view.h"
+#include "legends3ds/scene_e0.h"
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -80,4 +81,16 @@ void holds_and_hot_loop(){
     counting=true;for(std::size_t i=0;i<4096;++i){const auto result=l3::produce_source_scene_view_8001e550(input);require(result.status==Status::SourceBackedPartial&&result.frame.has_value(),"hot view");}counting=false;require(allocations==0,"view hot-loop allocation");
 }
 }
-int main(int argc,char** argv){require(argc==2,"usage: test_source_scene_view fixture.tsv");malformed();differentials(argv[1]);holds_and_hot_loop();std::cout<<"source scene view:384 original radial differentials, malformed/owner holds, optical adaptation and4096 allocation-free frames passed\n";}
+void e0_depth(){
+    // 0x8002A160: SZ3 = (TRZ<<12 + R3.v)>>12 clamped 0..0xFFFF, then >>2.
+    l3::SourceSceneViewFrame f;f.rotation_q12={{4096,0,0,0,4096,0,0,0,4096}};f.translation_1f800030={{0,0,1000}};
+    require(l3::source_scene_e0_depth_8002a160(f,{{0,0,800}})==450,"depth SZ3>>2");
+    require(l3::source_scene_e0_depth_8002a160(f,{{0,0,-2000}})==0,"depth clamps at 0");
+    f.translation_1f800030[2]=70000;require(l3::source_scene_e0_depth_8002a160(f,{{0,0,0}})==16383,"depth clamps at 0xFFFF");
+    f.rotation_q12={{0,0,4096,0,4096,0,-4096,0,0}};f.translation_1f800030[2]=0;   // view z = -x
+    require(l3::source_scene_e0_depth_8002a160(f,{{-2804,0,123}})==701,"rotated depth");
+    using T=l3::SceneE0MeshTier;
+    require(l3::scene_e0_tier_for_source_depth(700)==T::Near&&l3::scene_e0_tier_for_source_depth(701)==T::Middle&&
+        l3::scene_e0_tier_for_source_depth(1800)==T::Middle&&l3::scene_e0_tier_for_source_depth(1801)==T::Far,"LOD thresholds 701/1801");
+}
+int main(int argc,char** argv){require(argc==2,"usage: test_source_scene_view fixture.tsv");malformed();differentials(argv[1]);holds_and_hot_loop();e0_depth();std::cout<<"source scene view:384 original radial differentials, malformed/owner holds, optical adaptation and4096 allocation-free frames passed\n";}

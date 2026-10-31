@@ -106,6 +106,10 @@ SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewIn
         (0u-std::uint32_t(frame.target[2]))<<frame.source_shift}};
     inverse_eye[0]+=std::uint32_t(mul12(mul12(distance,sy),cp));inverse_eye[1]+=std::uint32_t(mul12(distance,sp));inverse_eye[2]+=std::uint32_t(mul12(mul12(distance,cy),cp));
     frame.translation=apply_matrix_lv(frame.rotation_q12,inverse_eye);
+    const std::array<std::uint32_t,3> eye32{{std::uint32_t(frame.target[0])-std::uint32_t(mul12(mul12(frame.distance,sy),cp)),
+        std::uint32_t(frame.target[1])-std::uint32_t(mul12(frame.distance,sp)),
+        std::uint32_t(frame.target[2])-std::uint32_t(mul12(mul12(frame.distance,cy),cp))}};
+    frame.translation_1f800030=apply_matrix_lv(frame.rotation_q12,{{0u-eye32[0],0u-eye32[1],0u-eye32[2]}});
     frame.eye={{s16(std::uint32_t(frame.target[0])-std::uint32_t(mul12(mul12(frame.distance,sy),cp))),
         s16(std::uint32_t(frame.target[1])-std::uint32_t(mul12(frame.distance,sp))),
         s16(std::uint32_t(frame.target[2])-std::uint32_t(mul12(mul12(frame.distance,cy),cp)))}};
@@ -118,5 +122,13 @@ SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewIn
     frame.center_y_pixels=float(s32(*projection.ofy))/65536.0f;
     frame.vertical_fov_degrees=frontend_vertical_fov_from_focal_pixels(frame.focal_pixels);
     out.status=Status::SourceBackedPartial;out.frame=frame;return out;
+}
+std::int32_t source_scene_e0_depth_8002a160(const SourceSceneViewFrame& frame,
+    const std::array<std::int16_t,3>& position) noexcept {
+    const auto& r=frame.rotation_q12;
+    const std::int64_t mac=(std::int64_t(frame.translation_1f800030[2])<<12)+std::int64_t(r[6])*position[0]+
+        std::int64_t(r[7])*position[1]+std::int64_t(r[8])*position[2];
+    std::int64_t sz=mac>>12;sz=sz<0?0:(sz>65535?65535:sz);
+    return std::int32_t(sz>>2);
 }
 } // namespace l3

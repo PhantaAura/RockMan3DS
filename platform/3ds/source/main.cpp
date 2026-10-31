@@ -1790,14 +1790,27 @@ EffectDrawStats draw_source_effects_uv(const l3::ChildRuntime& children,const l3
     }
     return stats;
 }
+// The scene view of the current frame (0x8001E550), when bound.
+static std::optional<l3::SourceSceneViewFrame> g_scene_view_frame;
 size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::SceneE0Resources& resources) {
     if(!use_uv_renderer()||!resources.resident_in(session.active_area().ebd))return 0;
     configure_immediate_attributes_uv();configure_texenv_uv(false);
     const auto& pool=session.source_event_phase5_context().pool_e0;
     size_t instances=0,semi_instances=0,held_materials=0,submitted_passes=0;
     for(size_t slot=0;slot<pool.slots.size();++slot) {
-        const auto draw=l3::scene_e0_draw_view(pool.slots[slot],resources,
-            session.active_area().ebd,l3::SceneE0MeshTier::Near);
+        // 0x8002A160: depth of +0x38 under 0x1F800008/0x1F800030, far cull
+        // against 0x1F800006, then Near/Middle/Far at 701/1801. Without a
+        // bound scene view (gameplay camera) the Near mesh is drawn.
+        auto tier=l3::SceneE0MeshTier::Near;
+        const auto& w=pool.slots[slot];
+        if(g_scene_view_frame&&w.known[56]&&w.known[57]&&w.known[58]&&w.known[59]&&w.known[60]&&w.known[61]){
+            const auto half=[&](size_t at){return int16_t(uint16_t(w.raw[at]|(w.raw[at+1]<<8)));};
+            const auto depth=l3::source_scene_e0_depth_8002a160(*g_scene_view_frame,{{half(56),half(58),half(60)}});
+            const auto far=session.source_event_phase6_context().half_1f800006;
+            if(far&&depth>int32_t(*far))continue;
+            tier=l3::scene_e0_tier_for_source_depth(depth);
+        }
+        const auto draw=l3::scene_e0_draw_view(w,resources,session.active_area().ebd,tier);
         if(draw.status!=l3::SceneE0Status::Ready)continue;
         const auto& v=draw.view;
         if(v.mesh->part.triangles.empty()&&v.mesh->part.quads.empty())continue;
@@ -5468,6 +5481,7 @@ int main() {
             C3D_Mtx view{};Mtx_LookAt(&view,eye,at,up,false);
             C3D_Mtx frame_projection=g_projection;
             bool source_camera_bound=false;
+            g_scene_view_frame.reset();
             if(g_source_event_boot&&g_source_scene_camera&&use_uv_renderer()&&actor_metadata.scene_view&&
                session.source_event_phase5_resources().resident_in(session.active_area().ebd)) {
                 (void)session.apply_source_scene_tracked_camera_target();
@@ -5477,6 +5491,7 @@ int main() {
                 if(source_view.frame&&(source_view.frame->center_x_pixels!=200.f||source_view.frame->center_y_pixels!=120.f)) {
                     source_view.status=l3::SourceSceneViewStatus::UnsupportedOptics;source_view.frame.reset();
                 }
+                g_scene_view_frame=source_view.frame;
                 if(source_view.frame) {
                     const auto& f=*source_view.frame;
                     for(size_t row=0;row<4;++row)view.r[row]=FVec4_New(f.native_view_row_major[row*4],
@@ -5627,7 +5642,7 @@ int main() {
             if(scene_e0&&g_hardware_scene_draw==HardwareSceneDraw::All) {
                 const auto submitted=draw_source_scene_e0_uv(session,*scene_e0);
                 if(session.frame_counter()%60u==0u)
-                    hardware_test_trace("# source_scene_E0_draw,frame=%lu,instances=%lu,LOD=FRONTEND_NEAR_DIAGNOSTIC,texture=INITIAL_BATCH_DIAGNOSTIC,source_camera_bound=%u,retail_parity=false",
+                    hardware_test_trace("# source_scene_E0_draw,frame=%lu,instances=%lu,LOD=8002A160_DEPTH,texture=INITIAL_BATCH_DIAGNOSTIC,source_camera_bound=%u,retail_parity=false",
                         (unsigned long)session.frame_counter(),(unsigned long)submitted,unsigned(source_camera_bound));
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){

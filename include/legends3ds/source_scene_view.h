@@ -40,6 +40,8 @@ struct SourceSceneViewFrame {
     std::array<std::int16_t,9> rotation_q12{};
     std::array<std::int32_t,3> translation{};
     std::array<std::int16_t,3> eye{};
+    // 0x80037FB4 tail: 0x1F800030 = ApplyMatrixLV(R, -eye) (32-bit eye).
+    std::array<std::int32_t,3> translation_1f800030{};
     std::array<std::int32_t,3> target{};
     std::int16_t distance=0,yaw=0,pitch=0;
     std::uint8_t source_shift=0;
@@ -61,4 +63,9 @@ struct SourceSceneViewResult {
 // does not consume/update camera program state, event counters or story flags.
 // Every output is value-owned and valid only for this current input snapshot.
 SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewInputs& inputs) noexcept;
+// 0x8002A160 depth for an E0 object at world position +0x38: RTPS with
+// rotation 0x1F800008 and translation 0x1F800030, SZ3 (0..0xFFFF) >> 2.
+// Compared with 0x1F800006 (far cull) and 701/1801 (LOD).
+std::int32_t source_scene_e0_depth_8002a160(const SourceSceneViewFrame& frame,
+    const std::array<std::int16_t,3>& position) noexcept;
 } // namespace l3
