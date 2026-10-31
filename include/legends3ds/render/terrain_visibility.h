@@ -93,6 +93,12 @@ struct TerrainFaceResult {
     uint16_t max_sz = 0;
 };
 // 0x1F8001C0 for this frame: view-space depth (MAC3) of the player position.
+// Scene-camera variant (0x8001E550 views): the 0x1F800008 words of the scene
+// view, the scene's own projection controls (camera commands 32..34 set
+// DQA/DQB) and the 0x1F800074 shift; FarColor/ramp from the area record.
+struct SourceProjectionControls;
+TerrainFaceCamera make_scene_face_camera(const std::array<uint32_t,8>& camera_1f800008,
+    const std::array<uint8_t,40>* area, const SourceProjectionControls& projection, uint8_t shift) noexcept;
 std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,
     int16_t x, int16_t y, int16_t z) noexcept;
 // Vertices are raw world coordinates in the primitive's original order.

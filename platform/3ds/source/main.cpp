@@ -2386,6 +2386,12 @@ void psx_packet_extra(uint32_t packet, uint8_t len, const std::array<std::array<
     }
 }
 
+// Subdivided points come back in the 0x1F800074-shifted space; the 3DS depth
+// extra wants world units.
+std::array<int32_t,3> psx_unshift(const std::array<int32_t,3>& w) {
+    const uint8_t sh = g_psx_camera ? g_psx_camera->lod_1f800074 : 0;
+    return {{w[0] >> sh, w[1] >> sh, w[2] >> sh}};
+}
 void psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult& r, uint32_t material_word,
                            uint32_t see_through_code, uint32_t& previous,
                            const l3::TerrainSubdivision* sub = nullptr) {
@@ -2410,7 +2416,7 @@ void psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult
             for (unsigned k = 0; k < 4; ++k) {
                 const uint8_t i = quad[k];
                 p.x[k] = sub->sx[i]; p.y[k] = sub->sy[i]; p.u[k] = sub->u[i]; p.v[k] = sub->v[i];
-                pts[k] = sub->world[i];
+                pts[k] = psx_unshift(sub->world[i]);
             }
             const uint32_t packet = g_psx_prims.allocate(9, 12);
             l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), p);
@@ -2425,7 +2431,7 @@ void psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult
             for (unsigned k = 0; k < 3; ++k) {
                 const uint8_t i = l3::kSubdivisionTris80097CA0[t][k];
                 p.x[k] = sub->sx[i]; p.y[k] = sub->sy[i]; p.u[k] = sub->u[i]; p.v[k] = sub->v[i];
-                pts[k] = sub->world[i];
+                pts[k] = psx_unshift(sub->world[i]);
             }
             pts[3] = pts[2];
             const uint32_t packet = g_psx_prims.allocate(7, 12);
@@ -2486,6 +2492,11 @@ void psx_emit_negative_face(const TerrainQuadInfo& q, const l3::TerrainFaceResul
 bool psx_rtps(int32_t x, int32_t y, int32_t z, int16_t& sx, int16_t& sy, uint16_t& sz, uint16_t* ir0) {
     if (!g_psx_camera) return false;
     if (x < INT16_MIN || x > INT16_MAX || y < INT16_MIN || y > INT16_MAX || z < INT16_MIN || z > INT16_MAX) return false;
+    // Model vertices are shifted by 0x1F800074 before the GTE (sllv in
+    // 0x8002A160 / 0x80028F90), matching the shifted camera translation.
+    if (const uint8_t sh = g_psx_camera->lod_1f800074) {
+        x = int16_t(uint16_t(uint32_t(x) << sh)); y = int16_t(uint16_t(uint32_t(y) << sh)); z = int16_t(uint16_t(uint32_t(z) << sh));
+    }
     auto gte = g_psx_camera->gte;
     gte.data[0] = (uint32_t(x) & 0xffffu) | (uint32_t(y) << 16);
     gte.data[1] = uint32_t(z) & 0xffffu;
@@ -5545,7 +5556,19 @@ int main() {
                 // FarColor for the depth cue (0x800371A0).
                 if(source_follow_view&&!source_camera_bound&&mode&&source_follow.scratch_shift_1f800074==0)
                     faces=l3::make_terrain_face_camera(source_follow.camera_1f800008,&session.active_area().flow.setup_blob);
-                if(faces){faces->lod_1f800074=source_follow.scratch_shift_1f800074;
+                // Scene views (0x8001E550 -> 0x80038324 -> 0x80037FB4): the same
+                // packet path, with the scene's 0x1F800008 words, its projection
+                // controls and its 0x1F800074 shift.
+                std::optional<l3::SourceGameplayCameraFrame> scene_camera;
+                if(!faces&&source_camera_bound&&g_scene_view_frame&&mode){
+                    const auto& f=*g_scene_view_frame;
+                    scene_camera=l3::source_gameplay_camera_80037fb4(refs,f.target,f.distance,f.yaw,f.pitch,
+                        f.source_shift,source_follow.retained_pad_1f8000f2);
+                    faces=l3::make_scene_face_camera(scene_camera->camera_1f800008,&session.active_area().flow.setup_blob,
+                        session.source_event_phase6_context().projection,f.source_shift);
+                }
+                if(faces&&!scene_camera){faces->lod_1f800074=source_follow.scratch_shift_1f800074;}
+                if(faces){
                     // CANDIDATE: the 400-pixel top screen widens the off-screen test like the cell side cut.
                     faces->screen_x_min=-40;faces->screen_width=400;}
                 // 0x1F80007C: ABE while event byte 0x800C4C48 is 0. An unknown
@@ -5564,12 +5587,23 @@ int main() {
                 cells.valid=false;
                 if(faces&&g_current_area==session.map_area_index()){
                     l3::TerrainCellViewInput cv;
+                    if(scene_camera){
+                        // 0x80038324 stores the scene target at 0x800A39A0; 0x80037FB4
+                        // writes 0x800A3A10 and the eye.
+                        const auto& f=*g_scene_view_frame;
+                        cv.camera_1f800008=scene_camera->camera_1f800008;
+                        cv.translation_1f800030=l3::terrain_cell_translation_1f800030(scene_camera->camera_1f800008,scene_camera->eye_800a39f0);
+                        cv.eye_x_1f800028=int16_t(scene_camera->eye_800a39f0[0]);cv.eye_z_1f80002c=int16_t(scene_camera->eye_800a39f0[2]);
+                        cv.pitch_800a3a10=scene_camera->rotation_800a3a10[0];cv.yaw_800a3a12=scene_camera->rotation_800a3a10[1];
+                        cv.target_x_800a39a0=f.target[0];cv.target_z_800a39a8=f.target[2];cv.lod_1f800074=f.source_shift;
+                    }else{
                     cv.camera_1f800008=source_follow.camera_1f800008;
                     cv.translation_1f800030=l3::terrain_cell_translation_1f800030(source_follow.camera_1f800008,source_follow.eye_800a39f0);
                     cv.eye_x_1f800028=int16_t(source_follow.eye_800a39f0[0]);cv.eye_z_1f80002c=int16_t(source_follow.eye_800a39f0[2]);
                     cv.pitch_800a3a10=source_follow.rotation_800a3a10[0];cv.yaw_800a3a12=source_follow.rotation_800a3a10[1];
                     cv.target_x_800a39a0=source_follow.target_800a39a0[0];cv.target_z_800a39a8=source_follow.target_800a39a0[2];
-                    cv.lod_1f800074=source_follow.scratch_shift_1f800074;cv.mode_1f800075=mode.value_or(0);
+                    cv.lod_1f800074=source_follow.scratch_shift_1f800074;}
+                    cv.mode_1f800075=mode.value_or(0);
                     l3::compute_terrain_cell_visibility(session.active_map(),session.map_area_index(),refs,cv,cells);
                 }
                 // One OT per frame: terrain and the player write packets,
