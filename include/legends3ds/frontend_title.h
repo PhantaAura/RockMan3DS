@@ -53,6 +53,8 @@ psxgpu::PolyFt4 frontend_menu_row_8001456c(unsigned row, int selection) noexcept
 // semi-transparent, drawn with the E1 draw mode ABR 2 that follows it),
 // gradient. The original then calls the scene draw 0x800137D4 (Servbots).
 std::vector<FrontendPacket> frontend_backdrop_80013fb8();
+// Port widescreen (400-px top screen): widens the backdrop in place.
+void frontend_backdrop_widescreen(std::vector<FrontendPacket>& packets);
 
 enum class FrontendResult : uint8_t { None, NewGame, Continue, Option, Attract };
 

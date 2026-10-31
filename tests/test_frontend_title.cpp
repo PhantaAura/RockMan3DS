@@ -28,6 +28,13 @@ int main() {
     assert((back[3].words[0] >> 24) == 0x3A && back[3].words[4] == 0xFFFFFFu && back[4].words[0] == 0xE10000C0u);
     assert((back[5].words[0] >> 24) == 0x38 && back[5].words[6] == 0xE0FFC0u && back[5].words[7] == ((240u << 16) | 320u));
     assert(kFrontendMaterialWords[4] == 0x7C8000D9u);
+    {   // Widescreen: two wall extensions, strip and gradient span x -40..360.
+        auto wide = frontend_backdrop_80013fb8();
+        frontend_backdrop_widescreen(wide);
+        assert(wide.size() == 8 && wide[1].bucket == 35 && int16_t(wide[1].words[1]) == -40);
+        assert(int16_t(wide[5].words[1]) == -40 && uint16_t(wide[5].words[7]) == 360);
+        assert(int16_t(wide[7].words[1]) == -40 && uint16_t(wide[7].words[3]) == 360);
+    }
 
     // Title: fade 2 then the 900-frame PRESS START loop, then attract.
     FrontendState s;

@@ -3101,6 +3101,7 @@ bool run_frontend_title(bool scripted) {
         in.pressed = pending; pending = 0;
         in.fade_80098a72 = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
         f = l3::frontend_step_80013420(state, in);
+        l3::frontend_backdrop_widescreen(f.packets);   // 400-px top screen
         for (const uint8_t type : f.fades) {
             l3::SourceFadeStartupResult started;
             if (type == 2) started = l3::consume_source_fade_startup_80017c30_type2(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents);

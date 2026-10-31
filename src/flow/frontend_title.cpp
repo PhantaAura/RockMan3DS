@@ -47,6 +47,25 @@ std::vector<FrontendPacket> frontend_backdrop_80013fb8() {
     return out;
 }
 
+void frontend_backdrop_widescreen(std::vector<FrontendPacket>& packets) {
+    // Port presentation, not original: the 400-px top screen shows PS1 x
+    // -40..360. The strip and gradient span it; the wall continues its own
+    // mirror (u 40..0 left of x 0, u 0..40 right of x 320).
+    const uint32_t wall = kFrontendMaterialWords[4];
+    for (auto& p : packets) {
+        const uint8_t code = uint8_t(p.words[0] >> 24) & 0xFDu;   // POLY_G4, semi or not
+        if (code != 0x38 || p.length != 8 || uint16_t(p.words[1]) != 0 || uint16_t(p.words[3]) != 320) continue;
+        for (unsigned k : {1u, 5u}) p.words[k] = (p.words[k] & 0xFFFF0000u) | uint16_t(-40);
+        for (unsigned k : {3u, 7u}) p.words[k] = (p.words[k] & 0xFFFF0000u) | 360u;
+    }
+    for (size_t i = 0; i < packets.size(); ++i)
+        if (packets[i].bucket == 35 && (packets[i].words[2] >> 16) == (wall >> 16)) {
+            packets.insert(packets.begin() + std::ptrdiff_t(i), {ft4(quad(wall, -40, 0, 0, 160, 40, 0, 0, 160), 35),
+                                                                 ft4(quad(wall, 320, 0, 360, 160, 0, 0, 40, 160), 35)});
+            break;
+        }
+}
+
 psxgpu::PolyFt4 frontend_logo_80013fb8() noexcept {
     return quad(kFrontendMaterialWords[0], 0x20, 8, 0x11F, 0xA8, 0, 0, 0xFF, 0xA0);
 }
