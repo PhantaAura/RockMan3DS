@@ -1807,10 +1807,17 @@ size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::Scene
             const auto half=[&](size_t at){return int16_t(uint16_t(w.raw[at]|(w.raw[at+1]<<8)));};
             const auto depth=l3::source_scene_e0_depth_8002a160(*g_scene_view_frame,{{half(56),half(58),half(60)}});
             const auto far=session.source_event_phase6_context().half_1f800006;
-            if(far&&depth>int32_t(*far))continue;
+            if(far&&depth>int32_t(*far)){
+                if(session.frame_counter()%60u==0u)hardware_test_trace("# source_scene_E0_slot,frame=%lu,slot=%lu,far_culled=1,depth=%ld,far=%u",
+                    (unsigned long)session.frame_counter(),(unsigned long)slot,(long)depth,unsigned(*far));
+                continue;}
             tier=l3::scene_e0_tier_for_source_depth(depth);
         }
         const auto draw=l3::scene_e0_draw_view(w,resources,session.active_area().ebd,tier);
+        if(session.frame_counter()%60u==0u&&w.known[3]&&w.known[9]&&w.known[10])
+            hardware_test_trace("# source_scene_E0_slot,frame=%lu,slot=%lu,variant=%u,state=%u,sub=%u,flags0=%02x,flags6=%02x,tier=%u,draw_status=%u,view=%u",
+                (unsigned long)session.frame_counter(),(unsigned long)slot,unsigned(w.raw[3]),unsigned(w.raw[9]),unsigned(w.raw[10]),
+                unsigned(w.raw[0]),unsigned(w.raw[6]),unsigned(tier),unsigned(draw.status),unsigned(g_scene_view_frame.has_value()));
         if(draw.status!=l3::SceneE0Status::Ready)continue;
         const auto& v=draw.view;
         if(v.mesh->part.triangles.empty()&&v.mesh->part.quads.empty())continue;
@@ -4546,6 +4553,13 @@ int main() {
                                     (unsigned long)result.source_function,unsigned(prop.raw[9]),unsigned(prop.raw[10]),half(56),half(58),half(60),
                                     unsigned(prop.known[56]),unsigned(prop.known[57]),unsigned(prop.known[58]),unsigned(prop.known[59]),unsigned(prop.known[60]),unsigned(prop.known[61]));
                             }
+                        }
+                        if(session.frame_counter()%60u==0u)for(size_t slot=0;slot<pass.slots.size();++slot){
+                            const auto& r=pass.slots[slot];
+                            if(r.status==l3::SceneE0Status::NotScheduled||r.committed)continue;
+                            hardware_test_trace("# source_scene_E0_hold,frame=%lu,slot=%lu,status=%u,function=%08lx,missing=%d",
+                                (unsigned long)session.frame_counter(),(unsigned long)slot,unsigned(r.status),(unsigned long)r.source_function,
+                                r.missing_offset?int(*r.missing_offset):-1);
                         }
                         if(pass.initialized_count||session.frame_counter()%60u==0u)
                             hardware_test_trace("# source_scene_E0_update,frame=%lu,status=%u,initialized=%lu,updated=%lu,held=%lu,chronology=CANDIDATE,later_behavior=SOURCE_BACKED_PARTIAL",
