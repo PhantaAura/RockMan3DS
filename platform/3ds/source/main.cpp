@@ -5870,6 +5870,7 @@ int main() {
             }
             auto ui_status=session.bottom_screen_model();
             g_hud_target.update(actors,session.map_area_index(),ui_status);
+            ui_status.hud_anim=uint8_t(session.frame_counter()%12u);
             mockup_hud_draw(ui_state,ui_status,ui_map,&g_runtime_diag);
             gfxScreenSwapBuffers(GFX_BOTTOM,false);
             mml_diag_phase(&g_runtime_diag,MML_PHASE_BOTTOM_UI,static_cast<uint32_t>((svcGetSystemTick()-ui_start)/CPU_TICKS_PER_USEC));

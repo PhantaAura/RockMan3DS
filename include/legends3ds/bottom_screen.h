@@ -84,6 +84,7 @@ struct BottomScreenModel {
     bool target_visible = false;
     uint16_t target_hp = 0;
     uint16_t target_hp_max = 0;
+    uint8_t hud_anim = 0; /* HUD frame counter for the ring icon (0..11) */
 };
 
 struct BottomScreenLayout {

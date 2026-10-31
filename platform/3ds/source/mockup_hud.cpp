@@ -67,7 +67,7 @@ RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel
     key[22]=static_cast<uint32_t>(status.money);
     key[23]=g_gauge.loaded;
     key[18]=status.target_visible?(uint64_t(uint16_t(status.target_hp))<<16|uint16_t(status.target_hp_max)|(1ull<<40)):0;
-    key[19]=0;
+    key[19]=(status.hud_anim%12u)/2u;
     return key;
 }
 uint64_t raster_fingerprint(const RasterKey& key) {
@@ -250,7 +250,23 @@ void draw_map(Raster& raster, const l3::MockupMapView& map, const l3::MockupUiSt
 // cluts 0x3E35-0x3E37 and 0x3E74/0x3E75, which no resource uploads. All six
 // fit the TIM's 8 palette rows laid out 64x2 (rows 0-3 on line 248, rows 4-7
 // on line 249), so clut 0x3E75 -> row 5 (CANDIDATE; the runtime copy is not found).
-constexpr int kCellRow=5, kTargetRow=2;
+constexpr int kCellRow=5, kTargetRow=2, kIconRow=4;
+// Ring icon: FUN_8005C9BC steps a 12-frame counter and draws frame
+// table[counter] (0x80098020: 0,0,1,1,..5,5) from the six 16x16 pieces at
+// 0x8008D570 (clut 0x3E74) at anchor+(6,72), above everything else.
+void draw_ring_icon(Raster& r, int x, int y, unsigned anim) {
+    constexpr uint8_t kUv[6][2]={{0x00,0x60},{0x10,0x60},{0x30,0x70},{0x00,0x70},{0x10,0x70},{0x20,0x70}};
+    const unsigned frame=(anim%12u)/2u;
+    r.sprite(x+6,y+72,kUv[frame][0],kUv[frame][1],16,16,{128,128,128},kIconRow);
+}
+// Special weapon gauge, FUN_8005CCF4 (pieces 0x8008D610, origin 280,190).
+// With no special weapon the energy max is 0x7FFF and only the 24x40 hook
+// base and the 24x24 lamp top (0x8008D674) are drawn; the port has no
+// special weapons yet, so this is that state.
+void draw_weapon_gauge(Raster& r, int x, int y) {
+    r.sprite(x,y-24,0x48,0x60,24,24);                            // lamp top
+    r.sprite(x,y,0x28,0x38,24,40);                               // hook base
+}
 void draw_life_gauge(Raster& r, int x, int y, unsigned hp, unsigned hp_max, int max_body) {
     const int body=std::clamp(int(hp_max>>4)*5-10,0,max_body);
     const int top=y-body;
@@ -309,14 +325,16 @@ void draw_status(Raster& r, const l3::BottomScreenModel& status) {
         const int body=std::clamp(int(status.hp_max>>4)*5-10,0,kMaxBody);
         const int cap_top=p.y+4+(130-80-body)/2;
         draw_life_gauge(r,p.x+12,cap_top+body-16,std::min(status.hp,status.hp_max),status.hp_max,kMaxBody);
+        draw_ring_icon(r,p.x+12,cap_top+body-16,status.hud_anim);
     }
-    r.text(text_x,p.y+50,"LIFE",kAccent);
+    if(g_gauge.loaded) draw_weapon_gauge(r,p.x+p.w-6-24,p.y+92);
+    r.text(text_x,p.y+8,"LIFE",kAccent);
     if(status.hp_max) {
         char hp[8], max[8];
         std::snprintf(hp,sizeof(hp),"%u",unsigned(std::min(status.hp,status.hp_max)));
         std::snprintf(max,sizeof(max),"/%u",unsigned(status.hp_max));
-        r.text(text_x,p.y+64,hp,kWhite); r.text(text_x,p.y+76,max,kMuted);
-    } else r.text(text_x,p.y+64,"--",kMuted);
+        r.text(text_x,p.y+20,hp,kWhite); r.text(text_x,p.y+32,max,kMuted);
+    } else r.text(text_x,p.y+20,"--",kMuted);
     // The last enemy hit: original target gauge (FUN_8005CEFC) under a label.
     if(g_gauge.loaded && status.target_visible && status.target_hp_max) {
         r.fill(p.x+6,p.y+134,p.w-12,1,kBorder);
