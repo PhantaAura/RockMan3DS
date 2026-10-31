@@ -1831,6 +1831,8 @@ size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::Scene
     return instances;
 }
 
+bool psx_emit_class40(const l3::SourceEventPhase5Bytes<1444>& work, const l3::ActorMeshResource& mesh,
+                      const l3::SourceSceneActor40IntegerPose& pose,const l3::SourceSceneActor40Matrices& world);
 size_t draw_source_scene_actor40_uv(const l3::RuntimeSession& session,const l3::SourceSceneActor40Resources& resource,const l3::ReferenceTables& refs) {
     const auto& work=session.source_event_phase5_context().pool40.slots[0];
     const auto* selected=l3::select_source_scene_actor40_pose(work,resource);
@@ -1840,6 +1842,7 @@ size_t draw_source_scene_actor40_uv(const l3::RuntimeSession& session,const l3::
         &refs,session.source_event_phase6_context().byte_1f800074,*selected);
     if(integer_pose.status!=l3::SourceSceneActor40PoseStatus::SourceBackedPartial)return 0;
     const auto pose=l3::present_source_scene_actor40_integer_pose(integer_pose);
+    if(psx_emit_class40(work,*mesh,integer_pose,pose))return pose.part_count;
     configure_immediate_attributes_uv();configure_texenv_uv(false);size_t drawn=0;
     for(size_t i=0;i<pose.part_count;++i){if(!pose.draw_enabled[i])continue;
         const auto& part=mesh->model.parts[i];
@@ -2151,6 +2154,9 @@ static bool g_psx_terrain = true;
 static bool g_psx_actors = true;
 // This frame's face camera (set before the terrain draw; reset each frame).
 static std::optional<l3::TerrainFaceCamera> g_psx_camera;
+// 0x1F800006 of the current scene frame (camera commands 32..34), if known.
+static std::optional<uint16_t> g_psx_far_1f800006;
+std::optional<uint16_t> session_far_1f800006(){return g_psx_far_1f800006;}
 struct PsxTranslatorStats {
     uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0, subdivided = 0,
         negative = 0, negative_triangles = 0, negative_3d = 0, unfitted_ramp = 0, negative_near = 0, near_stream_end = 0,
@@ -2681,6 +2687,107 @@ bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::Imported
         for (const auto& quad : part.quads) {
             const std::array<const PsxVert*,4> v{{vert(quad.index[0]), vert(quad.index[1]), vert(quad.index[2]), vert(quad.index[3])}};
             psx_emit_model_prim(v, 4, false, 2048, [&](const auto& sx, const auto& sy, uint16_t) {
+                return l3::psxgpu::class20_packet_800289a0(colour, true, word, ramp, quad.uv, sx, sy);
+            });
+        }
+    }
+    return true;
+}
+
+// The scene class-40 actor through the OT (0x80028F90 -> 0x80029608).
+// Visibility at the actor point work+0x14 (raw, not shifted): SZ3>>2 against
+// 0x1F800006 (far), 48>>shift (near) and SX/SY windows -352..672/-136..888;
+// flag 0x40 keeps an actor nearer than 0x1F800006 without the other tests.
+// Colour +0x15E (BGR555) DPCS at that point's IR0; ramp 0x800C0DC0[(d/128)&31].
+// Per part: rotation = sat16(R_cam * M_col >> 12) (MVMVA per column of the
+// work+0x240 matrix), translation = TR_cam + (R_cam * work+0x180) >> 12, then
+// RTPT of the raw mesh vertices; flat POLY_FT3/FT4, NCLIP > 0, bucket OTZ>>1.
+// Holds (returns false) for +0x15E == 0 (per-part colours +0x186 not ported).
+bool psx_emit_class40(const l3::SourceEventPhase5Bytes<1444>& work, const l3::ActorMeshResource& mesh,
+                      const l3::SourceSceneActor40IntegerPose& pose,const l3::SourceSceneActor40Matrices& world) {
+    if (!g_psx_actors || !g_psx_camera || !g_psx_ot.size()) return false;
+    const auto& cam = *g_psx_camera;
+    const auto rd16 = [&](size_t o) { return int16_t(uint16_t(work.raw[o] | (work.raw[o + 1] << 8))); };
+    for (size_t o : {size_t(0), size_t(0x14), size_t(0x15), size_t(0x16), size_t(0x17), size_t(0x18), size_t(0x19), size_t(0x15e), size_t(0x15f)})
+        if (!work.known[o]) return false;
+    const uint16_t c15 = uint16_t(rd16(0x15e));
+    if (c15 == 0) return false;
+    auto gte = cam.gte;
+    gte.data[0] = (uint32_t(uint16_t(rd16(0x14)))) | (uint32_t(uint16_t(rd16(0x16))) << 16);
+    gte.data[1] = uint32_t(uint16_t(rd16(0x18)));
+    const auto p = l3::source_gte_rtps_0180001(gte);
+    if (p.status != l3::SourcePlayerProxyStatus::SourceBackedPartial) return false;
+    const int32_t depth = int32_t(p.depth) >> 2;
+    const int16_t ax = int16_t(uint16_t(p.screen_xy)), ay = int16_t(uint16_t(p.screen_xy >> 16));
+    const uint16_t air0 = uint16_t(gte.data[8]);
+    const auto far = session_far_1f800006();
+    const bool keep_near = (work.raw[0] & 0x40u) && far && depth < int32_t(*far);
+    if (!keep_near) {
+        if (far && int32_t(*far) < depth) return true;
+        if (depth < (48 >> (cam.lod_1f800074 & 31))) return true;
+        if (uint16_t(ax + 352) >= 1025u || uint16_t(ay + 136) >= 1025u) return true;
+    }
+    const uint32_t colour = psx_depth_cue(l3::psxgpu::class20_colour_8002831c(c15), air0);
+    const uint8_t ramp = cam.area_record ? l3::psxgpu::actor_ramp_80027f78(depth, *cam.area_record) : 0;
+    const auto R = [&](int r, int c) { const size_t k = size_t(r * 3 + c);
+        const uint32_t w = cam.gte.control[k / 2]; return int32_t(int16_t(uint16_t(k & 1 ? w >> 16 : w))); };
+    const auto sat = [](int64_t v) { return int32_t(v < -32768 ? -32768 : v > 32767 ? 32767 : v); };
+    static std::vector<PsxVert> verts;
+    for (size_t i = 0; i < pose.part_count && i < mesh.model.parts.size(); ++i) {
+        const auto& ip = pose.parts[i];
+        if (!ip.draw_enabled || !ip.transform_written) continue;
+        const auto M = [&](int r, int c) { const size_t o = size_t(r * 3 + c) * 2;
+            return int32_t(int16_t(uint16_t(ip.matrix[o] | (ip.matrix[o + 1] << 8)))); };
+        std::array<int32_t,9> C{};
+        for (int c = 0; c < 3; ++c) for (int r = 0; r < 3; ++r)
+            C[size_t(r * 3 + c)] = sat((int64_t(R(r, 0)) * M(0, c) + int64_t(R(r, 1)) * M(1, c) + int64_t(R(r, 2)) * M(2, c)) >> 12);
+        std::array<int32_t,3> T{};
+        for (int r = 0; r < 3; ++r)
+            T[size_t(r)] = int32_t(cam.gte.control[5 + r]) + int32_t((int64_t(R(r, 0)) * ip.position[0] + int64_t(R(r, 1)) * ip.position[1] + int64_t(R(r, 2)) * ip.position[2]) >> 12);
+        auto part_gte = cam.gte;
+        part_gte.control[0] = uint32_t(uint16_t(C[0])) | (uint32_t(uint16_t(C[1])) << 16);
+        part_gte.control[1] = uint32_t(uint16_t(C[2])) | (uint32_t(uint16_t(C[3])) << 16);
+        part_gte.control[2] = uint32_t(uint16_t(C[4])) | (uint32_t(uint16_t(C[5])) << 16);
+        part_gte.control[3] = uint32_t(uint16_t(C[6])) | (uint32_t(uint16_t(C[7])) << 16);
+        part_gte.control[4] = uint32_t(int32_t(int16_t(C[8])));
+        for (int r = 0; r < 3; ++r) part_gte.control[5 + r] = uint32_t(T[size_t(r)]);
+        const auto& part = mesh.model.parts[i];
+        const uint32_t word = mesh.bindings[i].material_word;
+        verts.assign(part.vertices.size(), PsxVert{});
+        const auto vert = [&](uint8_t index) -> const PsxVert* {
+            auto& pv = verts[index];
+            if (!pv.done) {
+                pv.done = true;
+                const auto& src = part.vertices[index];
+                auto g = part_gte;
+                g.data[0] = uint32_t(uint16_t(src.x)) | (uint32_t(uint16_t(src.y)) << 16);
+                g.data[1] = uint32_t(uint16_t(src.z));
+                const auto q = l3::source_gte_rtps_0180001(g);
+                pv.ok = q.status == l3::SourcePlayerProxyStatus::SourceBackedPartial && q.depth != 0;
+                pv.sx = int16_t(uint16_t(q.screen_xy)); pv.sy = int16_t(uint16_t(q.screen_xy >> 16)); pv.sz = q.depth;
+                pv.ir0 = uint16_t(g.data[8]);
+                // 3DS depth/position extra from the presented pose (world units).
+                const auto w = l3::player_pose_transform_point(world.world[i], {float(src.x), float(src.y), float(src.z)});
+                const auto e = world_vertex_uv(w.x, w.y, w.z);
+                const C3D_FVec ve = Mtx_MultiplyFVec4(&g_frame_view, FVec4_New(e.x, e.y, e.z, 1.f));
+                const C3D_FVec c = Mtx_MultiplyFVec4(&g_frame_projection, ve);
+                const float inv = c.w != 0.f ? 1.f / c.w : 0.f;
+                pv.depth = c.z * inv; pv.nx = c.x * inv; pv.ny = c.y * inv;
+            }
+            return &pv;
+        };
+        for (const auto& tri : part.triangles) {
+            std::array<const PsxVert*,4> v{{vert(tri.index[0]), vert(tri.index[1]), vert(tri.index[2]), nullptr}};
+            v[3] = v[2];
+            std::array<uint8_t,8> uv{};
+            for (unsigned k = 0; k < 6; ++k) uv[k] = tri.uv[k];
+            psx_emit_model_prim(v, 3, false, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+                return l3::psxgpu::class20_packet_800289a0(colour, false, word, ramp, uv, sx, sy);
+            });
+        }
+        for (const auto& quad : part.quads) {
+            const std::array<const PsxVert*,4> v{{vert(quad.index[0]), vert(quad.index[1]), vert(quad.index[2]), vert(quad.index[3])}};
+            psx_emit_model_prim(v, 4, false, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
                 return l3::psxgpu::class20_packet_800289a0(colour, true, word, ramp, quad.uv, sx, sy);
             });
         }
@@ -5610,6 +5717,7 @@ int main() {
                 // drawn after the player (opaque) and after the actors (semi).
                 psx_begin_frame();
                 g_psx_camera = faces;
+                g_psx_far_1f800006 = session.source_event_phase6_context().half_1f800006;
                 const u64 terrain_start=svcGetSystemTick();
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 g_frame_split.terrain+=svcGetSystemTick()-terrain_start;
