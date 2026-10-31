@@ -5594,7 +5594,14 @@ int main() {
             const bool isolate_scene_actor=g_source_scene_actor40_only&&g_source_scene_actor40&&
                 use_uv_renderer()&&scene_actor40&&scene_actor40_prefix_ready&&scene_actor40_pose_ready&&
                 session.source_event_phase5_resources().resident_in(session.active_area().ebd);
-            const bool draw_legacy_player=!isolate_scene_actor&&g_hardware_scene_draw!=HardwareSceneDraw::TerrainOnly;
+            // Event 1 phase 1 clears player byte0 bits 0/1 (0x80101138) and
+            // phase 7 sets bit 0 again; in between only the scene's class-40
+            // Mega Man is drawn (oracle: byte0 = 0 through the scene, 3 at
+            // control). Which of the two bits gates the draw: CANDIDATE.
+            const bool opening_hides_player=g_new_game_opening&&session.source_event_work()&&
+                session.source_event_work()->active00()&&(session.compat_player().bytes[0]&3u)==0;
+            const bool draw_legacy_player=!isolate_scene_actor&&!opening_hides_player&&
+                g_hardware_scene_draw!=HardwareSceneDraw::TerrainOnly;
             const u64 player_start=svcGetSystemTick();
             if(draw_legacy_player) {
                 if (use_uv_renderer())

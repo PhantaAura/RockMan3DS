@@ -84,6 +84,18 @@ original end condition) the type-10 fade startup returned NeedsProfile: the
 pack's L3FD was decoder 1 and lacks 0x80097A46. The pack now cooks the
 decoder-2 profile (build pass-opening-211127); not re-run yet.
 
+## Azahar run 3 (build pass-opening-211127): NEW GAME -> Area 1
+Phase 7 at frame 3074 (original: record 19 frame 44 -> fade 10), source area
+transition committed at 3096: Mega Man at (2822,-1,-4833), area music
+request 0 queued, Area 1 actors spawned; the run continued in Area 1 until
+the script ended (frame 6807). The user, watching, saw two Mega Men during
+the scene: the legacy player was still drawn although phase 1 clears player
+byte0 bits 0/1. It is now hidden while event 1 is active and those bits are
+clear (build pass-opening-213708; not re-run). The user also saw timing lag
+in the shake sequence; this session ran ~6.7 game updates/s (6807 in 1010 s
+wall incl. boot), so the scene played well below real time while the XA
+stream plays in real time. Not separated from a port timing bug yet.
+
 ## Open
 - Re-run the opening in Azahar with the counter fix (build
   pass-opening-203335): records 10..19, phase 7, Area 1 control at
