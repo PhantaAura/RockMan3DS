@@ -42,7 +42,7 @@ TUTORIAL_TOOLS = (
     "l3cook_st00", "l3cook_render", "l3cook_map_init", "l3cook_st00_flow", "l3cook_st00_spawn", "l3cook_pbd",
     "l3cook_player_comp", "l3cook_anim", "l3cook_skeleton", "l3cook_msg",
     "l3cook_ebd", "l3cook_texture", "l3cook_palette", "l3cook_material_cache",
-    "l3cook_player_material_cache", "l3cook_actor_material_cache", "l3cook_negative_materials", "l3cook_scene_e0_material", "l3cook_frontend_materials",
+    "l3cook_player_material_cache", "l3cook_actor_material_cache", "l3cook_negative_materials", "l3cook_scene_e0_material", "l3cook_frontend_materials", "l3cook_bottom_gauge",
 )
 
 
