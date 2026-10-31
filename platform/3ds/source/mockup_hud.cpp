@@ -63,10 +63,11 @@ RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel
         }
     } else if(options_page) key[8]=l3::mockup_map_available(map);
     key[16]=status.hp; key[17]=status.hp_max;
-    key[18]=status.buster_enabled; key[19]=status.lock_on_active;
     key[20]=static_cast<unsigned>(status.context);
     key[22]=static_cast<uint32_t>(status.money);
     key[23]=g_gauge.loaded;
+    key[18]=status.target_visible?(uint64_t(uint16_t(status.target_hp))<<16|uint16_t(status.target_hp_max)|(1ull<<40)):0;
+    key[19]=0;
     return key;
 }
 uint64_t raster_fingerprint(const RasterKey& key) {
@@ -114,6 +115,11 @@ public:
         const size_t i = (size_t(x) * 240u + size_t(239-y)) * 3u;
         buffer_[i] = c.b; buffer_[i+1] = c.g; buffer_[i+2] = c.r;
     }
+    Color get(int x, int y) const {
+        if (x < 0 || x >= 320 || y < 0 || y >= 240) return {};
+        const size_t i = (size_t(x) * 240u + size_t(239-y)) * 3u;
+        return {buffer_[i+2], buffer_[i+1], buffer_[i]};
+    }
     void fill(int x, int y, int w, int h, Color c) {
         const int end_x = std::min(clip_x1_, x+w), end_y = std::min(clip_y1_, y+h);
         for (int px = std::max(clip_x0_,x); px < end_x; ++px)
@@ -142,13 +148,19 @@ public:
     }
     // One textured sprite from the gauge page: 0x0000 texels are transparent
     // and the 0x808080 primitive color leaves texels unchanged (PS1 modulation).
-    void sprite(int dx, int dy, int u, int v, int w, int h, Color mod={128,128,128}, int row=0) {
+    // semi: PS1 abr 0 (0.5*back + 0.5*texel), used by tpage 0x000D quads with cmd 0x2E.
+    void sprite(int dx, int dy, int u, int v, int w, int h, Color mod={128,128,128}, int row=0, bool semi=false) {
         if(!g_gauge.loaded) return;
         for(int y=0;y<h;++y) for(int x=0;x<w;++x) {
             const uint16_t c=g_gauge.palette[size_t(row)*16u+g_gauge.indices[size_t((v+y)&255)*256u+size_t((u+x)&255)]];
             if(!c) continue;
             const auto channel=[](unsigned five, unsigned m){ return (unsigned char)std::min(255u,(five<<3)*m/128u); };
-            pixel(dx+x,dy+y,{channel(c&31u,mod.r),channel((c>>5)&31u,mod.g),channel((c>>10)&31u,mod.b)});
+            Color texel{channel(c&31u,mod.r),channel((c>>5)&31u,mod.g),channel((c>>10)&31u,mod.b)};
+            if(semi && (c&0x8000u)) {
+                const Color back=get(dx+x,dy+y);
+                texel={(unsigned char)((back.r+texel.r)/2),(unsigned char)((back.g+texel.g)/2),(unsigned char)((back.b+texel.b)/2)};
+            }
+            pixel(dx+x,dy+y,texel);
         }
     }
     void center(const l3::BottomUiRect& r, int y, const char* text_value, Color c=kWhite) {
@@ -226,17 +238,6 @@ void draw_map(Raster& raster, const l3::MockupMapView& map, const l3::MockupUiSt
     char zoom[8]; std::snprintf(zoom,sizeof(zoom),"%uX",unsigned(state.map_zoom));
     raster.text(layout.content.x+layout.content.w-8-int(std::strlen(zoom))*6,layout.content.y+6,zoom,kMuted);
 }
-const char* context_label(l3::BottomScreenContext context) {
-    switch(context) {
-    case l3::BottomScreenContext::Gameplay: return "PLAYING";
-    case l3::BottomScreenContext::Dialogue: return "DIALOGUE";
-    case l3::BottomScreenContext::Cinematic: return "CINEMATIC";
-    case l3::BottomScreenContext::Pause: return "PAUSED";
-    case l3::BottomScreenContext::Save: return "SAVE";
-    case l3::BottomScreenContext::Loading: return "LOADING";
-    }
-    return "PLAYING";
-}
 // Mega Man's life gauge, composed exactly as ROCK_NEO FUN_8005C9BC does in
 // its normal state (piece table 0x8008D37C, cells 0x8008D5E8/0x8008D5FC):
 // a top cap raised by the body height 5*(max>>4)-10, a body window of that
@@ -245,13 +246,18 @@ const char* context_label(l3::BottomScreenContext context) {
 // ordering table draws the last-inserted primitive first, so pieces are
 // painted here in reverse call order. Anchor (x,y) is the original (8,0x88)
 // screen origin; on the bottom screen it is placed by port presentation.
+// GAUGE01u's loader puts its 16x8 CLUT at (832,248), yet the HUD also samples
+// cluts 0x3E35-0x3E37 and 0x3E74/0x3E75, which no resource uploads. All six
+// fit the TIM's 8 palette rows laid out 64x2 (rows 0-3 on line 248, rows 4-7
+// on line 249), so clut 0x3E75 -> row 5 (CANDIDATE; the runtime copy is not found).
+constexpr int kCellRow=5, kTargetRow=2;
 void draw_life_gauge(Raster& r, int x, int y, unsigned hp, unsigned hp_max, int max_body) {
     const int body=std::clamp(int(hp_max>>4)*5-10,0,max_body);
     const int top=y-body;
     const unsigned full=hp>>4, part=hp&15u;
     r.sprite(x+4,top+0x20,0x70,0x40,0x10,body+16,{0,0,0});        // interior, color 0
-    if(part) r.sprite(x+8,y+0x25-int(full)*5,0x98,0,8,8);           // remainder
-    for(unsigned i=full;i-->0;) r.sprite(x+8,y+0x25-int(i)*5,0x88,0,8,8);
+    if(part) r.sprite(x+8,y+0x25-int(full)*5,0x98,0,8,8,{128,128,128},kCellRow); // remainder
+    for(unsigned i=full;i-->0;) r.sprite(x+8,y+0x25-int(i)*5,0x88,0,8,8,{128,128,128},kCellRow);
     r.sprite(x-8,y+0x38,0x00,0x38,0x28,0x28);                     // ring
     // Body window. The original samples v=0x18 for `body` rows; past 16 rows
     // that runs into the ring art, so longer bodies repeat the 16-row segment
@@ -272,6 +278,26 @@ void draw_panel(Raster& r, const l3::BottomUiRect& p, Color fill) {
 }
 // Status column: the original life gauge on the left with the HP readout
 // beside it, then buster / lock-on slots and the screen context.
+// Target life gauge, composed as ROCK_NEO FUN_8005CEFC (piece set 0 at
+// 0x8008D688, clut 0x3E36): the 32x32 emblem at the anchor, a pipe of
+// max>>shift px extending left with its left cap, and the fill of
+// ceil(hp>>shift) px plus its 1-px end, painted in reverse OT order. The
+// original reads the shift from its HUD slot (+0x0C); here the smallest
+// shift that fits max_len is used (port presentation).
+void draw_target_gauge(Raster& r, int x, int y, unsigned hp, unsigned hp_max, int max_len) {
+    unsigned shift=0;
+    while(shift<15 && int(hp_max>>shift)>max_len) ++shift;
+    const int len=int(hp_max>>shift);
+    const int fill=hp?int((std::min(hp,hp_max)+(1u<<shift)-1u)>>shift):0;
+    const Color plain{128,128,128};
+    r.sprite(x-len,y+8,0x98,8,len,16,plain,kTargetRow,true);     // pipe, semi-transparent
+    if(fill>0) {
+        r.sprite(x-fill,y+12,0xA8,0x20,1,8,plain,kTargetRow);    // fill end
+        r.sprite(x-fill+1,y+12,0xA8,0x28,fill,8,plain,kTargetRow); // fill
+    }
+    r.sprite(x-len-10,y+8,0x88,8,10,16,plain,kTargetRow);        // left cap
+    r.sprite(x,y,0xA8,0,32,32,plain,kTargetRow);                 // emblem
+}
 void draw_status(Raster& r, const l3::BottomScreenModel& status) {
     const auto& p=l3::mockup_ui_layout().status;
     const int text_x=p.x+48;
@@ -291,14 +317,12 @@ void draw_status(Raster& r, const l3::BottomScreenModel& status) {
         std::snprintf(max,sizeof(max),"/%u",unsigned(status.hp_max));
         r.text(text_x,p.y+64,hp,kWhite); r.text(text_x,p.y+76,max,kMuted);
     } else r.text(text_x,p.y+64,"--",kMuted);
-    const l3::BottomUiRect slots[2]={{static_cast<int16_t>(p.x+5),static_cast<int16_t>(p.y+138),static_cast<int16_t>(p.w-10),18},
-                                     {static_cast<int16_t>(p.x+5),static_cast<int16_t>(p.y+158),static_cast<int16_t>(p.w-10),18}};
-    for(const auto& slot:slots) { r.fill(slot.x,slot.y,slot.w,slot.h,kHeader); r.border(slot,kBorder); }
-    r.text(slots[0].x+4,slots[0].y+6,"BUSTER",kMuted);
-    r.text(slots[0].x+slots[0].w-22,slots[0].y+6,status.buster_enabled?"RDY":"OFF",status.buster_enabled?kAccent:kMuted);
-    r.text(slots[1].x+4,slots[1].y+6,"LOCK",kMuted);
-    r.text(slots[1].x+slots[1].w-22,slots[1].y+6,status.lock_on_active?" ON":"OFF",status.lock_on_active?kPlayer:kMuted);
-    r.center(p,p.y+182,context_label(status.context),kMuted);
+    // The last enemy hit: original target gauge (FUN_8005CEFC) under a label.
+    if(g_gauge.loaded && status.target_visible && status.target_hp_max) {
+        r.fill(p.x+6,p.y+134,p.w-12,1,kBorder);
+        r.text(p.x+8,p.y+142,"TARGET",kAccent);
+        draw_target_gauge(r,p.x+p.w-6-32,p.y+154,status.target_hp,status.target_hp_max,p.w-6-32-14);
+    }
 }
 // Footer: GAUGE01u ZENNY plate (0,177 96x14) with the money in its box.
 // The plate is original art; showing it permanently here is port presentation.

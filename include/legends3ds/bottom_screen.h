@@ -80,6 +80,10 @@ struct BottomScreenModel {
     uint16_t cutscene_skip_hold = 0;
     uint16_t cutscene_skip_hold_required = 60;
     int32_t money = 0; /* zenny, ROCK_NEO 0x800C1B2C */
+    /* Last enemy hit, for the target life gauge (ROCK_NEO 0x8005CEFC). */
+    bool target_visible = false;
+    uint16_t target_hp = 0;
+    uint16_t target_hp_max = 0;
 };
 
 struct BottomScreenLayout {

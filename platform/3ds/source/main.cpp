@@ -3,6 +3,7 @@
 #include <3ds.h>
 #include <citro3d.h>
 #include <algorithm>
+#include <cstdint>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -274,6 +275,42 @@ std::vector<uint8_t> read_binary(const std::string& path, size_t limit=kRuntimeF
 }
 
 std::string data_path(const char* rel) { return std::string(kDataRoot) + rel; }
+
+// Bottom-screen target gauge (ROCK_NEO 0x8005CEFC draws up to three HUD
+// slots at 0x800BBDC0 from an actor's +6E health and +B0 max). Which actor
+// fills a slot and for how long is not recovered: show the last actor whose
+// health dropped for 5 s (CANDIDATE). Max is +B0 where the port has it,
+// otherwise the first health seen for that actor.
+struct HudTargetTracker {
+    std::vector<int16_t> last, first;
+    size_t index = SIZE_MAX, area = SIZE_MAX;
+    uint16_t timer = 0;
+    void update(const l3::ActorAreaRuntime& actors, size_t area_index, l3::BottomScreenModel& model) {
+        if (area_index != area || last.size() != actors.actors.size()) {
+            area = area_index; index = SIZE_MAX; timer = 0;
+            last.assign(actors.actors.size(), INT16_MIN); first = last;
+        }
+        for (size_t i = 0; i < actors.actors.size(); ++i) {
+            const auto& a = actors.actors[i];
+            std::optional<int16_t> hp;
+            if (a.source_behavior && a.source_behavior->health_6e) hp = a.source_behavior->health_6e;
+            else if (a.source_reaverbot19 && a.source_reaverbot19->health_6e) hp = a.source_reaverbot19->health_6e;
+            else if (a.source_popout && a.source_popout->health_6e) hp = a.source_popout->health_6e;
+            if (!hp) continue;
+            if (first[i] == INT16_MIN) first[i] = *hp;
+            if (a.source_behavior && a.source_behavior->initial_health_b0) first[i] = *a.source_behavior->initial_health_b0;
+            if (last[i] != INT16_MIN && *hp < last[i]) { index = i; timer = 150; }
+            last[i] = *hp;
+        }
+        if (timer && index < last.size() && first[index] > 0) {
+            --timer;
+            model.target_visible = true;
+            model.target_hp_max = uint16_t(first[index]);
+            model.target_hp = uint16_t(std::clamp<int>(last[index], 0, first[index]));
+        }
+    }
+};
+HudTargetTracker g_hud_target;
 
 bool section_matches_file(const l3::LoadedAreaPackage& package, uint32_t kind, const std::string& path) {
     const auto section = std::find_if(package.directory.begin(), package.directory.end(),
@@ -5831,7 +5868,9 @@ int main() {
                 mockup_hud_set_dialogue(d.active&&d.source_controls_inline,text,
                     d.waiting_for_choice?int(d.choice_targets.size()):0,int(d.choice),d.waiting_for_advance);
             }
-            mockup_hud_draw(ui_state,session.bottom_screen_model(),ui_map,&g_runtime_diag);
+            auto ui_status=session.bottom_screen_model();
+            g_hud_target.update(actors,session.map_area_index(),ui_status);
+            mockup_hud_draw(ui_state,ui_status,ui_map,&g_runtime_diag);
             gfxScreenSwapBuffers(GFX_BOTTOM,false);
             mml_diag_phase(&g_runtime_diag,MML_PHASE_BOTTOM_UI,static_cast<uint32_t>((svcGetSystemTick()-ui_start)/CPU_TICKS_PER_USEC));
             g_runtime_diag.frame_us=static_cast<uint32_t>((svcGetSystemTick()-frame_start)/CPU_TICKS_PER_USEC);
