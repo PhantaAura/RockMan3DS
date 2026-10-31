@@ -2102,7 +2102,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
 }
 
 BottomScreenModel RuntimeSession::bottom_screen_model()const{
-    BottomScreenModel m; m.context=dialogue_.active?BottomScreenContext::Dialogue:(camera_.owner==RuntimeCameraOwner::Script?BottomScreenContext::Cinematic:BottomScreenContext::Gameplay);m.area_name_id=static_cast<uint16_t>(area_index_);m.hp=hp_;m.hp_max=hp_max_;m.buster_enabled=l3_pl00_shot_is_enabled(&player_);m.lock_on_active=locked_target_index_.has_value();m.objective_available=objective_.has_value();if(objective_)m.objective=*objective_;m.dialogue_history_count=history_.size();m.save_available=!dialogue_.active&&camera_.owner==RuntimeCameraOwner::Gameplay;m.cutscene_skip_available=cutscene_skippable();m.cutscene_skip_hold=cutscene_skip_hold_frames_;return m;
+    BottomScreenModel m; m.context=dialogue_.active?BottomScreenContext::Dialogue:(camera_.owner==RuntimeCameraOwner::Script?BottomScreenContext::Cinematic:BottomScreenContext::Gameplay);m.area_name_id=static_cast<uint16_t>(area_index_);m.hp=hp_;m.hp_max=hp_max_;m.money=source_money_800c1b2c_;m.buster_enabled=l3_pl00_shot_is_enabled(&player_);m.lock_on_active=locked_target_index_.has_value();m.objective_available=objective_.has_value();if(objective_)m.objective=*objective_;m.dialogue_history_count=history_.size();m.save_available=!dialogue_.active&&camera_.owner==RuntimeCameraOwner::Gameplay;m.cutscene_skip_available=cutscene_skippable();m.cutscene_skip_hold=cutscene_skip_hold_frames_;return m;
 }
 BottomScreenLayout RuntimeSession::bottom_screen_layout()const{return build_bottom_screen_layout(bottom_screen_model(),settings_);}
 

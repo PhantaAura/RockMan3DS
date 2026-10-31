@@ -2,6 +2,7 @@
 #include "../platform/3ds/source/mockup_hud.h"
 #include <algorithm>
 #include <array>
+#include <vector>
 #include <cassert>
 #include <cstdint>
 #include <cstring>
@@ -205,4 +206,27 @@ int main() {
     mockup_hud_raster(pixels,state,status,incomplete);
     assert_guards(framebuffer);
     mockup_hud_raster(nullptr,state,status,{});
+
+    // GAUGE01u art: malformed files are rejected; a loaded page draws the
+    // life gauge in the status panel and the ZENNY plate in the footer.
+    std::vector<unsigned char> art(16+256+256*256,1);
+    const unsigned char header[16]={'L','3','U','I',1,0,0,1,0,1,16,0,8,0,0,0};
+    std::copy(std::begin(header),std::end(header),art.begin());
+    for(size_t i=0;i<128;++i){ art[16+i*2]=i%16==1?0x1f:0; art[17+i*2]=0; }
+    assert(!mockup_hud_load_gauge(art.data(),art.size()-1));
+    auto bad=art; bad[0]='X'; assert(!mockup_hud_load_gauge(bad.data(),bad.size()));
+    assert(mockup_hud_load_gauge(art.data(),art.size()));
+    status.hp=0x50; status.hp_max=0x60; status.money=42;
+    mockup_hud_raster(pixels,state,status,map);
+    assert_guards(framebuffer);
+    const auto& panel=layout.status;
+    const int gauge_x=panel.x+panel.w/2-12, gauge_y=panel.y+4+(126-100)/2+20-16;
+    expect_pixel(pixels,gauge_x-8,gauge_y+0x38,248,0,0);   // ring
+    expect_pixel(pixels,gauge_x,gauge_y+0x28,248,0,0);     // base
+    expect_pixel(pixels,220,223,248,0,0);                  // ZENNY plate
+    status.hp=std::numeric_limits<uint16_t>::max(); status.hp_max=std::numeric_limits<uint16_t>::max();
+    status.money=std::numeric_limits<int32_t>::max();
+    mockup_hud_raster(pixels,state,status,map);
+    assert_guards(framebuffer);
+    expect_pixel(pixels,panel.x,panel.y,61,112,142);
 }

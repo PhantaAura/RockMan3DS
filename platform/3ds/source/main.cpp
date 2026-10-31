@@ -5801,6 +5801,12 @@ int main() {
                 boot_log(MML_BOOT_FIRST_FRAME, "first frame submitted; GPU completion pending");
                 boot_log(MML_BOOT_READY, "runtime initialized; first GPU sync pending");
                 mockup_hud_init();
+                {
+                    bool ok=false;
+                    try { const auto gauge=read_binary(data_path("materials/hud_gauge.l3ui"));
+                          ok=mockup_hud_load_gauge(gauge.data(),gauge.size()); } catch(const std::exception&) {}
+                    boot_log(MML_BOOT_DATA, ok?"HUD_GAUGE=1 GAUGE01u life gauge on bottom screen":"HUD_GAUGE=0 hud_gauge.l3ui absent or malformed");
+                }
             }
             g_runtime_diag.triangles = g_submitted_vertices/3u;
             g_runtime_diag.linear_bytes = g_owned_linear_bytes;

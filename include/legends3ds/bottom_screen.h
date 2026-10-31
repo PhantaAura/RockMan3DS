@@ -79,6 +79,7 @@ struct BottomScreenModel {
     bool cutscene_skip_available = false;
     uint16_t cutscene_skip_hold = 0;
     uint16_t cutscene_skip_hold_required = 60;
+    int32_t money = 0; /* zenny, ROCK_NEO 0x800C1B2C */
 };
 
 struct BottomScreenLayout {

@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdio>
 #include <cstring>
+#include <vector>
 #ifdef __3DS__
 #include <3ds.h>
 #endif
@@ -12,10 +13,10 @@ struct Color { unsigned char r, g, b; };
 constexpr Color kBackground{8,18,30}, kPanel{13,30,48}, kBorder{61,112,142};
 constexpr Color kAccent{110,225,230}, kWhite{226,242,250}, kMuted{139,167,185};
 constexpr Color kGrid{20,46,66}, kGeometry{41,110,123}, kSpecial{161,116,74};
-constexpr Color kPlayer{255,221,86}, kHealth{61,220,133};
+constexpr Color kPlayer{255,221,86};
 // Keep only two identities/keys, not copies of the 230,400-byte framebuffers.
 // Full key comparison prevents a hash collision from suppressing a needed draw.
-using RasterKey = std::array<uint64_t,22>;
+using RasterKey = std::array<uint64_t,24>;
 struct RasterCacheEntry {
     unsigned char* framebuffer=nullptr;
     uint64_t fingerprint=0;
@@ -27,6 +28,14 @@ size_t next_cache_entry=0;
 // original top-screen window; text and choice state come from the runtime).
 struct DialogueOverlay { bool active=false; char text[480]={}; int options=0, choice=0; bool next=false; uint64_t hash=0; };
 DialogueOverlay g_dialogue{};
+// GAUGE01u.TIM page (materials/hud_gauge.l3ui, cooked from the owner's
+// DEMO_DAT.BIN). Empty until mockup_hud_load_gauge succeeds.
+struct GaugeArt {
+    std::vector<uint8_t> indices; // 256x256, one palette index per pixel
+    std::array<uint16_t,128> palette{}; // 8 rows of 16 PS1 BGR555 colors
+    bool loaded=false;
+};
+GaugeArt g_gauge{};
 RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel& status,
                      const l3::MockupMapView& map) {
     RasterKey key{};
@@ -54,6 +63,8 @@ RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel
     key[16]=status.hp; key[17]=status.hp_max;
     key[18]=status.buster_enabled; key[19]=status.lock_on_active;
     key[20]=static_cast<unsigned>(status.context);
+    key[22]=static_cast<uint32_t>(status.money);
+    key[23]=g_gauge.loaded;
     return key;
 }
 uint64_t raster_fingerprint(const RasterKey& key) {
@@ -125,6 +136,17 @@ public:
                         if (g.rows[row] & (1u<<(4-col))) pixel(x+col,y+row,c);
                 break;
             }
+        }
+    }
+    // One textured sprite from the gauge page: 0x0000 texels are transparent
+    // and the 0x808080 primitive color leaves texels unchanged (PS1 modulation).
+    void sprite(int dx, int dy, int u, int v, int w, int h, Color mod={128,128,128}, int row=0) {
+        if(!g_gauge.loaded) return;
+        for(int y=0;y<h;++y) for(int x=0;x<w;++x) {
+            const uint16_t c=g_gauge.palette[size_t(row)*16u+g_gauge.indices[size_t((v+y)&255)*256u+size_t((u+x)&255)]];
+            if(!c) continue;
+            const auto channel=[](unsigned five, unsigned m){ return (unsigned char)std::min(255u,(five<<3)*m/128u); };
+            pixel(dx+x,dy+y,{channel(c&31u,mod.r),channel((c>>5)&31u,mod.g),channel((c>>10)&31u,mod.b)});
         }
     }
     void center(const l3::BottomUiRect& r, int y, const char* text_value, Color c=kWhite) {
@@ -225,23 +247,65 @@ const char* context_label(l3::BottomScreenContext context) {
     }
     return "PLAYING";
 }
+// Mega Man's life gauge, composed exactly as ROCK_NEO FUN_8005C9BC does in
+// its normal state (piece table 0x8008D37C, cells 0x8008D5E8/0x8008D5FC):
+// a top cap raised by the body height 5*(max>>4)-10, a body window of that
+// height, the base, the 40x40 ring, one 8x8 cell per 16 HP stepping up 5 px,
+// a half cell for a remainder, and a black interior behind them. The PS1
+// ordering table draws the last-inserted primitive first, so pieces are
+// painted here in reverse call order. Anchor (x,y) is the original (8,0x88)
+// screen origin; on the bottom screen it is placed by port presentation.
+void draw_life_gauge(Raster& r, int x, int y, unsigned hp, unsigned hp_max, int max_body) {
+    const int body=std::clamp(int(hp_max>>4)*5-10,0,max_body);
+    const int top=y-body;
+    const unsigned full=hp>>4, part=hp&15u;
+    r.sprite(x+4,top+0x20,0x70,0x40,0x10,body+16,{0,0,0});        // interior, color 0
+    if(part) r.sprite(x+8,y+0x25-int(full)*5,0x98,0,8,8);           // remainder
+    for(unsigned i=full;i-->0;) r.sprite(x+8,y+0x25-int(i)*5,0x88,0,8,8);
+    r.sprite(x-8,y+0x38,0x00,0x38,0x28,0x28);                     // ring
+    // Body window. The original samples v=0x18 for `body` rows; past 16 rows
+    // that runs into the ring art, so longer bodies repeat the 16-row segment
+    // (port presentation for maxima the original gauge never reaches).
+    for(int done=0;done<body;done+=16) r.sprite(x,top+0x28+done,0x00,0x18,0x18,std::min(16,body-done));
+    r.sprite(x,y+0x28,0x00,0x28,0x18,0x10);                       // base
+    r.sprite(x,top+0x10,0x00,0x00,0x18,0x18);                     // top cap
+}
+// GAUGE01u digits: 8x8 cells from (96,176), '0'..'9'.
+void draw_gauge_number(Raster& r, int right_x, int y, uint32_t value, int min_digits) {
+    int x=right_x-8;
+    for(int n=0; value || n<min_digits; ++n, value/=10, x-=8) r.sprite(x,y,96+int(value%10)*8,176,8,8);
+}
 void draw_status(Raster& r, const l3::BottomScreenModel& status) {
     const auto& p=l3::mockup_ui_layout().status;
-    r.center(p,24,"PLAYER",kAccent); r.fill(p.x+6,38,p.w-12,1,kBorder);
-    r.text(p.x+6,49,"HP");
-    if (status.hp_max) {
-        char hp[24]; std::snprintf(hp,sizeof(hp),"%u/%u",unsigned(status.hp),unsigned(status.hp_max));
-        r.text(p.x+6,63,hp);
-        r.fill(p.x+6,77,p.w-12,9,kBackground);
-        const int bar=int(uint32_t(std::min(status.hp,status.hp_max))*(p.w-12)/status.hp_max);
-        r.fill(p.x+6,77,bar,9,kHealth);
-    } else r.text(p.x+6,63,"NO DATA",kMuted);
-    r.text(p.x+6,101,"BUSTER",kMuted);
-    r.text(p.x+6,115,status.buster_enabled?"READY":"OFF",status.buster_enabled?kAccent:kMuted);
-    r.text(p.x+6,141,"LOCK",kMuted);
-    r.text(p.x+6,155,status.lock_on_active?"ACTIVE":"OFF",status.lock_on_active?kPlayer:kMuted);
-    r.fill(p.x+6,179,p.w-12,1,kBorder);
-    r.center(p,194,context_label(status.context),kMuted);
+    if(!g_gauge.loaded) {
+        // Without cooked art there is nothing original to show; say so.
+        r.center(p,24,"LIFE",kAccent);
+        r.center(p,60,"GAUGE ART",kMuted); r.center(p,72,"MISSING",kMuted);
+    } else if(status.hp_max) {
+        // Centre the whole gauge (cap top to ring bottom, 80+body px) in the
+        // 126 px above the text block; longer bodies are clipped to fit.
+        constexpr int kMaxBody=46;
+        const int body=std::clamp(int(status.hp_max>>4)*5-10,0,kMaxBody);
+        const int cap_top=p.y+4+(126-80-body)/2;
+        draw_life_gauge(r,p.x+p.w/2-12,cap_top+body-16,std::min(status.hp,status.hp_max),status.hp_max,kMaxBody);
+    }
+    r.fill(p.x+6,p.y+134,p.w-12,1,kBorder);
+    if(status.hp_max) {
+        char hp[24]; std::snprintf(hp,sizeof(hp),"%u/%u",unsigned(std::min(status.hp,status.hp_max)),unsigned(status.hp_max));
+        r.center(p,p.y+140,hp);
+    } else r.center(p,p.y+140,"NO DATA",kMuted);
+    r.text(p.x+6,p.y+156,"BUSTER",kMuted);
+    r.text(p.x+p.w-6-18,p.y+156,status.buster_enabled?"RDY":"OFF",status.buster_enabled?kAccent:kMuted);
+    r.text(p.x+6,p.y+170,"LOCK",kMuted);
+    r.text(p.x+p.w-6-18,p.y+170,status.lock_on_active?" ON":"OFF",status.lock_on_active?kPlayer:kMuted);
+    r.center(p,p.y+188,context_label(status.context),kMuted);
+}
+// Footer: GAUGE01u ZENNY plate (0,176 96x15) with the money in its box.
+// The plate is original art; showing it permanently here is port presentation.
+void draw_zenny(Raster& r, int32_t money) {
+    if(!g_gauge.loaded) return;
+    r.sprite(220,223,0,176,96,15);
+    draw_gauge_number(r,311,227,uint32_t(std::clamp<int32_t>(money,0,999999)),1);
 }
 void draw_content(Raster& r, const l3::MockupUiState& state,
                   const l3::MockupMapView& map, const MMLRuntimeDiag* diag) {
@@ -297,7 +361,8 @@ void mockup_hud_raster(unsigned char* buffer, const l3::MockupUiState& state,
         r.fill(panel.x,panel.y,panel.w,panel.h,kPanel); r.border(panel,kBorder);
     }
     draw_content(r,state,map,diagnostics); draw_status(r,status);
-    r.text(5,228,"TOUCH TABS | HOLD SELECT",kAccent);
+    r.text(5,228,"TOUCH TABS | SELECT",kAccent);
+    draw_zenny(r,status.money);
     if(g_dialogue.active) {
         // Word-wrapped uppercase text, 50 columns, 9 rows; '\n' breaks lines.
         const l3::BottomUiRect box{4,130,312,106};
@@ -326,6 +391,19 @@ void mockup_hud_set_dialogue(bool active, const char* text, int options, int cho
     h^=uint64_t(options)<<40^uint64_t(choice)<<48^uint64_t(waiting_next)<<56^uint64_t(active)<<60;
     next.hash=h|1;
     g_dialogue=next;
+}
+bool mockup_hud_load_gauge(const unsigned char* data, size_t size) {
+    g_gauge.loaded=false;
+    const auto u16=[&](size_t at){ return uint16_t(data[at]|(data[at+1]<<8)); };
+    constexpr size_t kHeader=16, kPalette=128*2, kIndices=256*256;
+    if(!data || size!=kHeader+kPalette+kIndices || std::memcmp(data,"L3UI",4)!=0 || u16(4)!=1 ||
+       u16(6)!=256 || u16(8)!=256 || u16(10)!=16 || u16(12)!=8) return false;
+    for(size_t i=0;i<128;++i) g_gauge.palette[i]=u16(kHeader+i*2);
+    g_gauge.indices.assign(data+kHeader+kPalette,data+size);
+    for(uint8_t& index:g_gauge.indices) index&=15u;
+    g_gauge.loaded=true;
+    mockup_hud_invalidate();
+    return true;
 }
 void mockup_hud_init() {
     mockup_hud_invalidate();
