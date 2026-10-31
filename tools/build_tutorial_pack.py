@@ -213,7 +213,7 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
             raise RuntimeError('Selected fresh original head resource was not collected')
         manifest['player_head_selection']=head_selection
         _write_actor_source_metadata(dat.parent.parent/'ROCK_NEO.EXE',runtime,out,manifest)
-        fade_package,fade_evidence=cook_source_fade((dat.parent.parent/'ROCK_NEO.EXE').read_bytes())
+        fade_package,fade_evidence=cook_source_fade((dat.parent.parent/'ROCK_NEO.EXE').read_bytes(),steps=True)
         (runtime/'source_fade.l3fd').write_bytes(fade_package)
         manifest['source_fade_startup']={**fade_evidence,
             'path':str((runtime/'source_fade.l3fd').relative_to(out)),

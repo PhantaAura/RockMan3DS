@@ -83,20 +83,28 @@ SourceFadeCallbackResult iterate(SourceFadeContext& context,SourceFadeCallbackSt
 void require(bool condition,const char* reason){if(!condition)throw std::runtime_error(reason);}
 }
 SourceFadeStartupProfile load_source_fade_startup_profile(const std::vector<uint8_t>& bytes) {
-    require(bytes.size()==68||bytes.size()==72,"noncanonical source fade profile size");
+    require(bytes.size()==68||bytes.size()==72||bytes.size()==76,"noncanonical source fade profile size");
     const auto* p=bytes.data();
     require(p[0]=='L'&&p[1]=='3'&&p[2]=='F'&&p[3]=='D',"source fade profile magic rejected");
-    const bool handoff=read16(p+4)==2;
-    require((read16(p+4)==1||handoff)&&read16(p+6)==64,"unsupported source fade profile version/header");
-    const uint32_t payload=handoff?8u:4u;
-    require(bytes.size()==64u+payload&&read32(p+8)==(handoff?2u:1u)&&read32(p+12)==0&&read32(p+16)==1&&read32(p+20)==bytes.size()&&read32(p+28)==payload,
+    const uint16_t version=read16(p+4);
+    require(version>=1&&version<=3&&read16(p+6)==64,"unsupported source fade profile version/header");
+    const uint32_t payload=version==1?4u:version==2?8u:12u;
+    require(bytes.size()==64u+payload&&read32(p+8)==version&&read32(p+12)==0&&read32(p+16)==1&&read32(p+20)==bytes.size()&&read32(p+28)==payload,
             "unsupported source fade profile coverage/decoder");
     for(size_t i=0;i<kExeDigest.size();++i)require(p[32+i]==kExeDigest[i],"unsupported source fade owner identity");
     require(crc32(p+64,payload)==read32(p+24),"source fade profile payload CRC rejected");
-    require(!handoff||read16(p+70)==0,"source fade reserved field rejected");
-    SourceFadeStartupProfile result;result.decoder=handoff?2u:1u;
+    require(version!=2||read16(p+70)==0,"source fade reserved field rejected");
+    SourceFadeStartupProfile result;result.decoder=version;
+    if(version==3){
+        // v3: 0x80097A44, 0x80097A46, then 0x80097A48..0x80097A4E.
+        result.duration_80097a44=read16(p+64);result.duration_80097a46=read16(p+66);
+        std::array<uint16_t,4> steps{};
+        for(size_t i=0;i<4;++i)steps[i]=read16(p+68+2*i);
+        result.steps_80097a48=steps;result.step_80097a4c=steps[2];
+        return result;
+    }
     result.duration_80097a44=read16(p+64);result.step_80097a4c=read16(p+66);
-    if(handoff)result.duration_80097a46=read16(p+68);
+    if(version==2)result.duration_80097a46=read16(p+68);
     return result;
 }
 SourceFadeStartupResult consume_source_fade_startup_80017c30_type2(
@@ -108,7 +116,7 @@ SourceFadeStartupResult consume_source_fade_startup_80017c30_type2(
     if(read16(work.raw.data()+10)!=0){out.status=SourceFadeStartupStatus::SourceBackedBusyNoop;out.committed=true;return out;}
     out.status=SourceFadeStartupStatus::NeedsProfile;
     if(!profile||!profile->duration_80097a44||!profile->step_80097a4c)return out;
-    if(profile->decoder!=1&&profile->decoder!=2){out.status=SourceFadeStartupStatus::UnsupportedProfile;return out;}
+    if(profile->decoder<1||profile->decoder>3){out.status=SourceFadeStartupStatus::UnsupportedProfile;return out;}
     out.status=SourceFadeStartupStatus::NeedsSchedulerIntentQueue;
     if(!intents||!intents->initialized||intents->count>intents->entries.size())return out;
     if(intents->count==intents->entries.size()){out.status=SourceFadeStartupStatus::SchedulerIntentQueueFull;return out;}
@@ -137,12 +145,31 @@ SourceFadeStartupResult consume_source_fade_startup_80017c30_type10(
     if(read16(work.raw.data()+10)!=0){out.status=SourceFadeStartupStatus::SourceBackedBusyNoop;out.committed=true;return out;}
     out.status=SourceFadeStartupStatus::NeedsProfile;
     if(!profile||!profile->duration_80097a46||!profile->step_80097a4c)return out;
-    if(profile->decoder!=2){out.status=SourceFadeStartupStatus::UnsupportedProfile;return out;}
+    if(profile->decoder<2){out.status=SourceFadeStartupStatus::UnsupportedProfile;return out;}
     // Original type2 andtype10 select80017C74 and mode0, with identical
     // packets and callback. Only the duration index differs (A0>>3).
     SourceFadeStartupProfile selected;selected.decoder=1;
     selected.duration_80097a44=profile->duration_80097a46;
     selected.step_80097a4c=profile->step_80097a4c;
+    return consume_source_fade_startup_80017c30_type2(context,&selected,intents);
+}
+SourceFadeStartupResult consume_source_fade_startup_80017c30_mode0(
+    SourceFadeContext& context,const SourceFadeStartupProfile* profile,
+    SourceFadeSchedulerIntentQueue* intents,uint8_t type) noexcept {
+    SourceFadeStartupResult out;
+    if(type>11||(type&4)){out.status=SourceFadeStartupStatus::UnsupportedProfile;return out;}
+    const auto& work=context.work_80098a68;
+    if(!work.known[10]||!work.known[11])return out;
+    if(read16(work.raw.data()+10)!=0){out.status=SourceFadeStartupStatus::SourceBackedBusyNoop;out.committed=true;return out;}
+    out.status=SourceFadeStartupStatus::NeedsProfile;
+    if(!profile)return out;
+    const auto duration=(type>>3)?profile->duration_80097a46:profile->duration_80097a44;
+    std::optional<uint16_t> step;
+    if(profile->steps_80097a48)step=(*profile->steps_80097a48)[type&3];
+    else if((type&3)==2)step=profile->step_80097a4c;
+    if(!duration||!step)return out;
+    SourceFadeStartupProfile selected;selected.decoder=1;
+    selected.duration_80097a44=duration;selected.step_80097a4c=step;
     return consume_source_fade_startup_80017c30_type2(context,&selected,intents);
 }
 SourceFadeCallbackResult acknowledge_source_fade_scheduler_intent(

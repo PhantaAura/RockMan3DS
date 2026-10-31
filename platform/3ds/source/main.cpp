@@ -3046,7 +3046,7 @@ bool run_frontend_title(bool scripted) {
     // Fades 0x80017C30 types 2 (title in) and 10 (title out), callback
     // 0x80017E94, subtract tile: the ported source_fade module. 0x80013420
     // stores 0x1F800001 = 2, the callback's endpoint hold. Boot leaves no
-    // fade running (0x80098A70/72 = 0). Types 1, 9 and 22 are not ported yet.
+    // fade running (0x80098A70/72 = 0). Type 22 (mode 2) is not ported yet.
     l3::SourceFadeContext fade;
     for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
     l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
@@ -3104,10 +3104,12 @@ bool run_frontend_title(bool scripted) {
         l3::frontend_backdrop_widescreen(f.packets);   // 400-px top screen
         for (const uint8_t type : f.fades) {
             l3::SourceFadeStartupResult started;
-            if (type == 2) started = l3::consume_source_fade_startup_80017c30_type2(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents);
-            else if (type == 10) started = l3::consume_source_fade_startup_80017c30_type10(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents);
+            // Types 1/2/9/10 are mode 0 (0x80017C74). Type 22 (mode 2, sub 4,
+            // NEW GAME) is not ported: no fade is faked for it.
+            const bool mode0 = type <= 11 && !(type & 4);
+            if (mode0) started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, type);
             hardware_test_trace("# frontend_fade,frame=%lu,type=%u,status=%u,ported=%u",
-                (unsigned long)frame, unsigned(type), unsigned(started.status), unsigned(type == 2 || type == 10));
+                (unsigned long)frame, unsigned(type), unsigned(started.status), unsigned(mode0));
         }
         for (const auto& sound : f.sounds)
             (void)l3::enqueue_source_audio_8001a008(title_audio, sound[0], sound[1], 0);

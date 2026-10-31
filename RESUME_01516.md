@@ -32,7 +32,8 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   drawn on the 3DS title (Azahar: textured, animated, walking). Open: the
   Servbots look larger than expected (scale/projection CANDIDATE, needs an
   oracle frame mid-wave). The front end now runs at 30 Hz (it ran at 60).
-  Missing: fades 1/9/22, CONTINUE/OPTION, attract demo.
+  Fades 1/2/9/10 run (mode 0, L3FDv3); type 10 had silently never run
+  (v1 profile). Missing: fade 22 (mode 2, NEW GAME), CONTINUE/OPTION, attract demo.
   Research: `docs/research_01516/FRONTEND_TITLE.md`.
 - **Tutorial exit.** After 0x622 the far door loads ST00 Area 3. Event 3 now
   spawns the original boss resource and advances its recovered intro to the
