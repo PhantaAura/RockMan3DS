@@ -2156,6 +2156,10 @@ static bool g_psx_actors = true;
 static std::optional<l3::TerrainFaceCamera> g_psx_camera;
 // 0x1F800006 of the current scene frame (camera commands 32..34), if known.
 static std::optional<uint16_t> g_psx_far_1f800006;
+// 0x1F800030 (ApplyMatrixLV(R, -eye), unshifted) of the current frame camera.
+static std::optional<std::array<int32_t,3>> g_psx_tr_1f800030;
+struct Class40Trace{uint32_t calls=0,culled=0,held=0,parts=0,prims=0,depth=0;uint8_t reason=0;};
+static Class40Trace g_class40_trace;
 std::optional<uint16_t> session_far_1f800006(){return g_psx_far_1f800006;}
 struct PsxTranslatorStats {
     uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0, subdivided = 0,
@@ -2712,20 +2716,25 @@ bool psx_emit_class40(const l3::SourceEventPhase5Bytes<1444>& work, const l3::Ac
         if (!work.known[o]) return false;
     const uint16_t c15 = uint16_t(rd16(0x15e));
     if (c15 == 0) return false;
+    ++g_class40_trace.calls;
+    if (!g_psx_tr_1f800030) { ++g_class40_trace.held; g_class40_trace.reason = 1; return false; }
+    // The actor point uses translation 0x1F800030 (ctc2 from 0x1F800030), not 0x1F80001C.
     auto gte = cam.gte;
+    for (int r = 0; r < 3; ++r) gte.control[5 + r] = uint32_t((*g_psx_tr_1f800030)[size_t(r)]);
     gte.data[0] = (uint32_t(uint16_t(rd16(0x14)))) | (uint32_t(uint16_t(rd16(0x16))) << 16);
     gte.data[1] = uint32_t(uint16_t(rd16(0x18)));
     const auto p = l3::source_gte_rtps_0180001(gte);
     if (p.status != l3::SourcePlayerProxyStatus::SourceBackedPartial) return false;
     const int32_t depth = int32_t(p.depth) >> 2;
+    g_class40_trace.depth = uint32_t(depth);
     const int16_t ax = int16_t(uint16_t(p.screen_xy)), ay = int16_t(uint16_t(p.screen_xy >> 16));
     const uint16_t air0 = uint16_t(gte.data[8]);
     const auto far = session_far_1f800006();
     const bool keep_near = (work.raw[0] & 0x40u) && far && depth < int32_t(*far);
     if (!keep_near) {
-        if (far && int32_t(*far) < depth) return true;
-        if (depth < (48 >> (cam.lod_1f800074 & 31))) return true;
-        if (uint16_t(ax + 352) >= 1025u || uint16_t(ay + 136) >= 1025u) return true;
+        if (far && int32_t(*far) < depth) { ++g_class40_trace.culled; g_class40_trace.reason = 2; return true; }
+        if (depth < (48 >> (cam.lod_1f800074 & 31))) { ++g_class40_trace.culled; g_class40_trace.reason = 3; return true; }
+        if (uint16_t(ax + 352) >= 1025u || uint16_t(ay + 136) >= 1025u) { ++g_class40_trace.culled; g_class40_trace.reason = 4; return true; }
     }
     const uint32_t colour = psx_depth_cue(l3::psxgpu::class20_colour_8002831c(c15), air0);
     const uint8_t ramp = cam.area_record ? l3::psxgpu::actor_ramp_80027f78(depth, *cam.area_record) : 0;
@@ -2735,7 +2744,8 @@ bool psx_emit_class40(const l3::SourceEventPhase5Bytes<1444>& work, const l3::Ac
     static std::vector<PsxVert> verts;
     for (size_t i = 0; i < pose.part_count && i < mesh.model.parts.size(); ++i) {
         const auto& ip = pose.parts[i];
-        if (!ip.draw_enabled || !ip.transform_written) continue;
+        if (!world.draw_enabled[i]) continue;
+        ++g_class40_trace.parts;
         const auto M = [&](int r, int c) { const size_t o = size_t(r * 3 + c) * 2;
             return int32_t(int16_t(uint16_t(ip.matrix[o] | (ip.matrix[o + 1] << 8)))); };
         std::array<int32_t,9> C{};
@@ -2792,6 +2802,7 @@ bool psx_emit_class40(const l3::SourceEventPhase5Bytes<1444>& work, const l3::Ac
             });
         }
     }
+    g_class40_trace.reason = 0;
     return true;
 }
 
@@ -5718,6 +5729,10 @@ int main() {
                 psx_begin_frame();
                 g_psx_camera = faces;
                 g_psx_far_1f800006 = session.source_event_phase6_context().half_1f800006;
+                g_psx_tr_1f800030.reset();
+                if(faces)g_psx_tr_1f800030=scene_camera
+                    ?l3::terrain_cell_translation_1f800030(scene_camera->camera_1f800008,scene_camera->eye_800a39f0)
+                    :l3::terrain_cell_translation_1f800030(source_follow.camera_1f800008,source_follow.eye_800a39f0);
                 const u64 terrain_start=svcGetSystemTick();
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 g_frame_split.terrain+=svcGetSystemTick()-terrain_start;
@@ -5777,6 +5792,10 @@ int main() {
                 const auto count=draw_source_scene_actor40_uv(session,*scene_actor40,refs);
                 if(session.frame_counter()%60u==0u){const auto* pose=l3::select_source_scene_actor40_pose(
                         session.source_event_phase5_context().pool40.slots[0],*scene_actor40);
+                    hardware_test_trace("# source_actor40_packets,frame=%lu,calls=%lu,culled=%lu,held=%lu,parts=%lu,depth=%lu,reason=%u,actor_packets=%lu,actor_culled=%lu,source=80028F90",
+                        (unsigned long)session.frame_counter(),(unsigned long)g_class40_trace.calls,(unsigned long)g_class40_trace.culled,
+                        (unsigned long)g_class40_trace.held,(unsigned long)g_class40_trace.parts,(unsigned long)g_class40_trace.depth,
+                        unsigned(g_class40_trace.reason),(unsigned long)g_psx_stats.actor_packets,(unsigned long)g_psx_stats.actor_culled);
                     hardware_test_trace("# source_actor40_draw,frame=%lu,parts=%lu,request=%u,record=%u,shade=UNKNOWN,integer_pose=MATCHES_MEASURED_FIELDS,raster=CANDIDATE,retail_parity=false",
                         (unsigned long)session.frame_counter(),(unsigned long)count,
                         pose?unsigned(pose->request):255u,pose?unsigned(pose->record_index):255u);}
