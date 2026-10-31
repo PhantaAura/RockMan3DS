@@ -72,13 +72,13 @@ int main() {
     assert(!l3::make_mockup_map_view(runtime,0,std::numeric_limits<int32_t>::max(),0).player_in_area);
     assert(!l3::mockup_map_available(l3::make_mockup_map_view(runtime,1,0,0)));
     const auto rect=l3::mockup_map_rect(map);
-    assert(rect.w==142 && rect.h==94);
+    assert(rect.w==layout.map_view.w && rect.h==layout.map_view.w*2/3);
     assert(rect.x>=layout.map_view.x && rect.y>=layout.map_view.y);
     assert(rect.x+rect.w<=layout.map_view.x+layout.map_view.w);
     assert(rect.y+rect.h<=layout.map_view.y+layout.map_view.h);
     auto tall=map; tall.width=1; tall.height=6;
     const auto tall_rect=l3::mockup_map_rect(tall);
-    assert(tall_rect.w==28 && tall_rect.h==168);
+    assert(tall_rect.w==layout.map_view.h/6 && tall_rect.h==layout.map_view.h);
     auto incomplete=map; incomplete.cell_count=5;
     assert(!l3::mockup_map_available(incomplete));
     assert(l3::mockup_map_rect(incomplete).w==0);
@@ -109,20 +109,20 @@ int main() {
     assert(enlarged.w==2*rect.w && enlarged.h==2*rect.h);
     assert(l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Begin,150,120));
     assert(l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Move,100000,100000));
-    assert(gesture.map_pan_x==71 && gesture.map_pan_y==10);
+    assert(gesture.map_pan_x==106 && gesture.map_pan_y==55);
     auto projected=l3::mockup_map_projection(map,gesture);
     assert(projected.x<=layout.map_view.x && projected.y<=layout.map_view.y);
     assert(projected.x+projected.w>=layout.map_view.x+layout.map_view.w);
     assert(projected.y+projected.h>=layout.map_view.y+layout.map_view.h);
     assert(l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Move,-100000,-100000));
-    assert(gesture.map_pan_x==-71 && gesture.map_pan_y==-10);
+    assert(gesture.map_pan_x==-106 && gesture.map_pan_y==-55);
     assert(gesture.tab==l3::MockupTab::Map); // A drag crossing tabs cannot select one.
     auto changed_area=map; changed_area.area_index=1;
     assert(!l3::mockup_ui_touch_event(gesture,changed_area,l3::MockupTouchPhase::Move,160,120));
     assert(!gesture.map_dragging);
     assert(l3::mockup_map_set_zoom(gesture,tall,4));
     const auto tall_zoom=l3::mockup_map_projection(tall,gesture);
-    assert(tall_zoom.w==112 && tall_zoom.h==672);
+    assert(tall_zoom.w==112 && tall_zoom.h==688);
     assert(gesture.map_pan_x==0); // A narrow map stays centered even when zoomed.
     assert(l3::mockup_map_set_zoom(gesture,map,4));
     gesture.map_pan_x=std::numeric_limits<int16_t>::max();
@@ -167,16 +167,16 @@ int main() {
     state.tab=l3::MockupTab::Map;
     mockup_hud_raster(pixels,state,status,map);
     assert_guards(framebuffer);
-    expect_pixel(pixels,0,0,8,18,30);
-    expect_pixel(pixels,319,239,8,18,30);
-    expect_pixel(pixels,layout.tabs[0].x,layout.tabs[0].y,110,225,230);
-    expect_pixel(pixels,layout.tabs[1].x,layout.tabs[1].y,61,112,142);
+    expect_pixel(pixels,0,0,4,10,40);
+    expect_pixel(pixels,319,239,4,10,40);
+    expect_pixel(pixels,layout.tabs[0].x,layout.tabs[0].y,72,210,248);
+    expect_pixel(pixels,layout.tabs[1].x,layout.tabs[1].y,96,150,224);
     const int marker_x=rect.x+int((uint32_t(map.player_x)*2u+1u)*rect.w/(uint32_t(map.width)*2u));
     const int marker_y=rect.y+int((uint32_t(map.player_z)*2u+1u)*rect.h/(uint32_t(map.height)*2u));
     expect_pixel(pixels,marker_x,marker_y,255,221,86);
     auto no_player=map; no_player.player_in_area=false;
     mockup_hud_raster(pixels,state,status,no_player);
-    expect_pixel(pixels,marker_x,marker_y,8,18,30);
+    expect_pixel(pixels,marker_x,marker_y,4,10,40);
     auto bad_marker=map; bad_marker.player_x=std::numeric_limits<uint16_t>::max();
     mockup_hud_raster(pixels,state,status,bad_marker);
     assert_guards(framebuffer);
@@ -187,9 +187,9 @@ int main() {
     state.map_pan_x=32767; state.map_pan_y=-32768;
     mockup_hud_raster(pixels,state,status,map);
     assert_guards(framebuffer);
-    expect_pixel(pixels,layout.content.x,layout.content.y,61,112,142);
-    expect_pixel(pixels,layout.status.x,layout.status.y,61,112,142);
-    expect_pixel(pixels,layout.tabs[0].x,layout.tabs[0].y,110,225,230);
+    expect_pixel(pixels,layout.content.x,layout.content.y,96,150,224);
+    expect_pixel(pixels,layout.status.x,layout.status.y,96,150,224);
+    expect_pixel(pixels,layout.tabs[0].x,layout.tabs[0].y,72,210,248);
     l3::mockup_map_reset(state);
     MMLRuntimeDiag diag{};
     diag.frame_us=std::numeric_limits<uint32_t>::max();
@@ -200,7 +200,7 @@ int main() {
         state.tab=static_cast<l3::MockupTab>(tab);
         mockup_hud_raster(pixels,state,status,map,&diag);
         assert_guards(framebuffer);
-        expect_pixel(pixels,layout.tabs[tab].x,layout.tabs[tab].y,110,225,230);
+        expect_pixel(pixels,layout.tabs[tab].x,layout.tabs[tab].y,72,210,248);
     }
     state.tab=l3::MockupTab::Map; status.hp_max=0;
     mockup_hud_raster(pixels,state,status,incomplete);
@@ -220,13 +220,13 @@ int main() {
     mockup_hud_raster(pixels,state,status,map);
     assert_guards(framebuffer);
     const auto& panel=layout.status;
-    const int gauge_x=panel.x+panel.w/2-12, gauge_y=panel.y+4+(126-100)/2+20-16;
+    const int gauge_x=panel.x+12, gauge_y=panel.y+4+(130-100)/2+20-16;
     expect_pixel(pixels,gauge_x-8,gauge_y+0x38,248,0,0);   // ring
     expect_pixel(pixels,gauge_x,gauge_y+0x28,248,0,0);     // base
-    expect_pixel(pixels,220,223,248,0,0);                  // ZENNY plate
+    expect_pixel(pixels,222,224,248,0,0);                  // ZENNY plate
     status.hp=std::numeric_limits<uint16_t>::max(); status.hp_max=std::numeric_limits<uint16_t>::max();
     status.money=std::numeric_limits<int32_t>::max();
     mockup_hud_raster(pixels,state,status,map);
     assert_guards(framebuffer);
-    expect_pixel(pixels,panel.x,panel.y,61,112,142);
+    expect_pixel(pixels,panel.x,panel.y,96,150,224);
 }

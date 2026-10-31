@@ -3,10 +3,12 @@
 
 namespace l3 {
 namespace {
+// Tab strip across the top, map/content panel left, player status right,
+// footer hint below (port presentation after the user's reference image).
 constexpr MockupUiLayout kLayout{
-    {{{4, 16, 66, 48}, {4, 68, 66, 48}, {4, 120, 66, 48}, {4, 172, 66, 48}}},
-    {74, 16, 154, 204}, {232, 16, 84, 204}, {80, 38, 142, 168},
-    {80, 42, 142, 32}, {80, 82, 142, 32}, {80,118,142,24}
+    {{{4, 2, 75, 18}, {83, 2, 75, 18}, {162, 2, 75, 18}, {241, 2, 75, 18}}},
+    {4, 24, 224, 196}, {232, 24, 84, 196}, {10, 42, 212, 172},
+    {10, 46, 212, 32}, {10, 86, 212, 32}, {10, 126, 212, 24}
 };
 }
 const MockupUiLayout& mockup_ui_layout() { return kLayout; }

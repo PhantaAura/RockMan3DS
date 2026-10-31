@@ -10,9 +10,11 @@
 
 namespace {
 struct Color { unsigned char r, g, b; };
-constexpr Color kBackground{8,18,30}, kPanel{13,30,48}, kBorder{61,112,142};
-constexpr Color kAccent{110,225,230}, kWhite{226,242,250}, kMuted{139,167,185};
-constexpr Color kGrid{20,46,66}, kGeometry{41,110,123}, kSpecial{161,116,74};
+// Deep blue riveted panels with a cyan selection (port presentation).
+constexpr Color kBackground{4,10,40}, kPanel{16,40,112}, kBorder{96,150,224};
+constexpr Color kAccent{72,210,248}, kWhite{230,240,255}, kMuted{150,170,210};
+constexpr Color kGrid{28,52,110}, kGeometry{196,172,132}, kSpecial{214,120,64};
+constexpr Color kRivet{170,200,240}, kHeader{8,22,72};
 constexpr Color kPlayer{255,221,86};
 // Keep only two identities/keys, not copies of the 230,400-byte framebuffers.
 // Full key comparison prevents a hash collision from suppressing a needed draw.
@@ -156,28 +158,10 @@ private:
     unsigned char* buffer_;
     int clip_x0_=0,clip_y0_=0,clip_x1_=320,clip_y1_=240;
 };
-void draw_tab_icon(Raster& r, l3::MockupTab tab, int x, int y, Color color) {
-    switch(tab) {
-    case l3::MockupTab::Map:
-        r.border({static_cast<int16_t>(x-9),static_cast<int16_t>(y),18,16},color);
-        r.fill(x-3,y+1,1,14,color); r.fill(x+3,y+1,1,14,color);
-        r.fill(x-8,y+7,16,1,color); break;
-    case l3::MockupTab::Items:
-        r.border({static_cast<int16_t>(x-9),static_cast<int16_t>(y+4),18,12},color);
-        r.fill(x-7,y+1,14,2,color); r.fill(x-2,y+7,4,3,color); break;
-    case l3::MockupTab::Weapons:
-        r.border({static_cast<int16_t>(x-7),static_cast<int16_t>(y+2),14,12},color);
-        r.fill(x-1,y,2,16,color); r.fill(x-10,y+7,20,2,color); break;
-    case l3::MockupTab::Options:
-        r.fill(x-10,y+2,20,1,color); r.fill(x-10,y+8,20,1,color);
-        r.fill(x-10,y+14,20,1,color); r.fill(x-5,y,3,5,color);
-        r.fill(x+3,y+6,3,5,color); r.fill(x-2,y+12,3,5,color); break;
-    }
-}
 void draw_map(Raster& raster, const l3::MockupMapView& map, const l3::MockupUiState& state) {
     const auto& layout=l3::mockup_ui_layout();
     char area[24]; std::snprintf(area,sizeof(area),"AREA %lu",static_cast<unsigned long>(map.area_index));
-    raster.text(layout.content.x+6,layout.content.y+8,area,kAccent);
+    raster.text(layout.content.x+8,layout.content.y+6,area,kWhite);
     if (!l3::mockup_map_available(map)) {
         raster.center(layout.content,88,"MAP DATA",kWhite);
         raster.center(layout.content,102,"UNAVAILABLE",kMuted);
@@ -192,9 +176,9 @@ void draw_map(Raster& raster, const l3::MockupMapView& map, const l3::MockupUiSt
                                  static_cast<int16_t>(draw_w),static_cast<int16_t>(draw_h)};
     raster.clip(view);
     // The software backend on Old3DS has no hardware integer divide. Build
-    // the at-most 142x168 sampling axes once, then fill each source-cell run.
-    std::array<uint16_t,142> sample_x{};
-    std::array<uint16_t,168> sample_z{};
+    // the at-most 212x172 sampling axes once, then fill each source-cell run.
+    std::array<uint16_t,212> sample_x{};
+    std::array<uint16_t,172> sample_z{};
     for(int x=0;x<bounds.w;++x)
         sample_x[x]=static_cast<uint16_t>(uint32_t(bounds.x+x-projection.x)*map.width/projection.w);
     for(int z=0;z<bounds.h;++z)
@@ -233,8 +217,14 @@ void draw_map(Raster& raster, const l3::MockupMapView& map, const l3::MockupUiSt
         raster.pixel(x+dx[heading]*4,y+dy[heading]*4,kPlayer);
     }
     raster.clear_clip();
-    char zoom[24]; std::snprintf(zoom,sizeof(zoom),"DRAG MAP  %uX",unsigned(state.map_zoom));
-    raster.text(layout.content.x+6,209,zoom,kMuted);
+    // North marker in the map's lower-left corner (map rows run north-up).
+    const l3::BottomUiRect north{static_cast<int16_t>(view.x+3),static_cast<int16_t>(view.y+view.h-24),13,21};
+    raster.fill(north.x,north.y,north.w,north.h,kHeader); raster.border(north,kBorder);
+    raster.text(north.x+4,north.y+3,"N",kWhite);
+    raster.fill(north.x+6,north.y+12,1,6,kWhite); raster.fill(north.x+5,north.y+13,3,1,kWhite);
+    raster.fill(north.x+4,north.y+14,5,1,kWhite);
+    char zoom[8]; std::snprintf(zoom,sizeof(zoom),"%uX",unsigned(state.map_zoom));
+    raster.text(layout.content.x+layout.content.w-8-int(std::strlen(zoom))*6,layout.content.y+6,zoom,kMuted);
 }
 const char* context_label(l3::BottomScreenContext context) {
     switch(context) {
@@ -275,43 +265,53 @@ void draw_gauge_number(Raster& r, int right_x, int y, uint32_t value, int min_di
     int x=right_x-8;
     for(int n=0; value || n<min_digits; ++n, value/=10, x-=8) r.sprite(x,y,96+int(value%10)*8,176,8,8);
 }
+// Riveted panel: fill, border, and a rivet in each corner.
+void draw_panel(Raster& r, const l3::BottomUiRect& p, Color fill) {
+    r.fill(p.x,p.y,p.w,p.h,fill); r.border(p,kBorder);
+    for(const int x:{p.x+3,p.x+p.w-5}) for(const int y:{p.y+3,p.y+p.h-5}) r.fill(x,y,2,2,kRivet);
+}
+// Status column: the original life gauge on the left with the HP readout
+// beside it, then buster / lock-on slots and the screen context.
 void draw_status(Raster& r, const l3::BottomScreenModel& status) {
     const auto& p=l3::mockup_ui_layout().status;
+    const int text_x=p.x+48;
     if(!g_gauge.loaded) {
-        // Without cooked art there is nothing original to show; say so.
-        r.center(p,24,"LIFE",kAccent);
-        r.center(p,60,"GAUGE ART",kMuted); r.center(p,72,"MISSING",kMuted);
+        r.text(p.x+8,p.y+40,"GAUGE",kMuted); r.text(p.x+8,p.y+52,"ART",kMuted); r.text(p.x+8,p.y+64,"MISSING",kMuted);
     } else if(status.hp_max) {
-        // Centre the whole gauge (cap top to ring bottom, 80+body px) in the
-        // 126 px above the text block; longer bodies are clipped to fit.
+        // Cap top to ring bottom is 80+body px; centre it in the top 130 px.
         constexpr int kMaxBody=46;
         const int body=std::clamp(int(status.hp_max>>4)*5-10,0,kMaxBody);
-        const int cap_top=p.y+4+(126-80-body)/2;
-        draw_life_gauge(r,p.x+p.w/2-12,cap_top+body-16,std::min(status.hp,status.hp_max),status.hp_max,kMaxBody);
+        const int cap_top=p.y+4+(130-80-body)/2;
+        draw_life_gauge(r,p.x+12,cap_top+body-16,std::min(status.hp,status.hp_max),status.hp_max,kMaxBody);
     }
-    r.fill(p.x+6,p.y+134,p.w-12,1,kBorder);
+    r.text(text_x,p.y+50,"LIFE",kAccent);
     if(status.hp_max) {
-        char hp[24]; std::snprintf(hp,sizeof(hp),"%u/%u",unsigned(std::min(status.hp,status.hp_max)),unsigned(status.hp_max));
-        r.center(p,p.y+140,hp);
-    } else r.center(p,p.y+140,"NO DATA",kMuted);
-    r.text(p.x+6,p.y+156,"BUSTER",kMuted);
-    r.text(p.x+p.w-6-18,p.y+156,status.buster_enabled?"RDY":"OFF",status.buster_enabled?kAccent:kMuted);
-    r.text(p.x+6,p.y+170,"LOCK",kMuted);
-    r.text(p.x+p.w-6-18,p.y+170,status.lock_on_active?" ON":"OFF",status.lock_on_active?kPlayer:kMuted);
-    r.center(p,p.y+188,context_label(status.context),kMuted);
+        char hp[8], max[8];
+        std::snprintf(hp,sizeof(hp),"%u",unsigned(std::min(status.hp,status.hp_max)));
+        std::snprintf(max,sizeof(max),"/%u",unsigned(status.hp_max));
+        r.text(text_x,p.y+64,hp,kWhite); r.text(text_x,p.y+76,max,kMuted);
+    } else r.text(text_x,p.y+64,"--",kMuted);
+    const l3::BottomUiRect slots[2]={{static_cast<int16_t>(p.x+5),static_cast<int16_t>(p.y+138),static_cast<int16_t>(p.w-10),18},
+                                     {static_cast<int16_t>(p.x+5),static_cast<int16_t>(p.y+158),static_cast<int16_t>(p.w-10),18}};
+    for(const auto& slot:slots) { r.fill(slot.x,slot.y,slot.w,slot.h,kHeader); r.border(slot,kBorder); }
+    r.text(slots[0].x+4,slots[0].y+6,"BUSTER",kMuted);
+    r.text(slots[0].x+slots[0].w-22,slots[0].y+6,status.buster_enabled?"RDY":"OFF",status.buster_enabled?kAccent:kMuted);
+    r.text(slots[1].x+4,slots[1].y+6,"LOCK",kMuted);
+    r.text(slots[1].x+slots[1].w-22,slots[1].y+6,status.lock_on_active?" ON":"OFF",status.lock_on_active?kPlayer:kMuted);
+    r.center(p,p.y+182,context_label(status.context),kMuted);
 }
-// Footer: GAUGE01u ZENNY plate (0,176 96x15) with the money in its box.
+// Footer: GAUGE01u ZENNY plate (0,177 96x14) with the money in its box.
 // The plate is original art; showing it permanently here is port presentation.
 void draw_zenny(Raster& r, int32_t money) {
     if(!g_gauge.loaded) return;
-    r.sprite(220,223,0,176,96,15);
-    draw_gauge_number(r,311,227,uint32_t(std::clamp<int32_t>(money,0,999999)),1);
+    r.sprite(218,223,0,177,96,14);
+    draw_gauge_number(r,306,226,uint32_t(std::clamp<int32_t>(money,0,999999)),1);
 }
 void draw_content(Raster& r, const l3::MockupUiState& state,
                   const l3::MockupMapView& map, const MMLRuntimeDiag* diag) {
     const auto& p=l3::mockup_ui_layout().content;
     if(state.tab==l3::MockupTab::Map) { draw_map(r,map,state); return; }
-    r.text(p.x+6,p.y+8,l3::mockup_tab_label(state.tab),kAccent);
+    r.text(p.x+8,p.y+6,l3::mockup_tab_label(state.tab),kWhite);
     if(state.tab==l3::MockupTab::Items || state.tab==l3::MockupTab::Weapons) {
         r.center(p,84,state.tab==l3::MockupTab::Items?"INVENTORY":"LOADOUT");
         r.center(p,101,"UNAVAILABLE",kMuted);
@@ -325,12 +325,13 @@ void draw_content(Raster& r, const l3::MockupUiState& state,
         r.border(button,available?kAccent:kBorder);
     }
     char zoom[24]; std::snprintf(zoom,sizeof(zoom),"MAP ZOOM %uX",unsigned(state.map_zoom));
-    r.center(layout.map_zoom_button,49,zoom,available?kWhite:kMuted);
-    r.center(layout.map_zoom_button,62,"TAP TO CYCLE",kMuted);
-    r.center(layout.map_reset_button,94,"RESET MAP",available?kWhite:kMuted);
-    r.center(layout.map_follow_button,127,state.map_follow_player?"FOLLOW PLAYER ON":"FOLLOW PLAYER OFF",available?kWhite:kMuted);
-    const char* controls[]={"HOLD SELECT","L/R TABS  X ZOOM","D-PAD PAN B CENTER","A SHOW/HIDE MAP"};
-    for(int i=0;i<4;++i) r.text(p.x+6,151+i*14,controls[i]);
+    const auto& zb=layout.map_zoom_button; const auto& rb=layout.map_reset_button; const auto& fb=layout.map_follow_button;
+    r.center(zb,zb.y+7,zoom,available?kWhite:kMuted);
+    r.center(zb,zb.y+20,"TAP TO CYCLE",kMuted);
+    r.center(rb,rb.y+13,"RESET MAP",available?kWhite:kMuted);
+    r.center(fb,fb.y+9,state.map_follow_player?"FOLLOW PLAYER ON":"FOLLOW PLAYER OFF",available?kWhite:kMuted);
+    const char* controls[]={"HOLD SELECT","L/R TABS  X ZOOM","D-PAD PAN  B CENTER","A SHOW/HIDE MAP"};
+    for(int i=0;i<4;++i) r.text(p.x+8,fb.y+fb.h+12+i*14,controls[i]);
 }
 } // namespace
 
@@ -345,23 +346,24 @@ void mockup_hud_raster(unsigned char* buffer, const l3::MockupUiState& state,
         r.text(91,128,"TOUCH TO RESTORE",kAccent);
         return;
     }
-    r.text(5,4,"LEGENDS3DS",kMuted);
     const auto& layout=l3::mockup_ui_layout();
     for(size_t i=0;i<layout.tabs.size();++i) {
         const auto tab=static_cast<l3::MockupTab>(i);
         const auto& panel=layout.tabs[i];
         const bool selected=tab==state.tab;
-        r.fill(panel.x,panel.y,panel.w,panel.h,selected?Color{23,66,80}:kPanel);
+        r.fill(panel.x,panel.y,panel.w,panel.h,selected?kAccent:kHeader);
         r.border(panel,selected?kAccent:kBorder);
-        if(selected) r.fill(panel.x+1,panel.y+1,2,panel.h-2,kAccent);
-        draw_tab_icon(r,tab,panel.x+panel.w/2,panel.y+7,selected?kAccent:kMuted);
-        r.center(panel,panel.y+33,l3::mockup_tab_label(tab),selected?kWhite:kMuted);
+        if(selected) r.border({static_cast<int16_t>(panel.x+1),static_cast<int16_t>(panel.y+1),
+                               static_cast<int16_t>(panel.w-2),static_cast<int16_t>(panel.h-2)},kWhite);
+        r.center(panel,panel.y+6,l3::mockup_tab_label(tab),selected?kBackground:kWhite);
     }
-    for(const auto& panel:{layout.content,layout.status}) {
-        r.fill(panel.x,panel.y,panel.w,panel.h,kPanel); r.border(panel,kBorder);
-    }
+    for(const auto& panel:{layout.content,layout.status}) draw_panel(r,panel,kPanel);
+    // Content header strip (area name / page title).
+    r.fill(layout.content.x+1,layout.content.y+1,layout.content.w-2,16,kHeader);
+    r.fill(layout.content.x+1,layout.content.y+17,layout.content.w-2,1,kBorder);
     draw_content(r,state,map,diagnostics); draw_status(r,status);
-    r.text(5,228,"TOUCH TABS | SELECT",kAccent);
+    draw_panel(r,{4,222,312,17},kHeader);
+    r.text(12,227,"TAP A TAB TO OPEN MENU.",kWhite);
     draw_zenny(r,status.money);
     if(g_dialogue.active) {
         // Word-wrapped uppercase text, 50 columns, 9 rows; '\n' breaks lines.
