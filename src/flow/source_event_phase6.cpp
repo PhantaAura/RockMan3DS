@@ -339,6 +339,23 @@ SourceEventPhase6Result consume_source_event1_camera_8001ec0c(const SourceEventW
     scene.camera_800bc738=next;state.awaiting_camera_8001ec0c=false;state.awaiting_timeline_8001f070=true;context=state;
     out.committed=true;out.status=SourceEventPhase6Status::CameraConsumed;out.next_consumer=0x8001f070u;return out;
 }
+bool apply_source_scene_tracked_target_8001e5bc(const SourceEventWork& work,
+    SourceEventPhase5Context& scene,const SourceEventPhase6Context& context) noexcept {
+    if(!context.byte_800bc733||*context.byte_800bc733==0)return false;
+    auto& camera=scene.camera_800bc738;
+    if(!camera.known[1])return false;
+    const size_t slot_offset=0x24+size_t(camera.raw[1])*4;
+    if(slot_offset+4>work.raw.size()||!known(work,slot_offset,4))return false;
+    const uint32_t token=get32(work.raw.data()+slot_offset);
+    const uint8_t* raw=nullptr;const uint8_t* valid=nullptr;
+    if(auto* a=resolve(scene.pool40,token,0x800c3580u,0x40)){raw=a->raw.data();valid=a->known.data();}
+    else if(auto* b=resolve(scene.pool_e0,token,0x800bf118u,0xe0)){raw=b->raw.data();valid=b->known.data();}
+    if(!raw)return false;
+    for(size_t i=0;i<12;++i)if(!valid[0x1c+i]||!camera.known[0xa8+i])return false;
+    for(size_t axis=0;axis<3;++axis)
+        put(camera,8+axis*4,4,get32(raw+0x1c+axis*4)+get32(camera.raw.data()+0xa8+axis*4));
+    return true;
+}
 SourceEventPhase6Result consume_source_event1_timeline_8001f070(SourceEventWork& work,
     SourceEventPhase6Context& context,const SourceEventPhase6Profile* profile) noexcept {
     SourceEventPhase6Result out;out.next_consumer=0x8001f070u;

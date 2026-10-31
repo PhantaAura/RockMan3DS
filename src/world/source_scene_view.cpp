@@ -77,14 +77,15 @@ SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewIn
     if(!input.scene||!input.scene->mode_800a395c)return hold(Status::NeedsCameraMode);
     if(*input.scene->mode_800a395c==1)return hold(Status::GameplayCameraOwned);
     if(!input.script||!input.script->byte_800bc733)return hold(Status::NeedsScriptControl);
-    if(*input.script->byte_800bc733!=0)return hold(Status::NeedsTrackedActor);
     if(!input.script->byte_1f800074)return hold(Status::NeedsSourceShift);
     if(*input.script->byte_1f800074>2)return hold(Status::UnsupportedSourceShift);
     const auto& camera=input.scene->camera_800bc738;
     const auto known=[&](std::size_t offset,std::size_t n)noexcept{for(std::size_t i=0;i<n;++i)if(!camera.known[offset+i]){out.missing_camera_offset=std::uint16_t(offset+i);return false;}return true;};
     if(!known(0,1))return hold(Status::NeedsCameraBytes);
     if(camera.raw[0]!=0)return hold(Status::NeedsTargetPointCamera);
-    for(std::size_t axis=0;axis<3;++axis)if(!known(8+axis*4,4)||!known(152+axis*4,4))return hold(Status::NeedsCameraBytes);
+    // Tracked (0x8001E5BC): target = camera+8.. as stored from the actor, no +0x98.
+    const bool tracked=*input.script->byte_800bc733!=0;
+    for(std::size_t axis=0;axis<3;++axis)if(!known(8+axis*4,4)||(!tracked&&!known(152+axis*4,4)))return hold(Status::NeedsCameraBytes);
     for(const std::size_t offset:{std::size_t(0x3a),std::size_t(0x3e),std::size_t(0x42)})if(!known(offset,2))return hold(Status::NeedsCameraBytes);
     const auto& projection=input.script->projection;
     if(!projection.ofx||!projection.ofy||!projection.h)return hold(Status::NeedsProjectionControls);
@@ -94,7 +95,7 @@ SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewIn
     if(h==0||h>=32768u||(*projection.ofx&65535u)||(*projection.ofy&65535u))return hold(Status::UnsupportedOptics);
     SourceSceneViewFrame frame;frame.source_shift=*input.script->byte_1f800074;
     frame.yaw=s16(u16(camera.raw.data()+0x3a));frame.pitch=s16(u16(camera.raw.data()+0x3e));frame.distance=s16(u16(camera.raw.data()+0x42));
-    for(std::size_t axis=0;axis<3;++axis)frame.target[axis]=asr(u32(camera.raw.data()+8+axis*4)+u32(camera.raw.data()+152+axis*4),16);
+    for(std::size_t axis=0;axis<3;++axis)frame.target[axis]=asr(u32(camera.raw.data()+8+axis*4)+(tracked?0u:u32(camera.raw.data()+152+axis*4)),16);
     frame.rotation_q12=rotation_yx(*input.reference,frame.pitch,frame.yaw);
     const auto sy=scalar_sin(*input.profile,frame.yaw),cy=scalar_cos(*input.profile,frame.yaw);
     const auto sp=scalar_sin(*input.profile,frame.pitch),cp=scalar_cos(*input.profile,frame.pitch);

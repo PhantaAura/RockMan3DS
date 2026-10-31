@@ -316,6 +316,9 @@ public:
     bool bind_source_handoff_display_receipt(const SourceEventHandoffDisplayReceipt&) noexcept;
 
     bool bind_source_event_phase6_profile(SourceEventPhase6Profile profile) noexcept;
+    // 0x8001E5BC tracked-camera store, run just before the view (0x8001E550).
+    bool apply_source_scene_tracked_camera_target() noexcept {
+        return source_event_work_&&apply_source_scene_tracked_target_8001e5bc(*source_event_work_,source_event_phase5_context_,source_event_phase6_context_);}
     std::optional<SourceEventSceneOverlayPresentation> source_event_scene_overlay() const noexcept;
     bool acknowledge_source_event_scene_overlay(SourceEventSceneOverlayLease lease) noexcept;
     SceneE0FirstUpdatePass service_diagnostic_scene_e0_first_updates(const SceneE0Resources& resources) noexcept;

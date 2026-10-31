@@ -5470,6 +5470,7 @@ int main() {
             bool source_camera_bound=false;
             if(g_source_event_boot&&g_source_scene_camera&&use_uv_renderer()&&actor_metadata.scene_view&&
                session.source_event_phase5_resources().resident_in(session.active_area().ebd)) {
+                (void)session.apply_source_scene_tracked_camera_target();
                 auto source_view=l3::produce_source_scene_view_8001e550({&*actor_metadata.scene_view,&refs,
                     &session.source_event_phase5_context(),&session.source_event_phase6_context(),
                     session.source_event_phase5_resources().resident_in(session.active_area().ebd)});

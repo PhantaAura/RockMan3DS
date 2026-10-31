@@ -134,6 +134,12 @@ SourceEventPhase6Result consume_source_event1_phase6_prefix_8010102c(
 SourceEventPhase6Result consume_source_event1_camera_8001ec0c(
     const SourceEventWork& work,SourceEventPhase5Context& scene,
     SourceEventPhase6Context& context,const SourceEventPhase6Profile* profile) noexcept;
+// 0x8001E5BC, the tracked branch of 0x8001E550 (0x800BC733 != 0): camera
+// +8/+0xC/+0x10 = actor(event+0x24 + 4*camera[1]) +0x1C/+0x20/+0x24 plus camera
+// +0xA8/+0xAC/+0xB0. The actor may be the class-40 or an E0 object. Returns
+// false (nothing stored) when not tracking or an owner is unknown.
+bool apply_source_scene_tracked_target_8001e5bc(const SourceEventWork& work,
+    SourceEventPhase5Context& scene,const SourceEventPhase6Context& context) noexcept;
 SourceEventPhase6Result consume_source_event1_timeline_8001f070(
     SourceEventWork& work,SourceEventPhase6Context& context,
     const SourceEventPhase6Profile* profile) noexcept;
