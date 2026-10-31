@@ -15,6 +15,10 @@ namespace l3 {
 constexpr uint32_t kSourcePaletteBuffer800ad168 = 0x800AD168u;
 constexpr size_t kSourcePaletteRows = 64, kSourcePaletteRowWords = 256;
 constexpr size_t kSourcePaletteTimelineCapacity = 16;
+// Exact cooked sizes (header 16 + payload), for read admission limits.
+constexpr size_t kSourcePaletteC0ProfileBytes = 16 + 32 + 10 * (8 + 4 * kSourcePaletteTimelineCapacity) + 16 + 36 + 12 +
+    2 * (1 + 6 * 32) + 2 * 24 * (1 + 4 * 32);
+constexpr size_t kSourcePaletteBankBytes = 16 + 4 + 2 * 8192 + 8192;
 
 struct SourcePaletteBuffer {
     std::array<uint16_t,kSourcePaletteRows * kSourcePaletteRowWords> words{};

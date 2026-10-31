@@ -3822,8 +3822,8 @@ int main() {
                 try{
                     l3::SourcePaletteC0Profile profile;
                     if(present(data_path("source_palette_c0.l3c0").c_str())&&present(data_path("materials/palette_bank_00.l3pb").c_str())&&
-                       l3::load_source_palette_c0_profile(read_binary(data_path("source_palette_c0.l3c0"),4096),profile)&&
-                       l3::load_source_palette_bank(read_binary(data_path("materials/palette_bank_00.l3pb"),32768),g_palette_buffer))
+                       l3::load_source_palette_c0_profile(read_binary(data_path("source_palette_c0.l3c0"),l3::kSourcePaletteC0ProfileBytes),profile)&&
+                       l3::load_source_palette_bank(read_binary(data_path("materials/palette_bank_00.l3pb"),l3::kSourcePaletteBankBytes),g_palette_buffer))
                         g_palette_c0=profile;
                     if(g_palette_c0)(void)l3::parse_source_scene_face_profile(g_palette_c0->face_block.data(),g_palette_c0->face_block.size(),g_face_profile);
                 }catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}

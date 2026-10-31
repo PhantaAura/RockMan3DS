@@ -90,5 +90,6 @@ int main() {
     update_source_palette_c0_80017478(pool2, empty, prof);
     require(pool2.slots[0].raw[0x0D] == 0 && update_source_palette_c0_80017478(pool2, empty, prof).held == 1, "unknown palette holds");
     (void)before;
+    static_assert(kSourcePaletteC0ProfileBytes == 7410 && kSourcePaletteBankBytes == 24596, "cooked sizes (cook_source_palette_c0.py, l3cook_palette_bank)");
     std::puts("source_palette_c0: spawn, init, blend, advance/loop/end, 0x70 switch, sub4 snap, holds OK");
 }
