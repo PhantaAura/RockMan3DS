@@ -17,6 +17,7 @@ import zlib
 OVERLAY_SHA = '9490c200edc3a8045af4629e983bed83cab56a9a53b178ac067ea76af3ce413c'
 BASE = 0x80100000
 CAPACITY = 16
+FACE_CUES, FACE_SCRIPTS, FACE_ENTRIES = 32, 24, 32
 
 
 def cook(overlay):
@@ -43,6 +44,34 @@ def cook(overlay):
     # 0x8011CA94: six (u, v) frame bases of the E0 variant-4 UV animation 0x8011381C.
     payload += overlay[0x8011CA94 - BASE:0x8011CA94 - BASE + 12]
     assert len(payload) == 32 + 10 * (8 + 4 * CAPACITY) + 16 + 36 + 12
+    # Opening face (class-40 Mega Man, 0x8010C820 / 0x8010C6B8): cue tables
+    # 0x8011C338 (eyes) and 0x8011C3A4 (mouth), 6-byte {event+8 halfword,
+    # event+0x1C frame, script}; a record whose event+8 low byte is nonzero
+    # (or 0xFF) cannot match in the scene and ends the cooked table. Script
+    # tables 0x8011C2A8 / 0x8011C2E0, 4-byte {frame, ?, s16 duration} entries
+    # up to and including the first duration <= 0 (a loop or hold).
+    def cues(base):
+        recs = []
+        for k in range(FACE_CUES):
+            r = overlay[base - BASE + 6 * k:base - BASE + 6 * k + 6]
+            if r[0] != 0: break
+            recs.append(r)
+        else:
+            raise ValueError('Face cue table exceeds capacity')
+        return bytes([len(recs)]) + b''.join(recs).ljust(6 * FACE_CUES, b'\0')
+    def script(pointer):
+        if not BASE <= pointer < BASE + len(overlay): return bytes(1 + 4 * FACE_ENTRIES)
+        entries = []
+        for k in range(FACE_ENTRIES):
+            e = overlay[pointer - BASE + 4 * k:pointer - BASE + 4 * k + 4]
+            entries.append(e)
+            if struct.unpack('<h', e[2:4])[0] <= 0: break
+        else:
+            raise ValueError('Face script exceeds capacity')
+        return bytes([len(entries)]) + b''.join(entries).ljust(4 * FACE_ENTRIES, b'\0')
+    payload += cues(0x8011C338) + cues(0x8011C3A4)
+    for table in (0x8011C2A8, 0x8011C2E0):
+        payload += b''.join(script(word(table + 4 * i)) for i in range(FACE_SCRIPTS))
     return b'L3C0' + struct.pack('<HHII', 1, 16, 16 + len(payload), zlib.crc32(payload) & 0xffffffff) + payload
 
 

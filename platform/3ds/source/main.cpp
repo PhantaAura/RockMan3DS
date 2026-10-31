@@ -1,6 +1,7 @@
 #include "checkpoint_version.h"
 #include "legends3ds/gameplay_gates.h"
 #include "legends3ds/source_palette_c0.h"
+#include "legends3ds/source_scene_face.h"
 #include <3ds.h>
 #include <citro3d.h>
 #include <algorithm>
@@ -981,6 +982,8 @@ struct RuntimePalettePage { uint32_t word = 0; uint16_t clut_x = 0, clut_y = 0, 
 static std::vector<RuntimePalettePage> g_runtime_palette_pages;
 static std::optional<l3::SourcePaletteC0Profile> g_palette_c0;
 static l3::SourcePaletteBuffer g_palette_buffer;
+static l3::SourceSceneFaceProfile g_face_profile;
+static l3::SourceSceneFaceState g_face_state;
 void register_runtime_palette_page(const l3::MaterialCacheEntry& e) {
     const uint16_t clut = uint16_t(e.material_word >> 16);
     const uint16_t x = uint16_t((clut & 0x3Fu) * 16u), y = uint16_t(clut >> 6);
@@ -3822,6 +3825,7 @@ int main() {
                        l3::load_source_palette_c0_profile(read_binary(data_path("source_palette_c0.l3c0"),4096),profile)&&
                        l3::load_source_palette_bank(read_binary(data_path("materials/palette_bank_00.l3pb"),32768),g_palette_buffer))
                         g_palette_c0=profile;
+                    if(g_palette_c0)(void)l3::parse_source_scene_face_profile(g_palette_c0->face_block.data(),g_palette_c0->face_block.size(),g_face_profile);
                 }catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
                 boot_log(MML_BOOT_DATA,g_palette_c0?"PALETTE_C0=1 0x80017478 subtypes 3/4, buffer 0x800AD168":"PALETTE_C0=0 profile/bank absent");
             }
@@ -4550,6 +4554,27 @@ int main() {
                     }
                     else {
                         const auto result=session.service_diagnostic_scene_actor40_update(*scene_actor40);
+                        // 0x8010C820 tail: face cues and scripts, UV copies 0x8002D320.
+                        if(g_face_profile.loaded&&session.source_event_work()){
+                            const auto& ev=*session.source_event_work();
+                            if(ev.known[8]&&ev.known[9]&&ev.known[0x1c]&&ev.known[0x1d]&&ev.known[0x1e]&&ev.known[0x1f]){
+                                std::array<l3::SourceFaceUvCopy,4> copies{};
+                                const uint16_t h08=uint16_t(ev.raw[8]|(ev.raw[9]<<8));
+                                const uint32_t w1c=uint32_t(ev.raw[0x1c])|(uint32_t(ev.raw[0x1d])<<8)|(uint32_t(ev.raw[0x1e])<<16)|(uint32_t(ev.raw[0x1f])<<24);
+                                const size_t n=l3::step_source_scene_face_8010c820(g_face_state,g_face_profile,h08,w1c,copies);
+                                const auto& ebd=session.active_area().ebd;
+                                const auto apply=[&](l3::ActorMeshResource& mesh,const std::array<uint8_t,96>& descriptor,const l3::SourceFaceUvCopy& c){
+                                    for(size_t slot=0;slot<mesh.model.parts.size()&&slot<24;++slot)if(descriptor[slot*4]==c.destination_part)
+                                        (void)l3::apply_source_face_uv_8002d320(mesh.model.parts[slot],ebd.source_payload.data(),ebd.source_payload.size(),
+                                            ebd.load_base,scene_actor40->descriptor_token,c.source_part,c.offset);};
+                                for(size_t i=0;i<n;++i){
+                                    apply(scene_actor40->mesh,scene_actor40->descriptor_copy,copies[i]);
+                                    if(scene_actor40->mesh_variant)apply(scene_actor40->mesh_variant->mesh,scene_actor40->mesh_variant->descriptor,copies[i]);
+                                    hardware_test_trace("# source_face,frame=%lu,part=%u,source=%u,offset=%08lx,source_fn=8010C820",
+                                        (unsigned long)session.frame_counter(),unsigned(copies[i].destination_part),unsigned(copies[i].source_part),(unsigned long)copies[i].offset);
+                                }
+                            }
+                        }
                         if(result.request_reset||unsigned(result.status)!=last_actor40_update_status||session.frame_counter()%60u==0u){
                             hardware_test_trace("# source_actor40_update,frame=%lu,status=%u,committed=%u,state=%u,substate=%u,request=%u,shadow_pending=%u,timed_cues_pending=%u,tail_status=%u,player_mirrors=%u,chronology=CANDIDATE",
                                 (unsigned long)session.frame_counter(),unsigned(result.status),unsigned(result.committed),

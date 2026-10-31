@@ -39,6 +39,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_event_phase5.cpp
     src/flow/source_event_phase6.cpp
     src/flow/source_palette_c0.cpp
+    src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp
     src/flow/source_event_random_tape.cpp
     src/world/scene_e0.cpp
@@ -1198,3 +1199,7 @@ add_executable(test_source_palette_c0 tests/test_source_palette_c0.cpp)
 target_link_libraries(test_source_palette_c0 PRIVATE legends3ds_core)
 target_compile_options(test_source_palette_c0 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_palette_c0 COMMAND test_source_palette_c0)
+add_executable(test_source_scene_face tests/test_source_scene_face.cpp)
+target_link_libraries(test_source_scene_face PRIVATE legends3ds_core)
+target_compile_options(test_source_scene_face PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_scene_face COMMAND test_source_scene_face)
