@@ -96,6 +96,17 @@ in the shake sequence; this session ran ~6.7 game updates/s (6807 in 1010 s
 wall incl. boot), so the scene played well below real time while the XA
 stream plays in real time. Not separated from a port timing bug yet.
 
+## Azahar run 4 (build pass-opening-213708): opening, then the tutorial
+`opening_then_tutorial.txt`, one continuous normal boot: title -> NEW GAME
+-> event 1 -> source transition into Area 1 -> door into Area 2 -> flag
+`0x622` at frame 13509 -> door into Area 3; script end at 14532. No spawn
+file, no forced flags.
+
+## Later ports (host-tested, not yet seen in Azahar)
+- Tracked scene camera `0x8001E5BC` (record 3 shot).
+- E0 falling blocks / slide `0x801133B4`, `0x80113600`, `0x801136A4`,
+  `0x80113A6C`, `0x80113B00` with debris/impact children and jolts.
+
 ## Open
 - Re-run the opening in Azahar with the counter fix (build
   pass-opening-203335): records 10..19, phase 7, Area 1 control at
