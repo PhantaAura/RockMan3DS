@@ -63,6 +63,12 @@ struct SourceSceneViewResult {
 // does not consume/update camera program state, event counters or story flags.
 // Every output is value-owned and valid only for this current input snapshot.
 SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewInputs& inputs) noexcept;
+// The frame 0x8001E550 composes from resolved values (target already with
+// the +0x98 offset or tracked; yaw/pitch/distance halfwords; shift; positive
+// H; integer pixel offsets ofx/ofy in 16.16 words).
+SourceSceneViewFrame compose_source_scene_view_frame(const SourceSceneViewProfile& profile,const ReferenceTables& reference,
+    const std::array<std::int32_t,3>& target,std::int16_t yaw,std::int16_t pitch,std::int16_t distance,std::uint8_t shift,
+    std::uint32_t h,std::int32_t ofx,std::int32_t ofy) noexcept;
 // 0x8002A160 depth for an E0 object at world position +0x38: RTPS with
 // rotation 0x1F800008 and translation 0x1F800030, SZ3 (0..0xFFFF) >> 2.
 // Compared with 0x1F800006 (far cull) and 701/1801 (LOD).

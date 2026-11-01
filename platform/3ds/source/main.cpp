@@ -5,6 +5,7 @@
 #include <3ds.h>
 #include <citro3d.h>
 #include <algorithm>
+#include <functional>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -46,6 +47,7 @@
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/frontend_title.h"
 #include "legends3ds/source_intro_crawl.h"
+#include "legends3ds/source_attract_event10.h"
 #include "legends3ds/frontend_servbots.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/gameplay_clock.h"
@@ -1050,9 +1052,12 @@ bool upload_material_texture(const l3::MaterialCacheEntry* e, C3D_Tex& tex) {
 
 // Optional per-area depth-ramp scales (materials/area_NN.l3cr).
 static std::vector<l3::TerrainClutRampEntry> g_terrain_ramp;
+// Folder of the per-area CLUT ramps: ST00's materials/, or a cutscene stage's
+// own folder while it owns the terrain (the attract scene's attract/).
+static const char* g_terrain_ramp_dir = "materials";
 void load_terrain_ramp(size_t area) {
     g_terrain_ramp.clear();
-    char rel[64];std::snprintf(rel,sizeof(rel),"materials/area_%02lu.l3cr",static_cast<unsigned long>(area));
+    char rel[64];std::snprintf(rel,sizeof(rel),"%s/area_%02lu.l3cr",g_terrain_ramp_dir,static_cast<unsigned long>(area));
     try{
         const auto bytes=read_binary(data_path(rel),1u<<20);
         g_terrain_ramp=l3::load_l3clut_ramp(bytes.data(),bytes.size());
@@ -3444,6 +3449,225 @@ void run_intro_event71(bool scripted) {
     psx_resolver_reset();
 }
 
+// Title attract scene, ST07 event 10 (docs/research_01516/ATTRACT_EVENT10.md):
+// the handler on the shared scene runtime (attract.l3cs), the ST07 terrain of
+// the area each shot requests (areas 1-4; area 0 is the exterior), the
+// background layers (re-initialised by each area load, as the stage init
+// 0x801000B0 does) and the XA of 0x20000005. ST00's terrain is released while
+// it plays; restore() rebuilds it. Not ported yet: the actors (the ship, the
+// Servbots, Tron, Teisel), fade 20, the areas' fog/depth cue.
+void run_attract_event10(bool scripted, const std::function<void()>& restore) {
+    l3::SourceScenePackage package;
+    l3::SourceAttractProfile profile;
+    l3::SourceBgProfile bg;
+    l3::RuntimeMap map;
+    l3::St00RenderSource render;
+    l3::ReferenceTables refs;
+    l3::SourceSceneViewProfile view_profile;
+    try {
+        if (!l3::load_source_scene_package(read_binary(data_path("attract/attract.l3cs"), l3::kSourceScenePackageMaxBytes), package) ||
+            !l3::bind_source_attract_profile(package, profile))
+            throw std::runtime_error("attract.l3cs absent or rejected");
+        if (!l3::load_source_bg_profile(read_binary(data_path("attract/attract_bg.l3bg"), l3::kSourceBgProfileBytes), bg))
+            throw std::runtime_error("attract_bg.l3bg rejected");
+        map = l3::load_l3map(read_binary(data_path("attract/st07.l3map")), true);
+        render = l3::load_l3render(read_binary(data_path("attract/st07.l3render")), true);
+        refs = l3::load_l3reference(read_binary(data_path("reference.l3ref")), true);
+        view_profile = l3::load_source_scene_view_profile(read_binary(data_path("source_scene_view.l3sv"), l3::kSourceSceneViewProfileBytes));
+    } catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_EVENT10=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+        return;
+    }
+    // Background pages: the front-end material slot, as the narration uses.
+    {
+        const auto cache = l3::load_l3material_cache(read_binary(data_path("attract/attract_bg.l3mc")), true);
+        for (const auto& e : cache.entries) {
+            if (!e.resolved) continue;
+            GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
+            auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
+        }
+    }
+    release_all_render_resources();   // area 0 (the exterior) has no terrain
+    psx_resolver_reset();
+    l3::SourceBgLayers layers{};
+    l3::init_source_bg_layers_80022fd4(bg, layers);   // stage init, area 0
+    NativeXaAudio xa;
+    { char xa_path[256]; std::snprintf(xa_path, sizeof(xa_path), "%saudio/attract_xa.l3xa", kDataRoot);
+      const bool ready = xa.open(xa_path);
+      char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_XA=%u attract_xa.l3xa %s", unsigned(ready), xa.error());
+      boot_log(MML_BOOT_DATA, line); }
+    boot_log(MML_BOOT_DATA, "ATTRACT_EVENT10=1 handler 0x80100330, ST07 areas 1-4, BG, XA 0x20000005; actors not ported");
+    l3::SourceFadeContext fade;
+    for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
+    l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
+    l3::SourceFadeCallbackState fade_callback;
+    std::optional<l3::SourceFadeStartupProfile> fade_profile;
+    try { fade_profile = l3::load_source_fade_startup_profile(read_binary(data_path("source_fade.l3fd"), 4096)); }
+    catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+    constexpr uint8_t kEndpointHold1f800001 = 2;
+    constexpr std::array<uint16_t,3> kFarByShift{{3584, 1664, 768}};   // 0x8001EC0C op 0x20..0x22
+    l3::SourceAttractEvent10State event;
+    l3::MaterialCache terrain_cache;
+    int area = 0, pending_area = -1;
+    bool visible = false, xa_start_pending = false, xa_started = false, xa_clock_bound = false;
+    uint64_t xa_clock_frames = 0, xa_clock_remainder = 0;
+    uint16_t pending_start = 0;
+    std::vector<l3::FrontendPacket> packets;
+    l3::GameplayClock clock;
+    u64 last_tick = svcGetSystemTick();
+    uint32_t tick = 0;
+    while (aptMainLoop() && !event.done) {
+        hidScanInput();
+        u32 down = hidKeysDown();
+        if (scripted) { u32 held = 0, up = 0; circlePosition cp{}; if (!diagnostic_autoplay_frame(down, held, up, cp)) break; }
+        if (down & KEY_START) pending_start = 1;
+        const u64 now = svcGetSystemTick();
+        uint64_t elapsed_us = (now - last_tick) / CPU_TICKS_PER_USEC;
+        last_tick = now;
+        xa.pump();
+        if (xa.observation().playing) {   // 1260 frames (37800 / 30) per tick
+            const uint64_t position = xa.position_frames();
+            if (xa_clock_bound && position >= xa_clock_frames) {
+                xa_clock_remainder += (position - xa_clock_frames) * 1000000u;
+                elapsed_us = xa_clock_remainder / 37800u; xa_clock_remainder %= 37800u;
+            }
+            xa_clock_bound = true; xa_clock_frames = position;
+        } else xa_clock_bound = false;
+        clock.advance(elapsed_us, false);
+        while (!event.done && clock.consume()) {
+            const int16_t busy = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
+            if (xa_start_pending) {
+                xa_start_pending = false; xa_started = xa.start();
+                hardware_test_trace("# attract_xa_start,tick=%lu,command=20000005,xa_started=%u,%s", (unsigned long)tick, unsigned(xa_started), xa.error());
+            }
+            const uint8_t phase = event.phase;
+            const uint8_t e8 = event.event.e8, e9 = event.event.e9;
+            // 0x8001D878: the CD command has completed once its stream started.
+            const auto step = l3::step_source_attract_event10_80100330(event, profile, layers, xa_started || !xa.observation().ready,
+                                                                      busy, pending_start != 0);
+            pending_start = 0;
+            if (step.cd_command) xa_start_pending = true;
+            if (step.fade_type) {
+                l3::SourceFadeStartupResult started;
+                const bool mode0 = step.fade_type <= 11 && !(step.fade_type & 4);
+                if (mode0) started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, step.fade_type);
+                if (step.fade_type == 2) visible = true;   // black (stage loading) until the fade-in
+                hardware_test_trace("# attract_fade,tick=%lu,type=%u,status=%u,ported=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status), unsigned(mode0));
+            }
+            if (step.area_request >= 0) pending_area = step.area_request;
+            if (fade_intents.count && !fade_callback.running)
+                (void)l3::acknowledge_source_fade_scheduler_intent(fade, fade_intents, fade_callback, kEndpointHold1f800001);
+            else if (fade_callback.running)
+                (void)l3::advance_source_fade_callback(fade, fade_callback, kEndpointHold1f800001);
+            (void)l3::update_source_bg_layers_80023144(layers);
+            if (phase != event.phase || e8 != event.event.e8 || e9 != event.event.e9 || step.area_request >= 0 || step.actor_callbacks) {
+                const auto v = l3::source_camera_view(event.camera);
+                hardware_test_trace("# attract_event10,tick=%lu,phase=%u,shot=%u:%u,area_request=%d,actor_callbacks=%u,target=%d:%d:%d,yaw=%d,pitch=%d,distance=%d,camera_unsupported=%u",
+                    (unsigned long)tick, unsigned(event.phase), unsigned(event.event.e9), unsigned(event.event.e8), int(step.area_request),
+                    unsigned(step.actor_callbacks), int(v.target[0]), int(v.target[1]), int(v.target[2]), int(v.yaw), int(v.pitch), int(v.distance),
+                    unsigned(event.camera.unsupported));
+            }
+            ++tick;
+        }
+        // An area load (0x80100CD4 -> the stage loader): the area's terrain and
+        // the stage init's background re-initialisation.
+        if (pending_area >= 0 && pending_area != area) {
+            (void)acquire_gpu_frame("attract area"); submit_gpu_frame(false);
+            require_gpu_idle_for_release();
+            terrain_cache = {};
+            try {
+                char rel[64]; std::snprintf(rel, sizeof(rel), "attract/area_%02d.l3mc", pending_area);
+                terrain_cache = l3::load_l3material_cache(read_binary(data_path(rel)), false);
+                g_terrain_ramp_dir = "attract";
+                rebuild_terrain_batches(map, render, &terrain_cache, size_t(pending_area));
+                g_terrain_ramp_dir = "materials";
+                area = pending_area;
+            } catch (const std::exception& error) {
+                g_terrain_ramp_dir = "materials";
+                release_all_render_resources(); area = 0;
+                boot_log(MML_BOOT_DATA, error.what());
+            }
+            l3::init_source_bg_layers_80022fd4(bg, layers);
+            psx_resolver_reset();
+            hardware_test_trace("# attract_area,tick=%lu,area=%d,batches=%lu", (unsigned long)tick, area, (unsigned long)g_terrain_batches.size());
+        }
+        pending_area = -1;
+        (void)acquire_gpu_frame("attract");
+        C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
+        if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("attract: C3D_FrameDrawOn rejected");
+        C3D_BindProgram(&g_shader_program);
+        psx_begin_frame();
+        packets = visible ? l3::draw_source_bg_layers_80023144(layers, 40) : std::vector<l3::FrontendPacket>{};
+        std::reverse(packets.begin(), packets.end());   // AddPrim prepends: last added draws first
+        const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
+        const auto add_packets = [&](bool behind_scene) {
+            for (const auto& fp : packets) {
+                if ((fp.bucket > 32) != behind_scene) continue;
+                const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
+                for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
+                float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
+                for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
+                g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+            }
+        };
+        // Screen entries 35..33 (background), the scene OT (terrain), entries 32..30.
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        add_packets(true);
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        if (visible && area > 0 && !g_terrain_batches.empty()) {
+            const auto v = l3::source_camera_view(event.camera);
+            const auto camera = l3::source_gameplay_camera_80037fb4(refs, v.target, v.distance, v.yaw, v.pitch, v.shift, 0);
+            auto faces = l3::make_terrain_face_camera(camera.camera_1f800008, nullptr);
+            faces.lod_1f800074 = v.shift; faces.screen_x_min = -40; faces.screen_width = 400;
+            static l3::TerrainCellVisibility cells;
+            cells.valid = false;
+            l3::TerrainCellViewInput cv;
+            cv.camera_1f800008 = camera.camera_1f800008;
+            cv.translation_1f800030 = l3::terrain_cell_translation_1f800030(camera.camera_1f800008, camera.eye_800a39f0);
+            cv.eye_x_1f800028 = int16_t(camera.eye_800a39f0[0]); cv.eye_z_1f80002c = int16_t(camera.eye_800a39f0[2]);
+            cv.pitch_800a3a10 = camera.rotation_800a3a10[0]; cv.yaw_800a3a12 = camera.rotation_800a3a10[1];
+            cv.target_x_800a39a0 = v.target[0]; cv.target_z_800a39a8 = v.target[2]; cv.lod_1f800074 = v.shift;
+            l3::compute_terrain_cell_visibility(map, size_t(area), refs, cv, cells);
+            // Matrices for any batch drawn directly (as gameplay's scene path).
+            const auto frame = l3::compose_source_scene_view_frame(view_profile, refs, v.target, v.yaw, v.pitch, v.distance, v.shift,
+                                                                   384u, int32_t(160u << 16), int32_t(120u << 16));
+            C3D_Mtx view, projection;
+            for (size_t row = 0; row < 4; ++row) view.r[row] = FVec4_New(frame.native_view_row_major[row * 4],
+                frame.native_view_row_major[row * 4 + 1], frame.native_view_row_major[row * 4 + 2], frame.native_view_row_major[row * 4 + 3]);
+            Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(frame.vertical_fov_degrees), l3::kFrontendAspect, l3::kFrontendNear, l3::kFrontendFar, false);
+            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_projection, &projection);
+            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_model_view, &view);
+            C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+            g_psx_camera = faces;
+            g_psx_far_1f800006 = kFarByShift[v.shift < 3 ? v.shift : 0];
+            g_psx_tr_1f800030 = cv.translation_1f800030;
+            draw_terrain(&faces, 0, l3::kObservedArea1BackFaceThreshold, &cells);
+            psx_draw_ot(false);
+            psx_draw_ot(true);
+            g_psx_camera.reset(); g_psx_tr_1f800030.reset();
+            C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+            g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        }
+        add_packets(false);
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        g_psx_xy_from_gte = xy;
+        draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
+        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+        submit_gpu_frame();
+    }
+    hardware_test_trace("# attract_event10_end,tick=%lu,done=%u,skipped=%u", (unsigned long)tick, unsigned(event.done), unsigned(event.flags_0a & 1));
+    xa.close();
+    (void)acquire_gpu_frame("attract release"); submit_gpu_frame(false);
+    require_gpu_idle_for_release();
+    for (auto& m : g_frontend_materials) release_gpu_texture(m.texture, m.texture_ready);
+    std::vector<GpuMaterial>().swap(g_frontend_materials);
+    psx_resolver_reset();
+    restore();   // ST00's terrain/player/actor materials back
+}
+
 // Returns NewGame, Attract (title timeout, 0x80013420) or None (no front end).
 l3::FrontendResult run_frontend_title(bool scripted) {
     const auto path = data_path("materials/frontend.l3mc");
@@ -4446,14 +4670,16 @@ int main() {
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt","r")){std::fclose(f);spawn_file=true;}
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_title.txt","r")){std::fclose(f);title_file=true;}
             if(!spawn_file&&(!g_autoplay.active||title_file)){
-                // Oracle cold boot: narration (event 71), title; on the title
-                // timeout (0x80013420 Attract) ST07 event 10 (Bonne/Servbot
-                // scene), then the narration again, then the title. Event 10
-                // is not ported yet and is skipped.
+                // Oracle cold boot: narration (event 71), then the title.
                 if(!g_autoplay.active)run_intro_event71(false);
+                // Title timeouts alternate the attract scenes (oracle): ST07
+                // event 10, then the narration, then event 10 again.
+                bool attract_bonne=true;
                 while(run_frontend_title(g_autoplay.active)==l3::FrontendResult::Attract){
-                    hardware_test_trace("# frontend_attract,event=10,stage=7,ported=0");
-                    run_intro_event71(false);
+                    if(attract_bonne)run_attract_event10(false,[&]{
+                        rebuild_current_terrain(map,render,&terrain_materials,&player_materials,g_current_area);});
+                    else run_intro_event71(false);
+                    attract_bonne=!attract_bonne;
                 }
             }
         }

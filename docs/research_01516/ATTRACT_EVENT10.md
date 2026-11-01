@@ -92,3 +92,17 @@ Cooked check: phase 2 at tick 1414 (oracle ~1417); shots 1:0/2:0/0:1 at
 273/483/633 (oracle ~274/485/635; the constant 1-2 tick lead is the CD
 wait, taken as one tick). The 170-word camera program runs without an
 unsupported command.
+
+## Player (2026-11-01)
+`run_attract_event10` (main.cpp): plays when the title times out, alternating
+with the narration as in the oracle (event 10 first). ST00's terrain is
+released for the scene and rebuilt after. Each shot's area request
+rebuilds the ST07 terrain of that area (materials and CLUT ramps from
+attract/) and re-initialises the background layers (stage init). Frames:
+background entries 35..33, the terrain through the camera program's view
+(the face camera, cell visibility and 0x1F800006 far value of shift 0, plus
+the scene-view matrices for directly drawn batches), then entries 32..30
+(the semi-transparent cloud strips sit in front). XA 0x20000005 (channel 5,
+46.77 s) starts the tick after its command and drives the tick clock. Black
+until the phase-0 fade-in. Start skips (fade 10). Not ported: actors, fade
+20 (natural end cuts), the areas' fog/depth cue (no area record).

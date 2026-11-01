@@ -24,8 +24,10 @@ BIN_BYTES = 524601840
 REQUEST = 0x20000003
 # Measured (stream id, start LBA, end LBA, channel) per supported request:
 # 0x20000003 the opening (ST00 event 1 phase 2), 0x2000001E the pre-title
-# narration (ST01 event 71 phase 1).
-MEASURED_SPANS = {0x20000003: (245, 91731, 107315, 3), 0x2000001E: (245, 121115, 136547, 3)}
+# narration (ST01 event 71 phase 1), 0x20000005 the title attract scene
+# (ST07 event 10 phase 0).
+MEASURED_SPANS = {0x20000003: (245, 91731, 107315, 3), 0x2000001E: (245, 121115, 136547, 3),
+                  0x20000005: (245, 91731, 98747, 5)}
 SECTOR_BYTES = 2352
 GROUP_BYTES = 128
 GROUP_COUNT = 18

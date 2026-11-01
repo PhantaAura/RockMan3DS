@@ -78,6 +78,10 @@ if [ -f "$CUE" ]; then
     INTRO_XA="$CACHE/audio/intro_xa-$INTRO_XA_KEY.l3xa"
     [ -f "$INTRO_XA" ] || python3 "$ROOT/tools/cook_xa_stream.py" --cue "$CUE" --exe "$OWNER/ROCK_NEO.EXE" --out "$INTRO_XA" --request 0x2000001E > /dev/null
     cp "$INTRO_XA" "$DATA/audio/intro_xa.l3xa"
+    # Title attract scene (ST07 event 10, 0x8001D58C(0x20000005)): channel 5.
+    ATTRACT_XA="$CACHE/audio/attract_xa-$INTRO_XA_KEY.l3xa"
+    [ -f "$ATTRACT_XA" ] || python3 "$ROOT/tools/cook_xa_stream.py" --cue "$CUE" --exe "$OWNER/ROCK_NEO.EXE" --out "$ATTRACT_XA" --request 0x20000005 > /dev/null
+    cp "$ATTRACT_XA" "$DATA/audio/attract_xa.l3xa"
 else
     echo "WARNING: no CUE at $CUE; Roll's voice clips are not installed (text stays silent)."
 fi
