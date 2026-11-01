@@ -483,8 +483,14 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 if len(e7)!=1 or e7[0].typ!=0: raise RuntimeError('ST07_00.BIN: expected one type-0 ST07_00.EBD')
                 eb7=td/'st07_00.ebd'; eb7.write_bytes((dat/'ST07_00.BIN').read_bytes()[e7[0].payload_start:e7[0].payload_start+e7[0].size])
                 run(tools,'l3cook_ebd',eb7,hex(e7[0].load),aout/'attract.l3ebd')
+                # The shadow sprite 0x8002CBDC (CLUT 0x3EF4 | TPAGE 0x45): page from
+                # INIT_DAT; its grey-ramp palette matches the oracle's VRAM (832, 251)
+                # during the scene word for word, and of the DAT containers only
+                # ST02_00 holds those words (CANDIDATE source; listed last, so it
+                # resolves nothing the scene's own containers already do).
+                with open(bgw,'a') as f: f.write('3ef40045\n')
                 run(tools,'l3cook_word_materials',aout/'attract_bg.l3mc',bgw,'--ebd',aout/'attract.l3ebd',
-                    dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN')
+                    dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN',dat/'ST02_00.BIN')
                 manifest['attract_stage']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str(aout.relative_to(out)),
                     'source':'ST07.BIN map/stage + ST07_00.BIN pages; areas 1-4 (oracle: 0x800C1B61 = event+8)'}

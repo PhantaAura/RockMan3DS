@@ -161,6 +161,15 @@ PolyFt4 class20_packet_800289a0(uint32_t colour_code, bool quad, uint32_t materi
         uint16_t(uint16_t(material_word >> 16) | ramp), uint16_t(uint16_t(material_word) | 0x20u), uv, sx, sy);
 }
 
+std::optional<PolyFt4> shadow_packet_8002cbdc(int32_t depth, uint16_t type,
+    const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept {
+    if (depth >= 577) return std::nullopt;
+    uint32_t code = 0x2E808080u;
+    if (depth >= 64) { const uint32_t c = uint32_t((576 - depth) >> 2); code = 0x2E000000u | (c << 16) | (c << 8) | c; }
+    const uint8_t u0 = type ? 192 : 224, u1 = type ? 223 : 255;
+    return model_packet(code, 0x3EF4u, 0x45u, {{u0, 224, u1, 224, u0, 255, u1, 255}}, sx, sy);
+}
+
 bool terrain_needs_subdivision_8002602c(int64_t mac0, const std::array<int16_t,4>& sx,
     const std::array<int16_t,4>& sy) noexcept {
     const int64_t area = mac0 < 0 ? -mac0 : mac0;

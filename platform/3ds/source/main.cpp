@@ -2617,7 +2617,8 @@ PsxVert psx_project_vert(const std::array<float,3>& w) {
 // One primitive from projected vertices: NCLIP (unless two-sided), AVSZ
 // bucket >> 1 below bucket_limit, make(sx, sy, ir0 of vertex 2) -> packet.
 template <class Make>
-void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool two_sided, size_t bucket_limit, Make&& make) {
+void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool two_sided, size_t bucket_limit, Make&& make,
+                         size_t bucket_override = SIZE_MAX) {
     for (unsigned k = 0; k < n; ++k) if (!v[k]->ok) { ++g_psx_stats.actor_unsupported; return; }
     std::array<int16_t,4> sx{}, sy{};
     for (unsigned k = 0; k < 4; ++k) { const auto* q = v[k < n ? k : 2]; sx[k] = q->sx; sy[k] = q->sy; }
@@ -2637,7 +2638,7 @@ void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool
         const auto* q = v[k < n ? k : 2];
         extra[k] = q->depth; extra[4 + 2 * k] = q->nx; extra[5 + 2 * k] = q->ny;
     }
-    g_psx_ot.add_prim(g_psx_prims, size_t(otz >> 1), packet);
+    g_psx_ot.add_prim(g_psx_prims, bucket_override != SIZE_MAX ? bucket_override : size_t(otz >> 1), packet);
     ++g_psx_stats.actor_packets;
 }
 
@@ -2777,6 +2778,42 @@ bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::Imported
         }
     }
     return true;
+}
+
+// One shadow of 0x8002CBDC: the centre (x, floor, z) projected raw with
+// translation 0x1F800030 gives depth = SZ3 / 4 (cull above 0x1F800006 or
+// below 48); corners at heading -+ half_angle (rsin/rcos 0x8007A060 /
+// 0x8007A12C, radius r): P0 = c + r(sin, cos)(h - a), P1 = (h + a),
+// P2 = 2c - P1, P3 = 2c - P0, projected with the shifted camera. The
+// original adds r*sin >> (12 - shift) to the shifted centre; here the world
+// offset r*sin >> 12 is shifted by psx_rtps (a rounding difference only).
+void psx_emit_shadow(int16_t x, int16_t floor_y, int16_t z, int32_t radius, int32_t half_angle, uint16_t heading, uint16_t type,
+                     const l3::ReferenceTables& refs) {
+    if (!g_psx_camera || !g_psx_tr_1f800030 || !g_psx_ot.size()) return;
+    auto gte = g_psx_camera->gte;
+    for (int r = 0; r < 3; ++r) gte.control[5 + r] = uint32_t((*g_psx_tr_1f800030)[size_t(r)]);
+    gte.data[0] = uint32_t(uint16_t(x)) | (uint32_t(uint16_t(floor_y)) << 16);
+    gte.data[1] = uint32_t(uint16_t(z));
+    const auto c = l3::source_gte_rtps_0180001(gte);
+    if (c.status != l3::SourcePlayerProxyStatus::SourceBackedPartial) return;
+    const int32_t depth = int32_t(c.depth) >> 2;
+    const auto far = session_far_1f800006();
+    if ((far && int32_t(*far) < depth) || depth < 48 || depth >= 577) return;
+    const int32_t h = int32_t(heading & 0xFFFu);
+    const auto offset = [&](int32_t angle, int32_t& ox, int32_t& oz) {
+        ox = (l3::reference_rsin_8007a060(refs, angle) * radius) >> 12;
+        oz = (l3::reference_rcos_8007a12c(refs, angle) * radius) >> 12;
+    };
+    int32_t x0, z0, x1, z1;
+    offset(h - half_angle, x0, z0); offset(h + half_angle, x1, z1);
+    const float fy = float(floor_y);
+    const PsxVert p0 = psx_project_vert({{float(x + x0), fy, float(z + z0)}});
+    const PsxVert p1 = psx_project_vert({{float(x + x1), fy, float(z + z1)}});
+    const PsxVert p2 = psx_project_vert({{float(x - x1), fy, float(z - z1)}});
+    const PsxVert p3 = psx_project_vert({{float(x - x0), fy, float(z - z0)}});
+    psx_emit_model_prim({{&p0, &p1, &p2, &p3}}, 4, true, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+        return *l3::psxgpu::shadow_packet_8002cbdc(depth, type, sx, sy);
+    }, size_t(depth >> 1));
 }
 
 // The scene class-40 actor through the OT (0x80028F90 -> 0x80029608).
@@ -3540,7 +3577,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         boot_log(MML_BOOT_DATA, line);
     }
     // The Servbot (class 0x20/0x00) with every request the records use.
-    struct LiveServbot { l3::SourceAttractServbot logic; l3::ImportedActorInstance actor; bool needs_floor = true; };
+    struct LiveServbot { l3::SourceAttractServbot logic; l3::ImportedActorInstance actor; bool needs_floor = true, shadow = false; };
     std::vector<LiveServbot> servbots;
     std::shared_ptr<const l3::ActorMeshResource> servbot_mesh;
     std::shared_ptr<const l3::ActorAnimationBank> servbot_bank;
@@ -3755,6 +3792,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                     else if (anim.step) (void)l3::actor_animation_step(*servbot_bank, *a.pose, *a.animation_cursor);
                 }
                 a.source_origin = b.logic.raw; a.heading = b.logic.heading;
+                b.shadow = anim.shadow;
             }
             if (step.cd_command) xa_start_pending = true;
             // The iris advances one pass per tick; its first pass only builds the ring.
@@ -3920,6 +3958,19 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             for (const auto& st : statics)
                 if (st.actor.pose) (void)psx_emit_class20(st.actor, l3::build_imported_actor_pose_matrices(st.actor));
             if (teisel && teisel->actor.pose) (void)psx_emit_class20(teisel->actor, l3::build_imported_actor_pose_matrices(teisel->actor));
+            // Shadows 0x8002C8CC (queued by the updates, drawn by 0x8002CB18):
+            // y = max(0x80048E6C, work y); Servbots radius 80 at scale 1024
+            // else 40 (0x80102238..), Tron/Bon 48 (0x80102E8C / 0x80102FB0);
+            // all scale 512 (the half angle), type 0.
+            const auto shadow = [&](const std::array<int16_t,3>& p, int32_t radius, uint16_t heading) {
+                const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), p[0], p[1], p[2], kNullBounds);
+                const int16_t y = floor.floor_y && *floor.floor_y >= p[1] ? *floor.floor_y : p[1];
+                psx_emit_shadow(p[0], y, p[2], radius, 512, heading, 0, refs);
+            };
+            if (area > 0) {
+                for (const auto& b : servbots) if (b.shadow && !b.needs_floor) shadow(b.logic.raw, b.logic.big == 1 ? 80 : 40, b.logic.heading);
+                for (const auto& st : statics) if (!st.needs_floor) shadow(st.logic.raw, 48, st.logic.heading);
+            }
             const auto unresolved_before = g_psx_stats.unresolved;
             psx_draw_ot(false);
             if (ship_live && g_psx_stats.unresolved != unresolved_before && tick % 60u == 0u)

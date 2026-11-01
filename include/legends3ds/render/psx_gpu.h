@@ -150,6 +150,14 @@ uint16_t e0_ramp_8002a3ec(uint8_t flags, int32_t sz_quarter, const std::array<ui
 // (ABR 1). 0x800289A0 links only buckets below 2048.
 PolyFt4 class20_packet_800289a0(uint32_t colour_code, bool quad, uint32_t material_word, uint8_t ramp,
     const std::array<uint8_t,8>& uv, const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept;
+// Shadow packet of 0x8002CBDC (queue 0x800ACE00, drained by 0x8002CB18):
+// POLY_FT4 code 0x2E (semi; tpage 0x45 = ABR 2, subtract), CLUT 0x3EF4;
+// colour 0x808080 below depth 64, else (576 - depth) / 4 per channel, none
+// from 577 (depth = the centre's SZ3 / 4, unshifted). UVs: type != 0 ->
+// u 192..223, else 224..255; v 224..255. Bucket depth >> 1, no NCLIP.
+std::optional<PolyFt4> shadow_packet_8002cbdc(int32_t depth, uint16_t type,
+    const std::array<int16_t,4>& sx, const std::array<int16_t,4>& sy) noexcept;
+
 // 0x80028540..0x8002857C: work +0x15E (15-bit BGR, bit 15 = semi) to the
 // 0x1F8000E4 colour word (before DPCS).
 constexpr uint32_t class20_colour_8002831c(uint16_t c) noexcept {
