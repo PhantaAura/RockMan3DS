@@ -470,6 +470,12 @@ struct ImportedActorFloorSample {
 // height. Allocation-free, with at most four candidates.
 ImportedActorFloorSample sample_imported_actor_floor(const ImportedActorInstance& actor,
                                                    const RuntimeMap& map, size_t area_index);
+// The same 0x80048E6C floor query for a class-0x20 actor point with explicit
+// work+0x78 bounds (all zero for a null +0x78, as the ST07 cutscene classes
+// store), without the initializer admission above.
+ImportedActorFloorSample sample_actor_floor_80048e6c(const RuntimeMap& map, size_t area_index,
+                                                     int16_t x, int16_t y, int16_t z,
+                                                     const RetailPlayerBounds& bounds);
 void unload_imported_actors(ActorAreaRuntime& area);
 
 struct ImportedActorPoseMatrices {

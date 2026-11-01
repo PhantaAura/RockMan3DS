@@ -150,3 +150,16 @@ ported). Placed by record 26 (904, -1, 340) and 27 (1124, -1, 390).
 **0x40/0x0B** (not ported): a class-0x40 actor with its own timer states
 (4/2/10/90/50) and the face UV routines 0x8002D404 / 0x8002D320 (as the
 opening's Mega Man face), record 28 at (1024, -1, 240). CANDIDATE: Tron.
+
+## Bridge cast height (2026-11-01)
+Seen in Azahar: Bon (class 0x2B) drawn huge and low in the close-up 2:4.
+Oracle in that shot: camera target (1024, -414, -95), pitch 209, distance
+-273, shift 2 (the port's camera program gives the same); Tron (class 0x40)
+at (1024, -106, 240) against record y -1, so the floor query adds -105 on
+the bridge. Scale is not the cause (0x80033638 ScaleMatrix(+0x158 <<
+shift) = the port's column scale with the shifted projection).
+The port's 0x80048E6C query now runs for these classes with null bounds
+(sample_actor_floor_80048e6c: work+0x78 = 0) and returns -1 in area 3, but
+the cooked ST07 map has no contact list for the bridge, corridor and
+area-1 cells (runtime_map_cell_contact_list == null), so those stay at the
+record height. Next: decode ST07's contact lists in the map cooker.

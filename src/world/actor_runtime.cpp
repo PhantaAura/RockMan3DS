@@ -1543,8 +1543,13 @@ ImportedActorFloorSample sample_imported_actor_floor(const ImportedActorInstance
         out.status = RuntimeContactStatus::Unsupported;
         return out;
     }
-    const auto& bounds = *actor.floor_bounds;
-    const int16_t x = actor.source_origin[0], y = actor.source_origin[1], z = actor.source_origin[2];
+    return sample_actor_floor_80048e6c(map, area, actor.source_origin[0], actor.source_origin[1],
+                                       actor.source_origin[2], *actor.floor_bounds);
+}
+ImportedActorFloorSample sample_actor_floor_80048e6c(const RuntimeMap& map, size_t area,
+                                                     int16_t x, int16_t y, int16_t z,
+                                                     const RetailPlayerBounds& bounds) {
+    ImportedActorFloorSample out;
     const auto find_cell = [&](int32_t world_x, int32_t world_z) -> std::optional<RuntimeCellRef> {
         if (area >= map.areas.size()) return std::nullopt;
         const auto& data = map.areas[area];

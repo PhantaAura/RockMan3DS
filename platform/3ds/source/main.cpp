@@ -3725,10 +3725,12 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             hardware_test_trace("# attract_area,tick=%lu,area=%d,batches=%lu", (unsigned long)tick, area, (unsigned long)g_terrain_batches.size());
         }
         pending_area = -1;
+        // The cast's init stores work+0x78 = 0: 0x80048E6C with null (all-zero) bounds.
+        static const l3::RetailPlayerBounds kNullBounds = [] { l3::RetailPlayerBounds b; b.x0 = b.x1 = b.z0 = b.z1 = b.y0 = b.y1 = 0; return b; }();
         for (auto& st : statics) {   // 0x80102DD8 / 0x80102EFC floor query, as the Servbots'
             if (!st.needs_floor || area <= 0) continue;
             st.needs_floor = false;
-            const auto floor = l3::sample_imported_actor_floor(st.actor, map, size_t(area));
+            const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), st.logic.raw[0], st.logic.raw[1], st.logic.raw[2], kNullBounds);
             if (floor.floor_y) { st.logic.raw[1] = int16_t(st.logic.raw[1] + *floor.floor_y); st.actor.source_origin = st.logic.raw; }
             hardware_test_trace("# attract_cast,tick=%lu,class=%02x,slot=%u,request=%u,pos=%d:%d:%d,floor=%d",
                 (unsigned long)tick, unsigned(st.logic.object_class), unsigned(st.logic.slot), unsigned(st.logic.request),
@@ -3739,7 +3741,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         for (auto& b : servbots) {
             if (!b.needs_floor || area <= 0) continue;
             b.needs_floor = false;
-            const auto floor = l3::sample_imported_actor_floor(b.actor, map, size_t(area));
+            const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), b.logic.raw[0], b.logic.raw[1], b.logic.raw[2], kNullBounds);
             if (floor.floor_y) {
                 b.logic.raw[1] = int16_t(b.logic.raw[1] + *floor.floor_y);
                 b.logic.fixed[1] = int32_t(uint32_t(int32_t(b.logic.raw[1])) << 16);
