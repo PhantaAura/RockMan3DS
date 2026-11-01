@@ -79,6 +79,15 @@ bool NativeXaAudio::apply_diagonal_mix(const std::array<uint8_t,4>& values) noex
     if(!dsp_ready_||failed_||values[1]||values[3]||values[0]!=values[2])return false;
     float mix[12]{};mix[0]=mix[1]=float(values[0])/128.0f;ndspChnSetMix(0,mix);return true;
 }
+uint64_t NativeXaAudio::position_frames() const noexcept {
+    if(!dsp_ready_||failed_)return completed_frames_;
+    for(size_t slot=0;slot<waves_.size();++slot){
+        const volatile ndspWaveBuf* wave=&waves_[slot];
+        if(wave->status==NDSP_WBUF_PLAYING&&wave->nsamples)
+            return std::max(completed_frames_,first_frame_[slot]+uint64_t(ndspChnGetSamplePos(0)));
+    }
+    return completed_frames_;
+}
 l3::XaPlaybackObservation NativeXaAudio::observation() const noexcept {
     const bool paused=dsp_ready_&&!failed_&&ndspChnIsPaused(0);
     return {dsp_ready_&&pcm_&&stream_.ready(),dsp_ready_&&!failed_&&!paused&&ndspChnIsPlaying(0),ever_started_,failed_,completed_frames_,paused};

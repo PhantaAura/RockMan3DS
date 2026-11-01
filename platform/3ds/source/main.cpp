@@ -4114,6 +4114,8 @@ int main() {
         }
         l3::GameplayClock gameplay_clock;
         u64 previous_update_clock=svcGetSystemTick();
+        // Opening: game ticks follow the XA playback position (see below).
+        bool xa_clock_bound=false;uint64_t xa_clock_frames=0,xa_clock_remainder=0;
         bool pending_fire=false,pending_lock=false,pending_dialogue=false,pending_left=false,pending_right=false;
         uint16_t pending_psx_pressed=0;
         uint64_t last_rng_mismatch_generation=0;
@@ -4442,7 +4444,22 @@ int main() {
             in.dialogue_right=(down&(KEY_DRIGHT|KEY_CPAD_RIGHT))!=0;
             const u64 update_start=svcGetSystemTick();
             const u64 update_clock=svcGetSystemTick();
-            gameplay_clock.advance((update_clock-previous_update_clock)/CPU_TICKS_PER_USEC,ui_focus);
+            uint64_t elapsed_us=(update_clock-previous_update_clock)/CPU_TICKS_PER_USEC;
+            // On the PS1 the scene timeline (one tick per two VBlanks) and the
+            // XA stream (150 sectors/s) both run off hardware clocks; the oracle
+            // measures 5.000 sectors per tick, i.e. 37800/30 = 1260 frames per
+            // tick. While the opening's XA plays, its DSP position is the clock,
+            // so the 3DS audio rate cannot drift from the lip-sync cues.
+            if(g_new_game_opening&&session.source_event_work()&&session.source_event_work()->active00()&&
+               xa_audio.observation().playing){
+                const uint64_t position=xa_audio.position_frames();
+                if(xa_clock_bound&&position>=xa_clock_frames){
+                    xa_clock_remainder+=(position-xa_clock_frames)*1000000u;
+                    elapsed_us=xa_clock_remainder/37800u;xa_clock_remainder%=37800u;
+                }
+                xa_clock_bound=true;xa_clock_frames=position;
+            } else xa_clock_bound=false;
+            gameplay_clock.advance(elapsed_us,ui_focus);
             previous_update_clock=update_clock;
             if (ui_focus) {
                 pending_fire=pending_lock=pending_dialogue=false;pending_psx_pressed=0;

@@ -12,6 +12,9 @@ public:
     void pump() noexcept;
     bool apply_diagonal_mix(const std::array<uint8_t,4>& values) noexcept;
     l3::XaPlaybackObservation observation() const noexcept;
+    // Sample-accurate DSP position (stream frames at 37800 Hz) while a buffer
+    // plays; otherwise the completed-buffer count. Monotonic.
+    uint64_t position_frames() const noexcept;
     const l3::XaStreamReader& stream() const noexcept{return stream_;}
     const char* error() const noexcept{return error_;}
     Result dsp_result() const noexcept{return dsp_result_;}

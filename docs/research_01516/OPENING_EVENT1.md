@@ -120,3 +120,16 @@ file, no forced flags.
   0x622 route was only validated with it clear.
 - Phase-6 tick rate vs the port's 60 Hz session tick (see oracle) is unchecked.
 - Out of scope: ST01 intro event 71 and the attract demo (ST07 event 10).
+
+## Lip-sync and XA timing (oracle, 2026-10-31)
+- Constructor tick (phase 5 -> 6) also runs the class-40 initializer
+  0x8010C930 (writes 0x80122470/74); 0x1F800074 reads 0 there (the camera
+  program writes 1 next tick). Next tick: timeline counters -> 1, then the
+  face fires the mouth cue (record 0, frame 1; script 0x8011C224).
+- XA (channel 3) plays LBA ~92014 at the constructor tick in the oracle;
+  the port plays ~92011 at its constructor tick (same start).
+- Oracle rate: 5.000 sectors per scene tick (regression over 67 audio
+  sectors). The port's ticks ran off the system timer at 30/s and Azahar's
+  DSP played ~0.6% slower (4.97 sectors per tick), so voice lagged the mouth
+  by ~0.7 s at the end. While the opening's XA plays, game ticks now follow
+  the DSP sample position (1260 frames per tick).
