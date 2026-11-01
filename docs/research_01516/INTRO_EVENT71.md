@@ -34,7 +34,7 @@ event 1, all opcodes already ported).
 Timeline `0x80100F7C`: one record, 3100 ticks (0x0C1C), index 0, callback
 `0x801002E4`; then the 0xFF terminator (phase-5 end condition).
 
-## Callback 0x801002E4 (text crawl)
+## Callback 0x801002E4 (background layer fade; not the crawl)
 Drives the message/text window state at `0x800BBA90`:
 - tick 0: `0x800BBA9C` = 130, `0x800BBA90` &= ~2, window coords
   `0x800BBB20` -= 56 and `0x800BBAE8` -= 16; event+24 actor action 1;
@@ -75,3 +75,32 @@ signature matched against oracle RAM at 0x80100000). ST07 also ships
 `ST07_MAP.IDX/MDT`, `ST07.STG/HED`, `ST07_00/05/05B.BIN`. Event 10 is a
 separate port (its own stage cook, constructor/timeline, Bonne/Servbot actors),
 after event 71.
+
+## Static read 2 (R3_ST01 full disassembly, 2026-10-31)
+The narration is three layers; none uses the message system.
+
+**Text crawl** (object update 0x80100918, scanline 0x80100A70). The text is
+prerendered: OPENG0..3 (4-bit 256x256 pages) sit side by side in VRAM, tpage
+21 + (v >> 8), CLUT 0x7C00. Each frame emits 176 one-line POLY_FT4 strips,
+x 32..287, at y 32 + i:
+- i 0..15: v = scroll + i, colour i*8 (grey), semi-transparent (fade in)
+- i 0..143 at y 48 + i: v = scroll + 16 + i, colour 0x808080, semi-transparent
+- i 0..15 at y 192 + i: v = scroll + 160 + i, colour (16 - i)*8 (fade out)
+Strips with v < 0 or v >= 1024 are skipped. Init (0x801008F8): scroll = -190.
+Scroll += 1 every 3 updates; the object releases (0x800319F4) at 1024.
+
+**Background layers**: the EXE's 11-layer parallax renderer 0x80023144
+(56-byte records at 0x800BBA90), initialised by 0x80022FD4 from the stage
+descriptor table at 0x80100D5C (ST01 stage init 0x801000A8). BG\CHAR
+ST01BG00..02 are its tiles. Callback 0x801002E4 shifts two layer offsets
+(0x800BBB20 -= 56, 0x800BBAE8 -= 16), sets 0x800BBA9C = 130 at tick 0, and
+from tick 2200 decrements it every 3 ticks to -11 (CANDIDATE: layer
+brightness fade-out). Not ported anywhere in the repo yet.
+
+**Airship**: class init 0x8010080C (0x8002F9C4 model, +344 = 0x00200020,
++348/+350 scale 32/16912, +86 = 1024) and action 0x801006A8: x (+20) -1 every
+4 updates, y (+22) +1 every 5 updates until 220, then x continues to -289,
+then a 30-update wait and 0x80031824.
+
+Port order: crawl (self-contained) -> background layers -> airship -> boot
+hook before the title (coordinate with the main session) -> event 10.
