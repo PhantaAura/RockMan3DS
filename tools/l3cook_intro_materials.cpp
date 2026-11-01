@@ -1,0 +1,34 @@
+// Pre-title narration material cache from the owner's ST01.BIN: the four
+// text-crawl pages OPENG0..3 (tpage 21..24, CLUT 0x7C00) the ST01 strips use
+// (docs/research_01516/INTRO_EVENT71.md). Resources are composed in container
+// order, as the stage loader uploads them.
+#include "legends3ds/material_cache.h"
+#include "legends3ds/source_intro_crawl.h"
+#include "legends3ds/st00_source.h"
+#include <fstream>
+#include <iostream>
+#include <stdexcept>
+
+int main(int argc, char** argv) {
+    try {
+        if (argc != 3) { std::cerr << "usage: l3cook_intro_materials ST01.BIN OUT.l3mc\n"; return 2; }
+        const auto resources = l3::scan_mml_indexed_resources(l3::read_file(argv[1]));
+        const std::vector<uint32_t> words(l3::kSourceIntroCrawlMaterialWords.begin(), l3::kSourceIntroCrawlMaterialWords.end());
+        std::vector<l3::MaterialVramDiagnostics> diagnostics;
+        const auto cache = l3::build_material_cache(words, resources, &diagnostics);
+        for (const auto& d : diagnostics)
+            std::cout << std::hex << "material 0x" << d.material_word << std::dec << ": image "
+                      << d.image_words_written << "/" << d.image_words_total << " palette "
+                      << d.palette_words_written << "/" << d.palette_words_total << "\n";
+        for (const auto& e : cache.entries)
+            if (!e.resolved) throw std::runtime_error("unresolved intro material");
+        const auto cooked = l3::cook_l3material_cache(cache);
+        std::ofstream out(argv[2], std::ios::binary);
+        out.write(reinterpret_cast<const char*>(cooked.data()), static_cast<std::streamsize>(cooked.size()));
+        if (!out) throw std::runtime_error("failed writing intro material cache");
+        return 0;
+    } catch (const std::exception& error) {
+        std::cerr << "l3cook_intro_materials: " << error.what() << "\n";
+        return 1;
+    }
+}

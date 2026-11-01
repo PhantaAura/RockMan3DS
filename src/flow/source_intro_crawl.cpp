@@ -39,4 +39,38 @@ SourceIntroCrawlFrame update_source_intro_crawl_801008c0(SourceC0Work& w) noexce
     if (next >= 1024) f.released = true;
     return f;
 }
+
+FrontendPacket source_intro_crawl_packet_80100a70(const SourceIntroCrawlStrip& s) noexcept {
+    FrontendPacket p; p.length = 9; p.bucket = kSourceIntroCrawlOtEntry;
+    const uint32_t y0 = uint16_t(s.y), y1 = uint16_t(s.y + 1), v = s.v & 0xFFu;
+    const uint32_t tpage = uint32_t((s.v >> 8) + 21) | 0x20u;
+    p.words = {{0x2C000000u | s.colour,
+                (y0 << 16) | 32u, (0x7C00u << 16) | (v << 8) | 0u,
+                (y0 << 16) | 287u, (tpage << 16) | (v << 8) | 255u,
+                (y1 << 16) | 32u, (v << 8) | 0u,
+                (y1 << 16) | 287u, (v << 8) | 255u}};
+    return p;
+}
+
+SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71State& st, int16_t busy) noexcept {
+    SourceIntroEvent71Step out;
+    const auto timeline = [&] { if (st.timeline_ticks < kSourceIntroTimelineTicks) ++st.timeline_ticks; };
+    switch (st.phase) {
+    case 0: ++st.phase; break;                                   // 0x801004D8
+    case 1: out.cd_command = true; ++st.phase; break;            // 0x80100504
+    case 2: st.countdown_0c = 5; ++st.phase; break;              // 0x80100520
+    case 3: if (--st.countdown_0c == 0) ++st.phase; break;       // 0x8010053C
+    case 4: out.fade_type = 2; ++st.phase; break;                // 0x80100564 (+ constructor 0x80100400)
+    case 5:                                                      // 0x80100584
+        if (busy == 0 && st.timeline_ticks >= kSourceIntroTimelineTicks) { out.fade_type = 10; st.phase = 10; }
+        timeline();
+        break;
+    case 10:                                                     // 0x801005D0
+        timeline();
+        if (busy == 0) st.done = true;
+        break;
+    default: break;
+    }
+    return out;
+}
 } // namespace l3

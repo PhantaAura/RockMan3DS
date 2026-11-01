@@ -33,5 +33,23 @@ int main() {
     w.raw[0x1A] = uint8_t(1023 & 0xFF); w.raw[0x1B] = uint8_t(1023 >> 8); w.raw[0x0B] = 2;
     f = update_source_intro_crawl_801008c0(w);
     require(f.released && scroll(w) == 1024, "release at 1024");
+    // GP0 words: code 0x2E (0x2C | semi), tpage 21+page | 0x20, CLUT 0x7C00.
+    const auto pk = source_intro_crawl_packet_80100a70({100, 0x1FF, 0x02808080u});
+    require(pk.length == 9 && pk.bucket == 30 && pk.words[0] == 0x2E808080u && pk.words[1] == ((100u << 16) | 32u) &&
+            pk.words[2] == ((0x7C00u << 16) | (0xFFu << 8)) && pk.words[4] == ((0x36u << 16) | (0xFFu << 8) | 255u) &&
+            pk.words[7] == ((101u << 16) | 287u), "strip packet words");
+    require((kSourceIntroCrawlMaterialWords[1] & 0xFFFFu) == 0x36u && (kSourceIntroCrawlMaterialWords[0] >> 16) == 0x7C00u, "material words");
+    // Event 71: phase 1 -> 5 in 8 ticks (oracle), fade 2 at phase 4, fade 10
+    // after the 3100-tick record, title once the fade is idle.
+    SourceIntroEvent71State ev; unsigned ticks = 0, fade2 = 0, cd = 0;
+    while (ev.phase != 5) { auto st = step_source_intro_event71_8010049c(ev, 0); ++ticks; fade2 += st.fade_type == 2; cd += st.cd_command; }
+    require(ticks == 9 && fade2 == 1 && cd == 1, "phases 0..4");
+    unsigned t5 = 0; uint8_t f10 = 0;
+    while (ev.phase == 5) { f10 = step_source_intro_event71_8010049c(ev, 0).fade_type; ++t5; }
+    require(t5 == kSourceIntroTimelineTicks + 1 && f10 == 10, "fade 10 after the 3100-tick record");
+    step_source_intro_event71_8010049c(ev, 5);
+    require(!ev.done, "phase 10 waits for the fade");
+    step_source_intro_event71_8010049c(ev, 0);
+    require(ev.done, "title after the fade");
     std::puts("source_intro_crawl: init, 3-tick scroll, strip window, fades, release OK");
 }

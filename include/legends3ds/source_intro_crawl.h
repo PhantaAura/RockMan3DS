@@ -5,6 +5,7 @@
 // OPENG0..3 (four 4-bit 256x256 pages side by side from VRAM x 320, y 256,
 // CLUT 0x7C00); 0x80100A70 emits one 256-pixel scanline strip of it.
 // Original addresses are identity tokens.
+#include "legends3ds/frontend_title.h"
 #include "legends3ds/source_event_phase5.h"
 #include <array>
 #include <cstddef>
@@ -32,4 +33,36 @@ struct SourceIntroCrawlFrame {
 // +8 = 1 (no draw). State 1 (0x80100918): draw with the current +0x1A, then
 // +0xB += 1; at 3 it resets and +0x1A += 1; +0x1A >= 1024 releases.
 SourceIntroCrawlFrame update_source_intro_crawl_801008c0(SourceC0Work& w) noexcept;
+
+// The four tpage/CLUT words the strips use: tpage 21..24 (4-bit, abr 1,
+// x 320/384/448/512, y 256) with CLUT 0x7C00 = (0, 496).
+constexpr std::array<uint32_t,4> kSourceIntroCrawlMaterialWords{{
+    psx_material_word(0x7C00, psx_get_tpage(0, 1, 320, 256)),
+    psx_material_word(0x7C00, psx_get_tpage(0, 1, 384, 256)),
+    psx_material_word(0x7C00, psx_get_tpage(0, 1, 448, 256)),
+    psx_material_word(0x7C00, psx_get_tpage(0, 1, 512, 256)),
+}};
+// The GP0 words 0x80100A70 writes (9-word POLY_FT4, OT entry 30 of 0x800A8934).
+constexpr uint16_t kSourceIntroCrawlOtEntry = 30;
+FrontendPacket source_intro_crawl_packet_80100a70(const SourceIntroCrawlStrip& strip) noexcept;
+
+// ST01 event 71 handler 0x8010049C (phase table 0x80100004), one update per
+// tick. Ported: the phase order, the 5-tick countdown, fade requests 2 and 10,
+// the 3100-tick timeline record 0x80100F7C ending on its 0xFF terminator, and
+// the phase-10 wait for the fade (0x800A8A72 == 0). Not ported: the CD command
+// 0x2000001E and its wait 0x8001D878 (taken as one tick; the oracle shows
+// phase 1 -> 5 in 8 ticks = 1 + 1 + 5 + 1), the camera, the callback's
+// background fade, the 0x8001DE84 Start skip.
+struct SourceIntroEvent71State {
+    uint8_t phase = 0;
+    int32_t countdown_0c = 0;
+    uint32_t timeline_ticks = 0;   // 0x8001F070 ticks of the single record
+    bool done = false;             // phase 10 ended: the title thread starts
+};
+struct SourceIntroEvent71Step {
+    uint8_t fade_type = 0;         // 0x80017C30 request this tick (0 = none)
+    bool cd_command = false;       // 0x8001D58C(0x2000001E) issued this tick
+};
+constexpr uint32_t kSourceIntroTimelineTicks = 0x0C1C;   // record 0x80100F7C
+SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71State& st, int16_t fade_busy_80098a72) noexcept;
 } // namespace l3

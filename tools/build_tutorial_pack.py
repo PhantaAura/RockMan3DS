@@ -176,7 +176,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials','l3cook_intro_materials']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -415,6 +415,14 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 manifest['frontend_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'frontend.l3mc').relative_to(out)),
                     'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U/EM0000 (CANDIDATE: the Servbot page); words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C and DEMO_DAT.EBD'}
+            # Pre-title narration (ST01 event 71, docs/research_01516/INTRO_EVENT71.md):
+            # the text-crawl pages OPENG0..3 from ST01.BIN.
+            if (dat/'ST01.BIN').is_file():
+                run(tools,'l3cook_intro_materials',dat/'ST01.BIN',mout/'intro.l3mc')
+                manifest['intro_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((mout/'intro.l3mc').relative_to(out)),
+                    'source':'ST01.BIN OPENG0..3; words from R3_ST01 0x80100A70 (tpage 21+page | 0x20, CLUT 0x7C00)'}
+            if (dat/'DEMO_DAT.BIN').is_file():
                 # The title Servbot parade: the DEMO_DAT.EBD class-20 model and
                 # the wave scripts + title camera from the EXE.
                 demo=[r for r in iter_resources(dat/'DEMO_DAT.BIN') if r.internal==r'..\EMBIN\DEMO_DAT.EBD']

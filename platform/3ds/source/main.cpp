@@ -45,6 +45,7 @@
 #include "legends3ds/runtime_session.h"
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/frontend_title.h"
+#include "legends3ds/source_intro_crawl.h"
 #include "legends3ds/frontend_servbots.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/gameplay_clock.h"
@@ -3234,10 +3235,102 @@ void step_title_servbots(TitleServbotScene& s, uint8_t frontend_state, int16_t f
     }
 }
 
-bool run_frontend_title(bool scripted) {
+// Pre-title narration, ST01 event 71 (docs/research_01516/INTRO_EVENT71.md):
+// the event handler 0x8010049C and the C0 text crawl 0x801008C0, which the
+// area loader spawns on the event's first tick (oracle). Not ported yet: the
+// background layers 0x80023144 (sky/sea; black here), the airship actor, the
+// CD/XA command 0x2000001E and the Start skip 0x8001DE84.
+void run_intro_event71(bool scripted) {
+    const auto path = data_path("materials/intro.l3mc");
+    if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
+    else { boot_log(MML_BOOT_DATA, "INTRO_EVENT71=0 intro.l3mc absent"); return; }
+    const auto cache = l3::load_l3material_cache(read_binary(path), true);
+    for (const auto& e : cache.entries) {
+        if (!e.resolved) continue;
+        GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
+        auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
+    }
+    psx_resolver_reset();
+    boot_log(MML_BOOT_DATA, "INTRO_EVENT71=1 crawl 0x801008C0, event 0x8010049C; BG layers/airship/XA not ported");
+    l3::SourceFadeContext fade;
+    for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
+    l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
+    l3::SourceFadeCallbackState fade_callback;
+    std::optional<l3::SourceFadeStartupProfile> fade_profile;
+    try { fade_profile = l3::load_source_fade_startup_profile(read_binary(data_path("source_fade.l3fd"), 4096)); }
+    catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+    constexpr uint8_t kEndpointHold1f800001 = 2;
+    l3::SourceIntroEvent71State event;
+    l3::SourceC0Work crawl; crawl.raw[8] = 0; crawl.known[8] = 1;
+    bool crawl_live = true;
+    std::vector<l3::FrontendPacket> packets;
+    l3::GameplayClock clock;
+    u64 last_tick = svcGetSystemTick();
+    uint32_t tick = 0;
+    while (aptMainLoop() && !event.done) {
+        hidScanInput();
+        if (scripted) { u32 down = 0, held = 0, up = 0; circlePosition cp{}; if (!diagnostic_autoplay_frame(down, held, up, cp)) break; }
+        const u64 now = svcGetSystemTick();
+        clock.advance((now - last_tick) / CPU_TICKS_PER_USEC, false);
+        last_tick = now;
+        while (!event.done && clock.consume()) {
+            const int16_t busy = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
+            const uint8_t phase = event.phase;
+            const auto step = l3::step_source_intro_event71_8010049c(event, busy);
+            if (step.fade_type) {
+                const auto started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, step.fade_type);
+                hardware_test_trace("# intro_fade,tick=%lu,type=%u,status=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status));
+            }
+            if (step.cd_command) hardware_test_trace("# intro_cd_command,tick=%lu,command=2000001e,ported=0", (unsigned long)tick);
+            packets.clear();
+            if (crawl_live) {
+                const auto frame = l3::update_source_intro_crawl_801008c0(crawl);
+                for (size_t i = 0; i < frame.count; ++i) packets.push_back(l3::source_intro_crawl_packet_80100a70(frame.strips[i]));
+                if (frame.released) crawl_live = false;
+            }
+            if (fade_intents.count && !fade_callback.running)
+                (void)l3::acknowledge_source_fade_scheduler_intent(fade, fade_intents, fade_callback, kEndpointHold1f800001);
+            else if (fade_callback.running)
+                (void)l3::advance_source_fade_callback(fade, fade_callback, kEndpointHold1f800001);
+            if (phase != event.phase || tick % 300u == 0u)
+                hardware_test_trace("# intro_event71,tick=%lu,phase=%u,timeline=%lu,crawl_scroll=%d,strips=%lu,fade_busy=%d",
+                    (unsigned long)tick, unsigned(event.phase), (unsigned long)event.timeline_ticks,
+                    int(int16_t(uint16_t(crawl.raw[0x1A] | (crawl.raw[0x1B] << 8)))), (unsigned long)packets.size(), int(busy));
+            ++tick;
+        }
+        (void)acquire_gpu_frame("intro");
+        C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
+        if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("intro: C3D_FrameDrawOn rejected");
+        psx_begin_frame();
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
+        for (const auto& fp : packets) {
+            const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
+            for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
+            float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
+            for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
+            g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+        }
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        g_psx_xy_from_gte = xy;
+        draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
+        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+        submit_gpu_frame();
+    }
+    hardware_test_trace("# intro_event71_end,tick=%lu,done=%u", (unsigned long)tick, unsigned(event.done));
+    (void)acquire_gpu_frame("intro release"); submit_gpu_frame(false);
+    require_gpu_idle_for_release();
+    for (auto& m : g_frontend_materials) release_gpu_texture(m.texture, m.texture_ready);
+    std::vector<GpuMaterial>().swap(g_frontend_materials);
+    psx_resolver_reset();
+}
+
+// Returns NewGame, Attract (title timeout, 0x80013420) or None (no front end).
+l3::FrontendResult run_frontend_title(bool scripted) {
     const auto path = data_path("materials/frontend.l3mc");
     if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
-    else { boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=0 frontend.l3mc absent"); return false; }
+    else { boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=0 frontend.l3mc absent"); return l3::FrontendResult::None; }
     const auto cache = l3::load_l3material_cache(read_binary(path), true);
     for (const auto& e : cache.entries) {
         if (!e.resolved) continue;
@@ -3273,7 +3366,7 @@ bool run_frontend_title(bool scripted) {
     l3::FrontendState state;
     uint8_t last_state = 0xFF, last_sub = 0xFF;
     uint32_t frame = 0;   // front-end updates
-    bool new_game = false;
+    bool new_game = false, attract = false;
     // The front end updates once per two VBlanks like gameplay (oracle: the
     // title's work changes every second frame); each 3DS frame redraws the
     // last update's packets. Presses wait for the next update.
@@ -3281,7 +3374,7 @@ bool run_frontend_title(bool scripted) {
     u64 last_tick = svcGetSystemTick();
     uint16_t pending = 0;
     l3::FrontendFrame f;
-    while (aptMainLoop() && !new_game) {
+    while (aptMainLoop() && !new_game && !attract) {
         hidScanInput();
         u32 down = hidKeysDown();
         if (scripted) {
@@ -3351,7 +3444,7 @@ bool run_frontend_title(bool scripted) {
         ++frame;
         switch (f.result) {
             case l3::FrontendResult::NewGame: new_game = true; break;
-            case l3::FrontendResult::Attract:
+            case l3::FrontendResult::Attract: attract = true; break;   // main.cpp plays the attract scene
             case l3::FrontendResult::Continue:
             case l3::FrontendResult::Option:
                 hardware_test_trace("# frontend_unported,frame=%lu,result=%u,returning_to_title=1",
@@ -3406,7 +3499,7 @@ bool run_frontend_title(bool scripted) {
     for (auto& m : g_frontend_materials) release_gpu_texture(m.texture, m.texture_ready);
     std::vector<GpuMaterial>().swap(g_frontend_materials);
     psx_resolver_reset();
-    return new_game;
+    return new_game ? l3::FrontendResult::NewGame : attract ? l3::FrontendResult::Attract : l3::FrontendResult::None;
 }
 
 uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
@@ -4234,7 +4327,17 @@ int main() {
             bool spawn_file=false,title_file=false;
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt","r")){std::fclose(f);spawn_file=true;}
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_title.txt","r")){std::fclose(f);title_file=true;}
-            if(!spawn_file&&(!g_autoplay.active||title_file))(void)run_frontend_title(g_autoplay.active);
+            if(!spawn_file&&(!g_autoplay.active||title_file)){
+                // Oracle cold boot: narration (event 71), title; on the title
+                // timeout (0x80013420 Attract) ST07 event 10 (Bonne/Servbot
+                // scene), then the narration again, then the title. Event 10
+                // is not ported yet and is skipped.
+                if(!g_autoplay.active)run_intro_event71(false);
+                while(run_frontend_title(g_autoplay.active)==l3::FrontendResult::Attract){
+                    hardware_test_trace("# frontend_attract,event=10,stage=7,ported=0");
+                    run_intro_event71(false);
+                }
+            }
         }
         l3::GameplayClock gameplay_clock;
         u64 previous_update_clock=svcGetSystemTick();
