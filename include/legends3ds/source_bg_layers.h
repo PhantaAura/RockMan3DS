@@ -12,7 +12,7 @@
 #include <vector>
 
 namespace l3 {
-constexpr size_t kSourceBgLayers = 11, kSourceBgMaxCells = 256;
+constexpr size_t kSourceBgLayers = 11, kSourceBgMaxCells = 512;
 constexpr size_t kSourceBgProfileBytes = 16 + 32 + kSourceBgLayers * (4 + 22 + 4 * kSourceBgMaxCells + 2);
 
 // One cooked descriptor (L3BG, from the stage's 0x80022FD4 table).

@@ -76,3 +76,19 @@ SCR st07 d00xxx TIMs (terrain pages); BG CHAR ST02BG00/01 + ST07BG02
 
 Shots captured from the oracle (owner-local, not committed) give a
 per-shot visual reference for each step.
+
+## Logic ported (2026-11-01)
+`source_attract_event10`: the handler's three phases, the timeline consumer
+0x8001F070 and the resumable camera interpreter 0x8001EC0C (pc at block
++0xB8 persists; each pass runs to the first failed wait, then velocities are
+added), with the callbacks' background flags (0x801007E0 hides clouds at
+count 222; 0x80100834 swaps to the top-down sea and strips; 0x8010086C hides
+the strips) and area requests (0x80100944/9B8/B14/B98 -> 1/2/3/4,
+0x80100CD4). Actor spawns/releases are reported, not ported. Background:
+every area uses table 0x80108B4C (eight velocity layers, hidden), phase 0
+writes the rows at 0x80106124 and layer 7 y = 240. Fade 20 (natural end)
+is not a ported fade type yet.
+Cooked check: phase 2 at tick 1414 (oracle ~1417); shots 1:0/2:0/0:1 at
+273/483/633 (oracle ~274/485/635; the constant 1-2 tick lead is the CD
+wait, taken as one tick). The 170-word camera program runs without an
+unsupported command.

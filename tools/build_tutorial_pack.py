@@ -176,7 +176,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials','l3cook_intro_materials']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials','l3cook_intro_materials','l3cook_word_materials']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -457,6 +457,17 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 for area_index in range(1,5):
                     run(tools,'l3cook_material_cache',*maps,str(area_index),aout/f'area_{area_index:02d}.l3mc',
                         dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN','--ramp-out',aout/f'area_{area_index:02d}.l3cr')
+                # Event 10 tables (timelines, camera programs, background rows),
+                # the area-0 background layers (0x80105658[0]) and their pages.
+                pr=[r for r in iter_resources(dat/'ST07.BIN') if r.internal.upper()==r'..\PROGBIN\R3_ST07.BIN']
+                if len(pr)!=1 or pr[0].typ!=0: raise RuntimeError('ST07.BIN: expected one type-0 r3_st07.bin')
+                op7=st07/'r3_st07.bin'; op7.write_bytes(core[pr[0].payload_start:pr[0].payload_start+pr[0].size])
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_attract_event10.py'),
+                    '--overlay',str(op7),'--out',str(aout/'attract.l3at')],check=True)
+                bgw=td/'attract_bg_words.txt'
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
+                    '--overlay',str(op7),'--out',str(aout/'attract_bg.l3bg'),'--words',str(bgw),'--stage','st07','--area','0'],check=True)
+                run(tools,'l3cook_word_materials',aout/'attract_bg.l3mc',bgw,dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN')
                 manifest['attract_stage']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str(aout.relative_to(out)),
                     'source':'ST07.BIN map/stage + ST07_00.BIN pages; areas 1-4 (oracle: 0x800C1B61 = event+8)'}

@@ -41,6 +41,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_palette_c0.cpp
     src/flow/source_intro_crawl.cpp
     src/flow/source_bg_layers.cpp
+    src/flow/source_attract_event10.cpp
     src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp
     src/flow/source_event_random_tape.cpp
@@ -469,6 +470,8 @@ add_executable(l3cook_negative_materials tools/l3cook_negative_materials.cpp)
 add_executable(l3cook_frontend_materials tools/l3cook_frontend_materials.cpp)
 target_link_libraries(l3cook_frontend_materials PRIVATE legends3ds_core)
 add_executable(l3cook_intro_materials tools/l3cook_intro_materials.cpp)
+add_executable(l3cook_word_materials tools/l3cook_word_materials.cpp)
+target_link_libraries(l3cook_word_materials PRIVATE legends3ds_core)
 target_link_libraries(l3cook_intro_materials PRIVATE legends3ds_core)
 target_link_libraries(l3cook_negative_materials PRIVATE legends3ds_core)
 add_executable(l3area_inspection_probe tools/l3area_inspection_probe.cpp)
@@ -1213,6 +1216,10 @@ add_executable(test_source_bg_layers tests/test_source_bg_layers.cpp)
 target_link_libraries(test_source_bg_layers PRIVATE legends3ds_core)
 target_compile_options(test_source_bg_layers PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_bg_layers COMMAND test_source_bg_layers)
+add_executable(test_source_attract_event10 tests/test_source_attract_event10.cpp)
+target_link_libraries(test_source_attract_event10 PRIVATE legends3ds_core)
+target_compile_options(test_source_attract_event10 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_attract_event10 COMMAND test_source_attract_event10)
 add_executable(test_source_scene_face tests/test_source_scene_face.cpp)
 target_link_libraries(test_source_scene_face PRIVATE legends3ds_core)
 target_compile_options(test_source_scene_face PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
