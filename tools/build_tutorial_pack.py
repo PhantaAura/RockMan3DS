@@ -468,10 +468,11 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 # The cutscene importer finds event 10's timelines, camera
                 # programs, spawns, CD/area requests; --extra carries the
                 # phase-0 background rows 0x80106124, the 29 spawn records
-                # 0x80105B8C and the Servbot behaviour table 0x8010663C.
+                # 0x80105B8C, the Servbot behaviour table 0x8010663C and
+                # Teisel's face scripts/tables 0x80106914.
                 subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
                     '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(op7),'--event','10','--stage','7',
-                    '--extra','80106124:64','--extra','80105B8C:580','--extra','8010663C:100',
+                    '--extra','80106124:64','--extra','80105B8C:580','--extra','8010663C:100','--extra','80106914:72',
                     '--out',str(aout/'attract.l3cs')],check=True)
                 bgw=td/'attract_bg_words.txt'
                 subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),

@@ -2720,7 +2720,8 @@ bool psx_emit_player(const std::vector<l3::PlayerVisualPrimitive>& local_visuals
 bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::ImportedActorPoseMatrices& pose) {
     // Dynamic class40 owners share the presentation container, but their
     // original draw path is 0x80028F90 rather than this class20 packet path.
-    if (actor.source_class != 0x20 || !g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
+    // Class 0x40 cutscene actors (ST07 Teisel) share this flat class-0x20 packet path (CANDIDATE colour/ramp).
+    if ((actor.source_class != 0x20 && actor.source_class != 0x40) || !g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
     ++g_psx_stats.class20_actors;
     const auto& cam = *g_psx_camera;
     const auto& root = pose.world[0];
@@ -3459,7 +3460,8 @@ void run_intro_event71(bool scripted) {
 // exterior area). ST00's terrain is released while it plays; restore()
 // rebuilds it. The Servbots (class 0x20/0x00, 0x8010205C) of every interior
 // shot: the callbacks' record lists, their behaviours 0x8010663C[id]; the
-// bridge's static classes 0x28 / 0x2B. Not ported yet: class 0x40/0x0B, the
+// bridge's static classes 0x28 (Tron) / 0x2B (Bon) and Teisel (class 0x40 /
+// 0x0B with his face, drawn through the class-0x20 path). Not ported yet: the
 // shot-2:0 objects, shadows 0x8002C8CC, fade 20, the areas' fog/depth cue.
 void run_attract_event10(bool scripted, const std::function<void()>& restore) {
     l3::SourceScenePackage package;
@@ -3566,6 +3568,29 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_CAST=0 %s", error.what());
         boot_log(MML_BOOT_DATA, line);   // the scene plays without them
     }
+    // Teisel (class 0x40/0x0B): his own mesh copy, since the face writes its UVs.
+    struct LiveTeisel { l3::SourceAttractTeisel logic; l3::ImportedActorInstance actor; bool needs_floor = true; };
+    std::optional<LiveTeisel> teisel;
+    std::shared_ptr<l3::ActorMeshResource> teisel_mesh;
+    std::shared_ptr<const l3::ActorAnimationBank> teisel_bank;
+    std::optional<l3::ActorPoseResource> teisel_pose;
+    size_t teisel_row = 0; uint32_t teisel_descriptor = 0;
+    try {
+        const auto rows = l3::find_ebd_entries(cast, 0x40, 0x0B);
+        if (rows.size() != 1 || profile.teisel_face.size() < 72) throw std::runtime_error("attract: Teisel row or face scripts missing");
+        teisel_row = rows[0];
+        teisel_descriptor = cast.load_base + cast.entries[rows[0]].resource_offset[0];
+        const auto mesh = l3::decode_ebd_scene_actor40_mesh(cast, rows[0]);
+        static constexpr uint8_t kRequests[] = {0};   // 0x800322A8(a0, 0, 0)
+        teisel_bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_scene_actor40_animation_bank(
+            cast, rows[0], mesh, kRequests, sizeof(kRequests), 1024 * 1024));
+        teisel_pose = l3::decode_ebd_scene_actor40_pose(cast, rows[0], mesh, 0, 0);
+        teisel_mesh = std::make_shared<l3::ActorMeshResource>(mesh);
+    } catch (const std::exception& error) {
+        teisel_mesh.reset();
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_TEISEL=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
     // Background pages: the front-end material slot, as the narration uses.
     {
         const auto cache = l3::load_l3material_cache(read_binary(data_path("attract/attract_bg.l3mc")), true);
@@ -3642,9 +3667,21 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                 if (ship.pose && ship.animation_cursor) (void)l3::actor_animation_reset(*ship_bank, 0, *ship.pose, *ship.animation_cursor);
             } else if (ship_live && ship.pose && ship.animation_cursor) (void)l3::actor_animation_step(*ship_bank, *ship.pose, *ship.animation_cursor);
             // Callback releases (event+0x24 slots) and record spawns.
-            if (step.release_slots) { servbots.clear(); statics.clear(); }
+            if (step.release_slots) { servbots.clear(); statics.clear(); teisel.reset(); }
             if (step.spawn_first >= 0 && servbot_mesh)
                 for (int k = step.spawn_first; k < step.spawn_first + int(step.spawn_count) && k < int(profile.records.size()); ++k) {
+                    LiveTeisel lt;
+                    if (l3::spawn_source_attract_teisel(profile.records[size_t(k)], lt.logic)) {
+                        if (!teisel_mesh) continue;
+                        auto& a = lt.actor;
+                        a.original_pool_slot = lt.logic.slot; a.source_class = 0x40; a.subtype = 0x0B; a.row = uint32_t(teisel_row);
+                        a.floor_query_required = false; a.pose_selected_by_retail_state = true;
+                        a.resource = teisel_mesh; a.animation_bank = teisel_bank; a.pose = teisel_pose;
+                        a.animation_cursor = l3::actor_sequence_begin(0, teisel_pose->sequencing_record);
+                        a.source_origin = lt.logic.raw; a.heading = lt.logic.heading; a.raw_scale = {{512, 512, 512}};
+                        teisel = std::move(lt);
+                        continue;
+                    }
                     LiveStatic st;
                     if (l3::spawn_source_attract_static(profile.records[size_t(k)], st.logic)) {
                         st.kind = st.logic.object_class == 0x28 ? 0 : 1;
@@ -3671,6 +3708,23 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                     servbots.push_back(std::move(b));
                 }
             // Their class updates follow the event (event+0x10 after this tick's timeline).
+            if (teisel) {
+                const auto ts = l3::update_source_attract_teisel_8010384c(teisel->logic, profile, event.event);
+                auto& a = teisel->actor;
+                if (a.pose && a.animation_cursor) {
+                    if (ts.reset) (void)l3::actor_animation_reset(*teisel_bank, 0, *a.pose, *a.animation_cursor);
+                    else if (ts.step) (void)l3::actor_animation_step(*teisel_bank, *a.pose, *a.animation_cursor);
+                }
+                // 0x8002D320 face copies into the slots drawing parts 16 / 18.
+                for (size_t c = 0; c < ts.copy_count; ++c)
+                    for (size_t slot = 0; slot < teisel_mesh->bindings.size() && slot < teisel_mesh->model.parts.size(); ++slot)
+                        if (teisel_mesh->bindings[slot].mesh_index == ts.copies[c].destination_part)
+                            (void)l3::apply_source_face_uv_8002d320(teisel_mesh->model.parts[slot], cast.source_payload.data(),
+                                cast.source_payload.size(), cast.load_base, teisel_descriptor, ts.copies[c].source_part, ts.copies[c].offset);
+                if (ts.copy_count)
+                    hardware_test_trace("# attract_teisel_face,tick=%lu,copies=%lu,shot=%u:%u,c10=%lu",
+                        (unsigned long)tick, (unsigned long)ts.copy_count, unsigned(event.event.e9), unsigned(event.event.e8), (unsigned long)event.event.c10);
+            }
             for (auto& st : statics) {
                 auto& a = st.actor;
                 if (st.needs_floor) continue;   // the spawn tick's update was the init (request above)
@@ -3734,6 +3788,13 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         pending_area = -1;
         // The cast's init stores work+0x78 = 0: 0x80048E6C with null (all-zero) bounds.
         static const l3::RetailPlayerBounds kNullBounds = [] { l3::RetailPlayerBounds b; b.x0 = b.x1 = b.z0 = b.z1 = b.y0 = b.y1 = 0; return b; }();
+        if (teisel && teisel->needs_floor && area > 0) {   // 0x801038A4 floor query
+            teisel->needs_floor = false;
+            const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), teisel->logic.raw[0], teisel->logic.raw[1], teisel->logic.raw[2], kNullBounds);
+            if (floor.floor_y) { teisel->logic.raw[1] = int16_t(teisel->logic.raw[1] + *floor.floor_y); teisel->actor.source_origin = teisel->logic.raw; }
+            hardware_test_trace("# attract_teisel,tick=%lu,pos=%d:%d:%d,floor=%d", (unsigned long)tick,
+                int(teisel->logic.raw[0]), int(teisel->logic.raw[1]), int(teisel->logic.raw[2]), floor.floor_y ? int(*floor.floor_y) : 99999);
+        }
         for (auto& st : statics) {   // 0x80102DD8 / 0x80102EFC floor query, as the Servbots'
             if (!st.needs_floor || area <= 0) continue;
             st.needs_floor = false;
@@ -3783,7 +3844,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         psx_draw_ot(false, true);
         g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
         const bool terrain = area > 0 && !g_terrain_batches.empty();
-        if (visible && (terrain || ship_live || !servbots.empty() || !statics.empty())) {
+        if (visible && (terrain || ship_live || !servbots.empty() || !statics.empty() || teisel)) {
             const auto v = l3::source_camera_view(event.camera);
             const auto camera = l3::source_gameplay_camera_80037fb4(refs, v.target, v.distance, v.yaw, v.pitch, v.shift, 0);
             auto faces = l3::make_terrain_face_camera(camera.camera_1f800008, nullptr);
@@ -3827,6 +3888,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                 if (b.actor.pose) (void)psx_emit_class20(b.actor, l3::build_imported_actor_pose_matrices(b.actor));
             for (const auto& st : statics)
                 if (st.actor.pose) (void)psx_emit_class20(st.actor, l3::build_imported_actor_pose_matrices(st.actor));
+            if (teisel && teisel->actor.pose) (void)psx_emit_class20(teisel->actor, l3::build_imported_actor_pose_matrices(teisel->actor));
             const auto unresolved_before = g_psx_stats.unresolved;
             psx_draw_ot(false);
             if (ship_live && g_psx_stats.unresolved != unresolved_before && tick % 60u == 0u)

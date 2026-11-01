@@ -1,4 +1,5 @@
 #include "legends3ds/source_attract_event10.h"
+#include "legends3ds/source_scene_face.h"
 
 namespace l3 {
 namespace {
@@ -21,6 +22,7 @@ bool bind_source_attract_profile(const SourceScenePackage& pkg, SourceAttractPro
         for (size_t k = 0; k + 20 <= rec->bytes.size(); k += 20) {
             std::array<uint8_t,20> r{}; for (size_t i = 0; i < 20; ++i) r[i] = rec->bytes[k + i]; p.records.push_back(r);
         }
+    if (const auto* face = pkg.data_at(0x80106914u)) p.teisel_face = face->bytes;   // --extra 80106914:72
     if (const auto* beh = pkg.data_at(0x8010663Cu))
         for (size_t k = 0; k + 4 <= beh->bytes.size(); k += 4)
             p.servbot_behaviours.push_back(uint32_t(beh->bytes[k]) | (uint32_t(beh->bytes[k + 1]) << 8) |
@@ -202,5 +204,61 @@ bool spawn_source_attract_static(const std::array<uint8_t,20>& r, SourceAttractS
     s.heading = rd16(&r[18]);
     out = s;
     return true;
+}
+
+bool spawn_source_attract_teisel(const std::array<uint8_t,20>& r, SourceAttractTeisel& out) noexcept {
+    if (r[3] != 0x40 || r[1] != 0x0B || r[2] != 10) return false;
+    SourceAttractTeisel t;
+    t.slot = r[0];
+    for (size_t i = 0; i < 3; ++i) t.raw[i] = int16_t(rd16(&r[12 + 2 * i]));
+    t.heading = rd16(&r[18]);
+    out = t;
+    return true;
+}
+
+namespace {
+constexpr uint32_t kTeiselFaceBase = 0x80106914u;
+int byte_at(const SourceAttractProfile& p, uint32_t token) noexcept {
+    if (token < kTeiselFaceBase || token - kTeiselFaceBase >= p.teisel_face.size()) return -1000;
+    return int8_t(p.teisel_face[token - kTeiselFaceBase]);
+}
+uint32_t word_at(const SourceAttractProfile& p, uint32_t token) noexcept {
+    if (token < kTeiselFaceBase || token + 4 - kTeiselFaceBase > p.teisel_face.size()) return 0;
+    const uint8_t* b = &p.teisel_face[token - kTeiselFaceBase];
+    return uint32_t(b[0]) | (uint32_t(b[1]) << 8) | (uint32_t(b[2]) << 16) | (uint32_t(b[3]) << 24);
+}
+void face_set_80103a24(SourceAttractTeisel& t, const SourceAttractProfile& p, uint32_t expression) noexcept {
+    t.face[0] = {word_at(p, 0x80106944u + 4 * expression), 0, -1};
+    t.face[1] = {word_at(p, 0x80106950u + 4 * expression), 0, -1};
+}
+} // namespace
+
+SourceAttractTeiselStep update_source_attract_teisel_8010384c(SourceAttractTeisel& t, const SourceAttractProfile& p,
+                                                               const SourceEventCounters& ev) noexcept {
+    SourceAttractTeiselStep out;
+    if (t.state == 0) {   // 0x8010386C..0x801038F0, then straight to the face step
+        out.reset = true; face_set_80103a24(t, p, 0); t.state = 1;
+    } else {
+        if (ev.e8 == 4) {
+            if (ev.e9 == 1) { if (ev.c10 == 10) face_set_80103a24(t, p, 2); else if (ev.c10 == 90) face_set_80103a24(t, p, 0); }
+            else if (ev.e9 == 2) { if (ev.c10 == 1) face_set_80103a24(t, p, 2); else if (ev.c10 == 50) face_set_80103a24(t, p, 1); }
+        }
+        out.step = true;
+    }
+    static constexpr uint8_t kParts[2][2] = {{16, 17}, {18, 19}};
+    for (size_t ch = 0; ch < 2; ++ch) {   // 0x80103A6C
+        auto& f = t.face[ch];
+        if (!f.script) continue;
+        const int next = byte_at(p, f.script + uint32_t(f.index + 1));
+        if (next == 127) f.index = 0;
+        else if (next != 126 && next > -1000) f.index = int8_t(f.index + 1);
+        const int frame = byte_at(p, f.script + uint32_t(f.index));
+        if (frame <= -1000) continue;
+        const int16_t value = int16_t(uint8_t(frame));
+        if (value != f.previous && out.copy_count < out.copies.size())
+            out.copies[out.copy_count++] = {kParts[ch][0], kParts[ch][1], source_face_offset_8002d404(uint8_t(frame), 42, 64, 6)};
+        f.previous = value;
+    }
+    return out;
 }
 } // namespace l3

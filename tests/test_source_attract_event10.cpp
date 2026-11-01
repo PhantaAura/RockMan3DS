@@ -2,6 +2,7 @@
 // binding, camera program 0x8001EC0C, timeline 0x8001F070 and the handler
 // 0x80100330, on authored data.
 #include "legends3ds/source_attract_event10.h"
+#include "legends3ds/source_scene_face.h"
 #include <cstdio>
 #include <cstdlib>
 using namespace l3;
@@ -138,5 +139,30 @@ int main() {
             st28.raw[0] == 904 && st28.raw[1] == -1 && st28.raw[2] == 340 && st28.slot == 11, "class 0x28 spawn");
     b28[1] = 0x2B; require(spawn_source_attract_static(b28, st28) && st28.request == 0, "class 0x2B request 0");
     b28[1] = 0x0B; require(!spawn_source_attract_static(b28, st28), "other classes rejected");
+    // Teisel: init copies eyes frame 2 / mouth frame 0; expression 2 at tick 10
+    // of shot 1:4 starts the talking loop (2, 4, 3, then 127 back to the start).
+    SourceAttractProfile tp; tp.loaded = true; tp.teisel_face.assign(72, 0);
+    const auto put = [&](uint32_t token, std::initializer_list<uint8_t> bytes) { size_t k = token - 0x80106914u; for (auto b : bytes) tp.teisel_face[k++] = b; };
+    put(0x80106914u, {2, 126}); put(0x80106918u, {0, 126}); put(0x8010691Cu, {2, 126}); put(0x80106920u, {2, 4, 3, 127});
+    const auto word = [&](uint32_t token, uint32_t v) { put(token, {uint8_t(v), uint8_t(v >> 8), uint8_t(v >> 16), uint8_t(v >> 24)}); };
+    for (uint32_t e = 0; e < 3; ++e) word(0x80106944u + 4 * e, 0x80106914u);
+    word(0x80106950u, 0x80106918u); word(0x80106954u, 0x8010691Cu); word(0x80106958u, 0x80106920u);
+    std::array<uint8_t,20> r28{{13, 0x0B, 10, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x04, 0xFF, 0xFF, 0xF0, 0x00, 0, 0}};
+    SourceAttractTeisel te;
+    require(spawn_source_attract_teisel(r28, te) && te.raw[0] == 1024 && te.raw[1] == -1 && te.raw[2] == 240, "Teisel spawn");
+    SourceEventCounters tev; tev.e8 = 4; tev.e9 = 1; tev.c10 = 0;
+    auto ts = update_source_attract_teisel_8010384c(te, tp, tev);
+    require(ts.reset && ts.copy_count == 2 && ts.copies[0].destination_part == 16 && ts.copies[0].offset == source_face_offset_8002d404(2, 42, 64, 6) &&
+            ts.copies[1].destination_part == 18 && ts.copies[1].offset == 0, "init: eyes frame 2, mouth frame 0");
+    tev.c10 = 5; ts = update_source_attract_teisel_8010384c(te, tp, tev);
+    require(ts.step && ts.copy_count == 0, "126 holds: no copies");
+    std::vector<uint32_t> mouth;
+    for (uint32_t t = 10; t < 16; ++t) {
+        tev.c10 = t; ts = update_source_attract_teisel_8010384c(te, tp, tev);
+        for (size_t k = 0; k < ts.copy_count; ++k) if (ts.copies[k].destination_part == 18) mouth.push_back(ts.copies[k].offset);
+    }
+    // tick 10: set (prev -1) then step -> index 1 (frame 4); 11 -> frame 3; 12 -> 127 -> frame 2; 13 -> 4 ...
+    require(mouth.size() >= 4 && mouth[0] == source_face_offset_8002d404(4, 42, 64, 6) && mouth[1] == source_face_offset_8002d404(3, 42, 64, 6) &&
+            mouth[2] == source_face_offset_8002d404(2, 42, 64, 6) && mouth[3] == source_face_offset_8002d404(4, 42, 64, 6), "talking loop with 127 wrap");
     std::puts("source_attract_event10: camera waits/cuts/velocity, timeline, phases, area request, end and skip fades OK");
 }

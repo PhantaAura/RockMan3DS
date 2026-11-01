@@ -1,6 +1,6 @@
 // Material cache for an explicit list of CLUT/tpage words (one hex word per
 // line, e.g. from cook_intro_bg.py) plus, with --ebd, the words of every
-// class-0x20 mesh in a cooked EBD, composed from owner containers in the
+// class-0x20 and class-0x40 mesh in a cooked EBD, composed from owner containers in the
 // stage loader's upload order (later containers overwrite earlier VRAM).
 // Every word must resolve.
 #include "legends3ds/actor_resource.h"
@@ -23,8 +23,9 @@ int main(int argc, char** argv) {
         if (argc > 5 && std::string(argv[3]) == "--ebd") {
             const auto ebd = l3::load_l3ebd_directory(l3::read_file(argv[4]), true);
             for (size_t row = 0; row < ebd.entries.size(); ++row) {
-                if (ebd.entries[row].object_class != 0x20) continue;   // class 0x40 meshes use their own decoder
-                const auto mesh = l3::decode_ebd_actor_mesh(ebd, row);
+                const uint8_t cls = ebd.entries[row].object_class;
+                if (cls != 0x20 && cls != 0x40) continue;
+                const auto mesh = cls == 0x40 ? l3::decode_ebd_scene_actor40_mesh(ebd, row) : l3::decode_ebd_actor_mesh(ebd, row);
                 for (const auto& part : mesh.model.parts) {
                     for (const auto& t : part.triangles) mesh_words.insert((uint32_t(t.clut) << 16) | t.tpage);
                     for (const auto& q : part.quads) mesh_words.insert((uint32_t(q.clut) << 16) | q.tpage);

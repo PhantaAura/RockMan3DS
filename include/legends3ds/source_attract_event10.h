@@ -25,6 +25,7 @@ struct SourceAttractProfile {
     std::vector<SourceSceneAreaRequest> area_requests;
     std::vector<std::array<uint8_t,20>> records;   // 0x80105B8C.. (29 spawn records)
     std::vector<uint32_t> servbot_behaviours;      // 0x8010663C[id] (class 0x20/0x00 by +0xC)
+    std::vector<uint8_t> teisel_face;              // 0x80106914..: face scripts + tables 0x80106944/0x80106950
 };
 bool bind_source_attract_profile(const SourceScenePackage& package, SourceAttractProfile& out);
 
@@ -88,4 +89,30 @@ struct SourceAttractStatic {
     uint16_t heading = 0;
 };
 bool spawn_source_attract_static(const std::array<uint8_t,20>& record, SourceAttractStatic& out) noexcept;
+
+// Teisel (family 0x40, class 0x0B, per-type table [10] = 0x8010384C), record
+// 28. Init: drawn flag, model, scale 512, floor query, animation request 0,
+// face set 0x80103A24(expression 0). Then each update: in shot e8 = 4 the
+// expression changes (e9 1: tick 10 -> 2, tick 90 -> 0; e9 2: tick 1 -> 2,
+// tick 50 -> 1), 0x80032488, then the face step 0x80103A6C.
+// Face (+1248): per channel (eyes: script 0x80106944[expr], parts 17 -> 16;
+// mouth: 0x80106950[expr], 19 -> 18) the index advances unless the next byte
+// is 126 (hold) or 127 (back to 0); a frame change copies the source part's
+// UVs with offset 0x8002D404(frame, 42, 64, 6).
+struct SourceAttractFaceChannel { uint32_t script = 0; int8_t index = 0; int16_t previous = -1; };
+struct SourceAttractTeisel {
+    uint8_t slot = 0, state = 0;
+    std::array<int16_t,3> raw{};
+    uint16_t heading = 0;
+    std::array<SourceAttractFaceChannel,2> face{};
+};
+bool spawn_source_attract_teisel(const std::array<uint8_t,20>& record, SourceAttractTeisel& out) noexcept;
+struct SourceAttractFaceCopy { uint8_t destination_part = 0, source_part = 0; uint32_t offset = 0; };
+struct SourceAttractTeiselStep {
+    bool reset = false, step = false;        // animation request 0 / 0x80032488
+    std::array<SourceAttractFaceCopy,2> copies{};
+    size_t copy_count = 0;
+};
+SourceAttractTeiselStep update_source_attract_teisel_8010384c(SourceAttractTeisel& teisel, const SourceAttractProfile& profile,
+                                                               const SourceEventCounters& event) noexcept;
 } // namespace l3

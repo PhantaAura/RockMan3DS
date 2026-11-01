@@ -180,3 +180,17 @@ centre, talking (face routines): Teisel. Left edge: class 0x28 (Tron,
 brown hat); right: class 0x2B (Bon). Azahar with the seeds applied shows
 Tron and Bon at the oracle's framing; the centre is empty until class
 0x40/0x0B (Teisel) is ported.
+
+## Teisel ported (2026-11-01)
+Class 0x40/0x0B (0x8010384C), record 28: init drawn flag, model, scale 512,
+floor query, request 0, face set 0x80103A24(expression 0); each update: in
+shot e8 4 the expression changes (e9 1: tick 10 -> 2, 90 -> 0; e9 2: tick
+1 -> 2, 50 -> 1), 0x80032488, face step 0x80103A6C. Face: eyes script
+0x80106944[expr] (all 0x80106914: frame 2 held), mouth 0x80106950[expr]
+(0x80106918 closed, 0x8010691C frame 2, 0x80106920 the 32-frame talking
+loop 2/4/3, 127 = loop); index advances unless the next byte is 126 (hold)
+or 127 (back to 0); a new frame copies parts 17 -> 16 / 19 -> 18 with
+0x8002D404(frame, 42, 64, 6). Drawn through the class-0x20 packet path
+(ImportedActorPoseMatrices widened to the 24 class-0x40 slots; class 0x20
+keeps 13), CANDIDATE colour/ramp (the class-0x40 consumer 0x80028F90 is
+not used here).
