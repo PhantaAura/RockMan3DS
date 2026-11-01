@@ -192,5 +192,6 @@ loop 2/4/3, 127 = loop); index advances unless the next byte is 126 (hold)
 or 127 (back to 0); a new frame copies parts 17 -> 16 / 19 -> 18 with
 0x8002D404(frame, 42, 64, 6). Drawn through the class-0x20 packet path
 (ImportedActorPoseMatrices widened to the 24 class-0x40 slots; class 0x20
-keeps 13), CANDIDATE colour/ramp (the class-0x40 consumer 0x80028F90 is
-not used here).
+keeps 13). Colour/ramp follow 0x80028F90: the actor point is projected raw
+(not shifted by 0x1F800074) with translation 0x1F800030; oracle +0x15E =
+0x4210 (work 0x800C3580). Shifting it made him dark/red in the close-ups.
