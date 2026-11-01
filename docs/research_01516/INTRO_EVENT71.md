@@ -1,6 +1,6 @@
 # Pre-title intro: ST01 event 71 (scope, 2026-10-31)
 
-Status: research only (static read of R3_ST01.BIN; extracted owner-locally
+Status: research only. Oracle boot sequence added 2026-10-31 (below) (static read of R3_ST01.BIN; extracted owner-locally
 from `CDDATA/DAT/ST01.BIN`, not committed). Nothing ported yet.
 
 ## Handler 0x8010049C (11-entry table at 0x80100004)
@@ -60,3 +60,18 @@ Sky/sea gradient: `0x80100920` / `0x80100A70` (POLY_FT4 lines, see
 3. Sky/sea gradient draw, the constructed actor (airship) and its path.
 4. Text crawl: callback `0x801002E4` + the message window it drives.
 5. Oracle per phase (frames, actor, crawl counter) and an Azahar run.
+
+## Oracle: cold-boot attract sequence (no input, US disc, 60 Hz frames)
+| Frames | Event | What is on screen |
+|---|---|---|
+| 1254-7508 | 71 (ST01), phases 1..5, then 10 | sky/sea backdrop, small airship crossing right to left, white text crawl ("In a world covered by endless water...") fading at top and bottom |
+| 7508-9562 | 71 phase 10, then title | title screen "PRESS START BUTTON" |
+| 9732-12719 | 10 (ST07), phases 0..2 | Bonne attract scene: the Gesellschaft over the sea, Servbots in the cockpit |
+| 12719-14764 | 10 phase 2 (event off) | title again; a Servbot runs across it |
+| 14838- | 0, then 71 | attract loop restarts with the narration |
+
+Event 10's overlay is `r3_st07.bin` in `ST07.BIN` (load 0x80100000, 35904 B;
+signature matched against oracle RAM at 0x80100000). ST07 also ships
+`ST07_MAP.IDX/MDT`, `ST07.STG/HED`, `ST07_00/05/05B.BIN`. Event 10 is a
+separate port (its own stage cook, constructor/timeline, Bonne/Servbot actors),
+after event 71.
