@@ -149,7 +149,7 @@ animation request 19 / 0; then animate each update (shadow radius 48 not
 ported). Placed by record 26 (904, -1, 340) and 27 (1124, -1, 390).
 **0x40/0x0B** (not ported): a class-0x40 actor with its own timer states
 (4/2/10/90/50) and the face UV routines 0x8002D404 / 0x8002D320 (as the
-opening's Mega Man face), record 28 at (1024, -1, 240). CANDIDATE: Tron.
+opening's Mega Man face), record 28 at (1024, -1, 240).
 
 ## Bridge cast height (2026-11-01)
 Seen in Azahar: Bon (class 0x2B) drawn huge and low in the close-up 2:4.
@@ -173,3 +173,10 @@ seeds are 0). The pack now cooks attract/st07.l3init and the player
 applies it. Floor query with null bounds then gives -105 on the bridge
 (Tron y -1 -> -106, the oracle's value), -1 in the corridor and area 3,
 -257 in area 1.
+
+## Cast identities (oracle frames, 2026-11-01)
+Late in shot 2:4 the original zooms onto the class-0x40 character in the
+centre, talking (face routines): Teisel. Left edge: class 0x28 (Tron,
+brown hat); right: class 0x2B (Bon). Azahar with the seeds applied shows
+Tron and Bon at the oracle's framing; the centre is empty until class
+0x40/0x0B (Teisel) is ported.
