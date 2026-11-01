@@ -125,7 +125,9 @@ int main() {
     assert(mockup_hud_raster_cached(p,ui,status,map));
     ++map.player_x;
     assert(!mockup_hud_raster_cached(p,ui,status,map));
-    status.lock_on_active=true;
+    status.lock_on_active=true; // no longer shown
+    assert(!mockup_hud_raster_cached(p,ui,status,map));
+    status.target_visible=true;status.target_hp=3;status.target_hp_max=8;
     assert(mockup_hud_raster_cached(p,ui,status,map));
     // Third unexpected framebuffer evicts bounded storage; it never needs a
     // heap buffer and regenerates the correct pixels when reused.

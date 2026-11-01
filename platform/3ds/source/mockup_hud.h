@@ -9,6 +9,9 @@ void mockup_hud_init();
 // Invalidates both buffer entries after external framebuffer writes or in-place
 // changes to borrowed map cells. New immutable maps are also keyed by identity.
 void mockup_hud_invalidate();
+// Loads materials/hud_gauge.l3ui (GAUGE01u.TIM, see tools/l3cook_bottom_gauge).
+// Without it the bottom screen shows no gauge art. Returns false if malformed.
+bool mockup_hud_load_gauge(const unsigned char* data, size_t size);
 // Draws/flushes only a changed bottom framebuffer, with no heap allocation.
 // Caller owns presentation: swap GFX_BOTTOM once after this draw, at the chosen
 // frame boundary. Never use gfxSwapBuffers here because top belongs to Citro3D.

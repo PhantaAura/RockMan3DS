@@ -170,7 +170,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_frontend_materials']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_frontend_materials','l3cook_bottom_gauge']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -374,6 +374,11 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
             # the logo / PRESS START / menu pages from DEMO_DAT.BIN.
             if (dat/'DEMO_DAT.BIN').is_file():
                 run(tools,'l3cook_frontend_materials',dat/'DEMO_DAT.BIN',mout/'frontend.l3mc')
+                # Bottom-screen life gauge art (GAUGE01u.TIM; ROCK_NEO 0x8005C9BC).
+                run(tools,'l3cook_bottom_gauge',dat/'DEMO_DAT.BIN',mout/'hud_gauge.l3ui')
+                manifest['hud_gauge']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((mout/'hud_gauge.l3ui').relative_to(out)),
+                    'source':'DEMO_DAT.BIN GAUGE01u.TIM; sprite table ROCK_NEO 0x8008D37C (cell clut 0x3E75 CANDIDATE)'}
                 manifest['frontend_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'frontend.l3mc').relative_to(out)),
                     'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U/EM0000 (CANDIDATE: the Servbot page); words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C and DEMO_DAT.EBD'}
