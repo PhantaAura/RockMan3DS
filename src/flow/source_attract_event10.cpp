@@ -3,95 +3,21 @@
 namespace l3 {
 namespace {
 uint16_t rd16(const uint8_t* p) noexcept { return uint16_t(p[0] | (p[1] << 8)); }
-uint32_t rd32(const uint8_t* p) noexcept { return uint32_t(p[0]) | (uint32_t(p[1]) << 8) | (uint32_t(p[2]) << 16) | (uint32_t(p[3]) << 24); }
-uint32_t crc32(const uint8_t* p, size_t n) noexcept {
-    uint32_t c = 0xFFFFFFFFu;
-    for (size_t i = 0; i < n; ++i) { c ^= p[i]; for (int k = 0; k < 8; ++k) c = (c >> 1) ^ (0xEDB88320u & (0u - (c & 1u))); }
-    return ~c;
-}
-int32_t add(int32_t a, int32_t b) noexcept { return int32_t(uint32_t(a) + uint32_t(b)); }
 } // namespace
 
-bool load_source_attract_profile(const std::vector<uint8_t>& b, SourceAttractProfile& out) {
-    if (b.size() != kSourceAttractProfileBytes || b[0] != 'L' || b[1] != '3' || b[2] != 'A' || b[3] != 'T' ||
-        rd16(&b[4]) != 1 || rd16(&b[6]) != 16 || rd32(&b[8]) != b.size() || rd32(&b[12]) != crc32(b.data() + 16, b.size() - 16))
-        return false;
+bool bind_source_attract_profile(const SourceScenePackage& pkg, SourceAttractProfile& out) {
+    if (!pkg.loaded || pkg.event != 10 || pkg.stage != 7) return false;
+    const auto* t0 = pkg.timeline(0x80105E1Cu); const auto* t1 = pkg.timeline(0x801060D4u);
+    const auto* c0 = pkg.camera(0x80105DD0u); const auto* c1 = pkg.camera(0x80105E2Cu);
+    const auto* rows = pkg.data_at(0x80106124u);
+    if (!t0 || !t1 || !c0 || !c1 || !rows || rows->bytes.size() != 64) return false;
     SourceAttractProfile p;
-    const uint8_t* r = b.data() + 16 + 32;
-    for (auto& t : p.timelines) {
-        t.token = rd32(r); const uint32_t n = rd32(r + 4);
-        if (!n || n > 16) return false;
-        for (uint32_t k = 0; k < n; ++k) t.records.push_back({{rd32(r + 8 + 8 * k), rd32(r + 12 + 8 * k)}});
-        r += 8 + 8 * 16;
-    }
-    for (auto& c : p.cameras) {
-        c.token = rd32(r); const uint32_t n = rd32(r + 4);
-        if (!n || n > 256) return false;
-        for (uint32_t k = 0; k < n; ++k) c.words.push_back(rd32(r + 8 + 4 * k));
-        r += 8 + 4 * 256;
-    }
-    for (auto& row : p.bg_rows) { for (size_t k = 0; k < 8; ++k) row[k] = r[k]; r += 8; }
+    p.timelines = {{*t0, *t1}}; p.cameras = {{*c0, *c1}};
+    for (size_t i = 0; i < 8; ++i) for (size_t k = 0; k < 8; ++k) p.bg_rows[i][k] = rows->bytes[i * 8 + k];
+    p.area_requests = pkg.area_requests;
     p.loaded = true;
     out = std::move(p);
     return true;
-}
-
-void step_source_camera_program_8001ec0c(SourceCameraBlock& c, const SourceAttractCameraProgram& program,
-                                         const SourceEventCounters& ev) noexcept {
-    for (size_t budget = 0; budget < program.words.size(); ++budget) {
-        if (c.pc >= program.words.size()) { c.unsupported = true; break; }
-        const uint32_t command = program.words[c.pc];
-        const uint8_t op = uint8_t(command >> 24);
-        if (command == 0xFFFFFFFFu || op == 255) break;
-        if (op <= 2) {
-            if (op == 0) { if (ev.c14 < (command & 0x00FFFFFFu)) break; }
-            else if (op == 1) { if (ev.e8 != uint8_t(command >> 16) || ev.c18 != (command & 0xFFFFu)) break; }
-            else { if (ev.e9 != uint8_t(command >> 16) || ev.c1c != (command & 0xFFFFu)) break; }
-            ++c.pc;
-        } else if (op == 3 || op == 4) { c.mode = uint8_t(op - 3); ++c.pc;
-        } else if (op == 5 || op == 6) { c.tracked = uint8_t(op - 5); ++c.pc;
-        } else if (op >= 16 && op <= 22) {
-            if (c.pc + 3 >= program.words.size()) { c.unsupported = true; break; }
-            std::array<int32_t,3> v{};
-            for (size_t i = 0; i < 3; ++i) v[i] = int32_t(program.words[c.pc + 1 + i]);
-            if (op == 16) c.tracked = 0;
-            if (op == 20) { c.tracked = 1; c.tracked_slot = uint8_t(command >> 16); }
-            switch (op) {   // offsets 8, 56, 24, 72, 168, 104, 120
-            case 16: c.target = v; break;          case 17: c.angles = v; break;
-            case 18: c.target_velocity = v; break; case 19: c.angle_velocity = v; break;
-            case 20: c.word_a8 = v; break;         case 21: c.third = v; break;
-            default: c.third_velocity = v; break;
-            }
-            c.pc += 4;
-        } else if (op >= 32 && op <= 34) { c.shift = uint8_t(op - 32); ++c.pc;
-        } else { c.unsupported = true; break; }
-    }
-    for (size_t i = 0; i < 3; ++i) {
-        c.target[i] = add(c.target[i], c.target_velocity[i]);
-        c.angles[i] = add(c.angles[i], c.angle_velocity[i]);
-        c.third[i] = add(c.third[i], c.third_velocity[i]);
-    }
-}
-
-SourceCameraView source_camera_view(const SourceCameraBlock& c) noexcept {
-    SourceCameraView v;
-    for (size_t i = 0; i < 3; ++i) v.target[i] = add(c.target[i], c.offset_98[i]) >> 16;
-    v.yaw = int16_t(uint32_t(c.angles[0]) >> 16); v.pitch = int16_t(uint32_t(c.angles[1]) >> 16);
-    v.distance = int16_t(uint32_t(c.angles[2]) >> 16); v.shift = c.shift;
-    return v;
-}
-
-void step_source_timeline_8001f070(SourceEventCounters& ev, size_t& record, const SourceAttractTimeline& t) noexcept {
-    if (record >= t.records.size()) return;
-    ++ev.c10; ++ev.c14; ++ev.c18; ++ev.c1c;
-    const uint16_t raw = uint16_t(t.records[record][0] >> 16);
-    const uint32_t deadline = raw <= 32767u ? raw : (uint32_t(raw) | 0xFFFF0000u);
-    if (raw == 0xFFFFu || deadline != ev.c10 || record + 1 >= t.records.size()) return;
-    const uint32_t header = t.records[record + 1][0];
-    const uint8_t b8 = uint8_t(header), b9 = uint8_t(header >> 8);
-    if (ev.e8 != b8) { ev.c18 = 0; ev.c1c = 0; }
-    if (ev.e9 != b9) ev.c1c = 0;
-    ev.e8 = b8; ev.e9 = b9; ev.c10 = 0; ++record;
 }
 
 namespace {
@@ -116,13 +42,12 @@ uint32_t run_callback(SourceAttractEvent10State& st, const SourceAttractProfile&
         if (first) { flags(3, 0); flags(7, 0); }
         if (st.event.c10 == 130) ++out.actor_callbacks;
         break;
-    case 0x80100944u: if (first) { out.area_request = 1; ++out.actor_callbacks; } break;
-    case 0x801009B8u: if (first) { out.area_request = 2; ++out.actor_callbacks; } break;
-    case 0x80100B14u: if (first) { out.area_request = 3; ++out.actor_callbacks; } break;
-    case 0x80100B98u: if (first) { out.area_request = 4; ++out.actor_callbacks; } break;
+    case 0x80100944u: case 0x801009B8u: case 0x80100B14u: case 0x80100B98u:
     case 0x80100C4Cu: case 0x80100CCCu: if (first) ++out.actor_callbacks; break;
     default: break;
     }
+    // The importer's callback -> area requests (0x80100CD4 on the first tick).
+    if (first) for (const auto& a : prof.area_requests) if (a.callback == cb) out.area_request = int8_t(a.area);
     return cb;
 }
 } // namespace

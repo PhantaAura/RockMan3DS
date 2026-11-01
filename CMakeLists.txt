@@ -41,6 +41,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_palette_c0.cpp
     src/flow/source_intro_crawl.cpp
     src/flow/source_bg_layers.cpp
+    src/flow/source_scene_runtime.cpp
     src/flow/source_attract_event10.cpp
     src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp

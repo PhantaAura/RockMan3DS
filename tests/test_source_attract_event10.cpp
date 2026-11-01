@@ -1,5 +1,6 @@
-// ST07 event 10: camera program 0x8001EC0C, timeline 0x8001F070 and the
-// handler 0x80100330 on an authored profile.
+// ST07 event 10 on the shared scene runtime: the L3CS package loader and
+// binding, camera program 0x8001EC0C, timeline 0x8001F070 and the handler
+// 0x80100330, on authored data.
 #include "legends3ds/source_attract_event10.h"
 #include <cstdio>
 #include <cstdlib>
@@ -7,10 +8,49 @@ using namespace l3;
 namespace {
 void require(bool ok, const char* why) { if (!ok) { std::fprintf(stderr, "FAIL %s\n", why); std::exit(1); } }
 uint32_t rec(uint8_t e8, uint8_t e9, uint16_t ticks) { return uint32_t(e8) | (uint32_t(e9) << 8) | (uint32_t(ticks) << 16); }
+void u32(std::vector<uint8_t>& b, uint32_t v) { for (int i = 0; i < 4; ++i) b.push_back(uint8_t(v >> (8 * i))); }
+uint32_t crc32(const uint8_t* p, size_t n) {
+    uint32_t c = 0xFFFFFFFFu;
+    for (size_t i = 0; i < n; ++i) { c ^= p[i]; for (int k = 0; k < 8; ++k) c = (c >> 1) ^ (0xEDB88320u & (0u - (c & 1u))); }
+    return ~c;
+}
+// An authored L3CS in tools/cook_cutscene.py's layout.
+std::vector<uint8_t> package() {
+    std::vector<uint8_t> p(64, 0);   // EXE + overlay SHA-256
+    p.push_back(10); p.push_back(0); p.push_back(7); p.push_back(0); u32(p, 0x80100330u);
+    u32(p, 2);
+    u32(p, 0x80105E1Cu); u32(p, 2); u32(p, 0xFFFF0000u); u32(p, 0x801007E0u); u32(p, 0xFFu); u32(p, 0);
+    u32(p, 0x801060D4u); u32(p, 1); u32(p, 0xFFu); u32(p, 0);
+    u32(p, 2);
+    u32(p, 0x80105DD0u); u32(p, 1); u32(p, 0xFFFFFFFFu);
+    u32(p, 0x80105E2Cu); u32(p, 2); u32(p, 0x20000000u); u32(p, 0xFFFFFFFFu);
+    u32(p, 1); u32(p, 0x80105B8Cu); for (int i = 0; i < 20; ++i) p.push_back(uint8_t(i));
+    u32(p, 1); u32(p, 0x20000005u);
+    u32(p, 1); u32(p, 0x80100944u); u32(p, 1);
+    u32(p, 0x80105658u);
+    u32(p, 1); u32(p, 0x80106124u); u32(p, 64); for (int i = 0; i < 64; ++i) p.push_back(uint8_t(i));
+    std::vector<uint8_t> b = {'L', '3', 'C', 'S', 1, 0, 16, 0};
+    u32(b, uint32_t(16 + p.size())); u32(b, crc32(p.data(), p.size()));
+    b.insert(b.end(), p.begin(), p.end());
+    return b;
+}
 }
 int main() {
+    // L3CS: load, look up by original address, bind the event-10 profile.
+    auto bytes = package();
+    SourceScenePackage pkg;
+    require(load_source_scene_package(bytes, pkg) && pkg.event == 10 && pkg.stage == 7 && pkg.handler == 0x80100330u &&
+            pkg.timelines.size() == 2 && pkg.camera(0x80105E2Cu) && pkg.camera(0x80105E2Cu)->words.size() == 2 &&
+            pkg.spawns.size() == 1 && pkg.spawns[0].bytes[19] == 19 && pkg.cd_requests[0] == 0x20000005u &&
+            pkg.area_requests[0].area == 1 && pkg.bg_table == 0x80105658u && pkg.data_at(0x80106124u), "package loads");
+    SourceAttractProfile bound;
+    require(bind_source_attract_profile(pkg, bound) && bound.bg_rows[1][0] == 8 && bound.area_requests.size() == 1, "profile binds");
+    auto bad = bytes; bad.back() ^= 1;
+    require(!load_source_scene_package(bad, pkg = {}), "CRC rejects");
+    bytes.push_back(0);
+    require(!load_source_scene_package(bytes, pkg), "size rejects");
     // Camera: set target, velocity, wait for e9 == 1 on its first tick, then a cut.
-    SourceAttractCameraProgram cam{0x80105E2Cu, {
+    SourceSceneCameraProgram cam{0x80105E2Cu, {
         0x20000000u, 0x10000000u, 0x00010000u, 0x00020000u, 0x00030000u,
         0x12000000u, 0x00008000u, 0u, 0u,
         0x02010000u, 0x21000000u, 0x10000000u, 0x00640000u, 0u, 0u, 0x12000000u, 0u, 0u, 0u, 0xFFFFFFFFu}};
@@ -25,7 +65,7 @@ int main() {
     v = source_camera_view(c);
     require(c.pc == 19 && v.target[0] == 100 && c.target_velocity[0] == 0 && v.shift == 1, "cut on the shot's first tick");
     // Timeline: 3 ticks of (0,0), then (1,0) resets +0x18/+0x1C; terminator stops.
-    SourceAttractTimeline tl{0x801060D4u, {{{rec(0, 0, 3), 0x801007E0u}}, {{rec(1, 0, 2), 0x80100944u}}, {{0xFFu, 0}}}};
+    SourceSceneTimeline tl{0x801060D4u, {{{rec(0, 0, 3), 0x801007E0u}}, {{rec(1, 0, 2), 0x80100944u}}, {{0xFFu, 0}}}};
     SourceEventCounters e; size_t r = 0;
     for (int i = 0; i < 3; ++i) step_source_timeline_8001f070(e, r, tl);
     require(r == 1 && e.e8 == 1 && e.c10 == 0 && e.c18 == 0 && e.c14 == 3, "record advance at its tick count");
@@ -39,6 +79,7 @@ int main() {
     p.cameras[0] = {0x80105DD0u, {0x20000000u, 0xFFFFFFFFu}};
     p.cameras[1] = cam;
     for (auto& row : p.bg_rows) row = {{3, 0, 0, 0, 0x80, 0xFF, 0, 0}};   // flags 3, vx -128
+    p.area_requests = {{0x80100944u, 1}};
     SourceBgLayers L{}; for (auto& l : L) l.present = true;
     SourceAttractEvent10State st;
     auto s = step_source_attract_event10_80100330(st, p, L, false, 0, false);

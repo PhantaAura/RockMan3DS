@@ -457,13 +457,17 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 for area_index in range(1,5):
                     run(tools,'l3cook_material_cache',*maps,str(area_index),aout/f'area_{area_index:02d}.l3mc',
                         dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN','--ramp-out',aout/f'area_{area_index:02d}.l3cr')
-                # Event 10 tables (timelines, camera programs, background rows),
+                # Event 10's cutscene package,
                 # the area-0 background layers (0x80105658[0]) and their pages.
                 pr=[r for r in iter_resources(dat/'ST07.BIN') if r.internal.upper()==r'..\PROGBIN\R3_ST07.BIN']
                 if len(pr)!=1 or pr[0].typ!=0: raise RuntimeError('ST07.BIN: expected one type-0 r3_st07.bin')
                 op7=st07/'r3_st07.bin'; op7.write_bytes(core[pr[0].payload_start:pr[0].payload_start+pr[0].size])
-                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_attract_event10.py'),
-                    '--overlay',str(op7),'--out',str(aout/'attract.l3at')],check=True)
+                # The cutscene importer finds event 10's timelines, camera
+                # programs, spawns, CD/area requests; --extra carries the
+                # phase-0 background rows 0x80106124.
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
+                    '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(op7),'--event','10','--stage','7',
+                    '--extra','80106124:64','--out',str(aout/'attract.l3cs')],check=True)
                 bgw=td/'attract_bg_words.txt'
                 subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
                     '--overlay',str(op7),'--out',str(aout/'attract_bg.l3bg'),'--words',str(bgw),'--stage','st07','--area','0'],check=True)
