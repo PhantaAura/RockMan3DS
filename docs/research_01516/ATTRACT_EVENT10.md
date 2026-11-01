@@ -121,3 +121,21 @@ variant 0 (0x801066D0[0] = 0x80102B28) at (0, 0, 0): init sets the drawn
 flag, scale +0x158 = (512, 512, 512), animation request 0; each tick saves
 the previous position and advances the animation (0x80032488). Lifetime:
 the exterior area (the area-1 callback releases the actors).
+
+## Servbots (2026-11-01)
+Class dispatch: hook 0x1F800058 = 0x801054D4[class] -> per-class table
+[+4] (Servbot 0x801052DC[4] = 0x8010205C; ship 0x80105338[10] =
+0x80102AEC). Records 0x80105B8C.. (29, contiguous; spawn 0x8001E968 copies
+rec[12..17] to +0x14/+0x1C and rec[18..19] to the heading +0x56; 0x8001EAE8
+copies rec[8..11] to +0xC..+0xF). Callback spawn lists (first tick, after
+releasing the previous event+0x24 slots): 0x80100944 records 1-3,
+0x801009B8 4-6, 0x80100B14 7-11, 0x80100B98 12-14, 0x80100C4C 15-28 (11
+Servbots + classes 0x28, 0x2B, 0x40/0x0B: the bridge cast, not ported yet).
+Servbot init 0x8010212C: scale 1024 if +0xE == 1 else 512; floor query
+0x80048E6C (y += floor). Behaviours 0x8010663C[id]: 0x80102238 animate +
+shadow; 0x801021DC animate; 0x801022B8 (id 1), 0x8010241C (id 4) scripted
+steps on event+0x10; 0x8010239C (id 2) forward 128; 0x80102500 (id 5)
+forward 256 from tick 76; 0x80102590 (id 10) stand/walk/request 19 at 125;
+0x80102678 (id 24) forward 64. Requests used: 0-7, 9, 10, 0x10-0x14 (all in
+the EBD's bank). Not ported: shadows 0x8002C8CC; the floor query runs
+against the requested area once it is loaded (CANDIDATE timing).

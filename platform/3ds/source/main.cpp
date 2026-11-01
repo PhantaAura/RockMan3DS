@@ -3457,8 +3457,10 @@ void run_intro_event71(bool scripted) {
 // 0x0B variant 0, 0x80102B28: spawned by the phase-0 record 0x80105B8C at its
 // position, scale (512, 512, 512), animation request 0; it lives in the
 // exterior area). ST00's terrain is released while it plays; restore()
-// rebuilds it. Not ported yet: the other actors (the Servbots, Tron,
-// Teisel, the shot-2:0 objects), fade 20, the areas' fog/depth cue.
+// rebuilds it. The Servbots (class 0x20/0x00, 0x8010205C) of every interior
+// shot: the callbacks' record lists, their behaviours 0x8010663C[id].
+// Not ported yet: the bridge's classes 0x28/0x2B and 0x40/0x0B, the
+// shot-2:0 objects, shadows 0x8002C8CC, fade 20, the areas' fog/depth cue.
 void run_attract_event10(bool scripted, const std::function<void()>& restore) {
     l3::SourceScenePackage package;
     l3::SourceAttractProfile profile;
@@ -3511,7 +3513,29 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         ship_ready = true;
     } catch (const std::exception& error) {
         char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_SHIP=0 %s", error.what());
-        boot_log(MML_BOOT_DATA, line);   // the scene plays without it
+        boot_log(MML_BOOT_DATA, line);
+    }
+    // The Servbot (class 0x20/0x00) with every request the records use.
+    struct LiveServbot { l3::SourceAttractServbot logic; l3::ImportedActorInstance actor; bool needs_floor = true; };
+    std::vector<LiveServbot> servbots;
+    std::shared_ptr<const l3::ActorMeshResource> servbot_mesh;
+    std::shared_ptr<const l3::ActorAnimationBank> servbot_bank;
+    std::optional<l3::ActorPoseResource> servbot_pose;
+    size_t servbot_row = 0;
+    try {
+        const auto rows = l3::find_ebd_entries(cast, 0x20, 0x00);
+        if (rows.size() != 1 || profile.records.size() < 29 || profile.servbot_behaviours.size() < 25)
+            throw std::runtime_error("attract: Servbot row, records or behaviours missing");
+        servbot_row = rows[0];
+        servbot_mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(cast, rows[0]));
+        static constexpr uint8_t kRequests[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 0x10, 0x11, 0x12, 0x13, 0x14};
+        servbot_bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+            cast, rows[0], *servbot_mesh, kRequests, sizeof(kRequests), 512 * 1024));
+        servbot_pose = l3::decode_ebd_actor_pose(cast, rows[0], *servbot_mesh, 0, 0);
+    } catch (const std::exception& error) {
+        servbot_mesh.reset();
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_SERVBOT=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);   // the scene plays without them
     }
     // Background pages: the front-end material slot, as the narration uses.
     {
@@ -3588,6 +3612,30 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                 ship_live = true;
                 if (ship.pose && ship.animation_cursor) (void)l3::actor_animation_reset(*ship_bank, 0, *ship.pose, *ship.animation_cursor);
             } else if (ship_live && ship.pose && ship.animation_cursor) (void)l3::actor_animation_step(*ship_bank, *ship.pose, *ship.animation_cursor);
+            // Callback releases (event+0x24 slots) and record spawns.
+            if (step.release_slots) servbots.clear();
+            if (step.spawn_first >= 0 && servbot_mesh)
+                for (int k = step.spawn_first; k < step.spawn_first + int(step.spawn_count) && k < int(profile.records.size()); ++k) {
+                    LiveServbot b;
+                    if (!l3::spawn_source_attract_servbot(profile.records[size_t(k)], profile, b.logic)) continue;   // other classes: not ported
+                    auto& a = b.actor;
+                    a.original_pool_slot = b.logic.slot; a.source_class = 0x20; a.subtype = 0; a.row = uint32_t(servbot_row);
+                    a.floor_query_required = false; a.pose_selected_by_retail_state = true;
+                    a.resource = servbot_mesh; a.animation_bank = servbot_bank; a.pose = servbot_pose;
+                    a.animation_cursor = l3::actor_sequence_begin(0, servbot_pose->sequencing_record);
+                    a.source_origin = b.logic.raw; a.heading = b.logic.heading; a.raw_scale = b.logic.scale();
+                    servbots.push_back(std::move(b));
+                }
+            // Their class updates follow the event (event+0x10 after this tick's timeline).
+            for (auto& b : servbots) {
+                const auto anim = l3::update_source_attract_servbot_8010205c(b.logic, event.event.c10, refs);
+                auto& a = b.actor;
+                if (a.pose && a.animation_cursor) {
+                    if (anim.reset) (void)l3::actor_animation_reset(*servbot_bank, anim.request, *a.pose, *a.animation_cursor);
+                    else if (anim.step) (void)l3::actor_animation_step(*servbot_bank, *a.pose, *a.animation_cursor);
+                }
+                a.source_origin = b.logic.raw; a.heading = b.logic.heading;
+            }
             if (step.cd_command) xa_start_pending = true;
             if (step.fade_type) {
                 l3::SourceFadeStartupResult started;
@@ -3635,6 +3683,22 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             hardware_test_trace("# attract_area,tick=%lu,area=%d,batches=%lu", (unsigned long)tick, area, (unsigned long)g_terrain_batches.size());
         }
         pending_area = -1;
+        // 0x8010212C's floor query (y += floor), against the area the shot
+        // loads (the port loads it before the next draw; CANDIDATE timing).
+        for (auto& b : servbots) {
+            if (!b.needs_floor || area <= 0) continue;
+            b.needs_floor = false;
+            const auto floor = l3::sample_imported_actor_floor(b.actor, map, size_t(area));
+            if (floor.floor_y) {
+                b.logic.raw[1] = int16_t(b.logic.raw[1] + *floor.floor_y);
+                b.logic.fixed[1] = int32_t(uint32_t(int32_t(b.logic.raw[1])) << 16);
+                b.actor.source_origin = b.logic.raw;
+            }
+            hardware_test_trace("# attract_servbot,tick=%lu,slot=%u,id=%u,behaviour=%08lx,pos=%d:%d:%d,heading=%u,floor=%d,floor_status=%u",
+                (unsigned long)tick, unsigned(b.logic.slot), unsigned(b.logic.id), (unsigned long)b.logic.behaviour,
+                int(b.logic.raw[0]), int(b.logic.raw[1]), int(b.logic.raw[2]), unsigned(b.logic.heading),
+                floor.floor_y ? int(*floor.floor_y) : 99999, unsigned(floor.status));
+        }
         (void)acquire_gpu_frame("attract");
         C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
         if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("attract: C3D_FrameDrawOn rejected");
@@ -3659,7 +3723,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         psx_draw_ot(false, true);
         g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
         const bool terrain = area > 0 && !g_terrain_batches.empty();
-        if (visible && (terrain || ship_live)) {
+        if (visible && (terrain || ship_live || !servbots.empty())) {
             const auto v = l3::source_camera_view(event.camera);
             const auto camera = l3::source_gameplay_camera_80037fb4(refs, v.target, v.distance, v.yaw, v.pitch, v.shift, 0);
             auto faces = l3::make_terrain_face_camera(camera.camera_1f800008, nullptr);
@@ -3699,6 +3763,8 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                         int(ship.source_origin[0]), int(ship.source_origin[1]), int(ship.source_origin[2]), int(v.target[0]), int(v.target[1]), int(v.target[2]), int(v.distance));
                 }
             }
+            for (const auto& b : servbots)
+                if (b.actor.pose) (void)psx_emit_class20(b.actor, l3::build_imported_actor_pose_matrices(b.actor));
             const auto unresolved_before = g_psx_stats.unresolved;
             psx_draw_ot(false);
             if (ship_live && g_psx_stats.unresolved != unresolved_before && tick % 60u == 0u)

@@ -464,10 +464,12 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 op7=st07/'r3_st07.bin'; op7.write_bytes(core[pr[0].payload_start:pr[0].payload_start+pr[0].size])
                 # The cutscene importer finds event 10's timelines, camera
                 # programs, spawns, CD/area requests; --extra carries the
-                # phase-0 background rows 0x80106124.
+                # phase-0 background rows 0x80106124, the 29 spawn records
+                # 0x80105B8C and the Servbot behaviour table 0x8010663C.
                 subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
                     '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(op7),'--event','10','--stage','7',
-                    '--extra','80106124:64','--out',str(aout/'attract.l3cs')],check=True)
+                    '--extra','80106124:64','--extra','80105B8C:580','--extra','8010663C:100',
+                    '--out',str(aout/'attract.l3cs')],check=True)
                 bgw=td/'attract_bg_words.txt'
                 subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
                     '--overlay',str(op7),'--out',str(aout/'attract_bg.l3bg'),'--words',str(bgw),'--stage','st07','--area','0'],check=True)

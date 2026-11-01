@@ -104,5 +104,32 @@ int main() {
     while (!(sk.phase == 1 && sk.sub == 1)) step_source_attract_event10_80100330(sk, p, L, true, 0, false);
     step_source_attract_event10_80100330(sk, p, L, true, 0, true);
     require(step_source_attract_event10_80100330(sk, p, L, true, 0, false).fade_type == 10 && sk.phase == 2, "Start skips with fade 10");
+    // Servbots: spawn fields from the record, the id-4 walk, first-tick request.
+    SourceAttractProfile cast; cast.loaded = true;
+    cast.servbot_behaviours.assign(25, 0x80102238u); cast.servbot_behaviours[4] = 0x8010241Cu;
+    std::array<uint8_t,20> r4{{1, 0x00, 4, 0x20, 0, 0, 0, 0, 4, 1, 1, 0, 0, 0, 0, 0, 0xF4, 0x01, 0x00, 0x02}};   // pos (0, 0, 500), heading 512
+    SourceAttractServbot sb;
+    require(spawn_source_attract_servbot(r4, cast, sb) && sb.slot == 1 && sb.id == 4 && sb.request == 1 && sb.big == 1 &&
+            sb.raw[2] == 500 && sb.fixed[2] == (500 << 16) && sb.heading == 512 && sb.scale()[0] == 1024 && sb.behaviour == 0x8010241Cu,
+            "servbot spawn fields");
+    ReferenceTables refs;
+    auto an = update_source_attract_servbot_8010205c(sb, 1, refs);
+    require(an.reset && an.request == 1 && sb.raw[0] == -3 && sb.raw[2] == 497 && sb.fixed[0] == int32_t(0xFFFC6A7Fu), "first tick: request + walk step");
+    for (uint32_t t = 2; t < 20; ++t) update_source_attract_servbot_8010205c(sb, t, refs);
+    require(sb.raw[0] == -57 && sb.raw[2] == 443, "x/z -3 per tick for 19 ticks");
+    an = update_source_attract_servbot_8010205c(sb, 20, refs);
+    require(an.step && sb.raw[0] == -57 && sb.raw[2] == 442, "then z -1 only");
+    std::array<uint8_t,20> ship{{0, 0x0B, 10, 0x20}};
+    require(!spawn_source_attract_servbot(ship, cast, sb), "other classes are not Servbots");
+    // The corridor callback (record 1, so its first tick has +0x10 == 0)
+    // spawns records 4..6 after releasing three slots.
+    SourceAttractProfile pc = p; pc.timelines[1] = {0x801060D4u, {{{rec(0, 0, 2), 0x801007E0u}}, {{rec(2, 0, 5), 0x801009B8u}}, {{0xFFu, 0}}}};
+    SourceAttractEvent10State cs;
+    int first = -1; unsigned count = 0, released = 0;
+    while (cs.phase != 2 && first < 0) {
+        const auto t = step_source_attract_event10_80100330(cs, pc, L, true, 0, false);
+        if (t.spawn_first >= 0) { first = t.spawn_first; count = t.spawn_count; released = t.release_slots; }
+    }
+    require(first == 4 && count == 3 && released == 3, "corridor spawn list");
     std::puts("source_attract_event10: camera waits/cuts/velocity, timeline, phases, area request, end and skip fades OK");
 }

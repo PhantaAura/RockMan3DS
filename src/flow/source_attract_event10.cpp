@@ -15,6 +15,16 @@ bool bind_source_attract_profile(const SourceScenePackage& pkg, SourceAttractPro
     p.timelines = {{*t0, *t1}}; p.cameras = {{*c0, *c1}};
     for (size_t i = 0; i < 8; ++i) for (size_t k = 0; k < 8; ++k) p.bg_rows[i][k] = rows->bytes[i * 8 + k];
     p.area_requests = pkg.area_requests;
+    // Spawn records (--extra 80105B8C:580) and the Servbot behaviour table
+    // (--extra 8010663C:100); both optional for the logic, required for the cast.
+    if (const auto* rec = pkg.data_at(0x80105B8Cu))
+        for (size_t k = 0; k + 20 <= rec->bytes.size(); k += 20) {
+            std::array<uint8_t,20> r{}; for (size_t i = 0; i < 20; ++i) r[i] = rec->bytes[k + i]; p.records.push_back(r);
+        }
+    if (const auto* beh = pkg.data_at(0x8010663Cu))
+        for (size_t k = 0; k + 4 <= beh->bytes.size(); k += 4)
+            p.servbot_behaviours.push_back(uint32_t(beh->bytes[k]) | (uint32_t(beh->bytes[k + 1]) << 8) |
+                                           (uint32_t(beh->bytes[k + 2]) << 16) | (uint32_t(beh->bytes[k + 3]) << 24));
     p.loaded = true;
     out = std::move(p);
     return true;
@@ -42,8 +52,16 @@ uint32_t run_callback(SourceAttractEvent10State& st, const SourceAttractProfile&
         if (first) { flags(3, 0); flags(7, 0); }
         if (st.event.c10 == 130) ++out.actor_callbacks;
         break;
-    case 0x80100944u: case 0x801009B8u: case 0x80100B14u: case 0x80100B98u:
-    case 0x80100C4Cu: case 0x80100CCCu: if (first) ++out.actor_callbacks; break;
+    // First tick: release the previous slots (0x80031824 on event+0x24..),
+    // spawn consecutive records (0x8001EAE8). Record indices into 0x80105B8C.
+    case 0x80100944u: if (first) { out.release_slots = 1; out.spawn_first = 1; out.spawn_count = 3; } break;
+    case 0x801009B8u:   // also releases the 64-entry pool 0x800A3B40; two objects at 130 (not ported)
+        if (first) { out.release_slots = 3; out.spawn_first = 4; out.spawn_count = 3; }
+        if (st.event.c10 == 130) ++out.actor_callbacks;
+        break;
+    case 0x80100B14u: if (first) { out.release_slots = 3; out.spawn_first = 7; out.spawn_count = 5; } break;
+    case 0x80100B98u: if (first) { out.release_slots = 5; out.spawn_first = 12; out.spawn_count = 3; } break;
+    case 0x80100C4Cu: if (first) { out.release_slots = 3; out.spawn_first = 15; out.spawn_count = 14; } break;
     default: break;
     }
     // The importer's callback -> area requests (0x80100CD4 on the first tick).
@@ -115,5 +133,63 @@ SourceAttractEvent10Step step_source_attract_event10_80100330(SourceAttractEvent
         step_source_timeline_8001f070(st.event, st.record, prof.timelines[st.timeline]);
     }
     return out;
+}
+
+bool spawn_source_attract_servbot(const std::array<uint8_t,20>& r, const SourceAttractProfile& prof,
+                                  SourceAttractServbot& out) noexcept {
+    if (r[3] != 0x20 || r[1] != 0x00 || r[2] != 4) return false;
+    SourceAttractServbot s;
+    s.slot = r[0]; s.id = r[8]; s.request = r[9]; s.big = r[10]; s.byte_0f = r[11];
+    for (size_t i = 0; i < 3; ++i) { s.raw[i] = int16_t(rd16(&r[12 + 2 * i])); s.fixed[i] = int32_t(uint32_t(int32_t(s.raw[i])) << 16); }
+    s.heading = rd16(&r[18]);
+    if (s.id >= prof.servbot_behaviours.size()) return false;
+    s.behaviour = prof.servbot_behaviours[s.id];
+    out = s;
+    return true;
+}
+
+SourceAttractAnimation update_source_attract_servbot_8010205c(SourceAttractServbot& s, uint32_t t, const ReferenceTables& refs) noexcept {
+    SourceAttractAnimation a;
+    if (s.state == 0) s.state = 1;   // 0x8010212C (flags, model, scale by +0xE, floor query) then the behaviour
+    const auto move = [&](int16_t forward) {   // 0x8002FEA4(work, forward, 0, 0)
+        const auto d = reference_player_motion_delta(refs, s.heading, forward, 0, 0);
+        const std::array<int32_t,3> delta{{d.dx_fixed, d.dy_fixed, d.dz_fixed}};
+        for (size_t i = 0; i < 3; ++i) {
+            s.fixed[i] = int32_t(uint32_t(s.fixed[i]) + uint32_t(delta[i]));
+            s.raw[i] = reference_fixed_to_short_80030150(s.fixed[i]);
+        }
+    };
+    const auto animate = [&](uint8_t request) {   // +9 == 0: 0x800322A8(request); else 0x80032488
+        if (!s.started) { a.reset = true; a.request = request; s.started = 1; } else a.step = true;
+    };
+    const int32_t c = int32_t(t);
+    switch (s.behaviour) {
+    case 0x801021DCu: animate(s.request); break;
+    case 0x80102238u: animate(s.request); a.shadow = true; break;
+    case 0x801022B8u:
+        if (c < 20) { s.raw[2] = int16_t(s.raw[2] - 3); s.fixed[2] = int32_t(uint32_t(s.fixed[2]) + 0xFFFC6A7Fu); }
+        else if (c < 40) {
+            s.raw[0] = int16_t(s.raw[0] + 1); s.raw[2] = int16_t(s.raw[2] - 1);
+            s.fixed[0] = int32_t(uint32_t(s.fixed[0]) + 0x00019581u); s.fixed[2] = int32_t(uint32_t(s.fixed[2]) - 0x00019581u);
+        }
+        animate(s.request); a.shadow = true; break;
+    case 0x8010239Cu: move(128); animate(s.request); a.shadow = true; break;
+    case 0x8010241Cu:
+        if (c < 20) {
+            s.raw[2] = int16_t(s.raw[2] - 3); s.fixed[2] = int32_t(uint32_t(s.fixed[2]) + 0xFFFC6A7Fu);
+            s.raw[0] = int16_t(s.raw[0] - 3); s.fixed[0] = int32_t(uint32_t(s.fixed[0]) + 0xFFFC6A7Fu);
+        } else if (c < 40) { s.raw[2] = int16_t(s.raw[2] - 1); s.fixed[2] = int32_t(uint32_t(s.fixed[2]) + 0xFFFE6A7Fu); }
+        animate(s.request); a.shadow = true; break;
+    case 0x80102500u: if (c >= 76) move(256); animate(s.request); a.shadow = true; break;
+    case 0x80102590u:
+        a.shadow = true;
+        if (!s.started) { a.reset = true; a.request = s.request; s.started = 1; break; }
+        if (c >= 81 && c < 139) move(128);
+        if (c == 125) { a.reset = true; a.request = 19; } else a.step = true;
+        break;
+    case 0x80102678u: move(64); animate(s.request); a.shadow = true; break;
+    default: animate(s.request); break;   // unported behaviour: animate in place
+    }
+    return a;
 }
 } // namespace l3
