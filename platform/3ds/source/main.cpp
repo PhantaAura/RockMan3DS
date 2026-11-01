@@ -2720,14 +2720,26 @@ bool psx_emit_player(const std::vector<l3::PlayerVisualPrimitive>& local_visuals
 bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::ImportedActorPoseMatrices& pose) {
     // Dynamic class40 owners share the presentation container, but their
     // original draw path is 0x80028F90 rather than this class20 packet path.
-    // Class 0x40 cutscene actors (ST07 Teisel) share this flat class-0x20 packet path (CANDIDATE colour/ramp).
+    // Class 0x40 cutscene actors (ST07 Teisel) share this flat class-0x20 packet
+    // path, with 0x80028F90's unshifted actor point for colour and ramp.
     if ((actor.source_class != 0x20 && actor.source_class != 0x40) || !g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
     ++g_psx_stats.class20_actors;
     const auto& cam = *g_psx_camera;
     const auto& root = pose.world[0];
     int16_t ax = 0, ay = 0; uint16_t asz = 0, air0 = 0;
-    if (!psx_rtps(int32_t(std::lround(root.m[3])), int32_t(std::lround(root.m[7])), int32_t(std::lround(root.m[11])),
-                  ax, ay, asz, &air0)) return false;
+    const int32_t rx = int32_t(std::lround(root.m[3])), ry = int32_t(std::lround(root.m[7])), rz = int32_t(std::lround(root.m[11]));
+    if (actor.source_class == 0x40 && g_psx_tr_1f800030) {
+        // 0x80028F90: the actor point is raw (not shifted) with translation
+        // 0x1F800030; colour/ramp come from its IR0 and SZ (oracle: ST07
+        // Teisel +0x15E = 0x4210 at 0x800C3580).
+        auto gte = cam.gte;
+        for (int r = 0; r < 3; ++r) gte.control[5 + r] = uint32_t((*g_psx_tr_1f800030)[size_t(r)]);
+        gte.data[0] = uint32_t(uint16_t(int16_t(rx))) | (uint32_t(uint16_t(int16_t(ry))) << 16);
+        gte.data[1] = uint32_t(uint16_t(int16_t(rz)));
+        const auto p = l3::source_gte_rtps_0180001(gte);
+        if (p.status != l3::SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return false;
+        asz = p.depth; air0 = uint16_t(gte.data[8]);
+    } else if (!psx_rtps(rx, ry, rz, ax, ay, asz, &air0)) return false;
     uint16_t c15 = 0x4210;
     if (actor.source_behavior) c15 = actor.source_behavior->work_15e;
     else if (actor.source_reaverbot19) c15 = actor.source_reaverbot19->shade_15e;
