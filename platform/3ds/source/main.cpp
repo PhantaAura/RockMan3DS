@@ -3687,8 +3687,22 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             g_psx_far_1f800006 = kFarByShift[v.shift < 3 ? v.shift : 0];
             g_psx_tr_1f800030 = cv.translation_1f800030;
             if (terrain) draw_terrain(&faces, 0, l3::kObservedArea1BackFaceThreshold, &cells);
-            if (ship_live) (void)psx_emit_class20(ship, l3::build_imported_actor_pose_matrices(ship));
+            if (ship_live) {
+                const auto before = g_psx_stats;
+                const bool emitted = psx_emit_class20(ship, l3::build_imported_actor_pose_matrices(ship));
+                static uint32_t last_ship_trace = UINT32_MAX;
+                if (tick / 60u != last_ship_trace) {   // about once per two seconds
+                    last_ship_trace = tick / 60u;
+                    hardware_test_trace("# attract_ship,tick=%lu,emitted=%u,packets=%lu,culled=%lu,unsupported=%lu,origin=%d:%d:%d,camera_target=%d:%d:%d,distance=%d",
+                        (unsigned long)tick, unsigned(emitted), (unsigned long)(g_psx_stats.actor_packets - before.actor_packets),
+                        (unsigned long)(g_psx_stats.actor_culled - before.actor_culled), (unsigned long)(g_psx_stats.actor_unsupported - before.actor_unsupported),
+                        int(ship.source_origin[0]), int(ship.source_origin[1]), int(ship.source_origin[2]), int(v.target[0]), int(v.target[1]), int(v.target[2]), int(v.distance));
+                }
+            }
+            const auto unresolved_before = g_psx_stats.unresolved;
             psx_draw_ot(false);
+            if (ship_live && g_psx_stats.unresolved != unresolved_before && tick % 60u == 0u)
+                hardware_test_trace("# attract_ship_unresolved,tick=%lu,count=%lu", (unsigned long)tick, (unsigned long)(g_psx_stats.unresolved - unresolved_before));
             psx_draw_ot(true);
             g_psx_camera.reset(); g_psx_tr_1f800030.reset();
             C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
