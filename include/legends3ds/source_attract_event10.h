@@ -48,6 +48,8 @@ struct SourceAttractEvent10Step {
     int8_t spawn_first = -1;        // 0x8001EAE8 on records [spawn_first, spawn_first + spawn_count)
     uint8_t spawn_count = 0;
     uint32_t callback = 0;          // record callback run this tick (0 = none)
+    uint8_t fx_spawn = 0;           // class-0x80 emitters: 1 = 0x8010086C at 130, 2 = 0x801009B8 at 130
+    bool fx_clear = false;          // 0x801009B8 first tick: 0x80031988 on all 64 slots of 0x800A3B40
 };
 // One tick of 0x80100330. cd_done: 0x8001D878; fade_busy: 0x800A8A72;
 // start: pad bit 8 (0x800C0C2A). layers: the 0x800BBA90 records (area 0
@@ -115,6 +117,34 @@ struct SourceAttractTeiselStep {
 };
 SourceAttractTeiselStep update_source_attract_teisel_8010384c(SourceAttractTeisel& teisel, const SourceAttractProfile& profile,
                                                                const SourceEventCounters& event) noexcept;
+
+// Class 0x80 type 8 (ST07 0x801055B8[8] = 0x801046A0; +13 == 0: emitter
+// 0x80106C14[+3], else puff 0x80106C1C[+3]), pool 0x800A3B40 (64 x 0x48).
+// Emitters (flags 1, never drawn) spawn a puff when (+9 & 7) == 0, then
+// +9 += 1. Set 1 (0x8010086C, shot 2:0 tick 130): x -256, y -672 - 32i,
+// z 280 + 63i, +9 = 6 - 2i, i 0..3; state 0 (0x8010470C) puffs: life 20,
+// sprite 0x3D48000E, colour 0x2E808080, uv (32, 0), scale (rand & 7) + 16;
+// each update (0x801047E0) drawn only while event+8 == 1; at life 15/10/5
+// u += 32; y -= 1 + life / 3, scale += 1 + life / 6, life -= 1; released
+// at 0. Set 2 (0x801009B8, shot 0:2 tick 130): (-18, -79, 200) +9 = 8 and
+// (28, -79, 200) +9 = 4; state 1 (0x80104904) puffs: life 32, z += rand & 3,
+// x += rand & 3, sprite 0x3D4E002E, colour 0x2E404040, uv (32, 0), scale
+// (rand & 3) + 18; each update (0x801049F4) drawn only while event+8 == 3
+// and event+0x10 > 0; colour += 0xFFFDFDFE, y -= life < 17 ? 2 : 1,
+// life -= 1. rand is 0x8007FE50 (the LCG; its seed here is CANDIDATE).
+// New puffs are not updated on their spawn pass (CANDIDATE slot order).
+struct SourceAttractFx {
+    bool emitter = false;
+    uint8_t state = 0, counter = 0, u = 0, v = 0;   // +3, +9, +0x22, +0x23
+    int8_t life = 0;                                 // +14
+    std::array<int16_t,3> pos{};                     // +0x1C
+    uint16_t scale = 0;                              // +0x24
+    uint32_t material = 0, colour = 0;               // +0x14, +0x18
+    bool visible = false;                            // flags bit 1
+};
+struct SourceAttractFxPool { std::vector<SourceAttractFx> objects; uint32_t rand_next = 1; };
+void spawn_source_attract_fx(SourceAttractFxPool& pool, uint8_t set) noexcept;
+void update_source_attract_fx(SourceAttractFxPool& pool, const SourceEventCounters& event) noexcept;
 
 // Fade type 20 (the scene's natural end, 0x80017C30 -> mode 2, sequence
 // 0x800821E0[2] = steps 0, 4, 1): step 4 is the iris wipe 0x80018BB8. Its

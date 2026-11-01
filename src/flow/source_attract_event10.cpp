@@ -50,16 +50,16 @@ uint32_t run_callback(SourceAttractEvent10State& st, const SourceAttractProfile&
     case 0x80100834u:   // top-down shot: side sea off, top sea and cloud strips on
         if (first) { flags(0, 0); flags(1, 3); flags(3, 3); flags(7, 3); }
         break;
-    case 0x8010086Cu:   // strips off; actor spawns at +0x10 == 130 (not ported)
+    case 0x8010086Cu:   // strips off; the chimney-smoke emitters at +0x10 == 130
         if (first) { flags(3, 0); flags(7, 0); }
-        if (st.event.c10 == 130) ++out.actor_callbacks;
+        if (st.event.c10 == 130) out.fx_spawn = 1;
         break;
     // First tick: release the previous slots (0x80031824 on event+0x24..),
     // spawn consecutive records (0x8001EAE8). Record indices into 0x80105B8C.
     case 0x80100944u: if (first) { out.release_slots = 1; out.spawn_first = 1; out.spawn_count = 3; } break;
-    case 0x801009B8u:   // also releases the 64-entry pool 0x800A3B40; two objects at 130 (not ported)
-        if (first) { out.release_slots = 3; out.spawn_first = 4; out.spawn_count = 3; }
-        if (st.event.c10 == 130) ++out.actor_callbacks;
+    case 0x801009B8u:   // also releases the 64-entry pool 0x800A3B40; the steam emitters at 130
+        if (first) { out.release_slots = 3; out.spawn_first = 4; out.spawn_count = 3; out.fx_clear = true; }
+        if (st.event.c10 == 130) out.fx_spawn = 2;
         break;
     case 0x80100B14u: if (first) { out.release_slots = 3; out.spawn_first = 7; out.spawn_count = 5; } break;
     case 0x80100B98u: if (first) { out.release_slots = 5; out.spawn_first = 12; out.spawn_count = 3; } break;
@@ -261,6 +261,69 @@ SourceAttractTeiselStep update_source_attract_teisel_8010384c(SourceAttractTeise
     }
     return out;
 }
+namespace {
+constexpr size_t kFxPoolSlots = 64;
+uint32_t fx_rand_8007fe50(SourceAttractFxPool& pool) noexcept {
+    pool.rand_next = pool.rand_next * 1103515245u + 12345u;
+    return (pool.rand_next >> 16) & 0x7FFFu;
+}
+} // namespace
+
+void spawn_source_attract_fx(SourceAttractFxPool& pool, uint8_t set) noexcept {
+    const auto add = [&](int16_t x, int16_t y, int16_t z, uint8_t counter, uint8_t state) {
+        if (pool.objects.size() >= kFxPoolSlots) return;
+        SourceAttractFx e; e.emitter = true; e.state = state; e.counter = counter; e.pos = {{x, y, z}};
+        pool.objects.push_back(e);
+    };
+    if (set == 1) for (int i = 0; i < 4; ++i) add(-256, int16_t(-672 - 32 * i), int16_t(280 + 63 * i), uint8_t(6 - 2 * i), 0);
+    if (set == 2) { add(-18, -79, 200, 8, 1); add(28, -79, 200, 4, 1); }
+}
+
+void update_source_attract_fx(SourceAttractFxPool& pool, const SourceEventCounters& event) noexcept {
+    const size_t n = pool.objects.size();
+    std::vector<SourceAttractFx> spawned;
+    for (size_t i = 0; i < n; ++i) {
+        auto& o = pool.objects[i];
+        if (o.emitter) {
+            if ((o.counter & 7) == 0 && n + spawned.size() < kFxPoolSlots) {
+                SourceAttractFx p; p.state = o.state; p.pos = o.pos; p.u = 32; p.v = 0;
+                if (o.state == 0) {
+                    p.life = 20; p.material = 0x3D48000Eu; p.colour = 0x2E808080u;
+                    p.scale = uint16_t((fx_rand_8007fe50(pool) & 7) + 16);
+                } else {
+                    p.life = 32;
+                    p.pos[2] = int16_t(p.pos[2] + (fx_rand_8007fe50(pool) & 3));
+                    p.pos[0] = int16_t(p.pos[0] + (fx_rand_8007fe50(pool) & 3));
+                    p.material = 0x3D4E002Eu; p.colour = 0x2E404040u;
+                    p.scale = uint16_t((fx_rand_8007fe50(pool) & 3) + 18);
+                }
+                spawned.push_back(p);
+            }
+            ++o.counter;
+            continue;
+        }
+        if (o.state == 0) {
+            o.visible = event.e8 == 1;
+            if (o.life <= 0) { o.life = -128; continue; }   // 0x80031988
+            if (o.life == 15 || o.life == 10 || o.life == 5) o.u = uint8_t(o.u + 32);
+            const int a0 = o.life / 3, a1 = o.life / 6;
+            --o.life;
+            o.pos[1] = int16_t(o.pos[1] - 1 - a0);
+            o.scale = uint16_t(o.scale + a1 + 1);
+        } else {
+            o.visible = event.e8 == 3 && int32_t(event.c10) > 0;
+            if (o.life <= 0) { o.life = -128; continue; }
+            o.colour += 0xFFFDFDFEu;
+            o.pos[1] = int16_t(o.pos[1] - (o.life < 17 ? 2 : 1));
+            --o.life;
+        }
+    }
+    std::vector<SourceAttractFx> kept;
+    for (const auto& o : pool.objects) if (o.emitter || o.life != -128) kept.push_back(o);
+    for (const auto& p : spawned) kept.push_back(p);
+    pool.objects.swap(kept);
+}
+
 void start_source_iris_80018bb8(SourceIrisWipe& iris) noexcept { iris.state = 1; iris.counter = 60; }
 
 SourceIrisFrame step_source_iris_80018bb8(SourceIrisWipe& iris) noexcept {

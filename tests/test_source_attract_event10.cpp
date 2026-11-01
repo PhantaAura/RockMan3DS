@@ -164,6 +164,28 @@ int main() {
     // tick 10: set (prev -1) then step -> index 1 (frame 4); 11 -> frame 3; 12 -> 127 -> frame 2; 13 -> 4 ...
     require(mouth.size() >= 4 && mouth[0] == source_face_offset_8002d404(4, 42, 64, 6) && mouth[1] == source_face_offset_8002d404(3, 42, 64, 6) &&
             mouth[2] == source_face_offset_8002d404(2, 42, 64, 6) && mouth[3] == source_face_offset_8002d404(4, 42, 64, 6), "talking loop with 127 wrap");
+    // Class 0x80 type 8: the chimney smoke (set 1) and the steam (set 2).
+    SourceAttractFxPool fx; SourceEventCounters fev; fev.e8 = 1;
+    spawn_source_attract_fx(fx, 1);
+    require(fx.objects.size() == 4 && fx.objects[3].pos[1] == -768 && fx.objects[3].pos[2] == 469 && fx.objects[3].counter == 0,
+            "smoke emitters: 4 at (-256, -672 - 32i, 280 + 63i), +9 = 6 - 2i");
+    update_source_attract_fx(fx, fev);   // emitter 3 (+9 = 0) puffs
+    require(fx.objects.size() == 5 && !fx.objects[4].emitter && fx.objects[4].life == 20 && fx.objects[4].material == 0x3D48000Eu &&
+            fx.objects[4].scale >= 16 && fx.objects[4].scale <= 23, "a puff: life 20, sprite 0x3D48000E, scale 16..23");
+    const uint16_t s0 = fx.objects[4].scale;
+    update_source_attract_fx(fx, fev);
+    require(fx.objects[4].visible && fx.objects[4].life == 19 && fx.objects[4].pos[1] == -768 - 7 && fx.objects[4].scale == s0 + 4,
+            "puff update: y -= 1 + 20/3, scale += 1 + 20/6");
+    fev.e8 = 0; update_source_attract_fx(fx, fev);
+    require(!fx.objects[4].visible, "smoke drawn only while event+8 == 1");
+    SourceAttractFxPool steam; spawn_source_attract_fx(steam, 2);
+    update_source_attract_fx(steam, fev);   // emitter 1 (+9 = 8) puffs on its first pass
+    require(steam.objects.size() == 3 && steam.objects[2].life == 32 && steam.objects[2].colour == 0x2E404040u &&
+            steam.objects[2].material == 0x3D4E002Eu, "steam puff: life 32, colour 0x404040, sprite 0x3D4E002E");
+    fev.e8 = 3; fev.c10 = 1; update_source_attract_fx(steam, fev);
+    require(steam.objects[2].visible && steam.objects[2].colour == 0x2E3E3E3Eu && steam.objects[2].pos[1] == -80,
+            "steam update: colour -2 per channel, y -= 1 (life >= 17)");
+
     // Fade type 20: the iris 0x80018BB8.
     SourceIrisWipe iris; start_source_iris_80018bb8(iris);
     std::vector<SourceIrisFrame> frames;

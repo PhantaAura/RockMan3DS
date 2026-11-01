@@ -491,6 +491,12 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 with open(bgw,'a') as f: f.write('3ef40045\n')
                 run(tools,'l3cook_word_materials',aout/'attract_bg.l3mc',bgw,'--ebd',aout/'attract.l3ebd',
                     dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN',dat/'ST02_00.BIN')
+                # The class-0x80 type-8 sprites: chimney smoke (CLUT 0x3D48 | TPAGE
+                # 0x0E) and steam (0x3D4E | 0x2E), DEMO_DAT's pages and palettes; both
+                # palettes match the oracle's VRAM (128/224, 245) during the scene
+                # (ST02_00's smoke palette differs, so their own cache).
+                fxw=td/'attract_fx_words.txt'; fxw.write_text('3d48000e\n3d4e002e\n')
+                run(tools,'l3cook_word_materials',aout/'attract_fx.l3mc',fxw,dat/'DEMO_DAT.BIN')
                 manifest['attract_stage']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str(aout.relative_to(out)),
                     'source':'ST07.BIN map/stage + ST07_00.BIN pages; areas 1-4 (oracle: 0x800C1B61 = event+8)'}

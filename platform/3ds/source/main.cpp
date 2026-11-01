@@ -2816,6 +2816,61 @@ void psx_emit_shadow(int16_t x, int16_t floor_y, int16_t z, int32_t radius, int3
     }, size_t(depth >> 1));
 }
 
+// A class-0x80 sprite of 0x80029C18 (draw pass 0x80029B10, table
+// 0x800898D0[0]) for flags without 0x20 (rotation) or 0x08 (flat colour):
+// view = R * pos + TR (raw pos with 0x1F800030 at shift 0, else pos <<
+// shift with the camera translation); drawn for view z in 192..far * 4;
+// half size s = scale << shift; RTPT of (vx - s, vy - s), (vx + s, vy - s)
+// and the centre (identity rotation, no translation): xy2 = 2c - xy1,
+// xy3 = 2c - xy0; colour = DPCS(colour word) at the centre's IR0; uv (u, v),
+// +31 across/down; CLUT/TPAGE from the material word; bucket vz >> 3.
+void psx_emit_sprite_80029c18(const std::array<int16_t,3>& pos, uint16_t scale, uint8_t u, uint8_t v,
+                              uint32_t material, uint32_t colour) {
+    if (!g_psx_camera || !g_psx_tr_1f800030 || !g_psx_ot.size()) return;
+    const auto& cam = *g_psx_camera;
+    const uint8_t sh = cam.lod_1f800074 & 31;
+    const auto R = [&](int r, int c) { const size_t k = size_t(r * 3 + c);
+        const uint32_t w = cam.gte.control[k / 2]; return int64_t(int16_t(uint16_t(k & 1 ? w >> 16 : w))); };
+    const int64_t p[3] = {int64_t(pos[0]) << sh, int64_t(pos[1]) << sh, int64_t(pos[2]) << sh};
+    int32_t vw[3];
+    for (int r = 0; r < 3; ++r) {
+        const int64_t tr = sh ? int32_t(cam.gte.control[5 + r]) : (*g_psx_tr_1f800030)[size_t(r)];
+        vw[r] = int32_t(tr + ((R(r, 0) * p[0] + R(r, 1) * p[1] + R(r, 2) * p[2]) >> 12));
+    }
+    const auto far = session_far_1f800006();
+    if ((far && int32_t(*far) * 4 < vw[2]) || vw[2] < 192) return;
+    const int32_t s = int32_t(scale) << sh;
+    auto gte = cam.gte;
+    gte.control[0] = 0x1000u; gte.control[1] = 0; gte.control[2] = 0x1000u; gte.control[3] = 0; gte.control[4] = 0x1000u;
+    gte.control[5] = gte.control[6] = gte.control[7] = 0;
+    const auto rtps = [&](int32_t x, int32_t y, PsxVert& out) {
+        gte.data[0] = uint32_t(uint16_t(int16_t(x))) | (uint32_t(uint16_t(int16_t(y))) << 16);
+        gte.data[1] = uint32_t(uint16_t(int16_t(vw[2])));
+        const auto q = l3::source_gte_rtps_0180001(gte);
+        out.done = true; out.ok = q.status == l3::SourcePlayerProxyStatus::SourceBackedPartial && q.depth != 0;
+        out.sx = int16_t(uint16_t(q.screen_xy)); out.sy = int16_t(uint16_t(q.screen_xy >> 16)); out.sz = q.depth;
+        out.ir0 = uint16_t(gte.data[8]);
+    };
+    PsxVert v0, v1, c;
+    rtps(vw[0] - s, vw[1] - s, v0); rtps(vw[0] + s, vw[1] - s, v1); rtps(vw[0], vw[1], c);
+    if (!v0.ok || !v1.ok || !c.ok) return;
+    // The 3DS depth/xy extras: the world centre's (every corner shares its depth).
+    const PsxVert centre3d = psx_project_vert({{float(pos[0]), float(pos[1]), float(pos[2])}});
+    PsxVert v2 = c, v3 = c;
+    v2.sx = int16_t(2 * c.sx - v1.sx); v2.sy = int16_t(2 * c.sy - v1.sy);
+    v3.sx = int16_t(2 * c.sx - v0.sx); v3.sy = int16_t(2 * c.sy - v0.sy);
+    for (PsxVert* q : {&v0, &v1, &v2, &v3}) { q->depth = centre3d.depth; q->nx = centre3d.nx; q->ny = centre3d.ny; }
+    const uint32_t code = psx_depth_cue(colour, c.ir0);
+    psx_emit_model_prim({{&v0, &v1, &v2, &v3}}, 4, true, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+        l3::psxgpu::PolyFt4 poly; poly.code_rgb = (code & 0x00FFFFFFu) | (colour & 0xFF000000u);
+        const uint8_t u1 = uint8_t(u + 31), v1b = uint8_t(v + 31);
+        const std::array<uint8_t,8> uv{{u, v, u1, v, u, v1b, u1, v1b}};
+        for (size_t k = 0; k < 4; ++k) { poly.x[k] = sx[k]; poly.y[k] = sy[k]; poly.u[k] = uv[2 * k]; poly.v[k] = uv[2 * k + 1]; }
+        poly.clut = uint16_t(material >> 16); poly.tpage = uint16_t(material);
+        return poly;
+    }, size_t(vw[2] >> 3));
+}
+
 // The scene class-40 actor through the OT (0x80028F90 -> 0x80029608).
 // Visibility at the actor point work+0x14 (raw, not shifted): SZ3>>2 against
 // 0x1F800006 (far), 48>>shift (near) and SX/SY windows -352..672/-136..888;
@@ -3644,14 +3699,15 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         boot_log(MML_BOOT_DATA, line);
     }
     // Background pages: the front-end material slot, as the narration uses.
-    {
-        const auto cache = l3::load_l3material_cache(read_binary(data_path("attract/attract_bg.l3mc")), true);
+    // attract_fx.l3mc: the smoke sprite (its palette comes from another container).
+    for (const char* rel : {"attract/attract_bg.l3mc", "attract/attract_fx.l3mc"}) try {
+        const auto cache = l3::load_l3material_cache(read_binary(data_path(rel)), true);
         for (const auto& e : cache.entries) {
             if (!e.resolved) continue;
             GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
             auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
         }
-    }
+    } catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
     release_all_render_resources();   // area 0 (the exterior) has no terrain
     psx_resolver_reset();
     l3::SourceBgLayers layers{};
@@ -3680,6 +3736,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
     std::vector<l3::FrontendPacket> packets;
     // Fade type 20 (the natural end): the iris wipe 0x80018BB8, then black.
     l3::SourceIrisWipe iris; l3::SourceIrisFrame iris_frame; bool iris_black = false;
+    l3::SourceAttractFxPool fx;   // class 0x80 type 8: chimney smoke, steam
     l3::GameplayClock clock;
     u64 last_tick = svcGetSystemTick();
     uint32_t tick = 0;
@@ -3795,6 +3852,9 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                 b.shadow = anim.shadow;
             }
             if (step.cd_command) xa_start_pending = true;
+            if (step.fx_clear) fx.objects.clear();
+            if (step.fx_spawn) l3::spawn_source_attract_fx(fx, step.fx_spawn);
+            l3::update_source_attract_fx(fx, event.event);   // the object pass after the handler
             // The iris advances one pass per tick; its first pass only builds the ring.
             if (iris.state) {
                 iris_frame = l3::step_source_iris_80018bb8(iris);
@@ -3971,6 +4031,8 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                 for (const auto& b : servbots) if (b.shadow && !b.needs_floor) shadow(b.logic.raw, b.logic.big == 1 ? 80 : 40, b.logic.heading);
                 for (const auto& st : statics) if (!st.needs_floor) shadow(st.logic.raw, 48, st.logic.heading);
             }
+            for (const auto& o : fx.objects)
+                if (!o.emitter && o.visible) psx_emit_sprite_80029c18(o.pos, o.scale, o.u, o.v, o.material, o.colour);
             const auto unresolved_before = g_psx_stats.unresolved;
             psx_draw_ot(false);
             if (ship_live && g_psx_stats.unresolved != unresolved_before && tick % 60u == 0u)
