@@ -95,7 +95,9 @@ std::vector<FrontendPacket> draw_source_bg_layers_80023144(const SourceBgLayers&
                 const int r = ((row % l.height) + l.height) % l.height, c = col % l.width;
                 const uint32_t t = l.tiles[size_t(r) * size_t(l.width) + size_t(c)] + (uint32_t(l.tile_add) << 14);
                 const uint32_t u = t & 0xFFu, v = (t >> 8) & 0xFFu, clut = t >> 16;
-                const uint32_t u1 = u + 32 > 255 ? 255 : u + 32, v1 = v + 32 > 255 ? 255 : v + 32;
+                // The sprite shows texels u..u+31; the port samples (u + 0.5) / 256
+                // per vertex, so u + 32 would bleed the next tile's column.
+                const uint32_t u1 = (u + 31) & 0xFFu, v1 = (v + 31) & 0xFFu;
                 const uint32_t xa = uint16_t(x), xb = uint16_t(x + 32), ya = uint16_t(y), yb = uint16_t(y + 32);
                 FrontendPacket p; p.length = 9; p.bucket = uint16_t(28 + l.ot_entry);
                 p.words = {{code, (ya << 16) | xa, (clut << 16) | (v << 8) | u,

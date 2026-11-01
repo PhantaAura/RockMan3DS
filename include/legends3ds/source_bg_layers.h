@@ -53,8 +53,9 @@ SourceBgUpdate update_source_bg_layers_80023144(SourceBgLayers& layers) noexcept
 // 0x80023144 draw part: per drawn layer, one 32x32 tile per cell over the
 // 320x240 screen from -(x mod 32), -(y mod 32), map indices wrapping. Each
 // SPRT (code 0x64 | semi << 1, tpage from the preceding E1 word) is returned
-// as the identical POLY_FT4. Packets come in the original's draw order
-// (layers share OT entries and AddPrim prepends, so layer 10 draws first);
+// as a POLY_FT4 over the same 32x32 rectangle with texels u..u+31, v..v+31.
+// Packets come in the original's draw order (layers share OT entries and
+// AddPrim prepends, so layer 10 draws first);
 // bucket = 28 + ot_entry. widescreen_margin extends the columns by that many
 // pixels on each side (port presentation only; 0 = the original).
 std::vector<FrontendPacket> draw_source_bg_layers_80023144(const SourceBgLayers& layers, int widescreen_margin = 0);
