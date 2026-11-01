@@ -3641,6 +3641,8 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
     uint64_t xa_clock_frames = 0, xa_clock_remainder = 0;
     uint16_t pending_start = 0;
     std::vector<l3::FrontendPacket> packets;
+    // Fade type 20 (the natural end): the iris wipe 0x80018BB8, then black.
+    l3::SourceIrisWipe iris; l3::SourceIrisFrame iris_frame; bool iris_black = false;
     l3::GameplayClock clock;
     u64 last_tick = svcGetSystemTick();
     uint32_t tick = 0;
@@ -3755,12 +3757,25 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                 a.source_origin = b.logic.raw; a.heading = b.logic.heading;
             }
             if (step.cd_command) xa_start_pending = true;
+            // The iris advances one pass per tick; its first pass only builds the ring.
+            if (iris.state) {
+                iris_frame = l3::step_source_iris_80018bb8(iris);
+                if (iris_frame.done) {
+                    iris_black = true;
+                    fade.work_80098a68.raw[10] = fade.work_80098a68.raw[11] = 0;
+                }
+            }
             if (step.fade_type) {
                 l3::SourceFadeStartupResult started;
                 const bool mode0 = step.fade_type <= 11 && !(step.fade_type & 4);
                 if (mode0) started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, step.fade_type);
+                if (step.fade_type == 20 && !iris.state) {   // 0x80017C30 case 20: busy 0xFFFF, mode 2
+                    l3::start_source_iris_80018bb8(iris); iris_frame = {};
+                    fade.work_80098a68.raw[10] = fade.work_80098a68.raw[11] = 0xFF;
+                    fade.work_80098a68.known[10] = fade.work_80098a68.known[11] = 1;
+                }
                 if (step.fade_type == 2) visible = true;   // black (stage loading) until the fade-in
-                hardware_test_trace("# attract_fade,tick=%lu,type=%u,status=%u,ported=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status), unsigned(mode0));
+                hardware_test_trace("# attract_fade,tick=%lu,type=%u,status=%u,ported=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status), unsigned(mode0 || step.fade_type == 20));
             }
             if (step.area_request >= 0) pending_area = step.area_request;
             if (fade_intents.count && !fade_callback.running)
@@ -3842,6 +3857,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         psx_begin_frame();
         packets = visible ? l3::draw_source_bg_layers_80023144(layers, 40) : std::vector<l3::FrontendPacket>{};
         std::reverse(packets.begin(), packets.end());   // AddPrim prepends: last added draws first
+        if (iris_frame.draw) for (const auto& p : l3::build_source_iris_packets(iris_frame, refs, true)) packets.push_back(p);
         const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
         const auto add_packets = [&](bool behind_scene) {
             for (const auto& fp : packets) {
@@ -3918,6 +3934,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
         g_psx_xy_from_gte = xy;
         draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
+        if (iris_black) (void)draw_source_subtract_uv(255, 255, 255, 320, 240);
         C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
         submit_gpu_frame();
     }

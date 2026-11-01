@@ -164,5 +164,18 @@ int main() {
     // tick 10: set (prev -1) then step -> index 1 (frame 4); 11 -> frame 3; 12 -> 127 -> frame 2; 13 -> 4 ...
     require(mouth.size() >= 4 && mouth[0] == source_face_offset_8002d404(4, 42, 64, 6) && mouth[1] == source_face_offset_8002d404(3, 42, 64, 6) &&
             mouth[2] == source_face_offset_8002d404(2, 42, 64, 6) && mouth[3] == source_face_offset_8002d404(4, 42, 64, 6), "talking loop with 127 wrap");
-    std::puts("source_attract_event10: camera waits/cuts/velocity, timeline, phases, area request, end and skip fades OK");
+    // Fade type 20: the iris 0x80018BB8.
+    SourceIrisWipe iris; start_source_iris_80018bb8(iris);
+    std::vector<SourceIrisFrame> frames;
+    for (int i = 0; i < 80 && (frames.empty() || !frames.back().done); ++i) frames.push_back(step_source_iris_80018bb8(iris));
+    require(frames.size() == 65 && frames[0].inner == 240 && frames[0].outer == 210 && frames[59].inner == 4 && frames[59].outer == 210,
+            "iris state 1: 60 passes, inner 4c (c 60..1), outer 210");
+    require(frames[60].inner == 16 && frames[60].outer == 80 && frames[64].inner == 0 && frames[64].outer == 16 && frames[64].done &&
+            !frames[63].done && iris.state == 0, "iris state 2: c 4..0, outer 16c + 16, ends at 0");
+    const auto ring = build_source_iris_packets(frames[0], ReferenceTables{}, false);
+    require(ring.size() == 33 && ring[0].length == 8 && (ring[0].words[0] >> 24) == 0x3A && (ring[0].words[0] & 0xFFFFFFu) == 0 &&
+            ring[0].words[4] == 0xFFFFFFu && ring[32].length == 1 && ring[32].words[0] == 0xE1000740u && ring[0].bucket == 30,
+            "iris ring: 32 semi G4 (inner 0, outer white) then draw mode ABR 2");
+    require(build_source_iris_packets(frames[0], ReferenceTables{}, true).size() == 65, "widescreen adds the solid outer ring");
+    std::puts("source_attract_event10: camera waits/cuts/velocity, timeline, phases, area request, end and skip fades, iris OK");
 }

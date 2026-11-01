@@ -261,4 +261,52 @@ SourceAttractTeiselStep update_source_attract_teisel_8010384c(SourceAttractTeise
     }
     return out;
 }
+void start_source_iris_80018bb8(SourceIrisWipe& iris) noexcept { iris.state = 1; iris.counter = 60; }
+
+SourceIrisFrame step_source_iris_80018bb8(SourceIrisWipe& iris) noexcept {
+    SourceIrisFrame f;
+    if (iris.state == 1) {
+        f.draw = true; f.inner = int16_t(iris.counter * 4); f.outer = 210;
+        if (--iris.counter == 0) { iris.state = 2; iris.counter = 5; }
+    } else if (iris.state == 2) {
+        --iris.counter;
+        f.draw = true; f.inner = int16_t(iris.counter * 4); f.outer = int16_t(iris.counter * 16 + 16);
+        if (iris.counter == 0) { iris.state = 0; f.done = true; }
+    }
+    return f;
+}
+
+std::vector<FrontendPacket> build_source_iris_packets(const SourceIrisFrame& frame, const ReferenceTables& refs,
+                                                        bool widescreen) {
+    std::vector<FrontendPacket> out;
+    if (!frame.draw) return out;
+    const auto xy = [](int32_t x, int32_t y) { return uint32_t(uint16_t(int16_t(x))) | (uint32_t(uint16_t(int16_t(y))) << 16); };
+    // Ring radius r at angle step i: inner T * R >> 12; the fixed outer 210
+    // is T * 105 >> 11 (0x80018E00..); state 2's outer is T * R' >> 12.
+    const auto point = [&](size_t i, int32_t r, bool fixed210) {
+        const int32_t c = reference_rcos_8007a12c(refs, int32_t((i & 31u) << 7));
+        const int32_t s = reference_rsin_8007a060(refs, int32_t((i & 31u) << 7));
+        return fixed210 ? xy(((c * 105) >> 11) + 160, ((s * 105) >> 11) + 120)
+                        : xy(((c * r) >> 12) + 160, ((s * r) >> 12) + 120);
+    };
+    const bool fixed = frame.outer == 210;
+    const auto ring = [&](int32_t r0, bool fixed0, int32_t r1, bool fixed1, uint32_t colour0, uint32_t colour1) {
+        for (size_t i = 0; i < 32; ++i) {
+            FrontendPacket p; p.length = 8; p.bucket = 30;
+            p.words = {{0x3A000000u | colour0, point(i, r0, fixed0), colour0, point(i + 1, r0, fixed0),
+                        colour1, point(i, r1, fixed1), colour1, point(i + 1, r1, fixed1), 0u}};
+            out.push_back(p);
+        }
+    };
+    ring(frame.inner, false, frame.outer, fixed, 0u, 0xFFFFFFu);
+    // While the inner radius is still past 210 the original's ring lies off
+    // its 320-px screen; the widescreen fill starts beyond both radii.
+    if (widescreen) {
+        if (frame.inner > frame.outer) ring(frame.inner, false, 400, false, 0xFFFFFFu, 0xFFFFFFu);
+        else ring(frame.outer, fixed, 400, false, 0xFFFFFFu, 0xFFFFFFu);
+    }
+    FrontendPacket mode; mode.length = 1; mode.bucket = 30; mode.words[0] = 0xE1000740u;   // 0x8007DF38(dfe 1, dtd 1, tpage 0x140)
+    out.push_back(mode);
+    return out;
+}
 } // namespace l3

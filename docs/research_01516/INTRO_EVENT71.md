@@ -94,8 +94,8 @@ Scroll += 1 every 3 updates; the object releases (0x800319F4) at 1024.
 descriptor table at 0x80100D5C (ST01 stage init 0x801000A8). BG\CHAR
 ST01BG00..02 are its tiles. Callback 0x801002E4 shifts two layer offsets
 (0x800BBB20 -= 56, 0x800BBAE8 -= 16), sets 0x800BBA9C = 130 at tick 0, and
-from tick 2200 decrements it every 3 ticks to -11 (CANDIDATE: layer
-brightness fade-out). Not ported anywhere in the repo yet.
+from tick 2200 decrements it every 3 ticks to -11. 0x800BBA9C is layer 0's
+drawn x scroll (+0xC), not a brightness; ported in callback_801002e4.
 
 **Airship**: class init 0x8010080C (0x8002F9C4 model, +344 = 0x00200020,
 +348/+350 scale 32/16912, +86 = 1024) and action 0x801006A8: x (+20) -1 every

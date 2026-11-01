@@ -115,4 +115,24 @@ struct SourceAttractTeiselStep {
 };
 SourceAttractTeiselStep update_source_attract_teisel_8010384c(SourceAttractTeisel& teisel, const SourceAttractProfile& profile,
                                                                const SourceEventCounters& event) noexcept;
+
+// Fade type 20 (the scene's natural end, 0x80017C30 -> mode 2, sequence
+// 0x800821E0[2] = steps 0, 4, 1): step 4 is the iris wipe 0x80018BB8. Its
+// first pass builds the ring (no draw) and sets counter 60; then per fade
+// pass (one per game tick): state 1 draws inner radius 4c, outer 210
+// (T * 105 >> 11), then c -= 1 and at 0 goes to state 2 with c = 5; state 2
+// does c -= 1 first, draws inner 4c, outer 16c + 16, and at c = 0 ends
+// (busy 0x80098A72 clears after the sequence). Ring: 32 semi POLY_G4 (code
+// 0x3A; inner colour 0, outer 0xFFFFFF) around (160, 120), T[i] =
+// (rcos, rsin)(i * 128), after draw mode E1000740 (ABR 2: B - F), OT entry 30.
+struct SourceIrisWipe { uint8_t state = 0; int8_t counter = 0; };
+struct SourceIrisFrame { bool draw = false, done = false; int16_t inner = 0, outer = 0; };
+void start_source_iris_80018bb8(SourceIrisWipe& iris) noexcept;
+SourceIrisFrame step_source_iris_80018bb8(SourceIrisWipe& iris) noexcept;
+// The ring's packets for one frame (draw mode last, so it draws first after
+// the OT prepend). widescreen adds a solid ring from the outer radius to 400
+// (3DS: the 400-px screen's corners lie beyond 210; the oracle also shows
+// black outside the state-2 ring).
+std::vector<FrontendPacket> build_source_iris_packets(const SourceIrisFrame& frame, const ReferenceTables& refs,
+                                                        bool widescreen);
 } // namespace l3
