@@ -52,7 +52,31 @@ FrontendPacket source_intro_crawl_packet_80100a70(const SourceIntroCrawlStrip& s
     return p;
 }
 
-SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71State& st, int16_t busy) noexcept {
+namespace {
+void callback_801002e4(SourceIntroEvent71State& st, SourceIntroEvent71Step& out, SourceBgLayers* layers) noexcept {
+    const uint32_t t = st.timeline_ticks;
+    if (t == 0) {
+        if (layers) {
+            (*layers)[0].x = 130; (*layers)[0].flags = uint8_t((*layers)[0].flags & ~2u);
+            (*layers)[2].vx = int16_t((*layers)[2].vx - 56);
+            (*layers)[1].vx = int16_t((*layers)[1].vx - 16);
+        }
+        out.airship_action1 = true;
+        st.countdown_0c = 3;
+    }
+    if (t == 2200 && layers) (*layers)[0].flags = uint8_t((*layers)[0].flags | 2u);
+    if (st.byte_06 == 0 && t > 2200 && --st.countdown_0c == 0) {
+        st.countdown_0c = 3;
+        if (layers) {
+            auto& x = (*layers)[0].x;
+            x = int16_t(x - 1);
+            if (x == -11) ++st.byte_06;
+        }
+    }
+}
+} // namespace
+
+SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71State& st, int16_t busy, SourceBgLayers* layers) noexcept {
     SourceIntroEvent71Step out;
     const auto timeline = [&] { if (st.timeline_ticks < kSourceIntroTimelineTicks) ++st.timeline_ticks; };
     switch (st.phase) {
@@ -63,9 +87,11 @@ SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71Stat
     case 4: out.fade_type = 2; ++st.phase; break;                // 0x80100564 (+ constructor 0x80100400)
     case 5:                                                      // 0x80100584
         if (busy == 0 && st.timeline_ticks >= kSourceIntroTimelineTicks) { out.fade_type = 10; st.phase = 10; }
+        if (st.timeline_ticks < kSourceIntroTimelineTicks) callback_801002e4(st, out, layers);   // 0x8010045C
         timeline();
         break;
     case 10:                                                     // 0x801005D0
+        if (st.timeline_ticks < kSourceIntroTimelineTicks) callback_801002e4(st, out, layers);
         timeline();
         if (busy == 0) st.done = true;
         break;

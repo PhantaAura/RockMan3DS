@@ -417,11 +417,22 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                     'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U/EM0000 (CANDIDATE: the Servbot page); words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C and DEMO_DAT.EBD'}
             # Pre-title narration (ST01 event 71, docs/research_01516/INTRO_EVENT71.md):
             # the text-crawl pages OPENG0..3 from ST01.BIN.
+            # Plus the background layers (descriptor table 0x80100D5C[0], the
+            # 0x80022FD4 input) and the tile pages ST01BG00..02 they use.
             if (dat/'ST01.BIN').is_file():
-                run(tools,'l3cook_intro_materials',dat/'ST01.BIN',mout/'intro.l3mc')
+                st01=[r for r in iter_resources(dat/'ST01.BIN') if r.internal.upper()==r'..\PROGBIN\R3_ST01.BIN']
+                if len(st01)!=1 or st01[0].typ!=0: raise RuntimeError('ST01.BIN: expected one type-0 R3_ST01.BIN')
+                op=td/'r3_st01.bin'; op.write_bytes((dat/'ST01.BIN').read_bytes()[st01[0].payload_start:st01[0].payload_start+st01[0].size])
+                bg_words=td/'intro_bg_words.txt'
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
+                    '--overlay',str(op),'--out',str(runtime/'intro_bg.l3bg'),'--words',str(bg_words)],check=True)
+                run(tools,'l3cook_intro_materials',dat/'ST01.BIN',mout/'intro.l3mc',bg_words)
                 manifest['intro_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'intro.l3mc').relative_to(out)),
-                    'source':'ST01.BIN OPENG0..3; words from R3_ST01 0x80100A70 (tpage 21+page | 0x20, CLUT 0x7C00)'}
+                    'source':'ST01.BIN OPENG0..3 + ST01BG00..02; words from R3_ST01 0x80100A70 (tpage 21+page | 0x20, CLUT 0x7C00) and the 0x80100D5C layer tiles'}
+                manifest['intro_bg']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((runtime/'intro_bg.l3bg').relative_to(out)),
+                    'source':'R3_ST01 0x80100D5C[0] descriptors (0x80022FD4); camera-scroll layers not ported'}
             if (dat/'DEMO_DAT.BIN').is_file():
                 # The title Servbot parade: the DEMO_DAT.EBD class-20 model and
                 # the wave scripts + title camera from the EXE.

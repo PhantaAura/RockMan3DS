@@ -3237,9 +3237,10 @@ void step_title_servbots(TitleServbotScene& s, uint8_t frontend_state, int16_t f
 
 // Pre-title narration, ST01 event 71 (docs/research_01516/INTRO_EVENT71.md):
 // the event handler 0x8010049C and the C0 text crawl 0x801008C0, which the
-// area loader spawns on the event's first tick (oracle). Not ported yet: the
-// background layers 0x80023144 (sky/sea; black here), the airship actor, the
-// CD/XA command 0x2000001E and the Start skip 0x8001DE84.
+// area loader spawns on the event's first tick (oracle), and the background
+// layers (0x80022FD4 at stage init, 0x80023144 per update, driven by the
+// record callback 0x801002E4). Not ported yet: the airship actor, the CD/XA
+// command 0x2000001E and the Start skip 0x8001DE84.
 void run_intro_event71(bool scripted) {
     const auto path = data_path("materials/intro.l3mc");
     if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
@@ -3251,7 +3252,16 @@ void run_intro_event71(bool scripted) {
         auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
     }
     psx_resolver_reset();
-    boot_log(MML_BOOT_DATA, "INTRO_EVENT71=1 crawl 0x801008C0, event 0x8010049C; BG layers/airship/XA not ported");
+    l3::SourceBgLayers layers{};
+    {
+        l3::SourceBgProfile bg;
+        bool bg_ready = false;
+        try { bg_ready = l3::load_source_bg_profile(read_binary(data_path("intro_bg.l3bg"), l3::kSourceBgProfileBytes), bg); }
+        catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+        if (bg_ready) l3::init_source_bg_layers_80022fd4(bg, layers);
+        boot_log(MML_BOOT_DATA, bg_ready ? "INTRO_BG=1 intro_bg.l3bg" : "INTRO_BG=0 intro_bg.l3bg absent or rejected");
+    }
+    boot_log(MML_BOOT_DATA, "INTRO_EVENT71=1 crawl 0x801008C0, event 0x8010049C, BG 0x80023144; airship/XA not ported");
     l3::SourceFadeContext fade;
     for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
     l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
@@ -3276,16 +3286,24 @@ void run_intro_event71(bool scripted) {
         while (!event.done && clock.consume()) {
             const int16_t busy = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
             const uint8_t phase = event.phase;
-            const auto step = l3::step_source_intro_event71_8010049c(event, busy);
+            const auto step = l3::step_source_intro_event71_8010049c(event, busy, &layers);
             if (step.fade_type) {
                 const auto started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, step.fade_type);
                 hardware_test_trace("# intro_fade,tick=%lu,type=%u,status=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status));
             }
             if (step.cd_command) hardware_test_trace("# intro_cd_command,tick=%lu,command=2000001e,ported=0", (unsigned long)tick);
-            packets.clear();
+            // 0x80023144 after the event update; 40 px each side widen it to
+            // the 400-px top screen (port presentation; the layers wrap).
+            const auto bg_update = l3::update_source_bg_layers_80023144(layers);
+            packets = l3::draw_source_bg_layers_80023144(layers, 40);
+            std::reverse(packets.begin(), packets.end());   // AddPrim prepends: last added draws first
+            // Oracle: black (stage loading) until the type-2 fade-in of phase 4.
+            const bool visible = event.phase >= 5;
+            if (!visible) packets.clear();
+            if (bg_update.camera_held && tick == 0) hardware_test_trace("# intro_bg,camera_layers_held=%u", unsigned(bg_update.camera_held));
             if (crawl_live) {
                 const auto frame = l3::update_source_intro_crawl_801008c0(crawl);
-                for (size_t i = 0; i < frame.count; ++i) packets.push_back(l3::source_intro_crawl_packet_80100a70(frame.strips[i]));
+                if (visible) for (size_t i = 0; i < frame.count; ++i) packets.push_back(l3::source_intro_crawl_packet_80100a70(frame.strips[i]));
                 if (frame.released) crawl_live = false;
             }
             if (fade_intents.count && !fade_callback.running)
@@ -3293,9 +3311,10 @@ void run_intro_event71(bool scripted) {
             else if (fade_callback.running)
                 (void)l3::advance_source_fade_callback(fade, fade_callback, kEndpointHold1f800001);
             if (phase != event.phase || tick % 300u == 0u)
-                hardware_test_trace("# intro_event71,tick=%lu,phase=%u,timeline=%lu,crawl_scroll=%d,strips=%lu,fade_busy=%d",
+                hardware_test_trace("# intro_event71,tick=%lu,phase=%u,timeline=%lu,crawl_scroll=%d,packets=%lu,fade_busy=%d,bg_x=%d:%d:%d:%d",
                     (unsigned long)tick, unsigned(event.phase), (unsigned long)event.timeline_ticks,
-                    int(int16_t(uint16_t(crawl.raw[0x1A] | (crawl.raw[0x1B] << 8)))), (unsigned long)packets.size(), int(busy));
+                    int(int16_t(uint16_t(crawl.raw[0x1A] | (crawl.raw[0x1B] << 8)))), (unsigned long)packets.size(), int(busy),
+                    int(layers[0].x), int(layers[1].x), int(layers[2].x), int(layers[3].x));
             ++tick;
         }
         (void)acquire_gpu_frame("intro");

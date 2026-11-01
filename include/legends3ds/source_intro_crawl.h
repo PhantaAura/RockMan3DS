@@ -6,6 +6,7 @@
 // CLUT 0x7C00); 0x80100A70 emits one 256-pixel scanline strip of it.
 // Original addresses are identity tokens.
 #include "legends3ds/frontend_title.h"
+#include "legends3ds/source_bg_layers.h"
 #include "legends3ds/source_event_phase5.h"
 #include <array>
 #include <cstddef>
@@ -51,18 +52,26 @@ FrontendPacket source_intro_crawl_packet_80100a70(const SourceIntroCrawlStrip& s
 // the 3100-tick timeline record 0x80100F7C ending on its 0xFF terminator, and
 // the phase-10 wait for the fade (0x800A8A72 == 0). Not ported: the CD command
 // 0x2000001E and its wait 0x8001D878 (taken as one tick; the oracle shows
-// phase 1 -> 5 in 8 ticks = 1 + 1 + 5 + 1), the camera, the callback's
-// background fade, the 0x8001DE84 Start skip.
+// phase 1 -> 5 in 8 ticks = 1 + 1 + 5 + 1), the camera, the 0x8001DE84
+// Start skip. The record callback 0x801002E4 runs before each timeline tick
+// while the record is live (0x8010045C): at event+0x10 == 0 it hides layer 0
+// and sets its x to 130, layer 1 vx -= 16, layer 2 vx -= 56, starts the
+// airship (event+0x24 action 1) and event+0x0C = 3; at 2200 it shows layer 0;
+// after 2200, until event+6 is set, layer 0 x -= 1 every 3 ticks, and at -11
+// event+6 += 1.
 struct SourceIntroEvent71State {
     uint8_t phase = 0;
     int32_t countdown_0c = 0;
-    uint32_t timeline_ticks = 0;   // 0x8001F070 ticks of the single record
+    uint32_t timeline_ticks = 0;   // 0x8001F070 ticks of the single record (event+0x10)
+    uint8_t byte_06 = 0;           // event+6: callback slide finished
     bool done = false;             // phase 10 ended: the title thread starts
 };
 struct SourceIntroEvent71Step {
     uint8_t fade_type = 0;         // 0x80017C30 request this tick (0 = none)
     bool cd_command = false;       // 0x8001D58C(0x2000001E) issued this tick
+    bool airship_action1 = false;  // callback: event+0x24 actor +9 = 1, +0xA = 0
 };
 constexpr uint32_t kSourceIntroTimelineTicks = 0x0C1C;   // record 0x80100F7C
-SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71State& st, int16_t fade_busy_80098a72) noexcept;
+SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71State& st, int16_t fade_busy_80098a72,
+    SourceBgLayers* layers = nullptr) noexcept;
 } // namespace l3

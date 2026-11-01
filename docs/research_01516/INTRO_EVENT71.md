@@ -104,3 +104,17 @@ then a 30-update wait and 0x80031824.
 
 Port order: crawl (self-contained) -> background layers -> airship -> boot
 hook before the title (coordinate with the main session) -> event 10.
+
+## Background layers ported (2026-10-31)
+`source_bg_layers`: 0x80022FD4 init and the 0x80023144 velocity scroll
+(+0x8002366C wrap) and tile draw; the camera-driven scroll (record+1 == 0)
+holds and is reported. ST01 uses four velocity layers (all +1 = 1): layer 0
+is the lighthouse (hidden at init, shown by the callback at 2200, x 130 ->
+-11), layers 1/2 drift once the callback sets vx -16/-56, layer 3 is static.
+Tiles: tile word + (+0x28 << 14) gives CLUTs (128..176, 511) over tpages
+0x1C..0x1E; all eight intro materials resolve fully from ST01's TIMs.
+SPRT tiles are drawn as the identical POLY_FT4. Widescreen: 40 px of
+wrapped columns on each side (port presentation). Before the phase-4 fade-in
+the screen stays black (oracle shot at phase 1: black + "now loading").
+Not oracle-verified yet: layer values per tick (the oracle stalled at boot
+on this run; static read only).

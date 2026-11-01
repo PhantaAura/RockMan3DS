@@ -1,6 +1,7 @@
 // Pre-title narration material cache from the owner's ST01.BIN: the four
-// text-crawl pages OPENG0..3 (tpage 21..24, CLUT 0x7C00) the ST01 strips use
-// (docs/research_01516/INTRO_EVENT71.md). Resources are composed in container
+// text-crawl pages OPENG0..3 (tpage 21..24, CLUT 0x7C00) the ST01 strips use,
+// plus the background-layer words cook_intro_bg.py lists (one hex word per
+// line) (docs/research_01516/INTRO_EVENT71.md). Resources are composed in container
 // order, as the stage loader uploads them.
 #include "legends3ds/material_cache.h"
 #include "legends3ds/source_intro_crawl.h"
@@ -8,12 +9,19 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 int main(int argc, char** argv) {
     try {
-        if (argc != 3) { std::cerr << "usage: l3cook_intro_materials ST01.BIN OUT.l3mc\n"; return 2; }
+        if (argc != 3 && argc != 4) { std::cerr << "usage: l3cook_intro_materials ST01.BIN OUT.l3mc [BG_WORDS.txt]\n"; return 2; }
         const auto resources = l3::scan_mml_indexed_resources(l3::read_file(argv[1]));
-        const std::vector<uint32_t> words(l3::kSourceIntroCrawlMaterialWords.begin(), l3::kSourceIntroCrawlMaterialWords.end());
+        std::vector<uint32_t> words(l3::kSourceIntroCrawlMaterialWords.begin(), l3::kSourceIntroCrawlMaterialWords.end());
+        if (argc == 4) {
+            std::ifstream list(argv[3]);
+            std::string line;
+            while (std::getline(list, line)) if (!line.empty()) words.push_back(uint32_t(std::stoul(line, nullptr, 16)));
+            if (!list.eof()) throw std::runtime_error("failed reading background word list");
+        }
         std::vector<l3::MaterialVramDiagnostics> diagnostics;
         const auto cache = l3::build_material_cache(words, resources, &diagnostics);
         for (const auto& d : diagnostics)
