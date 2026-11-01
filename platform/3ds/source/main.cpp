@@ -3453,9 +3453,12 @@ void run_intro_event71(bool scripted) {
 // the handler on the shared scene runtime (attract.l3cs), the ST07 terrain of
 // the area each shot requests (areas 1-4; area 0 is the exterior), the
 // background layers (re-initialised by each area load, as the stage init
-// 0x801000B0 does) and the XA of 0x20000005. ST00's terrain is released while
-// it plays; restore() rebuilds it. Not ported yet: the actors (the ship, the
-// Servbots, Tron, Teisel), fade 20, the areas' fog/depth cue.
+// 0x801000B0 does), the XA of 0x20000005 and the Gesellschaft (class 0x20 /
+// 0x0B variant 0, 0x80102B28: spawned by the phase-0 record 0x80105B8C at its
+// position, scale (512, 512, 512), animation request 0; it lives in the
+// exterior area). ST00's terrain is released while it plays; restore()
+// rebuilds it. Not ported yet: the other actors (the Servbots, Tron,
+// Teisel, the shot-2:0 objects), fade 20, the areas' fog/depth cue.
 void run_attract_event10(bool scripted, const std::function<void()>& restore) {
     l3::SourceScenePackage package;
     l3::SourceAttractProfile profile;
@@ -3478,6 +3481,37 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_EVENT10=0 %s", error.what());
         boot_log(MML_BOOT_DATA, line);
         return;
+    }
+    // The cast's EBD and the Gesellschaft.
+    l3::EbdDirectory cast;
+    std::shared_ptr<const l3::ActorMeshResource> ship_mesh;
+    std::shared_ptr<const l3::ActorAnimationBank> ship_bank;
+    l3::ImportedActorInstance ship;
+    bool ship_ready = false, ship_live = false;
+    try {
+        cast = l3::load_l3ebd_directory(read_binary(data_path("attract/attract.l3ebd")), true);
+        const auto rows = l3::find_ebd_entries(cast, 0x20, 0x0B);
+        const auto* record = [&]() -> const l3::SourceSceneSpawnRecord* {
+            for (const auto& r : package.spawns) if (r.token == 0x80105B8Cu) return &r;
+            return nullptr; }();
+        if (rows.size() != 1 || !record) throw std::runtime_error("attract: ship row or spawn record missing");
+        ship_mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(cast, rows[0]));
+        static constexpr uint8_t kRequests[] = {0};   // 0x800322A8(a0, 0, 0)
+        ship_bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+            cast, rows[0], *ship_mesh, kRequests, sizeof(kRequests), 256 * 1024));
+        const auto pose = l3::decode_ebd_actor_pose(cast, rows[0], *ship_mesh, 0, 0);
+        ship.original_pool_slot = 0; ship.source_class = 0x20; ship.subtype = 0x0B; ship.row = uint32_t(rows[0]);
+        ship.floor_query_required = false; ship.pose_selected_by_retail_state = true;
+        ship.resource = ship_mesh; ship.animation_bank = ship_bank; ship.pose = pose;
+        ship.animation_cursor = l3::actor_sequence_begin(0, pose.sequencing_record);
+        // rec[12..17]: the 0x8001E968 position; 0x80102B5C: +0x158 = 0x0200 x3.
+        const auto rd = [&](size_t o) { return int16_t(uint16_t(record->bytes[o] | (record->bytes[o + 1] << 8))); };
+        ship.source_origin = {{rd(12), rd(14), rd(16)}};
+        ship.raw_scale = {{512, 512, 512}}; ship.heading = 0;
+        ship_ready = true;
+    } catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_SHIP=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);   // the scene plays without it
     }
     // Background pages: the front-end material slot, as the narration uses.
     {
@@ -3547,6 +3581,13 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             const auto step = l3::step_source_attract_event10_80100330(event, profile, layers, xa_started || !xa.observation().ready,
                                                                       busy, pending_start != 0);
             pending_start = 0;
+            // The phase-0 record spawns the ship (0x8001EAE8); its class update
+            // follows the event in the same tick: init (request 0), then
+            // 0x80032488 each tick.
+            if (step.cd_command && ship_ready) {
+                ship_live = true;
+                if (ship.pose && ship.animation_cursor) (void)l3::actor_animation_reset(*ship_bank, 0, *ship.pose, *ship.animation_cursor);
+            } else if (ship_live && ship.pose && ship.animation_cursor) (void)l3::actor_animation_step(*ship_bank, *ship.pose, *ship.animation_cursor);
             if (step.cd_command) xa_start_pending = true;
             if (step.fade_type) {
                 l3::SourceFadeStartupResult started;
@@ -3589,6 +3630,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
                 boot_log(MML_BOOT_DATA, error.what());
             }
             l3::init_source_bg_layers_80022fd4(bg, layers);
+            ship_live = false;   // the area-1 callback releases the exterior's actors
             psx_resolver_reset();
             hardware_test_trace("# attract_area,tick=%lu,area=%d,batches=%lu", (unsigned long)tick, area, (unsigned long)g_terrain_batches.size());
         }
@@ -3616,7 +3658,8 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         add_packets(true);
         psx_draw_ot(false, true);
         g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
-        if (visible && area > 0 && !g_terrain_batches.empty()) {
+        const bool terrain = area > 0 && !g_terrain_batches.empty();
+        if (visible && (terrain || ship_live)) {
             const auto v = l3::source_camera_view(event.camera);
             const auto camera = l3::source_gameplay_camera_80037fb4(refs, v.target, v.distance, v.yaw, v.pitch, v.shift, 0);
             auto faces = l3::make_terrain_face_camera(camera.camera_1f800008, nullptr);
@@ -3629,7 +3672,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             cv.eye_x_1f800028 = int16_t(camera.eye_800a39f0[0]); cv.eye_z_1f80002c = int16_t(camera.eye_800a39f0[2]);
             cv.pitch_800a3a10 = camera.rotation_800a3a10[0]; cv.yaw_800a3a12 = camera.rotation_800a3a10[1];
             cv.target_x_800a39a0 = v.target[0]; cv.target_z_800a39a8 = v.target[2]; cv.lod_1f800074 = v.shift;
-            l3::compute_terrain_cell_visibility(map, size_t(area), refs, cv, cells);
+            if (terrain) l3::compute_terrain_cell_visibility(map, size_t(area), refs, cv, cells);
             // Matrices for any batch drawn directly (as gameplay's scene path).
             const auto frame = l3::compose_source_scene_view_frame(view_profile, refs, v.target, v.yaw, v.pitch, v.distance, v.shift,
                                                                    384u, int32_t(160u << 16), int32_t(120u << 16));
@@ -3643,7 +3686,8 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             g_psx_camera = faces;
             g_psx_far_1f800006 = kFarByShift[v.shift < 3 ? v.shift : 0];
             g_psx_tr_1f800030 = cv.translation_1f800030;
-            draw_terrain(&faces, 0, l3::kObservedArea1BackFaceThreshold, &cells);
+            if (terrain) draw_terrain(&faces, 0, l3::kObservedArea1BackFaceThreshold, &cells);
+            if (ship_live) (void)psx_emit_class20(ship, l3::build_imported_actor_pose_matrices(ship));
             psx_draw_ot(false);
             psx_draw_ot(true);
             g_psx_camera.reset(); g_psx_tr_1f800030.reset();

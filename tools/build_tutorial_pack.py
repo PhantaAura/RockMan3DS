@@ -471,7 +471,14 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 bgw=td/'attract_bg_words.txt'
                 subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
                     '--overlay',str(op7),'--out',str(aout/'attract_bg.l3bg'),'--words',str(bgw),'--stage','st07','--area','0'],check=True)
-                run(tools,'l3cook_word_materials',aout/'attract_bg.l3mc',bgw,dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN')
+                # The cast: ST07_00.EBD (the ship 0x20/0x0B, Servbots, the Bonnes);
+                # the class-0x20 mesh pages join the background pages.
+                e7=[r for r in iter_resources(dat/'ST07_00.BIN') if r.internal.upper()==r'..\EMBIN\ST07_00.EBD']
+                if len(e7)!=1 or e7[0].typ!=0: raise RuntimeError('ST07_00.BIN: expected one type-0 ST07_00.EBD')
+                eb7=td/'st07_00.ebd'; eb7.write_bytes((dat/'ST07_00.BIN').read_bytes()[e7[0].payload_start:e7[0].payload_start+e7[0].size])
+                run(tools,'l3cook_ebd',eb7,hex(e7[0].load),aout/'attract.l3ebd')
+                run(tools,'l3cook_word_materials',aout/'attract_bg.l3mc',bgw,'--ebd',aout/'attract.l3ebd',
+                    dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN')
                 manifest['attract_stage']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str(aout.relative_to(out)),
                     'source':'ST07.BIN map/stage + ST07_00.BIN pages; areas 1-4 (oracle: 0x800C1B61 = event+8)'}

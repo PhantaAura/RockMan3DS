@@ -106,3 +106,18 @@ the scene-view matrices for directly drawn batches), then entries 32..30
 46.77 s) starts the tick after its command and drives the tick clock. Black
 until the phase-0 fade-in. Start skips (fade 10). Not ported: actors, fade
 20 (natural end cuts), the areas' fog/depth cue (no area record).
+
+## Cast (2026-11-01)
+Oracle function trace (PSX_FNTRACE_ALL) per shot: shot 0:0 runs only the
+handler and 0x80102AEC/0x80102C04 (a0 = 0x8009F108, slot 0 of the pool
+hook 0x1F800058 dispatches: table[+2] -> per-class table[+3/+8]); the
+corridor adds 0x8010205C/0x801022A4 (many objects); the bridge adds
+0x80102D84, 0x80102E80.., 0x8010384C, 0x80103A00.
+ST07_00.EBD rows: 0x20/0x00 (Servbot, page 0x3D88002B as on the title),
+0x20/0x0B (the Gesellschaft, page 0x3D000026), 0x20/0x28, 0x20/0x2B,
+0x40/0x0B. All class-0x20 pages resolve from INIT_DAT + ST07 + ST07_00.
+**The Gesellschaft** (ported): record 0x80105B8C = family 0x20, type 0x0B,
+variant 0 (0x801066D0[0] = 0x80102B28) at (0, 0, 0): init sets the drawn
+flag, scale +0x158 = (512, 512, 512), animation request 0; each tick saves
+the previous position and advances the animation (0x80032488). Lifetime:
+the exterior area (the area-1 callback releases the actors).
