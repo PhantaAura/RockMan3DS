@@ -3284,6 +3284,11 @@ void run_intro_event71(bool scripted) {
     try {
         auto a = std::make_unique<IntroAirship>();
         a->ebd = l3::load_l3ebd_directory(read_binary(data_path("intro/intro.l3ebd")), true);
+        // The pose unpacker reads a fixed 32-word window; ST01_00's only pose
+        // starts 28 bytes before the end of the EBD, so on the PS1 the window
+        // runs into whatever RAM follows. The two parts use the first 14 bytes
+        // (real data); the zero tail stands in for the unused remainder.
+        a->ebd.source_payload.resize(a->ebd.source_payload.size() + l3::kActorPackedPoseBytes);
         a->refs = l3::load_l3reference(read_binary(data_path("reference.l3ref")), true);
         const auto rows = l3::find_ebd_entries(a->ebd, 0x20, 0x0A);
         if (rows.size() != 1) throw std::runtime_error("intro.l3ebd: expected one class 0x20/0x0A row");
