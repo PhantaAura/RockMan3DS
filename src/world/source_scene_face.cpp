@@ -48,10 +48,12 @@ size_t step_source_scene_face_8010c820(SourceSceneFaceState& st, const SourceSce
         if (st.cue_position[ch] >= table.count) continue;
         const auto& cue = table.cues[st.cue_position[ch]];
         if (cue.timeline != event_08 || uint32_t(cue.frame) != event_1c) continue;
-        if (cue.script >= kSourceFaceScripts || !prof.scripts[ch][cue.script].count) continue;
+        // The original advances the cursor unconditionally (0x8010C8F8..0x8010C90C);
+        // a script we did not cook simply leaves the channel idle.
+        ++st.cue_position[ch];
+        if (cue.script >= kSourceFaceScripts || !prof.scripts[ch][cue.script].count) { st.running[ch] = false; continue; }
         st.script[ch] = uint8_t(cue.script); st.entry[ch] = 0; st.counter[ch] = 0; st.running[ch] = true;
         emit(ch);
-        ++st.cue_position[ch];
     }
     // 0x8010C6B8: duration <= 0 jumps by that many entries (loop) and clears
     // the counter; the counter then counts to the current entry's duration.

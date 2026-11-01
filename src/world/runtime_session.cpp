@@ -2090,6 +2090,12 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         source_event_input.candidate_rng=&candidate;
     }
     source_event_result_=step_source_event_pipeline(source_event_work_,source_event_profile_.get(),source_event_input);
+    // Oracle (US disc, New Game): 0x1F800074 reads 0 from phase 4 through the
+    // constructor tick, where the class-40 initializer 0x8010C930 already runs
+    // (same tick, after the event); the camera program writes it next tick.
+    if(source_event_result_.committed&&source_event_result_.phase5_consumer_status==SourceEventPhase5Status::Consumed&&
+       !source_event_phase6_context_.byte_1f800074)
+        source_event_phase6_context_.byte_1f800074=uint8_t(0);
     if(paired_constructor_boundary&&source_event_result_.committed&&source_event_result_.phase5_consumer_status==SourceEventPhase5Status::Consumed){
         source_event_phase6_context_.scratch_half_1f800002=source_scene_rng_tape_.profile().constructor.scratch_half;
         source_scene_rng_constructor_admitted_=true;

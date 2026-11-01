@@ -32,6 +32,15 @@ int main() {
     // 11 held 3 frames -> 12 held 2 -> 13 (duration -2 jumps back to entry 0 next frame) -> 11 ...
     require(frames.size() >= 4 && frames[0] == 12 && frames[1] == 13 && frames[2] == 12, "script steps and loops");
 
+    // 0x8010C8F8..0x8010C90C: the cursor advances even when the cue's script is
+    // empty, so the next cue still fires on its own frame.
+    SourceSceneFaceProfile p2; p2.loaded = true;
+    p2.cues[1].count = 2; p2.cues[1].cues[0] = {0, 1, 5}; p2.cues[1].cues[1] = {0, 3, 2};
+    p2.scripts[1][2] = s;
+    SourceSceneFaceState s2;
+    require(step_source_scene_face_8010c820(s2, p2, 0, 1, out) == 0 && s2.cue_position[1] == 1, "empty-script cue still advances");
+    require(step_source_scene_face_8010c820(s2, p2, 0, 3, out) == 1 && s2.running[1], "next cue fires");
+
     // 0x8002D320: copy part 19's UV words + offset into a decoded part (32-bit add, carries).
     std::vector<uint8_t> ebd(0x400, 0); const uint32_t base = 0x80180000u;
     put32(ebd, 0x70, base + 0x100);                        // descriptor+0x70 -> Near mesh
