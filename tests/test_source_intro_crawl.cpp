@@ -51,5 +51,16 @@ int main() {
     require(!ev.done, "phase 10 waits for the fade");
     step_source_intro_event71_8010049c(ev, 0);
     require(ev.done, "title after the fade");
+    // Airship: idle until the callback's action 1; then x -1 / 4 updates, y +1 / 5.
+    SourceIntroAirship ship;
+    update_source_intro_airship_8010080c(ship, false);
+    require(ship.initialized && ship.position == (std::array<int16_t,3>{{860, -300, 0}}), "airship idle after init");
+    update_source_intro_airship_8010080c(ship, true);           // sub 0: timers
+    for (int i = 0; i < 20; ++i) update_source_intro_airship_8010080c(ship, false);
+    require(ship.position[0] == 855 && ship.position[1] == -296 && ship.sub == 1, "x -1 per 4, y +1 per 5");
+    while (ship.sub == 1) update_source_intro_airship_8010080c(ship, false);
+    require(ship.position[1] == 220 && ship.position[0] == 860 - (520 * 5) / 4, "y stops at 220 after 2600 updates");
+    while (!ship.released) update_source_intro_airship_8010080c(ship, false);
+    require(ship.position[0] == -290, "released after x < -289 and the 30-update wait");
     std::puts("source_intro_crawl: init, 3-tick scroll, strip window, fades, release OK");
 }

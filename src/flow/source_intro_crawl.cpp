@@ -99,4 +99,29 @@ SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71Stat
     }
     return out;
 }
+
+void update_source_intro_airship_8010080c(SourceIntroAirship& a, bool start) noexcept {
+    if (a.released) return;
+    if (start) { a.action = 1; a.sub = 0; }
+    a.initialized = true;                                    // +8 == 0: init, then the action (same call)
+    if (a.action != 1) return;                               // 0x801006A0
+    switch (a.sub) {                                         // 0x801006A8
+    case 0: a.timer_0c = 4; a.timer_0d = 5; a.sub = 1; break;
+    case 1:
+        if (--a.timer_0c <= 0) { a.timer_0c = 4; --a.position[0]; }
+        if (--a.timer_0d <= 0) {
+            a.timer_0d = 5;
+            if (++a.position[1] >= 220) a.sub = 2;
+        }
+        break;
+    case 2:
+        if (--a.timer_0c <= 0) {
+            a.timer_0c = 4;
+            if (--a.position[0] < -289) { a.sub = 3; a.timer_0c = 30; }
+        }
+        break;
+    case 3: if (--a.timer_0c <= 0) a.released = true; break;   // 0x80031824
+    default: break;
+    }
+}
 } // namespace l3

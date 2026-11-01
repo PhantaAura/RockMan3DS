@@ -3242,8 +3242,9 @@ void step_title_servbots(TitleServbotScene& s, uint8_t frontend_state, int16_t f
 // record callback 0x801002E4), and the narration XA the phase-1 command
 // 0x2000001E plays (started the tick after; oracle: LBA 121149 at timeline
 // tick 1, i.e. 34 sectors = 6.8 ticks of stream by then; while it plays,
-// ticks follow its DSP position, as in the opening). Not ported yet: the airship actor and
-// the Start skip 0x8001DE84.
+// ticks follow its DSP position, as in the opening), and the airship (class
+// 0x20/0x0A, 0x8010080C) seen through the static scene camera. Not ported
+// yet: the Start skip 0x8001DE84 and the camera program's fog.
 void run_intro_event71(bool scripted) {
     const auto path = data_path("materials/intro.l3mc");
     if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
@@ -3270,7 +3271,46 @@ void run_intro_event71(bool scripted) {
       char line[160]; std::snprintf(line, sizeof(line), "INTRO_XA=%u intro_xa.l3xa %s", unsigned(ready), xa.error());
       boot_log(MML_BOOT_DATA, line); }
     bool xa_clock_bound = false, xa_start_pending = false; uint64_t xa_clock_frames = 0, xa_clock_remainder = 0;
-    boot_log(MML_BOOT_DATA, "INTRO_EVENT71=1 crawl 0x801008C0, event 0x8010049C, BG 0x80023144, XA 0x2000001E; airship not ported");
+    // The airship: ST01_00.EBD class 0x20/0x0A, the scene camera of program
+    // 0x80100F30 (0x20: shift 0; 0x10: target 0; 0x11: yaw 0, pitch 0,
+    // distance 2000), drawn like the title's class-0x20 Servbots.
+    struct IntroAirship {
+        l3::EbdDirectory ebd; l3::ReferenceTables refs; l3::TerrainFaceCamera camera;
+        std::shared_ptr<const l3::ActorMeshResource> mesh;
+        std::shared_ptr<const l3::ActorAnimationBank> bank;
+        l3::ImportedActorInstance actor;
+    };
+    std::unique_ptr<IntroAirship> airship;
+    try {
+        auto a = std::make_unique<IntroAirship>();
+        a->ebd = l3::load_l3ebd_directory(read_binary(data_path("intro/intro.l3ebd")), true);
+        a->refs = l3::load_l3reference(read_binary(data_path("reference.l3ref")), true);
+        const auto rows = l3::find_ebd_entries(a->ebd, 0x20, 0x0A);
+        if (rows.size() != 1) throw std::runtime_error("intro.l3ebd: expected one class 0x20/0x0A row");
+        a->mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(a->ebd, rows[0]));
+        static constexpr uint8_t kRequests[] = {0};   // 0x800322A8(a0, 0, 0)
+        a->bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+            a->ebd, rows[0], *a->mesh, kRequests, sizeof(kRequests), 256 * 1024));
+        const auto pose = l3::decode_ebd_actor_pose(a->ebd, rows[0], *a->mesh, 0, 0);
+        const auto view = l3::source_gameplay_camera_80037fb4(a->refs, {{0, 0, 0}}, 2000, 0, 0, 0, 0);
+        a->camera = l3::make_terrain_face_camera(view.camera_1f800008, nullptr);
+        a->camera.screen_x_min = -40; a->camera.screen_width = 400;   // 400-px top screen
+        auto& actor = a->actor;
+        actor.original_pool_slot = 0; actor.source_class = 0x20; actor.subtype = 0x0A; actor.row = uint32_t(rows[0]);
+        actor.floor_query_required = false; actor.pose_selected_by_retail_state = true;
+        actor.resource = a->mesh; actor.animation_bank = a->bank; actor.pose = pose;
+        actor.animation_cursor = l3::actor_sequence_begin(0, pose.sequencing_record);
+        actor.heading = l3::kSourceIntroAirshipHeading; actor.raw_scale = l3::kSourceIntroAirshipScale;
+        if (actor.pose && actor.animation_cursor) (void)l3::actor_animation_reset(*a->bank, 0, *actor.pose, *actor.animation_cursor);
+        airship = std::move(a);
+        boot_log(MML_BOOT_DATA, "INTRO_AIRSHIP=1 intro.l3ebd class 0x20/0x0A");
+    } catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "INTRO_AIRSHIP=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
+    l3::SourceIntroAirship ship;
+    bool ship_spawned = false;
+    boot_log(MML_BOOT_DATA, "INTRO_EVENT71=1 crawl 0x801008C0, event 0x8010049C, BG 0x80023144, XA 0x2000001E, airship 0x8010080C");
     l3::SourceFadeContext fade;
     for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
     l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
@@ -3316,6 +3356,15 @@ void run_intro_event71(bool scripted) {
                 hardware_test_trace("# intro_xa_start,tick=%lu,command=2000001e,xa_started=%u,%s", (unsigned long)tick, unsigned(started), xa.error());
             }
             if (step.cd_command) xa_start_pending = true;
+            // The constructor (phase 4, 0x80100400) spawns the airship; its
+            // class update runs after the event in the same tick.
+            if (step.fade_type == 2) ship_spawned = true;
+            if (ship_spawned && airship) {
+                l3::update_source_intro_airship_8010080c(ship, step.airship_action1);
+                auto& actor = airship->actor;
+                actor.source_origin = ship.position;
+                if (actor.pose && actor.animation_cursor) (void)l3::actor_animation_step(*airship->bank, *actor.pose, *actor.animation_cursor);
+            }
             // 0x80023144 after the event update; 40 px each side widen it to
             // the 400-px top screen (port presentation; the layers wrap).
             const auto bg_update = l3::update_source_bg_layers_80023144(layers);
@@ -3339,6 +3388,9 @@ void run_intro_event71(bool scripted) {
                     (unsigned long)tick, unsigned(event.phase), (unsigned long)event.timeline_ticks,
                     int(int16_t(uint16_t(crawl.raw[0x1A] | (crawl.raw[0x1B] << 8)))), (unsigned long)packets.size(), int(busy),
                     int(layers[0].x), int(layers[1].x), int(layers[2].x), int(layers[3].x));
+            if (ship_spawned && (phase != event.phase || tick % 300u == 0u))
+                hardware_test_trace("# intro_airship,tick=%lu,sub=%u,x=%d,y=%d,z=%d,released=%u",
+                    (unsigned long)tick, unsigned(ship.sub), int(ship.position[0]), int(ship.position[1]), int(ship.position[2]), unsigned(ship.released));
             ++tick;
         }
         (void)acquire_gpu_frame("intro");
@@ -3347,13 +3399,29 @@ void run_intro_event71(bool scripted) {
         psx_begin_frame();
         C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
         const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
-        for (const auto& fp : packets) {
-            const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
-            for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
-            float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
-            for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
-            g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+        // Three walks, as the title: screen entries 35..33 (background), the
+        // spliced scene OT (the airship), then entries 32..30 (crawl).
+        const auto add_packets = [&](bool behind_scene) {
+            for (const auto& fp : packets) {
+                if ((fp.bucket > 32) != behind_scene) continue;
+                const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
+                for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
+                float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
+                for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
+                g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+            }
+        };
+        add_packets(true);
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        if (airship && ship.initialized && !ship.released && event.phase >= 5) {
+            g_psx_camera = airship->camera;
+            (void)psx_emit_class20(airship->actor, l3::build_imported_actor_pose_matrices(airship->actor));
+            psx_draw_ot(false, true);
+            g_psx_camera.reset();
+            g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
         }
+        add_packets(false);
         psx_draw_ot(false, true);
         g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
         g_psx_xy_from_gte = xy;

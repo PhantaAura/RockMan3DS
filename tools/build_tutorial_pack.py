@@ -426,7 +426,13 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 bg_words=td/'intro_bg_words.txt'
                 subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
                     '--overlay',str(op),'--out',str(runtime/'intro_bg.l3bg'),'--words',str(bg_words)],check=True)
-                run(tools,'l3cook_intro_materials',dat/'ST01.BIN',mout/'intro.l3mc',bg_words)
+                # The airship (ST01_00.EBD class 0x20/0x0A, constructor record 0x80100F1C).
+                emb=[r for r in iter_resources(dat/'ST01.BIN') if r.internal.upper()==r'..\EMBIN\ST01_00.EBD']
+                if len(emb)!=1 or emb[0].typ!=0: raise RuntimeError('ST01.BIN: expected one type-0 ST01_00.EBD')
+                iout=runtime/'intro'; iout.mkdir(exist_ok=True)
+                eb=td/'st01_00.ebd'; eb.write_bytes((dat/'ST01.BIN').read_bytes()[emb[0].payload_start:emb[0].payload_start+emb[0].size])
+                run(tools,'l3cook_ebd',eb,hex(emb[0].load),iout/'intro.l3ebd')
+                run(tools,'l3cook_intro_materials',dat/'ST01.BIN',mout/'intro.l3mc',bg_words,iout/'intro.l3ebd')
                 manifest['intro_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'intro.l3mc').relative_to(out)),
                     'source':'ST01.BIN OPENG0..3 + ST01BG00..02; words from R3_ST01 0x80100A70 (tpage 21+page | 0x20, CLUT 0x7C00) and the 0x80100D5C layer tiles'}

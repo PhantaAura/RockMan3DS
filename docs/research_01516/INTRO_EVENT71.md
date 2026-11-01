@@ -135,3 +135,17 @@ Samples of (timeline tick, crawl row 0x800A2D22, XA LBA):
 Crawl row = -188 + T/3 and XA = 5.00 sectors per tick, both as in the port.
 The port started the stream on the command tick (LBA 121155 at T = 1);
 it now starts the tick after (121150 vs 121149).
+
+## Airship ported (2026-10-31)
+Constructor record 0x80100F1C (via 0x8001EAE8 -> 0x8001E968): family 0x20,
+type 0x0A, position (860, -300, 0). ST01_00.EBD has exactly that row
+(2 parts, 28 tris, 164 quads, texture word 0x3DC8002B, which resolves fully).
+Init 0x8010080C: scale +0x158 = (32, 32, 32), heading +0x56 = 1024, drawn
+flag; init falls through to the action in the same call. Action 1
+(0x801006A8, started by the callback): x -1 / 4 updates, y +1 / 5 until
+220; x -1 / 4 until < -289; 30-update wait; release. Animation request 0
+every update (0x800322A8). Scene camera from program 0x80100F30: shift 0,
+target 0, yaw 0, pitch 0, distance 2000; projected path (325, 63) at tick 0
+to (195, 162) at tick 2700 matches the oracle shots. Drawn between the
+background (entry 34) and the crawl (entry 30), the spliced scene OT.
+Not ported: the camera program's fog (0x8007A1CC distance cue).

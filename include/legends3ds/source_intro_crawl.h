@@ -74,4 +74,24 @@ struct SourceIntroEvent71Step {
 constexpr uint32_t kSourceIntroTimelineTicks = 0x0C1C;   // record 0x80100F7C
 SourceIntroEvent71Step step_source_intro_event71_8010049c(SourceIntroEvent71State& st, int16_t fade_busy_80098a72,
     SourceBgLayers* layers = nullptr) noexcept;
+
+// The narration airship: family 0x20, type 0x0A, spawned by the constructor
+// record 0x80100F1C at (860, -300, 0) (rec[12..17]). Init 0x8010080C: scale
+// +0x158 = (32, 32, 32), heading +0x56 = 1024, +0 |= 2 (drawn). Action +9
+// from table 0x80100F8C: 0 idle (0x801006A0), 1 = 0x801006A8, started by the
+// event callback (+9 = 1, +0xA = 0). Each update then runs 0x800322A8(a0, 0, 0)
+// (animation request 0).
+struct SourceIntroAirship {
+    bool initialized = false, released = false;
+    std::array<int16_t,3> position{{860, -300, 0}};   // +0x14
+    uint8_t action = 0, sub = 0;                       // +9, +0xA
+    int8_t timer_0c = 0, timer_0d = 0;                 // +0xC, +0xD
+};
+constexpr std::array<int16_t,3> kSourceIntroAirshipScale{{32, 32, 32}};
+constexpr uint16_t kSourceIntroAirshipHeading = 1024;
+// One update (0x8010080C): init on the first (falling through to the
+// action dispatch in the same call), then the action. Sub 0: timers
+// 4/5; sub 1: x -1 every 4 updates, y +1 every 5 until y >= 220; sub 2: x -1
+// every 4 until x < -289, then a 30-update wait (sub 3) and release.
+void update_source_intro_airship_8010080c(SourceIntroAirship& a, bool start_action1) noexcept;
 } // namespace l3
