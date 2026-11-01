@@ -69,8 +69,14 @@ Z scale**: the hidden one is flat (0) and grows to 1.0.
   (`class20_03_distance_work80`, CANDIDATE writer).
 - The morph frame draws one class03 rand() (RA 0x801022F8) for the subtype-3
   state-0 prologue (CANDIDATE).
-- The hit proxy (bit 8) is not registered while hidden, so shots pass through.
-  Damage is impossible anyway because bit 2 is clear.
+- The hit proxy (bit 8) is now registered every frame, hidden or not
+  (0x80106410..0x80106470: +0x180 copied to +0x354, then 0x800341BC with
+  radius 0x50, 0x8000, work+1, +0x35C, 0x04880000 | +0x350, 0x00800000, 0x80;
+  +0x35C cleared). So a Buster shot is stopped by the hidden pop-out, as in
+  the original. Damage is still impossible because bit 2 is clear.
+  The +0x180 point comes from 0x8003346C right after the callback, as for
+  0x19; the original reads the point the previous frame's draw left there
+  (one-frame timing, CANDIDATE).
 - The 0x1F HP (`0x80098844` record byte +8) is not cooked. It is unused before
   the morph, and the subtype-3 init sets the HP again.
 - Work +0x0F (record 1585 has 0x80): the only subtype-3 reader is init

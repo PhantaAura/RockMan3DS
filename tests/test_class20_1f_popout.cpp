@@ -96,10 +96,42 @@ void actor_bridge(){
     // The new caller RA is admitted by the class03 RNG stage.
     static_assert(kSourceClass1FRngCallerRa==0x80106378u,"0x80106370 jal + 8");
 }
+// The hidden 0x1F registers 0x800341BC every frame (flags 0x2C has bit 8):
+// 0x80106410..0x80106470 with radius 0x50, 0x8000, stack 0x04880000|+350,
+// 0x00800000, 0x80, then clears +0x35C. Bit 2 is clear, so a hit packet only
+// gets cleared: no 0xA3 sound and no damage.
+void hidden_proxy(){
+    const auto r=refs();
+    ImportedActorInstance a;a.source_class=0x20;a.subtype=0x1F;a.initializer=0x8010648C;
+    a.source_dispatch_flag0=1;a.source_dispatch_flag6=1;a.raw_scale={{512,512,512}};a.original_pool_slot=2;
+    a.pose=ActorPoseResource{};a.pose->root_translation={{0,0,0}};
+    a.source_popout=fresh(2560,-129,-7040,0);
+    SourceHitProxyBank bank;
+    // Not bound yet: nothing is registered.
+    auto t=tick_imported_actor_popout_1f(a,r,uint16_t(1),std::nullopt,&bank,0xffu);
+    assert(t.committed&&!t.proxy_registered&&bank.count==0&&a.source_popout->flags_348==0x2C);
+    assert(initialize_imported_actor_fresh_pose_proxy_subset(a));
+    assert(a.source_proxy_target.source_address==0x8009f108u+2u*0x3c0u+0x35cu);
+    assert(!initialize_imported_actor_fresh_pose_proxy_subset(a));
+    a.source_proxy_target.packet_00=0x18000040u;   // a Buster hit from the previous frame
+    t=tick_imported_actor_popout_1f(a,r,uint16_t(1),0u,&bank,0xffu);
+    assert(t.committed&&t.proxy_registered&&bank.count==1);
+    const auto& row=bank.records[0];
+    assert(row.target==&a.source_proxy_target&&row.encoded_extent==((0x50u>>2)|0x8000u));
+    assert(row.parallel_word==(0x04880000u|a.source_popout->work_350));
+    assert((row.encoded_identity>>24)==(0x20u|2u)&&(row.encoded_identity&0x00ffffffu)==(((0x8009f108u+2u*0x3c0u+0x35cu)&0x7fffffu)|0x00800000u));
+    assert(row.point[0]==a.source_point_180[0]&&row.point[2]==a.source_point_180[2]);
+    assert((a.source_proxy_target.flags_04&0x80u)!=0);
+    assert(a.source_proxy_target.packet_00==0&&!t.result.sound_8001a050&&a.source_popout->health_6e==std::nullopt);
+    // A missing bank or mask registers nothing but still runs the callback.
+    t=tick_imported_actor_popout_1f(a,r,uint16_t(1),0u,nullptr);
+    assert(t.committed&&!t.proxy_registered);
+}
 } // namespace
 
 int main(){
     reducer();
     actor_bridge();
-    std::cout<<"PASS: class20/1F init, work80 wait, lunge + z scale, 0x80106800, morph flag, actor bridge\n";
+    hidden_proxy();
+    std::cout<<"PASS: class20/1F init, work80 wait, lunge + z scale, 0x80106800, morph flag, actor bridge, hidden proxy\n";
 }

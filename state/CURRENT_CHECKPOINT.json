@@ -145,5 +145,15 @@
  },
  "world_comes_alive_scope": "Azahar emulator only; physical Old 3DS PENDING",
  "performance": "Azahar route average 24.5 FPS (was 20.1); player draw 2.7 ms (was 9.3); 30 FPS not reached",
- "frontend": "Title/menu state machine 0x80013420 ported (SOURCE_BACKED_PARTIAL); backdrop scene, fades, sounds, CONTINUE/OPTION, attract, opening scene not ported"
+ "frontend": "Title/menu state machine 0x80013420 ported (SOURCE_BACKED_PARTIAL); backdrop scene, fades, sounds, CONTINUE/OPTION, attract, opening scene not ported",
+ "branch_reaverbot_camera_fix": {
+  "commits": [
+   "42a6835 class20/03 animation requests 7..17",
+   "8a8f235 hidden pop-out hit proxy"
+  ],
+  "host_tests": "170/170 PASS",
+  "native_build": "PASS",
+  "azahar": "NOT RUN (stalled off-Space)",
+  "note": "docs/research_01516/REAVERBOT_CAMERA_FIX.md"
+ }
 }

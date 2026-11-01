@@ -290,6 +290,15 @@ struct ImportedActorAnimationTick {
 // diagnostic cadence gate; this does not execute class03 AI or select requests.
 ImportedActorAnimationTick tick_imported_actor_request0(ActorAreaRuntime& area) noexcept;
 
+// Every request the ported class20/03 reducers select: initializer/action0 0;
+// actions 1/2/9 1; action3 2->3; actions 5/10 4; action6 6; action7 7..11 and
+// action8 12..16 (+1 per landing, 0x8011BEE0/EC/F8); their phase3 17; action4
+// 21->22. A missing request holds the whole callback (NeedsAnimationConsumer),
+// which froze the pop-out's action8 entrance in the air. The ST00 row holds
+// all of them (5/18/19/20 are absent or unselected).
+constexpr std::array<uint8_t, 19> kClass20_03AnimationRequests{{
+    0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 22}};
+
 // Optional load-time banks for initializer-selected class03. Explicit requests
 // share one immutable row bank; no request0 substitution or per-tick decoding.
 // Preparation validates every actor before any binding is published.
@@ -401,12 +410,17 @@ ImportedActorBehaviorTick tick_imported_actor_state1(ImportedActorInstance& acto
 struct ImportedActorPopoutTick {
     Class20_1FResult result;
     bool committed = false, morph_pending = false, pose_changed = false;
+    bool proxy_registered = false;
 };
-// One 0x801062EC callback for a subtype-0x1F actor. All-or-nothing; the hit
-// proxy (flags bit 8, 0x800341BC) is reported, not registered. Allocation-free.
+// One 0x801062EC callback for a subtype-0x1F actor. All-or-nothing. While
+// flags bit 8 is set (always, from 0x2C) the tail 0x80106410..0x80106468
+// registers the hit proxy 0x800341BC on the +0x180 root point, radius 0x50,
+// into +0x35C; the packet is cleared afterwards. Allocation-free.
 ImportedActorPopoutTick tick_imported_actor_popout_1f(ImportedActorInstance& actor,
     const ReferenceTables& references, std::optional<uint16_t> random_sample,
-    std::optional<uint32_t> work_80) noexcept;
+    std::optional<uint32_t> work_80, SourceHitProxyBank* bank = nullptr,
+    std::optional<uint32_t> mask_80098798 = std::nullopt,
+    std::array<SourceHitProxyOwnerPoint*,24> owners_800be478 = {}) noexcept;
 // Binds the 0x80098844[0x19] record (L3CB subtype 0x19 row) and the
 // 0x80036478 detection profile (record +0x0F, offset -0x60). Fresh only.
 bool bind_imported_actor_reaverbot19_record(ImportedActorInstance& actor,

@@ -515,7 +515,7 @@ void load_actor_rng_candidate_gate() {
 }
 void prepare_actor_animation_banks(l3::ActorAreaRuntime& actors,const l3::EbdDirectory& ebd) {
     if(actor_state_fields_requested()) {
-        constexpr std::array<uint8_t,8> requests{{0,1,2,3,4,6,21,22}};
+        const auto& requests=l3::kClass20_03AnimationRequests;
         try {
             l3::bind_imported_actor_animation_banks(actors,ebd,requests.data(),requests.size());
             char label[192];std::snprintf(label,sizeof(label),
@@ -5105,7 +5105,9 @@ int main() {
                                     continue;
                                 }
                                 const uint8_t before=actor.source_popout->action_09;
-                                const auto popout=l3::tick_imported_actor_popout_1f(actor,refs,sample,target->source_work_80);
+                                const auto popout=l3::tick_imported_actor_popout_1f(actor,refs,sample,target->source_work_80,
+                                    g_source_actor_proxy?&g_children.hit_proxy_bank():nullptr,0xffu,g_children.proxy_owner_pointers());
+                                if(g_source_actor_proxy)g_children.publish_proxy_owner_points();
                                 if(popout.committed&&sample)(void)l3::commit_source_rng_update(g_actor_rng,popout_rng);
                                 else if(rng_begun)l3::rollback_source_rng_update(popout_rng);
                                 if(popout.committed&&(before!=actor.source_popout->action_09||popout.morph_pending))
