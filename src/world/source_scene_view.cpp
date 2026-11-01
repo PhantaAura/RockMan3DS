@@ -68,6 +68,38 @@ bool initialize_source_scene_projection_80011f48(SourceProjectionControls& owner
     if(!profile.initialized)return false;
     owner.ofx=profile.boot_ofx;owner.ofy=profile.boot_ofy;owner.h=profile.boot_h;return true;
 }
+SourceSceneViewFrame compose_source_scene_view_frame(const SourceSceneViewProfile& profile,const ReferenceTables& reference,
+    const std::array<std::int32_t,3>& target,std::int16_t yaw,std::int16_t pitch,std::int16_t camera_distance,std::uint8_t shift,
+    std::uint32_t h,std::int32_t ofx,std::int32_t ofy) noexcept {
+    SourceSceneViewFrame frame;frame.source_shift=shift;
+    frame.yaw=yaw;frame.pitch=pitch;frame.distance=camera_distance;frame.target=target;
+    frame.rotation_q12=rotation_yx(reference,frame.pitch,frame.yaw);
+    const auto sy=scalar_sin(profile,frame.yaw),cy=scalar_cos(profile,frame.yaw);
+    const auto sp=scalar_sin(profile,frame.pitch),cp=scalar_cos(profile,frame.pitch);
+    const auto distance=s32(std::uint32_t(std::int32_t(frame.distance))<<frame.source_shift);
+    std::array<std::uint32_t,3> inverse_eye{{
+        (0u-std::uint32_t(frame.target[0]))<<frame.source_shift,
+        (0u-std::uint32_t(frame.target[1]))<<frame.source_shift,
+        (0u-std::uint32_t(frame.target[2]))<<frame.source_shift}};
+    inverse_eye[0]+=std::uint32_t(mul12(mul12(distance,sy),cp));inverse_eye[1]+=std::uint32_t(mul12(distance,sp));inverse_eye[2]+=std::uint32_t(mul12(mul12(distance,cy),cp));
+    frame.translation=apply_matrix_lv(frame.rotation_q12,inverse_eye);
+    const std::array<std::uint32_t,3> eye32{{std::uint32_t(frame.target[0])-std::uint32_t(mul12(mul12(frame.distance,sy),cp)),
+        std::uint32_t(frame.target[1])-std::uint32_t(mul12(frame.distance,sp)),
+        std::uint32_t(frame.target[2])-std::uint32_t(mul12(mul12(frame.distance,cy),cp))}};
+    frame.translation_1f800030=apply_matrix_lv(frame.rotation_q12,{{0u-eye32[0],0u-eye32[1],0u-eye32[2]}});
+    frame.eye={{s16(std::uint32_t(frame.target[0])-std::uint32_t(mul12(mul12(frame.distance,sy),cp))),
+        s16(std::uint32_t(frame.target[1])-std::uint32_t(mul12(frame.distance,sp))),
+        s16(std::uint32_t(frame.target[2])-std::uint32_t(mul12(mul12(frame.distance,cy),cp)))}};
+    const float scale=512.0f*float(1u<<frame.source_shift);
+    constexpr std::array<float,3> output_sign{{1.0f,-1.0f,-1.0f}},input_sign{{1.0f,-1.0f,1.0f}};
+    for(std::size_t row=0;row<3;++row){for(std::size_t col=0;col<3;++col)frame.native_view_row_major[row*4+col]=output_sign[row]*input_sign[col]*float(frame.rotation_q12[row*3+col])/4096.0f;
+        frame.native_view_row_major[row*4+3]=output_sign[row]*float(frame.translation[row])/scale;}
+    frame.native_view_row_major[15]=1.0f;frame.focal_pixels=float(h);
+    frame.center_x_pixels=float(ofx)/65536.0f+40.0f;
+    frame.center_y_pixels=float(ofy)/65536.0f;
+    frame.vertical_fov_degrees=frontend_vertical_fov_from_focal_pixels(frame.focal_pixels);
+    return frame;
+}
 SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewInputs& input) noexcept {
     using Status=SourceSceneViewStatus;SourceSceneViewResult out;
     const auto hold=[&](Status status)noexcept{out.status=status;return out;};
@@ -77,14 +109,15 @@ SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewIn
     if(!input.scene||!input.scene->mode_800a395c)return hold(Status::NeedsCameraMode);
     if(*input.scene->mode_800a395c==1)return hold(Status::GameplayCameraOwned);
     if(!input.script||!input.script->byte_800bc733)return hold(Status::NeedsScriptControl);
-    if(*input.script->byte_800bc733!=0)return hold(Status::NeedsTrackedActor);
     if(!input.script->byte_1f800074)return hold(Status::NeedsSourceShift);
     if(*input.script->byte_1f800074>2)return hold(Status::UnsupportedSourceShift);
     const auto& camera=input.scene->camera_800bc738;
     const auto known=[&](std::size_t offset,std::size_t n)noexcept{for(std::size_t i=0;i<n;++i)if(!camera.known[offset+i]){out.missing_camera_offset=std::uint16_t(offset+i);return false;}return true;};
     if(!known(0,1))return hold(Status::NeedsCameraBytes);
     if(camera.raw[0]!=0)return hold(Status::NeedsTargetPointCamera);
-    for(std::size_t axis=0;axis<3;++axis)if(!known(8+axis*4,4)||!known(152+axis*4,4))return hold(Status::NeedsCameraBytes);
+    // Tracked (0x8001E5BC): target = camera+8.. as stored from the actor, no +0x98.
+    const bool tracked=*input.script->byte_800bc733!=0;
+    for(std::size_t axis=0;axis<3;++axis)if(!known(8+axis*4,4)||(!tracked&&!known(152+axis*4,4)))return hold(Status::NeedsCameraBytes);
     for(const std::size_t offset:{std::size_t(0x3a),std::size_t(0x3e),std::size_t(0x42)})if(!known(offset,2))return hold(Status::NeedsCameraBytes);
     const auto& projection=input.script->projection;
     if(!projection.ofx||!projection.ofy||!projection.h)return hold(Status::NeedsProjectionControls);
@@ -92,30 +125,23 @@ SourceSceneViewResult produce_source_scene_view_8001e550(const SourceSceneViewIn
     // The native optical adapter supports positive H and original integer pixel
     // offsets. Source fixed/negative offsets remain explicit unsupported optics.
     if(h==0||h>=32768u||(*projection.ofx&65535u)||(*projection.ofy&65535u))return hold(Status::UnsupportedOptics);
-    SourceSceneViewFrame frame;frame.source_shift=*input.script->byte_1f800074;
-    frame.yaw=s16(u16(camera.raw.data()+0x3a));frame.pitch=s16(u16(camera.raw.data()+0x3e));frame.distance=s16(u16(camera.raw.data()+0x42));
-    for(std::size_t axis=0;axis<3;++axis)frame.target[axis]=asr(u32(camera.raw.data()+8+axis*4)+u32(camera.raw.data()+152+axis*4),16);
-    frame.rotation_q12=rotation_yx(*input.reference,frame.pitch,frame.yaw);
-    const auto sy=scalar_sin(*input.profile,frame.yaw),cy=scalar_cos(*input.profile,frame.yaw);
-    const auto sp=scalar_sin(*input.profile,frame.pitch),cp=scalar_cos(*input.profile,frame.pitch);
-    const auto distance=s32(std::uint32_t(std::int32_t(frame.distance))<<frame.source_shift);
-    std::array<std::uint32_t,3> inverse_eye{{
-        (0u-std::uint32_t(frame.target[0]))<<frame.source_shift,
-        (0u-std::uint32_t(frame.target[1]))<<frame.source_shift,
-        (0u-std::uint32_t(frame.target[2]))<<frame.source_shift}};
-    inverse_eye[0]+=std::uint32_t(mul12(mul12(distance,sy),cp));inverse_eye[1]+=std::uint32_t(mul12(distance,sp));inverse_eye[2]+=std::uint32_t(mul12(mul12(distance,cy),cp));
-    frame.translation=apply_matrix_lv(frame.rotation_q12,inverse_eye);
-    frame.eye={{s16(std::uint32_t(frame.target[0])-std::uint32_t(mul12(mul12(frame.distance,sy),cp))),
-        s16(std::uint32_t(frame.target[1])-std::uint32_t(mul12(frame.distance,sp))),
-        s16(std::uint32_t(frame.target[2])-std::uint32_t(mul12(mul12(frame.distance,cy),cp)))}};
-    const float scale=512.0f*float(1u<<frame.source_shift);
-    constexpr std::array<float,3> output_sign{{1.0f,-1.0f,-1.0f}},input_sign{{1.0f,-1.0f,1.0f}};
-    for(std::size_t row=0;row<3;++row){for(std::size_t col=0;col<3;++col)frame.native_view_row_major[row*4+col]=output_sign[row]*input_sign[col]*float(frame.rotation_q12[row*3+col])/4096.0f;
-        frame.native_view_row_major[row*4+3]=output_sign[row]*float(frame.translation[row])/scale;}
-    frame.native_view_row_major[15]=1.0f;frame.focal_pixels=float(h);
-    frame.center_x_pixels=float(s32(*projection.ofx))/65536.0f+40.0f;
-    frame.center_y_pixels=float(s32(*projection.ofy))/65536.0f;
-    frame.vertical_fov_degrees=frontend_vertical_fov_from_focal_pixels(frame.focal_pixels);
+    {
+        const std::array<std::int32_t,3> target{{
+            asr(u32(camera.raw.data()+8)+(tracked?0u:u32(camera.raw.data()+152)),16),
+            asr(u32(camera.raw.data()+12)+(tracked?0u:u32(camera.raw.data()+156)),16),
+            asr(u32(camera.raw.data()+16)+(tracked?0u:u32(camera.raw.data()+160)),16)}};
+        const auto frame=compose_source_scene_view_frame(*input.profile,*input.reference,target,
+            s16(u16(camera.raw.data()+0x3a)),s16(u16(camera.raw.data()+0x3e)),s16(u16(camera.raw.data()+0x42)),
+            *input.script->byte_1f800074,h,s32(*projection.ofx),s32(*projection.ofy));
     out.status=Status::SourceBackedPartial;out.frame=frame;return out;
+    }
+}
+std::int32_t source_scene_e0_depth_8002a160(const SourceSceneViewFrame& frame,
+    const std::array<std::int16_t,3>& position) noexcept {
+    const auto& r=frame.rotation_q12;
+    const std::int64_t mac=(std::int64_t(frame.translation_1f800030[2])<<12)+std::int64_t(r[6])*position[0]+
+        std::int64_t(r[7])*position[1]+std::int64_t(r[8])*position[2];
+    std::int64_t sz=mac>>12;sz=sz<0?0:(sz>65535?65535:sz);
+    return std::int32_t(sz>>2);
 }
 } // namespace l3

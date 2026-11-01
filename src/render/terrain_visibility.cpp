@@ -6,6 +6,11 @@ namespace l3 {
 namespace {
 int16_t lo16(uint32_t v) noexcept { return static_cast<int16_t>(static_cast<uint16_t>(v & 0xffffu)); }
 int16_t hi16(uint32_t v) noexcept { return static_cast<int16_t>(static_cast<uint16_t>(v >> 16)); }
+// The terrain routines shift cell coordinates left by 0x1F800074 (sllv)
+// before the GTE; the V registers keep 16 bits.
+int32_t shifted(int32_t v, uint8_t shift) noexcept {
+    return shift ? int32_t(int16_t(uint16_t(uint32_t(v) << (shift & 31u)))) : v;
+}
 }
 
 TerrainFaceCamera make_terrain_face_camera(const std::array<uint32_t,8>& words,
@@ -29,9 +34,26 @@ TerrainFaceCamera make_terrain_face_camera(const std::array<uint32_t,8>& words,
     return c;
 }
 
+TerrainFaceCamera make_scene_face_camera(const std::array<uint32_t,8>& words,
+    const std::array<uint8_t,40>* area, const SourceProjectionControls& projection, uint8_t shift) noexcept {
+    TerrainFaceCamera c;
+    for (size_t i = 0; i < 8; ++i) c.gte.control[i] = words[i];
+    c.gte.control[4] = static_cast<uint32_t>(static_cast<int32_t>(lo16(words[4])));
+    c.gte.matrix_translation_bound = true;
+    if (area) {
+        c.area_record = *area;
+        c.far_color = source_far_color_8007b0f8({{(*area)[32], (*area)[33], (*area)[34]}});
+    }
+    (void)bind_source_projection_controls(c.gte, projection);
+    c.lod_1f800074 = shift;
+    return c;
+}
+
 std::optional<int32_t> terrain_view_depth_1f8001c0(const TerrainFaceCamera& camera,
     int16_t x, int16_t y, int16_t z) noexcept {
     auto gte = camera.gte;
+    x = int16_t(shifted(x, camera.lod_1f800074)); y = int16_t(shifted(y, camera.lod_1f800074));
+    z = int16_t(shifted(z, camera.lod_1f800074));
     gte.data[0] = static_cast<uint16_t>(x) | (static_cast<uint32_t>(static_cast<uint16_t>(y)) << 16);
     gte.data[1] = static_cast<uint16_t>(z);
     // RT (MVMVA rotation + translation, sf=1) and RTPS share MAC1..3.
@@ -49,8 +71,10 @@ TerrainFaceResult classify_terrain_face(const TerrainFaceCamera& camera,
         if (x[v] < INT16_MIN || x[v] > INT16_MAX || y[v] < INT16_MIN || y[v] > INT16_MAX ||
             z[v] < INT16_MIN || z[v] > INT16_MAX) return r;
         auto gte = camera.gte;
-        gte.data[0] = (static_cast<uint32_t>(x[v]) & 0xffffu) | (static_cast<uint32_t>(y[v]) << 16);
-        gte.data[1] = static_cast<uint32_t>(z[v]) & 0xffffu;
+        const int32_t vx = shifted(x[v], camera.lod_1f800074), vy = shifted(y[v], camera.lod_1f800074),
+                      vz = shifted(z[v], camera.lod_1f800074);
+        gte.data[0] = (static_cast<uint32_t>(vx) & 0xffffu) | (static_cast<uint32_t>(vy) << 16);
+        gte.data[1] = static_cast<uint32_t>(vz) & 0xffffu;
         const auto p = source_gte_rtps_0180001(gte);
         if (p.status != SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return r;
         sx[v] = lo16(p.screen_xy); sy[v] = hi16(p.screen_xy); sz[v] = p.depth;
@@ -120,7 +144,7 @@ std::optional<TerrainSubdivision> terrain_subdivide_8002466c(const TerrainFaceCa
     const std::array<uint8_t,8>& uv, const TerrainFaceResult& face) noexcept {
     TerrainSubdivision s;
     for (size_t k = 0; k < 4; ++k) {
-        s.world[k] = {{x[k], y[k], z[k]}};
+        s.world[k] = {{shifted(x[k], camera.lod_1f800074), shifted(y[k], camera.lod_1f800074), shifted(z[k], camera.lod_1f800074)}};
         s.sx[k] = face.sx[k]; s.sy[k] = face.sy[k];
         s.u[k] = uv[2 * k]; s.v[k] = uv[2 * k + 1];
     }

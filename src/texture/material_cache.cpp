@@ -201,8 +201,24 @@ MaterialResolution resolve_material_word_last_writer(uint32_t word, const std::v
     return out;
 }
 
+PaletteBankSnapshot compose_palette_bank(const std::vector<IndexedResource>& resources) {
+    CpuPaletteBank bank;
+    VramRegion image(0, 0, 1, 1), clut(0, 0, 1, 1);   // only the CPU bank is kept
+    for (const auto& resource : resources) {
+        if (resource.kind == IndexedResourceKind::ClutType4) upload_palette(resource.clut4, image, clut, bank);
+        else if (resource.kind == IndexedResourceKind::PaletteType9) upload_palette(resource.palette9, image, clut, bank);
+        else if (resource.kind == IndexedResourceKind::TextureType1) upload_palette(resource.texture, image, clut, bank);
+        else throw std::runtime_error("unknown material upload resource kind");
+    }
+    return {bank.words, bank.written, bank.dirty};
+}
+
+bool palette_bank_row(uint16_t x, uint16_t y) noexcept {
+    return x < 256u && ((y >= 240u && y < 256u) || (y >= 496u && y < 512u));
+}
+
 MaterialCache build_material_cache(const std::vector<uint32_t>& words, const std::vector<IndexedResource>& resources,
-                                  std::vector<MaterialVramDiagnostics>* diagnostics) {
+                                  std::vector<MaterialVramDiagnostics>* diagnostics, bool keep_runtime_palettes) {
     std::vector<uint32_t> unique = words;
     std::sort(unique.begin(), unique.end());
     unique.erase(std::unique(unique.begin(), unique.end()), unique.end());
@@ -228,7 +244,11 @@ MaterialCache build_material_cache(const std::vector<uint32_t>& words, const std
             static_cast<uint32_t>(image.words.size()), static_cast<uint16_t>(clut_coverage), pe});
         e.source_width = static_cast<uint16_t>(image.extent_x * pixels_per_word);
         e.source_height = image.extent_y;
-        if (image_coverage && clut_coverage == pe) {
+        // keep_runtime_palettes: a CLUT in the 0x800AD168 mirror rows may be
+        // written only at runtime (family-C0 palette objects); keep the page's
+        // indices with the palette words as composed so far (unwritten = 0).
+        const bool runtime_palette = keep_runtime_palettes && palette_bank_row(clut_ref.vram_x, clut_ref.vram_y);
+        if (image_coverage && (clut_coverage == pe || runtime_palette)) {
             e.indices.resize(size_t(kL3MaterialTextureWidth) * kL3MaterialTextureHeight);
             const uint16_t mask = page.bpp == 4 ? 15u : 255u;
             for (size_t index = 0; index < image.words.size(); ++index) {

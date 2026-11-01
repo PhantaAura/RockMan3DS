@@ -484,12 +484,20 @@ struct ImportedActorFloorSample {
 // height. Allocation-free, with at most four candidates.
 ImportedActorFloorSample sample_imported_actor_floor(const ImportedActorInstance& actor,
                                                    const RuntimeMap& map, size_t area_index);
+// The same 0x80048E6C floor query for a class-0x20 actor point with explicit
+// work+0x78 bounds (all zero for a null +0x78, as the ST07 cutscene classes
+// store), without the initializer admission above.
+ImportedActorFloorSample sample_actor_floor_80048e6c(const RuntimeMap& map, size_t area_index,
+                                                     int16_t x, int16_t y, int16_t z,
+                                                     const RetailPlayerBounds& bounds);
 void unload_imported_actors(ActorAreaRuntime& area);
 
+// Sized for class 0x40's 24 draw slots; class 0x20 keeps its 13-part limit
+// (0x8003346C -> 0x80033598 builds both classes' matrices).
 struct ImportedActorPoseMatrices {
     size_t part_count = 0;
-    std::array<PlayerPoseMatrix, kActorClass20PartLimit> world{};
-    std::array<bool, kActorClass20PartLimit> draw_enabled{};
+    std::array<PlayerPoseMatrix, kActorDrawDescriptorSlots> world{};
+    std::array<bool, kActorDrawDescriptorSlots> draw_enabled{};
 };
 // Float presentation bridge for source work +0x1e8 rotation matrices and +0x180
 // positions. Returns world points in the same raw coordinate units as terrain.

@@ -1,9 +1,12 @@
 #include "checkpoint_version.h"
 #include "legends3ds/gameplay_gates.h"
+#include "legends3ds/source_palette_c0.h"
+#include "legends3ds/source_scene_face.h"
 #include <3ds.h>
 #include <citro3d.h>
 #include <algorithm>
 #include <cstdint>
+#include <functional>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -44,6 +47,8 @@
 #include "legends3ds/runtime_session.h"
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/frontend_title.h"
+#include "legends3ds/source_intro_crawl.h"
+#include "legends3ds/source_attract_event10.h"
 #include "legends3ds/frontend_servbots.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/gameplay_clock.h"
@@ -231,6 +236,7 @@ static bool g_retail_actor_animation = false;
 static bool g_actor_state_fields = false;
 static bool g_actor_rng_candidate = false;
 static bool g_source_event_boot = false;
+static bool g_new_game_opening = false;   // NEW GAME plays ST00 event 1
 // Exact first E0 callback stores, with an explicitly diagnostic native sweep
 // and frontend Near LOD. Main-phase scheduling and source camera depth are held.
 static bool g_source_scene_e0 = false;
@@ -1011,10 +1017,61 @@ void rebuild_terrain_uv_flat(const l3::RuntimeMap& map, const l3::St00RenderSour
     g_owned_linear_bytes += uint32_t(bytes);
 }
 
+// Pages whose CLUT lies in the 0x800AD168 mirror rows (VRAM y 240..255 /
+// 496..511): the family-C0 palette objects rewrite those colours at runtime,
+// so each page keeps its indices in CTR tile order for re-colouring.
+struct RuntimePalettePage { uint32_t word = 0; uint16_t clut_x = 0, clut_y = 0, entries = 0; std::vector<uint8_t> tiled; };
+static std::vector<RuntimePalettePage> g_runtime_palette_pages;
+static std::optional<l3::SourcePaletteC0Profile> g_palette_c0;
+static l3::SourcePaletteBuffer g_palette_buffer;
+static l3::SourceSceneFaceProfile g_face_profile;
+static l3::SourceSceneFaceState g_face_state;
+void register_runtime_palette_page(const l3::MaterialCacheEntry& e) {
+    const uint16_t clut = uint16_t(e.material_word >> 16);
+    const uint16_t x = uint16_t((clut & 0x3Fu) * 16u), y = uint16_t(clut >> 6);
+    if (!e.resolved || !l3::palette_bank_row(x, y)) return;
+    for (const auto& p : g_runtime_palette_pages) if (p.word == e.material_word) return;
+    RuntimePalettePage page; page.word = e.material_word; page.clut_x = x; page.clut_y = y; page.entries = e.palette_entries;
+    // Tile order of the index plane: run the RGBA tiler with the index in R.
+    std::vector<uint8_t> linear(e.indices.size() * 4u, 0);
+    for (size_t i = 0; i < e.indices.size(); ++i) linear[i * 4u] = e.indices[i];
+    const auto tiled = l3::ctr_rgba8_tiled_abgr(linear, l3::kL3MaterialTextureWidth, l3::kL3MaterialTextureHeight);
+    page.tiled.resize(e.indices.size());
+    for (size_t i = 0; i < page.tiled.size(); ++i) page.tiled[i] = tiled[i * 4u + 3u];
+    g_runtime_palette_pages.push_back(std::move(page));
+}
+// Re-colour every uploaded copy of the pages whose mirror row changed, with
+// material_page_rgba8's rules (word 0 transparent, STP alpha 0x80).
+void recolour_runtime_palette_pages(uint64_t rows) {
+    for (const auto& page : g_runtime_palette_pages) {
+        const size_t row = page.clut_y < 256u ? 32u + (page.clut_y - 240u) : 48u + (page.clut_y - 496u);
+        if (!((rows >> row) & 1u)) continue;
+        std::array<uint32_t,256> lut{};
+        bool complete = true;
+        for (size_t i = 0; i < page.entries; ++i) {
+            const size_t at = row * l3::kSourcePaletteRowWords + page.clut_x + i;
+            if (at >= g_palette_buffer.words.size() || !g_palette_buffer.known[at]) { complete = false; break; }
+            const uint16_t c = g_palette_buffer.words[at];
+            const auto e5 = [](uint16_t v) { v &= 31u; return uint32_t((v << 3) | (v >> 2)); };
+            const uint32_t a = c == 0 ? 0u : ((c & 0x8000u) ? 0x80u : 0xFFu);
+            lut[i] = a | (e5(c >> 10) << 8) | (e5(c >> 5) << 16) | (e5(c) << 24);   // A,B,G,R bytes
+        }
+        if (!complete) continue;
+        const auto paint = [&](C3D_Tex& tex) {
+            auto* d = static_cast<uint32_t*>(tex.data);
+            if (!d) return;
+            for (size_t k = 0; k < page.tiled.size(); ++k) d[k] = lut[page.tiled[k]];
+            GSPGPU_FlushDataCache(d, uint32_t(page.tiled.size() * 4u));
+        };
+        for (auto& b : g_terrain_batches) if (b.texture_ready && !(b.key >> 32) && b.material_word == page.word) paint(b.texture);
+        for (auto& m : g_scene_materials) if (m.texture_ready && m.material_word == page.word) paint(m.texture);
+    }
+}
 bool upload_material_texture(const l3::MaterialCacheEntry* e, C3D_Tex& tex) {
     if (!e || !e->resolved) return false;
     if (g_owned_texture_bytes > kAreaTextureLimit - kTexturePageBytes)
         throw std::runtime_error("area combined terrain/player GPU texture policy exceeded");
+    register_runtime_palette_page(*e);
     const auto rgba = l3::material_page_rgba8(*e);
     if (rgba.size() != size_t(kTexturePageBytes))
         throw std::runtime_error("material RGBA page size mismatch");
@@ -1032,9 +1089,12 @@ bool upload_material_texture(const l3::MaterialCacheEntry* e, C3D_Tex& tex) {
 
 // Optional per-area depth-ramp scales (materials/area_NN.l3cr).
 static std::vector<l3::TerrainClutRampEntry> g_terrain_ramp;
+// Folder of the per-area CLUT ramps: ST00's materials/, or a cutscene stage's
+// own folder while it owns the terrain (the attract scene's attract/).
+static const char* g_terrain_ramp_dir = "materials";
 void load_terrain_ramp(size_t area) {
     g_terrain_ramp.clear();
-    char rel[64];std::snprintf(rel,sizeof(rel),"materials/area_%02lu.l3cr",static_cast<unsigned long>(area));
+    char rel[64];std::snprintf(rel,sizeof(rel),"%s/area_%02lu.l3cr",g_terrain_ramp_dir,static_cast<unsigned long>(area));
     try{
         const auto bytes=read_binary(data_path(rel),1u<<20);
         g_terrain_ramp=l3::load_l3clut_ramp(bytes.data(),bytes.size());
@@ -1828,14 +1888,34 @@ EffectDrawStats draw_source_effects_uv(const l3::ChildRuntime& children,const l3
     }
     return stats;
 }
+// The scene view of the current frame (0x8001E550), when bound.
+static std::optional<l3::SourceSceneViewFrame> g_scene_view_frame;
 size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::SceneE0Resources& resources) {
     if(!use_uv_renderer()||!resources.resident_in(session.active_area().ebd))return 0;
     configure_immediate_attributes_uv();configure_texenv_uv(false);
     const auto& pool=session.source_event_phase5_context().pool_e0;
     size_t instances=0,semi_instances=0,held_materials=0,submitted_passes=0;
     for(size_t slot=0;slot<pool.slots.size();++slot) {
-        const auto draw=l3::scene_e0_draw_view(pool.slots[slot],resources,
-            session.active_area().ebd,l3::SceneE0MeshTier::Near);
+        // 0x8002A160: depth of +0x38 under 0x1F800008/0x1F800030, far cull
+        // against 0x1F800006, then Near/Middle/Far at 701/1801. Without a
+        // bound scene view (gameplay camera) the Near mesh is drawn.
+        auto tier=l3::SceneE0MeshTier::Near;
+        const auto& w=pool.slots[slot];
+        if(g_scene_view_frame&&w.known[56]&&w.known[57]&&w.known[58]&&w.known[59]&&w.known[60]&&w.known[61]){
+            const auto half=[&](size_t at){return int16_t(uint16_t(w.raw[at]|(w.raw[at+1]<<8)));};
+            const auto depth=l3::source_scene_e0_depth_8002a160(*g_scene_view_frame,{{half(56),half(58),half(60)}});
+            const auto far=session.source_event_phase6_context().half_1f800006;
+            if(far&&depth>int32_t(*far)){
+                if(session.frame_counter()%60u==0u)hardware_test_trace("# source_scene_E0_slot,frame=%lu,slot=%lu,far_culled=1,depth=%ld,far=%u",
+                    (unsigned long)session.frame_counter(),(unsigned long)slot,(long)depth,unsigned(*far));
+                continue;}
+            tier=l3::scene_e0_tier_for_source_depth(depth);
+        }
+        const auto draw=l3::scene_e0_draw_view(w,resources,session.active_area().ebd,tier);
+        if(session.frame_counter()%60u==0u&&w.known[3]&&w.known[9]&&w.known[10])
+            hardware_test_trace("# source_scene_E0_slot,frame=%lu,slot=%lu,variant=%u,state=%u,sub=%u,flags0=%02x,flags6=%02x,tier=%u,draw_status=%u,view=%u",
+                (unsigned long)session.frame_counter(),(unsigned long)slot,unsigned(w.raw[3]),unsigned(w.raw[9]),unsigned(w.raw[10]),
+                unsigned(w.raw[0]),unsigned(w.raw[6]),unsigned(tier),unsigned(draw.status),unsigned(g_scene_view_frame.has_value()));
         if(draw.status!=l3::SceneE0Status::Ready)continue;
         const auto& v=draw.view;
         if(v.mesh->part.triangles.empty()&&v.mesh->part.quads.empty())continue;
@@ -1856,6 +1936,8 @@ size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::Scene
     return instances;
 }
 
+bool psx_emit_class40(const l3::SourceEventPhase5Bytes<1444>& work, const l3::ActorMeshResource& mesh,
+                      const l3::SourceSceneActor40IntegerPose& pose,const l3::SourceSceneActor40Matrices& world);
 size_t draw_source_scene_actor40_uv(const l3::RuntimeSession& session,const l3::SourceSceneActor40Resources& resource,const l3::ReferenceTables& refs) {
     const auto& work=session.source_event_phase5_context().pool40.slots[0];
     const auto* selected=l3::select_source_scene_actor40_pose(work,resource);
@@ -1865,6 +1947,7 @@ size_t draw_source_scene_actor40_uv(const l3::RuntimeSession& session,const l3::
         &refs,session.source_event_phase6_context().byte_1f800074,*selected);
     if(integer_pose.status!=l3::SourceSceneActor40PoseStatus::SourceBackedPartial)return 0;
     const auto pose=l3::present_source_scene_actor40_integer_pose(integer_pose);
+    if(psx_emit_class40(work,*mesh,integer_pose,pose))return pose.part_count;
     configure_immediate_attributes_uv();configure_texenv_uv(false);size_t drawn=0;
     for(size_t i=0;i<pose.part_count;++i){if(!pose.draw_enabled[i])continue;
         const auto& part=mesh->model.parts[i];
@@ -2176,6 +2259,13 @@ static bool g_psx_terrain = true;
 static bool g_psx_actors = true;
 // This frame's face camera (set before the terrain draw; reset each frame).
 static std::optional<l3::TerrainFaceCamera> g_psx_camera;
+// 0x1F800006 of the current scene frame (camera commands 32..34), if known.
+static std::optional<uint16_t> g_psx_far_1f800006;
+// 0x1F800030 (ApplyMatrixLV(R, -eye), unshifted) of the current frame camera.
+static std::optional<std::array<int32_t,3>> g_psx_tr_1f800030;
+struct Class40Trace{uint32_t calls=0,culled=0,held=0,parts=0,prims=0,depth=0;uint8_t reason=0;};
+static Class40Trace g_class40_trace;
+std::optional<uint16_t> session_far_1f800006(){return g_psx_far_1f800006;}
 struct PsxTranslatorStats {
     uint32_t packets = 0, opaque = 0, semi = 0, runs = 0, unresolved = 0, chained = 0, subdivide_fallback = 0, subdivided = 0,
         negative = 0, negative_triangles = 0, negative_3d = 0, unfitted_ramp = 0, negative_near = 0, near_stream_end = 0,
@@ -2236,7 +2326,7 @@ const PsxResolved& psx_resolve(uint16_t clut, uint16_t tpage) {
         }
     // Class-20 / E0 pages: the ramp is ORed into the CLUT (0x800289A0,
     // 0x8002A6E8), so a page whose CLUT bits are a subset stands in (scale 1).
-    for (const auto* list : {&g_actor_materials, &g_scene_materials}) {
+    for (const auto* list : {&g_actor_materials, &g_scene_materials, &g_scene_actor40_materials}) {
         if (r.found) break;
         for (const auto& m : *list) {
             const uint16_t mc = uint16_t(m.material_word >> 16);
@@ -2411,6 +2501,12 @@ void psx_packet_extra(uint32_t packet, uint8_t len, const std::array<std::array<
     }
 }
 
+// Subdivided points come back in the 0x1F800074-shifted space; the 3DS depth
+// extra wants world units.
+std::array<int32_t,3> psx_unshift(const std::array<int32_t,3>& w) {
+    const uint8_t sh = g_psx_camera ? g_psx_camera->lod_1f800074 : 0;
+    return {{w[0] >> sh, w[1] >> sh, w[2] >> sh}};
+}
 void psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult& r, uint32_t material_word,
                            uint32_t see_through_code, uint32_t& previous,
                            const l3::TerrainSubdivision* sub = nullptr) {
@@ -2435,7 +2531,7 @@ void psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult
             for (unsigned k = 0; k < 4; ++k) {
                 const uint8_t i = quad[k];
                 p.x[k] = sub->sx[i]; p.y[k] = sub->sy[i]; p.u[k] = sub->u[i]; p.v[k] = sub->v[i];
-                pts[k] = sub->world[i];
+                pts[k] = psx_unshift(sub->world[i]);
             }
             const uint32_t packet = g_psx_prims.allocate(9, 12);
             l3::psxgpu::write_poly_ft4(g_psx_prims.payload(packet), p);
@@ -2450,7 +2546,7 @@ void psx_emit_terrain_face(const TerrainQuadInfo& q, const l3::TerrainFaceResult
             for (unsigned k = 0; k < 3; ++k) {
                 const uint8_t i = l3::kSubdivisionTris80097CA0[t][k];
                 p.x[k] = sub->sx[i]; p.y[k] = sub->sy[i]; p.u[k] = sub->u[i]; p.v[k] = sub->v[i];
-                pts[k] = sub->world[i];
+                pts[k] = psx_unshift(sub->world[i]);
             }
             pts[3] = pts[2];
             const uint32_t packet = g_psx_prims.allocate(7, 12);
@@ -2511,6 +2607,11 @@ void psx_emit_negative_face(const TerrainQuadInfo& q, const l3::TerrainFaceResul
 bool psx_rtps(int32_t x, int32_t y, int32_t z, int16_t& sx, int16_t& sy, uint16_t& sz, uint16_t* ir0) {
     if (!g_psx_camera) return false;
     if (x < INT16_MIN || x > INT16_MAX || y < INT16_MIN || y > INT16_MAX || z < INT16_MIN || z > INT16_MAX) return false;
+    // Model vertices are shifted by 0x1F800074 before the GTE (sllv in
+    // 0x8002A160 / 0x80028F90), matching the shifted camera translation.
+    if (const uint8_t sh = g_psx_camera->lod_1f800074) {
+        x = int16_t(uint16_t(uint32_t(x) << sh)); y = int16_t(uint16_t(uint32_t(y) << sh)); z = int16_t(uint16_t(uint32_t(z) << sh));
+    }
     auto gte = g_psx_camera->gte;
     gte.data[0] = (uint32_t(x) & 0xffffu) | (uint32_t(y) << 16);
     gte.data[1] = uint32_t(z) & 0xffffu;
@@ -2553,7 +2654,8 @@ PsxVert psx_project_vert(const std::array<float,3>& w) {
 // One primitive from projected vertices: NCLIP (unless two-sided), AVSZ
 // bucket >> 1 below bucket_limit, make(sx, sy, ir0 of vertex 2) -> packet.
 template <class Make>
-void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool two_sided, size_t bucket_limit, Make&& make) {
+void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool two_sided, size_t bucket_limit, Make&& make,
+                         size_t bucket_override = SIZE_MAX) {
     for (unsigned k = 0; k < n; ++k) if (!v[k]->ok) { ++g_psx_stats.actor_unsupported; return; }
     std::array<int16_t,4> sx{}, sy{};
     for (unsigned k = 0; k < 4; ++k) { const auto* q = v[k < n ? k : 2]; sx[k] = q->sx; sy[k] = q->sy; }
@@ -2573,7 +2675,7 @@ void psx_emit_model_prim(const std::array<const PsxVert*,4>& v, unsigned n, bool
         const auto* q = v[k < n ? k : 2];
         extra[k] = q->depth; extra[4 + 2 * k] = q->nx; extra[5 + 2 * k] = q->ny;
     }
-    g_psx_ot.add_prim(g_psx_prims, size_t(otz >> 1), packet);
+    g_psx_ot.add_prim(g_psx_prims, bucket_override != SIZE_MAX ? bucket_override : size_t(otz >> 1), packet);
     ++g_psx_stats.actor_packets;
 }
 
@@ -2656,13 +2758,26 @@ bool psx_emit_player(const std::vector<l3::PlayerVisualPrimitive>& local_visuals
 bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::ImportedActorPoseMatrices& pose) {
     // Dynamic class40 owners share the presentation container, but their
     // original draw path is 0x80028F90 rather than this class20 packet path.
-    if (actor.source_class != 0x20 || !g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
+    // Class 0x40 cutscene actors (ST07 Teisel) share this flat class-0x20 packet
+    // path, with 0x80028F90's unshifted actor point for colour and ramp.
+    if ((actor.source_class != 0x20 && actor.source_class != 0x40) || !g_psx_actors || !g_psx_camera || !g_psx_ot.size() || pose.part_count == 0) return false;
     ++g_psx_stats.class20_actors;
     const auto& cam = *g_psx_camera;
     const auto& root = pose.world[0];
     int16_t ax = 0, ay = 0; uint16_t asz = 0, air0 = 0;
-    if (!psx_rtps(int32_t(std::lround(root.m[3])), int32_t(std::lround(root.m[7])), int32_t(std::lround(root.m[11])),
-                  ax, ay, asz, &air0)) return false;
+    const int32_t rx = int32_t(std::lround(root.m[3])), ry = int32_t(std::lround(root.m[7])), rz = int32_t(std::lround(root.m[11]));
+    if (actor.source_class == 0x40 && g_psx_tr_1f800030) {
+        // 0x80028F90: the actor point is raw (not shifted) with translation
+        // 0x1F800030; colour/ramp come from its IR0 and SZ (oracle: ST07
+        // Teisel +0x15E = 0x4210 at 0x800C3580).
+        auto gte = cam.gte;
+        for (int r = 0; r < 3; ++r) gte.control[5 + r] = uint32_t((*g_psx_tr_1f800030)[size_t(r)]);
+        gte.data[0] = uint32_t(uint16_t(int16_t(rx))) | (uint32_t(uint16_t(int16_t(ry))) << 16);
+        gte.data[1] = uint32_t(uint16_t(int16_t(rz)));
+        const auto p = l3::source_gte_rtps_0180001(gte);
+        if (p.status != l3::SourcePlayerProxyStatus::SourceBackedPartial || p.depth == 0) return false;
+        asz = p.depth; air0 = uint16_t(gte.data[8]);
+    } else if (!psx_rtps(rx, ry, rz, ax, ay, asz, &air0)) return false;
     uint16_t c15 = 0x4210;
     if (actor.source_behavior) c15 = actor.source_behavior->work_15e;
     else if (actor.source_reaverbot19) c15 = actor.source_reaverbot19->shade_15e;
@@ -2699,6 +2814,205 @@ bool psx_emit_class20(const l3::ImportedActorInstance& actor, const l3::Imported
             });
         }
     }
+    return true;
+}
+
+// One shadow of 0x8002CBDC: the centre (x, floor, z) projected raw with
+// translation 0x1F800030 gives depth = SZ3 / 4 (cull above 0x1F800006 or
+// below 48); corners at heading -+ half_angle (rsin/rcos 0x8007A060 /
+// 0x8007A12C, radius r): P0 = c + r(sin, cos)(h - a), P1 = (h + a),
+// P2 = 2c - P1, P3 = 2c - P0, projected with the shifted camera. The
+// original adds r*sin >> (12 - shift) to the shifted centre; here the world
+// offset r*sin >> 12 is shifted by psx_rtps (a rounding difference only).
+void psx_emit_shadow(int16_t x, int16_t floor_y, int16_t z, int32_t radius, int32_t half_angle, uint16_t heading, uint16_t type,
+                     const l3::ReferenceTables& refs) {
+    if (!g_psx_camera || !g_psx_tr_1f800030 || !g_psx_ot.size()) return;
+    auto gte = g_psx_camera->gte;
+    for (int r = 0; r < 3; ++r) gte.control[5 + r] = uint32_t((*g_psx_tr_1f800030)[size_t(r)]);
+    gte.data[0] = uint32_t(uint16_t(x)) | (uint32_t(uint16_t(floor_y)) << 16);
+    gte.data[1] = uint32_t(uint16_t(z));
+    const auto c = l3::source_gte_rtps_0180001(gte);
+    if (c.status != l3::SourcePlayerProxyStatus::SourceBackedPartial) return;
+    const int32_t depth = int32_t(c.depth) >> 2;
+    const auto far = session_far_1f800006();
+    if ((far && int32_t(*far) < depth) || depth < 48 || depth >= 577) return;
+    const int32_t h = int32_t(heading & 0xFFFu);
+    const auto offset = [&](int32_t angle, int32_t& ox, int32_t& oz) {
+        ox = (l3::reference_rsin_8007a060(refs, angle) * radius) >> 12;
+        oz = (l3::reference_rcos_8007a12c(refs, angle) * radius) >> 12;
+    };
+    int32_t x0, z0, x1, z1;
+    offset(h - half_angle, x0, z0); offset(h + half_angle, x1, z1);
+    const float fy = float(floor_y);
+    const PsxVert p0 = psx_project_vert({{float(x + x0), fy, float(z + z0)}});
+    const PsxVert p1 = psx_project_vert({{float(x + x1), fy, float(z + z1)}});
+    const PsxVert p2 = psx_project_vert({{float(x - x1), fy, float(z - z1)}});
+    const PsxVert p3 = psx_project_vert({{float(x - x0), fy, float(z - z0)}});
+    psx_emit_model_prim({{&p0, &p1, &p2, &p3}}, 4, true, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+        return *l3::psxgpu::shadow_packet_8002cbdc(depth, type, sx, sy);
+    }, size_t(depth >> 1));
+}
+
+// A class-0x80 sprite of 0x80029C18 (draw pass 0x80029B10, table
+// 0x800898D0[0]) for flags without 0x20 (rotation) or 0x08 (flat colour):
+// view = R * pos + TR (raw pos with 0x1F800030 at shift 0, else pos <<
+// shift with the camera translation); drawn for view z in 192..far * 4;
+// half size s = scale << shift; RTPT of (vx - s, vy - s), (vx + s, vy - s)
+// and the centre (identity rotation, no translation): xy2 = 2c - xy1,
+// xy3 = 2c - xy0; colour = DPCS(colour word) at the centre's IR0; uv (u, v),
+// +31 across/down; CLUT/TPAGE from the material word; bucket vz >> 3.
+void psx_emit_sprite_80029c18(const std::array<int16_t,3>& pos, uint16_t scale, uint8_t u, uint8_t v,
+                              uint32_t material, uint32_t colour) {
+    if (!g_psx_camera || !g_psx_tr_1f800030 || !g_psx_ot.size()) return;
+    const auto& cam = *g_psx_camera;
+    const uint8_t sh = cam.lod_1f800074 & 31;
+    const auto R = [&](int r, int c) { const size_t k = size_t(r * 3 + c);
+        const uint32_t w = cam.gte.control[k / 2]; return int64_t(int16_t(uint16_t(k & 1 ? w >> 16 : w))); };
+    const int64_t p[3] = {int64_t(pos[0]) << sh, int64_t(pos[1]) << sh, int64_t(pos[2]) << sh};
+    int32_t vw[3];
+    for (int r = 0; r < 3; ++r) {
+        const int64_t tr = sh ? int32_t(cam.gte.control[5 + r]) : (*g_psx_tr_1f800030)[size_t(r)];
+        vw[r] = int32_t(tr + ((R(r, 0) * p[0] + R(r, 1) * p[1] + R(r, 2) * p[2]) >> 12));
+    }
+    const auto far = session_far_1f800006();
+    if ((far && int32_t(*far) * 4 < vw[2]) || vw[2] < 192) return;
+    const int32_t s = int32_t(scale) << sh;
+    auto gte = cam.gte;
+    gte.control[0] = 0x1000u; gte.control[1] = 0; gte.control[2] = 0x1000u; gte.control[3] = 0; gte.control[4] = 0x1000u;
+    gte.control[5] = gte.control[6] = gte.control[7] = 0;
+    const auto rtps = [&](int32_t x, int32_t y, PsxVert& out) {
+        gte.data[0] = uint32_t(uint16_t(int16_t(x))) | (uint32_t(uint16_t(int16_t(y))) << 16);
+        gte.data[1] = uint32_t(uint16_t(int16_t(vw[2])));
+        const auto q = l3::source_gte_rtps_0180001(gte);
+        out.done = true; out.ok = q.status == l3::SourcePlayerProxyStatus::SourceBackedPartial && q.depth != 0;
+        out.sx = int16_t(uint16_t(q.screen_xy)); out.sy = int16_t(uint16_t(q.screen_xy >> 16)); out.sz = q.depth;
+        out.ir0 = uint16_t(gte.data[8]);
+    };
+    PsxVert v0, v1, c;
+    rtps(vw[0] - s, vw[1] - s, v0); rtps(vw[0] + s, vw[1] - s, v1); rtps(vw[0], vw[1], c);
+    if (!v0.ok || !v1.ok || !c.ok) return;
+    // The 3DS depth/xy extras: the world centre's (every corner shares its depth).
+    const PsxVert centre3d = psx_project_vert({{float(pos[0]), float(pos[1]), float(pos[2])}});
+    PsxVert v2 = c, v3 = c;
+    v2.sx = int16_t(2 * c.sx - v1.sx); v2.sy = int16_t(2 * c.sy - v1.sy);
+    v3.sx = int16_t(2 * c.sx - v0.sx); v3.sy = int16_t(2 * c.sy - v0.sy);
+    for (PsxVert* q : {&v0, &v1, &v2, &v3}) { q->depth = centre3d.depth; q->nx = centre3d.nx; q->ny = centre3d.ny; }
+    const uint32_t code = psx_depth_cue(colour, c.ir0);
+    psx_emit_model_prim({{&v0, &v1, &v2, &v3}}, 4, true, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+        l3::psxgpu::PolyFt4 poly; poly.code_rgb = (code & 0x00FFFFFFu) | (colour & 0xFF000000u);
+        const uint8_t u1 = uint8_t(u + 31), v1b = uint8_t(v + 31);
+        const std::array<uint8_t,8> uv{{u, v, u1, v, u, v1b, u1, v1b}};
+        for (size_t k = 0; k < 4; ++k) { poly.x[k] = sx[k]; poly.y[k] = sy[k]; poly.u[k] = uv[2 * k]; poly.v[k] = uv[2 * k + 1]; }
+        poly.clut = uint16_t(material >> 16); poly.tpage = uint16_t(material);
+        return poly;
+    }, size_t(vw[2] >> 3));
+}
+
+// The scene class-40 actor through the OT (0x80028F90 -> 0x80029608).
+// Visibility at the actor point work+0x14 (raw, not shifted): SZ3>>2 against
+// 0x1F800006 (far), 48>>shift (near) and SX/SY windows -352..672/-136..888;
+// flag 0x40 keeps an actor nearer than 0x1F800006 without the other tests.
+// Colour +0x15E (BGR555) DPCS at that point's IR0; ramp 0x800C0DC0[(d/128)&31].
+// Per part: rotation = sat16(R_cam * M_col >> 12) (MVMVA per column of the
+// work+0x240 matrix), translation = TR_cam + (R_cam * work+0x180) >> 12, then
+// RTPT of the raw mesh vertices; flat POLY_FT3/FT4, NCLIP > 0, bucket OTZ>>1.
+// Holds (returns false) for +0x15E == 0 (per-part colours +0x186 not ported).
+bool psx_emit_class40(const l3::SourceEventPhase5Bytes<1444>& work, const l3::ActorMeshResource& mesh,
+                      const l3::SourceSceneActor40IntegerPose& pose,const l3::SourceSceneActor40Matrices& world) {
+    if (!g_psx_actors || !g_psx_camera || !g_psx_ot.size()) return false;
+    const auto& cam = *g_psx_camera;
+    const auto rd16 = [&](size_t o) { return int16_t(uint16_t(work.raw[o] | (work.raw[o + 1] << 8))); };
+    for (size_t o : {size_t(0), size_t(0x14), size_t(0x15), size_t(0x16), size_t(0x17), size_t(0x18), size_t(0x19), size_t(0x15e), size_t(0x15f)})
+        if (!work.known[o]) return false;
+    const uint16_t c15 = uint16_t(rd16(0x15e));
+    if (c15 == 0) return false;
+    ++g_class40_trace.calls;
+    if (!g_psx_tr_1f800030) { ++g_class40_trace.held; g_class40_trace.reason = 1; return false; }
+    // The actor point uses translation 0x1F800030 (ctc2 from 0x1F800030), not 0x1F80001C.
+    auto gte = cam.gte;
+    for (int r = 0; r < 3; ++r) gte.control[5 + r] = uint32_t((*g_psx_tr_1f800030)[size_t(r)]);
+    gte.data[0] = (uint32_t(uint16_t(rd16(0x14)))) | (uint32_t(uint16_t(rd16(0x16))) << 16);
+    gte.data[1] = uint32_t(uint16_t(rd16(0x18)));
+    const auto p = l3::source_gte_rtps_0180001(gte);
+    if (p.status != l3::SourcePlayerProxyStatus::SourceBackedPartial) return false;
+    const int32_t depth = int32_t(p.depth) >> 2;
+    g_class40_trace.depth = uint32_t(depth);
+    const int16_t ax = int16_t(uint16_t(p.screen_xy)), ay = int16_t(uint16_t(p.screen_xy >> 16));
+    const uint16_t air0 = uint16_t(gte.data[8]);
+    const auto far = session_far_1f800006();
+    const bool keep_near = (work.raw[0] & 0x40u) && far && depth < int32_t(*far);
+    if (!keep_near) {
+        if (far && int32_t(*far) < depth) { ++g_class40_trace.culled; g_class40_trace.reason = 2; return true; }
+        if (depth < (48 >> (cam.lod_1f800074 & 31))) { ++g_class40_trace.culled; g_class40_trace.reason = 3; return true; }
+        if (uint16_t(ax + 352) >= 1025u || uint16_t(ay + 136) >= 1025u) { ++g_class40_trace.culled; g_class40_trace.reason = 4; return true; }
+    }
+    const uint32_t colour = psx_depth_cue(l3::psxgpu::class20_colour_8002831c(c15), air0);
+    const uint8_t ramp = cam.area_record ? l3::psxgpu::actor_ramp_80027f78(depth, *cam.area_record) : 0;
+    const auto R = [&](int r, int c) { const size_t k = size_t(r * 3 + c);
+        const uint32_t w = cam.gte.control[k / 2]; return int32_t(int16_t(uint16_t(k & 1 ? w >> 16 : w))); };
+    const auto sat = [](int64_t v) { return int32_t(v < -32768 ? -32768 : v > 32767 ? 32767 : v); };
+    static std::vector<PsxVert> verts;
+    for (size_t i = 0; i < pose.part_count && i < mesh.model.parts.size(); ++i) {
+        const auto& ip = pose.parts[i];
+        if (!world.draw_enabled[i]) continue;
+        ++g_class40_trace.parts;
+        const auto M = [&](int r, int c) { const size_t o = size_t(r * 3 + c) * 2;
+            return int32_t(int16_t(uint16_t(ip.matrix[o] | (ip.matrix[o + 1] << 8)))); };
+        std::array<int32_t,9> C{};
+        for (int c = 0; c < 3; ++c) for (int r = 0; r < 3; ++r)
+            C[size_t(r * 3 + c)] = sat((int64_t(R(r, 0)) * M(0, c) + int64_t(R(r, 1)) * M(1, c) + int64_t(R(r, 2)) * M(2, c)) >> 12);
+        std::array<int32_t,3> T{};
+        for (int r = 0; r < 3; ++r)
+            T[size_t(r)] = int32_t(cam.gte.control[5 + r]) + int32_t((int64_t(R(r, 0)) * ip.position[0] + int64_t(R(r, 1)) * ip.position[1] + int64_t(R(r, 2)) * ip.position[2]) >> 12);
+        auto part_gte = cam.gte;
+        part_gte.control[0] = uint32_t(uint16_t(C[0])) | (uint32_t(uint16_t(C[1])) << 16);
+        part_gte.control[1] = uint32_t(uint16_t(C[2])) | (uint32_t(uint16_t(C[3])) << 16);
+        part_gte.control[2] = uint32_t(uint16_t(C[4])) | (uint32_t(uint16_t(C[5])) << 16);
+        part_gte.control[3] = uint32_t(uint16_t(C[6])) | (uint32_t(uint16_t(C[7])) << 16);
+        part_gte.control[4] = uint32_t(int32_t(int16_t(C[8])));
+        for (int r = 0; r < 3; ++r) part_gte.control[5 + r] = uint32_t(T[size_t(r)]);
+        const auto& part = mesh.model.parts[i];
+        const uint32_t word = mesh.bindings[i].material_word;
+        verts.assign(part.vertices.size(), PsxVert{});
+        const auto vert = [&](uint8_t index) -> const PsxVert* {
+            auto& pv = verts[index];
+            if (!pv.done) {
+                pv.done = true;
+                const auto& src = part.vertices[index];
+                auto g = part_gte;
+                g.data[0] = uint32_t(uint16_t(src.x)) | (uint32_t(uint16_t(src.y)) << 16);
+                g.data[1] = uint32_t(uint16_t(src.z));
+                const auto q = l3::source_gte_rtps_0180001(g);
+                pv.ok = q.status == l3::SourcePlayerProxyStatus::SourceBackedPartial && q.depth != 0;
+                pv.sx = int16_t(uint16_t(q.screen_xy)); pv.sy = int16_t(uint16_t(q.screen_xy >> 16)); pv.sz = q.depth;
+                pv.ir0 = uint16_t(g.data[8]);
+                // 3DS depth/position extra from the presented pose (world units).
+                const auto w = l3::player_pose_transform_point(world.world[i], {float(src.x), float(src.y), float(src.z)});
+                const auto e = world_vertex_uv(w.x, w.y, w.z);
+                const C3D_FVec ve = Mtx_MultiplyFVec4(&g_frame_view, FVec4_New(e.x, e.y, e.z, 1.f));
+                const C3D_FVec c = Mtx_MultiplyFVec4(&g_frame_projection, ve);
+                const float inv = c.w != 0.f ? 1.f / c.w : 0.f;
+                pv.depth = c.z * inv; pv.nx = c.x * inv; pv.ny = c.y * inv;
+            }
+            return &pv;
+        };
+        for (const auto& tri : part.triangles) {
+            std::array<const PsxVert*,4> v{{vert(tri.index[0]), vert(tri.index[1]), vert(tri.index[2]), nullptr}};
+            v[3] = v[2];
+            std::array<uint8_t,8> uv{};
+            for (unsigned k = 0; k < 6; ++k) uv[k] = tri.uv[k];
+            psx_emit_model_prim(v, 3, false, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+                return l3::psxgpu::class20_packet_800289a0(colour, false, word, ramp, uv, sx, sy);
+            });
+        }
+        for (const auto& quad : part.quads) {
+            const std::array<const PsxVert*,4> v{{vert(quad.index[0]), vert(quad.index[1]), vert(quad.index[2]), vert(quad.index[3])}};
+            psx_emit_model_prim(v, 4, false, SIZE_MAX, [&](const auto& sx, const auto& sy, uint16_t) {
+                return l3::psxgpu::class20_packet_800289a0(colour, true, word, ramp, quad.uv, sx, sy);
+            });
+        }
+    }
+    g_class40_trace.reason = 0;
     return true;
 }
 
@@ -3068,10 +3382,734 @@ void step_title_servbots(TitleServbotScene& s, uint8_t frontend_state, int16_t f
     }
 }
 
-bool run_frontend_title(bool scripted) {
+// Pre-title narration, ST01 event 71 (docs/research_01516/INTRO_EVENT71.md):
+// the event handler 0x8010049C and the C0 text crawl 0x801008C0, which the
+// area loader spawns on the event's first tick (oracle), and the background
+// layers (0x80022FD4 at stage init, 0x80023144 per update, driven by the
+// record callback 0x801002E4), and the narration XA the phase-1 command
+// 0x2000001E plays (started the tick after; oracle: LBA 121149 at timeline
+// tick 1, i.e. 34 sectors = 6.8 ticks of stream by then; while it plays,
+// ticks follow its DSP position, as in the opening), and the airship (class
+// 0x20/0x0A, 0x8010080C) seen through the static scene camera. Not ported
+// yet: the Start skip 0x8001DE84 and the camera program's fog.
+void run_intro_event71(bool scripted) {
+    const auto path = data_path("materials/intro.l3mc");
+    if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
+    else { boot_log(MML_BOOT_DATA, "INTRO_EVENT71=0 intro.l3mc absent"); return; }
+    const auto cache = l3::load_l3material_cache(read_binary(path), true);
+    for (const auto& e : cache.entries) {
+        if (!e.resolved) continue;
+        GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
+        auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
+    }
+    psx_resolver_reset();
+    l3::SourceBgLayers layers{};
+    std::optional<std::array<uint8_t,40>> area_record;   // L3BG v3: ST01 0x80100DA8[0] (fog toward 0x404040)
+    {
+        l3::SourceBgProfile bg;
+        bool bg_ready = false;
+        try {
+            const auto bytes = read_binary(data_path("intro_bg.l3bg"), l3::kSourceBgProfileBytes + 40);
+            bg_ready = l3::load_source_bg_profile(bytes, bg);
+            area_record = l3::source_bg_area_record(bytes);
+        }
+        catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+        if (bg_ready) l3::init_source_bg_layers_80022fd4(bg, layers);
+        boot_log(MML_BOOT_DATA, bg_ready ? "INTRO_BG=1 intro_bg.l3bg" : "INTRO_BG=0 intro_bg.l3bg absent or rejected");
+    }
+    NativeXaAudio xa;
+    { char xa_path[256]; std::snprintf(xa_path, sizeof(xa_path), "%saudio/intro_xa.l3xa", kDataRoot);
+      const bool ready = xa.open(xa_path);
+      char line[160]; std::snprintf(line, sizeof(line), "INTRO_XA=%u intro_xa.l3xa %s", unsigned(ready), xa.error());
+      boot_log(MML_BOOT_DATA, line); }
+    bool xa_clock_bound = false, xa_start_pending = false; uint64_t xa_clock_frames = 0, xa_clock_remainder = 0;
+    // The airship: ST01_00.EBD class 0x20/0x0A, the scene camera of program
+    // 0x80100F30 (0x20: shift 0; 0x10: target 0; 0x11: yaw 0, pitch 0,
+    // distance 2000), drawn like the title's class-0x20 Servbots.
+    struct IntroAirship {
+        l3::EbdDirectory ebd; l3::ReferenceTables refs; l3::TerrainFaceCamera camera;
+        std::shared_ptr<const l3::ActorMeshResource> mesh;
+        std::shared_ptr<const l3::ActorAnimationBank> bank;
+        l3::ImportedActorInstance actor;
+    };
+    std::unique_ptr<IntroAirship> airship;
+    try {
+        auto a = std::make_unique<IntroAirship>();
+        a->ebd = l3::load_l3ebd_directory(read_binary(data_path("intro/intro.l3ebd")), true);
+        // The pose unpacker reads a fixed 32-word window; ST01_00's only pose
+        // starts 28 bytes before the end of the EBD, so on the PS1 the window
+        // runs into whatever RAM follows. The two parts use the first 14 bytes
+        // (real data); the zero tail stands in for the unused remainder.
+        a->ebd.source_payload.resize(a->ebd.source_payload.size() + l3::kActorPackedPoseBytes);
+        a->refs = l3::load_l3reference(read_binary(data_path("reference.l3ref")), true);
+        const auto rows = l3::find_ebd_entries(a->ebd, 0x20, 0x0A);
+        if (rows.size() != 1) throw std::runtime_error("intro.l3ebd: expected one class 0x20/0x0A row");
+        a->mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(a->ebd, rows[0]));
+        static constexpr uint8_t kRequests[] = {0};   // 0x800322A8(a0, 0, 0)
+        a->bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+            a->ebd, rows[0], *a->mesh, kRequests, sizeof(kRequests), 256 * 1024));
+        const auto pose = l3::decode_ebd_actor_pose(a->ebd, rows[0], *a->mesh, 0, 0);
+        const auto view = l3::source_gameplay_camera_80037fb4(a->refs, {{0, 0, 0}}, 2000, 0, 0, 0, 0);
+        a->camera = l3::make_terrain_face_camera(view.camera_1f800008, area_record ? &*area_record : nullptr);
+        a->camera.screen_x_min = -40; a->camera.screen_width = 400;   // 400-px top screen
+        auto& actor = a->actor;
+        actor.original_pool_slot = 0; actor.source_class = 0x20; actor.subtype = 0x0A; actor.row = uint32_t(rows[0]);
+        actor.floor_query_required = false; actor.pose_selected_by_retail_state = true;
+        actor.resource = a->mesh; actor.animation_bank = a->bank; actor.pose = pose;
+        actor.animation_cursor = l3::actor_sequence_begin(0, pose.sequencing_record);
+        actor.heading = l3::kSourceIntroAirshipHeading; actor.raw_scale = l3::kSourceIntroAirshipScale;
+        if (actor.pose && actor.animation_cursor) (void)l3::actor_animation_reset(*a->bank, 0, *actor.pose, *actor.animation_cursor);
+        airship = std::move(a);
+        boot_log(MML_BOOT_DATA, "INTRO_AIRSHIP=1 intro.l3ebd class 0x20/0x0A");
+    } catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "INTRO_AIRSHIP=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
+    l3::SourceIntroAirship ship;
+    bool ship_spawned = false;
+    boot_log(MML_BOOT_DATA, "INTRO_EVENT71=1 crawl 0x801008C0, event 0x8010049C, BG 0x80023144, XA 0x2000001E, airship 0x8010080C");
+    l3::SourceFadeContext fade;
+    for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
+    l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
+    l3::SourceFadeCallbackState fade_callback;
+    std::optional<l3::SourceFadeStartupProfile> fade_profile;
+    try { fade_profile = l3::load_source_fade_startup_profile(read_binary(data_path("source_fade.l3fd"), 4096)); }
+    catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+    constexpr uint8_t kEndpointHold1f800001 = 2;
+    l3::SourceIntroEvent71State event;
+    l3::SourceC0Work crawl; crawl.raw[8] = 0; crawl.known[8] = 1;
+    bool crawl_live = true;
+    std::vector<l3::FrontendPacket> packets;
+    l3::GameplayClock clock;
+    u64 last_tick = svcGetSystemTick();
+    uint32_t tick = 0;
+    bool skipped = false;
+    while (aptMainLoop() && !event.done) {
+        hidScanInput();
+        if (scripted) { u32 down = 0, held = 0, up = 0; circlePosition cp{}; if (!diagnostic_autoplay_frame(down, held, up, cp)) break; }
+        // 3DS QoL (not in the original event 71): Start skips to the title.
+        else if (hidKeysDown() & KEY_START) { skipped = true; break; }
+        const u64 now = svcGetSystemTick();
+        uint64_t elapsed_us = (now - last_tick) / CPU_TICKS_PER_USEC;
+        last_tick = now;
+        xa.pump();
+        if (xa.observation().playing) {   // 1260 frames (37800 / 30) per tick
+            const uint64_t position = xa.position_frames();
+            if (xa_clock_bound && position >= xa_clock_frames) {
+                xa_clock_remainder += (position - xa_clock_frames) * 1000000u;
+                elapsed_us = xa_clock_remainder / 37800u; xa_clock_remainder %= 37800u;
+            }
+            xa_clock_bound = true; xa_clock_frames = position;
+        } else xa_clock_bound = false;
+        clock.advance(elapsed_us, false);
+        while (!event.done && clock.consume()) {
+            const int16_t busy = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
+            const uint8_t phase = event.phase;
+            const auto step = l3::step_source_intro_event71_8010049c(event, busy, &layers);
+            if (step.fade_type) {
+                const auto started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, step.fade_type);
+                hardware_test_trace("# intro_fade,tick=%lu,type=%u,status=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status));
+            }
+            if (xa_start_pending) {
+                xa_start_pending = false;
+                const bool started = xa.start();
+                hardware_test_trace("# intro_xa_start,tick=%lu,command=2000001e,xa_started=%u,%s", (unsigned long)tick, unsigned(started), xa.error());
+            }
+            if (step.cd_command) xa_start_pending = true;
+            // The constructor (phase 4, 0x80100400) spawns the airship; its
+            // class update runs after the event in the same tick.
+            if (step.fade_type == 2) ship_spawned = true;
+            if (ship_spawned && airship) {
+                l3::update_source_intro_airship_8010080c(ship, step.airship_action1);
+                auto& actor = airship->actor;
+                actor.source_origin = ship.position;
+                if (actor.pose && actor.animation_cursor) (void)l3::actor_animation_step(*airship->bank, *actor.pose, *actor.animation_cursor);
+            }
+            // 0x80023144 after the event update; 40 px each side widen it to
+            // the 400-px top screen (port presentation; the layers wrap).
+            const auto bg_update = l3::update_source_bg_layers_80023144(layers);
+            packets = l3::draw_source_bg_layers_80023144(layers, 40);
+            std::reverse(packets.begin(), packets.end());   // AddPrim prepends: last added draws first
+            // Oracle: black (stage loading) until the type-2 fade-in of phase 4.
+            const bool visible = event.phase >= 5;
+            if (!visible) packets.clear();
+            if (bg_update.camera_held && tick == 0) hardware_test_trace("# intro_bg,camera_layers_held=%u", unsigned(bg_update.camera_held));
+            if (crawl_live) {
+                const auto frame = l3::update_source_intro_crawl_801008c0(crawl);
+                if (visible) for (size_t i = 0; i < frame.count; ++i) packets.push_back(l3::source_intro_crawl_packet_80100a70(frame.strips[i]));
+                if (frame.released) crawl_live = false;
+            }
+            if (fade_intents.count && !fade_callback.running)
+                (void)l3::acknowledge_source_fade_scheduler_intent(fade, fade_intents, fade_callback, kEndpointHold1f800001);
+            else if (fade_callback.running)
+                (void)l3::advance_source_fade_callback(fade, fade_callback, kEndpointHold1f800001);
+            if (phase != event.phase || tick % 300u == 0u)
+                hardware_test_trace("# intro_event71,tick=%lu,phase=%u,timeline=%lu,crawl_scroll=%d,packets=%lu,fade_busy=%d,bg_x=%d:%d:%d:%d",
+                    (unsigned long)tick, unsigned(event.phase), (unsigned long)event.timeline_ticks,
+                    int(int16_t(uint16_t(crawl.raw[0x1A] | (crawl.raw[0x1B] << 8)))), (unsigned long)packets.size(), int(busy),
+                    int(layers[0].x), int(layers[1].x), int(layers[2].x), int(layers[3].x));
+            if (ship_spawned && (phase != event.phase || tick % 300u == 0u))
+                hardware_test_trace("# intro_airship,tick=%lu,sub=%u,x=%d,y=%d,z=%d,released=%u",
+                    (unsigned long)tick, unsigned(ship.sub), int(ship.position[0]), int(ship.position[1]), int(ship.position[2]), unsigned(ship.released));
+            ++tick;
+        }
+        (void)acquire_gpu_frame("intro");
+        C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
+        if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("intro: C3D_FrameDrawOn rejected");
+        psx_begin_frame();
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
+        // Three walks, as the title: screen entries 35..33 (background), the
+        // spliced scene OT (the airship), then entries 32..30 (crawl).
+        const auto add_packets = [&](bool behind_scene) {
+            for (const auto& fp : packets) {
+                if ((fp.bucket > 32) != behind_scene) continue;
+                const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
+                for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
+                float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
+                for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
+                g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+            }
+        };
+        add_packets(true);
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        if (airship && ship.initialized && !ship.released && event.phase >= 5) {
+            g_psx_camera = airship->camera;
+            (void)psx_emit_class20(airship->actor, l3::build_imported_actor_pose_matrices(airship->actor));
+            psx_draw_ot(false, true);
+            g_psx_camera.reset();
+            g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        }
+        add_packets(false);
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        g_psx_xy_from_gte = xy;
+        draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
+        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+        submit_gpu_frame();
+    }
+    hardware_test_trace("# intro_event71_end,tick=%lu,done=%u,skipped=%u,xa_frames=%llu", (unsigned long)tick, unsigned(event.done),
+        unsigned(skipped), (unsigned long long)xa.position_frames());
+    xa.close();
+    (void)acquire_gpu_frame("intro release"); submit_gpu_frame(false);
+    require_gpu_idle_for_release();
+    for (auto& m : g_frontend_materials) release_gpu_texture(m.texture, m.texture_ready);
+    std::vector<GpuMaterial>().swap(g_frontend_materials);
+    psx_resolver_reset();
+}
+
+// Title attract scene, ST07 event 10 (docs/research_01516/ATTRACT_EVENT10.md):
+// the handler on the shared scene runtime (attract.l3cs), the ST07 terrain of
+// the area each shot requests (areas 1-4; area 0 is the exterior), the
+// background layers (re-initialised by each area load, as the stage init
+// 0x801000B0 does), the XA of 0x20000005 and the Gesellschaft (class 0x20 /
+// 0x0B variant 0, 0x80102B28: spawned by the phase-0 record 0x80105B8C at its
+// position, scale (512, 512, 512), animation request 0; it lives in the
+// exterior area). ST00's terrain is released while it plays; restore()
+// rebuilds it. The Servbots (class 0x20/0x00, 0x8010205C) of every interior
+// shot: the callbacks' record lists, their behaviours 0x8010663C[id]; the
+// bridge's static classes 0x28 (Tron) / 0x2B (Bon) and Teisel (class 0x40 /
+// 0x0B with his face, drawn through the class-0x20 path). Not ported yet: the
+// shot-2:0 objects, shadows 0x8002C8CC, fade 20, the areas' fog/depth cue.
+void run_attract_event10(bool scripted, const std::function<void()>& restore) {
+    l3::SourceScenePackage package;
+    l3::SourceAttractProfile profile;
+    l3::SourceBgProfile bg;
+    l3::RuntimeMap map;
+    l3::St00RenderSource render;
+    l3::ReferenceTables refs;
+    l3::SourceSceneViewProfile view_profile;
+    try {
+        if (!l3::load_source_scene_package(read_binary(data_path("attract/attract.l3cs"), l3::kSourceScenePackageMaxBytes), package) ||
+            !l3::bind_source_attract_profile(package, profile))
+            throw std::runtime_error("attract.l3cs absent or rejected");
+        if (!l3::load_source_bg_profile(read_binary(data_path("attract/attract_bg.l3bg"), l3::kSourceBgProfileBytes + 40), bg))
+            throw std::runtime_error("attract_bg.l3bg rejected");
+        const auto map_bytes = read_binary(data_path("attract/st07.l3map"));
+        const auto render_bytes = read_binary(data_path("attract/st07.l3render"));
+        map = l3::load_l3map(map_bytes, true);
+        render = l3::load_l3render(render_bytes, true);
+        // The stage init's IDX seeds (raw6 = 1 in ST07): without them every
+        // cell picks the empty +8 contact list and floor queries fail.
+        const auto init = l3::load_map_initialization(read_binary(data_path("attract/st07.l3init"), l3::kMapInitializationMaxFileBytes), true);
+        (void)l3::apply_map_initialization(map, render, init, l3::crc32(map_bytes.data(), map_bytes.size()),
+                                           l3::crc32(render_bytes.data(), render_bytes.size()));
+        refs = l3::load_l3reference(read_binary(data_path("reference.l3ref")), true);
+        view_profile = l3::load_source_scene_view_profile(read_binary(data_path("source_scene_view.l3sv"), l3::kSourceSceneViewProfileBytes));
+    } catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_EVENT10=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+        return;
+    }
+    // The cast's EBD and the Gesellschaft.
+    l3::EbdDirectory cast;
+    std::shared_ptr<const l3::ActorMeshResource> ship_mesh;
+    std::shared_ptr<const l3::ActorAnimationBank> ship_bank;
+    l3::ImportedActorInstance ship;
+    bool ship_ready = false, ship_live = false;
+    try {
+        cast = l3::load_l3ebd_directory(read_binary(data_path("attract/attract.l3ebd")), true);
+        const auto rows = l3::find_ebd_entries(cast, 0x20, 0x0B);
+        const auto* record = [&]() -> const l3::SourceSceneSpawnRecord* {
+            for (const auto& r : package.spawns) if (r.token == 0x80105B8Cu) return &r;
+            return nullptr; }();
+        if (rows.size() != 1 || !record) throw std::runtime_error("attract: ship row or spawn record missing");
+        ship_mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(cast, rows[0]));
+        static constexpr uint8_t kRequests[] = {0};   // 0x800322A8(a0, 0, 0)
+        ship_bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+            cast, rows[0], *ship_mesh, kRequests, sizeof(kRequests), 256 * 1024));
+        const auto pose = l3::decode_ebd_actor_pose(cast, rows[0], *ship_mesh, 0, 0);
+        ship.original_pool_slot = 0; ship.source_class = 0x20; ship.subtype = 0x0B; ship.row = uint32_t(rows[0]);
+        ship.floor_query_required = false; ship.pose_selected_by_retail_state = true;
+        ship.resource = ship_mesh; ship.animation_bank = ship_bank; ship.pose = pose;
+        ship.animation_cursor = l3::actor_sequence_begin(0, pose.sequencing_record);
+        // rec[12..17]: the 0x8001E968 position; 0x80102B5C: +0x158 = 0x0200 x3.
+        const auto rd = [&](size_t o) { return int16_t(uint16_t(record->bytes[o] | (record->bytes[o + 1] << 8))); };
+        ship.source_origin = {{rd(12), rd(14), rd(16)}};
+        ship.raw_scale = {{512, 512, 512}}; ship.heading = 0;
+        ship_ready = true;
+    } catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_SHIP=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
+    // The Servbot (class 0x20/0x00) with every request the records use.
+    struct LiveServbot { l3::SourceAttractServbot logic; l3::ImportedActorInstance actor; bool needs_floor = true, shadow = false; };
+    std::vector<LiveServbot> servbots;
+    std::shared_ptr<const l3::ActorMeshResource> servbot_mesh;
+    std::shared_ptr<const l3::ActorAnimationBank> servbot_bank;
+    std::optional<l3::ActorPoseResource> servbot_pose;
+    size_t servbot_row = 0;
+    try {
+        const auto rows = l3::find_ebd_entries(cast, 0x20, 0x00);
+        if (rows.size() != 1 || profile.records.size() < 29 || profile.servbot_behaviours.size() < 25)
+            throw std::runtime_error("attract: Servbot row, records or behaviours missing");
+        servbot_row = rows[0];
+        servbot_mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(cast, rows[0]));
+        static constexpr uint8_t kRequests[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 0x10, 0x11, 0x12, 0x13, 0x14};
+        servbot_bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+            cast, rows[0], *servbot_mesh, kRequests, sizeof(kRequests), 512 * 1024));
+        servbot_pose = l3::decode_ebd_actor_pose(cast, rows[0], *servbot_mesh, 0, 0);
+    } catch (const std::exception& error) {
+        servbot_mesh.reset();
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_SERVBOT=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
+    // The bridge's static cast, classes 0x28 / 0x2B.
+    struct CastClass { std::shared_ptr<const l3::ActorMeshResource> mesh; std::shared_ptr<const l3::ActorAnimationBank> bank;
+                       std::optional<l3::ActorPoseResource> pose; size_t row = 0; };
+    std::array<CastClass,2> cast_classes{};   // [0] 0x28, [1] 0x2B
+    struct LiveStatic { l3::SourceAttractStatic logic; l3::ImportedActorInstance actor; size_t kind = 0; bool needs_floor = true; };
+    std::vector<LiveStatic> statics;
+    for (size_t k = 0; k < 2; ++k) try {
+        const uint8_t cls = k ? 0x2B : 0x28, request = k ? 0 : 19;
+        const auto rows = l3::find_ebd_entries(cast, 0x20, cls);
+        if (rows.size() != 1) throw std::runtime_error("attract: bridge cast row missing");
+        auto& cc = cast_classes[k];
+        cc.row = rows[0];
+        cc.mesh = std::make_shared<const l3::ActorMeshResource>(l3::decode_ebd_actor_mesh(cast, rows[0]));
+        const uint8_t requests[] = {request};
+        cc.bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_actor_animation_bank(
+            cast, rows[0], *cc.mesh, requests, 1, 512 * 1024));
+        cc.pose = l3::decode_ebd_actor_pose(cast, rows[0], *cc.mesh, 0, 0);
+    } catch (const std::exception& error) {
+        cast_classes[k].mesh.reset();
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_CAST=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);   // the scene plays without them
+    }
+    // Teisel (class 0x40/0x0B): his own mesh copy, since the face writes its UVs.
+    struct LiveTeisel { l3::SourceAttractTeisel logic; l3::ImportedActorInstance actor; bool needs_floor = true; };
+    std::optional<LiveTeisel> teisel;
+    std::shared_ptr<l3::ActorMeshResource> teisel_mesh;
+    std::shared_ptr<const l3::ActorAnimationBank> teisel_bank;
+    std::optional<l3::ActorPoseResource> teisel_pose;
+    size_t teisel_row = 0; uint32_t teisel_descriptor = 0;
+    try {
+        const auto rows = l3::find_ebd_entries(cast, 0x40, 0x0B);
+        if (rows.size() != 1 || profile.teisel_face.size() < 72) throw std::runtime_error("attract: Teisel row or face scripts missing");
+        teisel_row = rows[0];
+        teisel_descriptor = cast.load_base + cast.entries[rows[0]].resource_offset[0];
+        const auto mesh = l3::decode_ebd_scene_actor40_mesh(cast, rows[0]);
+        static constexpr uint8_t kRequests[] = {0};   // 0x800322A8(a0, 0, 0)
+        teisel_bank = std::make_shared<const l3::ActorAnimationBank>(l3::decode_ebd_scene_actor40_animation_bank(
+            cast, rows[0], mesh, kRequests, sizeof(kRequests), 1024 * 1024));
+        teisel_pose = l3::decode_ebd_scene_actor40_pose(cast, rows[0], mesh, 0, 0);
+        teisel_mesh = std::make_shared<l3::ActorMeshResource>(mesh);
+    } catch (const std::exception& error) {
+        teisel_mesh.reset();
+        char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_TEISEL=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
+    // Background pages: the front-end material slot, as the narration uses.
+    // attract_fx.l3mc: the smoke sprite (its palette comes from another container).
+    for (const char* rel : {"attract/attract_bg.l3mc", "attract/attract_fx.l3mc"}) try {
+        const auto cache = l3::load_l3material_cache(read_binary(data_path(rel)), true);
+        for (const auto& e : cache.entries) {
+            if (!e.resolved) continue;
+            GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
+            auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
+        }
+    } catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+    release_all_render_resources();   // area 0 (the exterior) has no terrain
+    psx_resolver_reset();
+    l3::SourceBgLayers layers{};
+    l3::init_source_bg_layers_80022fd4(bg, layers);   // stage init, area 0
+    NativeXaAudio xa;
+    { char xa_path[256]; std::snprintf(xa_path, sizeof(xa_path), "%saudio/attract_xa.l3xa", kDataRoot);
+      const bool ready = xa.open(xa_path);
+      char line[160]; std::snprintf(line, sizeof(line), "ATTRACT_XA=%u attract_xa.l3xa %s", unsigned(ready), xa.error());
+      boot_log(MML_BOOT_DATA, line); }
+    boot_log(MML_BOOT_DATA, "ATTRACT_EVENT10=1 handler 0x80100330, ST07 areas 1-4, BG, XA 0x20000005; actors not ported");
+    l3::SourceFadeContext fade;
+    for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
+    l3::SourceFadeSchedulerIntentQueue fade_intents; fade_intents.initialized = true;
+    l3::SourceFadeCallbackState fade_callback;
+    std::optional<l3::SourceFadeStartupProfile> fade_profile;
+    try { fade_profile = l3::load_source_fade_startup_profile(read_binary(data_path("source_fade.l3fd"), 4096)); }
+    catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
+    constexpr uint8_t kEndpointHold1f800001 = 2;
+    constexpr std::array<uint16_t,3> kFarByShift{{3584, 1664, 768}};   // 0x8001EC0C op 0x20..0x22
+    l3::SourceAttractEvent10State event;
+    l3::MaterialCache terrain_cache;
+    int area = 0, pending_area = -1;
+    bool visible = false, xa_start_pending = false, xa_started = false, xa_clock_bound = false;
+    uint64_t xa_clock_frames = 0, xa_clock_remainder = 0;
+    uint16_t pending_start = 0;
+    std::vector<l3::FrontendPacket> packets;
+    // Fade type 20 (the natural end): the iris wipe 0x80018BB8, then black.
+    l3::SourceIrisWipe iris; l3::SourceIrisFrame iris_frame; bool iris_black = false;
+    l3::SourceAttractFxPool fx;   // class 0x80 type 8: chimney smoke, steam
+    l3::GameplayClock clock;
+    u64 last_tick = svcGetSystemTick();
+    uint32_t tick = 0;
+    while (aptMainLoop() && !event.done) {
+        hidScanInput();
+        u32 down = hidKeysDown();
+        if (scripted) { u32 held = 0, up = 0; circlePosition cp{}; if (!diagnostic_autoplay_frame(down, held, up, cp)) break; }
+        if (down & KEY_START) pending_start = 1;
+        const u64 now = svcGetSystemTick();
+        uint64_t elapsed_us = (now - last_tick) / CPU_TICKS_PER_USEC;
+        last_tick = now;
+        xa.pump();
+        if (xa.observation().playing) {   // 1260 frames (37800 / 30) per tick
+            const uint64_t position = xa.position_frames();
+            if (xa_clock_bound && position >= xa_clock_frames) {
+                xa_clock_remainder += (position - xa_clock_frames) * 1000000u;
+                elapsed_us = xa_clock_remainder / 37800u; xa_clock_remainder %= 37800u;
+            }
+            xa_clock_bound = true; xa_clock_frames = position;
+        } else xa_clock_bound = false;
+        clock.advance(elapsed_us, false);
+        while (!event.done && clock.consume()) {
+            const int16_t busy = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
+            if (xa_start_pending) {
+                xa_start_pending = false; xa_started = xa.start();
+                hardware_test_trace("# attract_xa_start,tick=%lu,command=20000005,xa_started=%u,%s", (unsigned long)tick, unsigned(xa_started), xa.error());
+            }
+            const uint8_t phase = event.phase;
+            const uint8_t e8 = event.event.e8, e9 = event.event.e9;
+            // 0x8001D878: the CD command has completed once its stream started.
+            const auto step = l3::step_source_attract_event10_80100330(event, profile, layers, xa_started || !xa.observation().ready,
+                                                                      busy, pending_start != 0);
+            pending_start = 0;
+            // The phase-0 record spawns the ship (0x8001EAE8); its class update
+            // follows the event in the same tick: init (request 0), then
+            // 0x80032488 each tick.
+            if (step.cd_command && ship_ready) {
+                ship_live = true;
+                if (ship.pose && ship.animation_cursor) (void)l3::actor_animation_reset(*ship_bank, 0, *ship.pose, *ship.animation_cursor);
+            } else if (ship_live && ship.pose && ship.animation_cursor) (void)l3::actor_animation_step(*ship_bank, *ship.pose, *ship.animation_cursor);
+            // Callback releases (event+0x24 slots) and record spawns.
+            if (step.release_slots) { servbots.clear(); statics.clear(); teisel.reset(); }
+            if (step.spawn_first >= 0 && servbot_mesh)
+                for (int k = step.spawn_first; k < step.spawn_first + int(step.spawn_count) && k < int(profile.records.size()); ++k) {
+                    LiveTeisel lt;
+                    if (l3::spawn_source_attract_teisel(profile.records[size_t(k)], lt.logic)) {
+                        if (!teisel_mesh) continue;
+                        auto& a = lt.actor;
+                        a.original_pool_slot = lt.logic.slot; a.source_class = 0x40; a.subtype = 0x0B; a.row = uint32_t(teisel_row);
+                        a.floor_query_required = false; a.pose_selected_by_retail_state = true;
+                        a.resource = teisel_mesh; a.animation_bank = teisel_bank; a.pose = teisel_pose;
+                        a.animation_cursor = l3::actor_sequence_begin(0, teisel_pose->sequencing_record);
+                        a.source_origin = lt.logic.raw; a.heading = lt.logic.heading; a.raw_scale = {{512, 512, 512}};
+                        teisel = std::move(lt);
+                        continue;
+                    }
+                    LiveStatic st;
+                    if (l3::spawn_source_attract_static(profile.records[size_t(k)], st.logic)) {
+                        st.kind = st.logic.object_class == 0x28 ? 0 : 1;
+                        const auto& cc = cast_classes[st.kind];
+                        if (!cc.mesh) continue;
+                        auto& a = st.actor;
+                        a.original_pool_slot = st.logic.slot; a.source_class = 0x20; a.subtype = st.logic.object_class; a.row = uint32_t(cc.row);
+                        a.floor_query_required = false; a.pose_selected_by_retail_state = true;
+                        a.resource = cc.mesh; a.animation_bank = cc.bank; a.pose = cc.pose;
+                        a.animation_cursor = l3::actor_sequence_begin(0, cc.pose->sequencing_record);
+                        a.source_origin = st.logic.raw; a.heading = st.logic.heading; a.raw_scale = {{512, 512, 512}};
+                        if (a.pose && a.animation_cursor) (void)l3::actor_animation_reset(*cc.bank, st.logic.request, *a.pose, *a.animation_cursor);
+                        statics.push_back(std::move(st));
+                        continue;
+                    }
+                    LiveServbot b;
+                    if (!l3::spawn_source_attract_servbot(profile.records[size_t(k)], profile, b.logic)) continue;   // class 0x40/0x0B: not ported
+                    auto& a = b.actor;
+                    a.original_pool_slot = b.logic.slot; a.source_class = 0x20; a.subtype = 0; a.row = uint32_t(servbot_row);
+                    a.floor_query_required = false; a.pose_selected_by_retail_state = true;
+                    a.resource = servbot_mesh; a.animation_bank = servbot_bank; a.pose = servbot_pose;
+                    a.animation_cursor = l3::actor_sequence_begin(0, servbot_pose->sequencing_record);
+                    a.source_origin = b.logic.raw; a.heading = b.logic.heading; a.raw_scale = b.logic.scale();
+                    servbots.push_back(std::move(b));
+                }
+            // Their class updates follow the event (event+0x10 after this tick's timeline).
+            if (teisel) {
+                const auto ts = l3::update_source_attract_teisel_8010384c(teisel->logic, profile, event.event);
+                auto& a = teisel->actor;
+                if (a.pose && a.animation_cursor) {
+                    if (ts.reset) (void)l3::actor_animation_reset(*teisel_bank, 0, *a.pose, *a.animation_cursor);
+                    else if (ts.step) (void)l3::actor_animation_step(*teisel_bank, *a.pose, *a.animation_cursor);
+                }
+                // 0x8002D320 face copies into the slots drawing parts 16 / 18.
+                for (size_t c = 0; c < ts.copy_count; ++c)
+                    for (size_t slot = 0; slot < teisel_mesh->bindings.size() && slot < teisel_mesh->model.parts.size(); ++slot)
+                        if (teisel_mesh->bindings[slot].mesh_index == ts.copies[c].destination_part)
+                            (void)l3::apply_source_face_uv_8002d320(teisel_mesh->model.parts[slot], cast.source_payload.data(),
+                                cast.source_payload.size(), cast.load_base, teisel_descriptor, ts.copies[c].source_part, ts.copies[c].offset);
+                if (ts.copy_count)
+                    hardware_test_trace("# attract_teisel_face,tick=%lu,copies=%lu,shot=%u:%u,c10=%lu",
+                        (unsigned long)tick, (unsigned long)ts.copy_count, unsigned(event.event.e9), unsigned(event.event.e8), (unsigned long)event.event.c10);
+            }
+            for (auto& st : statics) {
+                auto& a = st.actor;
+                if (st.needs_floor) continue;   // the spawn tick's update was the init (request above)
+                if (a.pose && a.animation_cursor) (void)l3::actor_animation_step(*cast_classes[st.kind].bank, *a.pose, *a.animation_cursor);
+            }
+            for (auto& b : servbots) {
+                const auto anim = l3::update_source_attract_servbot_8010205c(b.logic, event.event.c10, refs);
+                auto& a = b.actor;
+                if (a.pose && a.animation_cursor) {
+                    if (anim.reset) (void)l3::actor_animation_reset(*servbot_bank, anim.request, *a.pose, *a.animation_cursor);
+                    else if (anim.step) (void)l3::actor_animation_step(*servbot_bank, *a.pose, *a.animation_cursor);
+                }
+                a.source_origin = b.logic.raw; a.heading = b.logic.heading;
+                b.shadow = anim.shadow;
+            }
+            if (step.cd_command) xa_start_pending = true;
+            if (step.fx_clear) fx.objects.clear();
+            if (step.fx_spawn) l3::spawn_source_attract_fx(fx, step.fx_spawn);
+            l3::update_source_attract_fx(fx, event.event);   // the object pass after the handler
+            // The iris advances one pass per tick; its first pass only builds the ring.
+            if (iris.state) {
+                iris_frame = l3::step_source_iris_80018bb8(iris);
+                if (iris_frame.done) {
+                    iris_black = true;
+                    fade.work_80098a68.raw[10] = fade.work_80098a68.raw[11] = 0;
+                }
+            }
+            if (step.fade_type) {
+                l3::SourceFadeStartupResult started;
+                const bool mode0 = step.fade_type <= 11 && !(step.fade_type & 4);
+                if (mode0) started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, step.fade_type);
+                if (step.fade_type == 20 && !iris.state) {   // 0x80017C30 case 20: busy 0xFFFF, mode 2
+                    l3::start_source_iris_80018bb8(iris); iris_frame = {};
+                    fade.work_80098a68.raw[10] = fade.work_80098a68.raw[11] = 0xFF;
+                    fade.work_80098a68.known[10] = fade.work_80098a68.known[11] = 1;
+                }
+                if (step.fade_type == 2) visible = true;   // black (stage loading) until the fade-in
+                hardware_test_trace("# attract_fade,tick=%lu,type=%u,status=%u,ported=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status), unsigned(mode0 || step.fade_type == 20));
+            }
+            if (step.area_request >= 0) pending_area = step.area_request;
+            if (fade_intents.count && !fade_callback.running)
+                (void)l3::acknowledge_source_fade_scheduler_intent(fade, fade_intents, fade_callback, kEndpointHold1f800001);
+            else if (fade_callback.running)
+                (void)l3::advance_source_fade_callback(fade, fade_callback, kEndpointHold1f800001);
+            (void)l3::update_source_bg_layers_80023144(layers);
+            if (phase != event.phase || e8 != event.event.e8 || e9 != event.event.e9 || step.area_request >= 0 || step.actor_callbacks) {
+                const auto v = l3::source_camera_view(event.camera);
+                hardware_test_trace("# attract_event10,tick=%lu,phase=%u,shot=%u:%u,area_request=%d,actor_callbacks=%u,target=%d:%d:%d,yaw=%d,pitch=%d,distance=%d,camera_unsupported=%u",
+                    (unsigned long)tick, unsigned(event.phase), unsigned(event.event.e9), unsigned(event.event.e8), int(step.area_request),
+                    unsigned(step.actor_callbacks), int(v.target[0]), int(v.target[1]), int(v.target[2]), int(v.yaw), int(v.pitch), int(v.distance),
+                    unsigned(event.camera.unsupported));
+            }
+            ++tick;
+        }
+        // An area load (0x80100CD4 -> the stage loader): the area's terrain and
+        // the stage init's background re-initialisation.
+        if (pending_area >= 0 && pending_area != area) {
+            (void)acquire_gpu_frame("attract area"); submit_gpu_frame(false);
+            require_gpu_idle_for_release();
+            terrain_cache = {};
+            try {
+                char rel[64]; std::snprintf(rel, sizeof(rel), "attract/area_%02d.l3mc", pending_area);
+                terrain_cache = l3::load_l3material_cache(read_binary(data_path(rel)), false);
+                g_terrain_ramp_dir = "attract";
+                rebuild_terrain_batches(map, render, &terrain_cache, size_t(pending_area));
+                g_terrain_ramp_dir = "materials";
+                area = pending_area;
+            } catch (const std::exception& error) {
+                g_terrain_ramp_dir = "materials";
+                release_all_render_resources(); area = 0;
+                boot_log(MML_BOOT_DATA, error.what());
+            }
+            l3::init_source_bg_layers_80022fd4(bg, layers);
+            ship_live = false;   // the area-1 callback releases the exterior's actors
+            psx_resolver_reset();
+            hardware_test_trace("# attract_area,tick=%lu,area=%d,batches=%lu", (unsigned long)tick, area, (unsigned long)g_terrain_batches.size());
+        }
+        pending_area = -1;
+        // The cast's init stores work+0x78 = 0: 0x80048E6C with null (all-zero) bounds.
+        static const l3::RetailPlayerBounds kNullBounds = [] { l3::RetailPlayerBounds b; b.x0 = b.x1 = b.z0 = b.z1 = b.y0 = b.y1 = 0; return b; }();
+        if (teisel && teisel->needs_floor && area > 0) {   // 0x801038A4 floor query
+            teisel->needs_floor = false;
+            const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), teisel->logic.raw[0], teisel->logic.raw[1], teisel->logic.raw[2], kNullBounds);
+            if (floor.floor_y) { teisel->logic.raw[1] = int16_t(teisel->logic.raw[1] + *floor.floor_y); teisel->actor.source_origin = teisel->logic.raw; }
+            hardware_test_trace("# attract_teisel,tick=%lu,pos=%d:%d:%d,floor=%d", (unsigned long)tick,
+                int(teisel->logic.raw[0]), int(teisel->logic.raw[1]), int(teisel->logic.raw[2]), floor.floor_y ? int(*floor.floor_y) : 99999);
+        }
+        for (auto& st : statics) {   // 0x80102DD8 / 0x80102EFC floor query, as the Servbots'
+            if (!st.needs_floor || area <= 0) continue;
+            st.needs_floor = false;
+            const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), st.logic.raw[0], st.logic.raw[1], st.logic.raw[2], kNullBounds);
+            if (floor.floor_y) { st.logic.raw[1] = int16_t(st.logic.raw[1] + *floor.floor_y); st.actor.source_origin = st.logic.raw; }
+            hardware_test_trace("# attract_cast,tick=%lu,class=%02x,slot=%u,request=%u,pos=%d:%d:%d,floor=%d",
+                (unsigned long)tick, unsigned(st.logic.object_class), unsigned(st.logic.slot), unsigned(st.logic.request),
+                int(st.logic.raw[0]), int(st.logic.raw[1]), int(st.logic.raw[2]), floor.floor_y ? int(*floor.floor_y) : 99999);
+        }
+        // 0x8010212C's floor query (y += floor), against the area the shot
+        // loads (the port loads it before the next draw; CANDIDATE timing).
+        for (auto& b : servbots) {
+            if (!b.needs_floor || area <= 0) continue;
+            b.needs_floor = false;
+            const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), b.logic.raw[0], b.logic.raw[1], b.logic.raw[2], kNullBounds);
+            if (floor.floor_y) {
+                b.logic.raw[1] = int16_t(b.logic.raw[1] + *floor.floor_y);
+                b.logic.fixed[1] = int32_t(uint32_t(int32_t(b.logic.raw[1])) << 16);
+                b.actor.source_origin = b.logic.raw;
+            }
+            hardware_test_trace("# attract_servbot,tick=%lu,slot=%u,id=%u,behaviour=%08lx,pos=%d:%d:%d,heading=%u,floor=%d,floor_status=%u",
+                (unsigned long)tick, unsigned(b.logic.slot), unsigned(b.logic.id), (unsigned long)b.logic.behaviour,
+                int(b.logic.raw[0]), int(b.logic.raw[1]), int(b.logic.raw[2]), unsigned(b.logic.heading),
+                floor.floor_y ? int(*floor.floor_y) : 99999, unsigned(floor.status));
+        }
+        (void)acquire_gpu_frame("attract");
+        C3D_RenderTargetClear(g_top_target, C3D_CLEAR_ALL, kClearColor, 0);
+        if (!C3D_FrameDrawOn(g_top_target)) throw std::runtime_error("attract: C3D_FrameDrawOn rejected");
+        C3D_BindProgram(&g_shader_program);
+        psx_begin_frame();
+        packets = visible ? l3::draw_source_bg_layers_80023144(layers, 40) : std::vector<l3::FrontendPacket>{};
+        std::reverse(packets.begin(), packets.end());   // AddPrim prepends: last added draws first
+        if (iris_frame.draw) for (const auto& p : l3::build_source_iris_packets(iris_frame, refs, true)) packets.push_back(p);
+        const bool xy = g_psx_xy_from_gte; g_psx_xy_from_gte = true;
+        const auto add_packets = [&](bool behind_scene) {
+            for (const auto& fp : packets) {
+                if ((fp.bucket > 32) != behind_scene) continue;
+                const uint32_t packet = g_psx_prims.allocate(fp.length, 12);
+                for (unsigned k = 0; k < fp.length; ++k) g_psx_prims.payload(packet)[k] = fp.words[k];
+                float* extra = reinterpret_cast<float*>(g_psx_prims.payload(packet) + fp.length);
+                for (unsigned k = 0; k < 12; ++k) extra[k] = 0.f;
+                g_psx_ot.add_prim(g_psx_prims, fp.bucket, packet);
+            }
+        };
+        // Screen entries 35..33 (background), the scene OT (terrain), entries 32..30.
+        C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+        add_packets(true);
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        const bool terrain = area > 0 && !g_terrain_batches.empty();
+        if (visible && (terrain || ship_live || !servbots.empty() || !statics.empty() || teisel)) {
+            const auto v = l3::source_camera_view(event.camera);
+            const auto camera = l3::source_gameplay_camera_80037fb4(refs, v.target, v.distance, v.yaw, v.pitch, v.shift, 0);
+            // The area record (0x800C0DC0): fog 0x8007A1CC at +0x24 toward far colour +32..34.
+            const auto* record = size_t(area) < profile.area_records.size() ? &profile.area_records[size_t(area)] : nullptr;
+            auto faces = l3::make_terrain_face_camera(camera.camera_1f800008, record);
+            faces.lod_1f800074 = v.shift; faces.screen_x_min = -40; faces.screen_width = 400;
+            static l3::TerrainCellVisibility cells;
+            cells.valid = false;
+            l3::TerrainCellViewInput cv;
+            cv.camera_1f800008 = camera.camera_1f800008;
+            cv.translation_1f800030 = l3::terrain_cell_translation_1f800030(camera.camera_1f800008, camera.eye_800a39f0);
+            cv.eye_x_1f800028 = int16_t(camera.eye_800a39f0[0]); cv.eye_z_1f80002c = int16_t(camera.eye_800a39f0[2]);
+            cv.pitch_800a3a10 = camera.rotation_800a3a10[0]; cv.yaw_800a3a12 = camera.rotation_800a3a10[1];
+            cv.target_x_800a39a0 = v.target[0]; cv.target_z_800a39a8 = v.target[2]; cv.lod_1f800074 = v.shift;
+            if (terrain) l3::compute_terrain_cell_visibility(map, size_t(area), refs, cv, cells);
+            // Matrices for any batch drawn directly (as gameplay's scene path).
+            const auto frame = l3::compose_source_scene_view_frame(view_profile, refs, v.target, v.yaw, v.pitch, v.distance, v.shift,
+                                                                   384u, int32_t(160u << 16), int32_t(120u << 16));
+            C3D_Mtx view, projection;
+            for (size_t row = 0; row < 4; ++row) view.r[row] = FVec4_New(frame.native_view_row_major[row * 4],
+                frame.native_view_row_major[row * 4 + 1], frame.native_view_row_major[row * 4 + 2], frame.native_view_row_major[row * 4 + 3]);
+            Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(frame.vertical_fov_degrees), l3::kFrontendAspect, l3::kFrontendNear, l3::kFrontendFar, false);
+            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_projection, &projection);
+            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_u_model_view, &view);
+            C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+            g_psx_camera = faces;
+            g_psx_far_1f800006 = kFarByShift[v.shift < 3 ? v.shift : 0];
+            g_psx_tr_1f800030 = cv.translation_1f800030;
+            if (terrain) draw_terrain(&faces, 0, l3::kObservedArea1BackFaceThreshold, &cells);
+            if (ship_live) {
+                const auto before = g_psx_stats;
+                const bool emitted = psx_emit_class20(ship, l3::build_imported_actor_pose_matrices(ship));
+                static uint32_t last_ship_trace = UINT32_MAX;
+                if (tick / 60u != last_ship_trace) {   // about once per two seconds
+                    last_ship_trace = tick / 60u;
+                    hardware_test_trace("# attract_ship,tick=%lu,emitted=%u,packets=%lu,culled=%lu,unsupported=%lu,origin=%d:%d:%d,camera_target=%d:%d:%d,distance=%d",
+                        (unsigned long)tick, unsigned(emitted), (unsigned long)(g_psx_stats.actor_packets - before.actor_packets),
+                        (unsigned long)(g_psx_stats.actor_culled - before.actor_culled), (unsigned long)(g_psx_stats.actor_unsupported - before.actor_unsupported),
+                        int(ship.source_origin[0]), int(ship.source_origin[1]), int(ship.source_origin[2]), int(v.target[0]), int(v.target[1]), int(v.target[2]), int(v.distance));
+                }
+            }
+            for (const auto& b : servbots)
+                if (b.actor.pose) (void)psx_emit_class20(b.actor, l3::build_imported_actor_pose_matrices(b.actor));
+            for (const auto& st : statics)
+                if (st.actor.pose) (void)psx_emit_class20(st.actor, l3::build_imported_actor_pose_matrices(st.actor));
+            if (teisel && teisel->actor.pose) (void)psx_emit_class20(teisel->actor, l3::build_imported_actor_pose_matrices(teisel->actor));
+            // Shadows 0x8002C8CC (queued by the updates, drawn by 0x8002CB18):
+            // y = max(0x80048E6C, work y); Servbots radius 80 at scale 1024
+            // else 40 (0x80102238..), Tron/Bon 48 (0x80102E8C / 0x80102FB0);
+            // all scale 512 (the half angle), type 0.
+            const auto shadow = [&](const std::array<int16_t,3>& p, int32_t radius, uint16_t heading) {
+                const auto floor = l3::sample_actor_floor_80048e6c(map, size_t(area), p[0], p[1], p[2], kNullBounds);
+                const int16_t y = floor.floor_y && *floor.floor_y >= p[1] ? *floor.floor_y : p[1];
+                psx_emit_shadow(p[0], y, p[2], radius, 512, heading, 0, refs);
+            };
+            if (area > 0) {
+                for (const auto& b : servbots) if (b.shadow && !b.needs_floor) shadow(b.logic.raw, b.logic.big == 1 ? 80 : 40, b.logic.heading);
+                for (const auto& st : statics) if (!st.needs_floor) shadow(st.logic.raw, 48, st.logic.heading);
+            }
+            for (const auto& o : fx.objects)
+                if (!o.emitter && o.visible) psx_emit_sprite_80029c18(o.pos, o.scale, o.u, o.v, o.material, o.colour);
+            const auto unresolved_before = g_psx_stats.unresolved;
+            psx_draw_ot(false);
+            if (ship_live && g_psx_stats.unresolved != unresolved_before && tick % 60u == 0u)
+                hardware_test_trace("# attract_ship_unresolved,tick=%lu,count=%lu", (unsigned long)tick, (unsigned long)(g_psx_stats.unresolved - unresolved_before));
+            psx_draw_ot(true);
+            g_psx_camera.reset(); g_psx_tr_1f800030.reset();
+            C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+            g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        }
+        add_packets(false);
+        psx_draw_ot(false, true);
+        g_psx_prims.clear(); g_psx_ot.clear_r(kPsxOtBuckets);
+        g_psx_xy_from_gte = xy;
+        draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
+        if (iris_black) (void)draw_source_subtract_uv(255, 255, 255, 320, 240);
+        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
+        submit_gpu_frame();
+    }
+    hardware_test_trace("# attract_event10_end,tick=%lu,done=%u,skipped=%u", (unsigned long)tick, unsigned(event.done), unsigned(event.flags_0a & 1));
+    xa.close();
+    (void)acquire_gpu_frame("attract release"); submit_gpu_frame(false);
+    require_gpu_idle_for_release();
+    for (auto& m : g_frontend_materials) release_gpu_texture(m.texture, m.texture_ready);
+    std::vector<GpuMaterial>().swap(g_frontend_materials);
+    psx_resolver_reset();
+    restore();   // ST00's terrain/player/actor materials back
+}
+
+// Returns NewGame, Attract (title timeout, 0x80013420) or None (no front end).
+l3::FrontendResult run_frontend_title(bool scripted) {
     const auto path = data_path("materials/frontend.l3mc");
     if (FILE* present = std::fopen(path.c_str(), "rb")) std::fclose(present);
-    else { boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=0 frontend.l3mc absent"); return false; }
+    else { boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=0 frontend.l3mc absent"); return l3::FrontendResult::None; }
     const auto cache = l3::load_l3material_cache(read_binary(path), true);
     for (const auto& e : cache.entries) {
         if (!e.resolved) continue;
@@ -3107,7 +4145,7 @@ bool run_frontend_title(bool scripted) {
     l3::FrontendState state;
     uint8_t last_state = 0xFF, last_sub = 0xFF;
     uint32_t frame = 0;   // front-end updates
-    bool new_game = false;
+    bool new_game = false, attract = false;
     // The front end updates once per two VBlanks like gameplay (oracle: the
     // title's work changes every second frame); each 3DS frame redraws the
     // last update's packets. Presses wait for the next update.
@@ -3115,7 +4153,7 @@ bool run_frontend_title(bool scripted) {
     u64 last_tick = svcGetSystemTick();
     uint16_t pending = 0;
     l3::FrontendFrame f;
-    while (aptMainLoop() && !new_game) {
+    while (aptMainLoop() && !new_game && !attract) {
         hidScanInput();
         u32 down = hidKeysDown();
         if (scripted) {
@@ -3185,7 +4223,7 @@ bool run_frontend_title(bool scripted) {
         ++frame;
         switch (f.result) {
             case l3::FrontendResult::NewGame: new_game = true; break;
-            case l3::FrontendResult::Attract:
+            case l3::FrontendResult::Attract: attract = true; break;   // main.cpp plays the attract scene
             case l3::FrontendResult::Continue:
             case l3::FrontendResult::Option:
                 hardware_test_trace("# frontend_unported,frame=%lu,result=%u,returning_to_title=1",
@@ -3240,7 +4278,7 @@ bool run_frontend_title(bool scripted) {
     for (auto& m : g_frontend_materials) release_gpu_texture(m.texture, m.texture_ready);
     std::vector<GpuMaterial>().swap(g_frontend_materials);
     psx_resolver_reset();
-    return new_game;
+    return new_game ? l3::FrontendResult::NewGame : attract ? l3::FrontendResult::Attract : l3::FrontendResult::None;
 }
 
 uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
@@ -3758,6 +4796,38 @@ int main() {
         auto local_visuals=l3::build_player_visuals(models,composition,nullptr);
         // Retain only the source head-part UV templates. Actual native draw
         // primitives are reset when the original phase-7 caller requests it.
+        // NEW GAME -> opening. The original menu starts stage 0 with flag 1540,
+        // whose ST00 poll entry starts event 1 (0x801010C4): Area 0 scene,
+        // phases 0..6, then the phase-7 hand-off 0x80101274 into Area 1. When
+        // the title will run and every cooked event-1 asset is present, boot
+        // the same source event path SOURCE_EVENT_BOOT=1 selects, with its
+        // scene owners, instead of the direct hand-off spawn. opening_skip.txt
+        // keeps the old direct hand-off (tutorial-route tests).
+        bool title_will_run=false;
+        if(g_sidecars_bound&&use_uv_renderer()){
+            const auto present=[](const char* p){FILE* f=std::fopen(p,"r");if(!f)return false;std::fclose(f);return true;};
+            title_will_run=!present("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt")&&
+                (!g_autoplay.active||present("sdmc:/3ds/Legends3DS/diagnostic_title.txt"));
+            const bool assets=actor_metadata.event_poll&&actor_metadata.event_phase2&&actor_metadata.event_command&&
+                actor_metadata.fade_startup&&actor_metadata.event_phase5&&actor_metadata.event_phase6;
+            if(title_will_run&&assets&&!present("sdmc:/3ds/Legends3DS/opening_skip.txt")&&!g_source_event_boot){
+                g_new_game_opening=true;g_source_event_boot=true;
+                g_source_scene_e0=g_source_scene_actor40=g_source_scene_textures=g_source_scene_camera=true;
+            }
+            if(g_new_game_opening){
+                try{
+                    l3::SourcePaletteC0Profile profile;
+                    if(present(data_path("source_palette_c0.l3c0").c_str())&&present(data_path("materials/palette_bank_00.l3pb").c_str())&&
+                       l3::load_source_palette_c0_profile(read_binary(data_path("source_palette_c0.l3c0"),l3::kSourcePaletteC0ProfileBytes),profile)&&
+                       l3::load_source_palette_bank(read_binary(data_path("materials/palette_bank_00.l3pb"),l3::kSourcePaletteBankBytes),g_palette_buffer))
+                        g_palette_c0=profile;
+                    if(g_palette_c0)(void)l3::parse_source_scene_face_profile(g_palette_c0->face_block.data(),g_palette_c0->face_block.size(),g_face_profile);
+                }catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+                boot_log(MML_BOOT_DATA,g_palette_c0?"PALETTE_C0=1 0x80017478 subtypes 3/4, buffer 0x800AD168":"PALETTE_C0=0 profile/bank absent");
+            }
+            boot_log(MML_BOOT_DATA,g_new_game_opening?"NEW_GAME_OPENING=1 ST00 event1 0x801010C4 phases0..7 then handoff 0x80101274"
+                :assets?"NEW_GAME_OPENING=0 direct handoff":"NEW_GAME_OPENING=0 event1 assets absent; direct handoff");
+        }
         const auto head_uv_baseline=g_source_event_boot?l3::capture_source_event_head_uv_baseline(
             models[static_cast<size_t>(l3::PlayerComponentSlot::Head)],local_visuals):
             std::optional<l3::SourceEventHeadUvBaseline>{};
@@ -3773,6 +4843,7 @@ int main() {
         // This native entry is a fresh diagnostic session, not a restored retail
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
+        if(g_palette_c0)session.bind_scene_e0_uv_frames(&g_palette_c0->e0_uv_frames);
         session.set_reference_tables(refs);
         // 0.0.15.15: ST00 E0/06 tutorial message triggers (owner-local L3TR).
         if(g_sidecars_bound){
@@ -3971,6 +5042,7 @@ int main() {
             unsigned enabled=0;char trailing=0;
             source_xa_requested=!extra&&!std::memchr(data,0,n)&&std::sscanf(data,"SOURCE_XA_AUDIO=%u %c",&enabled,&trailing)==1&&enabled==1;
         }
+        if(g_new_game_opening)source_xa_requested=true;   // phase 2 CD command needs its XA receipts
         if(source_xa_requested&&actor_metadata.event_command){
             char path[256];std::snprintf(path,sizeof(path),"%saudio/stream_%lu.l3xa",kDataRoot,
                 (unsigned long)actor_metadata.event_command->profile.id);
@@ -4034,10 +5106,28 @@ int main() {
             bool spawn_file=false,title_file=false;
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt","r")){std::fclose(f);spawn_file=true;}
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_title.txt","r")){std::fclose(f);title_file=true;}
-            if(!spawn_file&&(!g_autoplay.active||title_file))(void)run_frontend_title(g_autoplay.active);
+            if(!spawn_file&&(!g_autoplay.active||title_file)){
+                // Oracle cold boot: narration (event 71), then the title.
+                if(!g_autoplay.active)run_intro_event71(false);
+                // Title timeouts alternate the attract scenes (oracle): ST07
+                // event 10, then the narration, then event 10 again.
+                bool attract_bonne=true;
+                while(run_frontend_title(g_autoplay.active)==l3::FrontendResult::Attract){
+                    if(attract_bonne)run_attract_event10(false,[&]{
+                        rebuild_current_terrain(map,render,&terrain_materials,&player_materials,g_current_area);});
+                    else run_intro_event71(false);
+                    attract_bonne=!attract_bonne;
+                }
+            }
         }
         l3::GameplayClock gameplay_clock;
         u64 previous_update_clock=svcGetSystemTick();
+        // Opening: game ticks follow the XA playback position (see below).
+        bool xa_clock_bound=false;uint64_t xa_clock_frames=0,xa_clock_remainder=0;
+        // 3DS QoL (not in the original, which has no skip in ST00 event 1):
+        // Start fast-forwards the opening through its own ticks, voice muted,
+        // so it still ends in the event's phase-7 hand-off.
+        bool opening_skip=false;
         bool pending_fire=false,pending_lock=false,pending_dialogue=false,pending_left=false,pending_right=false;
         uint16_t pending_psx_pressed=0;
         uint64_t last_rng_mismatch_generation=0;
@@ -4059,6 +5149,16 @@ int main() {
             g_runtime_diag.draw_calls=0;
             g_submitted_vertices=0;
             hidScanInput(); u32 down=hidKeysDown(), held=hidKeysHeld(), up_keys=hidKeysUp();
+            const bool opening_active=g_new_game_opening&&session.source_event_work()&&session.source_event_work()->active00();
+            if(opening_active&&!g_autoplay.active&&(down&KEY_START)&&!opening_skip){
+                opening_skip=true;down&=~u32(KEY_START);xa_audio.set_muted(true);
+                hardware_test_trace("# opening_skip,frame=%lu,phase=%u",(unsigned long)session.frame_counter(),
+                    unsigned(session.source_event_work()->phase04()));
+            }
+            if(opening_skip&&!opening_active){
+                opening_skip=false;if(xa_audio.observation().playing)(void)xa_audio.pause();xa_audio.set_muted(false);
+                hardware_test_trace("# opening_skip_end,frame=%lu",(unsigned long)session.frame_counter());
+            }
             circlePosition autoplay_circle{};
             if(g_autoplay.active) {
                 const size_t step_before=g_autoplay.index;const uint32_t used_before=g_autoplay.used;
@@ -4366,7 +5466,24 @@ int main() {
             in.dialogue_right=(down&(KEY_DRIGHT|KEY_CPAD_RIGHT))!=0;
             const u64 update_start=svcGetSystemTick();
             const u64 update_clock=svcGetSystemTick();
-            gameplay_clock.advance((update_clock-previous_update_clock)/CPU_TICKS_PER_USEC,ui_focus);
+            uint64_t elapsed_us=(update_clock-previous_update_clock)/CPU_TICKS_PER_USEC;
+            // On the PS1 the scene timeline (one tick per two VBlanks) and the
+            // XA stream (150 sectors/s) both run off hardware clocks; the oracle
+            // measures 5.000 sectors per tick, i.e. 37800/30 = 1260 frames per
+            // tick. While the opening's XA plays, its DSP position is the clock,
+            // so the 3DS audio rate cannot drift from the lip-sync cues.
+            if(opening_skip){
+                elapsed_us=16u*33334u;xa_clock_bound=false;
+            } else if(g_new_game_opening&&session.source_event_work()&&session.source_event_work()->active00()&&
+               xa_audio.observation().playing){
+                const uint64_t position=xa_audio.position_frames();
+                if(xa_clock_bound&&position>=xa_clock_frames){
+                    xa_clock_remainder+=(position-xa_clock_frames)*1000000u;
+                    elapsed_us=xa_clock_remainder/37800u;xa_clock_remainder%=37800u;
+                }
+                xa_clock_bound=true;xa_clock_frames=position;
+            } else xa_clock_bound=false;
+            gameplay_clock.advance(elapsed_us,ui_focus);
             previous_update_clock=update_clock;
             if (ui_focus) {
                 pending_fire=pending_lock=pending_dialogue=false;pending_psx_pressed=0;
@@ -4379,7 +5496,7 @@ int main() {
                 pending_left=pending_left||in.dialogue_left;pending_right=pending_right||in.dialogue_right;
             }
             // Bounded catch-up retains debt; no variable-delta physics or render-rate animation.
-            for (unsigned step=0;step<4 && gameplay_clock.consume();++step) {
+            for (unsigned step=0;step<(opening_skip?16u:4u) && gameplay_clock.consume();++step) {
                 in.fire_pressed=pending_fire;in.lock_pressed=pending_lock;in.advance_dialogue=pending_dialogue;
                 in.dialogue_left=pending_left;in.dialogue_right=pending_right;pending_left=pending_right=false;
                 in.pressed_psx_mask=pending_psx_pressed;pending_psx_pressed=0;
@@ -4478,6 +5595,27 @@ int main() {
                     }
                     else {
                         const auto result=session.service_diagnostic_scene_actor40_update(*scene_actor40);
+                        // 0x8010C820 tail: face cues and scripts, UV copies 0x8002D320.
+                        if(g_face_profile.loaded&&session.source_event_work()){
+                            const auto& ev=*session.source_event_work();
+                            if(ev.known[8]&&ev.known[9]&&ev.known[0x1c]&&ev.known[0x1d]&&ev.known[0x1e]&&ev.known[0x1f]){
+                                std::array<l3::SourceFaceUvCopy,4> copies{};
+                                const uint16_t h08=uint16_t(ev.raw[8]|(ev.raw[9]<<8));
+                                const uint32_t w1c=uint32_t(ev.raw[0x1c])|(uint32_t(ev.raw[0x1d])<<8)|(uint32_t(ev.raw[0x1e])<<16)|(uint32_t(ev.raw[0x1f])<<24);
+                                const size_t n=l3::step_source_scene_face_8010c820(g_face_state,g_face_profile,h08,w1c,copies);
+                                const auto& ebd=session.active_area().ebd;
+                                const auto apply=[&](l3::ActorMeshResource& mesh,const std::array<uint8_t,96>& descriptor,const l3::SourceFaceUvCopy& c){
+                                    for(size_t slot=0;slot<mesh.model.parts.size()&&slot<24;++slot)if(descriptor[slot*4]==c.destination_part)
+                                        (void)l3::apply_source_face_uv_8002d320(mesh.model.parts[slot],ebd.source_payload.data(),ebd.source_payload.size(),
+                                            ebd.load_base,scene_actor40->descriptor_token,c.source_part,c.offset);};
+                                for(size_t i=0;i<n;++i){
+                                    apply(scene_actor40->mesh,scene_actor40->descriptor_copy,copies[i]);
+                                    if(scene_actor40->mesh_variant)apply(scene_actor40->mesh_variant->mesh,scene_actor40->mesh_variant->descriptor,copies[i]);
+                                    hardware_test_trace("# source_face,frame=%lu,part=%u,source=%u,offset=%08lx,source_fn=8010C820",
+                                        (unsigned long)session.frame_counter(),unsigned(copies[i].destination_part),unsigned(copies[i].source_part),(unsigned long)copies[i].offset);
+                                }
+                            }
+                        }
                         if(result.request_reset||unsigned(result.status)!=last_actor40_update_status||session.frame_counter()%60u==0u){
                             hardware_test_trace("# source_actor40_update,frame=%lu,status=%u,committed=%u,state=%u,substate=%u,request=%u,shadow_pending=%u,timed_cues_pending=%u,tail_status=%u,player_mirrors=%u,chronology=CANDIDATE",
                                 (unsigned long)session.frame_counter(),unsigned(result.status),unsigned(result.committed),
@@ -4527,6 +5665,11 @@ int main() {
                     else {
                         const auto prop_rng_before=g_actor_rng.native_global_ordinal();
                         const auto pass=session.service_diagnostic_scene_e0_updates(*scene_e0,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                        // 0x8011381C rewrites the shared Near mesh's quad UVs in place.
+                        for(const auto& r:pass.slots)if(r.committed&&r.uv_write)
+                            if(auto* mesh=scene_e0->find_mutable(r.uv_write->resource_token,r.uv_write->variant,l3::SceneE0MeshTier::Near))
+                                for(size_t q=0;q<2&&q<mesh->part.quads.size();++q)
+                                    mesh->part.quads[1-q].uv=r.uv_write->quad1_quad0[q];
                         if(g_actor_rng.native_global_ordinal()!=prop_rng_before&&session.frame_counter()%60u==0u)
                             hardware_test_trace("# source_prop_rng_candidate,frame=%lu,ordinal_before=%llu,ordinal_after=%llu,scope=SHARED_OPENBIOS_CANDIDATE,retail_chronology=false",
                                 (unsigned long)session.frame_counter(),(unsigned long long)prop_rng_before,
@@ -4543,12 +5686,23 @@ int main() {
                                     unsigned(prop.known[56]),unsigned(prop.known[57]),unsigned(prop.known[58]),unsigned(prop.known[59]),unsigned(prop.known[60]),unsigned(prop.known[61]));
                             }
                         }
+                        if(session.frame_counter()%60u==0u)for(size_t slot=0;slot<pass.slots.size();++slot){
+                            const auto& r=pass.slots[slot];
+                            if(r.status==l3::SceneE0Status::NotScheduled||r.committed)continue;
+                            hardware_test_trace("# source_scene_E0_hold,frame=%lu,slot=%lu,status=%u,function=%08lx,missing=%d",
+                                (unsigned long)session.frame_counter(),(unsigned long)slot,unsigned(r.status),(unsigned long)r.source_function,
+                                r.missing_offset?int(*r.missing_offset):-1);
+                        }
                         if(pass.initialized_count||session.frame_counter()%60u==0u)
                             hardware_test_trace("# source_scene_E0_update,frame=%lu,status=%u,initialized=%lu,updated=%lu,held=%lu,chronology=CANDIDATE,later_behavior=SOURCE_BACKED_PARTIAL",
                                 (unsigned long)session.frame_counter(),unsigned(pass.status),
                                 (unsigned long)pass.initialized_count,(unsigned long)pass.updated_count,(unsigned long)pass.held_count);
                     }
                 }
+                if(g_palette_c0){const auto pass=session.service_source_palette_c0(g_palette_buffer,*g_palette_c0);
+                    if(session.frame_counter()%60u==0u)
+                        hardware_test_trace("# source_palette_c0,frame=%lu,updated=%u,released=%u,held=%u,source=80017478",
+                            (unsigned long)session.frame_counter(),unsigned(pass.updated),unsigned(pass.released),unsigned(pass.held));}
                 if(g_source_event_boot){const auto pass=session.service_diagnostic_scene_effects();
                     if(pass.updated||pass.released||session.frame_counter()%60u==0u)
                         hardware_test_trace("# source_scene_effect80_update,frame=%lu,status=%u,committed=%u,updated=%u,released=%u,chronology=CANDIDATE",
@@ -5505,6 +6659,17 @@ int main() {
                 if (retail_animation_requested()) (void)l3::runtime_animation_finish(animation,player_track,session);
                 if((g_source_loop_replay||g_source_scene_rng_replay)&&session.source_recorded_scene_admitted())
                     (void)session.service_source_main_loop_tail_80011ecc();
+                else if(g_new_game_opening) {
+                    // 0x1F800002: main-loop counter, +1 per loop at 0x80011ECC.
+                    // Its value depends on boot/title time; the phase-6 shake
+                    // (0x8010102C, bit 1) reads it. Bound once when phase 6
+                    // begins, to the oracle's 657 there (counter = 657 +
+                    // event+10 in record 0, 2943 + event+10 in record 10). CANDIDATE.
+                    if(session.source_event_phase6_context().scratch_half_1f800002)
+                        (void)session.service_source_main_loop_tail_80011ecc();
+                    else if(session.source_event_work()&&session.source_event_work()->phase04()==6)
+                        session.bind_source_main_loop_half_snapshot_1f800002(657);
+                }
                 // 0x8001A110 runs after the main update (0x80011E78): every queued
                 // effect request keys its SPU voices, then the queue resets.
                 // Handler-1 records (sequenced music) dispatch inside the same
@@ -5597,14 +6762,18 @@ int main() {
             C3D_Mtx view{};Mtx_LookAt(&view,eye,at,up,false);
             C3D_Mtx frame_projection=g_projection;
             bool source_camera_bound=false;
+            if(g_palette_c0&&g_palette_buffer.changed_rows){recolour_runtime_palette_pages(g_palette_buffer.changed_rows);g_palette_buffer.changed_rows=0;}
+            g_scene_view_frame.reset();
             if(g_source_event_boot&&g_source_scene_camera&&use_uv_renderer()&&actor_metadata.scene_view&&
                session.source_event_phase5_resources().resident_in(session.active_area().ebd)) {
+                (void)session.apply_source_scene_tracked_camera_target();
                 auto source_view=l3::produce_source_scene_view_8001e550({&*actor_metadata.scene_view,&refs,
                     &session.source_event_phase5_context(),&session.source_event_phase6_context(),
                     session.source_event_phase5_resources().resident_in(session.active_area().ebd)});
                 if(source_view.frame&&(source_view.frame->center_x_pixels!=200.f||source_view.frame->center_y_pixels!=120.f)) {
                     source_view.status=l3::SourceSceneViewStatus::UnsupportedOptics;source_view.frame.reset();
                 }
+                g_scene_view_frame=source_view.frame;
                 if(source_view.frame) {
                     const auto& f=*source_view.frame;
                     for(size_t row=0;row<4;++row)view.r[row]=FVec4_New(f.native_view_row_major[row*4],
@@ -5658,7 +6827,19 @@ int main() {
                 // FarColor for the depth cue (0x800371A0).
                 if(source_follow_view&&!source_camera_bound&&mode&&source_follow.scratch_shift_1f800074==0)
                     faces=l3::make_terrain_face_camera(source_follow.camera_1f800008,&session.active_area().flow.setup_blob);
-                if(faces){faces->lod_1f800074=source_follow.scratch_shift_1f800074;
+                // Scene views (0x8001E550 -> 0x80038324 -> 0x80037FB4): the same
+                // packet path, with the scene's 0x1F800008 words, its projection
+                // controls and its 0x1F800074 shift.
+                std::optional<l3::SourceGameplayCameraFrame> scene_camera;
+                if(!faces&&source_camera_bound&&g_scene_view_frame&&mode){
+                    const auto& f=*g_scene_view_frame;
+                    scene_camera=l3::source_gameplay_camera_80037fb4(refs,f.target,f.distance,f.yaw,f.pitch,
+                        f.source_shift,source_follow.retained_pad_1f8000f2);
+                    faces=l3::make_scene_face_camera(scene_camera->camera_1f800008,&session.active_area().flow.setup_blob,
+                        session.source_event_phase6_context().projection,f.source_shift);
+                }
+                if(faces&&!scene_camera){faces->lod_1f800074=source_follow.scratch_shift_1f800074;}
+                if(faces){
                     // CANDIDATE: the 400-pixel top screen widens the off-screen test like the cell side cut.
                     faces->screen_x_min=-40;faces->screen_width=400;}
                 // 0x1F80007C: ABE while event byte 0x800C4C48 is 0. An unknown
@@ -5677,18 +6858,34 @@ int main() {
                 cells.valid=false;
                 if(faces&&g_current_area==session.map_area_index()){
                     l3::TerrainCellViewInput cv;
+                    if(scene_camera){
+                        // 0x80038324 stores the scene target at 0x800A39A0; 0x80037FB4
+                        // writes 0x800A3A10 and the eye.
+                        const auto& f=*g_scene_view_frame;
+                        cv.camera_1f800008=scene_camera->camera_1f800008;
+                        cv.translation_1f800030=l3::terrain_cell_translation_1f800030(scene_camera->camera_1f800008,scene_camera->eye_800a39f0);
+                        cv.eye_x_1f800028=int16_t(scene_camera->eye_800a39f0[0]);cv.eye_z_1f80002c=int16_t(scene_camera->eye_800a39f0[2]);
+                        cv.pitch_800a3a10=scene_camera->rotation_800a3a10[0];cv.yaw_800a3a12=scene_camera->rotation_800a3a10[1];
+                        cv.target_x_800a39a0=f.target[0];cv.target_z_800a39a8=f.target[2];cv.lod_1f800074=f.source_shift;
+                    }else{
                     cv.camera_1f800008=source_follow.camera_1f800008;
                     cv.translation_1f800030=l3::terrain_cell_translation_1f800030(source_follow.camera_1f800008,source_follow.eye_800a39f0);
                     cv.eye_x_1f800028=int16_t(source_follow.eye_800a39f0[0]);cv.eye_z_1f80002c=int16_t(source_follow.eye_800a39f0[2]);
                     cv.pitch_800a3a10=source_follow.rotation_800a3a10[0];cv.yaw_800a3a12=source_follow.rotation_800a3a10[1];
                     cv.target_x_800a39a0=source_follow.target_800a39a0[0];cv.target_z_800a39a8=source_follow.target_800a39a0[2];
-                    cv.lod_1f800074=source_follow.scratch_shift_1f800074;cv.mode_1f800075=mode.value_or(0);
+                    cv.lod_1f800074=source_follow.scratch_shift_1f800074;}
+                    cv.mode_1f800075=mode.value_or(0);
                     l3::compute_terrain_cell_visibility(session.active_map(),session.map_area_index(),refs,cv,cells);
                 }
                 // One OT per frame: terrain and the player write packets,
                 // drawn after the player (opaque) and after the actors (semi).
                 psx_begin_frame();
                 g_psx_camera = faces;
+                g_psx_far_1f800006 = session.source_event_phase6_context().half_1f800006;
+                g_psx_tr_1f800030.reset();
+                if(faces)g_psx_tr_1f800030=scene_camera
+                    ?l3::terrain_cell_translation_1f800030(scene_camera->camera_1f800008,scene_camera->eye_800a39f0)
+                    :l3::terrain_cell_translation_1f800030(source_follow.camera_1f800008,source_follow.eye_800a39f0);
                 const u64 terrain_start=svcGetSystemTick();
                 draw_terrain(faces?&*faces:nullptr,mode.value_or(0),threshold,&cells);
                 g_frame_split.terrain+=svcGetSystemTick()-terrain_start;
@@ -5723,7 +6920,14 @@ int main() {
             const bool isolate_scene_actor=g_source_scene_actor40_only&&g_source_scene_actor40&&
                 use_uv_renderer()&&scene_actor40&&scene_actor40_prefix_ready&&scene_actor40_pose_ready&&
                 session.source_event_phase5_resources().resident_in(session.active_area().ebd);
-            const bool draw_legacy_player=!isolate_scene_actor&&g_hardware_scene_draw!=HardwareSceneDraw::TerrainOnly;
+            // Event 1 phase 1 clears player byte0 bits 0/1 (0x80101138) and
+            // phase 7 sets bit 0 again; in between only the scene's class-40
+            // Mega Man is drawn (oracle: byte0 = 0 through the scene, 3 at
+            // control). Which of the two bits gates the draw: CANDIDATE.
+            const bool opening_hides_player=g_new_game_opening&&session.source_event_work()&&
+                session.source_event_work()->active00()&&(session.compat_player().bytes[0]&3u)==0;
+            const bool draw_legacy_player=!isolate_scene_actor&&!opening_hides_player&&
+                g_hardware_scene_draw!=HardwareSceneDraw::TerrainOnly;
             const u64 player_start=svcGetSystemTick();
             if(draw_legacy_player) {
                 if (use_uv_renderer())
@@ -5741,6 +6945,10 @@ int main() {
                 const auto count=draw_source_scene_actor40_uv(session,*scene_actor40,refs);
                 if(session.frame_counter()%60u==0u){const auto* pose=l3::select_source_scene_actor40_pose(
                         session.source_event_phase5_context().pool40.slots[0],*scene_actor40);
+                    hardware_test_trace("# source_actor40_packets,frame=%lu,calls=%lu,culled=%lu,held=%lu,parts=%lu,depth=%lu,reason=%u,actor_packets=%lu,actor_culled=%lu,source=80028F90",
+                        (unsigned long)session.frame_counter(),(unsigned long)g_class40_trace.calls,(unsigned long)g_class40_trace.culled,
+                        (unsigned long)g_class40_trace.held,(unsigned long)g_class40_trace.parts,(unsigned long)g_class40_trace.depth,
+                        unsigned(g_class40_trace.reason),(unsigned long)g_psx_stats.actor_packets,(unsigned long)g_psx_stats.actor_culled);
                     hardware_test_trace("# source_actor40_draw,frame=%lu,parts=%lu,request=%u,record=%u,shade=UNKNOWN,integer_pose=MATCHES_MEASURED_FIELDS,raster=CANDIDATE,retail_parity=false",
                         (unsigned long)session.frame_counter(),(unsigned long)count,
                         pose?unsigned(pose->request):255u,pose?unsigned(pose->record_index):255u);}
@@ -5748,7 +6956,7 @@ int main() {
             if(scene_e0&&g_hardware_scene_draw==HardwareSceneDraw::All) {
                 const auto submitted=draw_source_scene_e0_uv(session,*scene_e0);
                 if(session.frame_counter()%60u==0u)
-                    hardware_test_trace("# source_scene_E0_draw,frame=%lu,instances=%lu,LOD=FRONTEND_NEAR_DIAGNOSTIC,texture=INITIAL_BATCH_DIAGNOSTIC,source_camera_bound=%u,retail_parity=false",
+                    hardware_test_trace("# source_scene_E0_draw,frame=%lu,instances=%lu,LOD=8002A160_DEPTH,texture=INITIAL_BATCH_DIAGNOSTIC,source_camera_bound=%u,retail_parity=false",
                         (unsigned long)session.frame_counter(),(unsigned long)submitted,unsigned(source_camera_bound));
             }
             if(g_hardware_scene_draw==HardwareSceneDraw::All){

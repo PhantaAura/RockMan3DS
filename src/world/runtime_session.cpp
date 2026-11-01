@@ -1649,6 +1649,7 @@ SceneE0FirstUpdatePass RuntimeSession::service_diagnostic_scene_e0_updates(const
     inputs.event_work=source_event_work_?&*source_event_work_:nullptr;inputs.pool=&source_event_phase5_context_.pool_e0;
     inputs.scratch_half_1f800002=source_event_phase6_context_.scratch_half_1f800002;
     inputs.scene_context=&source_event_phase5_context_;
+    inputs.uv_frames=scene_e0_uv_frames_;
     SourcePropLiftActorFrameReceipt frame;
     if(inputs.event_work){
         const auto& event=*inputs.event_work;bool pointer_known=true;uint32_t actor_id=0;
@@ -1683,7 +1684,19 @@ SceneE0FirstUpdatePass RuntimeSession::service_diagnostic_scene_e0_updates(const
         inputs.prop_release_owner=&release.owner;
         auto& prop=source_event_phase5_context_.pool_e0.slots[i];
         const auto before=prop;
+        // Falling-block/slide states draw rand() on the E0 channel (opening).
+        SourceRngUpdateTransaction e0_rng;bool e0_rng_open=false;
+        if(candidate_rng&&candidate_rng->admitted()&&!source_scene_rng_tape_.admitted()&&prop.known[3]&&prop.known[9]&&
+           ((prop.raw[3]==2&&prop.raw[9]==3)||(prop.raw[3]==3&&prop.raw[9]==1)||(prop.raw[3]==4&&prop.raw[9]==1)))
+            e0_rng_open=begin_source_rng_update(*candidate_rng,e0_rng,{frame_counter_,frame_counter_,SourceRngUpdatePhase::E0ObjectCallback})==SourceRngStatus::Ready;
+        inputs.e0_rng=e0_rng_open?&e0_rng:nullptr;
         result=update_scene_e0_80112b9c(prop,resources,area_.ebd,inputs);
+        inputs.e0_rng=nullptr;
+        if(e0_rng_open){
+            if(result.committed){if(commit_source_rng_update(*candidate_rng,e0_rng)!=SourceRngStatus::Ready){
+                prop=before;result.committed=false;result.status=SceneE0Status::NeedsRngOrChildOwner;}}
+            else rollback_source_rng_update(e0_rng);
+        }
         if(result.foreign_release_committed &&
             !commit_source_prop_foreign_release(source_prop_foreign_globals_,release,true)){
             // Synchronous one-use publication: preserve the entire record if
@@ -1894,6 +1907,12 @@ bool RuntimeSession::initialize_fresh_source_event_subset_st00() noexcept {
     // does not establish retail position or camera-update cadence parity.
     initialize_source_event_scene_from_executable_boot_80068000(source_event_phase5_context_);
     initialize_source_event_phase5_pools_8002e88c(source_event_phase5_context_);
+    // The area loader (0x8002ED6C) spawns the area's family-C0 records into the
+    // reset pool; area 0's single record is the C0/03 palette object.
+    for(const auto& record:area_.flow.objects.records)
+        if((record.raw[1]&0xE0u)==0xC0u){std::array<uint8_t,20> raw{};
+            std::copy(record.raw.begin(),record.raw.begin()+20,raw.begin());
+            (void)spawn_source_c0_record_8002ed6c(source_event_phase5_context_.pool_c0,raw);}
     auto camera_known=source_event_player_known_;
     for(size_t i=0x14;i<0x1a;++i)camera_known[i]=1;
     (void)initialize_source_event_phase5_camera_80038674(source_event_phase5_context_,player_,camera_known);
@@ -2071,6 +2090,12 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         source_event_input.candidate_rng=&candidate;
     }
     source_event_result_=step_source_event_pipeline(source_event_work_,source_event_profile_.get(),source_event_input);
+    // Oracle (US disc, New Game): 0x1F800074 reads 0 from phase 4 through the
+    // constructor tick, where the class-40 initializer 0x8010C930 already runs
+    // (same tick, after the event); the camera program writes it next tick.
+    if(source_event_result_.committed&&source_event_result_.phase5_consumer_status==SourceEventPhase5Status::Consumed&&
+       !source_event_phase6_context_.byte_1f800074)
+        source_event_phase6_context_.byte_1f800074=uint8_t(0);
     if(paired_constructor_boundary&&source_event_result_.committed&&source_event_result_.phase5_consumer_status==SourceEventPhase5Status::Consumed){
         source_event_phase6_context_.scratch_half_1f800002=source_scene_rng_tape_.profile().constructor.scratch_half;
         source_scene_rng_constructor_admitted_=true;

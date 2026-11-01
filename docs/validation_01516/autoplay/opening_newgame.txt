@@ -1,0 +1,6 @@
+# New Game opening (normal boot, no spawn file, needs diagnostic_title.txt): title Start, menu A on NEW GAME, then no input through ST00 event 1 into Area 1 control
+120 0 0 0
+2 8 0 0
+60 0 0 0
+2 1 0 0
+7000 0 0 0

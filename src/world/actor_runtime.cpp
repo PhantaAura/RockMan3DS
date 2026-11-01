@@ -1582,8 +1582,13 @@ ImportedActorFloorSample sample_imported_actor_floor(const ImportedActorInstance
         out.status = RuntimeContactStatus::Unsupported;
         return out;
     }
-    const auto& bounds = *actor.floor_bounds;
-    const int16_t x = actor.source_origin[0], y = actor.source_origin[1], z = actor.source_origin[2];
+    return sample_actor_floor_80048e6c(map, area, actor.source_origin[0], actor.source_origin[1],
+                                       actor.source_origin[2], *actor.floor_bounds);
+}
+ImportedActorFloorSample sample_actor_floor_80048e6c(const RuntimeMap& map, size_t area,
+                                                     int16_t x, int16_t y, int16_t z,
+                                                     const RetailPlayerBounds& bounds) {
+    ImportedActorFloorSample out;
     const auto find_cell = [&](int32_t world_x, int32_t world_z) -> std::optional<RuntimeCellRef> {
         if (area >= map.areas.size()) return std::nullopt;
         const auto& data = map.areas[area];
@@ -1702,12 +1707,13 @@ ImportedActorPoseMatrices build_imported_actor_pose_matrices(const ImportedActor
     if (!actor.resource || !actor.pose) throw std::runtime_error("actor matrices require mesh and pose");
     const auto& bindings = actor.resource->bindings;
     const auto& pose = *actor.pose;
-    if (bindings.empty() || bindings.size() > kActorClass20PartLimit ||
+    const size_t part_limit = actor.source_class == 0x40 ? kActorDrawDescriptorSlots : kActorClass20PartLimit;
+    if (bindings.empty() || bindings.size() > part_limit ||
         pose.base_translation.size() != bindings.size())
         throw std::runtime_error("actor matrix part counts inconsistent");
-    std::array<PlayerPoseMatrix, kActorClass20PartLimit> rotation{};
-    std::array<PlayerPosePoint, kActorClass20PartLimit> position{};
-    std::array<bool, kActorClass20PartLimit> transform_initialized{};
+    std::array<PlayerPoseMatrix, kActorDrawDescriptorSlots> rotation{};
+    std::array<PlayerPosePoint, kActorDrawDescriptorSlots> position{};
+    std::array<bool, kActorDrawDescriptorSlots> transform_initialized{};
     const std::array<float, 3> scale{{float(actor.raw_scale[0]) / 4096.0f,
                                      float(actor.raw_scale[1]) / 4096.0f,
                                      float(actor.raw_scale[2]) / 4096.0f}};

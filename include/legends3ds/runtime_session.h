@@ -13,6 +13,7 @@
 #include "legends3ds/actor_detection.h"
 #include "legends3ds/source_audio_queue.h"
 #include "legends3ds/source_event_pipeline.h"
+#include "legends3ds/source_palette_c0.h"
 #include "legends3ds/scene_e0.h"
 #include "legends3ds/source_main_loop.h"
 #include "legends3ds/source_scene_actor40.h"
@@ -316,6 +317,13 @@ public:
     bool bind_source_handoff_display_receipt(const SourceEventHandoffDisplayReceipt&) noexcept;
 
     bool bind_source_event_phase6_profile(SourceEventPhase6Profile profile) noexcept;
+    // Family-C0 palette objects: 0x80017478 sweep over the scene C0 pool.
+    void bind_scene_e0_uv_frames(const std::array<std::array<uint8_t,2>,6>* frames) noexcept { scene_e0_uv_frames_=frames; }
+    SourcePaletteC0Pass service_source_palette_c0(SourcePaletteBuffer& buffer,const SourcePaletteC0Profile& profile) noexcept {
+        return update_source_palette_c0_80017478(source_event_phase5_context_.pool_c0,buffer,profile);}
+    // 0x8001E5BC tracked-camera store, run just before the view (0x8001E550).
+    bool apply_source_scene_tracked_camera_target() noexcept {
+        return source_event_work_&&apply_source_scene_tracked_target_8001e5bc(*source_event_work_,source_event_phase5_context_,source_event_phase6_context_);}
     std::optional<SourceEventSceneOverlayPresentation> source_event_scene_overlay() const noexcept;
     bool acknowledge_source_event_scene_overlay(SourceEventSceneOverlayLease lease) noexcept;
     SceneE0FirstUpdatePass service_diagnostic_scene_e0_first_updates(const SceneE0Resources& resources) noexcept;
@@ -662,6 +670,7 @@ private:
     SourcePropForeignGlobals source_prop_foreign_globals_;
     SourceEffectDispatchLease source_effect_dispatch_lease_;
     SourceEventPhase6Context source_event_phase6_context_{};
+    const std::array<std::array<uint8_t,2>,6>* scene_e0_uv_frames_=nullptr;
     std::optional<SourceEventHandoffDisplayReceipt> source_handoff_display_;
     SourceSceneActor40InitializerGlobals source_scene_actor40_initializer_globals_{};
     std::optional<SourceLoopSnapshot> source_loop_snapshot_;

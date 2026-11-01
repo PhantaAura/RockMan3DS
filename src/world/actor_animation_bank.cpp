@@ -21,7 +21,7 @@ ActorAnimationStatus pose_ready(const ActorAnimationRequestCache& cache,
         pose.sequencing_record != cache.sequence.records[index] ||
         pose.frame_index != pose.sequencing_record[0] ||
         pose.base_translation.empty() ||
-        pose.base_translation.size() > kActorClass20PartLimit)
+        pose.base_translation.size() > kActorDrawDescriptorSlots)   // the decoders enforce each class's limit
         return ActorAnimationStatus::InvalidCache;
     if (pose.base_translation.size() != live.base_translation.size())
         return ActorAnimationStatus::PartCountMismatch;

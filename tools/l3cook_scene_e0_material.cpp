@@ -17,7 +17,8 @@ int main(int argc,char** argv) {
             uploads.insert(uploads.end(),std::make_move_iterator(rows.begin()),std::make_move_iterator(rows.end()));
         }
         std::vector<l3::MaterialVramDiagnostics> coverage;
-        const auto cache=l3::build_material_cache(words,uploads,&coverage);
+        // Scene E0 pages may use CLUTs the family-C0 palette objects write at runtime.
+        const auto cache=l3::build_material_cache(words,uploads,&coverage,true);
         const auto bytes=l3::cook_scene_e0_material_snapshot(profile.ebd_source_digest,cache);
         (void)l3::load_scene_e0_material_snapshot(bytes,profile.ebd_source_digest,words);
         std::ofstream f(argv[3],std::ios::binary);f.write(reinterpret_cast<const char*>(bytes.data()),bytes.size());

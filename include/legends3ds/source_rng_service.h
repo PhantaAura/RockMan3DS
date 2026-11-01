@@ -79,6 +79,10 @@ struct SourceRngEffect34Context {
 constexpr uint32_t kSourceE005RngCallerRa = 0x80114020;
 // E0/08 target state 1 (0x801161D4): blink reload draw when +9 reaches 0.
 constexpr uint32_t kSourceE008BlinkRngCallerRa = 0x80116244;
+// ST00 E0 falling-block/slide states and their debris spawners (opening
+// scene): rand() return addresses 0x801133E4 .. 0x80113E54.
+constexpr std::array<uint32_t,10> kSourceE0BlockRngCallerRas{{0x801133e4u,0x8011367cu,0x80113ad8u,
+    0x80113cc8u,0x80113cf4u,0x80113d0cu,0x80113d2cu,0x80113d94u,0x80113dc0u,0x80113e54u}};
 struct SourceRngE0Context {
     uint32_t caller_ra = 0, work = 0;
     uint8_t slot = 255;

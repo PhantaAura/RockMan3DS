@@ -13,6 +13,12 @@ from cook_actor_combat import OwnerExe, build_metadata
 from cook_source_fade import cook as cook_source_fade
 from cook_source_event_phase5 import cook as cook_source_event_phase5
 from cook_source_event_phase6 import cook as cook_source_event_phase6
+from cook_source_event_poll import cook as cook_source_event_poll
+from cook_source_event_phase2 import cook as cook_source_event_phase2
+from cook_source_event_command import cook as cook_source_event_command
+from cook_source_prop_lift import cook as cook_source_prop_lift
+from cook_source_effect_dispatch import cook as cook_source_effect_dispatch
+from cook_source_palette_c0 import cook as cook_source_palette_c0
 from source_player_head import select_fresh_player_head
 from cook_source_scene_view import cook as cook_source_scene_view
 from cook_hit_proxy import build_metadata as cook_hit_proxy_rules
@@ -170,7 +176,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_frontend_materials','l3cook_bottom_gauge']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials','l3cook_bottom_gauge','l3cook_intro_materials','l3cook_word_materials']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -257,6 +263,24 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         # E0/06 tutorial message-trigger lists (0x8011CC9C), neutral L3TR/1.
         subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_tutorial_triggers.py')),
                         '--overlay',str(stage/'R3_ST00.BIN'),'--out',str(runtime/'st00.l3tr')],check=True)
+        # New Game opening, ST00 event 1 (0x801010C4): the flag poll table
+        # (0x8011ADF8), phase-2 sound/command records (0x8001B33C/0x8001D58C),
+        # the command's cold CD metadata, and the scene's lift/effect windows.
+        # Read by main.cpp's optional actor-metadata loader.
+        overlay_bytes=(stage/'R3_ST00.BIN').read_bytes()
+        exe_bytes=(dat.parent.parent/'ROCK_NEO.EXE').read_bytes()
+        (runtime/'source_event.l3ep').write_bytes(cook_source_event_poll(overlay_bytes))
+        (runtime/'source_event_phase2.l3eq').write_bytes(cook_source_event_phase2(exe_bytes)[0])
+        (runtime/'source_event_command.l3ec').write_bytes(cook_source_event_command(exe_bytes)[0])
+        (runtime/'source_prop_lift.l3pl').write_bytes(cook_source_prop_lift(overlay_bytes))
+        (runtime/'source_effect_dispatch.l3f2').write_bytes(cook_source_effect_dispatch(overlay_bytes))
+        (runtime/'source_palette_c0.l3c0').write_bytes(cook_source_palette_c0(overlay_bytes))
+        for key,name in (('source_prop_lift','source_prop_lift.l3pl'),('source_effect_dispatch','source_effect_dispatch.l3f2')):
+            manifest[key]={'format':1,'optional':True,'default_enabled':False,'runtime_gate':'SOURCE_EVENT_BOOT=1',
+                'status':'SOURCE_BACKED_PARTIAL','path':'legends3ds/tutorial/'+name}
+        manifest['opening_event1']={'status':'SOURCE_BACKED_PARTIAL',
+            'paths':[f'legends3ds/tutorial/{n}' for n in ('source_event.l3ep','source_event_phase2.l3eq',
+                'source_event_command.l3ec','source_prop_lift.l3pl','source_effect_dispatch.l3f2')]}
 
         # Exact fixed-point reference table used by the original movement path.
         # The EXE is inferred from the normal extraction layout
@@ -343,7 +367,10 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 area_container=dat/f'ST00_{area_index:02d}.BIN'
                 run(tools,'l3cook_material_cache',stage/'ST00_MAP.MDT',stage/'ST00_MAP.IDX',stage/'ST00.STG',stage/'ST00.HED',
                     str(area_index),mout/f'area_{area_index:02d}.l3mc',*upload_prefix,area_container,*negative_args,
-                    '--ramp-out',mout/f'area_{area_index:02d}.l3cr')
+                    '--ramp-out',mout/f'area_{area_index:02d}.l3cr',
+                    # Area 0's object list spawns the C0/03 palette object (0x8002ED6C):
+                    # its CLUT rows are written at runtime, keep those pages' indices.
+                    *(['--runtime-palettes'] if area_index==0 else []))
                 # Player meshes use their own TPAGE/CLUT words. Cook a parallel
                 # per-area cache so stage-local face/palette uploads can replace
                 # the common player pages with the same last-writer semantics.
@@ -365,6 +392,17 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
             scene_path=mout/'scene_e0_initial.l3sm'
             run(tools,'l3cook_scene_e0_material',runtime/'source_event_phase5.l3p5',
                 eout/'area_00.l3ebd',scene_path,*scene_uploads)
+            # Family-C0 palette bank (0x800AD168 rows 0..31) for the same batch.
+            run(tools,'l3cook_palette_bank',mout/'palette_bank_00.l3pb',*scene_uploads)
+            # The opening's class-40 actor (event+24) material pages, same
+            # initial upload batch as the E0 snapshot.
+            run(tools,'l3cook_scene_actor40_material',runtime/'source_event_phase5.l3p5',
+                eout/'area_00.l3ebd',mout/'scene_actor40_initial.l3sm',*scene_uploads)
+            manifest['scene_actor40_materials']={'format':1,'optional':True,
+                'runtime_gate':'SOURCE_SCENE_TEXTURES=1','default_enabled':False,
+                'snapshot':'INITIAL_UPLOAD_BATCH','chronology':'SOURCE_BACKED_PARTIAL',
+                'live_palette':'UNKNOWN','path':str((mout/'scene_actor40_initial.l3sm').relative_to(out)),
+                'uploads':[{'name':path.name,'sha256':sha256(path)} for path in scene_uploads]}
             manifest['scene_materials']={'format':1,'optional':True,
                 'runtime_gate':'SOURCE_SCENE_TEXTURES=1','default_enabled':False,
                 'snapshot':'INITIAL_UPLOAD_BATCH','chronology':'SOURCE_BACKED_PARTIAL',
@@ -382,6 +420,92 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 manifest['frontend_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'frontend.l3mc').relative_to(out)),
                     'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U/EM0000 (CANDIDATE: the Servbot page); words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C and DEMO_DAT.EBD'}
+            # Pre-title narration (ST01 event 71, docs/research_01516/INTRO_EVENT71.md):
+            # the text-crawl pages OPENG0..3 from ST01.BIN.
+            # Plus the background layers (descriptor table 0x80100D5C[0], the
+            # 0x80022FD4 input) and the tile pages ST01BG00..02 they use.
+            if (dat/'ST01.BIN').is_file():
+                st01=[r for r in iter_resources(dat/'ST01.BIN') if r.internal.upper()==r'..\PROGBIN\R3_ST01.BIN']
+                if len(st01)!=1 or st01[0].typ!=0: raise RuntimeError('ST01.BIN: expected one type-0 R3_ST01.BIN')
+                op=td/'r3_st01.bin'; op.write_bytes((dat/'ST01.BIN').read_bytes()[st01[0].payload_start:st01[0].payload_start+st01[0].size])
+                bg_words=td/'intro_bg_words.txt'
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
+                    '--overlay',str(op),'--out',str(runtime/'intro_bg.l3bg'),'--words',str(bg_words)],check=True)
+                # The airship (ST01_00.EBD class 0x20/0x0A, constructor record 0x80100F1C).
+                emb=[r for r in iter_resources(dat/'ST01.BIN') if r.internal.upper()==r'..\EMBIN\ST01_00.EBD']
+                if len(emb)!=1 or emb[0].typ!=0: raise RuntimeError('ST01.BIN: expected one type-0 ST01_00.EBD')
+                iout=runtime/'intro'; iout.mkdir(exist_ok=True)
+                eb=td/'st01_00.ebd'; eb.write_bytes((dat/'ST01.BIN').read_bytes()[emb[0].payload_start:emb[0].payload_start+emb[0].size])
+                run(tools,'l3cook_ebd',eb,hex(emb[0].load),iout/'intro.l3ebd')
+                run(tools,'l3cook_intro_materials',dat/'ST01.BIN',mout/'intro.l3mc',bg_words,iout/'intro.l3ebd')
+                manifest['intro_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((mout/'intro.l3mc').relative_to(out)),
+                    'source':'ST01.BIN OPENG0..3 + ST01BG00..02; words from R3_ST01 0x80100A70 (tpage 21+page | 0x20, CLUT 0x7C00) and the 0x80100D5C layer tiles'}
+                manifest['intro_bg']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((runtime/'intro_bg.l3bg').relative_to(out)),
+                    'source':'R3_ST01 0x80100D5C[0] descriptors (0x80022FD4); camera-scroll layers not ported'}
+            # Title attract scene (ST07 event 10, docs/research_01516/ATTRACT_EVENT10.md):
+            # the ST07 map/render and map areas 1-4 (event+8 selects the area;
+            # area 0 is the exterior, no terrain) with ST07_00's pages.
+            if (dat/'ST07.BIN').is_file() and (dat/'ST07_00.BIN').is_file():
+                aout=runtime/'attract'; aout.mkdir(exist_ok=True)
+                st07=td/'st07'; st07.mkdir(exist_ok=True)
+                names={r'..\MAP\DATA\ST07_MAP.IDX':'ST07_MAP.IDX',r'..\MAP\DATA\ST07_MAP.MDT':'ST07_MAP.MDT',
+                       r'..\SCR\DATA\ST07.STG':'ST07.STG',r'..\SCR\DATA\ST07.HED':'ST07.HED'}
+                core=(dat/'ST07.BIN').read_bytes()
+                for r in iter_resources(dat/'ST07.BIN'):
+                    if r.internal in names and r.typ==0: (st07/names[r.internal]).write_bytes(core[r.payload_start:r.payload_start+r.size])
+                if not all((st07/n).is_file() for n in names.values()): raise RuntimeError('ST07.BIN: map/stage resources missing')
+                maps=[st07/'ST07_MAP.MDT',st07/'ST07_MAP.IDX',st07/'ST07.STG',st07/'ST07.HED']
+                run(tools,'l3cook_st00',*maps,aout/'st07.l3map')
+                run(tools,'l3cook_render',*maps,aout/'st07.l3render')
+                # Stage init: IDX raw6 = the render header seed (oracle: 1 in ST07),
+                # which selects the descriptors' +4 contact lists (0x8005172C).
+                run(tools,'l3cook_map_init',*maps,aout/'st07.l3map',aout/'st07.l3render',aout/'st07.l3init','--stage0-startup')
+                for area_index in range(1,5):
+                    run(tools,'l3cook_material_cache',*maps,str(area_index),aout/f'area_{area_index:02d}.l3mc',
+                        dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN','--ramp-out',aout/f'area_{area_index:02d}.l3cr')
+                # Event 10's cutscene package,
+                # the area-0 background layers (0x80105658[0]) and their pages.
+                pr=[r for r in iter_resources(dat/'ST07.BIN') if r.internal.upper()==r'..\PROGBIN\R3_ST07.BIN']
+                if len(pr)!=1 or pr[0].typ!=0: raise RuntimeError('ST07.BIN: expected one type-0 r3_st07.bin')
+                op7=st07/'r3_st07.bin'; op7.write_bytes(core[pr[0].payload_start:pr[0].payload_start+pr[0].size])
+                # The cutscene importer finds event 10's timelines, camera
+                # programs, spawns, CD/area requests; --extra carries the
+                # phase-0 background rows 0x80106124, the 29 spawn records
+                # 0x80105B8C, the Servbot behaviour table 0x8010663C and
+                # Teisel's face scripts/tables 0x80106914.
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
+                    '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(op7),'--event','10','--stage','7',
+                    '--extra','80106124:64','--extra','80105B8C:580','--extra','8010663C:100','--extra','80106914:72','--extra','80105780:240',
+                    '--out',str(aout/'attract.l3cs')],check=True)
+                bgw=td/'attract_bg_words.txt'
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_intro_bg.py'),
+                    '--overlay',str(op7),'--out',str(aout/'attract_bg.l3bg'),'--words',str(bgw),'--stage','st07','--area','0'],check=True)
+                # The cast: ST07_00.EBD (the ship 0x20/0x0B, Servbots, the Bonnes);
+                # the class-0x20 mesh pages join the background pages.
+                e7=[r for r in iter_resources(dat/'ST07_00.BIN') if r.internal.upper()==r'..\EMBIN\ST07_00.EBD']
+                if len(e7)!=1 or e7[0].typ!=0: raise RuntimeError('ST07_00.BIN: expected one type-0 ST07_00.EBD')
+                eb7=td/'st07_00.ebd'; eb7.write_bytes((dat/'ST07_00.BIN').read_bytes()[e7[0].payload_start:e7[0].payload_start+e7[0].size])
+                run(tools,'l3cook_ebd',eb7,hex(e7[0].load),aout/'attract.l3ebd')
+                # The shadow sprite 0x8002CBDC (CLUT 0x3EF4 | TPAGE 0x45): page from
+                # INIT_DAT; its grey-ramp palette matches the oracle's VRAM (832, 251)
+                # during the scene word for word, and of the DAT containers only
+                # ST02_00 holds those words (CANDIDATE source; listed last, so it
+                # resolves nothing the scene's own containers already do).
+                with open(bgw,'a') as f: f.write('3ef40045\n')
+                run(tools,'l3cook_word_materials',aout/'attract_bg.l3mc',bgw,'--ebd',aout/'attract.l3ebd',
+                    dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN',dat/'ST02_00.BIN')
+                # The class-0x80 type-8 sprites: chimney smoke (CLUT 0x3D48 | TPAGE
+                # 0x0E) and steam (0x3D4E | 0x2E), DEMO_DAT's pages and palettes; both
+                # palettes match the oracle's VRAM (128/224, 245) during the scene
+                # (ST02_00's smoke palette differs, so their own cache).
+                fxw=td/'attract_fx_words.txt'; fxw.write_text('3d48000e\n3d4e002e\n')
+                run(tools,'l3cook_word_materials',aout/'attract_fx.l3mc',fxw,dat/'DEMO_DAT.BIN')
+                manifest['attract_stage']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str(aout.relative_to(out)),
+                    'source':'ST07.BIN map/stage + ST07_00.BIN pages; areas 1-4 (oracle: 0x800C1B61 = event+8)'}
+            if (dat/'DEMO_DAT.BIN').is_file():
                 # The title Servbot parade: the DEMO_DAT.EBD class-20 model and
                 # the wave scripts + title camera from the EXE.
                 demo=[r for r in iter_resources(dat/'DEMO_DAT.BIN') if r.internal==r'..\EMBIN\DEMO_DAT.EBD']

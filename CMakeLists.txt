@@ -38,6 +38,12 @@ add_library(legends3ds_core STATIC
     src/flow/frontend_servbots.cpp
     src/flow/source_event_phase5.cpp
     src/flow/source_event_phase6.cpp
+    src/flow/source_palette_c0.cpp
+    src/flow/source_intro_crawl.cpp
+    src/flow/source_bg_layers.cpp
+    src/flow/source_scene_runtime.cpp
+    src/flow/source_attract_event10.cpp
+    src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp
     src/flow/source_event_random_tape.cpp
     src/world/scene_e0.cpp
@@ -466,6 +472,10 @@ add_executable(l3cook_frontend_materials tools/l3cook_frontend_materials.cpp)
 target_link_libraries(l3cook_frontend_materials PRIVATE legends3ds_core)
 add_executable(l3cook_bottom_gauge tools/l3cook_bottom_gauge.cpp)
 target_link_libraries(l3cook_bottom_gauge PRIVATE legends3ds_core)
+add_executable(l3cook_intro_materials tools/l3cook_intro_materials.cpp)
+add_executable(l3cook_word_materials tools/l3cook_word_materials.cpp)
+target_link_libraries(l3cook_word_materials PRIVATE legends3ds_core)
+target_link_libraries(l3cook_intro_materials PRIVATE legends3ds_core)
 target_link_libraries(l3cook_negative_materials PRIVATE legends3ds_core)
 add_executable(l3area_inspection_probe tools/l3area_inspection_probe.cpp)
 target_link_libraries(l3area_inspection_probe PRIVATE legends3ds_core)
@@ -1190,6 +1200,33 @@ add_executable(test_frontend_title tests/test_frontend_title.cpp)
 target_link_libraries(test_frontend_title PRIVATE legends3ds_core)
 target_compile_options(test_frontend_title PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME frontend_title COMMAND test_frontend_title)
+add_executable(test_source_scene_tracked_camera tests/test_source_scene_tracked_camera.cpp)
+target_link_libraries(test_source_scene_tracked_camera PRIVATE legends3ds_core)
+target_compile_options(test_source_scene_tracked_camera PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_scene_tracked_camera COMMAND test_source_scene_tracked_camera)
+add_executable(l3cook_palette_bank tools/l3cook_palette_bank.cpp)
+target_link_libraries(l3cook_palette_bank PRIVATE legends3ds_core)
+target_compile_options(l3cook_palette_bank PRIVATE -Wall -Wextra -Wpedantic -Werror)
+add_executable(test_source_palette_c0 tests/test_source_palette_c0.cpp)
+target_link_libraries(test_source_palette_c0 PRIVATE legends3ds_core)
+target_compile_options(test_source_palette_c0 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_palette_c0 COMMAND test_source_palette_c0)
+add_executable(test_source_intro_crawl tests/test_source_intro_crawl.cpp)
+target_link_libraries(test_source_intro_crawl PRIVATE legends3ds_core)
+target_compile_options(test_source_intro_crawl PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_intro_crawl COMMAND test_source_intro_crawl)
+add_executable(test_source_bg_layers tests/test_source_bg_layers.cpp)
+target_link_libraries(test_source_bg_layers PRIVATE legends3ds_core)
+target_compile_options(test_source_bg_layers PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_bg_layers COMMAND test_source_bg_layers)
+add_executable(test_source_attract_event10 tests/test_source_attract_event10.cpp)
+target_link_libraries(test_source_attract_event10 PRIVATE legends3ds_core)
+target_compile_options(test_source_attract_event10 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_attract_event10 COMMAND test_source_attract_event10)
+add_executable(test_source_scene_face tests/test_source_scene_face.cpp)
+target_link_libraries(test_source_scene_face PRIVATE legends3ds_core)
+target_compile_options(test_source_scene_face PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_scene_face COMMAND test_source_scene_face)
 add_executable(test_frontend_servbots tests/test_frontend_servbots.cpp)
 target_link_libraries(test_frontend_servbots PRIVATE legends3ds_core)
 target_compile_options(test_frontend_servbots PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
