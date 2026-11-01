@@ -118,3 +118,12 @@ wrapped columns on each side (port presentation). Before the phase-4 fade-in
 the screen stays black (oracle shot at phase 1: black + "now loading").
 Not oracle-verified yet: layer values per tick (the oracle stalled at boot
 on this run; static read only).
+
+## Narration music (2026-10-31)
+0x8001D58C(0x2000001E) resolves through the EXE request tables to stream
+245 (the opening's XA file), span LBA 121115..136547, channel 3: 1929
+audio sectors, 102.88 s (the record is 3100 ticks = 103.3 s).
+`cook_xa_stream.py --request 0x2000001E` cooks it to `audio/intro_xa.l3xa`.
+The port starts it on the phase-1 tick (CANDIDATE: the original's seek
+latency is not measured) and, while it plays, advances ticks from its DSP
+position (1260 frames per tick), as the opening does.

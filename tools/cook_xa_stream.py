@@ -22,6 +22,10 @@ EXE_SHA = "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0"
 BIN_SHA = "b544b9f09f8d2fca435c433069da8726ec06eca5f131bd1599598f0d6f1ed908"
 BIN_BYTES = 524601840
 REQUEST = 0x20000003
+# Measured (stream id, start LBA, end LBA, channel) per supported request:
+# 0x20000003 the opening (ST00 event 1 phase 2), 0x2000001E the pre-title
+# narration (ST01 event 71 phase 1).
+MEASURED_SPANS = {0x20000003: (245, 91731, 107315, 3), 0x2000001E: (245, 121115, 136547, 3)}
 SECTOR_BYTES = 2352
 GROUP_BYTES = 128
 GROUP_COUNT = 18
@@ -98,7 +102,7 @@ def verify_disc(cue: Path) -> tuple[Path, dict]:
                     "sector_bytes": SECTOR_BYTES, "index1_frames": 0}
 
 
-def source_spec(image: bytes) -> StreamSpec:
+def source_spec(image: bytes, request: int = REQUEST) -> StreamSpec:
     """Read this request's packet and file bounds from the authenticated LOAD."""
     if len(image) != 825344 or hashlib.sha256(image).hexdigest() != EXE_SHA:
         raise ValueError("Unsupported owner executable identity")
@@ -117,7 +121,7 @@ def source_spec(image: bytes) -> StreamSpec:
     def word(address: int) -> int:
         return struct.unpack("<I", read(address, 4))[0]
 
-    bank, entry, index = (REQUEST >> 28) & 7, (REQUEST >> 16) & 255, REQUEST & 65535
+    bank, entry, index = (request >> 28) & 7, (request >> 16) & 255, request & 65535
     id_table = word(0x80088F9C + bank * 4)
     pair_table = word(0x80088EF8 + bank * 4)
     stream_id = struct.unpack("<H", read(id_table + entry * 2, 2))[0]
@@ -129,7 +133,7 @@ def source_spec(image: bytes) -> StreamSpec:
     spec = StreamSpec(stream_id, file_lba, file_bytes // 2336,
                       file_lba + (offset_word & 0xFFFFFF),
                       file_lba + (end_word & 0xFFFFFF), 1, (offset_word >> 24) & 31)
-    if (spec.stream_id, spec.start_lba, spec.end_lba, spec.filter_channel) != (245, 91731, 107315, 3):
+    if (spec.stream_id, spec.start_lba, spec.end_lba, spec.filter_channel) != MEASURED_SPANS.get(request):
         raise ValueError("Unsupported measured command span")
     validate_bounds(spec, BIN_BYTES // SECTOR_BYTES)
     return spec
@@ -268,7 +272,7 @@ def encode_header(spec: StreamSpec, count: int, pcm_crc: int, index_crc: int,
 
 
 def cook_stream(binary: Path, output: Path, spec: StreamSpec, *,
-                disc_sha: str, exe_sha: str, allow_eof_variant: bool = False) -> dict:
+                disc_sha: str, exe_sha: str, allow_eof_variant: bool = False, request: int = REQUEST) -> dict:
     """One-sector source/PCM working set; caller must authenticate owner input."""
     if binary.stat().st_size % SECTOR_BYTES:
         raise ValueError("BIN is not full-sector aligned")
@@ -361,7 +365,7 @@ def cook_stream(binary: Path, output: Path, spec: StreamSpec, *,
             temporary.unlink(missing_ok=True)
     return {
         "schema": "mml-xa-import/1", "status": "SOURCE_BACKED_PARTIAL",
-        "source_request": hex(REQUEST), "stream_id": spec.stream_id,
+        "source_request": hex(request), "stream_id": spec.stream_id,
         "source_file_lba": spec.file_lba, "source_file_sectors": spec.file_sectors,
         "start_lba": spec.start_lba, "end_lba_exclusive": spec.end_lba,
         "physical_sectors": spec.end_lba - spec.start_lba,
@@ -409,6 +413,8 @@ def main() -> int:
     parser.add_argument("--exe", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--proof", type=Path, help="Metadata-only JSON evidence output")
+    parser.add_argument("--request", type=lambda v: int(v, 0), default=REQUEST, choices=sorted(MEASURED_SPANS),
+                        help="0x8001D58C request (default: the opening's 0x20000003)")
     args = parser.parse_args()
     try:
         if args.exe.stat().st_size != 825344:
@@ -420,12 +426,12 @@ def main() -> int:
                 raise ValueError("Synced reference sources are read-only")
             if args.proof.exists():
                 raise ValueError("Refusing to overwrite existing XA evidence")
-        spec = source_spec(args.exe.read_bytes())
+        spec = source_spec(args.exe.read_bytes(), args.request)
         binary, disc_profile = verify_disc(args.cue.resolve())
         if spec.end_lba > disc_profile["track1_end_lba"]:
             raise ValueError("Selected source stream enters audio track")
         proof = cook_stream(binary, args.out, spec, disc_sha=BIN_SHA, exe_sha=EXE_SHA,
-                            allow_eof_variant=True)
+                            allow_eof_variant=True, request=args.request)
         proof["disc_profile"] = disc_profile
         if args.proof:
             args.proof.parent.mkdir(parents=True, exist_ok=True)
