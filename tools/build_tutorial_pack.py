@@ -219,9 +219,7 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
             raise RuntimeError('Selected fresh original head resource was not collected')
         manifest['player_head_selection']=head_selection
         _write_actor_source_metadata(dat.parent.parent/'ROCK_NEO.EXE',runtime,out,manifest)
-        # include_handoff: also 0x80097A46, the type-10 fade duration (title out,
-        # event-1 phase 6 -> 7).
-        fade_package,fade_evidence=cook_source_fade((dat.parent.parent/'ROCK_NEO.EXE').read_bytes(),include_handoff=True)
+        fade_package,fade_evidence=cook_source_fade((dat.parent.parent/'ROCK_NEO.EXE').read_bytes(),steps=True)
         (runtime/'source_fade.l3fd').write_bytes(fade_package)
         manifest['source_fade_startup']={**fade_evidence,
             'path':str((runtime/'source_fade.l3fd').relative_to(out)),
@@ -416,7 +414,20 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 run(tools,'l3cook_frontend_materials',dat/'DEMO_DAT.BIN',mout/'frontend.l3mc')
                 manifest['frontend_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'frontend.l3mc').relative_to(out)),
-                    'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U; words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C'}
+                    'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U/EM0000 (CANDIDATE: the Servbot page); words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C and DEMO_DAT.EBD'}
+                # The title Servbot parade: the DEMO_DAT.EBD class-20 model and
+                # the wave scripts + title camera from the EXE.
+                demo=[r for r in iter_resources(dat/'DEMO_DAT.BIN') if r.internal==r'..\EMBIN\DEMO_DAT.EBD']
+                if len(demo)!=1 or demo[0].typ!=0: raise RuntimeError('DEMO_DAT.BIN: expected one type-0 DEMO_DAT.EBD')
+                fout=runtime/'frontend'; fout.mkdir(exist_ok=True)
+                ep=td/'demo_dat.ebd'; ep.write_bytes((dat/'DEMO_DAT.BIN').read_bytes()[demo[0].payload_start:demo[0].payload_start+demo[0].size])
+                run(tools,'l3cook_ebd',ep,hex(demo[0].load),fout/'title.l3ebd')
+                subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_title_servbots.py'),
+                    '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--out',str(fout/'servbots.l3ts')],
+                    check=True,stdout=subprocess.DEVNULL)
+                manifest['frontend_servbots']={'format':2,'status':'SOURCE_BACKED_PARTIAL',
+                    'ebd':str((fout/'title.l3ebd').relative_to(out)),'scripts':str((fout/'servbots.l3ts').relative_to(out)),
+                    'source':'DEMO_DAT.EBD class 0x20/0; ROCK_NEO 0x80080960..0x80082104; camera 0x80038370'}
             manifest['actor_materials']={'format':1,'optional':True,'runtime_gate':'ACTOR_TEXTURES=1',
                 'default_enabled':False,'shade':'UNKNOWN','status':'SOURCE_BACKED_PARTIAL',
                 'upload_order':'inherited ordered VRAM resources; live original VRAM comparison pending'}

@@ -19,13 +19,15 @@ constexpr uint16_t psx_get_tpage(unsigned tp, unsigned abr, unsigned x, unsigned
 constexpr uint16_t psx_get_clut(unsigned x, unsigned y) noexcept { return uint16_t((y << 6) | (x >> 4)); }
 constexpr uint32_t psx_material_word(uint16_t clut, uint16_t tpage) noexcept { return (uint32_t(clut) << 16) | tpage; }
 
-// Logo, PRESS START, menu row, selected menu row, ruin wall (NTITLE3U).
-constexpr std::array<uint32_t, 5> kFrontendMaterialWords{{
+// Logo, PRESS START, menu row, selected menu row, ruin wall (NTITLE3U), and
+// the Servbot model's one part word (DEMO_DAT.EBD class 0x20/0 bindings).
+constexpr std::array<uint32_t, 6> kFrontendMaterialWords{{
     psx_material_word(psx_get_clut(0, 0x1F0), psx_get_tpage(1, 0, 320, 256)),
     psx_material_word(psx_get_clut(0, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(16, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(32, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(0, 0x1F2), psx_get_tpage(1, 2, 576, 256)),
+    0x3D88002Bu,
 }};
 
 // One GP0 packet as the front end adds it: words, payload length and the
@@ -51,6 +53,8 @@ psxgpu::PolyFt4 frontend_menu_row_8001456c(unsigned row, int selection) noexcept
 // semi-transparent, drawn with the E1 draw mode ABR 2 that follows it),
 // gradient. The original then calls the scene draw 0x800137D4 (Servbots).
 std::vector<FrontendPacket> frontend_backdrop_80013fb8();
+// Port widescreen (400-px top screen): widens the backdrop in place.
+void frontend_backdrop_widescreen(std::vector<FrontendPacket>& packets);
 
 enum class FrontendResult : uint8_t { None, NewGame, Continue, Option, Attract };
 

@@ -12,9 +12,17 @@
 // (tools/cook_title_servbots.py, L3TS).
 namespace l3 {
 
+// 0x80038370 on the title points (0x800979DC target, 0x800979EC), as the
+// cooker evaluates it: the arguments it passes to 0x80037FB4.
+struct TitleServbotCamera {
+    std::array<int32_t, 3> target{};
+    int32_t distance = 0, yaw = 0, pitch = 0;
+};
+
 struct TitleServbotScripts {
     uint32_t base = 0;
     std::vector<uint8_t> data;   // EXE bytes base .. base + size
+    std::optional<TitleServbotCamera> camera;   // L3TS0002 only
     std::optional<int16_t> halfword(uint32_t address) const noexcept;
     std::optional<uint32_t> word(uint32_t address) const noexcept;
     // Script pointer of slot `index` in wave `wave` (0x800820E0), 0 = none.
@@ -25,6 +33,9 @@ TitleServbotScripts load_title_servbot_scripts(const std::vector<uint8_t>& bytes
 // The used fields of one class-20 work (0x3C0 bytes at 0x8009F108 + slot).
 struct TitleServbot {
     bool active = false;              // +0
+    // Spawned by the title setup (state 1) this update: its callback first
+    // runs on the next update (oracle: +0 = 1, then 3).
+    bool fresh = false;
     uint8_t index = 0;                // +3
     uint8_t state = 0;                // +8: 0 init, 1 run, 2 release
     uint8_t wave = 0;                 // +0x0C
@@ -55,7 +66,7 @@ struct TitleServbotParade {
 
 struct TitleServbotFrame {
     std::vector<uint8_t> sounds;        // 0x8001A008 ids (a1 = a2 = 0)
-    uint8_t music_8002ee90 = 0;         // 0x8002EE90(2, 0x80) requests this frame
+    uint8_t released_8002ee90 = 0;      // slots 0x8002EE90(2, 0x80) released this frame
     std::array<bool, 16> animation_restart{};   // 0x800322A8 (else 0x80032488)
 };
 

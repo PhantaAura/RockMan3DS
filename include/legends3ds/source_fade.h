@@ -22,6 +22,8 @@ struct SourceFadeStartupProfile {
     // Only L3FDv2 admits the distinct source type10 duration. Never substitute
     // the type2 duration80097A44 when this owner is absent.
     std::optional<uint16_t> duration_80097a46=std::nullopt;
+    // L3FDv3: the whole step table 0x80097A48..0x80097A4E (index type & 3).
+    std::optional<std::array<uint16_t,4>> steps_80097a48=std::nullopt;
 };
 // L3FDv1: 64-byte header, four-byte owner-derived payload. Scalars are not
 // embedded in this implementation. The loader validates identity and CRC.
@@ -54,6 +56,12 @@ struct SourceFadeStartupResult {
 SourceFadeStartupResult consume_source_fade_startup_80017c30_type2(
     SourceFadeContext& context,const SourceFadeStartupProfile* profile,
     SourceFadeSchedulerIntentQueue* intents) noexcept;
+// Every type 0x80017C30 sends to 0x80017C74 (mode 0): 0..3 and 8..11.
+// Duration 0x80097A44[type >> 3], step 0x80097A48[type & 3]; L3FDv3 only
+// for steps other than 0x80097A4C. Other types: UnsupportedProfile.
+SourceFadeStartupResult consume_source_fade_startup_80017c30_mode0(
+    SourceFadeContext& context,const SourceFadeStartupProfile* profile,
+    SourceFadeSchedulerIntentQueue* intents,uint8_t type) noexcept;
 SourceFadeStartupResult consume_source_fade_startup_80017c30_type10(
     SourceFadeContext& context,const SourceFadeStartupProfile* profile,
     SourceFadeSchedulerIntentQueue* intents) noexcept;

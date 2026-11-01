@@ -74,7 +74,7 @@ PRESS START (0x80014394) draws two packets: the text, then the copyright
 lines at (32,208)-(288,232), uv (0,176)-(255,200). The fourth menu row
 (0x800C1B28 set) is the difficulty (EASY/NORMAL/HARD).
 
-## Title backdrop (ported) and the Servbot parade (not yet)
+## Title backdrop (ported) and the Servbot parade (logic ported)
 GP0 capture of an original menu frame (psxrecomp `gpu_frame_capture.py`)
 and a RAM write trace on the packet buffer show 0x80013FB8 writes:
 logo (OT list 0x800A4F50, linked at entry 32); the NTITLE3U wall as two
@@ -86,15 +86,37 @@ white with an E1 SetDrawMode(GetTPage(1,2,0,0)) after it (ABR 2, B-F)
 (96,144)-(224,200) (216 with the difficulty row), black, after its rows,
 blending with the logo's ABR 0. Ported; packets in `frontend_title.cpp`.
 
-Servbots: 0x80015428 (called with the front-end state) spawns 16 class-20
-actors through 0x80031418 (pool 0x8009F108, 0x3C0 bytes), work +0 = 1,
-+3 = index, +0x0C = wave (+8); waits 300 frames (+6), plays 0x8002EE90(2,
-0x80), next wave (wraps after 8). Class callbacks: scratch 0x1F800058 =
-0x800808A4 -> table 0x800808A0, entry 0 = 0x800153EC, which dispatches on
-work +8 through 0x80082104 with a1 = work + 0x348. Model texture EM0A00
-(ST01, VRAM (704,0), CLUT (128,246)); drawn by the class-20 renderer
-(packet writer 0x800295CC). Not ported yet.
-
+Servbots (logic VERIFIED_1TO1 against the oracle, drawing not yet ported):
+0x80015428 (called with the front-end state) spawns 16 class-20 actors
+through 0x80031418 (pool 0x8009F108, 0x3C0 bytes): work +0 = 1, +3 = index,
++2/+4/+0x0C cleared, then byte +0x0C = wave (+8). It waits 300 updates (+6);
+then **0x8002EE90(2, 0x80)** sweeps the class-20 pool (bit 2), unlinking
+(0x80052528) and releasing (0x80031824) every live slot (not a music call),
+and steps the wave (wraps after 8). Phase 2 re-arms only in states 4/5/6
+(menu), so the title itself shows one wave. Class callbacks: scratch
+0x1F800058 = 0x800808A4 -> table 0x800808A0, entry 0 = 0x800153EC,
+dispatching on work +8 through 0x80082104 (init 0x80014AC0, run 0x800150E0,
+release 0x800153CC) with a1 = work + 0x348.
+- Script reader 0x80014BCC: op 0 = wait (count - 1), ops 1..27 through table
+  0x800100B4[op - 1] (26 jump 0x80015074, 27 end 0x80015068 = state 2).
+  0x800150E0 has no state test after the reader: the end update still moves.
+- The title setup's spawn (state 1) runs its callbacks from the next update;
+  menu spawns (via 0x800137D4) in the same update (oracle, mechanism CANDIDATE).
+  A reused slot keeps its previous position (+0x14/+0x1C are not cleared).
+- Camera 0x80038370(a0 = 0x800979DC target (0,-224,512), a1 = 0x800979EC
+  (0,-448,-512)): distance = SquareRoot0 of the XZ distance plus one Newton
+  step (1024), yaw = ratan2(dx, dz) + 0x800, pitch argument -ratan2(dy, d)
+  = 141, then 0x80037FB4. Oracle 0x800A3A10 = (0xF73, 0): VERIFIED.
+  `tools/cook_title_servbots.py` evaluates it on the EXE tables (L3TS0002).
+- Model: DEMO_DAT.EBD (load 0x8016C000) class 0x20/0, 7 parts, one word
+  0x3D88002B (page (704,0), CLUT (128,246)); requests 0/1/2/9. The page
+  resolves fully from DEMO_DAT.BIN (EM0000.TIM; CANDIDATE that the live VRAM
+  holds it rather than ST01's EM0A00).
+- Oracle comparison (`tools/l3probe_title_servbots`, pool snapshots
+  slots 0-3 per frame, game update = 2 frames): title wave 0, 664 updates /
+  958 slot-updates, 0 mismatches; menu waves 4-7, 1094 updates / 2805
+  slot-updates, 2 mismatches, both a slot's position left from before the
+  probe window.
 ## Port plan
 1. Cook ST01 (map, EBD, TIMs) into the pack.
 2. Port the front-end state machine (states 0..6, substates) as a host-tested

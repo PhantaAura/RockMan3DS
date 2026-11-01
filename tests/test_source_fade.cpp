@@ -106,6 +106,30 @@ void profile_validation(){
     const auto rejected=[&](const std::vector<uint8_t>& candidate){bool failed=false;try{(void)l3::load_source_fade_startup_profile(candidate);}catch(const std::exception&){failed=true;}require(failed,"malformed profile accepted");};
     for(size_t offset:std::array<size_t,12>{{0,4,6,8,12,16,20,24,28,32,63,64}}){auto bad=bytes;bad[offset]^=1;rejected(bad);}
     auto bad=bytes;bad.pop_back();rejected(bad);bad=bytes;bad.push_back(0);rejected(bad);
+    // v3: durations 0x80097A44/46 and steps 0x80097A48..4E (values authored).
+    std::vector<uint8_t> v3(76);v3[0]='L';v3[1]='3';v3[2]='F';v3[3]='D';v3[4]=3;v3[6]=64;
+    write32(v3.data()+8,3);write32(v3.data()+16,1);write32(v3.data()+20,76);write32(v3.data()+28,12);
+    for(size_t i=0;i<32;++i)v3[32+i]=digest[i];
+    const uint16_t values[6]={1,0xFFFF,0xFF,0x40,0x10,4};
+    for(size_t i=0;i<6;++i){v3[64+2*i]=uint8_t(values[i]);v3[65+2*i]=uint8_t(values[i]>>8);}
+    write32(v3.data()+24,l3::crc32(v3.data()+64,12));
+    const auto p3=l3::load_source_fade_startup_profile(v3);
+    require(p3.decoder==3&&p3.duration_80097a46==0xFFFF&&p3.steps_80097a48&&(*p3.steps_80097a48)[1]==0x40&&p3.step_80097a4c==0x10,"v3 profile");
+    // Mode 0 (0x80017C74): type 1 -> duration [0] = 1, step [1] = 0x40;
+    // type 9 -> duration [1] = 0xFFFF, step 0x40; type 22 is another mode.
+    for(const uint8_t type:{uint8_t(1),uint8_t(9)}){
+        l3::SourceFadeContext c;for(size_t i:{8u,9u,10u,11u}){c.work_80098a68.raw[i]=0;c.work_80098a68.known[i]=1;}
+        l3::SourceFadeSchedulerIntentQueue q;q.initialized=true;
+        const auto r=l3::consume_source_fade_startup_80017c30_mode0(c,&p3,&q,type);
+        require(r.committed&&r.pending_scheduler_intent&&q.count==1,"mode0 start");
+        require(c.work_80098a68.raw[10]==(type==1?1:0xFF)&&c.work_80098a68.raw[12]==0x40,"mode0 duration/step");
+    }
+    {   l3::SourceFadeContext c;for(size_t i:{8u,9u,10u,11u}){c.work_80098a68.raw[i]=0;c.work_80098a68.known[i]=1;}
+        l3::SourceFadeSchedulerIntentQueue q;q.initialized=true;
+        require(!l3::consume_source_fade_startup_80017c30_mode0(c,&p3,&q,22).committed,"type 22 is not mode 0");
+        // A v1 profile has no step for type 1.
+        require(!l3::consume_source_fade_startup_80017c30_mode0(c,&loaded,&q,1).committed,"v1 lacks step [1]");
+    }
 }
 }
 int main(int argc,char** argv){require(argc==2,"usage: test_source_fade source-fade-startup.tsv");
