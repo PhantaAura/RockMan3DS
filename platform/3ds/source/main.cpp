@@ -2025,7 +2025,7 @@ ActorSourceMetadata load_actor_source_metadata() {
     load("source_event.l3ep",64+256*4,[&](const auto& bytes){out.event_poll=l3::load_source_event_poll_profile(bytes);});
     load("source_event_command.l3ec",l3::kSourceEventCommandPackageBytes,
         [&](const auto& bytes){out.event_command=l3::load_source_event_command_package(bytes);});
-    load("source_fade.l3fd",72,[&](const auto& bytes){out.fade_startup=l3::load_source_fade_startup_profile(bytes);});
+    load("source_fade.l3fd",4096,[&](const auto& bytes){out.fade_startup=l3::load_source_fade_startup_profile(bytes);});
     load("source_event_phase5.l3p5",1024,[&](const auto& bytes){out.event_phase5=l3::load_source_event_phase5_profile(bytes);});
     load("source_event_phase6.l3p6",2048,[&](const auto& bytes){out.event_phase6=l3::load_source_event_phase6_profile(bytes);});
     load("source_effect_dispatch.l3f2",l3::kSourceEffectDispatchPackageBytes,
