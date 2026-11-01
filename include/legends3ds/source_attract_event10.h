@@ -76,4 +76,16 @@ struct SourceAttractAnimation { bool reset = false; uint8_t request = 0; bool st
 // timeline's increment this tick).
 SourceAttractAnimation update_source_attract_servbot_8010205c(SourceAttractServbot& servbot, uint32_t event_10,
                                                               const ReferenceTables& refs) noexcept;
+
+// The bridge's static cast (family 0x20, per-class table [+4 = 10]): class
+// 0x28 (0x80102D84) and class 0x2B (0x80102EA8). Init: drawn flag, model,
+// scale +0x158 = (512, 512, 512), floor query (y += floor), animation request
+// 19 (0x28) or 0 (0x2B); then 0x80032488 each update (shadow 0x8002C8CC with
+// radius 48 not ported). Placement as 0x8001E968.
+struct SourceAttractStatic {
+    uint8_t object_class = 0, slot = 0, request = 0;
+    std::array<int16_t,3> raw{};
+    uint16_t heading = 0;
+};
+bool spawn_source_attract_static(const std::array<uint8_t,20>& record, SourceAttractStatic& out) noexcept;
 } // namespace l3

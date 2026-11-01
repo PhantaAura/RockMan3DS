@@ -139,3 +139,14 @@ forward 256 from tick 76; 0x80102590 (id 10) stand/walk/request 19 at 125;
 0x80102678 (id 24) forward 64. Requests used: 0-7, 9, 10, 0x10-0x14 (all in
 the EBD's bank). Not ported: shadows 0x8002C8CC; the floor query runs
 against the requested area once it is loaded (CANDIDATE timing).
+
+## Bridge cast (2026-11-01)
+Per-class tables [+4 = 10]: class 0x28 -> 0x80102D84, class 0x2B ->
+0x80102EA8 (family 0x20, hook 0x1F800058); class 0x40/0x0B -> hook
+0x1F80005C = 0x80105584[0x0B] = 0x80105478[10] = 0x8010384C.
+**0x28 / 0x2B** (ported): init drawn flag, model, scale 512, floor query,
+animation request 19 / 0; then animate each update (shadow radius 48 not
+ported). Placed by record 26 (904, -1, 340) and 27 (1124, -1, 390).
+**0x40/0x0B** (not ported): a class-0x40 actor with its own timer states
+(4/2/10/90/50) and the face UV routines 0x8002D404 / 0x8002D320 (as the
+opening's Mega Man face), record 28 at (1024, -1, 240). CANDIDATE: Tron.

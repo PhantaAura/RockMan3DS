@@ -131,5 +131,12 @@ int main() {
         if (t.spawn_first >= 0) { first = t.spawn_first; count = t.spawn_count; released = t.release_slots; }
     }
     require(first == 4 && count == 3 && released == 3, "corridor spawn list");
+    // The bridge's class 0x28 / 0x2B: request 19 / 0, record placement.
+    std::array<uint8_t,20> b28{{11, 0x28, 10, 0x20, 0, 0, 0, 0, 0, 0, 0, 0, 0x88, 0x03, 0xFF, 0xFF, 0x54, 0x01, 0, 0}};
+    SourceAttractStatic st28;
+    require(spawn_source_attract_static(b28, st28) && st28.object_class == 0x28 && st28.request == 19 &&
+            st28.raw[0] == 904 && st28.raw[1] == -1 && st28.raw[2] == 340 && st28.slot == 11, "class 0x28 spawn");
+    b28[1] = 0x2B; require(spawn_source_attract_static(b28, st28) && st28.request == 0, "class 0x2B request 0");
+    b28[1] = 0x0B; require(!spawn_source_attract_static(b28, st28), "other classes rejected");
     std::puts("source_attract_event10: camera waits/cuts/velocity, timeline, phases, area request, end and skip fades OK");
 }

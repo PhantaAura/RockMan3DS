@@ -192,4 +192,15 @@ SourceAttractAnimation update_source_attract_servbot_8010205c(SourceAttractServb
     }
     return a;
 }
+
+bool spawn_source_attract_static(const std::array<uint8_t,20>& r, SourceAttractStatic& out) noexcept {
+    if (r[3] != 0x20 || r[2] != 10 || (r[1] != 0x28 && r[1] != 0x2B)) return false;
+    SourceAttractStatic s;
+    s.object_class = r[1]; s.slot = r[0];
+    s.request = r[1] == 0x28 ? 19 : 0;   // 0x80102DE4 / 0x80102F08
+    for (size_t i = 0; i < 3; ++i) s.raw[i] = int16_t(rd16(&r[12 + 2 * i]));
+    s.heading = rd16(&r[18]);
+    out = s;
+    return true;
+}
 } // namespace l3
