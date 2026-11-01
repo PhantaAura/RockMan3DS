@@ -3475,8 +3475,15 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
             throw std::runtime_error("attract.l3cs absent or rejected");
         if (!l3::load_source_bg_profile(read_binary(data_path("attract/attract_bg.l3bg"), l3::kSourceBgProfileBytes), bg))
             throw std::runtime_error("attract_bg.l3bg rejected");
-        map = l3::load_l3map(read_binary(data_path("attract/st07.l3map")), true);
-        render = l3::load_l3render(read_binary(data_path("attract/st07.l3render")), true);
+        const auto map_bytes = read_binary(data_path("attract/st07.l3map"));
+        const auto render_bytes = read_binary(data_path("attract/st07.l3render"));
+        map = l3::load_l3map(map_bytes, true);
+        render = l3::load_l3render(render_bytes, true);
+        // The stage init's IDX seeds (raw6 = 1 in ST07): without them every
+        // cell picks the empty +8 contact list and floor queries fail.
+        const auto init = l3::load_map_initialization(read_binary(data_path("attract/st07.l3init"), l3::kMapInitializationMaxFileBytes), true);
+        (void)l3::apply_map_initialization(map, render, init, l3::crc32(map_bytes.data(), map_bytes.size()),
+                                           l3::crc32(render_bytes.data(), render_bytes.size()));
         refs = l3::load_l3reference(read_binary(data_path("reference.l3ref")), true);
         view_profile = l3::load_source_scene_view_profile(read_binary(data_path("source_scene_view.l3sv"), l3::kSourceSceneViewProfileBytes));
     } catch (const std::exception& error) {

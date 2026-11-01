@@ -454,6 +454,9 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 maps=[st07/'ST07_MAP.MDT',st07/'ST07_MAP.IDX',st07/'ST07.STG',st07/'ST07.HED']
                 run(tools,'l3cook_st00',*maps,aout/'st07.l3map')
                 run(tools,'l3cook_render',*maps,aout/'st07.l3render')
+                # Stage init: IDX raw6 = the render header seed (oracle: 1 in ST07),
+                # which selects the descriptors' +4 contact lists (0x8005172C).
+                run(tools,'l3cook_map_init',*maps,aout/'st07.l3map',aout/'st07.l3render',aout/'st07.l3init','--stage0-startup')
                 for area_index in range(1,5):
                     run(tools,'l3cook_material_cache',*maps,str(area_index),aout/f'area_{area_index:02d}.l3mc',
                         dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN','--ramp-out',aout/f'area_{area_index:02d}.l3cr')

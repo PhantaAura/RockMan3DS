@@ -163,3 +163,13 @@ The port's 0x80048E6C query now runs for these classes with null bounds
 the cooked ST07 map has no contact list for the bridge, corridor and
 area-1 cells (runtime_map_cell_contact_list == null), so those stay at the
 record height. Next: decode ST07's contact lists in the map cooker.
+
+## ST07 collision fixed (2026-11-01)
+ST07's descriptors keep their contact list at +4 only (+8 = 0), and the
+IDX file has raw6 = 0, so 0x8005172C picked the empty +8 list. Oracle: at
+runtime every non-null ST07 IDX row has raw6 = 1, the stage init's seed
+from the descriptor's render header (map_initialization, as ST00's, whose
+seeds are 0). The pack now cooks attract/st07.l3init and the player
+applies it. Floor query with null bounds then gives -105 on the bridge
+(Tron y -1 -> -106, the oracle's value), -1 in the corridor and area 3,
+-257 in area 1.
