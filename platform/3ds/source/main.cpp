@@ -3367,10 +3367,15 @@ void run_intro_event71(bool scripted) {
     }
     psx_resolver_reset();
     l3::SourceBgLayers layers{};
+    std::optional<std::array<uint8_t,40>> area_record;   // L3BG v3: ST01 0x80100DA8[0] (fog toward 0x404040)
     {
         l3::SourceBgProfile bg;
         bool bg_ready = false;
-        try { bg_ready = l3::load_source_bg_profile(read_binary(data_path("intro_bg.l3bg"), l3::kSourceBgProfileBytes), bg); }
+        try {
+            const auto bytes = read_binary(data_path("intro_bg.l3bg"), l3::kSourceBgProfileBytes + 40);
+            bg_ready = l3::load_source_bg_profile(bytes, bg);
+            area_record = l3::source_bg_area_record(bytes);
+        }
         catch (const std::exception& error) { boot_log(MML_BOOT_DATA, error.what()); }
         if (bg_ready) l3::init_source_bg_layers_80022fd4(bg, layers);
         boot_log(MML_BOOT_DATA, bg_ready ? "INTRO_BG=1 intro_bg.l3bg" : "INTRO_BG=0 intro_bg.l3bg absent or rejected");
@@ -3408,7 +3413,7 @@ void run_intro_event71(bool scripted) {
             a->ebd, rows[0], *a->mesh, kRequests, sizeof(kRequests), 256 * 1024));
         const auto pose = l3::decode_ebd_actor_pose(a->ebd, rows[0], *a->mesh, 0, 0);
         const auto view = l3::source_gameplay_camera_80037fb4(a->refs, {{0, 0, 0}}, 2000, 0, 0, 0, 0);
-        a->camera = l3::make_terrain_face_camera(view.camera_1f800008, nullptr);
+        a->camera = l3::make_terrain_face_camera(view.camera_1f800008, area_record ? &*area_record : nullptr);
         a->camera.screen_x_min = -40; a->camera.screen_width = 400;   // 400-px top screen
         auto& actor = a->actor;
         actor.original_pool_slot = 0; actor.source_class = 0x20; actor.subtype = 0x0A; actor.row = uint32_t(rows[0]);
@@ -3582,7 +3587,7 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         if (!l3::load_source_scene_package(read_binary(data_path("attract/attract.l3cs"), l3::kSourceScenePackageMaxBytes), package) ||
             !l3::bind_source_attract_profile(package, profile))
             throw std::runtime_error("attract.l3cs absent or rejected");
-        if (!l3::load_source_bg_profile(read_binary(data_path("attract/attract_bg.l3bg"), l3::kSourceBgProfileBytes), bg))
+        if (!l3::load_source_bg_profile(read_binary(data_path("attract/attract_bg.l3bg"), l3::kSourceBgProfileBytes + 40), bg))
             throw std::runtime_error("attract_bg.l3bg rejected");
         const auto map_bytes = read_binary(data_path("attract/st07.l3map"));
         const auto render_bytes = read_binary(data_path("attract/st07.l3render"));
@@ -3976,7 +3981,9 @@ void run_attract_event10(bool scripted, const std::function<void()>& restore) {
         if (visible && (terrain || ship_live || !servbots.empty() || !statics.empty() || teisel)) {
             const auto v = l3::source_camera_view(event.camera);
             const auto camera = l3::source_gameplay_camera_80037fb4(refs, v.target, v.distance, v.yaw, v.pitch, v.shift, 0);
-            auto faces = l3::make_terrain_face_camera(camera.camera_1f800008, nullptr);
+            // The area record (0x800C0DC0): fog 0x8007A1CC at +0x24 toward far colour +32..34.
+            const auto* record = size_t(area) < profile.area_records.size() ? &profile.area_records[size_t(area)] : nullptr;
+            auto faces = l3::make_terrain_face_camera(camera.camera_1f800008, record);
             faces.lod_1f800074 = v.shift; faces.screen_x_min = -40; faces.screen_width = 400;
             static l3::TerrainCellVisibility cells;
             cells.valid = false;

@@ -22,8 +22,9 @@ int32_t wrap(int32_t v, int16_t cells) noexcept {
 } // namespace
 
 bool load_source_bg_profile(const std::vector<uint8_t>& b, SourceBgProfile& out) {
-    if (b.size() != kSourceBgProfileBytes || b[0] != 'L' || b[1] != '3' || b[2] != 'B' || b[3] != 'G' ||
-        rd16(&b[4]) != 2 || rd16(&b[6]) != 16 || rd32(&b[8]) != b.size() || rd32(&b[12]) != crc32(b.data() + 16, b.size() - 16))
+    const bool v3 = b.size() == kSourceBgProfileBytes + 40;
+    if ((b.size() != kSourceBgProfileBytes && !v3) || b[0] != 'L' || b[1] != '3' || b[2] != 'B' || b[3] != 'G' ||
+        rd16(&b[4]) != (v3 ? 3 : 2) || rd16(&b[6]) != 16 || rd32(&b[8]) != b.size() || rd32(&b[12]) != crc32(b.data() + 16, b.size() - 16))
         return false;
     SourceBgProfile p{};
     const uint8_t* r = b.data() + 16 + 32;
@@ -39,6 +40,14 @@ bool load_source_bg_profile(const std::vector<uint8_t>& b, SourceBgProfile& out)
     }
     out = std::move(p);
     return true;
+}
+
+std::optional<std::array<uint8_t,40>> source_bg_area_record(const std::vector<uint8_t>& b) {
+    SourceBgProfile unused;
+    if (b.size() != kSourceBgProfileBytes + 40 || !load_source_bg_profile(b, unused)) return std::nullopt;
+    std::array<uint8_t,40> r{};
+    for (size_t i = 0; i < 40; ++i) r[i] = b[kSourceBgProfileBytes + i];
+    return r;
 }
 
 void init_source_bg_layers_80022fd4(const SourceBgProfile& profile, SourceBgLayers& layers) noexcept {

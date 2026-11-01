@@ -26,6 +26,10 @@ struct SourceAttractProfile {
     std::vector<std::array<uint8_t,20>> records;   // 0x80105B8C.. (29 spawn records)
     std::vector<uint32_t> servbot_behaviours;      // 0x8010663C[id] (class 0x20/0x00 by +0xC)
     std::vector<uint8_t> teisel_face;              // 0x80106914..: face scripts + tables 0x80106944/0x80106950
+    // 0x80105780 + 40 * area: the area record 0x800371A0 copies to 0x800C0DC0
+    // (ramp table, far colour +32..34, fog distance +0x24; oracle-identical
+    // for areas 0..4: grey 0x404040 at 0x3333).
+    std::vector<std::array<uint8_t,40>> area_records;
 };
 bool bind_source_attract_profile(const SourceScenePackage& package, SourceAttractProfile& out);
 

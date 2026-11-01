@@ -22,7 +22,11 @@ struct SourceBgDescriptor {
     std::vector<uint32_t> tiles;       // width*height words from p+32
 };
 using SourceBgProfile = std::array<SourceBgDescriptor,kSourceBgLayers>;
+// L3BG v2, or v3 with the area's 40-byte record after the descriptors.
 bool load_source_bg_profile(const std::vector<uint8_t>& bytes, SourceBgProfile& out);
+// v3 only: the area record (0x800C0DC0 copy: ramp table, far colour +32..34,
+// fog distance +0x24 for 0x8007A1CC).
+std::optional<std::array<uint8_t,40>> source_bg_area_record(const std::vector<uint8_t>& bytes);
 
 // The fields of one 56-byte record the routines read and write.
 struct SourceBgLayer {

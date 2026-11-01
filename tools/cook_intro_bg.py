@@ -5,7 +5,7 @@ Reads a hash-guarded owner overlay: R3_ST01 (layer table 0x80100D5C[area])
 or r3_st07 (0x80105658[area]); each table holds 11 pointers, the 0x80022FD4
 input of the stage init. Each present descriptor
 keeps its 11 init halfwords (p+0..p+20) and its width*height tile words
-(from p+32). Also prints the (CLUT, tpage) material words the tiles use,
+(from p+32), then (v3) the area's 40-byte record. Also prints the (CLUT, tpage) material words the tiles use,
 one hex word per line, for l3cook_intro_materials. Output is owner-local
 data, never part of the source release.
 """
@@ -16,16 +16,18 @@ import struct
 import zlib
 
 OVERLAY_SHA = '96bb58fb3adbd0ecc3d2e75e42d2672a71be378a2b0b03e2e38db29d38aa8fac'
-# Stage -> (overlay SHA-256, area-indexed table of layer tables).
-STAGES = {'st01': (OVERLAY_SHA, 0x80100D5C),
-          'st07': ('10cccd074b1e941b348fe152df05d8272e280ecbc3ed8fb02aeab08017bfa565', 0x80105658)}
+# Stage -> (overlay SHA-256, area-indexed table of layer tables, area records).
+# The 40-byte area records (0x800371A0 copies one to 0x800C0DC0: ramp table,
+# far colour +32..34, fog distance +0x24) sit at 0x80100DA8 / 0x80105780.
+STAGES = {'st01': (OVERLAY_SHA, 0x80100D5C, 0x80100DA8),
+          'st07': ('10cccd074b1e941b348fe152df05d8272e280ecbc3ed8fb02aeab08017bfa565', 0x80105658, 0x80105780)}
 BASE = 0x80100000
 LAYERS = 11
 MAX_CELLS = 512
 
 
 def cook(overlay, stage='st01', area=0):
-    sha, tables = STAGES[stage]
+    sha, tables, records = STAGES[stage]
     if hashlib.sha256(overlay).hexdigest() != sha:
         raise ValueError(f'Unsupported owner {stage.upper()} overlay identity')
     def word(a): return struct.unpack_from('<I', overlay, a - BASE)[0]
@@ -46,7 +48,8 @@ def cook(overlay, stage='st01', area=0):
             words.add(((((t + (init[4] << 14)) & 0xFFFFFFFF) >> 16) << 16) | init[3])
         payload += struct.pack('<B3x', 1) + struct.pack('<11H', *init) + b''.join(struct.pack('<I', t) for t in tiles)
         payload += bytes(4 * (MAX_CELLS - cells)) + bytes(2)
-    package = struct.pack('<4sHHII', b'L3BG', 2, 16, 16 + len(payload), zlib.crc32(payload) & 0xFFFFFFFF) + payload
+    payload += overlay[records + 40 * area - BASE:records + 40 * area + 40 - BASE]   # v3: the area record
+    package = struct.pack('<4sHHII', b'L3BG', 3, 16, 16 + len(payload), zlib.crc32(payload) & 0xFFFFFFFF) + payload
     return package, sorted(words)
 
 

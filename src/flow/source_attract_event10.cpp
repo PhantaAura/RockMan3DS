@@ -23,6 +23,10 @@ bool bind_source_attract_profile(const SourceScenePackage& pkg, SourceAttractPro
             std::array<uint8_t,20> r{}; for (size_t i = 0; i < 20; ++i) r[i] = rec->bytes[k + i]; p.records.push_back(r);
         }
     if (const auto* face = pkg.data_at(0x80106914u)) p.teisel_face = face->bytes;   // --extra 80106914:72
+    if (const auto* rec = pkg.data_at(0x80105780u))   // --extra 80105780:240
+        for (size_t k = 0; k + 40 <= rec->bytes.size(); k += 40) {
+            std::array<uint8_t,40> r{}; for (size_t i = 0; i < 40; ++i) r[i] = rec->bytes[k + i]; p.area_records.push_back(r);
+        }
     if (const auto* beh = pkg.data_at(0x8010663Cu))
         for (size_t k = 0; k + 4 <= beh->bytes.size(); k += 4)
             p.servbot_behaviours.push_back(uint32_t(beh->bytes[k]) | (uint32_t(beh->bytes[k + 1]) << 8) |

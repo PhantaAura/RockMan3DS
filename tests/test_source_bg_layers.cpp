@@ -4,6 +4,7 @@
 #include "legends3ds/source_intro_crawl.h"
 #include <cstdio>
 #include <cstdlib>
+#include <vector>
 using namespace l3;
 namespace {
 void require(bool ok, const char* why) { if (!ok) { std::fprintf(stderr, "FAIL %s\n", why); std::exit(1); } }
@@ -13,8 +14,32 @@ SourceBgDescriptor desc(uint16_t flags, int16_t w, int16_t h, uint16_t tpage, ui
     for (int i = 0; i < w * h; ++i) d.tiles.push_back(0x78010000u | uint32_t(i % 8) * 32u);
     return d;
 }
+uint32_t crc(const uint8_t* p, size_t n) {
+    uint32_t c = 0xFFFFFFFFu;
+    for (size_t i = 0; i < n; ++i) { c ^= p[i]; for (int k = 0; k < 8; ++k) c = (c >> 1) ^ (0xEDB88320u & (0u - (c & 1u))); }
+    return ~c;
+}
+// An empty-layer L3BG package (v2, or v3 with an area record).
+std::vector<uint8_t> package(uint16_t version, bool record) {
+    std::vector<uint8_t> b(kSourceBgProfileBytes + (record ? 40 : 0), 0);
+    b[0] = 'L'; b[1] = '3'; b[2] = 'B'; b[3] = 'G'; b[4] = uint8_t(version); b[6] = 16;
+    const uint32_t n = uint32_t(b.size());
+    for (int i = 0; i < 4; ++i) b[8 + i] = uint8_t(n >> (8 * i));
+    if (record) { b[kSourceBgProfileBytes + 32] = 0x40; b[kSourceBgProfileBytes + 0x24] = 0x33; }
+    const uint32_t c = crc(b.data() + 16, b.size() - 16);
+    for (int i = 0; i < 4; ++i) b[12 + i] = uint8_t(c >> (8 * i));
+    return b;
+}
 }
 int main() {
+    {
+        SourceBgProfile p;
+        require(load_source_bg_profile(package(2, false), p) && !source_bg_area_record(package(2, false)), "L3BG v2: no record");
+        const auto v3 = package(3, true);
+        const auto r = source_bg_area_record(v3);
+        require(load_source_bg_profile(v3, p) && r && (*r)[32] == 0x40 && (*r)[0x24] == 0x33, "L3BG v3: the area record");
+        require(!load_source_bg_profile(package(2, true), p) && !load_source_bg_profile(package(3, false), p), "version/size must agree");
+    }
     SourceBgProfile prof{};
     prof[0] = desc(0x0100, 20, 8, 0x1C, 0x1F20, 0, 6);   // hidden, no update (the lighthouse)
     prof[1] = desc(0x0103, 20, 8, 0x1D, 0x1F20, 0, 6);
