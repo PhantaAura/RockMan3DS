@@ -1,7 +1,11 @@
-# ST00 Area 3 boss: event ownership and intro slice
+# ST00 Area 3 boss: event ownership, callback and defeat
 
-Status: **SOURCE_BACKED_PARTIAL**. This is not a complete boss encounter and
-does not claim 1:1 AI, combat, camera, HUD, defeat, or progression.
+Status: **SOURCE_BACKED_PARTIAL**. The class 40/02 callback (AI, Buster
+damage, stagger, gauge, defeat flag 0x606, release) is translated and wired
+(section "Callback translation", 2026-11-01). Player damage and game over do
+not exist in the port yet, and the post-win event 3 is mapped but not ported.
+The earlier sections below describe the replayed intro slice that the
+callback has replaced; their observations remain the reference data.
 
 ## Original evidence
 
@@ -148,11 +152,85 @@ retained as negative evidence: releasing ownership at the endpoint let the
 door-arrival player state restore z `-1984` while the boss continued. The
 validated build retains event ownership only until intro leg 6.
 
-## Next exact step
+## Next exact step (superseded 2026-11-01, see "Callback translation")
 
-Bind the recovered action-1 chooser to the original `+0x504` detection owner
-and work `+0x80` writer, then translate the movement/contact branches of
-`0x80107FAC`. Recover the wrapper's
-`0x800341BC` radius-208 hit proxy, bind Buster damage to HP `+0x6E`, and add
-the original boss gauge. Child allocation identities are proved, but their
-live behavior is not ported. Do not add a synthetic defeat or transition.
+Port event 3 (poll on 0x606) with its two class 40/03 scene actors, smoke
+emitters, camera program, XA stream 1 and the Area 4 request; then Area 4
+event 2. Player damage (boss body contact 8, shockwave proxies) and game over
+are a separate system the port does not have yet.
+
+## Callback translation (2026-11-01)
+
+Read from the ST00 overlay with Ghidra headless on a copy of the project
+(the shared MCP projects were locked), cross-checked with capstone and the
+PSXRecomp oracle. Native: `src/world/class40_02_boss.cpp`, wired in
+`tick_source_area3_boss_801076e8` (`actor_runtime.cpp`) and the 3DS loop.
+
+Wrapper `0x801076E8`: copy +0x14..+0x28 to +0x2C, shade 0x4210, `rand()` at
+RA 0x80107774 into +0x4E2, state table `0x8011C054` (0 init, 1 `0x80107B48`,
+2 release `0x80107F00`, 3 null, 4 `0x80107D04` for parameter 0), then the
+animation (flags bit 0x10: advance or restart), shadow, and the hit proxy
+`0x800341BC(+0x4EC = pose point +0x180, radius 0xD0, 0, 0x8000, work+1,
+target +0x4F4, +0x4E8 | 0x04880008, 0x800000, 0)`.
+
+Init `0x801078B8` (parameter 1): two class-60 subtype-0x0A arms (pool
+`0x80031518`, byte0 0x25, limb +0x0D = 2 / 4), flags +0x4E0 = 0x1E,
+detection `0x80036478(+0x504, record byte0F, -0x60)`, bounds +0x78 =
+`0x8011C0A4` {-192,192,-192,192,-300,0}, HP = record byte08 << 5 into
++0x6E/+0xB0/+0xB2, floor `0x80048E6C`, state 1 / substate 0, gauge
+`0x8005D620(work, 0, 0, 0x51, 0x203050)`.
+
+Stats record `0x8009884C[2] + 16` (selector 1: `0x8008EF64`, selector 2:
+`0x8008F200`; oracle RAM): `06 05 04 03 00 00 00 00 20 50 10 00 00 00 00 05`
+-> HP 1024, stagger limit 0x50 << 2 = 320, detection profile 5. Now cooked
+into L3CB as class 40/02 record 1 (recipe `01516-boss40-1`).
+
+State 1 `0x80107B48`: `0x8003648C` every update -> flags bit 0x20; hit
+`0x8010A448` while bit 2; substate table `0x8011C068`; chooser when bit 0
+(HP < 1 -> 0, and on stage 0 once: bit 0x40, `0x8001DA8C(0x606)`,
+`0x8005D6E8`; 0/4 -> 3 with +0x0D = 1; 3 -> +0x0D; 2 or detected -> 1;
+else 0); +0x4EA decays by 1.
+
+| Substate | Code | Behaviour |
+|---|---|---|
+| 0 | 0x80107F40 | wait for detection or a hit packet |
+| 1 | 0x80107FAC | timer 80; near (+0x80 < 0xC8000): slam if facing (0x80031DCC ±0x80) else turn; far: turn ≤ 0x20, step 0x100, footstep sound 200; timer out -> charge (+0x4E6 = 60) |
+| 2 | 0x801084D4 | step 0x200 until +0x80 ≤ 0x47FFF, timer, wall or a hit bit 0x2000000; on cue +0xA6 == 1 three effect128/0x42 shockwaves at 12000/9200/6400 ahead with floor y, shake `0x800398F8(30, 2000, 5000)`, sound 0xC2 |
+| 3 | 0x80108C18 | 12-tick turn by |delta|/12, then +0x0D |
+| 4 | 0x80109038 | 28-tick stagger (stagger mode bit 4 off meanwhile) |
+| 6 | 0x80109638 | slam: requests 11/12/13, timers 13/10/20/10/15, arms -> substate 3 (Y-scale pulse 0x80110D24), shockwaves at timer 3 of phase 3, sounds 0xBF/0xC0/0xC1 |
+
+Hit `0x8010A448`: damage = packet & 0xFFFFFF; no type bits 0x18000000 ->
+sound 0xA3; else HP -= damage; at HP ≤ 0 on stage 0 `0x80042208` (player
+HP ≥ 0 sets 0x800B55F9 = 1) gives HP 0 and clears bit 2, else HP 1; sound
+0xA0/0xA2; in stagger mode +0x4EA += max(damage, 10) and reaching 320 enters
+substate 4; shade 0x7FFF and arm flash (+0x0E |= 0x20).
+
+Oracle (oracle-only HP writes, savestate slot 9 is HP 24 mid-slam):
+Buster hits take 48 or 24; after HP 0 the slam finishes, the chooser sets
+0x606 at frame +107 and substate 0; event 3 starts the same update.
+
+Substates 5 and 7..14 and state 4 are the parameter-0 variant (region tables
+0x8011C0B4..0x8011C148) and are held as UnsupportedSubstate/State.
+
+## Post-win event 3 (mapped, not ported)
+
+ST00 poll table (overlay 0x8011ADF8): flag 0x604 -> event 1 (opening),
+0x605 -> event 2, 0x606 -> event 3, 0x7B0 -> event 0. Event 3 handler
+`0x80102058` (`tools/cook_cutscene.py --event 3` finds it):
+
+| Phase | Effect |
+|---|---|
+| 0 | `0x8005D7C0`; wait `0x80042238(player)` |
+| 1 | stop sequences `0x8001B33C`, XA `0x8001D58C(0x20000001)` |
+| 2 | wait `0x8001D878`; +0x0C = 30 |
+| 3 | count down |
+| 4 | constructor `0x80101F7C`: hide player, camera `0x8001E6C0`, program `0x8011BB3C` (194 words), boss slot +8 = 2 (release), spawns `0x8011BB14` / `0x8011BB28` (class 40/03 scene actors, callback `0x8010A68C`, states `0x8011C178`), timeline `0x8011BE44` |
+| 5/6 | timeline callbacks, camera, `0x8001F070`; on busy 0 and timeline end (or the Start skip `0x8001DE84`) fade 10; then request area 4 (status 2), clear 0x606, player visible, `0x8001D494(0,1,0)` |
+
+Timeline records (ticks, callback): 45 `0x80101B6C`, 340 `0x80101B9C`
+(five smoke emitters `0x80116D60`), 75, 45 `0x80101D88`, 67 `0x80101DAC`,
+39, 50, 90 `0x80101DE4` (smoke off, class-1 object at (-256,-728,-880)),
+60 `0x80101EF0` (`0x8002EE90(0x40,0x80)`), 115 `0x80101F44`.
+Oracle: event 3 runs 1982 frames (12329 -> 14311), then Area 4 loads and
+event 2 starts (flag 0x605); Mega Man at (500,-7169,512).

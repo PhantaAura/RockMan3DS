@@ -308,6 +308,16 @@ struct HudTargetTracker {
             if (last[i] != INT16_MIN && *hp < last[i]) { index = i; timer = 150; }
             last[i] = *hp;
         }
+        // The Area 3 boss registers its gauge slot itself (0x8005D620 at init,
+        // 0x8005D6E8 at defeat), so it stays up for the whole fight.
+        for (const auto& a : actors.actors)
+            if (a.source_area3_boss && a.source_area3_boss->gauge_registered && a.source_area3_boss->health_max_b0 > 0) {
+                const auto& b = *a.source_area3_boss;
+                model.target_visible = true;
+                model.target_hp_max = uint16_t(b.health_max_b0);
+                model.target_hp = uint16_t(std::clamp<int>(b.health_6e, 0, b.health_max_b0));
+                return;
+            }
         if (timer && index < last.size() && first[index] > 0) {
             --timer;
             model.target_visible = true;
@@ -2055,6 +2065,7 @@ l3::ActorAreaRuntime load_area_actors(const l3::TutorialRuntimeArea& area,
             if (floor.floor_y) l3::bind_imported_actor_floor(actor,*floor.floor_y);
             if(metadata.combat)(void)l3::bind_imported_actor_combat_profile(actor,*metadata.combat,selector);
             if(metadata.combat)(void)l3::bind_imported_actor_reaverbot19_record(actor,*metadata.combat,selector);
+            if(metadata.combat)(void)l3::bind_source_area3_boss_record(actor,*metadata.combat,selector);
         } catch (const std::exception& error) {boot_log(MML_BOOT_DATA,error.what());}
     }
     prepare_actor_animation_banks(actors,area.ebd);
@@ -2084,6 +2095,7 @@ l3::ActorAreaRuntime load_active_actors(const l3::RuntimeSession& session,
             if(floor.floor_y)l3::bind_imported_actor_floor(actor,*floor.floor_y);
             if(metadata.combat)(void)l3::bind_imported_actor_combat_profile(actor,*metadata.combat,session.source_stats_selector());
             if(metadata.combat)(void)l3::bind_imported_actor_reaverbot19_record(actor,*metadata.combat,session.source_stats_selector());
+            if(metadata.combat)(void)l3::bind_source_area3_boss_record(actor,*metadata.combat,session.source_stats_selector());
         } catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
     }
     prepare_actor_animation_banks(actors,area.ebd);
@@ -5733,6 +5745,9 @@ int main() {
                     // Every live class-0x20 work counts: subtype 3 keeps +14/+18 in its
                     // behaviour state, 0x19 and 0x1F in source_origin.
                     for(const auto& actor:actors.actors){
+                        // Autoplay only: the Area 3 boss is a fight target too.
+                        if(g_autoplay.active&&actor.source_area3_boss&&!actor.source_released&&!actor.source_hidden)
+                            g_autoplay_enemies.push_back({{int(actor.source_origin[0]),int(actor.source_origin[2])}});
                         if(actor.source_released||actor.source_class!=0x20)continue;
                         std::array<int16_t,2> xz{};
                         if(actor.source_behavior)xz={{actor.source_behavior->raw_14[0],actor.source_behavior->raw_14[2]}};
@@ -5747,19 +5762,103 @@ int main() {
                 const bool dialogue_was_active=session.dialogue().active;
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
                 // The Area 3 boss is normal gameplay content, not a diagnostic
-                // actor-state gate. Advance its recovered intro and first
-                // bounded action-6 presentation cycle on every resident fixed
-                // update. Player/camera ownership only gates the event position above.
-                for(auto& actor:actors.actors)if(actor.source_area3_boss){
-                    const auto boss_tick=l3::tick_source_area3_boss_intro_80107b48(
-                        actor,session.player_position().z);
-                    if(boss_tick.state_changed)
-                        hardware_test_trace("# source_area3_boss_intro,frame=%lu,status=%u,action=%u,phase=%u,substate=%u,leg=%u,pos=%d:%d:%d,hp=%d,pose=%u,behavior=SOURCE_BACKED_PARTIAL",
-                            (unsigned long)session.frame_counter(),unsigned(boss_tick.status),
-                            unsigned(actor.source_area3_boss->action),unsigned(actor.source_area3_boss->phase),
-                            unsigned(actor.source_area3_boss->substate),unsigned(actor.source_area3_boss->intro_leg),
+                // actor-state gate: run its callback 0x801076E8 every resident
+                // fixed update (rand() at RA 0x80107774, detection +0x504,
+                // proxy radius 0xD0). Player/camera ownership only gates the
+                // event position above.
+                for(auto& actor:actors.actors)if(actor.source_area3_boss&&!actor.source_released){
+                    const auto& st=*actor.source_area3_boss;
+                    const auto pp=session.player_position();
+                    const auto target=l3::sample_imported_actor_target(actor,pp.x,pp.z,
+                        actor_angle_steps?&*actor_angle_steps:nullptr);
+                    std::optional<uint16_t> sample;
+                    l3::SourceRngUpdateTransaction boss_rng;bool boss_rng_begun=false;
+                    if(g_actor_rng.admitted()&&l3::begin_source_rng_update(g_actor_rng,boss_rng,
+                        {session.frame_counter(),g_actor_update_ordinal,l3::SourceRngUpdatePhase::Class03Callbacks})==l3::SourceRngStatus::Ready){
+                        boss_rng_begun=true;
+                        const auto staged=l3::stage_source_rng_class03(boss_rng,{l3::kSourceClass40BossRngCallerRa,
+                            l3::kSourceClass40BossWork,l3::kSourceClass40BossRngSlot,st.state_08,st.substate_09,st.phase_0a});
+                        if(staged.status==l3::SourceRngStatus::Ready)sample=staged.sample32a;
+                    }
+                    const auto detection_before=actor.source_detection40;
+                    std::optional<bool> detected;
+                    if(st.state_08==1&&target&&actor_metadata.detection&&actor.source_record40&&
+                       pp.x>=INT16_MIN&&pp.x<=INT16_MAX&&pp.y>=INT16_MIN&&pp.y<=INT16_MAX&&pp.z>=INT16_MIN&&pp.z<=INT16_MAX){
+                        l3::ActorDetectionPreparationInputs prepare;
+                        prepare.source.distance_work80=target->source_work_80;
+                        prepare.source.actor_raw={st.raw_14[0],st.raw_14[1],st.raw_14[2]};
+                        prepare.source.player_raw={static_cast<int16_t>(pp.x),static_cast<int16_t>(pp.y),static_cast<int16_t>(pp.z)};
+                        prepare.source.heading56=st.heading_56;
+                        prepare.source.reference=&refs;
+                        prepare.source.profile=(*actor_metadata.detection)[actor.source_detection40.profile_352];
+                        prepare.source.global_800bbd96=session.actor_detection_globals().halfword_800bbd96;
+                        prepare.source.scratch_1f800075=session.active_area().source_render_scratch_75;
+                        prepare.map=&session.active_map();prepare.area_index=session.map_area_index();
+                        prepare.normalization_lookup=actor_metadata.normalization?&*actor_metadata.normalization:nullptr;
+                        prepare.segment_bounds=actor_metadata.bounds;
+                        const auto prepared=l3::prepare_actor_detection_800364b0(actor.source_detection40,prepare);
+                        if(prepared.status==l3::ActorDetectionPreparationStatus::Ready){
+                            detected=prepared.detector.detected;actor.source_detection40=prepared.next;
+                        }
+                    }
+                    l3::Class20_03MotionWorld world;
+                    world.map=&session.active_map();world.area_index=session.map_area_index();
+                    world.references=&refs;world.bounds={-192,192,-192,192,-300,0};world.object_class=0x40; // +0x78 = 0x8011C0A4
+                    l3::Class40_02Inputs in;
+                    in.world=&world;in.random_sample=sample;
+                    if(target)in.work_80=target->source_work_80;
+                    const auto& pw=session.compat_player().bytes;
+                    const auto rd16=[&](size_t at){return int16_t(uint16_t(pw[at])|(uint16_t(pw[at+1])<<8));};
+                    const auto rd32=[&](size_t at){return int32_t(uint32_t(pw[at])|(uint32_t(pw[at+1])<<8)|(uint32_t(pw[at+2])<<16)|(uint32_t(pw[at+3])<<24));};
+                    in.player_raw={rd16(0x14),rd16(0x16),rd16(0x18)};
+                    in.player_fixed={rd32(0x1c),rd32(0x20),rd32(0x24)};
+                    in.player_heading=uint16_t(rd16(0x56))&0xfffu;
+                    in.angle_steps=actor_angle_steps?&*actor_angle_steps:nullptr;
+                    in.detected_8003648c=detected;
+                    in.stage_800c1b60=0;                                   // ST00
+                    // The port has no player damage yet, so 0x800B521E is never
+                    // negative here (0x80042208 always admits the defeat).
+                    in.player_hp_800b521e=int16_t(session.hp());
+                    in.arms_allocated=true;                               // class-60 pool has free slots in Area 3
+                    in.sound_consumer_ready=true;
+                    const uint8_t substate_before=st.substate_09;
+                    const int16_t hp_before=st.health_6e;
+                    const auto tick=l3::tick_source_area3_boss_801076e8(actor,in,refs,
+                        g_source_actor_proxy?&g_children.hit_proxy_bank():nullptr,0xffu,g_children.proxy_owner_pointers());
+                    g_children.publish_proxy_owner_points();
+                    if(tick.committed&&sample)(void)l3::commit_source_rng_update(g_actor_rng,boss_rng);
+                    else if(boss_rng_begun)l3::rollback_source_rng_update(boss_rng);
+                    if(!tick.committed){actor.source_detection40=detection_before;}
+                    else {
+                        const auto& now=*actor.source_area3_boss;
+                        const std::array<uint32_t,2> at{{uint32_t(uint16_t(now.raw_14[0]))|(uint32_t(uint16_t(now.raw_14[1]))<<16),
+                                                         uint32_t(uint16_t(now.raw_14[2]))|(uint32_t(uint16_t(now.raw_14[3]))<<16)}};
+                        for(uint8_t i=0;i<tick.result.sound_count;++i)
+                            (void)l3::enqueue_source_audio_8001a050(session.source_audio_queue(),tick.result.sounds[i],at);
+                        for(uint8_t i=0;i<tick.result.shockwave_count;++i)
+                            (void)g_children.spawn_effect_80031618(5,0x80,0x42,0x38,tick.result.shockwaves[i].point_38,4);
+                        if(tick.result.camera_shake_800398f8){
+                            const auto& eye=session.source_gameplay_camera().eye_800a39f0;
+                            const int64_t dx=int64_t(int16_t(eye[0]))-now.raw_14[0],dy=int64_t(int16_t(eye[1]))-now.raw_14[1],
+                                          dz=int64_t(int16_t(eye[2]))-now.raw_14[2];
+                            const auto d=uint32_t(std::sqrt(double(dx*dx+dy*dy+dz*dz)));   // 0x8007A578
+                            if(const auto shake=l3::source_camera_shake_800398f8(0x1e,2000,5000,d))session.set_camera_shake_800a395f(*shake);
+                        }
+                        if(tick.result.set_flag_606)session.set_story_flag(0x606,true);
+                    }
+                    if(tick.committed&&(substate_before!=actor.source_area3_boss->substate_09||hp_before!=actor.source_area3_boss->health_6e||
+                        tick.result.set_flag_606||tick.result.released||session.frame_counter()%120u==0u))
+                        hardware_test_trace("# source_area3_boss,frame=%lu,state=%u,substate=%u,phase=%u,hp=%d,flags=%04x,detected=%d,proxy=%u,shock=%u,flag606=%u,released=%u,pos=%d:%d:%d,pose=%u,behavior=SOURCE_BACKED_PARTIAL",
+                            (unsigned long)session.frame_counter(),unsigned(actor.source_area3_boss->state_08),
+                            unsigned(actor.source_area3_boss->substate_09),unsigned(actor.source_area3_boss->phase_0a),
+                            int(actor.source_area3_boss->health_6e),unsigned(actor.source_area3_boss->flags_4e0),
+                            detected?int(*detected):-1,unsigned(tick.proxy_registered),unsigned(tick.result.shockwave_count),
+                            unsigned(tick.result.set_flag_606),unsigned(tick.result.released),
                             int(actor.source_origin[0]),int(actor.source_origin[1]),int(actor.source_origin[2]),
-                            int(actor.source_area3_boss->hp),actor.pose?unsigned(actor.pose->request):255u);
+                            actor.pose?unsigned(actor.pose->request):255u);
+                    else if(!tick.committed&&session.frame_counter()%120u==0u)
+                        hardware_test_trace("# source_area3_boss_hold,frame=%lu,status=%u",
+                            (unsigned long)session.frame_counter(),unsigned(actor.last_boss40_status));
                 }
                 // WCA collision evidence: the first few wall contacts per area dump
                 // the live candidate cells (packed, IDX, raw6, descriptor, contact

@@ -1,0 +1,7 @@
+# M1 tutorial boss: run after the tutorial route (normal boot, no spawn file). The far door loads
+# ST00 Area 3; the boss walks in (event-owned entry), then the route fights it with the Buster
+# (ffffa faces the nearest target within cx units and fires) and waits for the defeat flag 0x606.
+600 ffffc 1570 0
+6000 ffffa 4000 0
+3000 ffffc 1542 0
+1800 0 0 0

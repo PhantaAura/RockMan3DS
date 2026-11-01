@@ -554,6 +554,8 @@ public:
     BottomScreenLayout bottom_screen_layout() const;
 
     void set_story_flag(uint16_t bit, bool value);
+    // 0x800398F8 tail: store a computed camera shake byte to 0x800A395F.
+    void set_camera_shake_800a395f(uint8_t value) { source_gameplay_camera_.shake_800a395f = value; }
     bool story_flag(uint16_t bit) const;
     RuntimeSaveState make_save_state(uint32_t checkpoint_id) const;
     void apply_save_state(const RuntimeSaveState& state);

@@ -402,15 +402,13 @@ Class40_02Result step_class40_02_801076e8(Class40_02State& state, const Class40_
         if (n.parameter_03 != 1) return hold(Status::UnsupportedState);
         if (!in.arms_allocated) return hold(Status::NeedsArms);
         if (!in.record) return hold(Status::NeedsRecord);
-        if (!in.floor_sample_80048e6c) return hold(Status::NeedsFloor);
         n.arms[0] = {}; n.arms[0].allocated = true; n.arms[0].part_0d = 2; n.arms[0].flags_0e = 0x40;
         n.arms[1] = {}; n.arms[1].allocated = true; n.arms[1].part_0d = 4; n.arms[1].flags_0e = 1;
         n.work_00 |= 2u;
         n.flags_4e0 = 0x1e; n.timer_4e4 = 0; n.timer_4e6 = 0; n.attack_4e8 = 0; n.stagger_4ea = 0;
         n.packet_4f4 = 0;
         n.health_6e = n.health_max_b0 = n.previous_health_b2 = int16_t(uint16_t(in.record->byte08_hp) << 5);
-        n.raw_14[1] = s16(*in.floor_sample_80048e6c);
-        n.fixed_1c[1] = s32(uint32_t(*in.floor_sample_80048e6c) << 16);
+        if (!b.floor()) return hold(b.failure);                        // 0x80048E6C into +0x16/+0x20
         n.state_08 = 1; n.substate_09 = 0; n.phase_0a = 0; n.aux_0b = 0;
         r.animation = Class40_02Animation::Restart;                    // 0x800322A8(work, 0, 0)
         n.gauge_registered = true; r.register_gauge_8005d620 = true;

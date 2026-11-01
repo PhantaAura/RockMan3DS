@@ -40,7 +40,7 @@ int main(){
     world.object_class=0x40;world.source_a6=0;
     Class40_02Inputs in;in.world=&world;in.random_sample=0;in.sound_consumer_ready=true;in.angle_steps=&st;
     in.record=Class40_02Record{0x20,0x50,5};in.work_80=0x1000000u;in.player_raw={-256,0,-1632};
-    in.player_fixed={-256*65536,0,-1632*65536};in.player_heading=0;in.floor_sample_80048e6c=uint16_t(0);
+    in.player_fixed={-256*65536,0,-1632*65536};in.player_heading=0;
     in.detected_8003648c=false;in.player_hp_800b521e=80;in.frame_a4=1;in.arms_allocated=true;
 
     // Pure chooser 0x80107B48 (ported from the earlier intro slice).

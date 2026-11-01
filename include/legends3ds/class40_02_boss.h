@@ -75,7 +75,6 @@ struct Class40_02Inputs {
     std::optional<bool> detected_8003648c;        // stepped every state-1 update
     uint8_t stage_800c1b60 = 0;
     std::optional<int16_t> player_hp_800b521e;    // read by 0x80042208 at defeat
-    std::optional<uint16_t> floor_sample_80048e6c; // init only
     std::optional<uint8_t> frame_a4;              // animation cursor +0xA4 (footstep cue)
     bool arms_allocated = false;                  // two 0x80031518 receipts
     bool sound_consumer_ready = false;
