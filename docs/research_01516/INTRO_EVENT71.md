@@ -127,3 +127,11 @@ audio sectors, 102.88 s (the record is 3100 ticks = 103.3 s).
 The port starts it on the phase-1 tick (CANDIDATE: the original's seek
 latency is not measured) and, while it plays, advances ticks from its DSP
 position (1260 frames per tick), as the opening does.
+
+## Narration sync check (oracle, 2026-10-31)
+Samples of (timeline tick, crawl row 0x800A2D22, XA LBA):
+(1, -188, 121149), (404, -54, 123162), (805, 80, 125170), (1205, 214, 127169),
+(1607, 348, 129180), (2008, 481, 131184), (2410, 615, 133196), (2815, 750, 135217).
+Crawl row = -188 + T/3 and XA = 5.00 sectors per tick, both as in the port.
+The port started the stream on the command tick (LBA 121155 at T = 1);
+it now starts the tick after (121150 vs 121149).

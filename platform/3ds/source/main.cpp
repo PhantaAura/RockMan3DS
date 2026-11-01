@@ -3240,8 +3240,9 @@ void step_title_servbots(TitleServbotScene& s, uint8_t frontend_state, int16_t f
 // area loader spawns on the event's first tick (oracle), and the background
 // layers (0x80022FD4 at stage init, 0x80023144 per update, driven by the
 // record callback 0x801002E4), and the narration XA the phase-1 command
-// 0x2000001E plays (started on that tick; while it plays, ticks follow its
-// DSP position, as in the opening). Not ported yet: the airship actor and
+// 0x2000001E plays (started the tick after; oracle: LBA 121149 at timeline
+// tick 1, i.e. 34 sectors = 6.8 ticks of stream by then; while it plays,
+// ticks follow its DSP position, as in the opening). Not ported yet: the airship actor and
 // the Start skip 0x8001DE84.
 void run_intro_event71(bool scripted) {
     const auto path = data_path("materials/intro.l3mc");
@@ -3268,7 +3269,7 @@ void run_intro_event71(bool scripted) {
       const bool ready = xa.open(xa_path);
       char line[160]; std::snprintf(line, sizeof(line), "INTRO_XA=%u intro_xa.l3xa %s", unsigned(ready), xa.error());
       boot_log(MML_BOOT_DATA, line); }
-    bool xa_clock_bound = false; uint64_t xa_clock_frames = 0, xa_clock_remainder = 0;
+    bool xa_clock_bound = false, xa_start_pending = false; uint64_t xa_clock_frames = 0, xa_clock_remainder = 0;
     boot_log(MML_BOOT_DATA, "INTRO_EVENT71=1 crawl 0x801008C0, event 0x8010049C, BG 0x80023144, XA 0x2000001E; airship not ported");
     l3::SourceFadeContext fade;
     for (size_t i : {8u, 9u, 10u, 11u}) { fade.work_80098a68.raw[i] = 0; fade.work_80098a68.known[i] = 1; }
@@ -3309,10 +3310,12 @@ void run_intro_event71(bool scripted) {
                 const auto started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, step.fade_type);
                 hardware_test_trace("# intro_fade,tick=%lu,type=%u,status=%u", (unsigned long)tick, unsigned(step.fade_type), unsigned(started.status));
             }
-            if (step.cd_command) {
+            if (xa_start_pending) {
+                xa_start_pending = false;
                 const bool started = xa.start();
-                hardware_test_trace("# intro_cd_command,tick=%lu,command=2000001e,xa_started=%u,%s", (unsigned long)tick, unsigned(started), xa.error());
+                hardware_test_trace("# intro_xa_start,tick=%lu,command=2000001e,xa_started=%u,%s", (unsigned long)tick, unsigned(started), xa.error());
             }
+            if (step.cd_command) xa_start_pending = true;
             // 0x80023144 after the event update; 40 px each side widen it to
             // the 400-px top screen (port presentation; the layers wrap).
             const auto bg_update = l3::update_source_bg_layers_80023144(layers);
