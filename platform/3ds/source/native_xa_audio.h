@@ -11,6 +11,8 @@ public:
     bool pause() noexcept;
     void pump() noexcept;
     bool apply_diagonal_mix(const std::array<uint8_t,4>& values) noexcept;
+    // 3DS-only (cutscene skip): silence the channel; the stream keeps playing.
+    void set_muted(bool muted) noexcept;
     l3::XaPlaybackObservation observation() const noexcept;
     // Sample-accurate DSP position (stream frames at 37800 Hz) while a buffer
     // plays; otherwise the completed-buffer count. Monotonic.
@@ -29,6 +31,8 @@ private:
     int16_t* pcm_=nullptr;
     size_t next_sector_=0;
     uint64_t completed_frames_=0;
+    float gain_=1.0f;
+    bool muted_=false;
     bool dsp_ready_=false,start_queued_=false,ever_started_=false,failed_=false;
     uint32_t underruns_=0,max_read_us_=0;
     Result dsp_result_=0;

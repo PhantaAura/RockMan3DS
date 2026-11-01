@@ -77,7 +77,13 @@ void NativeXaAudio::pump() noexcept {
 }
 bool NativeXaAudio::apply_diagonal_mix(const std::array<uint8_t,4>& values) noexcept {
     if(!dsp_ready_||failed_||values[1]||values[3]||values[0]!=values[2])return false;
-    float mix[12]{};mix[0]=mix[1]=float(values[0])/128.0f;ndspChnSetMix(0,mix);return true;
+    gain_=float(values[0])/128.0f;
+    float mix[12]{};mix[0]=mix[1]=muted_?0.0f:gain_;ndspChnSetMix(0,mix);return true;
+}
+void NativeXaAudio::set_muted(bool muted) noexcept {
+    muted_=muted;
+    if(!dsp_ready_||failed_)return;
+    float mix[12]{};mix[0]=mix[1]=muted_?0.0f:gain_;ndspChnSetMix(0,mix);
 }
 uint64_t NativeXaAudio::position_frames() const noexcept {
     if(!dsp_ready_||failed_)return completed_frames_;

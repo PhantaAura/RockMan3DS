@@ -3349,9 +3349,12 @@ void run_intro_event71(bool scripted) {
     l3::GameplayClock clock;
     u64 last_tick = svcGetSystemTick();
     uint32_t tick = 0;
+    bool skipped = false;
     while (aptMainLoop() && !event.done) {
         hidScanInput();
         if (scripted) { u32 down = 0, held = 0, up = 0; circlePosition cp{}; if (!diagnostic_autoplay_frame(down, held, up, cp)) break; }
+        // 3DS QoL (not in the original event 71): Start skips to the title.
+        else if (hidKeysDown() & KEY_START) { skipped = true; break; }
         const u64 now = svcGetSystemTick();
         uint64_t elapsed_us = (now - last_tick) / CPU_TICKS_PER_USEC;
         last_tick = now;
@@ -3452,8 +3455,8 @@ void run_intro_event71(bool scripted) {
         C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
         submit_gpu_frame();
     }
-    hardware_test_trace("# intro_event71_end,tick=%lu,done=%u,xa_frames=%llu", (unsigned long)tick, unsigned(event.done),
-        (unsigned long long)xa.position_frames());
+    hardware_test_trace("# intro_event71_end,tick=%lu,done=%u,skipped=%u,xa_frames=%llu", (unsigned long)tick, unsigned(event.done),
+        unsigned(skipped), (unsigned long long)xa.position_frames());
     xa.close();
     (void)acquire_gpu_frame("intro release"); submit_gpu_frame(false);
     require_gpu_idle_for_release();
@@ -4947,6 +4950,10 @@ int main() {
         u64 previous_update_clock=svcGetSystemTick();
         // Opening: game ticks follow the XA playback position (see below).
         bool xa_clock_bound=false;uint64_t xa_clock_frames=0,xa_clock_remainder=0;
+        // 3DS QoL (not in the original, which has no skip in ST00 event 1):
+        // Start fast-forwards the opening through its own ticks, voice muted,
+        // so it still ends in the event's phase-7 hand-off.
+        bool opening_skip=false;
         bool pending_fire=false,pending_lock=false,pending_dialogue=false,pending_left=false,pending_right=false;
         uint16_t pending_psx_pressed=0;
         uint64_t last_rng_mismatch_generation=0;
@@ -4968,6 +4975,16 @@ int main() {
             g_runtime_diag.draw_calls=0;
             g_submitted_vertices=0;
             hidScanInput(); u32 down=hidKeysDown(), held=hidKeysHeld(), up_keys=hidKeysUp();
+            const bool opening_active=g_new_game_opening&&session.source_event_work()&&session.source_event_work()->active00();
+            if(opening_active&&!g_autoplay.active&&(down&KEY_START)&&!opening_skip){
+                opening_skip=true;down&=~u32(KEY_START);xa_audio.set_muted(true);
+                hardware_test_trace("# opening_skip,frame=%lu,phase=%u",(unsigned long)session.frame_counter(),
+                    unsigned(session.source_event_work()->phase04()));
+            }
+            if(opening_skip&&!opening_active){
+                opening_skip=false;if(xa_audio.observation().playing)(void)xa_audio.pause();xa_audio.set_muted(false);
+                hardware_test_trace("# opening_skip_end,frame=%lu",(unsigned long)session.frame_counter());
+            }
             circlePosition autoplay_circle{};
             if(g_autoplay.active) {
                 const size_t step_before=g_autoplay.index;const uint32_t used_before=g_autoplay.used;
@@ -5281,7 +5298,9 @@ int main() {
             // measures 5.000 sectors per tick, i.e. 37800/30 = 1260 frames per
             // tick. While the opening's XA plays, its DSP position is the clock,
             // so the 3DS audio rate cannot drift from the lip-sync cues.
-            if(g_new_game_opening&&session.source_event_work()&&session.source_event_work()->active00()&&
+            if(opening_skip){
+                elapsed_us=16u*33334u;xa_clock_bound=false;
+            } else if(g_new_game_opening&&session.source_event_work()&&session.source_event_work()->active00()&&
                xa_audio.observation().playing){
                 const uint64_t position=xa_audio.position_frames();
                 if(xa_clock_bound&&position>=xa_clock_frames){
@@ -5303,7 +5322,7 @@ int main() {
                 pending_left=pending_left||in.dialogue_left;pending_right=pending_right||in.dialogue_right;
             }
             // Bounded catch-up retains debt; no variable-delta physics or render-rate animation.
-            for (unsigned step=0;step<4 && gameplay_clock.consume();++step) {
+            for (unsigned step=0;step<(opening_skip?16u:4u) && gameplay_clock.consume();++step) {
                 in.fire_pressed=pending_fire;in.lock_pressed=pending_lock;in.advance_dialogue=pending_dialogue;
                 in.dialogue_left=pending_left;in.dialogue_right=pending_right;pending_left=pending_right=false;
                 in.pressed_psx_mask=pending_psx_pressed;pending_psx_pressed=0;
