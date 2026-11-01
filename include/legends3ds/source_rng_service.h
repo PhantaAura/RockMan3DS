@@ -14,6 +14,11 @@ constexpr uint32_t kSourceClass03RngCallerRa = 0x801022f8;
 constexpr uint32_t kSourceClass1FRngCallerRa = 0x80106378;
 // ST00 subtype 0x19 callback 0x80104864: jal 0x8007FE50 at 0x801048E8.
 constexpr uint32_t kSourceClass19RngCallerRa = 0x801048f0;
+// ST00 class 40/02 (Area 3 boss) wrapper 0x801076E8: jal 0x8007FE50 at
+// 0x8010776C. Its work is class-40 slot 0 (0x800C3580); staged as slot 16.
+constexpr uint32_t kSourceClass40BossRngCallerRa = 0x80107774;
+constexpr uint32_t kSourceClass40BossWork = 0x800c3580;
+constexpr uint8_t kSourceClass40BossRngSlot = 16;
 
 enum class SourceRngCaptureScope : uint32_t { WholeBoundedCapture = 1, CompletedCapturePrefix = 2 };
 enum SourceRngWarning : uint32_t {
