@@ -439,6 +439,27 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 manifest['intro_bg']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((runtime/'intro_bg.l3bg').relative_to(out)),
                     'source':'R3_ST01 0x80100D5C[0] descriptors (0x80022FD4); camera-scroll layers not ported'}
+            # Title attract scene (ST07 event 10, docs/research_01516/ATTRACT_EVENT10.md):
+            # the ST07 map/render and map areas 1-4 (event+8 selects the area;
+            # area 0 is the exterior, no terrain) with ST07_00's pages.
+            if (dat/'ST07.BIN').is_file() and (dat/'ST07_00.BIN').is_file():
+                aout=runtime/'attract'; aout.mkdir(exist_ok=True)
+                st07=td/'st07'; st07.mkdir(exist_ok=True)
+                names={r'..\MAP\DATA\ST07_MAP.IDX':'ST07_MAP.IDX',r'..\MAP\DATA\ST07_MAP.MDT':'ST07_MAP.MDT',
+                       r'..\SCR\DATA\ST07.STG':'ST07.STG',r'..\SCR\DATA\ST07.HED':'ST07.HED'}
+                core=(dat/'ST07.BIN').read_bytes()
+                for r in iter_resources(dat/'ST07.BIN'):
+                    if r.internal in names and r.typ==0: (st07/names[r.internal]).write_bytes(core[r.payload_start:r.payload_start+r.size])
+                if not all((st07/n).is_file() for n in names.values()): raise RuntimeError('ST07.BIN: map/stage resources missing')
+                maps=[st07/'ST07_MAP.MDT',st07/'ST07_MAP.IDX',st07/'ST07.STG',st07/'ST07.HED']
+                run(tools,'l3cook_st00',*maps,aout/'st07.l3map')
+                run(tools,'l3cook_render',*maps,aout/'st07.l3render')
+                for area_index in range(1,5):
+                    run(tools,'l3cook_material_cache',*maps,str(area_index),aout/f'area_{area_index:02d}.l3mc',
+                        dat/'INIT_DAT.BIN',dat/'ST07.BIN',dat/'ST07_00.BIN','--ramp-out',aout/f'area_{area_index:02d}.l3cr')
+                manifest['attract_stage']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str(aout.relative_to(out)),
+                    'source':'ST07.BIN map/stage + ST07_00.BIN pages; areas 1-4 (oracle: 0x800C1B61 = event+8)'}
             if (dat/'DEMO_DAT.BIN').is_file():
                 # The title Servbot parade: the DEMO_DAT.EBD class-20 model and
                 # the wave scripts + title camera from the EXE.

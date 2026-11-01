@@ -12,8 +12,13 @@ The EXE event table 0x80089024[id] gives the handlers: event 1 0x801010C4
 handler dispatches on event+4 through 0x80105B80: phase 0 0x8010036C,
 phase 1 0x80100598, phase 2 0x801006D8.
 
-Oracle: event 10 runs in **ST07 area 00** (the EBD at 0x8016C000 matches
-`ST07_00.EBD`, 54960 B).
+Oracle: event 10 runs in stage 7 with the `ST07_00` container loaded (the
+EBD at 0x8016C000 matches `ST07_00.EBD`, 54960 B). The **map area changes
+with the shot segment**: 0x800C1B61 = event+8 (0 for the exterior shots,
+then 1, 2, 3, 4). Map area 0 has no terrain (exterior: background layers
+and the ship model); areas 1-4 cook fully with `l3cook_material_cache`
+from INIT_DAT + ST07 + ST07_00 (7/5/6/7 materials, all resolved); areas
+5/6 belong to other containers.
 
 ## Phase 0 (0x8010036C, sub-state event+5)
 - sub 0: `0x8001E6C0(0,0,0)`; camera directory 0x800BC7F0 = 0x80105DD0;
