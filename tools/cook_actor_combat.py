@@ -89,24 +89,7 @@ def build_metadata(owner):
                         'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
                         'action4_variant32E': 0,
                         'retained_values_in_evidence': False})
-    for subtype, count in E0_SUBTYPES:
-        for selector, (table, variant) in sorted(E0_TABLES.items()):
-            slot = table + subtype * 4
-            record = owner.word(slot)
-            if record & 3:
-                raise ValueError('Selected source record is unaligned')
-            for index in range(count):
-                fields = owner.read(record + 16 * index, 16)
-                rows.append(bytes((0xE0, subtype, selector, variant, index, 0,
-                                   fields[8], fields[10], fields[15], fields[12], 15, fields[9])) +
-                            fields[:4] + bytes((fields[11], 0, 0, 0)))
-                origins.append({'raw_stats_selector': selector, 'source_variant': variant,
-                                'source_class': 0xE0, 'subtype': subtype,
-                                'record_index0C': index, 'context_high0F': 0,
-                                'source_table_pointer_slot': hex(slot), 'source_record': hex(record + 16 * index),
-                                'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
-                                'action4_variant32E': 0,
-                                'retained_values_in_evidence': False})
+    # L3CB rows are ordered by identity (class first): 0x20, 0x40, 0xE0.
     for selector, (table, variant) in sorted(CLASS40_TABLES.items()):
         slot = table + CLASS40_SUBTYPE * 4
         record = owner.word(slot)
@@ -127,6 +110,28 @@ def build_metadata(owner):
                         'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
                         'action4_variant32E': 0,
                         'retained_values_in_evidence': False})
+    for subtype, count in E0_SUBTYPES:
+        for selector, (table, variant) in sorted(E0_TABLES.items()):
+            slot = table + subtype * 4
+            record = owner.word(slot)
+            if record & 3:
+                raise ValueError('Selected source record is unaligned')
+            for index in range(count):
+                fields = owner.read(record + 16 * index, 16)
+                rows.append(bytes((0xE0, subtype, selector, variant, index, 0,
+                                   fields[8], fields[10], fields[15], fields[12], 15, fields[9])) +
+                            fields[:4] + bytes((fields[11], 0, 0, 0)))
+                origins.append({'raw_stats_selector': selector, 'source_variant': variant,
+                                'source_class': 0xE0, 'subtype': subtype,
+                                'record_index0C': index, 'context_high0F': 0,
+                                'source_table_pointer_slot': hex(slot), 'source_record': hex(record + 16 * index),
+                                'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
+                                'action4_variant32E': 0,
+                                'retained_values_in_evidence': False})
+    # The runtime loader rejects rows that are not strictly ordered by the
+    # identity bytes 0..5 (class, subtype, selector, variant, index, context).
+    if any(rows[i - 1][:6] >= rows[i][:6] for i in range(1, len(rows))):
+        raise ValueError('Combat rows are not strictly ordered by source identity')
     combat_payload = b''.join(rows)
     combat = header(b'L3CB', len(rows), 20, combat_payload, version=5) + combat_payload
     detection_payload = b''.join(bytes((profile,)) +

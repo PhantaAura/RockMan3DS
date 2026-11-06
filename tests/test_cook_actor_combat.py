@@ -88,10 +88,10 @@ class CookActorCombatTests(unittest.TestCase):
         self.assertEqual(combat[32:52], bytes((32,3,1,0,0,0,12,24,4,36,15,48,65,48,32,16,60,0,0,0)))
         self.assertEqual(combat[52:72], bytes((32,3,2,1,0,0,13,25,4,37,15,49,66,48,32,16,61,0,0,0)))
         self.assertEqual(evidence['combat_format_version'], 5)
-        self.assertEqual([o['subtype'] for o in evidence['selection_origins']], [3, 3, 0x19, 0x19, 5, 5, 5, 5, 5, 5, 2, 2])
-        self.assertEqual(combat[232:252], bytes((0x40,2,1,0,1,0,32,16,5,0,15,80,0x51,0x40,0,0,0,0,0,0)))
-        self.assertEqual(combat[252:272], bytes((0x40,2,2,1,1,0,64,16,5,0,15,80,0x52,0x40,0,0,0,0,0,0)))
-        self.assertEqual(combat[112:132], bytes((0xE0,5,1,0,0,0,10,10,0,0,15,64,5,3,2,3,34,0,0,0)))
+        self.assertEqual([o['subtype'] for o in evidence['selection_origins']], [3, 3, 0x19, 0x19, 2, 2, 5, 5, 5, 5, 5, 5])
+        self.assertEqual(combat[112:132], bytes((0x40,2,1,0,1,0,32,16,5,0,15,80,0x51,0x40,0,0,0,0,0,0)))
+        self.assertEqual(combat[132:152], bytes((0x40,2,2,1,1,0,64,16,5,0,15,80,0x52,0x40,0,0,0,0,0,0)))
+        self.assertEqual(combat[152:172], bytes((0xE0,5,1,0,0,0,10,10,0,0,15,64,5,3,2,3,34,0,0,0)))
         for origin in evidence['selection_origins']:
             self.assertEqual(origin['retained_offsets'], [0, 8, 9, 10, 11, 12, 15])
             self.assertEqual(origin['action4_variant32E'], 0)
@@ -125,6 +125,12 @@ class CookActorCombatTests(unittest.TestCase):
         with self.assertRaises(ValueError): module.build_metadata(owner)
         owner = SyntheticOwner(); owner.bounds = (-9, -9, -11, 11, -13, 13)
         with self.assertRaises(ValueError): module.build_metadata(owner)
+
+    def test_rows_strictly_ordered_for_the_loader(self):
+        combat = module.build_metadata(SyntheticOwner())[0]['actor_combat.l3cb']
+        keys = [combat[32 + 20 * i:38 + 20 * i] for i in range(12)]
+        self.assertEqual(keys, sorted(keys))
+        self.assertEqual(len(set(keys)), 12)
 
     def test_exact_owner_hash_guard(self):
         with self.assertRaises(ValueError): module.cook(bytes(2048))
