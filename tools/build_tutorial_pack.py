@@ -25,6 +25,7 @@ from cook_hit_proxy import build_metadata as cook_hit_proxy_rules
 from cook_class60_06 import cook_from_dat as cook_class60_06
 from cook_reaction_profile import cook as cook_reaction_profile
 from cook_actor_angle import cook as cook_actor_angle
+from source_player_arms import select_player_meshes
 
 SECTOR=0x800
 SOURCE_ROOT=Path(__file__).resolve().parents[1]
@@ -40,6 +41,8 @@ TYPE0_WANTED={
  r"..\PLBIN\PL00H01P.PBD":"player/PL00H01P.PBD",
  r"..\PLBIN\PL00R00P.PBD":"player/PL00R00P.PBD",
  r"..\PLBIN\PL00L00P.PBD":"player/PL00L00P.PBD",
+ # Buster left arm, resident from INIT_DAT; 0x8002786C set 2 draws it.
+ r"..\PLBIN\PL00L04P.PBD":"player/PL00L04P.PBD",
  r"..\PLBIN\PL00F00P.PBD":"player/PL00F00P.PBD",
  r"..\PLBIN\PL00M00S.PBD":"player/PL00M00S.PBD",
  r"..\PLBIN\PL00M00M.PBD":"player/PL00M00M.PBD",
@@ -293,7 +296,15 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         subprocess.run([sys.executable, str(Path(__file__).with_name('cook_reference_tables.py')),
                         str(rock_neo),str(runtime/'reference.l3ref')],check=True)
         pout=runtime/'player'; pout.mkdir()
-        model_names=[('PL00B00P.PBD','body.l3model'),(head_selection['resource'],'head.l3model'),('PL00R00P.PBD','right.l3model'),('PL00L00P.PBD','left.l3model'),('PL00F00P.PBD','feet.l3model')]
+        # The five banks come from the original renderer's mesh set (0x8002786C /
+        # 0x800898EC) for the tutorial loadout +0x170=0, +0x171=1: set 2, whose
+        # left arm is the Buster arm PL00L04P (0.0.15.10..: PL00L00P, set 0).
+        meshes=select_player_meshes(rock_neo.read_bytes(),
+            {r.load:internal for internal,(r,_) in found.items() if internal.endswith('P.PBD')},0,1)
+        if meshes['resources']['head']!=head_selection['resource']:
+            raise RuntimeError('0x8002786C head bank differs from the fresh head selection')
+        manifest['player_mesh_set']=meshes
+        model_names=[(meshes['resources'][slot],slot+'.l3model') for slot in ('body','head','right','left','feet')]
         for src,dst in model_names: run(tools,'l3cook_pbd',player/src,pout/dst)
         run(tools,'l3cook_player_comp',*[player/x for x,_ in model_names],pout/'player.l3pc')
         def load(internal): return found[internal][0].load
