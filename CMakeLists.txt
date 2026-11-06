@@ -1057,6 +1057,7 @@ target_link_libraries(test_runtime_source_scene_rng PRIVATE legends3ds_core)
 target_compile_options(test_runtime_source_scene_rng PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME runtime_source_scene_rng COMMAND test_runtime_source_scene_rng)
 add_test(NAME native_checkpoint_version COMMAND ${Python3_EXECUTABLE} -B ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_native_checkpoint_version.py)
+add_test(NAME source_player_arms COMMAND ${Python3_EXECUTABLE} -B ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_source_player_arms.py)
 
 add_executable(test_source_effect_dispatch tests/test_source_effect_dispatch.cpp)
 target_link_libraries(test_source_effect_dispatch PRIVATE legends3ds_core)

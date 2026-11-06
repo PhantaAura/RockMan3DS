@@ -165,6 +165,9 @@ class TutorialOutputTests(unittest.TestCase):
              patch.object(cooker,'cook_class60_06',return_value=b'authored child profile'), \
              patch.object(cooker,'cook_reaction_profile',return_value=b'authored reaction profile'), \
              patch.object(cooker,'cook_actor_angle',return_value=b'authored angle profile'), \
+             patch.object(cooker,'select_player_meshes',return_value={'set':2,'resources':{
+                 'body':'PL00B00P.PBD','head':'PL00H01P.PBD','right':'PL00R00P.PBD','left':'PL00L04P.PBD',
+                 'feet':'PL00F00P.PBD'},'provenance':{'renderer':'0x8002786c'}}), \
              patch.object(cooker,'select_fresh_player_head',return_value={
                  'container':'HEAD01.BIN','resource':'PL00H01P.PBD','internal':r'..\PLBIN\PL00H01P.PBD',
                  'provenance':{'fresh_only':True}}):
@@ -206,6 +209,7 @@ class TutorialOutputTests(unittest.TestCase):
             self.assertEqual(record['sha256'],cooker.sha256(self.out/record['path']))
         self.assertFalse(manifest['actor_materials']['default_enabled'])
         self.assertTrue(manifest['player_head_selection']['provenance']['fresh_only'])
+        self.assertEqual(manifest['player_mesh_set']['resources']['left'],'PL00L04P.PBD')
         combat=manifest['combat_sidecars']
         self.assertTrue(combat['default_enabled'])
         for name in ('hit_proxy_rules.l3pr','class60_06.l3c6','actor_reactions.l3r7','actor_angle.l3ref'):

@@ -304,3 +304,12 @@ to the E0/05 box, the E0/08 debris/burst and the class-20 defeats, and drew
 it with the original meshes and sprite page (actor cache now uploads EXIT_SUP
 first; Area 2 inherits ST00_01). E0/07 camera shake ported. Azahar: target
 and box effects spawn, draw textured and release. Host 165/165.
+
+## Buster left arm (branch fix/buster-arm-model)
+
+The tutorial player was drawn with the plain left arm `PL00L00P`. The original
+renderer `0x8002786C` picks mesh set 2 from `+0x170 = 0`, `+0x171 = 1`
+(measured in the psxrecomp oracle), whose left arm is the Buster arm `PL00L04P`
+(resident from `INIT_DAT`). The pack now cooks the five player banks from that
+set (`tools/source_player_arms.py`). See
+`docs/research_01516/BUSTER_ARM_MESH_SET.md`.
