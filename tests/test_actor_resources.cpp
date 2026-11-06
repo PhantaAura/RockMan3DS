@@ -385,6 +385,10 @@ void area3_boss_intro_checks(){
     l3::ReferenceTables refs;
     const auto tick=l3::tick_source_area3_boss_801076e8(boss,{},refs,nullptr,std::nullopt);
     assert(!tick.committed&&boss.source_area3_boss->state_08==0);
+    // +0x80 for the boss uses the class-20 writer (oracle frame 5516).
+    boss.source_origin={{-256,-385,-1223}};
+    const auto sample=l3::sample_imported_actor_target(boss,-335,-937,nullptr);
+    assert(sample&&sample->source_work_80==0x15748u);
     boss.source_boss40_entry_released=true;
     assert(!l3::source_area3_boss_forces_player_entry(boss,-1632));
 }

@@ -5781,7 +5781,7 @@ int main() {
                         if(staged.status==l3::SourceRngStatus::Ready)sample=staged.sample32a;
                     }
                     const auto detection_before=actor.source_detection40;
-                    std::optional<bool> detected;
+                    std::optional<bool> detected;int detection_status=-1,detector_status=-1;
                     if(st.state_08==1&&target&&actor_metadata.detection&&actor.source_record40&&
                        pp.x>=INT16_MIN&&pp.x<=INT16_MAX&&pp.y>=INT16_MIN&&pp.y<=INT16_MAX&&pp.z>=INT16_MIN&&pp.z<=INT16_MAX){
                         l3::ActorDetectionPreparationInputs prepare;
@@ -5797,6 +5797,7 @@ int main() {
                         prepare.normalization_lookup=actor_metadata.normalization?&*actor_metadata.normalization:nullptr;
                         prepare.segment_bounds=actor_metadata.bounds;
                         const auto prepared=l3::prepare_actor_detection_800364b0(actor.source_detection40,prepare);
+                        detection_status=int(prepared.status);detector_status=int(prepared.detector.status);
                         if(prepared.status==l3::ActorDetectionPreparationStatus::Ready){
                             detected=prepared.detector.detected;actor.source_detection40=prepared.next;
                         }
@@ -5857,8 +5858,9 @@ int main() {
                             int(actor.source_origin[0]),int(actor.source_origin[1]),int(actor.source_origin[2]),
                             actor.pose?unsigned(actor.pose->request):255u);
                     else if(!tick.committed&&session.frame_counter()%120u==0u)
-                        hardware_test_trace("# source_area3_boss_hold,frame=%lu,status=%u",
-                            (unsigned long)session.frame_counter(),unsigned(actor.last_boss40_status));
+                        hardware_test_trace("# source_area3_boss_hold,frame=%lu,status=%u,target=%u,record=%u,prepare=%d,detector=%d",
+                            (unsigned long)session.frame_counter(),unsigned(actor.last_boss40_status),unsigned(bool(target)),
+                            unsigned(bool(actor.source_record40)),detection_status,detector_status);
                 }
                 // WCA collision evidence: the first few wall contacts per area dump
                 // the live candidate cells (packed, IDX, raw6, descriptor, contact

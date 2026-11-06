@@ -35,8 +35,13 @@ std::optional<ImportedActorTargetSample> sample_imported_actor_target(
     const ImportedActorInstance& actor, int32_t player_x, int32_t player_z,
     const SourceAngleSteps* steps) noexcept {
     // Subtype 0x1F reads the same +0x80 distance (0x801066D8); CANDIDATE that
-    // the per-frame writer matches the subtype-3 query.
-    if (actor.source_class != 0x20 || (actor.subtype != 3 && actor.subtype != 0x1F && actor.subtype != 0x19) ||
+    // the per-frame writer matches the subtype-3 query. The Area 3 boss
+    // (class 40/02) gets the same value: PSXRecomp frame 5516, boss
+    // (-256,-1223), player (-335,-937) -> +0x80 = 0x15748 = 4*(39^2+143^2).
+    const bool class20 = actor.source_class == 0x20 &&
+        (actor.subtype == 3 || actor.subtype == 0x1F || actor.subtype == 0x19);
+    const bool boss40 = actor.source_class == 0x40 && actor.subtype == 2 && actor.source_area3_boss;
+    if ((!class20 && !boss40) ||
         player_x < INT16_MIN || player_x > INT16_MAX ||
         player_z < INT16_MIN || player_z > INT16_MAX) return std::nullopt;
     ImportedActorTargetSample sample;
