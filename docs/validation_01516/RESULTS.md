@@ -657,3 +657,20 @@ Existing Area 3 intro changes were preserved and rebuilt before extension.
 `tools/m1_mac_build.sh` PASS in owner-local `pass-20261028-222004-m2-01516`;
 full host suite 170/170 PASS and native Old 3DS build PASS.
 No new Azahar or physical-device result is claimed by this rebuild.
+
+## ST00 Area 3 boss fight in Azahar (2026-11-06)
+
+Build `pass-20261106-221322-m2-01516` (branch claude/tutorial-boss-4a9127 @
+6eaebb6), Azahar 2126.0 Old 3DS mode, normal boot with the direct hand-off,
+route `autoplay/tutorial_full_boss.txt` (no forced flags or teleports):
+- trap room 0x60A at frame 2014, 0x622 at 11631, Area 3 loads the boss;
+- the boss detects Mega Man, turns, walks 16/update (z 1001 -> -295), charges
+  and slams; it is drawn textured (page 0x3D000028 now cooked);
+- Buster: one hit per shot, 24 damage each (first at 11963), stagger
+  substate 4 when +0x4EA reaches 320, HP 0 at 12090, flag 0x606 at 12105.
+Deviations: the boss charge stops at z -1095 (original -1223, CANDIDATE: the
+player's distance at that moment); the Buster fires a shot on every held
+frame (4 live), so the fight is far shorter than the original; the arms are
+not drawn; player damage, game over and the post-win event 3 are absent.
+Fixes this run needed: 76b1890 (L3CB row order), 9c71eca (+0x80 distance),
+74d4578 (boss texture page), 6eaebb6 (proxy after the queue reset).

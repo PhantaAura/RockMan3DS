@@ -13,8 +13,10 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   shockwaves, camera shake, the bottom-screen TARGET gauge and flag 0x606 at
   defeat. Event-1 loader fade cap fixed (opening was being skipped). Host
   178/178, native PASS (`pass-20261101-183506-m2-01516`). Azahar route
-  `autoplay/opening_tutorial_boss.txt` written but **not yet run** (Azahar
-  stalled at its game list). Missing: player damage + game over (no such
+  Azahar run 9 (2026-11-06, `autoplay/tutorial_full_boss.txt`, normal boot,
+  direct hand-off): 0x622 at 11631, boss visible, Buster hits of 24, HP 0 at
+  12090, flag 0x606 at 12105 (see RESULTS.md). The opening -> tutorial route
+  still stalls (no class-20 or Buster updates after the opening hand-off). Missing: player damage + game over (no such
   system in the port), the post-win event 3 (mapped in
   `docs/research_01516/AREA3_BOSS_SOURCE_SLICE.md`), arm drawing, the two
   arms' rand() calls.
@@ -234,8 +236,10 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
 0. Finish M1 (the Area 3 boss):
-   - run `autoplay/opening_tutorial_boss.txt` (+ empty `diagnostic_title.txt`)
-     in Azahar on a normal desktop Space; check the fight to flag 0x606;
+   - opening -> tutorial: after the event-1 hand-off no class-20 actor or
+     Buster updates (route stalls at the trap room); find the gate;
+   - Buster fires every held frame (4 live): check the original fire rate;
+   - boss charge stops at z -1095 vs -1223 in the original;
    - port event 3 (poll 0x606 -> handler `0x80102058`): two class 40/03 scene
      actors (`0x8010A68C`), smoke `0x80116D60`, camera `0x8011BB3C`, timeline
      `0x8011BE44`, XA 0x20000001, then the Area 4 request and Area 4 event 2;
