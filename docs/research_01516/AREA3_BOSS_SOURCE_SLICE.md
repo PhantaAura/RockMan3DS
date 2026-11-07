@@ -234,3 +234,26 @@ Timeline records (ticks, callback): 45 `0x80101B6C`, 340 `0x80101B9C`
 60 `0x80101EF0` (`0x8002EE90(0x40,0x80)`), 115 `0x80101F44`.
 Oracle: event 3 runs 1982 frames (12329 -> 14311), then Area 4 loads and
 event 2 starts (flag 0x605); Mega Man at (500,-7169,512).
+
+### Event 3 scene actors and hand-off (2026-11-07)
+
+- Spawn records `0x8011BB14` / `0x8011BB28` (20 bytes: [1] subtype, [2] 3,
+  [3] family 0x40, [12..17] position, [18..19] heading) create class-40
+  **subtype 5** at (-256,-384,-640) heading 0 in slot 1 (event+0x24) and
+  **subtype 8** at (-256,-384,-1024) heading 0x800 in slot 2 (event+0x28)
+  (PSXRecomp: slot bytes `03 41 05 00` / `03 42 08 00`, work stride 0x5A4).
+- ST00 class-40 table (base `0x8011A4A0`, fitted on 40/02 = `0x801076E8`):
+  40/03 `0x8010A68C` (an enemy-style init with stats/detection),
+  40/05 `0x8010D824` (scene Mega Man, init `0x8010C930`: the opening's actor,
+  already partly ported), 40/06 `0x8010E500`, 40/07 `0x8010EC54` (scene Mega
+  Man variants; all copy their position into 0x800B51C4), **40/08 empty**:
+  the subtype-8 scene boss is dispatched from elsewhere (CANDIDATE: EXE).
+  Its timeline commands: +9/+0A from callbacks, +0x128 = 0x0C / 0x0D.
+- The hand-off writes 0x800C356C = 2, 356F = 4 (area), 356E = 0 (stage),
+  3560..3564 = 0, 356A = 0, 356D = 0, 3570/3571 = 0xFF, clears 0x606, makes
+  the player visible, `0x8001D494(0,1,0)`, `0x80042314`. Area 4 then starts
+  event 2 (poll flag 0x605), which places Mega Man (oracle (500,-7169,512)).
+  Porting event 3 alone would leave the player at the Area 4 origin: events
+  3 and 2 must land together.
+- The PSXRecomp debug build does not trace overlay functions (fntrace on
+  0x8010A68C / 0x80116D60 returned no entries); RAM reads work.
