@@ -139,6 +139,9 @@ struct ImportedActorInstance {
     // Scripted entry hold (CANDIDATE end): released when the boss leaves its
     // first slam, the boundary the earlier validated build used.
     bool source_boss40_entry_released = false;
+    // 0x800341BC word of this update, registered after the frame's proxy
+    // queues are reset (the tick runs before that point).
+    std::optional<uint32_t> source_boss40_pending_proxy;
 };
 
 struct ActorAreaRuntime {
@@ -197,6 +200,10 @@ SourceArea3BossTick tick_source_area3_boss_801076e8(ImportedActorInstance&,
     std::array<SourceHitProxyOwnerPoint*,24> owners_800be478 = {}) noexcept;
 bool source_area3_boss_forces_player_entry(const ImportedActorInstance&,
                                            int32_t player_z) noexcept;
+// Registers (and clears) the pending boss proxy: radius 0xD0 at the pose
+// point, work+1 = 0x40, target +0x4F4. Call after the frame queue reset.
+bool register_source_area3_boss_proxy(ImportedActorInstance&,SourceHitProxyBank& bank,
+    std::optional<uint32_t> mask_80098798,std::array<SourceHitProxyOwnerPoint*,24> owners_800be478) noexcept;
 
 struct ImportedActorTargetSample {
     uint32_t source_work_80 = 0;

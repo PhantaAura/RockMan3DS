@@ -389,6 +389,11 @@ void area3_boss_intro_checks(){
     boss.source_origin={{-256,-385,-1223}};
     const auto sample=l3::sample_imported_actor_target(boss,-335,-937,nullptr);
     assert(sample&&sample->source_work_80==0x15748u);
+    // The proxy is only registered from a pending word with a pose point.
+    l3::SourceHitProxyBank bank;
+    assert(!l3::register_source_area3_boss_proxy(boss,bank,0xffu,{})&&bank.count==0);
+    boss.source_boss40_pending_proxy=0x04880008u;
+    assert(!l3::register_source_area3_boss_proxy(boss,bank,0xffu,{})&&!boss.source_boss40_pending_proxy);
     boss.source_boss40_entry_released=true;
     assert(!l3::source_area3_boss_forces_player_entry(boss,-1632));
 }

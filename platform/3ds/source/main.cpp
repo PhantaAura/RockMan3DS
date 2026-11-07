@@ -5824,9 +5824,8 @@ int main() {
                     in.sound_consumer_ready=true;
                     const uint8_t substate_before=st.substate_09;
                     const int16_t hp_before=st.health_6e;
-                    const auto tick=l3::tick_source_area3_boss_801076e8(actor,in,refs,
-                        g_source_actor_proxy?&g_children.hit_proxy_bank():nullptr,0xffu,g_children.proxy_owner_pointers());
-                    g_children.publish_proxy_owner_points();
+                    // The proxy is registered after the frame's queue reset below.
+                    const auto tick=l3::tick_source_area3_boss_801076e8(actor,in,refs,nullptr,0xffu);
                     if(tick.committed&&sample)(void)l3::commit_source_rng_update(g_actor_rng,boss_rng);
                     else if(boss_rng_begun)l3::rollback_source_rng_update(boss_rng);
                     if(!tick.committed){actor.source_detection40=detection_before;}
@@ -5853,7 +5852,7 @@ int main() {
                             (unsigned long)session.frame_counter(),unsigned(actor.source_area3_boss->state_08),
                             unsigned(actor.source_area3_boss->substate_09),unsigned(actor.source_area3_boss->phase_0a),
                             int(actor.source_area3_boss->health_6e),unsigned(actor.source_area3_boss->flags_4e0),
-                            detected?int(*detected):-1,unsigned(tick.proxy_registered),unsigned(tick.result.shockwave_count),
+                            detected?int(*detected):-1,unsigned(actor.source_boss40_pending_proxy.has_value()),unsigned(tick.result.shockwave_count),
                             unsigned(tick.result.set_flag_606),unsigned(tick.result.released),
                             int(actor.source_origin[0]),int(actor.source_origin[1]),int(actor.source_origin[2]),
                             actor.pose?unsigned(actor.pose->request):255u);
@@ -6186,6 +6185,11 @@ int main() {
                         const auto pp=session.player_position();
                         ++g_actor_update_ordinal;
                         g_children.reset_frame_queues();
+                        // The Area 3 boss ticked earlier this frame (event-owned);
+                        // its 0x800341BC record joins this frame's queue here.
+                        if(g_source_actor_proxy)for(auto& actor:actors.actors)
+                            if(actor.source_area3_boss&&l3::register_source_area3_boss_proxy(actor,g_children.hit_proxy_bank(),0xffu,
+                                g_children.proxy_owner_pointers()))g_children.publish_proxy_owner_points();
                         // ST00 E0/08 targets register their 0x800341BC proxies
                         // (radius 0x50, 0x04000000) on the shared hit records.
                         for(const auto& request:session.e008_proxy_requests()){

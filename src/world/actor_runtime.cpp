@@ -365,6 +365,24 @@ bool bind_source_area3_boss_record(ImportedActorInstance& actor,
     return true;
 }
 
+bool register_source_area3_boss_proxy(ImportedActorInstance& actor,SourceHitProxyBank& bank,
+    std::optional<uint32_t> mask,std::array<SourceHitProxyOwnerPoint*,24> owners) noexcept {
+    const auto word=actor.source_boss40_pending_proxy;
+    actor.source_boss40_pending_proxy.reset();
+    if(!word||!actor.source_proxy_bound||!actor.source_point_180_known||actor.source_released)return false;
+    SourceHitProxyRegistration registration;
+    const auto& p=actor.source_point_180;
+    registration.pointed_words={{uint32_t(uint16_t(p[0]))|(uint32_t(uint16_t(p[1]))<<16),
+                                 uint32_t(uint16_t(p[2]))|(uint32_t(uint16_t(p[3]))<<16)}};
+    registration.a1=0xd0;registration.a2=0;registration.a3=0x8000;
+    registration.stack10=0x40;                                     // work +1: class-40 slot 0
+    registration.stack18=*word;
+    registration.stack1c=0x00800000u;registration.stack20=0;
+    registration.target=&actor.source_proxy_target;registration.mask_80098798=mask;
+    registration.owners_800be478=owners;
+    return source_hit_proxy_register_800341bc(bank,registration).status==SourceHitProxyStatus::SourceBackedPartial;
+}
+
 SourceArea3BossTick tick_source_area3_boss_801076e8(ImportedActorInstance& actor,
     Class40_02Inputs in,const ReferenceTables& references,SourceHitProxyBank* bank,
     std::optional<uint32_t> mask,std::array<SourceHitProxyOwnerPoint*,24> owners) noexcept {
@@ -424,20 +442,9 @@ SourceArea3BossTick tick_source_area3_boss_801076e8(ImportedActorInstance& actor
         const auto produced=produce_actor_pose_collision_point_8003346c(pose);
         if(produced.point_180){actor.source_point_180=*produced.point_180;actor.source_point_180_known=true;}
     }
-    if(out.result.register_proxy&&bank&&actor.source_proxy_bound&&actor.source_point_180_known){
-        SourceHitProxyRegistration registration;
-        const auto& p=actor.source_point_180;
-        registration.pointed_words={{uint32_t(uint16_t(p[0]))|(uint32_t(uint16_t(p[1]))<<16),
-                                     uint32_t(uint16_t(p[2]))|(uint32_t(uint16_t(p[3]))<<16)}};
-        registration.a1=0xd0;registration.a2=0;registration.a3=0x8000;
-        registration.stack10=0x40;                                 // work +1: class-40 slot 0
-        registration.stack18=out.result.proxy_word_18;
-        registration.stack1c=0x00800000u;registration.stack20=0;
-        registration.target=&actor.source_proxy_target;registration.mask_80098798=mask;
-        registration.owners_800be478=owners;
-        out.proxy_registered=source_hit_proxy_register_800341bc(*bank,registration).status==
-                             SourceHitProxyStatus::SourceBackedPartial;
-    }
+    actor.source_boss40_pending_proxy.reset();
+    if(out.result.register_proxy)actor.source_boss40_pending_proxy=out.result.proxy_word_18;
+    if(bank)out.proxy_registered=register_source_area3_boss_proxy(actor,*bank,mask,owners);
     actor.source_proxy_target.packet_00=0;   // +0x4F4 cleared at the end of the callback
     out.committed=true;
     return out;
