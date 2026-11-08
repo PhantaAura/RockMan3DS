@@ -257,3 +257,27 @@ event 2 starts (flag 0x605); Mega Man at (500,-7169,512).
   3 and 2 must land together.
 - The PSXRecomp debug build does not trace overlay functions (fntrace on
   0x8010A68C / 0x80116D60 returned no entries); RAM reads work.
+
+## Player damage, death and game over (2026-11-07)
+
+Ported (`runtime_session.cpp`, `actor_detection.cpp`, `source_effects.cpp`,
+test `test_player_damage`):
+- player hit box `0x8003C36C`: radius 0x20 at pose part 8 (+0x3E8; standing
+  = position + (0,-86,0)), target +0x188, word 0x02000000, while +0x110 == 0
+  and 0x800B55F9 (boss-defeat lock) is clear;
+- hit section `0x8003C96C` and handler `0x8004174C` (writer of 0x800B521E
+  found by a PSXRecomp write trace), action choice `0x80041A44`, action 11
+  `0x8003E6B0`, action 12 `0x8003E860` (tables 0x80089FA4 / 0x80089FF8);
+- life-gauge gating (entry 0x800BBD78): damage applies only while the gauge
+  is shown or HP was depleted; an idle gauge absorbs the first hit
+  (PSXRecomp: 60 -> absorbed -> 50 -> 40, later 10 -> 0 -> -30 -> death);
+- boss shockwaves: effect-128 state-1 proxy `0x80044200`, damage
+  0x80097DDC[+0x0D] = 10 (cooked in L3PR v2).
+
+Death: get-up with HP < 0 sets player state 2 (`0x80041AB0`, table
+0x80089F94), which sets main phase 9. Phase 9 `0x80016798` (subs
+0x800101A8): fade 11, 120-frame wait, HUD/message reset, music stop, jingle
+0x41, fade 2, the GAME OVER screen (`0x80016DAC` draw environment 320 wide,
+`0x80016D0C`) until Start or the jingle ends, fade 10, clear flag 0x1FE,
+then the front end `0x80012F78(0x80013420)` (title; its intro is ST01 event
+71, as the oracle shows). Not ported yet: the port holds player state 2.
