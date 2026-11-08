@@ -1503,6 +1503,12 @@ constexpr u32 kAutoplaySteerToPoint=0xffffeu;
 constexpr u32 kAutoplayTalk=0xffffdu,kAutoplayWaitFlag=0xffffcu,kAutoplaySteerUntil=0xffffbu,kAutoplayFight=0xffffau,
               kAutoplayShootAt=0xffff9u,kAutoplayDoor=0xffff8u;
 static std::vector<std::array<int,2>> g_autoplay_enemies;
+// Player hit box 0x8003C36C: target +0x188 (0x800B5338) and the last pose
+// part-8 point (+0x3E8) from the integer pose pass.
+static l3::SourceHitProxyTarget g_player_proxy_target{0x800b5338u};
+static std::optional<std::array<int16_t,3>> g_player_point_3e8;
+// The shared target every effect-128 proxy names (0x800A86C0).
+static l3::SourceHitProxyTarget g_effect_shared_target{0x800a86c0u};
 struct DiagnosticAutoplay {
     bool active=false; std::vector<DiagnosticAutoplayStep> steps;
     size_t index=0; uint32_t used=0; u32 previous=0;
@@ -2039,7 +2045,7 @@ ActorSourceMetadata load_actor_source_metadata() {
     load("actor_reactions.l3r7",100,[&](const auto& bytes){out.reaction=l3::load_source_reaction_profile(bytes.data(),bytes.size());});
     load("source_event_phase2.l3eq",l3::kSourceEventPhase2PackageBytes,
         [&](const auto& bytes){out.event_phase2=l3::load_source_event_phase2_package(bytes);});
-    load("hit_proxy_rules.l3pr",32,[&](const auto& bytes){l3::SourceHitProxyRules rules;
+    load("hit_proxy_rules.l3pr",36,[&](const auto& bytes){l3::SourceHitProxyRules rules;
         if(!l3::decode_source_hit_proxy_rules(bytes,rules))throw std::runtime_error("invalid hit proxy rules");
         out.hit_proxy_rules=rules;});
     load("source_rng.l3rg",l3::kSourceRngProfileBytes,[&](const auto& bytes){l3::SourceRngProfile profile;
@@ -4857,6 +4863,7 @@ int main() {
         session.initialize_fresh_source_statistics_8001326c();
         if(g_palette_c0)session.bind_scene_e0_uv_frames(&g_palette_c0->e0_uv_frames);
         session.set_reference_tables(refs);
+        session.set_actor_angle_steps(actor_angle_steps?&*actor_angle_steps:nullptr);
         // 0.0.15.15: ST00 E0/06 tutorial message triggers (owner-local L3TR).
         if(g_sidecars_bound){
             const auto path=data_path("st00.l3tr");
@@ -5760,6 +5767,14 @@ int main() {
                     session.set_tutorial_class20_positions(std::move(live));
                 }
                 const bool dialogue_was_active=session.dialogue().active;
+                // The bank wrote last frame's hits on the player into +0x188.
+                if(g_player_proxy_target.packet_00){
+                    session.deliver_player_hit_target(g_player_proxy_target.packet_00,g_player_proxy_target.flags_04,
+                        g_player_proxy_target.point_08,g_player_proxy_target.word_0e);
+                    hardware_test_trace("# player_hit,frame=%lu,packet=%08lx,hp=%u,action=%u",(unsigned long)session.frame_counter(),
+                        (unsigned long)g_player_proxy_target.packet_00,unsigned(session.hp()),unsigned(session.compat_player().bytes[9]));
+                    g_player_proxy_target.packet_00=0;
+                }
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
                 // The Area 3 boss is normal gameplay content, not a diagnostic
                 // actor-state gate: run its callback 0x801076E8 every resident
@@ -5845,6 +5860,7 @@ int main() {
                             if(const auto shake=l3::source_camera_shake_800398f8(0x1e,2000,5000,d))session.set_camera_shake_800a395f(*shake);
                         }
                         if(tick.result.set_flag_606)session.set_story_flag(0x606,true);
+                        if(tick.result.player_lock_800b55f9)session.set_player_lock_800b55f9();
                     }
                     if(tick.committed&&(substate_before!=actor.source_area3_boss->substate_09||hp_before!=actor.source_area3_boss->health_6e||
                         tick.result.set_flag_606||tick.result.released||session.frame_counter()%120u==0u))
@@ -6185,6 +6201,29 @@ int main() {
                         const auto pp=session.player_position();
                         ++g_actor_update_ordinal;
                         g_children.reset_frame_queues();
+                        // Effect-128 state-1 proxies (the boss's shockwaves damage
+                        // the player through these). CANDIDATE: registered from
+                        // the effects' last tick, one frame after the original.
+                        if(g_source_actor_proxy&&actor_metadata.hit_proxy_rules&&actor_metadata.hit_proxy_rules->effect128_damage_80097ddc)
+                            for(size_t slot=0;slot<l3::source_effect_capacity;++slot)
+                                if(auto r=l3::source_effect128_proxy_80044200(g_children.effect_pool(),slot,
+                                       *actor_metadata.hit_proxy_rules->effect128_damage_80097ddc,&g_effect_shared_target)){
+                                    r->mask_80098798=0xffu;r->owners_800be478=g_children.proxy_owner_pointers();
+                                    (void)l3::source_hit_proxy_register_800341bc(g_children.hit_proxy_bank(),*r);
+                                }
+                        // The player's 0x8003C36C proxy (radius 0x20, word 0x02000000).
+                        if(g_source_actor_proxy&&g_player_point_3e8&&session.player_hit_proxy_admitted()){
+                            l3::SourceHitProxyRegistration registration;
+                            const auto& p=*g_player_point_3e8;
+                            registration.pointed_words={{uint32_t(uint16_t(p[0]))|(uint32_t(uint16_t(p[1]))<<16),uint32_t(uint16_t(p[2]))}};
+                            registration.a1=0x20;registration.a2=0;registration.a3=0;
+                            registration.stack10=session.compat_player().bytes[1];
+                            registration.stack18=0x02000000u;registration.stack1c=0x00800000u;registration.stack20=0;
+                            registration.target=&g_player_proxy_target;registration.mask_80098798=0xffu;
+                            registration.owners_800be478=g_children.proxy_owner_pointers();
+                            if(l3::source_hit_proxy_register_800341bc(g_children.hit_proxy_bank(),registration).status==
+                               l3::SourceHitProxyStatus::SourceBackedPartial)g_children.publish_proxy_owner_points();
+                        }
                         // The Area 3 boss ticked earlier this frame (event-owned);
                         // its 0x800341BC record joins this frame's queue here.
                         if(g_source_actor_proxy)for(auto& actor:actors.actors)
@@ -6571,6 +6610,8 @@ int main() {
                             pose_input.heading_offset_116=uint16_t(player_work[0x116]|(uint16_t(player_work[0x117])<<8));
                             const auto integer_pose=l3::produce_source_player_integer_pose_800325d4(pose_input);
                             const auto muzzle=l3::source_player_muzzles_800331a0(integer_pose);
+                            if(integer_pose.status==l3::SourcePlayerPoseStatus::SourceBackedPartial&&integer_pose.part_count>8)
+                                g_player_point_3e8=integer_pose.parts[8].position_3a8;
                             const bool muzzle_bound=l3::bind_source_player_muzzles_80035724(muzzle,source_buster_player);
                             // RuntimeSession owns these current native work
                             // fields even when the event-side known mask does

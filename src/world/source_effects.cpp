@@ -287,6 +287,25 @@ SourceEffectTick tick_source_effect(SourceEffectPool& p,uint32_t id,const Source
     if(result.committed){p.slots[*slot]=w;if(result.released)mark_source_effect_release_80031988(p,id);}
     return result;
 }
+std::optional<SourceHitProxyRegistration> source_effect128_proxy_80044200(
+    const SourceEffectPool& p,size_t slot,const std::array<uint8_t,4>& damage,SourceHitProxyTarget* target) noexcept {
+    if(slot>=p.slots.size()||!(p.allocated_80098838[slot/32]&bit(slot)))return std::nullopt;
+    const auto& w=p.slots[slot];
+    if(!(w[0]&w[6]&1u)||w[2]!=128||w[8]!=1||w[0xd]>3||w[0xe]>1)return std::nullopt;
+    uint32_t a3=0x4000;
+    if(w[0xe]==0){
+        if(w[3]&0x40u)a3=0xa000;
+        else if(w[3]==6)return std::nullopt;
+        else a3=0xc000;
+    }
+    SourceHitProxyRegistration r;
+    r.pointed_words={{uint32_t(u16(w,0x38))|(uint32_t(u16(w,0x3a))<<16),uint32_t(u16(w,0x3c))|(uint32_t(u16(w,0x3e))<<16)}};
+    const int32_t extent=int16_t(u16(w,0x3e));
+    r.a1=uint32_t(extent/2);r.a2=0;r.a3=a3;
+    r.stack10=w[1];r.stack18=uint32_t(damage[w[0xd]])|0x10000000u;r.stack1c=0;r.stack20=0x80;
+    r.target=target;
+    return r;
+}
 SourceEffectBatch tick_source_effect_batch(SourceEffectPool& p,const SourceEffect128Inputs& in) noexcept {
     SourceEffectBatch batch;
     for(size_t slot=0;slot<source_effect_capacity;++slot){

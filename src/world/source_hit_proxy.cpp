@@ -51,12 +51,21 @@ void emit(const SourceHitProxyRecord& own, const SourceHitProxyRecord& other) no
 
 bool decode_source_hit_proxy_rules(const std::vector<std::uint8_t>& bytes,
                                    SourceHitProxyRules& out) {
-    if (bytes.size() != 32 || bytes[0] != 'L' || bytes[1] != '3' ||
-        bytes[2] != 'P' || bytes[3] != 'R' || u16(bytes, 4) != 1 ||
-        u16(bytes, 6) != 24 || u32(bytes, 8) != 32 || u32(bytes, 12) != 8 ||
-        u32(bytes, 16) != crc32(bytes.data() + 24, 8) || u32(bytes, 20) != 0) return false;
+    // v1: 8 rule bytes (32 total); v2 adds the 4 effect damage bytes (36).
+    if (bytes.size() < 24 || bytes[0] != 'L' || bytes[1] != '3' ||
+        bytes[2] != 'P' || bytes[3] != 'R') return false;
+    const std::uint16_t version = u16(bytes, 4);
+    const std::size_t payload = version == 1 ? 8 : version == 2 ? 12 : 0;
+    if (!payload || bytes.size() != 24 + payload || u16(bytes, 6) != 24 ||
+        u32(bytes, 8) != 24 + payload || u32(bytes, 12) != payload ||
+        u32(bytes, 16) != crc32(bytes.data() + 24, payload) || u32(bytes, 20) != 0) return false;
     SourceHitProxyRules next;
     for (std::size_t i = 0; i < 8; ++i) next.unsigned_80097d00[i] = bytes[24 + i];
+    if (version == 2) {
+        std::array<std::uint8_t, 4> damage{};
+        for (std::size_t i = 0; i < 4; ++i) damage[i] = bytes[32 + i];
+        next.effect128_damage_80097ddc = damage;
+    }
     out = next;
     return true;
 }

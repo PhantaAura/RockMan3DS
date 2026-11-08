@@ -3,6 +3,7 @@
 #include "legends3ds/source_audio_queue.h"
 #include "legends3ds/ebd_directory.h"
 #include "legends3ds/reference_tables.h"
+#include "legends3ds/source_hit_proxy.h"
 
 namespace l3 {
 struct SourceEventPhase5Context;
@@ -86,6 +87,14 @@ SourceEffectTick tick_source_effect(SourceEffectPool&,uint32_t,
     const SourceEffect128Inputs& = {}) noexcept;
 SourceEffectBatch tick_source_effect_batch(SourceEffectPool&,
     const SourceEffect128Inputs& = {}) noexcept;
+// The 0x800341BC record subtype-128 state 1 registers (0x80044200..0x80044404):
+// point +0x38, radius (int16)+0x3E / 2, a3 0x4000 (+0xE 1), 0xA000 (param bit
+// 0x40) or 0xC000, word damage[+0x0D] | 0x10000000, +0x20 = 0x80, target the
+// shared 0x800A86C0 record. Parameter 6 (a direct player-packet branch) and
+// +0xE >= 2 register nothing.
+std::optional<SourceHitProxyRegistration> source_effect128_proxy_80044200(
+    const SourceEffectPool&,size_t slot,const std::array<uint8_t,4>& damage_80097ddc,
+    SourceHitProxyTarget* shared_target) noexcept;
 struct SourceEffectPhase5Batch {
     SourceEffectStatus status=SourceEffectStatus::SourceBackedPartial;
     bool committed=false;

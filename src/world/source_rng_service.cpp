@@ -87,6 +87,8 @@ struct SourceRngAccess {
         if (t.context_.phase != SourceRngUpdatePhase::Class03Callbacks ||
             !((actor.caller_ra == kSourceClass40BossRngCallerRa && actor.slot == kSourceClass40BossRngSlot &&
                actor.work == kSourceClass40BossWork) ||
+              (actor.caller_ra == kSourcePlayerHitRngCallerRa && actor.slot == kSourcePlayerHitRngSlot &&
+               actor.work == kSourcePlayerWork) ||
               ((actor.caller_ra == kSourceClass03RngCallerRa || actor.caller_ra == kSourceClass1FRngCallerRa ||
                 actor.caller_ra == kSourceClass19RngCallerRa) && actor.slot < 16 &&
                actor.work == 0x8009f108u + uint32_t(actor.slot) * 0x3c0u))) {

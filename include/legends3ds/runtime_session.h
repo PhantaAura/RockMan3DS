@@ -1,4 +1,5 @@
 #pragma once
+#include "legends3ds/source_angle.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/bottom_screen.h"
 #include "legends3ds/mml_message.h"
@@ -554,6 +555,19 @@ public:
     BottomScreenLayout bottom_screen_layout() const;
 
     void set_story_flag(uint16_t bit, bool value);
+    // Player hit box 0x8003C36C (radius 0x20 at +0x3E8, target +0x188, word
+    // 0x02000000): registered while +0x110 == 0 and 0x800B55F9 is clear.
+    // CANDIDATE: the original also requires work+0 & work+6 & 1, which the
+    // port does not maintain for the player.
+    bool player_hit_proxy_admitted() const noexcept {
+        return player_.bytes[0x110]==0 && !player_lock_800b55f9_ && player_.bytes[8]==1;
+    }
+    // The bank's write into the player's +0x188 target, read by the next update.
+    void deliver_player_hit_target(uint32_t packet,uint32_t flags,const std::array<int16_t,3>& point,uint16_t word0e) noexcept;
+    // 0x80042208 at the Area 3 boss's defeat (0x800B55F9 = 1).
+    void set_player_lock_800b55f9() noexcept { player_lock_800b55f9_ = true; }
+    bool player_dead() const noexcept { return player_.bytes[8]==2; }
+    void set_actor_angle_steps(const SourceAngleSteps* steps) noexcept { actor_angle_steps_ = steps; }
     // 0x800398F8 tail: store a computed camera shake byte to 0x800A395F.
     void set_camera_shake_800a395f(uint8_t value) { source_gameplay_camera_.shake_800a395f = value; }
     bool story_flag(uint16_t bit) const;
@@ -606,6 +620,16 @@ private:
     bool player_ledge_grab_80040818();
     void update_ledge_motion_8003eb08();
     void release_ledge_8003ee68();
+    // Player damage (USA): hit section 0x8003C96C, handler 0x8004174C,
+    // action choice 0x80041A44, action 11 0x8003E6B0, action 12 0x8003E860.
+    void update_player_hit_8003c96c();
+    void player_hit_8004174c();
+    void player_hit_action_80041a44(uint32_t packet);
+    void update_player_hurt_8003e6b0();
+    void update_player_knockdown_8003e860();
+    SourceRngService* tick_rng_ = nullptr;     // valid during tick()
+    const SourceAngleSteps* actor_angle_steps_ = nullptr;
+    bool player_lock_800b55f9_ = false;
     void reset_player_contact();
     void update_input_compat(const RuntimeInputFrame& input);
     void update_lock_on(const RuntimeInputFrame& input);
