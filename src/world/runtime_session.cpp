@@ -68,6 +68,10 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     // Retail USA boots with compatibility control profile 0 (table at 0x8008A04C).
     l3_pl00_install_control_profile_800425fc(&player_,0);
     player_.bytes[0x08]=1; player_.bytes[0x09]=0; player_.bytes[0x0A]=0;
+    // 0x8003C7E0/0x8003C840: the player init stores +0x175 = 7 (shot enable
+    // bit 0 plus bits 1/2 that the fire input 0x80040B68 requires). Measured 7
+    // in the psxrecomp oracle at first tutorial control.
+    player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
     locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear();

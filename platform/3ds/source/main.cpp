@@ -69,6 +69,7 @@
 #include "native_music.h"
 #include "legends3ds/source_camera.h"
 #include "legends3ds/source_player_buster.h"
+#include "legends3ds/source_player_fire.h"
 #include "mockup_hud.h"
 #include "legends3ds/render/terrain_visibility.h"
 #include "legends3ds/render/psx_gpu.h"
@@ -1610,11 +1611,17 @@ void draw_player_uv(const std::vector<l3::PlayerVisualPrimitive>& local_visuals,
                     const l3::PbdAnimation& animation,
                     const l3::PbdMainBodyTrack& track,
                     const l3::ReferenceTables& refs,
-                    const l3::RuntimeSession& session) {
+                    const l3::RuntimeSession& session,
+                    const std::array<uint16_t, l3::kPbdPackedAngleChannels>* overlay_frame = nullptr) {
     const std::array<uint16_t, l3::kPbdPackedAngleChannels>* frame = nullptr;
     if (retail_animation_requested()) frame = l3::pbd_main_body_track_frame(animation, track);
     const auto& channels = frame ? *frame : fallback_probe_frame(fallback_action, session);
-    const auto bank = l3::decode_pbd_main_pose_bank(channels);
+    auto bank = l3::decode_pbd_main_pose_bank(channels);
+    // 0x800325D4: +0x106 selects overlay parts (the Buster fire pose).
+    const auto& pw = session.compat_player().bytes;
+    const uint16_t selector = uint16_t(pw[0x106] | (pw[0x107] << 8));
+    if (frame && overlay_frame && selector)
+        bank = l3::source_merge_overlay_pose_800325d4(bank, l3::decode_pbd_main_pose_bank(*overlay_frame), selector);
     const auto matrices = l3::build_player_pose_matrices(skeleton, bank);
     // Through the GP0 translator when the frame has the face camera; it poses
     // and projects each shared vertex once, so the posed list is only needed
@@ -4769,6 +4776,17 @@ int main() {
             models[i]=l3::load_l3model(read_binary(data_path((std::string("player/")+model_names[i]).c_str())),true);
         const auto composition=l3::load_l3player_composition(read_binary(data_path("player/player.l3pc")),true);
         const auto animation=l3::load_l3animation(read_binary(data_path("player/main.l3anim")),true);
+        // Left-arm keys/poses for requests 0x60..0x7F (PL00L04S/M with the
+        // Buster loadout); without it the fire pose is held (main pose only).
+        std::optional<l3::PbdAnimation> left_arm_animation;
+        if(FILE* f=std::fopen(data_path("player/left.l3anim").c_str(),"rb")){
+            std::fclose(f);
+            try{left_arm_animation=l3::load_l3animation(read_binary(data_path("player/left.l3anim")),true);}
+            catch(const std::exception& e){boot_log(MML_BOOT_DATA,e.what());}
+        }
+        l3::SourcePlayerAnimationBanks fire_banks;fire_banks.main=&animation;
+        if(left_arm_animation)fire_banks.left_arm_04=&*left_arm_animation;
+        l3::SourceOverlayTrack fire_overlay;
         const auto skeleton=l3::load_l3skeleton(read_binary(data_path("player/main.l3skel")),true);
         const auto source_buster_profile=l3::load_source_buster_profile(
             read_binary(data_path("player/buster.l3bp")),true);
@@ -5459,6 +5477,7 @@ int main() {
             in.held_psx_mask=make_psx_held(held,cp);
             in.pressed_psx_mask=make_psx_held(down,circlePosition{});
             in.fire_pressed=(down&KEY_Y)!=0;
+            in.fire_held=(held&KEY_Y)!=0;
             in.lock_pressed=(down&KEY_X)!=0;
             in.lock_held=(held&KEY_X)!=0;
             in.advance_dialogue=(down&KEY_A)!=0;
@@ -5724,8 +5743,25 @@ int main() {
                 // Y is only the native frontend edge. The original animation
                 // callback which later asserts player+174 bits10/20 remains
                 // untraced, so this admission is CANDIDATE and is logged below.
-                const bool source_buster_fire_pressed=l3::source_buster_fire_admitted(
-                    g_source_actor_proxy,in.fire_pressed,session.player_shot_enabled(),session.player_busy_8004324c());
+                // Buster firing chain (source_player_fire). 0x8003C4EC runs the
+                // lane 0x80042F78 (0x8003CA00) before the action handler, whose
+                // 0x80040B68 call is made after the session's action update
+                // here (CANDIDATE frame placement); 0x8003C418 then steps the
+                // overlay track. The native Y button stands in for the Square
+                // mask at +0x13A (frontend mapping).
+                auto& fire_work=session.source_fire_player_work();
+                const uint16_t fire_pad=(in.fire_held||in.fire_pressed)?
+                    uint16_t(fire_work.bytes[0x13a]|(fire_work.bytes[0x13b]<<8)):uint16_t(0);
+                const int16_t fire_counter=source_buster_player.lanes[1].counter_4fa.value_or(0);
+                if(g_source_actor_proxy){
+                    // Loadout +0x170/+0x171 (0x8001F3C8 copies them on every area entry).
+                    fire_work.bytes[0x170]=uint8_t(source_buster_player.lanes[0].selection_170_or_171);
+                    fire_work.bytes[0x171]=uint8_t(source_buster_player.lanes[1].selection_170_or_171);
+                    if((fire_work.bytes[0x174]&0xc0u)==0x80u)
+                        (void)l3::source_buster_lane_80042f78(fire_work,fire_overlay,fire_banks,fire_pad,
+                            fire_counter,source_buster_profile);
+                }
+                bool source_buster_fire_pressed=false;
                 {
                     // E0/06 type 6 reads live class-0x20 +14/+18.
                     std::vector<std::array<int16_t,2>> live;
@@ -5746,6 +5782,19 @@ int main() {
                 }
                 const bool dialogue_was_active=session.dialogue().active;
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                if(g_source_actor_proxy){
+                    const uint8_t shot_before=fire_work.bytes[0x174]&0x30u;
+                    if(const auto context=l3::source_fire_context_for_action(fire_work.bytes[0x09]))
+                        (void)l3::source_fire_input_80040b68(fire_work,*context,fire_pad,fire_counter,source_buster_profile);
+                    const bool overlay_ok=l3::source_overlay_update_8003c418(fire_work,fire_overlay,fire_banks);
+                    // 0x80034EB8 reads +174 bit 0x20 raised by the lane this frame.
+                    source_buster_fire_pressed=(shot_before&0x20u)!=0;
+                    if(source_buster_fire_pressed||((fire_work.bytes[0x174]&0xc0u)&&session.frame_counter()%30u==0u))
+                        hardware_test_trace("# source_buster_fire,frame=%lu,174=%02x,178=%u,104=%02x,100=%u,106=%u,overlay=%u,shot=%u,owner=80040B68+80042F78+800323FC",
+                            (unsigned long)session.frame_counter(),unsigned(fire_work.bytes[0x174]),unsigned(fire_work.bytes[0x178]),
+                            unsigned(fire_work.bytes[0x104]),unsigned(fire_work.bytes[0x100]),unsigned(fire_work.bytes[0x106]),
+                            unsigned(overlay_ok),unsigned(source_buster_fire_pressed));
+                }
                 // The Area 3 boss is normal gameplay content, not a diagnostic
                 // actor-state gate. Advance its recovered intro and first
                 // bounded action-6 presentation cycle on every resident fixed
@@ -6452,10 +6501,18 @@ int main() {
                             pose_input.skeleton=&skeleton;pose_input.reference=&refs;
                             pose_input.scratch_shift_1f800074=0;
                             const auto& player_work=session.compat_player().bytes;
-                            pose_input.limb_pose_selector_106=player_work[0x106];
+                            // 0x800325D4 takes parts from the overlay bank by +0x106; the
+                            // merged bank is passed with selector 0 (same parts).
+                            pose_input.limb_pose_selector_106=0;
                             const auto* pose_frame=l3::pbd_main_body_track_frame(animation,player_track);
                             std::optional<l3::PbdMainPoseBank> pose_bank;
-                            if(pose_frame){pose_bank=l3::decode_pbd_main_pose_bank(*pose_frame);pose_input.primary_pose=&*pose_bank;}
+                            if(pose_frame){
+                                pose_bank=l3::decode_pbd_main_pose_bank(*pose_frame);
+                                const uint16_t selector=uint16_t(player_work[0x106]|(player_work[0x107]<<8));
+                                if(const auto* overlay=selector?l3::source_overlay_frame(fire_work,fire_overlay,fire_banks):nullptr)
+                                    pose_bank=l3::source_merge_overlay_pose_800325d4(*pose_bank,l3::decode_pbd_main_pose_bank(*overlay),selector);
+                                pose_input.primary_pose=&*pose_bank;
+                            }
                             const auto player_position=session.player_position();
                             if(player_position.x>=INT16_MIN&&player_position.x<=INT16_MAX&&
                                player_position.y>=INT16_MIN&&player_position.y<=INT16_MAX&&
@@ -6543,7 +6600,7 @@ int main() {
                                 // untraced animation callback; the Y edge stands in.
                                 // 0x80034EB8: +174 bit 0x20 fires lane +171 (stack10 0),
                                 // the measured Square shot; bit 0x10 is the +170 lane.
-                                select.fire_flags_174=uint8_t(source_buster_fire_pressed?0x20u:0x00u);
+                                select.fire_flags_174=uint8_t(source_buster_fire_pressed?0x20u:0x00u); // lane 0x80042F78 bit
                                 select.player_point_14=*pose_input.player_position_14;
                                 select.target_profile_8008994c=*actor_metadata.target;
                                 select.camera_1f800008=source_camera;
@@ -6931,7 +6988,8 @@ int main() {
             const u64 player_start=svcGetSystemTick();
             if(draw_legacy_player) {
                 if (use_uv_renderer())
-                    draw_player_uv(local_visuals,player_material_words,player_pose_storage,skeleton,fallback_action,animation,player_track,refs,session);
+                    draw_player_uv(local_visuals,player_material_words,player_pose_storage,skeleton,fallback_action,animation,player_track,refs,session,
+                        l3::source_overlay_frame(session.compat_player(),fire_overlay,fire_banks));
                 else draw_player_0143(local_visuals,skeleton,fallback_action,refs,session);
             }
             if(session.frame_counter()%60u==0u&&scene_actor40)
