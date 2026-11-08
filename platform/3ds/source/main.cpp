@@ -4918,6 +4918,18 @@ int main() {
         if(actor_metadata.event_phase2)session.bind_source_event_phase2_package(*actor_metadata.event_phase2);
         if(actor_metadata.event_command)session.bind_source_event_command_package(*actor_metadata.event_command);
         if(actor_metadata.fade_startup)session.bind_source_fade_profile(*actor_metadata.fade_startup);
+        // ST00 post-win events 3 and 2 (tools/cook_cutscene.py via the tutorial pack).
+        for(const unsigned ev:{3u,2u}) {
+            char name[32];std::snprintf(name,sizeof(name),"st00_event%u.l3cs",ev);
+            bool bound=false;
+            try {
+                l3::SourceScenePackage package;l3::SourcePostWinProfile profile;
+                bound=l3::load_source_scene_package(read_binary(data_path(name),l3::kSourceScenePackageMaxBytes),package)&&
+                      l3::bind_source_post_win_profile(package,uint8_t(ev),profile)&&
+                      session.bind_source_post_win_profile(std::move(profile));
+            } catch(const std::exception&) {}
+            hardware_test_trace("# source_post_win_profile,event=%u,bound=%u",ev,unsigned(bound));
+        }
         if(actor_metadata.event_phase5) {
             session.bind_source_event_phase5_profile(*actor_metadata.event_phase5);
             const auto admitted=session.bind_source_event_phase5_resources();
@@ -5320,11 +5332,15 @@ int main() {
                     unsigned(session.source_event_command_result().status));
             // Player door event 0x80050C2C case 3: event 0 runs in tick() and
             // offers the load at substate 6 (356C = 1); this commit is the loader.
-            const auto door_handoff=source_area_transition?std::optional<l3::SourceEventHandoffTransitionIntent>{}
+            // ST00 post-win event 3 (0x80102058) requests area 4 the same way
+            // (356C = 2); it shares the door's commit plumbing below.
+            const auto door_only=source_area_transition?std::optional<l3::SourceEventHandoffTransitionIntent>{}
                 : session.source_door_transition();
+            const bool post_win=!source_area_transition&&!door_only&&session.source_post_win_transition().has_value();
+            const auto door_handoff=post_win?session.source_post_win_transition():door_only;
             if(!door_handoff)failed_door_generation.reset();
             const bool door_transition=door_handoff&&failed_door_generation!=door_handoff->source_generation&&
-                session.can_commit_source_door_transition();
+                (post_win?session.can_commit_source_post_win_transition():session.can_commit_source_door_transition());
             if(source_area_transition || door_transition || ((released_keys&KEY_SELECT) && !select_ui_used)) {
                 const u64 transition_start=svcGetSystemTick();
                 hardware_test_area_event(source_area_transition?"source_transition_before":
@@ -5368,7 +5384,7 @@ int main() {
                         // RuntimeSession copies fallible work before changing
                         // collision, actor-table identity or pending events.
                         if (!(source_area_transition?session.commit_source_area_handoff():
-                              door_transition?session.commit_source_door_transition():
+                              door_transition?(post_win?session.commit_source_post_win_transition():session.commit_source_door_transition()):
                               session.transition_to_area(next_area,next_spawn,next_yaw)))
                             throw std::runtime_error("selected area transition rejected");
                         // The door arrival is event 0's offset from the request.
@@ -5426,6 +5442,12 @@ int main() {
                     actor_revisions={session.conditional_spawn_revision(),
                         session.conditional_spawn_revision(),std::nullopt};
                     if(actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
+                    // The fade work and the 0x1F800001 budget are globals the area
+                    // change does not touch; the native owner drops them with the
+                    // area, so rebind the profile and the fresh ST00 budget 2
+                    // (CANDIDATE: no other writer of 0x1F800001 is known).
+                    if(actor_metadata.fade_startup&&session.bind_source_fade_profile(*actor_metadata.fade_startup))
+                        session.bind_source_fade_scheduler_budget(2);
                     g_current_area=next_area;spawn=next_spawn;inspection_yaw=next_yaw;
                     // 0x80019C20 fades the music when the destination's differs;
                     // 0x80019D18 then queues it (the same request keeps playing).
@@ -5761,6 +5783,30 @@ int main() {
                 }
                 const bool dialogue_was_active=session.dialogue().active;
                 session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                {
+                    // ST00 post-win events 3/2. Their XA voice streams (0x20000001/2)
+                    // are not cooked yet: the CD request is acknowledged so
+                    // 0x8001D878 passes, and the stream is reported missing.
+                    if(const auto cd=session.pending_source_post_win_cd()){
+                        session.acknowledge_source_post_win_cd(*cd);
+                        hardware_test_trace("# source_post_win_cd,frame=%lu,request=%08lx,xa=not_installed",
+                            (unsigned long)session.frame_counter(),(unsigned long)*cd);
+                    }
+                    static uint8_t last_event=0,last_phase=0xff;static size_t last_record=SIZE_MAX;
+                    const auto& pw=session.source_post_win_event();const auto& ps=session.source_post_win_step();
+                    if(pw.active&&(pw.event!=last_event||pw.phase!=last_phase||pw.record!=last_record||ps.fade_type||
+                        ps.constructed||session.frame_counter()%120u==0u))
+                        hardware_test_trace("# source_post_win,frame=%lu,event=%u,phase=%u,record=%lu,c10=%lu,e8=%u,e9=%u,callback=%08lx,fade=%u,constructed=%u,spawns=%u,camera_pc=%lu,ticks=%lu",
+                            (unsigned long)session.frame_counter(),unsigned(pw.event),unsigned(pw.phase),(unsigned long)pw.record,
+                            (unsigned long)pw.counters.c10,unsigned(pw.counters.e8),unsigned(pw.counters.e9),(unsigned long)ps.callback,
+                            unsigned(ps.fade_type),unsigned(ps.constructed),unsigned(ps.spawn_count),(unsigned long)pw.camera.pc,(unsigned long)pw.ticks);
+                    if(ps.handoff)
+                        hardware_test_trace("# source_post_win_handoff,frame=%lu,event=%u,stage=%u,area=%u,cleared_flag=%03x,ported_load=%u",
+                            (unsigned long)session.frame_counter(),unsigned(pw.event),unsigned(ps.handoff->stage),unsigned(ps.handoff->area),
+                            unsigned(ps.handoff->cleared_flag),unsigned(ps.handoff->stage==0));
+                    if(pw.active){last_event=pw.event;last_phase=pw.phase;last_record=pw.record;}
+                    else {last_phase=0xff;last_record=SIZE_MAX;}
+                }
                 // The Area 3 boss is normal gameplay content, not a diagnostic
                 // actor-state gate: run its callback 0x801076E8 every resident
                 // fixed update (rand() at RA 0x80107774, detection +0x504,
