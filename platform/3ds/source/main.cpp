@@ -1895,6 +1895,54 @@ EffectDrawStats draw_source_effects_uv(const l3::ChildRuntime& children,const l3
     }
     return stats;
 }
+// Class-0x10 shots (pool 0x800BFB20), draw pass 0x80029A38: a record with
+// +0 & +6 & 2 renders through 0x800898D0[+0 & 0x1C] at +0x88. The 0x81 Buster
+// shot sets flags 0x2A: kind 0x08 = sprite 0x80029C18 with rotation (0x20,
+// angle +0x9A & 63 over the 64-step rcos/rsin tables built at 0x80012028) and
+// the flat colour word (0x08, no depth cue). Half size +0x98, UV +0x96/+0x97
+// across 32 texels, TPAGE/CLUT +0x88, colour +0x8C, centre +0x90.
+size_t draw_source_buster_sprites_uv(const l3::ChildRuntime& children,const l3::ReferenceTables& refs){
+    if(!use_uv_renderer())return 0;
+    configure_immediate_attributes_uv();
+    static l3::SceneE0MeshResource sprite;
+    if(sprite.part.vertices.empty()){
+        sprite.part.vertices={{-1,-1,0,0},{1,-1,0,0},{-1,1,0,0},{1,1,0,0}};
+        sprite.part.quads.resize(1);sprite.part.quads[0].index={{0,1,2,3}};
+    }
+    const float sign=g_frame_view_mirrored?-1.f:1.f;
+    const std::array<float,3> right{{sign*g_frame_view.r[0].x,-sign*g_frame_view.r[0].y,sign*g_frame_view.r[0].z}};
+    const std::array<float,3> down{{-g_frame_view.r[1].x,g_frame_view.r[1].y,-g_frame_view.r[1].z}};
+    const auto& pool=children.buster_pool();
+    const auto u16=[](const l3::SourceBusterWork& w,size_t o){return uint16_t(w[o]|(w[o+1]<<8));};
+    size_t drawn=0,passes=0;bool semi=false;
+    for(size_t slot=0;slot<l3::source_buster_capacity;++slot){
+        if(!(pool.allocated_800989f0&(0x80000000u>>slot)))continue;
+        const auto& w=pool.slots[slot];
+        if(!(int8_t(w[0])&w[6]&2)||(w[0]&0x1cu)!=0x08u)continue;
+        const uint32_t material=uint32_t(u16(w,0x88))|(uint32_t(u16(w,0x8a))<<16);
+        if(!material)continue;
+        sprite.material_word=material;
+        auto& quad=sprite.part.quads[0];const uint8_t u=w[0x96],v=w[0x97];
+        quad.uv={{u,v,uint8_t(u+31),v,u,uint8_t(v+31),uint8_t(u+31),uint8_t(v+31)}};
+        const float h=float(u16(w,0x98));
+        float c=1.f,s=0.f;
+        if(w[0]&0x20u){
+            const int32_t angle=int32_t(u16(w,0x9a)&63u)*64;
+            c=float(l3::reference_rcos_8007a12c(refs,angle))/4096.f;
+            s=float(l3::reference_rsin_8007a060(refs,angle))/4096.f;
+        }
+        const std::array<float,3> centre{{float(int16_t(u16(w,0x90))),float(int16_t(u16(w,0x92))),float(int16_t(u16(w,0x94)))}};
+        const auto transform=[&](const auto& p)->std::array<float,3>{
+            const float x=float(p.x)*c-float(p.y)*s,y=float(p.x)*s+float(p.y)*c;
+            std::array<float,3> out{};
+            for(size_t i=0;i<3;++i)out[i]=centre[i]+h*(x*right[i]+y*down[i]);
+            return out;
+        };
+        const uint32_t colour=uint32_t(u16(w,0x8c))|(uint32_t(u16(w,0x8e))<<16);
+        if(draw_e0_mesh_planned(sprite,g_actor_materials,actor_textures_requested(),colour,transform,passes,semi))++drawn;
+    }
+    return drawn;
+}
 // The scene view of the current frame (0x8001E550), when bound.
 static std::optional<l3::SourceSceneViewFrame> g_scene_view_frame;
 size_t draw_source_scene_e0_uv(const l3::RuntimeSession& session,const l3::SceneE0Resources& resources) {
@@ -2158,6 +2206,8 @@ size_t draw_source_busters_uv(const l3::ChildRuntime& children) {
         if(!(pool.allocated_800989f0&(0x80000000u>>slot)))continue;
         const auto& w=pool.slots[slot];
         if(!(int8_t(w[0])&w[6]&1)||(w[2]!=0x80&&w[2]!=0x81)||w[8]!=1)continue;
+        // 0x81 shots with a sprite block are drawn by draw_source_buster_sprites_uv.
+        if(w[2]==0x81&&(w[0x88]|w[0x89]|w[0x8a]|w[0x8b]))continue;
         if(!drawn){configure_texenv_uv(false);configure_immediate_attributes_uv();++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);}
         const auto& segment=segments[slot];
         const float ax=segment.second_2c[0],ay=segment.second_2c[1],az=segment.second_2c[2];
@@ -7056,6 +7106,9 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)drawn);
                 (void)draw_source_reward_pickups_uv(g_children);
                 const auto fx=draw_source_effects_uv(g_children,session.active_area().ebd,session.map_area_index());
+                if(const auto shots=draw_source_buster_sprites_uv(g_children,refs);shots&&session.frame_counter()%10u==0u)
+                    hardware_test_trace("# source_buster_sprite,frame=%lu,drawn=%lu,renderer=80029C18,flags=2A",
+                        (unsigned long)session.frame_counter(),(unsigned long)shots);
                 if((fx.models||fx.sprites||fx.held)&&session.frame_counter()%10u==0u)
                     hardware_test_trace("# effect_draw,frame=%lu,models=%lu,sprites=%lu,held=%lu,passes=%lu,meshes=%lu,tier=NEAR_CANDIDATE",
                         (unsigned long)session.frame_counter(),(unsigned long)fx.models,(unsigned long)fx.sprites,
