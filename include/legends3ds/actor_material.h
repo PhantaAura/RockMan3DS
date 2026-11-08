@@ -23,6 +23,9 @@ std::vector<uint32_t> collect_admitted_e0_object_material_words(const EbdDirecto
 // variants and tiers, the 0x8002F9C4 rows of the subtype-0x80 burst) and the
 // subtype-0x83 puff's fixed TPAGE/CLUT word (0x80044C94 stores 0x3D48002E).
 constexpr uint32_t kSourceEffect83MaterialWord = 0x3D48002Eu;
+// The Mega Buster shot sprite (class 0x10 subtype 0x81, 0x800437F8 +88):
+// 0x80097DAC[+4FC]; level 0 is the tutorial loadout (+4FC measured 0).
+constexpr uint32_t kSourceBusterShot81MaterialWordLevel0 = 0x3EB4002Eu;
 std::vector<uint32_t> collect_admitted_effect_material_words(const EbdDirectory& ebd);
 MaterialCache load_actor_material_cache(const std::vector<uint8_t>& bytes,
                                        uint64_t decoded_limit = kActorMaterialDecodedLimit);

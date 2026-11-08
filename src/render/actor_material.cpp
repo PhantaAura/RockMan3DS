@@ -54,7 +54,7 @@ std::vector<uint32_t> collect_admitted_e0_object_material_words(const EbdDirecto
     return {words.begin(),words.end()};
 }
 std::vector<uint32_t> collect_admitted_effect_material_words(const EbdDirectory& ebd) {
-    std::set<uint32_t> words{kSourceEffect83MaterialWord};
+    std::set<uint32_t> words{kSourceEffect83MaterialWord,kSourceBusterShot81MaterialWordLevel0};
     for(const auto row:find_ebd_entries(ebd,0x80,0x80))
         for(const auto tier:{SceneE0MeshTier::Near,SceneE0MeshTier::Middle,SceneE0MeshTier::Far})
             words.insert(decode_scene_e0_mesh(ebd,row,tier).material_word);
