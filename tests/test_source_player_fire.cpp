@@ -77,6 +77,18 @@ int main(){
         assert(t.request==0x60&&t.record==1&&g.bytes[0x100]==1);
     }
 
+    // 0x8005C8A4 refill: weapon 1 level 0 full count, every 17 frames.
+    {
+        SourceBusterProfile r=profile;r.levels[1][0].words[1]=3;
+        L3PlayerCompatWork g{};g.bytes[0x171]=1;
+        int16_t counter=0;uint8_t timer=0;int refills=0,first=-1;
+        for(int f=0;f<40;++f)if(source_buster_refill_8005c8a4(g,counter,timer,r)){++refills;if(first<0)first=f;}
+        assert(first==16&&refills==2&&counter==3);
+        g.bytes[0x171]=0;counter=0;assert(!source_buster_refill_8005c8a4(g,counter,timer,r)&&counter==0);
+        g.bytes[0x171]=1;r.levels[1][0].words[1]=1;counter=0;timer=0;
+        for(int f=0;f<40;++f)assert(!source_buster_refill_8005c8a4(g,counter,timer,r));
+    }
+
     // 0x800325D4 selector 2: torso parts 0/1 and left arm 5..7 from the overlay.
     PbdMainPoseBank a,b;
     for(size_t p=0;p<kPbdMainPosePartCount;++p){a.part_rotation[p]={1,1,1};b.part_rotation[p]={2,2,2};}

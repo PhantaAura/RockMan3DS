@@ -194,6 +194,20 @@ bool source_buster_lane_80042f78(L3PlayerCompatWork& w,SourceOverlayTrack& overl
     }
 }
 
+bool source_buster_refill_8005c8a4(const L3PlayerCompatWork& w,int16_t& counter,uint8_t& timer,
+                                   const SourceBusterProfile& profile) noexcept {
+    if(w.bytes[0x171]!=1)return false;
+    const int8_t level=int8_t(w.bytes[0x4f5+1*8]);
+    if(level<0||size_t(level)>=kSourceBusterLevelCount)return false;
+    const int16_t full=profile.levels[1][size_t(level)].words[1];
+    const uint8_t limit=level==7?0:17;
+    if(counter!=0){if(full<=0)return false;}
+    else if(full<2)return false;
+    timer=uint8_t(timer+1u);
+    if(timer<limit)return false;
+    timer=0;counter=full;return true;
+}
+
 PbdMainPoseBank source_merge_overlay_pose_800325d4(const PbdMainPoseBank& main,
                                                    const PbdMainPoseBank& overlay,uint16_t sel) noexcept {
     PbdMainPoseBank out=main;
