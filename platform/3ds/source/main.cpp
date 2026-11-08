@@ -5810,6 +5810,13 @@ int main() {
                     if((fire_work.bytes[0x174]&0xc0u)==0x80u)
                         (void)l3::source_buster_lane_80042f78(fire_work,fire_overlay,fire_banks,fire_pad,
                             fire_counter,source_buster_profile);
+                    // 0x8005C8A4 refills the Buster counter (CANDIDATE: once per frame).
+                    if(source_buster_player.lanes[1].counter_4fa){
+                        int16_t counter=*source_buster_player.lanes[1].counter_4fa;
+                        static uint8_t refill_timer_0f=0;
+                        if(l3::source_buster_refill_8005c8a4(fire_work,counter,refill_timer_0f,source_buster_profile))
+                            source_buster_player.lanes[1].counter_4fa=counter;
+                    }
                 }
                 bool source_buster_fire_pressed=false;
                 {

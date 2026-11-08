@@ -71,6 +71,15 @@ bool source_buster_lane_80042f78(L3PlayerCompatWork& work, SourceOverlayTrack& o
                                  const SourcePlayerAnimationBanks& banks, uint16_t pad_11c,
                                  int16_t counter_171, const SourceBusterProfile& profile) noexcept;
 
+// Buster counter refill, object callback 0x8005C8A4 (dispatch table
+// 0x8008D7C0; the spawning object is untraced, so running it every gameplay
+// frame is CANDIDATE). Only while +0x171 == 1: full = weapon 1 level row
+// (+0x4FD) halfword +2 (0x80037604); with counter != 0 and full > 0, or
+// counter == 0 and full >= 2, timer_0f counts to 17 (0 at level 7) and then
+// refills counter_171 to full. Returns true when it refilled.
+bool source_buster_refill_8005c8a4(const L3PlayerCompatWork& work, int16_t& counter_171,
+                                   uint8_t& timer_0f, const SourceBusterProfile& profile) noexcept;
+
 // 0x800325D4 part selection: +0x106 = 1 takes parts 0..4, 2 takes parts 0, 1,
 // 5..7 and 3 takes parts 0..7 from the overlay bank; the root stays main.
 PbdMainPoseBank source_merge_overlay_pose_800325d4(const PbdMainPoseBank& main,
