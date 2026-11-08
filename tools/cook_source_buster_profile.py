@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cook owner-local Buster selection, weapon-level and shot tables into neutral L3BP/2 data."""
+"""Cook owner-local Buster selection, weapon-level and shot tables into neutral L3BP/3 data."""
 import argparse,hashlib,struct,zlib
 from pathlib import Path
 
@@ -11,6 +11,7 @@ LEVELS=8
 SIZE=0x80097DCC   # shot radius by player +0x4FC (0x80043E78 +98)
 SPEED=0x80097DD4  # shot speed by player +0x4FE (0x800437F8)
 IMPACT=0x8008A240 # impact effect 0x82 step timers (0x80044BA0)
+MATERIAL=0x80097DAC # shot sprite TPAGE/CLUT by player +0x4FC (0x800437F8 +88)
 
 def cook(image:bytes)->bytes:
     base=struct.unpack_from('<I',image,24)[0]
@@ -33,8 +34,14 @@ def cook(image:bytes)->bytes:
     payload+=image[offset(SIZE,LEVELS):offset(SIZE,LEVELS)+LEVELS]
     payload+=image[offset(SPEED,LEVELS):offset(SPEED,LEVELS)+LEVELS]
     payload+=image[offset(IMPACT,8):offset(IMPACT,8)+8]
+    # L3BP/3: row bytes 0..4 per selection (0x80042F78 fire/rapid/end frames,
+    # rapid flag; 0x80040B68 byte 4) and the eight shot material words.
+    for selection in range(COUNT):
+        row=offset(ROWS+selection*12,12)
+        payload+=image[row:row+5]
+    payload+=image[offset(MATERIAL,32):offset(MATERIAL,32)+32]
     header=bytearray(32);header[:4]=b'L3BP'
-    struct.pack_into('<HHIIII',header,4,2,32,32+len(payload),COUNT,len(payload),zlib.crc32(payload)&0xffffffff)
+    struct.pack_into('<HHIIII',header,4,3,32,32+len(payload),COUNT,len(payload),zlib.crc32(payload)&0xffffffff)
     return bytes(header+payload)
 
 def main():
@@ -44,6 +51,6 @@ def main():
     output=cook(image)
     if args.out.exists():raise FileExistsError('refusing to overwrite cooked Buster profile')
     args.out.parent.mkdir(parents=True,exist_ok=True);args.out.write_bytes(output)
-    print('schema=L3BP/2 selections=16 bytes=%d source_rows=%08x source_pointers=%08x'%(len(output),ROWS,POINTERS))
+    print('schema=L3BP/3 selections=16 bytes=%d source_rows=%08x source_pointers=%08x'%(len(output),ROWS,POINTERS))
 
 if __name__=='__main__':main()

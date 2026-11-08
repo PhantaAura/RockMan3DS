@@ -9,10 +9,13 @@ std::uint32_t read32(const std::uint8_t* p) noexcept {return std::uint32_t(read1
 }
 SourceBusterProfile load_source_buster_profile(const std::vector<std::uint8_t>& bytes,bool verify_crc){
     constexpr std::size_t rows=kSourceBusterSelectionCount*4,levels=kSourceBusterSelectionCount*kSourceBusterLevelCount*8;
-    constexpr std::size_t header=32,payload=rows+levels+2*kSourceBusterLevelCount+8,file=header+payload;
-    if(bytes.size()!=file||bytes[0]!='L'||bytes[1]!='3'||bytes[2]!='B'||bytes[3]!='P')
+    constexpr std::size_t header=32,payload_v2=rows+levels+2*kSourceBusterLevelCount+8;
+    constexpr std::size_t payload_v3=payload_v2+kSourceBusterSelectionCount*5+kSourceBusterLevelCount*4;
+    if(bytes.size()<8||bytes[0]!='L'||bytes[1]!='3'||bytes[2]!='B'||bytes[3]!='P')
         throw std::runtime_error("not L3BP");
-    if(read16(bytes.data()+4)!=kSourceBusterProfileVersion||read16(bytes.data()+6)!=header||
+    const auto version=read16(bytes.data()+4);
+    const std::size_t payload=version==2?payload_v2:version==3?payload_v3:0,file=header+payload;
+    if(!payload||bytes.size()!=file||read16(bytes.data()+6)!=header||
        read32(bytes.data()+8)!=file||read32(bytes.data()+12)!=kSourceBusterSelectionCount||
        read32(bytes.data()+16)!=payload)throw std::runtime_error("unsupported L3BP");
     for(std::size_t i=24;i<header;++i)if(bytes[i])throw std::runtime_error("L3BP reserved header nonzero");
@@ -31,6 +34,11 @@ SourceBusterProfile load_source_buster_profile(const std::vector<std::uint8_t>& 
     for(auto& v:out.shot_radius_80097dcc)v=*level++;
     for(auto& v:out.shot_speed_80097dd4)v=*level++;
     for(auto& v:out.impact82_timers_8008a240)v=*level++;
+    if(version==3){
+        for(auto& row:out.fire_rows_80089a84)for(auto& b:row.bytes)b=*level++;
+        for(auto& w:out.shot_material_80097dac){w=read32(level);level+=4;}
+        out.has_fire_rows=true;
+    }
     return out;
 }
 void initialize_source_buster_fresh_lanes_80037534(
@@ -59,6 +67,7 @@ std::optional<SourceBusterShot81Stats> source_buster_shot81_stats(const SourceBu
     out.range_80037634=profile.levels[1][std::size_t(level_4fe)].words[2];
     out.radius_98=profile.shot_radius_80097dcc[std::size_t(level_4fc)];
     out.speed=profile.shot_speed_80097dd4[std::size_t(level_4fe)];
+    if(profile.has_fire_rows)out.material_88=profile.shot_material_80097dac[std::size_t(level_4fc)];
     return out;
 }
 } // namespace l3

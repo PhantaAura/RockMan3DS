@@ -240,6 +240,14 @@ SourceBusterBatch ChildRuntime::tick_source_busters_80017154(
                 write32(next,0xa8,uint32_t(uint16_t(unit[2])));
                 for(size_t i=0x4c;i<0x52;++i)next[i]=0;
                 raw_from_fixed();previous_from_current();
+                // 0x80043920..0x800439C8: the 0x80029C18 sprite block. Flags
+                // 0x2A pick renderer kind 0x08 (sprite) with rotation +9A and
+                // the flat colour word 0x2E808080 (no depth cue).
+                if(stats.material_88){
+                    write32(next,0x88,stats.material_88);write32(next,0x8c,0x2e808080u);
+                    for(size_t i=0;i<3;++i)write16(next,0x90+i*2,read16(next,0x14+i*2));
+                    next[0x96]=192;next[0x97]=96;
+                }
                 next[0x7c]=0;next[0x7d]=0;next[0x0b]=0;
                 write16(next,0x98,stats.radius_98);
                 next[9]=0;++next[8];
@@ -314,6 +322,7 @@ SourceBusterBatch ChildRuntime::tick_source_busters_80017154(
                         write32(next,0x1c+i*4,read32(next,0x1c+i*4)+uint32_t(v*0x100));
                     }
                     raw_from_fixed();
+                    for(size_t i=0;i<3;++i)write16(next,0x90+i*2,read16(next,0x14+i*2)); // 0x80043D84..A4
                     write16(next,0x9a,uint16_t(read16(next,0x9a)+5u));
                     const auto input=registration();
                     if(source_hit_proxy_check_register_composite_8003430c(proxies_,input).status!=SourceHitProxyStatus::SourceBackedPartial){

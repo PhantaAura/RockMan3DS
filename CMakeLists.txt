@@ -140,6 +140,7 @@ add_library(legends3ds_core STATIC
     src/input/classic_input.c
     src/player/classic_motion.c
     src/player/player_runtime.c
+    src/player/source_player_fire.cpp
     src/player/player_collision.c
     src/player/player_contact_runtime.cpp
     src/player/reference_tables.cpp
@@ -862,6 +863,10 @@ add_executable(test_source_buster_profile tests/test_source_buster_profile.cpp)
 target_link_libraries(test_source_buster_profile PRIVATE legends3ds_core)
 target_compile_options(test_source_buster_profile PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_buster_profile COMMAND test_source_buster_profile)
+add_executable(test_source_player_fire tests/test_source_player_fire.cpp)
+target_link_libraries(test_source_player_fire PRIVATE legends3ds_core)
+target_compile_options(test_source_player_fire PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_player_fire COMMAND test_source_player_fire)
 add_executable(test_player_fire_state tests/test_player_fire_state.cpp)
 target_link_libraries(test_player_fire_state PRIVATE legends3ds_core)
 target_compile_options(test_player_fire_state PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
