@@ -61,7 +61,7 @@ struct SourceEventAreaPrefixResult {
     bool committed = false;
     std::optional<uint32_t> store_8009888c;
 };
-// Only sourceST00 area0/1/2 branch80100460..801004F0. Original geometry,
+// Only source ST00 areas 0..4, branch 0x80100460..0x801004F0 of 0x8010038C. Original geometry,
 // actor/camera/audio initialization outside this prefix is not acknowledged.
 // Player mirror is explicitly supplied with known fields by its owning system.
 SourceEventAreaPrefixResult apply_source_st00_area_event_prefix(
