@@ -43,6 +43,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_bg_layers.cpp
     src/flow/source_scene_runtime.cpp
     src/flow/source_attract_event10.cpp
+    src/flow/source_st00_post_win.cpp
     src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp
     src/flow/source_event_random_tape.cpp
@@ -1228,6 +1229,10 @@ add_executable(test_source_attract_event10 tests/test_source_attract_event10.cpp
 target_link_libraries(test_source_attract_event10 PRIVATE legends3ds_core)
 target_compile_options(test_source_attract_event10 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_attract_event10 COMMAND test_source_attract_event10)
+add_executable(test_source_st00_post_win tests/test_source_st00_post_win.cpp)
+target_link_libraries(test_source_st00_post_win PRIVATE legends3ds_core)
+target_compile_options(test_source_st00_post_win PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_st00_post_win COMMAND test_source_st00_post_win)
 add_executable(test_source_scene_face tests/test_source_scene_face.cpp)
 target_link_libraries(test_source_scene_face PRIVATE legends3ds_core)
 target_compile_options(test_source_scene_face PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
