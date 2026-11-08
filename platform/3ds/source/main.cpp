@@ -4913,7 +4913,9 @@ int main() {
         if (!handoff_spawn && terrain_xyz_active()) { const auto entry=inspection_entry(map,render,g_current_area); spawn={entry.origin.x,entry.origin.y,entry.origin.z}; inspection_yaw=entry.yaw; }
         load_diagnostic_spawn(map,render,g_current_area,spawn,inspection_yaw);
         if (g_current_area) session.transition_to_area(g_current_area,spawn,inspection_yaw);
-        session.reset_player(spawn,inspection_yaw,100,100);
+        // New Game life: PSXRecomp reads +0x6E = +0xB0 = 80 at the Area 1
+        // hand-off and on reaching Area 3 (savestates 7, 8 and 2).
+        session.reset_player(spawn,inspection_yaw,80,80);
         auto player_track=l3::pbd_main_body_track_begin(animation,
             session.compat_player().bytes[0xAC], session.compat_player().bytes[0xA4]);
 

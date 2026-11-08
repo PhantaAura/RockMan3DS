@@ -281,3 +281,14 @@ Death: get-up with HP < 0 sets player state 2 (`0x80041AB0`, table
 `0x80016D0C`) until Start or the jingle ends, fade 10, clear flag 0x1FE,
 then the front end `0x80012F78(0x80013420)` (title; its intro is ST01 event
 71, as the oracle shows). Not ported yet: the port holds player state 2.
+
+### Repeated hits in the tutorial (2026-11-07)
+
+Azahar showed hits of 8 on two or three consecutive updates in the Area 1
+corridor. One Reaverbot cannot do that in the port or the original: the pair
+consumer gives each side the other's high flag byte, so an attacker that
+hits the player receives 0x02000000 and subtypes 3 and 0x19 zero their
+attack on their next update (`class20_03_action3.cpp`, `class20_19.cpp`).
+The bursts are the corridor pop-outs, which spring up and lunge together.
+The port also started Mega Man at 100/100; the original has 80/80 at the
+Area 1 hand-off (PSXRecomp savestates 7/8) and on reaching Area 3 (slot 2).
