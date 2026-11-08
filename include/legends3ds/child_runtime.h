@@ -151,6 +151,8 @@ enum class SourceBusterCallbackStatus : uint8_t {
 struct SourceBusterShot81Stats {
     int16_t damage_800375d4=0,range_80037634=0;
     uint8_t radius_98=0,speed=0;
+    // 0x80097DAC[+4FC] (L3BP/3); 0 = not cooked, the sprite block stays unset.
+    uint32_t material_88=0;
 };
 struct SourceBusterFrameContext {
     std::optional<std::array<uint32_t,2>> owner_position_14;

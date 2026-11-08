@@ -43,5 +43,20 @@ int main(){
     assert(!l3::source_buster_shot81_stats(profile,8,0)&&!l3::source_buster_shot81_stats(profile,0,-1));
     constexpr std::size_t corruptions[]={0,4,6,8,12,16,20,24,32,33,kFile-1};
     for(const std::size_t at:corruptions){auto bad=encoded;bad[at]^=1;assert(rejected(bad));}
-    std::cout<<"PASS L3BP/2 profile -> Buster lanes, weapon rows, shot 0x81 stats\n";
+    assert(!profile.has_fire_rows);
+    // L3BP/3 appends row bytes 0..4 per selection and the 8 material words.
+    {
+        auto v3=encoded;v3.resize(kFile+16*5+8*4);put16(v3,4,3);
+        const std::size_t extra=kFile;
+        for(std::size_t i=0;i<16;++i)for(std::size_t k=0;k<5;++k)v3[extra+i*5+k]=std::uint8_t(i*10+k);
+        for(std::size_t l=0;l<8;++l)put32(v3,extra+80+l*4,0x3E00002Eu+std::uint32_t(l<<16));
+        put32(v3,8,std::uint32_t(v3.size()));put32(v3,16,std::uint32_t(v3.size()-32));
+        put32(v3,20,l3::crc32(v3.data()+32,v3.size()-32));
+        const auto p3=l3::load_source_buster_profile(v3,true);
+        assert(p3.has_fire_rows&&p3.fire_rows_80089a84[1].bytes[0]==10&&p3.fire_rows_80089a84[1].bytes[4]==14);
+        assert(p3.shot_material_80097dac[0]==0x3E00002Eu&&p3.shot_material_80097dac[7]==0x3E07002Eu);
+        assert(p3.levels[1][3].words[0]==130);
+        auto short3=v3;short3.pop_back();assert(rejected(short3));
+    }
+    std::cout<<"PASS L3BP/2+3 profile -> Buster lanes, weapon rows, fire rows, shot 0x81 stats\n";
 }
