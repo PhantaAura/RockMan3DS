@@ -41,11 +41,15 @@ void hit(RuntimeSession& s, uint32_t packet) { s.deliver_player_hit_target(packe
 int main() {
     auto s = make_session(80);
     assert(s.compat_player().bytes[8] == 1 && s.player_hit_proxy_admitted());
-    // First shockwave: 10 damage, stun 10 <= 16 -> flinch (action 11).
+    // First hit on the idle life gauge: it only slides in (state 2, timer
+    // 28); flinch, no HP or stun change (PSXRecomp: 60 -> absorbed -> 50 -> 40).
     hit(s, 0x1000000Au);
-    assert(s.hp() == 70 && s.compat_player().bytes[0x73] == 10);
-    assert(action(s) == 11 && phase(s) == 1);
-    // Second: stun 20 > (0+1)*16 -> knockdown (action 12, phase 1 then 2).
+    assert(s.hp() == 80 && s.compat_player().bytes[0x73] == 0 && action(s) == 11);
+    assert(s.actor_detection_globals().gauge_state_800bbd7d == 2);
+    // Gauge shown: 10 damage, stun 10 <= 16 keeps the early flinch.
+    hit(s, 0x1000000Au);
+    assert(s.hp() == 70 && s.compat_player().bytes[0x73] == 10 && action(s) == 11);
+    // Stun 20 > (0+1)*16 -> knockdown (action 12, phase 1 then 2).
     hit(s, 0x1000000Au);
     assert(s.hp() == 60 && s.compat_player().bytes[0x73] == 20 && action(s) == 12 && phase(s) == 2);
     assert(s.compat_player().bytes[0x110] == 0xFF && !s.player_hit_proxy_admitted());
@@ -60,10 +64,21 @@ int main() {
     auto p = make_session(80);
     hit(p, 0x01000000u);
     assert(p.hp() == 80 && action(p) == 12);
+    // Gauge timers: 2 -> 1 after 28 updates, getting up hides it (3, 6) -> 0.
+    ActorDetectionGlobals g; show_player_gauge_8005d4f8(g);
+    for (int i = 0; i < 27; ++i) tick_actor_detection_globals_8005c2b8(g);
+    assert(g.gauge_state_800bbd7d == 2);
+    tick_actor_detection_globals_8005c2b8(g); assert(g.gauge_state_800bbd7d == 1);
+    hide_player_gauge_8005d528(g); assert(g.gauge_state_800bbd7d == 3 && g.gauge_timer_800bbd79 == 6);
+    for (int i = 0; i < 6; ++i) tick_actor_detection_globals_8005c2b8(g);
+    assert(g.gauge_state_800bbd7d == 0);
+    player_gauge_deplete_8005d98c(g); hide_player_gauge_8005d528(g); assert(g.gauge_state_800bbd7d == 2);
     // Out of HP: the hit clamps +0x6E to 0 and always knocks down.
     auto k = make_session(5);
+    hit(k, 0x1000000Au);                       // absorbed by the idle gauge
+    assert(k.hp() == 5);
     hit(k, 0x1000000Au);
-    assert(k.hp() == 0 && action(k) == 12);
+    assert(k.hp() == 0 && action(k) == 12 && k.actor_detection_globals().gauge_depleted_800bbd7f == 1);
     // The boss-defeat lock (0x800B55F9) stops the player's hit box.
     auto l = make_session(80);
     l.set_player_lock_800b55f9();

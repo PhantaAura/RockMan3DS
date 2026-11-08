@@ -61,7 +61,23 @@ struct ActorDetectionGlobals {
     int16_t halfword_800bbd94 = 0;
     int16_t halfword_800bbd96 = 0;
     uint8_t byte_800bbd84 = 0;
+    // The player life-gauge entry 0x800BBD78 (PSXRecomp-observed machine):
+    // +5 state 0 idle / 2 sliding in (timer +1 from 28) / 1 shown / 3 hiding
+    // (timer 6); +7 set once HP reached zero (0x8005D98C), cleared by the
+    // refill 0x8005D9EC.
+    uint8_t gauge_state_800bbd7d = 0, gauge_timer_800bbd79 = 0, gauge_depleted_800bbd7f = 0;
 };
+// 0x8005D4F8: an idle gauge starts sliding in (state 2, timer 28).
+void show_player_gauge_8005d4f8(ActorDetectionGlobals&) noexcept;
+// 0x8005D8C4(a0): 0 while +0x14 > 0; states 1/2 return 1; states 0/3 show the
+// gauge and return 1 only for a nonzero a0.
+bool player_gauge_hit_8005d8c4(ActorDetectionGlobals&, uint32_t amount) noexcept;
+// 0x8005D938: +7 while +0x14 <= 0.
+bool player_gauge_depleted_8005d938(const ActorDetectionGlobals&) noexcept;
+// 0x8005D98C: HP reached zero (+7 = 1, gauge shown) while +0x14 <= 0.
+void player_gauge_deplete_8005d98c(ActorDetectionGlobals&) noexcept;
+// 0x8005D528: states 1/2 start hiding (3, timer 6) unless +7 is set.
+void hide_player_gauge_8005d528(ActorDetectionGlobals&) noexcept;
 ActorDetectionGlobals initialize_actor_detection_globals_8005c258() noexcept;
 void tick_actor_detection_globals_8005c2b8(ActorDetectionGlobals& globals) noexcept;
 void set_actor_detection_countdown_8005ebb4(ActorDetectionGlobals& globals,

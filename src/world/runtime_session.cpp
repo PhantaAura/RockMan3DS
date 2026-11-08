@@ -402,10 +402,9 @@ void RuntimeSession::update_player_hit_8003c96c(){
     wr32w(player_,0x188,0);
 }
 
-// 0x8004174C. The HUD-state helpers 0x8005D8C4/0x8005D938/0x8005D98C read
-// 0x800BBD8C..: during ordinary play (PSXRecomp slot 2: +0x14 = 0, +5 = 0,
-// +7 = 1) the damage is applied, so the port applies it (CANDIDATE: their
-// other states are not modelled).
+// 0x8004174C. Damage applies only while the life gauge (0x800BBD78 entry,
+// actor_detection.h) is shown or HP was depleted; a hit on an idle gauge only
+// brings it in (PSXRecomp: 60 -> absorbed -> 50 -> 40).
 void RuntimeSession::player_hit_8004174c(){
     if((source_event_work_&&source_event_work_->known[0]&&source_event_work_->active00()!=0)||source_door_event0_.active)return;
     const uint32_t packet=uint32_t(rd32w(player_,0x188));
@@ -446,15 +445,25 @@ void RuntimeSession::player_hit_8004174c(){
         else if(q==4){player_.bytes[0x112]=uint8_t((player_.bytes[0x112]-1u)&3u);wr16w(player_,0x116,uint16_t(rd16w(player_,0x116)-0x400u));}
     }
     player_.bytes[0x174]=0;player_.bytes[0x177]=0;
-    // HP (+0x6E, mirrored into hp_ for the HUD).
+    auto& gauge=actor_detection_globals_;
+    if(packet&0x01000000u)(void)player_gauge_hit_8005d8c4(gauge,damage);
+    if(packet&0x40000000u)player_gauge_deplete_8005d98c(gauge);
     int16_t hp=rds16w(player_,0x6E);
-    if(hp>0){hp=int16_t(hp-int32_t(damage));if(hp<=0)hp=0;}
-    else hp=int16_t(hp-int32_t(damage));
-    wr16w(player_,0x6E,uint16_t(hp));hp_=uint16_t(hp<0?0:hp);
-    player_.bytes[0x73]=uint8_t(player_.bytes[0x73]+uint8_t(damage));
-    const int32_t limit=(int32_t(static_cast<int8_t>(player_.bytes[0x16A]))+1)*16;
-    if(limit<static_cast<int8_t>(player_.bytes[0x73])){player_.bytes[0x09]=12;player_.bytes[0x0A]=1;}
-    else player_hit_action_80041a44(packet);
+    if(player_gauge_hit_8005d8c4(gauge,0)||player_gauge_depleted_8005d938(gauge)){
+        // HP (+0x6E, mirrored into hp_ for the HUD) and the stun meter.
+        if(hp>0){hp=int16_t(hp-int32_t(damage));if(hp<=0){player_gauge_deplete_8005d98c(gauge);hp=0;}}
+        else hp=int16_t(hp-int32_t(damage));
+        wr16w(player_,0x6E,uint16_t(hp));hp_=uint16_t(hp<0?0:hp);
+        player_.bytes[0x73]=uint8_t(player_.bytes[0x73]+uint8_t(damage));
+        const int32_t limit=(int32_t(static_cast<int8_t>(player_.bytes[0x16A]))+1)*16;
+        if(limit<static_cast<int8_t>(player_.bytes[0x73])){player_.bytes[0x09]=12;player_.bytes[0x0A]=1;}
+        else player_hit_action_80041a44(packet);
+    }else{
+        // 0x8004197C: an idle gauge only slides in; no HP or stun change.
+        if(hp>0)(void)player_gauge_hit_8005d8c4(gauge,damage);
+        else player_gauge_deplete_8005d98c(gauge);
+        player_hit_action_80041a44(packet);
+    }
     // 0x800419B0: heading jitter -0x80 + (rand & 0x100), +0x0B from the side.
     uint32_t sample=0;
     if(tick_rng_&&tick_rng_->admitted()){
@@ -519,6 +528,7 @@ void RuntimeSession::update_player_knockdown_8003e860(){
         int16_t hp=rds16w(player_,0x6E);
         if(hp<0){player_.bytes[8]=2;player_.bytes[9]=0;return;}       // death: player state 2
         l3_pl00_anim_request_80041ddc(&player_,request,0,1);
+        hide_player_gauge_8005d528(actor_detection_globals_);           // 0x8003EAB0
         player_.bytes[0x112]=0;
         wr16w(player_,0x56,uint16_t(rd16w(player_,0x56)-rd16w(player_,0x116)));wr16w(player_,0x116,0);
         player_.bytes[0x09]=8;player_.bytes[0x0A]=6;player_.bytes[0x110]=1;player_.bytes[0x111]=0x30;
@@ -548,9 +558,8 @@ void RuntimeSession::update_player_knockdown_8003e860(){
         case 4:
             if(player_.bytes[0x74]!=0){fall();return;}
             l3_pl00_anim_request_80041ddc(&player_,0x24,0,1);
-            // Landing: 0x8005D8C4(8) admits it during ordinary play (CANDIDATE,
-            // as in the hit handler); without armour byte +0x16A, 8 more damage.
-            if(player_.bytes[0x16A]==0){
+            // Landing: 0x8005D8C4(8); without armour byte +0x16A, 8 more damage.
+            if(player_gauge_hit_8005d8c4(actor_detection_globals_,8)&&player_.bytes[0x16A]==0){
                 const int16_t hp=int16_t(rds16w(player_,0x6E)-8);wr16w(player_,0x6E,uint16_t(hp));hp_=uint16_t(hp<0?0:hp);
             }
             {
