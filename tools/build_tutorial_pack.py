@@ -43,6 +43,9 @@ TYPE0_WANTED={
  r"..\PLBIN\PL00L00P.PBD":"player/PL00L00P.PBD",
  # Buster left arm, resident from INIT_DAT; 0x8002786C set 2 draws it.
  r"..\PLBIN\PL00L04P.PBD":"player/PL00L04P.PBD",
+ # Its keys/poses (0x800321C8 / 0x800329D4 use PL00L04S/M when +0x171 != 0).
+ r"..\PLBIN\PL00L04S.PBD":"player/PL00L04S.PBD",
+ r"..\PLBIN\PL00L04M.PBD":"player/PL00L04M.PBD",
  r"..\PLBIN\PL00F00P.PBD":"player/PL00F00P.PBD",
  r"..\PLBIN\PL00M00S.PBD":"player/PL00M00S.PBD",
  r"..\PLBIN\PL00M00M.PBD":"player/PL00M00M.PBD",
@@ -328,7 +331,14 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         manifest['source_player_target']={'format':'L3TG/2','status':'SOURCE_BACKED_PARTIAL',
             'window':'0x8008994C','target_mode':'0x80097D02 image byte (CANDIDATE: no writer found)'}
         run(tools,'l3cook_anim',player/'PL00R00S.PBD',hex(load(r'..\PLBIN\PL00R00S.PBD')),player/'PL00R00M.PBD',hex(load(r'..\PLBIN\PL00R00M.PBD')),pout/'right.l3anim')
-        run(tools,'l3cook_anim',player/'PL00L00S.PBD',hex(load(r'..\PLBIN\PL00L00S.PBD')),player/'PL00L00M.PBD',hex(load(r'..\PLBIN\PL00L00M.PBD')),pout/'left.l3anim')
+        # Left-arm requests 0x60..0x7F (the Buster fire animations of
+        # 0x800423DC) use PL00L04S/M when +0x171 != 0, PL00L00S/M otherwise;
+        # the loadout's mesh set says which (set 1/2 imply +0x171 != 0).
+        arm='L04' if meshes['resources']['left']=='PL00L04P.PBD' else 'L00'
+        run(tools,'l3cook_anim',player/f'PL00{arm}S.PBD',hex(load(f'..\\PLBIN\\PL00{arm}S.PBD')),
+            player/f'PL00{arm}M.PBD',hex(load(f'..\\PLBIN\\PL00{arm}M.PBD')),pout/'left.l3anim')
+        manifest['player_left_arm_animation']={'bank':f'PL00{arm}S/M','selector':'+0x171 (0x800321C8)',
+            'status':'SOURCE_BACKED_PARTIAL'}
         mout=runtime/'messages'; mout.mkdir()
         run(tools,'l3cook_msg',messages/'st00_01.msg',mout/'st00_01.l3msg')
         run(tools,'l3cook_msg',messages/'st00_02.msg',mout/'st00_02.l3msg')

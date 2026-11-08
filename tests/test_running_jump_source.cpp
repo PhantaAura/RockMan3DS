@@ -34,7 +34,10 @@ int main(int argc,char** argv){
         const auto s=airborne_session(phase,vertical,held,control);
         for(size_t i=0;i<offsets.size();++i){
             const auto o=offsets[i];const unsigned n=(o==0x44||o==0x46||o==0x48||o==0x116)?2:1;
-            const int actual=value(s.compat_player(),o,n,n==2);
+            int actual=value(s.compat_player(),o,n,n==2);
+            // The cases were recorded from a start with +0x175 = 1; the player
+            // init 0x8003C840 stores 7 and action 8 only writes bit 0.
+            if(o==0x175)actual&=1;
             if(actual!=expected[i]){
                 std::cerr<<"Source scalar mismatch case "<<cases<<" phase "<<phase<<" velocity "<<vertical
                          <<" held "<<held<<" control "<<control<<" offset "<<o<<": "<<actual<<" expected "<<expected[i]<<'\n';return 1;

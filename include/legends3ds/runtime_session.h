@@ -72,6 +72,7 @@ struct RuntimePlayerReplaySeed {
 struct RuntimeInputFrame {
     uint16_t held_psx_mask = 0;
     bool fire_pressed = false;
+    bool fire_held = false;   // native Y held: presented to the Buster button mask +0x13A
     bool lock_pressed = false;
     bool lock_held = false;
     bool advance_dialogue = false;
@@ -537,6 +538,9 @@ public:
     uint32_t frame_counter() const { return frame_counter_; }
     size_t area_index() const { return area_index_; }
     const L3PlayerCompatWork& compat_player() const { return player_; }
+    // The Buster fire chain (source_player_fire) owns +0x100..+0x106 and
+    // +0x174..+0x178 between session ticks, as the original player callback does.
+    L3PlayerCompatWork& source_fire_player_work() { return player_; }
     // Exact byte owner used by the translated normal-Buster callback at
     // original player work +0x198. This does not assign broader semantics to
     // adjacent unknown work fields.
