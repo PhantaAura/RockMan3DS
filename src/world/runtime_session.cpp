@@ -1518,6 +1518,110 @@ bool RuntimeSession::commit_source_door_transition() {
     update_gameplay_camera_target();camera_.current=camera_.target;
     return true;
 }
+bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) noexcept {
+    if(!profile.loaded||(profile.event!=3&&profile.event!=2))return false;
+    source_post_win_profiles_[profile.event==3?0:1]=std::move(profile);
+    return true;
+}
+void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
+    source_post_win_step_={};
+    auto& ev=source_post_win_;
+    if(!ev.active){
+        // A retained hand-off waits for its loader (event 3) or for a stage
+        // the port does not load (event 2).
+        if(source_post_win_handoff_||!source_event_profile_||source_event_stage_!=0)return;
+        if(source_door_event0_.active||source_door_request_)return;
+        if(source_event_work_&&source_event_work_->known[0]&&source_event_work_->active00())return;
+        // The ST00 poll 0x80100598 over the bound table, as the pipeline runs
+        // it: the first set flag wins. The pipeline cannot poll after a door
+        // transition (356C is unknown there), so the native events take the
+        // poll's result here; only events 3 and 2 are started.
+        std::optional<uint8_t> selected;
+        for(const auto& r:source_event_profile_->records)
+            if(story_flag(r.flag)){selected=r.event;break;}
+        if(!selected||(*selected!=3&&*selected!=2)||!source_post_win_profiles_[*selected==3?0:1])return;
+        // 0x8001DDE4: work zeroed, +0 = 1, +1 = event (HP is never negative here).
+        ev=start_source_post_win_event(*selected);
+        source_post_win_cd_.reset();source_post_win_cd_done_=false;
+        if(source_event_work_){
+            auto& w=*source_event_work_;
+            w.raw[0]=1;w.raw[1]=*selected;w.raw[4]=0;w.known[0]=w.known[1]=w.known[4]=1;
+        }
+    }
+    const auto& profile=*source_post_win_profiles_[ev.event==3?0:1];
+    SourcePostWinInputs input;
+    // 0x80042238 has player stores, so it runs only in the phase that calls it.
+    if((ev.event==3&&ev.phase==0)||(ev.event==2&&ev.phase==1)){
+        const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
+        input.player_ready=ready&&*ready;
+    }
+    input.cd_done=source_post_win_cd_done_;
+    const auto& fw=source_fade_context_.work_80098a68;
+    // CANDIDATE: with no fade running or queued in the native scheduler,
+    // 0x80098A72 reads 0 (it is only raised while a fade runs).
+    input.fade_busy=(fw.known[10]&&fw.known[11])?uint16_t(fw.raw[10]|(uint16_t(fw.raw[11])<<8))
+        :(source_fade_callback_.running||source_fade_intents_.count?uint16_t(1):uint16_t(0));
+    input.start_skip=(in.pressed_psx_mask&0x0008u)!=0;   // 0x8001DE84 (Start, CANDIDATE bit)
+    auto step=step_source_post_win_event(ev,profile,input);
+    if(step.cd_request){source_post_win_cd_=step.cd_request;source_post_win_cd_done_=false;}
+    if(step.player_hidden)player_.bytes[0]=uint8_t(player_.bytes[0]&0xFCu);
+    if(step.fade_type){
+        auto& f=source_fade_context_.work_80098a68;
+        if(!f.known[10]||!f.known[11]){f.raw[10]=f.raw[11]=0;f.known[10]=f.known[11]=1;}  // same CANDIDATE as above
+        (void)consume_source_fade_startup_80017c30_mode0(source_fade_context_,
+            source_fade_profile_?&*source_fade_profile_:nullptr,&source_fade_intents_,step.fade_type);
+    }
+    if(step.handoff){
+        set_story_flag(step.handoff->cleared_flag,false);           // 0x8001DCD0
+        if(ev.event==3)player_.bytes[0]=uint8_t(player_.bytes[0]|1u);  // 0x800B51B0 |= 1
+        source_player_event_release_80042314(player_);
+        if(source_event_work_)source_event_work_->raw[0]=0;
+        source_post_win_handoff_=step.handoff;++source_post_win_generation_;
+    }
+    source_post_win_step_=step;
+}
+std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_win_transition() const noexcept {
+    const auto& h=source_post_win_handoff_;
+    if(!h||h->stage!=0)return std::nullopt;   // stage 2 (event 2) is not loaded by the port
+    SourceEventHandoffTransitionIntent t;
+    t.source_function=0x80102058u;t.source_generation=source_post_win_generation_;
+    t.raw=h->raw;t.known.fill(1);
+    t.spawn={{0,0,0}};t.source_stage=h->stage;t.destination_area=h->area;
+    return t;
+}
+bool RuntimeSession::can_commit_source_post_win_transition() const noexcept {
+    const auto intent=source_post_win_transition();
+    if(!intent||intent->destination_area==map_area_index_||!registered_area(intent->destination_area))return false;
+    auto player=player_;SourceEventPlayerKnown known{};known.fill(1);
+    return apply_source_handoff_spawn_80015ee8(*intent,intent->source_generation,player,known,true);
+}
+bool RuntimeSession::commit_source_post_win_transition() {
+    if(!can_commit_source_post_win_transition())return false;
+    const auto intent=*source_post_win_transition();
+    auto prepared=player_;SourceEventPlayerKnown known{};known.fill(1);
+    // Loader spawn 80015EE8 (argument6 = 1 for a new area).
+    if(!apply_source_handoff_spawn_80015ee8(intent,intent.source_generation,prepared,known,true))return false;
+    // The destination's init prefix 0x8010038C (area 4: hide, +8 = 0, flag 0x605).
+    auto flags=source_event_flags_;   // applied below through set_story_flag
+    const auto prefix=apply_source_st00_area_event_prefix(0,int8_t(intent.destination_area),flags,prepared);
+    if(!prefix.committed)return false;
+    const RuntimeVec3i spawn{rds16w(prepared,0x14),rds16w(prepared,0x16),rds16w(prepared,0x18)};
+    // The fade work 0x80098A68 is global: event 3's fade-out stays on screen
+    // through the load until event 2's fade-in.
+    const auto fade_profile=source_fade_profile_;const auto fade_context=source_fade_context_;
+    const auto fade_intents=source_fade_intents_;const auto fade_callback=source_fade_callback_;
+    const auto fade_hold=source_fade_endpoint_hold_;
+    if(!transition_to_area(intent.destination_area,spawn,rd16w(prepared,0x56)))return false;
+    source_fade_profile_=fade_profile;source_fade_context_=fade_context;source_fade_intents_=fade_intents;
+    source_fade_callback_=fade_callback;source_fade_endpoint_hold_=fade_hold;
+    player_=prepared;
+    if(intent.destination_area==4)set_story_flag(0x605,true);   // the prefix's 0x8001DA8C
+    sync_primary_position_from_fixed();
+    player_contact_={};
+    update_gameplay_camera_target();camera_.current=camera_.target;
+    source_post_win_handoff_.reset();   // the loader clears 356C
+    return true;
+}
 void RuntimeSession::update_source_door_event0(){
     auto& e=source_door_event0_;
     if(!e.active||!reference_tables_)return;
@@ -2090,6 +2194,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         source_event_input.candidate_rng=&candidate;
     }
     source_event_result_=step_source_event_pipeline(source_event_work_,source_event_profile_.get(),source_event_input);
+    update_source_post_win_event(in);
     // Oracle (US disc, New Game): 0x1F800074 reads 0 from phase 4 through the
     // constructor tick, where the class-40 initializer 0x8010C930 already runs
     // (same tick, after the event); the camera program writes it next tick.
