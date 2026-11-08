@@ -42,6 +42,16 @@ with row = `0x80089A84[+171]` (bytes 0..4, now cooked in L3BP/3):
 
 `0x80037664(w)` = halfword +6 of the weapon's level row at `+4F7 + w*8`.
 
+## Counter refill `0x8005C8A4`
+Weapon 1 (the Buster) has counter 3 at level 0, and `0x80035724` decrements
+it per shot. Object callback `0x8005C8A4` (table `0x8008D7C0`) refills it:
+while `+171 == 1`, a timer at object `+0x0F` counts to 17 (0 at level 7) and
+then stores the full count, the weapon 1 level row (`+0x4FD`) halfword +2
+(`0x80037604`). Its condition is counter != 0 with full > 0, or counter == 0
+with full >= 2. The object that owns it is untraced; the port runs it once per
+gameplay frame (CANDIDATE). Without it, Azahar showed firing stop after three
+shots.
+
 ## Overlay track and pose
 - `0x8003C418`: when not busy, the overlay mirrors the main track (`+104 =
   +AC`, `+100 = +A4`). It starts with `0x800321C8` when `+104 != +105`,
@@ -78,6 +88,18 @@ at `+0x88`. The 0x81 shot sets flags 0x2A, so it is kind 0x08, the sprite
 - `child_runtime`: the 0x81 shot writes its sprite block;
   `draw_source_buster_sprites_uv` draws it.
 - Test: `tests/test_source_player_fire.cpp` (authored data).
+
+## Results
+- Host: `test_source_player_fire` (fire, lane timing, re-fire, refill,
+  selector merge) and `test_source_buster_profile` (L3BP/3); suite 179/179.
+- `tools/m1_mac_build.sh` PASS, 0 warnings.
+- Azahar 2126.0, Old 3DS, unattended autoplay, Area 1 start with no enemies:
+  8 single presses → 8 shots, one per press; holding Y for 60 frames → a shot
+  every 8 frames (the lane's state-3 re-fire). That is 23 shots in total, all
+  spawned through `0x80034EB8` (`spawn_status=0`), with
+  `# source_buster_sprite,drawn=1` while shots fly. Traces show
+  `+174 = 0x82/0xA2`, `+104 = 0x60` and `+106 = 2` during firing. In the
+  door room, a capture during a shot shows the left arm raised forward.
 
 ## Not ported / CANDIDATE
 - A standing shot's main-track request (`0x60`, action 5) is HELD: the main

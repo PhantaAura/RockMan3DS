@@ -313,3 +313,15 @@ renderer `0x8002786C` picks mesh set 2 from `+0x170 = 0`, `+0x171 = 1`
 (resident from `INIT_DAT`). The pack now cooks the five player banks from that
 set (`tools/source_player_arms.py`). See
 `docs/research_01516/BUSTER_ARM_MESH_SET.md`.
+
+## Buster firing pose and shot sprite (branch fix/buster-arm-model)
+
+Ported the original firing chain: fire input `0x80040B68`, `0x80040E00`,
+`0x800423DC`, the Buster lane `0x80042F78` that raises `+0x174` bit 0x20 on the
+fire frame, the overlay track `0x800321C8`/`0x800323FC`/`0x8003C418` playing
+left-arm animation `0x60` from `PL00L04S/M`, and the `0x800325D4` selector merge
+(torso and left arm). The player init stores `+0x175 = 7`, and the counter
+refill is `0x8005C8A4`. The 0x81 shot now draws its own `0x80029C18` sprite
+(rotated, flat colour) instead of the diagnostic line. Azahar: one shot per
+press, rapid fire when held. See `docs/research_01516/BUSTER_FIRE_POSE.md`.
+
