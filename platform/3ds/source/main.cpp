@@ -6336,7 +6336,7 @@ int main() {
                 if(session.frame_counter()%120u==0u)
                     hardware_test_trace("# actor_gate,frame=%lu,admitted=%u,owned=%u,revision_failed=%u,dialogue_gate=%u,pause=%u,cutscene=%u,camera_gameplay=%u,game_over=%u",
                         (unsigned long)session.frame_counter(),unsigned(actor_tick_admitted),unsigned(actor_gameplay_owned()),
-                        unsigned(actor_revisions.failed_source_revision),unsigned(session.dialogue().active&&session.dialogue().gates_gameplay),
+                        unsigned(actor_revisions.failed_source_revision.has_value()),unsigned(session.dialogue().active&&session.dialogue().gates_gameplay),
                         unsigned(session.tutorial_pause_mode()),unsigned(session.cutscene_active()),
                         unsigned(session.camera().owner==l3::RuntimeCameraOwner::Gameplay),unsigned(g_game_over.active));
                 if(actor_tick_admitted&&actor_gameplay_owned()&&!actor_revisions.failed_source_revision) {

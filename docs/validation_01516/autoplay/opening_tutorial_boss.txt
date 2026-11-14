@@ -1,4 +1,4 @@
-# New Game opening, the full tutorial route, then the Area 3 boss (tutorial_boss.txt): needs diagnostic_title.txt
+# M1 full route: title -> NEW GAME -> opening -> tutorial -> 0x622 -> boss (Buster) -> 0x606 -> event 3 -> Area 4 -> event 2. Needs diagnostic_title.txt.
 120 0 0 0
 2 8 0 0
 60 0 0 0
@@ -21,6 +21,9 @@
 600 ffffd 0 0
 3000 ffffa 3000 0
 1500 ffffc 1546 0
+400 fffff 0 0
+400 fffff 0 0
+400 fffff 0 0
 600 ffffd 0 0
 900 ffffb -3328 -5600
 900 ffffb -3328 -10000
@@ -86,3 +89,4 @@
 6000 ffffa 4000 0
 3000 ffffc 1542 0
 1800 0 0 0
+12000 0 0 0
