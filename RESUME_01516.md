@@ -3,6 +3,19 @@
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
+- **Status 2026-11-13 (main 23db7cf).** Merged into main (a4a149b): the
+  ST00 event-1 opening, the ST01 intro crawl and ST07 attract scene, the
+  pop-out Reaverbot fix, the bottom-screen gauges. A cold-boot Azahar run
+  goes title -> NEW GAME -> opening -> tutorial -> 0x622 -> Area 3. Title
+  fades 1/2/9/10 (L3FDv3) and 22 (NEW GAME, step 6, CANDIDATE end) are in.
+  On branches, not merged: `claude/tutorial-boss-4a9127` (boss fight: the
+  boss detects, walks, charges, and dies to Buster hits of 24 -> flag 0x606;
+  player damage, game over and the post-win event still open) and
+  `fix/buster-arm-model` (armed Mega Man model, fire pose, shot sprite).
+  M3 roadmap (tutorial end -> first Tron fight) is being traced in the
+  oracle (`claude/m3-roadmap-661ae9`). OPTION (state 6) is mapped: fade 1,
+  0x80053A30/0x8005382C (untraced), Start -> sound 131 + fade 9 -> menu;
+  0x80062368 is the scrolling 64x64 tile backdrop (35 SPRT at OT 35).
 - **Area 3 boss intro (SOURCE_BACKED_PARTIAL).** PSXRecomp proves Area 3
   event 3 dynamically owns class `40/02` (not a placed actor), wrapper
   `0x801076E8`, initializer `0x801078B8`. A clean original Area 3 replay proves
