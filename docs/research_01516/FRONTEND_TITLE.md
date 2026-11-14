@@ -129,8 +129,8 @@ release 0x800153CC) with a1 = work + 0x348.
   0x8005382C(slot, data, -1) opens a message window (the dialogue system;
   `runtime_session.cpp` already models its slot-0 refusal), here slot 0
   with the message data at 0x8008B69C. So the OPTION menu is a message-
-  window menu, not ported: the port counts the calls. Porting it means
-  decoding that message (mml_message) and showing it with its choices.
+  window menu: ported 2026-11-14, see MESSAGE_WINDOW.md (Close/Triangle set
+  0x80098A58 bit 30, which ends state 6).
 
 ## Port plan
 1. Cook ST01 (map, EBD, TIMs) into the pack.

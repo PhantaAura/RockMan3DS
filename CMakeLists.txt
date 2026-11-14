@@ -126,6 +126,7 @@ add_library(legends3ds_core STATIC
     src/animation/pbd_animation.cpp
     src/animation/player_pose.cpp
     src/flow/mml_message.cpp
+    src/flow/mml_message_window.cpp
     src/flow/source_tutorial_triggers.cpp
     src/flow/source_gate_e007.cpp
     src/flow/source_target_e008.cpp
@@ -1206,6 +1207,14 @@ add_executable(test_frontend_title tests/test_frontend_title.cpp)
 target_link_libraries(test_frontend_title PRIVATE legends3ds_core)
 target_compile_options(test_frontend_title PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME frontend_title COMMAND test_frontend_title)
+add_executable(test_mml_message_window tests/test_mml_message_window.cpp)
+target_link_libraries(test_mml_message_window PRIVATE legends3ds_core)
+target_compile_options(test_mml_message_window PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME mml_message_window COMMAND test_mml_message_window)
+add_executable(l3cook_font_materials tools/l3cook_font_materials.cpp)
+target_link_libraries(l3cook_font_materials PRIVATE legends3ds_core)
+add_executable(l3probe_option_menu tools/l3probe_option_menu.cpp)
+target_link_libraries(l3probe_option_menu PRIVATE legends3ds_core)
 add_executable(test_source_scene_tracked_camera tests/test_source_scene_tracked_camera.cpp)
 target_link_libraries(test_source_scene_tracked_camera PRIVATE legends3ds_core)
 target_compile_options(test_source_scene_tracked_camera PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
