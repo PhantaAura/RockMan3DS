@@ -132,7 +132,17 @@ void profile_validation(){
     }
 }
 }
+void type22(){
+    l3::SourceFadeType22 f;l3::start_source_fade_type22(f);
+    auto r=l3::step_source_fade_type22_800194c4(f);require(r.subtract==0&&!r.done&&f.counter==63,"type22 build pass");
+    r=l3::step_source_fade_type22_800194c4(f);require(r.subtract==8,"type22 first pass");
+    r=l3::step_source_fade_type22_800194c4(f);require(r.subtract==8,"type22 second buffer");
+    r=l3::step_source_fade_type22_800194c4(f);require(r.subtract==16,"type22 third pass");
+    for(int i=0;i<59;++i)r=l3::step_source_fade_type22_800194c4(f);
+    require(!r.done,"type22 62 passes");
+    r=l3::step_source_fade_type22_800194c4(f);require(r.done&&r.subtract==255,"type22 ends after 63 passes");
+}
 int main(int argc,char** argv){require(argc==2,"usage: test_source_fade source-fade-startup.tsv");
-    differential(argv[1]);holds_and_loop();profile_validation();
+    differential(argv[1]);holds_and_loop();profile_validation();type22();
     std::cout<<"source fade startup: 517 original-instruction cases, bounded pending intents, profile/rollback guards and4096 allocation-free updates passed\n";
 }

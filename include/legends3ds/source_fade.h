@@ -119,6 +119,19 @@ struct SourceFadePresentation {
 // Resolves exact owned type2 packet fields and scalar intensity for a native
 // presentation backend. Raw tags/buffer pointers are deliberately not invented.
 SourceFadePresentation describe_source_fade_presentation(const SourceFadeContext& context) noexcept;
+
+// Fade type 22 (NEW GAME): 0x80017C30 case 22 sets mode 2, sequence 4
+// (0x800821E0[4] = steps 0, 6, 1) and busy 0xFFFF. Step 6 (0x800194C4):
+// the first pass builds a TILE 0x62 rgb (8,8,8) 320x240 after
+// SetDrawMode(1,1,0x140) (ABR 2: B - F) and sets +4 = 63; each later pass
+// links it at OT entry 30 and counts down; at 0 it hands to step 1 with
+// intensity 255. On the frozen frame each of the two buffers loses 8 per
+// pass it receives (CANDIDATE: frozen frame, two buffers, and busy
+// clearing when step 6 ends).
+struct SourceFadeType22 { uint8_t state = 0; uint8_t counter = 0; uint16_t passes = 0; };
+struct SourceFadeType22Frame { uint8_t subtract = 0; bool done = false; };
+void start_source_fade_type22(SourceFadeType22& fade) noexcept;
+SourceFadeType22Frame step_source_fade_type22_800194c4(SourceFadeType22& fade) noexcept;
 struct SourceFadePacketInput {
     std::optional<uint8_t> buffer_1f800000;
     std::optional<uint32_t> ordering_table_tag_116;

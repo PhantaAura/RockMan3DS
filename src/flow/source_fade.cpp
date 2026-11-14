@@ -1,5 +1,6 @@
 #include "legends3ds/source_fade.h"
 #include "legends3ds/l3map.h"
+#include <algorithm>
 #include <stdexcept>
 
 namespace l3 {
@@ -256,6 +257,19 @@ SourceFadePacketResult bind_source_fade_presentation_packets(
     store(draw,0,4,(read32(draw.raw.data())&0xff000000u)|(tile_address&0x00ffffffu));
     out.ordering_table_tag_116=(previous&0xff000000u)|(draw_address&0x00ffffffu);
     context=next;out.status=SourceFadePresentationStatus::SourceBackedPresentation;out.committed=true;
+    return out;
+}
+void start_source_fade_type22(SourceFadeType22& fade) noexcept { fade = SourceFadeType22{}; fade.state = 1; }
+SourceFadeType22Frame step_source_fade_type22_800194c4(SourceFadeType22& fade) noexcept {
+    SourceFadeType22Frame out;
+    if (fade.state == 1) { fade.counter = 63; fade.state = 2; return out; }   // builds the tile only
+    if (fade.state == 2) {
+        ++fade.passes;
+        out.subtract = uint8_t(std::min(255, 8 * ((fade.passes + 1) / 2)));
+        if (--fade.counter == 0) { fade.state = 3; out.done = true; out.subtract = 255; }
+        return out;
+    }
+    if (fade.state == 3) { out.subtract = 255; out.done = true; }   // step 1: held at 255
     return out;
 }
 } // namespace l3

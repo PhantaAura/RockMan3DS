@@ -4153,6 +4153,8 @@ l3::FrontendResult run_frontend_title(bool scripted) {
     u64 last_tick = svcGetSystemTick();
     uint16_t pending = 0;
     l3::FrontendFrame f;
+    l3::SourceFadeType22 fade22;   // NEW GAME (type 22, mode 2 step 6)
+    uint8_t fade22_subtract = 0;
     while (aptMainLoop() && !new_game && !attract) {
         hidScanInput();
         u32 down = hidKeysDown();
@@ -4179,12 +4181,16 @@ l3::FrontendResult run_frontend_title(bool scripted) {
         l3::frontend_backdrop_widescreen(f.packets);   // 400-px top screen
         for (const uint8_t type : f.fades) {
             l3::SourceFadeStartupResult started;
-            // Types 1/2/9/10 are mode 0 (0x80017C74). Type 22 (mode 2, sub 4,
-            // NEW GAME) is not ported: no fade is faked for it.
+            // Types 1/2/9/10 are mode 0 (0x80017C74); type 22 (NEW GAME) is
+            // mode 2, sequence 4, step 6 (source_fade.h). Busy != 0 is a no-op.
             const bool mode0 = type <= 11 && !(type & 4);
             if (mode0) started = l3::consume_source_fade_startup_80017c30_mode0(fade, fade_profile ? &*fade_profile : nullptr, &fade_intents, type);
+            else if (type == 22 && in.fade_80098a72 == 0) {
+                l3::start_source_fade_type22(fade22);
+                fade.work_80098a68.raw[10] = fade.work_80098a68.raw[11] = 0xFF;   // busy 0xFFFF
+            }
             hardware_test_trace("# frontend_fade,frame=%lu,type=%u,status=%u,ported=%u",
-                (unsigned long)frame, unsigned(type), unsigned(started.status), unsigned(mode0));
+                (unsigned long)frame, unsigned(type), unsigned(started.status), unsigned(mode0 || type == 22));
         }
         for (const auto& sound : f.sounds)
             (void)l3::enqueue_source_audio_8001a008(title_audio, sound[0], sound[1], 0);
@@ -4196,6 +4202,11 @@ l3::FrontendResult run_frontend_title(bool scripted) {
             (void)title_sfx.consume(title_audio, l3::SourceSoundListener{});
             title_sfx.tick(44100u / 30u);
         } else l3::finish_source_audio_queue_batch_8001a1d0(title_audio);
+        if (fade22.state) {
+            const auto f22 = l3::step_source_fade_type22_800194c4(fade22);
+            fade22_subtract = f22.subtract;
+            if (f22.done) fade.work_80098a68.raw[10] = fade.work_80098a68.raw[11] = 0;   // CANDIDATE
+        }
         // The fade callback thread: one pass per update.
         if (fade_intents.count && !fade_callback.running)
             (void)l3::acknowledge_source_fade_scheduler_intent(fade, fade_intents, fade_callback, kEndpointHold1f800001);
@@ -4269,6 +4280,7 @@ l3::FrontendResult run_frontend_title(bool scripted) {
         g_psx_xy_from_gte = xy;
         C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
         draw_source_fade_uv(l3::describe_source_fade_presentation(fade));
+        if (fade22.state) (void)draw_source_subtract_uv(fade22_subtract, fade22_subtract, fade22_subtract, 320, 240);
         C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
         submit_gpu_frame();
     }
