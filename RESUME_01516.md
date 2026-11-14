@@ -3,19 +3,39 @@
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
-- **Status 2026-11-13 (main 23db7cf).** Merged into main (a4a149b): the
-  ST00 event-1 opening, the ST01 intro crawl and ST07 attract scene, the
-  pop-out Reaverbot fix, the bottom-screen gauges. A cold-boot Azahar run
-  goes title -> NEW GAME -> opening -> tutorial -> 0x622 -> Area 3. Title
-  fades 1/2/9/10 (L3FDv3) and 22 (NEW GAME, step 6, CANDIDATE end) are in.
-  On branches, not merged: `claude/tutorial-boss-4a9127` (boss fight: the
-  boss detects, walks, charges, and dies to Buster hits of 24 -> flag 0x606;
-  player damage, game over and the post-win event still open) and
-  `fix/buster-arm-model` (armed Mega Man model, fire pose, shot sprite).
-  M3 roadmap (tutorial end -> first Tron fight) is being traced in the
-  oracle (`claude/m3-roadmap-661ae9`). OPTION (state 6) is mapped: fade 1,
-  0x80053A30/0x8005382C (untraced), Start -> sound 131 + fade 9 -> menu;
-  0x80062368 is the scrolling 64x64 tile backdrop (35 SPRT at OT 35).
+- **Post-win events 3 and 2 (M1, 2026-11-13, branch claude/event3-postwin-90c613).**
+  ST00 event 3 (`0x80102058`, phases 0..6) and event 2 (`0x8010194C`,
+  phases 0..7) run natively over cooked L3CS tables
+  (`src/flow/source_st00_post_win.cpp`, tests `test_source_st00_post_win`,
+  `test_runtime_post_win`): timeline, camera program (event 3), spawns,
+  every record callback (actor writes recorded per slot), fades, hand-offs.
+  RuntimeSession takes the ST00 poll result (0x606 -> 3, 0x605 -> 2), commits
+  event 3's area-4 request through the door plumbing with Area 4's prefix
+  (0x8010038C case 4: hide, flag 0x605) and retains event 2's **stage 2**
+  request (the port has no stage 2). Azahar run 2 (normal boot,
+  `tutorial_full_boss.txt`): 0x606 @12464 -> event 3 -> fade 10 @13424 ->
+  Area 4 @13453 -> event 2 @13455 -> stage-2 request @16255 (RESULTS.md).
+  Host 180/180, native PASS (`pass-20261107-215041-m2-01516`). Missing: the
+  scene actors (40/05, 40/08, event 2's cast) are not drawn or simulated,
+  the event camera is not applied to the 3DS view, smoke/objects/sounds,
+  XA voice 0x20000001/2 (no measured span), event 2's camera op 0x80.
+- **Area 3 boss callback (M1, 2026-11-01, branch claude/tutorial-boss-4a9127).**
+  The real class 40/02 callback `0x801076E8` replaces the replayed intro:
+  init `0x801078B8`, chooser `0x80107B48`, substates 0/1/2/3/4/6, hit
+  `0x8010A448`, release (`src/world/class40_02_boss.cpp`, test
+  `test_class40_02_boss`). Wired in Area 3 with detection +0x504, rand() RA
+  0x80107774, the 0x800341BC proxy (radius 0xD0) so Buster hits land, cooked
+  stats record (L3CB class 40/02 record 1, HP 1024), sounds, effect128/0x42
+  shockwaves, camera shake, the bottom-screen TARGET gauge and flag 0x606 at
+  defeat. Event-1 loader fade cap fixed (opening was being skipped). Host
+  178/178, native PASS (`pass-20261101-183506-m2-01516`). Azahar route
+  Azahar run 9 (2026-11-06, `autoplay/tutorial_full_boss.txt`, normal boot,
+  direct hand-off): 0x622 at 11631, boss visible, Buster hits of 24, HP 0 at
+  12090, flag 0x606 at 12105 (see RESULTS.md). The opening -> tutorial route
+  still stalls (no class-20 or Buster updates after the opening hand-off). Missing: player damage + game over (no such
+  system in the port), the post-win event 3 (mapped in
+  `docs/research_01516/AREA3_BOSS_SOURCE_SLICE.md`), arm drawing, the two
+  arms' rand() calls.
 - **Area 3 boss intro (SOURCE_BACKED_PARTIAL).** PSXRecomp proves Area 3
   event 3 dynamically owns class `40/02` (not a placed actor), wrapper
   `0x801076E8`, initializer `0x801078B8`. A clean original Area 3 replay proves
@@ -231,12 +251,19 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-0. Continue the Area 3 boss (current user order):
-   - bind the recovered `0x80107B48` chooser to original `+0x504` detection
-     ownership and the work `+0x80` writer, then port `0x80107FAC` movement;
-   - bind the original hit proxy, Buster reaction, HP +0x6E and boss gauge;
-   - then attacks, player damage/game over, defeat and post-win event.
-   Do not fake defeat or skip the unknown state handlers.
+0. Finish M1 (the Area 3 boss):
+   - opening -> tutorial: after the event-1 hand-off no class-20 actor or
+     Buster updates (route stalls at the trap room); find the gate;
+   - Buster fires every held frame (4 live): check the original fire rate;
+   - boss charge stops at z -1095 vs -1223 in the original;
+   - post-win events 3/2 (logic ported, see Completed): draw and run their
+     scene actors (40/05 init `0x8010C930`/`0x8010D824`; 40/08's callback is
+     not in the ST00 table, CANDIDATE: EXE), apply the event camera to the
+     3DS view, smoke `0x80116D60`, `0x80031618` objects, `0x8011877C`, XA
+     0x20000001/2 spans, event 2's camera op 0x80 (word 359); decide how
+     1.0 handles event 2's stage-2 request (the tutorial's end);
+   - player damage (boss body word 8, shockwave proxies) and game over;
+   - draw the class-60/0A arms (limbs 2/4, slam Y pulse).
 1. Then finish the front end/opening:
    - title backdrop done (wall, strip, gradient, menu box), fade 2/10, title
      sounds (sfx_title.l3sb). Left: the Servbot parade (0x80015428 ->
