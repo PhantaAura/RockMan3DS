@@ -3,6 +3,22 @@
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
+- **Post-win events 3 and 2 (M1, 2026-11-13, branch claude/event3-postwin-90c613).**
+  ST00 event 3 (`0x80102058`, phases 0..6) and event 2 (`0x8010194C`,
+  phases 0..7) run natively over cooked L3CS tables
+  (`src/flow/source_st00_post_win.cpp`, tests `test_source_st00_post_win`,
+  `test_runtime_post_win`): timeline, camera program (event 3), spawns,
+  every record callback (actor writes recorded per slot), fades, hand-offs.
+  RuntimeSession takes the ST00 poll result (0x606 -> 3, 0x605 -> 2), commits
+  event 3's area-4 request through the door plumbing with Area 4's prefix
+  (0x8010038C case 4: hide, flag 0x605) and retains event 2's **stage 2**
+  request (the port has no stage 2). Azahar run 2 (normal boot,
+  `tutorial_full_boss.txt`): 0x606 @12464 -> event 3 -> fade 10 @13424 ->
+  Area 4 @13453 -> event 2 @13455 -> stage-2 request @16255 (RESULTS.md).
+  Host 180/180, native PASS (`pass-20261107-215041-m2-01516`). Missing: the
+  scene actors (40/05, 40/08, event 2's cast) are not drawn or simulated,
+  the event camera is not applied to the 3DS view, smoke/objects/sounds,
+  XA voice 0x20000001/2 (no measured span), event 2's camera op 0x80.
 - **Area 3 boss callback (M1, 2026-11-01, branch claude/tutorial-boss-4a9127).**
   The real class 40/02 callback `0x801076E8` replaces the replayed intro:
   init `0x801078B8`, chooser `0x80107B48`, substates 0/1/2/3/4/6, hit
@@ -240,9 +256,12 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
      Buster updates (route stalls at the trap room); find the gate;
    - Buster fires every held frame (4 live): check the original fire rate;
    - boss charge stops at z -1095 vs -1223 in the original;
-   - port event 3 (poll 0x606 -> handler `0x80102058`): two class 40/03 scene
-     actors (`0x8010A68C`), smoke `0x80116D60`, camera `0x8011BB3C`, timeline
-     `0x8011BE44`, XA 0x20000001, then the Area 4 request and Area 4 event 2;
+   - post-win events 3/2 (logic ported, see Completed): draw and run their
+     scene actors (40/05 init `0x8010C930`/`0x8010D824`; 40/08's callback is
+     not in the ST00 table, CANDIDATE: EXE), apply the event camera to the
+     3DS view, smoke `0x80116D60`, `0x80031618` objects, `0x8011877C`, XA
+     0x20000001/2 spans, event 2's camera op 0x80 (word 359); decide how
+     1.0 handles event 2's stage-2 request (the tutorial's end);
    - player damage (boss body word 8, shockwave proxies) and game over;
    - draw the class-60/0A arms (limbs 2/4, slam Y pulse).
 1. Then finish the front end/opening:
