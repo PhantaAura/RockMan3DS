@@ -54,6 +54,11 @@ RuntimeSession& RuntimeSession::operator=(const RuntimeSession& other){
     return *this;
 }
 
+void RuntimeSession::set_turn_setting_800c1b64(uint8_t value){
+    turn_setting_800c1b64_=uint8_t(value?1:0);
+    l3_pl00_install_control_profile_800425fc(&player_,turn_setting_800c1b64_);
+}
+
 void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16_t hpmax){
     invalidate_source_event_random_tape(source_scene_rng_tape_);source_scene_rng_constructor_admitted_=false;source_scene_rng_tape_status_=SourceEventRandomTapeStatus::Disabled;
     source_loop_snapshot_admitted_=false;
@@ -65,8 +70,8 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_={}; player_position_=p; hp_max_=hpmax?hpmax:1; hp_=std::min(hp,hp_max_);
     source_gameplay_camera_={};
     wr16w(player_,0x56,yaw&0x0FFFu);
-    // Retail USA boots with compatibility control profile 0 (table at 0x8008A04C).
-    l3_pl00_install_control_profile_800425fc(&player_,0);
+    // 0x8003BF2C: control profile 0x800C1B64 (OPTION Turn; table 0x8008A04C).
+    l3_pl00_install_control_profile_800425fc(&player_,turn_setting_800c1b64_);
     player_.bytes[0x08]=1; player_.bytes[0x09]=0; player_.bytes[0x0A]=0;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
