@@ -6850,7 +6850,10 @@ int main() {
             hardware_test_clock_event(gameplay_clock);
             // An explicit native presentation scheduler pass, independent of
             // catch-up movement ticks. Original-vs-native cadence is unproven.
-            if(g_source_event_boot&&use_uv_renderer()&&!ui_focus) {
+            // The post-win events (3/2) own fades in every boot mode.
+            const bool post_win_fades=session.source_post_win_event().active||
+                session.source_fade_callback_state().running||session.source_fade_intents().count;
+            if((g_source_event_boot||post_win_fades)&&use_uv_renderer()&&!ui_focus) {
                 const auto fade=session.service_source_fade_scheduler();
                 if(fade.committed||session.source_fade_callback_state().running) {
                     const auto image=session.source_fade_presentation();
@@ -7167,7 +7170,9 @@ int main() {
                 scene_overlay->source_function==0x80100614u&&
                 draw_source_subtract_uv(scene_overlay->r,scene_overlay->g,scene_overlay->b,
                     scene_overlay->width,scene_overlay->height);
-            if(g_source_event_boot&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All)draw_source_fade_uv(session.source_fade_presentation());
+            if((g_source_event_boot||session.source_post_win_event().active||session.source_post_win_handoff()||
+                session.source_fade_callback_state().running)&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All)
+                draw_source_fade_uv(session.source_fade_presentation());
             submit_gpu_frame();
             if(g_render_submissions==0)boot_log(MML_BOOT_FIRST_FRAME,"first 3D GPU submission queued; completion pending");
             ++g_render_submissions;
