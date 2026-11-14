@@ -5291,9 +5291,7 @@ int main() {
                         g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>64;
                         if(mag>64)keys|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
                         else if(autoplay_tick%8u<4u)keys|=KEY_Y;
-                        // Diagnostic route only: back away from a close target
-                        // (its lunges now hurt) while still aiming and firing.
-                        if(autoplay_step.keys==kAutoplayFight&&long(tx)*tx+long(tz)*tz<700L*700L)keys|=KEY_DDOWN;
+
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
                     held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
                 } else if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint||autoplay_step.keys==kAutoplaySteerUntil||
@@ -5590,7 +5588,10 @@ int main() {
                 g_game_over_freeze=false;
                 if(g_game_over.active){
                     l3::SourceGameOverInputs go_in;
-                    go_in.fade_busy_80098a72=session.source_fade_busy_80098a72();
+                    // A fade started this update is still a queued scheduler intent
+                    // (0x80012E10); count it as busy until the callback ends.
+                    go_in.fade_busy_80098a72=session.source_fade_busy_80098a72()?session.source_fade_busy_80098a72():
+                        int16_t(session.source_fade_intents().count||session.source_fade_callback_state().running?1:0);
                     go_in.busy_800a8788=0;                                     // CANDIDATE: CD/XA idle
                     go_in.start_pressed=(in.pressed_psx_mask&0x8u)!=0;
                     go_in.jingle_playing=music.playing(0);
