@@ -281,6 +281,20 @@ public:
     }
     void invalidate_source_fade_scheduler_budget() noexcept { source_fade_endpoint_hold_.reset(); }
     const SourceFadeCallbackState& source_fade_callback_state() const noexcept { return source_fade_callback_; }
+    // 0x80017C30(type) for the mode-0 types (0..3, 8..11) outside an event.
+    SourceFadeStartupResult start_source_fade_80017c30(uint8_t type) noexcept {
+        // Boot leaves no fade running (0x80098A70/72 = 0, as the title assumes).
+        for(size_t i=8;i<12;++i)if(!source_fade_context_.work_80098a68.known[i]){
+            source_fade_context_.work_80098a68.raw[i]=0;source_fade_context_.work_80098a68.known[i]=1;}
+        return consume_source_fade_startup_80017c30_mode0(source_fade_context_,
+            source_fade_profile_?&*source_fade_profile_:nullptr,&source_fade_intents_,type);
+    }
+    // 0x80098A72, the fade-busy halfword (0 when idle or unknown).
+    int16_t source_fade_busy_80098a72() const noexcept {
+        const auto& w=source_fade_context_.work_80098a68;
+        if(!w.known[10]||!w.known[11])return 0;
+        return int16_t(uint16_t(w.raw[10])|(uint16_t(w.raw[11])<<8));
+    }
     SourceFadePresentation source_fade_presentation() const noexcept {
         return describe_source_fade_presentation(source_fade_context_);
     }
@@ -567,6 +581,11 @@ public:
     // 0x80042208 at the Area 3 boss's defeat (0x800B55F9 = 1).
     void set_player_lock_800b55f9() noexcept { player_lock_800b55f9_ = true; }
     bool player_dead() const noexcept { return player_.bytes[8]==2; }
+    // 0x80041AB0 (player state 2) sets main phase 9 / sub 0 on its first
+    // frame; the 3DS loop runs source_game_over.h from that request.
+    bool consume_game_over_request() noexcept { const bool r=game_over_request_; game_over_request_=false; return r; }
+    // 0x8005D9EC: HP from +0xB0 and the depleted flag cleared.
+    void refill_player_life_8005d9ec() noexcept;
     void set_actor_angle_steps(const SourceAngleSteps* steps) noexcept { actor_angle_steps_ = steps; }
     // 0x800398F8 tail: store a computed camera shake byte to 0x800A395F.
     void set_camera_shake_800a395f(uint8_t value) { source_gameplay_camera_.shake_800a395f = value; }
@@ -630,6 +649,7 @@ private:
     SourceRngService* tick_rng_ = nullptr;     // valid during tick()
     const SourceAngleSteps* actor_angle_steps_ = nullptr;
     bool player_lock_800b55f9_ = false;
+    bool game_over_request_ = false;
     void reset_player_contact();
     void update_input_compat(const RuntimeInputFrame& input);
     void update_lock_on(const RuntimeInputFrame& input);

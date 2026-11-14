@@ -45,6 +45,7 @@
 #include "legends3ds/source_player_pose.h"
 #include "legends3ds/source_buster_profile.h"
 #include "legends3ds/runtime_session.h"
+#include "legends3ds/source_game_over.h"
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/frontend_title.h"
 #include "legends3ds/source_intro_crawl.h"
@@ -1507,6 +1508,9 @@ static std::vector<std::array<int,2>> g_autoplay_enemies;
 // part-8 point (+0x3E8) from the integer pose pass.
 static l3::SourceHitProxyTarget g_player_proxy_target{0x800b5338u};
 static std::optional<std::array<int16_t,3>> g_player_point_3e8;
+// Main phase 9 (game over) and whether this update freezes gameplay.
+static l3::SourceGameOverState g_game_over;
+static bool g_game_over_freeze=false, g_game_over_front_end_logged=false;
 // The shared target every effect-128 proxy names (0x800A86C0).
 static l3::SourceHitProxyTarget g_effect_shared_target{0x800a86c0u};
 struct DiagnosticAutoplay {
@@ -4511,6 +4515,42 @@ void rebuild_current_terrain(const l3::RuntimeMap& map,
 
 } // namespace
 
+// Main phase 9's own packets: the closing curtain 0x80016E90 (sub 1) and,
+// from sub 2, a black screen with the GAME OVER POLY_FT4 0x80016DAC (subs
+// 3..5), through the PS1 packet path the front end uses.
+void draw_game_over_overlay(const l3::SourceGameOverState& go) {
+    if(go.sub>=2)(void)draw_source_subtract_uv(255,255,255,320,240);   // nothing else is drawn
+    std::vector<std::array<uint32_t,9>> packets;std::vector<uint8_t> lengths;
+    const auto xy=[](int x,int y){return uint32_t(uint16_t(int16_t(x)))|(uint32_t(uint16_t(int16_t(y)))<<16);};
+    if(go.sub==1){
+        for(const auto& r:l3::source_game_over_curtain_80016e90(go.timer_08)){
+            packets.push_back({{0x28000000u,xy(r.x0,r.y0),xy(r.x1,r.y0),xy(r.x0,r.y1),xy(r.x1,r.y1),0,0,0,0}});lengths.push_back(5);
+        }
+    }
+    if(go.sub>=3&&go.sub<=5){
+        const auto& q=l3::kSourceGameOverQuad;
+        const uint32_t clut=l3::kSourceGameOverMaterialWord>>16,tpage=l3::kSourceGameOverMaterialWord&0xffffu;
+        packets.push_back({{0x2c808080u,xy(q.x0,q.y0),(clut<<16)|0x0000u,xy(q.x1,q.y0),(tpage<<16)|0x00ffu,
+                            xy(q.x0,q.y1),0x8000u,xy(q.x1,q.y1),0x80ffu}});lengths.push_back(9);
+    }
+    if(packets.empty())return;
+    g_psx_prims.clear();g_psx_ot.clear_r(kPsxOtBuckets);
+    for(size_t i=0;i<packets.size();++i){
+        const uint32_t packet=g_psx_prims.allocate(lengths[i],12);
+        for(unsigned k=0;k<lengths[i];++k)g_psx_prims.payload(packet)[k]=packets[i][k];
+        float* extra=reinterpret_cast<float*>(g_psx_prims.payload(packet)+lengths[i]);
+        for(unsigned k=0;k<12;++k)extra[k]=0.f;
+        g_psx_ot.add_prim(g_psx_prims,30,packet);
+    }
+    C3D_DepthTest(false,GPU_ALWAYS,GPU_WRITE_COLOR);
+    const bool from_gte=g_psx_xy_from_gte;g_psx_xy_from_gte=true;
+    psx_draw_ot(false,true);
+    g_psx_xy_from_gte=from_gte;
+    g_psx_prims.clear();g_psx_ot.clear_r(kPsxOtBuckets);
+    C3D_DepthTest(true,GPU_GEQUAL,GPU_WRITE_ALL);
+}
+
+
 int main() {
     gfxInitDefault();
     gfxSet3D(false); // Only the left eye is rendered; explicitly own 2D output.
@@ -5522,11 +5562,46 @@ int main() {
                 in.dialogue_left=pending_left;in.dialogue_right=pending_right;pending_left=pending_right=false;
                 in.pressed_psx_mask=pending_psx_pressed;pending_psx_pressed=0;
                 pending_fire=pending_lock=pending_dialogue=false;
+                g_game_over_freeze=false;
+                if(g_game_over.active){
+                    l3::SourceGameOverInputs go_in;
+                    go_in.fade_busy_80098a72=session.source_fade_busy_80098a72();
+                    go_in.busy_800a8788=0;                                     // CANDIDATE: CD/XA idle
+                    go_in.start_pressed=(in.pressed_psx_mask&0x8u)!=0;
+                    go_in.jingle_playing=music.playing(0);
+                    const uint8_t sub_before=uint8_t(g_game_over.sub);
+                    const auto go=l3::step_source_game_over_80016798(g_game_over,go_in);
+                    if(go.endpoint_hold_1f800001)session.bind_source_fade_scheduler_budget(go.endpoint_hold_1f800001);
+                    if(go.fade)(void)session.start_source_fade_80017c30(*go.fade);
+                    if(go.stop_music)music.stop_all();
+                    if(go.load_gameover){
+                        try{
+                            const auto cache=l3::load_l3material_cache(read_binary(data_path("materials/gameover.l3mc")),true);
+                            for(const auto& e:cache.entries){
+                                if(!e.resolved)continue;
+                                GpuMaterial m;m.material_word=e.material_word;g_frontend_materials.push_back(m);
+                                auto& owned=g_frontend_materials.back();owned.texture_ready=upload_material_texture(&e,owned.texture);
+                            }
+                            psx_resolver_reset();
+                        }catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+                    }
+                    if(go.sound)(void)l3::enqueue_source_audio_8001a008(session.source_audio_queue(),*go.sound,0,0);
+                    if(go.cd_8001d854)music.fade_out();
+                    if(go.clear_flag_1fe)session.set_story_flag(0x1fe,false);
+                    if(go.to_front_end&&!g_game_over_front_end_logged){
+                        g_game_over_front_end_logged=true;
+                        hardware_test_trace("# game_over_front_end,frame=%lu,held=1,reason=return_to_title_not_ported",(unsigned long)session.frame_counter());
+                    }
+                    g_game_over_freeze=!go.update_pass;
+                    if(sub_before!=uint8_t(g_game_over.sub))
+                        hardware_test_trace("# game_over,frame=%lu,sub=%d,timer08=%d,fade=%d,jingle=%u",(unsigned long)session.frame_counter(),
+                            int(g_game_over.sub),int(g_game_over.timer_08),int(go_in.fade_busy_80098a72),unsigned(go_in.jingle_playing));
+                }
                 const auto actor_gameplay_owned=[&]{
                     // Tutorial messages keep gameplay; their handlers pause the
                     // object classes through 0x8002EE90 (mode 1). CANDIDATE consumer:
                     // the native class-0x20 loop holds while paused.
-                    return !(session.dialogue().active&&session.dialogue().gates_gameplay)&&
+                    return !g_game_over_freeze&&!(session.dialogue().active&&session.dialogue().gates_gameplay)&&
                         session.tutorial_pause_mode()!=1&&!session.cutscene_active()&&
                         session.camera().owner==l3::RuntimeCameraOwner::Gameplay;
                 };
@@ -5777,13 +5852,17 @@ int main() {
                         (unsigned long)g_player_proxy_target.packet_00,unsigned(session.hp()),unsigned(session.compat_player().bytes[9]));
                     g_player_proxy_target.packet_00=0;
                 }
-                session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                if(!g_game_over_freeze)session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                if(session.consume_game_over_request()&&!g_game_over.active){
+                    g_game_over={};g_game_over.active=true;
+                    hardware_test_trace("# game_over,frame=%lu,sub=0,trigger=player_state2",(unsigned long)session.frame_counter());
+                }
                 // The Area 3 boss is normal gameplay content, not a diagnostic
                 // actor-state gate: run its callback 0x801076E8 every resident
                 // fixed update (rand() at RA 0x80107774, detection +0x504,
                 // proxy radius 0xD0). Player/camera ownership only gates the
                 // event position above.
-                for(auto& actor:actors.actors)if(actor.source_area3_boss&&!actor.source_released){
+                for(auto& actor:actors.actors)if(!g_game_over_freeze&&actor.source_area3_boss&&!actor.source_released){
                     const auto& st=*actor.source_area3_boss;
                     const auto pp=session.player_position();
                     const auto target=l3::sample_imported_actor_target(actor,pp.x,pp.z,
@@ -6847,7 +6926,7 @@ int main() {
             hardware_test_clock_event(gameplay_clock);
             // An explicit native presentation scheduler pass, independent of
             // catch-up movement ticks. Original-vs-native cadence is unproven.
-            if(g_source_event_boot&&use_uv_renderer()&&!ui_focus) {
+            if((g_source_event_boot||g_game_over.active)&&use_uv_renderer()&&!ui_focus) {
                 const auto fade=session.service_source_fade_scheduler();
                 if(fade.committed||session.source_fade_callback_state().running) {
                     const auto image=session.source_fade_presentation();
@@ -7164,7 +7243,8 @@ int main() {
                 scene_overlay->source_function==0x80100614u&&
                 draw_source_subtract_uv(scene_overlay->r,scene_overlay->g,scene_overlay->b,
                     scene_overlay->width,scene_overlay->height);
-            if(g_source_event_boot&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All)draw_source_fade_uv(session.source_fade_presentation());
+            if(g_game_over.active&&use_uv_renderer())draw_game_over_overlay(g_game_over);
+            if((g_source_event_boot||g_game_over.active)&&use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All)draw_source_fade_uv(session.source_fade_presentation());
             submit_gpu_frame();
             if(g_render_submissions==0)boot_log(MML_BOOT_FIRST_FRAME,"first 3D GPU submission queued; completion pending");
             ++g_render_submissions;

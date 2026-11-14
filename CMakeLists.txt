@@ -90,6 +90,7 @@ add_library(legends3ds_core STATIC
     src/world/class20_1f_popout.cpp
     src/world/class20_19.cpp
     src/world/class40_02_boss.cpp
+    src/flow/source_game_over.cpp
     src/world/class20_03_action3.cpp
     src/world/actor_runtime.cpp
     src/world/class20_03_behavior.cpp
@@ -1113,6 +1114,10 @@ add_executable(test_player_damage tests/test_player_damage.cpp)
 target_link_libraries(test_player_damage PRIVATE legends3ds_core)
 target_compile_options(test_player_damage PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME player_damage COMMAND test_player_damage)
+add_executable(test_source_game_over tests/test_source_game_over.cpp)
+target_link_libraries(test_source_game_over PRIVATE legends3ds_core)
+target_compile_options(test_source_game_over PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_game_over COMMAND test_source_game_over)
 
 add_executable(test_map_edge tests/test_map_edge.cpp)
 target_link_libraries(test_map_edge PRIVATE legends3ds_core)

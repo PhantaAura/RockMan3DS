@@ -376,6 +376,10 @@ void RuntimeSession::release_ledge_8003ee68(){
     l3_pl00_shot_enable_on(&player_);l3_pl00_anim_request_80041ddc(&player_,18,0,1);
 }
 
+void RuntimeSession::refill_player_life_8005d9ec() noexcept {
+    hp_=hp_max_;wr16w(player_,0x6E,hp_);actor_detection_globals_.gauge_depleted_800bbd7f=0;
+}
+
 void RuntimeSession::deliver_player_hit_target(uint32_t packet,uint32_t flags,
     const std::array<int16_t,3>& point,uint16_t word0e) noexcept {
     wr32w(player_,0x188,int32_t(packet));wr32w(player_,0x18C,int32_t(flags));
@@ -2177,7 +2181,14 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         }
         else if(player_.bytes[8]==3&&source_door_event0_.active){source_player_state3_80041b8c(player_);sync_primary_position_from_fixed();}
         else if(player_.bytes[8]==0)source_player_state0_8003c7b0(player_);
-        else if(player_.bytes[8]==2){}   // death state 2: its handler and game over are not ported yet
+        else if(player_.bytes[8]==2){
+            // 0x80041AB0: mirrors, the contact query, then main phase 9 once.
+            l3_pl00_snapshot_collision_pose(&player_);
+            player_.bytes[0x75]=player_.bytes[0x74];player_.bytes[0xAD]=player_.bytes[0xAC];player_.bytes[0x77]=player_.bytes[0x76];
+            wr16w(player_,0xB2,rd16w(player_,0x6E));
+            update_player_contact();
+            if(player_.bytes[9]==0){game_over_request_=true;++player_.bytes[9];}
+        }
         else{update_player_motion();update_player_contact();}
         update_source_door_event();
         // CANDIDATE order: event 0 after the player, then the door objects.

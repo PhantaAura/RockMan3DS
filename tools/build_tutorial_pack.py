@@ -420,6 +420,16 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 manifest['frontend_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'frontend.l3mc').relative_to(out)),
                     'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U/EM0000 (CANDIDATE: the Servbot page); words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C and DEMO_DAT.EBD'}
+            # Game over (main phase 9, ROCK_NEO 0x80016798): one 256x128 4-bit
+            # quad, GetTPage(0,0,320,256) | GetClut(0,0x1F0) << 16 (0x80016DAC),
+            # whose only image is GAMEOVER.BIN (Cd_read_comb in sub-phase 2).
+            if (dat/'GAMEOVER.BIN').is_file():
+                with tempfile.TemporaryDirectory() as gtd:
+                    gw=Path(gtd)/'gameover_words.txt'; gw.write_text('7c000015\n')
+                    run(tools,'l3cook_word_materials',mout/'gameover.l3mc',gw,dat/'GAMEOVER.BIN')
+                manifest['gameover_material']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((mout/'gameover.l3mc').relative_to(out)),
+                    'source':'GAMEOVER.BIN; word from ROCK_NEO 0x80016DAC'}
             # Pre-title narration (ST01 event 71, docs/research_01516/INTRO_EVENT71.md):
             # the text-crawl pages OPENG0..3 from ST01.BIN.
             # Plus the background layers (descriptor table 0x80100D5C[0], the
