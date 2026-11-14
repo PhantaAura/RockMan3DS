@@ -674,3 +674,31 @@ frame (4 live), so the fight is far shorter than the original; the arms are
 not drawn; player damage, game over and the post-win event 3 are absent.
 Fixes this run needed: 76b1890 (L3CB row order), 9c71eca (+0x80 distance),
 74d4578 (boss texture page), 6eaebb6 (proxy after the queue reset).
+
+## ST00 post-win events 3 and 2 in Azahar (2026-11-13)
+
+Build `pass-20261107-215041-m2-01516` (commit "Service and draw the session
+fade..."), Azahar Old 3DS mode, normal boot (`SOURCE_EVENT_BOOT=0`,
+`NEW_GAME_OPENING=0` direct hand-off), route
+`autoplay/tutorial_full_boss.txt` (+12000 idle frames), no spawn or title file.
+
+| Frame | Event |
+|---|---|
+| 11988 | flag 0x622 (tutorial done, Area 2) |
+| 12464 | boss HP 0, flag 0x606 |
+| 12465 | event 3 phase 1 (`0x80042238` took the player the tick before) |
+| 12466 | CD 0x20000001 acknowledged (`xa=not_installed`) |
+| 12498 | constructor `0x80101F7C`: 2 spawns, camera program 0x8011BB3C |
+| 13424 | timeline end (event tick 960), fade 10; native fade scheduler runs |
+| 13453 | hand-off: stage 0 area 4, 0x606 cleared; Area 4 loaded |
+| 13455 | event 2 starts from flag 0x605 (Area 4 prefix) |
+| 13457 | CD 0x20000002 acknowledged (`xa=not_installed`) |
+| 13488 | fade 2 (in) |
+| 13489 | constructor `0x80101888`: 14 spawns |
+| 16227 | timeline end (event tick 2773), fade 10 |
+| 16255 | hand-off: stage 2 area 0, 0x605 cleared; retained (`ported_load=0`) |
+
+Run 1 (`pass-20261107-210933`) held at 13993 after fade 10: the session's
+fade scheduler and its draw ran only with `SOURCE_EVENT_BOOT=1`. Fixed.
+Not shown: the scene actors (no model drawn for slots 40/05, 40/08 or event
+2's cast), the event camera on the 3DS view, smoke/objects, XA voice.
