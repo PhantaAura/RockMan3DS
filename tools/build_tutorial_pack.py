@@ -176,7 +176,7 @@ def build_pack(dat_dir:Path,host_build_dir:Path,out_dir:Path,
     if not dat.is_dir(): raise ValueError('DAT directory not found')
     required_tools=['l3cook_st00','l3cook_render','l3cook_map_init','l3cook_st00_flow','l3cook_st00_spawn','l3cook_pbd','l3cook_player_comp','l3cook_anim','l3cook_skeleton','l3cook_msg','l3cook_ebd']
     if with_indexed: required_tools += ['l3cook_texture','l3cook_palette']
-    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials','l3cook_bottom_gauge','l3cook_intro_materials','l3cook_word_materials']
+    if with_material_cache: required_tools += ['l3cook_material_cache','l3cook_player_material_cache','l3cook_actor_material_cache','l3cook_negative_materials','l3cook_scene_e0_material','l3cook_scene_actor40_material','l3cook_palette_bank','l3cook_frontend_materials','l3cook_bottom_gauge','l3cook_intro_materials','l3cook_word_materials','l3cook_font_materials']
     for t in required_tools:
         if not (tools/t).is_file(): raise ValueError(f'missing host tool: {tools/t}')
     for name in CORE_CONTAINERS:
@@ -519,6 +519,15 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 manifest['frontend_servbots']={'format':2,'status':'SOURCE_BACKED_PARTIAL',
                     'ebd':str((fout/'title.l3ebd').relative_to(out)),'scripts':str((fout/'servbots.l3ts').relative_to(out)),
                     'source':'DEMO_DAT.EBD class 0x20/0; ROCK_NEO 0x80080960..0x80082104; camera 0x80038370'}
+                # The OPTION menu (front-end state 6): message windows over the
+                # EXE's message data, drawn with the FONT.BIN page.
+                if (dat/'FONT.BIN').is_file():
+                    run(tools,'l3cook_font_materials',dat/'FONT.BIN',mout/'font.l3mc')
+                    subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_option_menu.py'),
+                        str(dat.parent.parent/'ROCK_NEO.EXE'),str(fout/'option.l3ex')],check=True,stdout=subprocess.DEVNULL)
+                    manifest['frontend_option']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                        'font':str((mout/'font.l3mc').relative_to(out)),'messages':str((fout/'option.l3ex').relative_to(out)),
+                        'source':'FONT.BIN page (960,256); ROCK_NEO messages 0x8008B67C..0x8008BA7C, interpreter 0x80053B40'}
             manifest['actor_materials']={'format':1,'optional':True,'runtime_gate':'ACTOR_TEXTURES=1',
                 'default_enabled':False,'shade':'UNKNOWN','status':'SOURCE_BACKED_PARTIAL',
                 'upload_order':'inherited ordered VRAM resources; live original VRAM comparison pending'}

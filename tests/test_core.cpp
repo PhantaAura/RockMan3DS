@@ -179,7 +179,7 @@ int main() {
     msg[mo++] = 1; msg[mo++] = 2; msg[mo++] = 3; msg[mo++] = 4;
     msg[mo++] = 0xA4; msg[mo++] = 0x34; msg[mo++] = 0x12; // WAIT
     msg[mo++] = 0x9F;                 // NEXT
-    msg[mo++] = 0xED;                 // unknown high byte preserved, not guessed
+    msg[mo++] = 0xFE;                 // unknown high byte preserved, not guessed
     msg[mo++] = 0; msg[mo++] = 0;     // terminator => 0x12
     mo = 0x12;
     msg[mo++] = 0x96; msg[mo++] = 0x10; msg[mo++] = 0x20;
@@ -209,7 +209,7 @@ int main() {
     assert(msg_cursor.next(me) && me.kind==l3::MmlRuntimeEventKind::Audio && me.args.size()==4 && me.args[0]==1);
     assert(msg_cursor.next(me) && me.kind==l3::MmlRuntimeEventKind::Wait && me.args.size()==2);
     assert(msg_cursor.next(me) && me.kind==l3::MmlRuntimeEventKind::Next);
-    assert(msg_cursor.next(me) && me.kind==l3::MmlRuntimeEventKind::UnknownControl && me.opcode==0xED);
+    assert(msg_cursor.next(me) && me.kind==l3::MmlRuntimeEventKind::UnknownControl && me.opcode==0xFE);
     assert(msg_cursor.next(me) && me.kind==l3::MmlRuntimeEventKind::BlockEnd);
     assert(!msg_cursor.next(me));
     msg_cursor.start_block(1);

@@ -33,6 +33,7 @@ int mml_message_fixed_arg_bytes(uint8_t op) {
         case 0x8F: return 4; // AUDIO
         case 0x93: return 2; // DECOR
         case 0x94: return 0; // MOVE_FREE
+        case 0x95: return 0; // HALT (0x80054BAC)
         case 0x96: return 2; // SEL
         case 0x97: return -1; // MULTI: one type byte + one byte per prior SEL in block
         case 0x99: return 2; // CALL
@@ -51,7 +52,8 @@ int mml_message_fixed_arg_bytes(uint8_t op) {
         case 0xAC: return 2; // EXE_JUMP
         case 0xAD: return 6;
         case 0xAE: return 2; // OPTION
-        case 0xAF: return 1;
+        case 0xAF: return 1; // ROW_BREAK (0x80056128)
+        case 0xB0: return 1; // BRIGHTNESS (0x80056180)
         case 0xB2: return 0;
         case 0xB3: return 0;
         case 0xB4: return 0;
@@ -70,6 +72,7 @@ int mml_message_fixed_arg_bytes(uint8_t op) {
         case 0xDD: return 4;
         case 0xE1: return 2;
         case 0xE3: return 2;
+        case 0xED: return 0; // SPACE12 (0x8005A858)
         default: return -1;
     }
 }
@@ -132,7 +135,7 @@ MmlMessageFile parse_mml_message_payload(const std::vector<uint8_t>& b) {
                 const size_t args = static_cast<size_t>(fixed);
                 if (args > token_end - (i + 1u)) throw std::runtime_error("truncated MSG control command");
                 block.tokens.push_back(make_token(MmlMessageTokenKind::Control, op, b.data() + i + 1u, args));
-                if (op == 0x96u) ++selection_count;
+                if (op == 0x96u || op == 0xADu) ++selection_count;   // both bump +114 (0x80054BB4, 0x80055CC4)
                 i += 1u + args;
                 continue;
             }
