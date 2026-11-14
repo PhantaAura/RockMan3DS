@@ -5291,6 +5291,9 @@ int main() {
                         g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>64;
                         if(mag>64)keys|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
                         else if(autoplay_tick%8u<4u)keys|=KEY_Y;
+                        // Diagnostic route only: back away from a close target
+                        // (its lunges now hurt) while still aiming and firing.
+                        if(autoplay_step.keys==kAutoplayFight&&long(tx)*tx+long(tz)*tz<700L*700L)keys|=KEY_DDOWN;
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
                     held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
                 } else if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint||autoplay_step.keys==kAutoplaySteerUntil||
@@ -5900,6 +5903,13 @@ int main() {
                         hardware_test_trace("# source_post_win_handoff,frame=%lu,event=%u,stage=%u,area=%u,cleared_flag=%03x,ported_load=%u",
                             (unsigned long)session.frame_counter(),unsigned(pw.event),unsigned(ps.handoff->stage),unsigned(ps.handoff->area),
                             unsigned(ps.handoff->cleared_flag),unsigned(ps.handoff->stage==0));
+                    // Event 3's constructor 0x80101F7C stores 2 to 0x800C3588: class-40
+                    // slot 0's state byte, the boss's release state 0x80107F00.
+                    if(ps.constructed&&pw.event==3)
+                        for(auto& actor:actors.actors)if(actor.source_area3_boss&&!actor.source_released){
+                            actor.source_area3_boss->state_08=2;
+                            hardware_test_trace("# source_area3_boss_release,frame=%lu,writer=80101F7C",(unsigned long)session.frame_counter());
+                        }
                     if(pw.active){last_event=pw.event;last_phase=pw.phase;last_record=pw.record;}
                     else {last_phase=0xff;last_record=SIZE_MAX;}
                 }
@@ -6323,6 +6333,12 @@ int main() {
                 // This diagnostic lifecycle advances initial pose0 on the first
                 // admitted native tick. Original allocation-frame timing and
                 // pause ownership remain unknown; stale presentation is held.
+                if(session.frame_counter()%120u==0u)
+                    hardware_test_trace("# actor_gate,frame=%lu,admitted=%u,owned=%u,revision_failed=%u,dialogue_gate=%u,pause=%u,cutscene=%u,camera_gameplay=%u,game_over=%u",
+                        (unsigned long)session.frame_counter(),unsigned(actor_tick_admitted),unsigned(actor_gameplay_owned()),
+                        unsigned(actor_revisions.failed_source_revision),unsigned(session.dialogue().active&&session.dialogue().gates_gameplay),
+                        unsigned(session.tutorial_pause_mode()),unsigned(session.cutscene_active()),
+                        unsigned(session.camera().owner==l3::RuntimeCameraOwner::Gameplay),unsigned(g_game_over.active));
                 if(actor_tick_admitted&&actor_gameplay_owned()&&!actor_revisions.failed_source_revision) {
                     if(actor_state_fields_requested()) {
                         const auto pp=session.player_position();

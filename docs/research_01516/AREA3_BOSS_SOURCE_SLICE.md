@@ -351,3 +351,14 @@ Not ported: the scene actors (40/05, 40/08 and event 2's cast) — their
 commands are recorded per slot; the smoke emitters, `0x80031618` objects,
 `0x8011877C`, sound `0x8002EE90`; the XA streams 0x20000001/2 (no measured
 span in `cook_xa_stream.py`); applying the event camera to the 3DS view.
+
+### Charge stop z -1223 vs -1095 (2026-11-13)
+
+PSXRecomp from slot 2: the walk ends at -295 and the charge starts there, as
+in the port. Mega Man stays at z -1632 until the boss reaches -871; the
+charge's footstep shockwaves (750 ahead) then hit him and his flinch slides
+him back (-1691, -1750, -1759). The boss stops by distance (+0x80 <= 0x47FFF)
+at -1223, 536 units from him, the same rule as the port. Run 9 predates the
+player-damage port (no flinch), so the boss stopped at -1095 against a
+player still at -1632. Event 3's constructor store 0x800C3588 = 2 is
+class-40 slot 0's state byte: the boss's release state 0x80107F00, now wired.
