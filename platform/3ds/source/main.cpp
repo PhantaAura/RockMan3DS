@@ -45,6 +45,7 @@
 #include "legends3ds/source_player_pose.h"
 #include "legends3ds/source_buster_profile.h"
 #include "legends3ds/runtime_session.h"
+#include "legends3ds/source_stage_load.h"
 #include "legends3ds/source_game_over.h"
 #include "legends3ds/runtime_animation.h"
 #include "legends3ds/frontend_title.h"
@@ -254,6 +255,11 @@ static bool g_source_scene_rng_replay = false;
 static bool g_source_actor_proxy = false;
 static l3::SourceRngService g_actor_rng;
 static l3::ChildRuntime g_children;
+// Stage loading (source_stage_load.h): the stage this boot pass loads and,
+// after a stage request, the carry and arrival the next pass applies.
+static uint8_t g_stage = 0;
+static std::optional<l3::SourceStageCarry> g_stage_carry;
+static std::optional<l3::SourceStageArrival> g_stage_arrival;
 static l3::SourceGteRtpsState g_source_player_gte;
 static uint64_t g_actor_update_ordinal = 0;
 // Original owner materials, with diagnostic unlit white modulation. Shade and
@@ -282,6 +288,8 @@ std::vector<uint8_t> read_binary(const std::string& path, size_t limit=kRuntimeF
 }
 
 std::string data_path(const char* rel) { return std::string(kDataRoot) + rel; }
+// Stage-local data: ST00 at the pack root, other stages under stages/stNN/.
+std::string stage_path(const char* rel) { return data_path(l3::stage_asset_path(g_stage, rel).c_str()); }
 
 // Bottom-screen target gauge (ROCK_NEO 0x8005CEFC draws up to three HUD
 // slots at 0x800BBDC0 from an actor's +6E health and +B0 max). Which actor
@@ -4436,7 +4444,7 @@ std::string area_materials_path(size_t area, bool player) {
     char rel[96];
     std::snprintf(rel, sizeof(rel), player ? "materials/player_area_%02lu.l3mc" : "materials/area_%02lu.l3mc",
                   (unsigned long)area);
-    return data_path(rel);
+    return stage_path(rel);
 }
 
 l3::MaterialCache load_area_materials(size_t area, bool player, uint64_t remaining,
@@ -4451,7 +4459,7 @@ void rebuild_actor_materials(size_t area,uint64_t remaining) {
     if(!actor_textures_requested()||!g_sidecars_bound)return;
     try{
         char rel[96];std::snprintf(rel,sizeof(rel),"materials/actor_area_%02lu.l3mc",static_cast<unsigned long>(area));
-        const auto bytes=read_binary(data_path(rel));
+        const auto bytes=read_binary(stage_path(rel));
         const auto cache=l3::load_actor_material_cache(bytes,std::min(remaining,l3::kActorMaterialDecodedLimit));
         g_actor_materials.reserve(cache.entries.size());
         for(const auto& e:cache.entries){
@@ -4617,6 +4625,14 @@ int main() {
         // The probe may select X/B after startup flags were sampled. Bind
         // the matching camera only once that final renderer choice is owned.
         load_view_calibration();
+        // A stage request (0x800C356C = 2 naming another stage) returns here
+        // after the outgoing stage's resources are released: the whole
+        // session and renderer are rebuilt from the new stage's data, as the
+        // original reloads the overlay, map and area set.
+    stage_reload:
+        if(g_stage!=0){g_source_event_boot=false;g_new_game_opening=false;}
+        hardware_test_trace("# stage_load,stage=%u,arrival=%u,area=%u",unsigned(g_stage),unsigned(g_stage_arrival.has_value()),
+            unsigned(g_stage_arrival?g_stage_arrival->area:0));
         hardware_test_trace("# top_draw_plan,mode=%u,renderer=%u,0=all,1=terrain_only,2=player_only,empty_immediate_batches=SKIPPED",
             unsigned(g_hardware_scene_draw),unsigned(g_renderer_gate.active));
         l3::RuntimeMap boot_map;
@@ -4624,7 +4640,7 @@ int main() {
         bool package_loaded = false;
         std::vector<l3::TutorialRuntimeArea> packaged_areas;
         std::optional<l3::St00SpawnCatalog> spawn_catalog;
-        if (FILE* present = std::fopen(kAreaPackagePath, "rb")) {
+        if (FILE* present = g_stage==0 ? std::fopen(kAreaPackagePath, "rb") : nullptr) {
             std::fclose(present);
             const u64 load_start = svcGetSystemTick();
             hardware_test_area_event("package_before", 0, 0, 0, 0, 0);
@@ -4700,11 +4716,11 @@ int main() {
             }
         }
         if (!package_loaded) {
-            const auto map_bytes=read_binary(data_path("st00.l3map"));
-            const auto render_bytes=read_binary(data_path("st00.l3render"));
+            const auto map_bytes=read_binary(stage_path("st00.l3map"));
+            const auto render_bytes=read_binary(stage_path("st00.l3render"));
             boot_map = l3::load_l3map(map_bytes, true);
             render = l3::load_l3render(render_bytes, true);
-            const auto initialization_path=data_path("st00.l3init");
+            const auto initialization_path=stage_path("st00.l3init");
             if(FILE* input=std::fopen(initialization_path.c_str(),"rb")) {
                 const bool seek_ok=std::fseek(input,0,SEEK_END)==0;
                 const long length=seek_ok?std::ftell(input):-1;
@@ -4725,7 +4741,7 @@ int main() {
                 }
             } else boot_log(MML_BOOT_DATA,"loose map initialization absent UNKNOWN");
         }
-        if (terrain_xyz_active() && g_sidecars_bound && g_negative_materials.empty()) {
+        if (g_stage==0 && terrain_xyz_active() && g_sidecars_bound && g_negative_materials.empty()) {
             const auto path = data_path("st00.l3nm");
             if (FILE* f = std::fopen(path.c_str(), "rb")) {
                 std::fclose(f);
@@ -4790,18 +4806,21 @@ int main() {
             std::vector<l3::TutorialRuntimeArea>().swap(packaged_areas);
             boot_log(MML_BOOT_DATA,"package runtime table/list/EBD bound");
         } else if (g_sidecars_bound) {
-            const auto flow=read_binary(data_path("st00.l3flow"));
-            for(size_t i=0;i<kTutorialAreaCount;++i){
+            const auto flow=read_binary(stage_path("st00.l3flow"));
+            const size_t flow_areas=g_stage==0?kTutorialAreaCount:l3::inspect_l3st00_flow(flow,true).area_count;
+            for(size_t i=0;i<flow_areas;++i){
                 char rel[64];
                 std::snprintf(rel,sizeof(rel),"ebd/area_%02lu.l3ebd",(unsigned long)i);
-                areas.push_back(l3::load_tutorial_runtime_area(flow,read_binary(data_path(rel)),i,true));
+                areas.push_back(l3::load_tutorial_runtime_area(flow,read_binary(stage_path(rel)),i,true));
             }
+            // Map areas beyond the overlay's tables bind map data only.
+            while(areas.size()<boot_map.areas.size()){areas.emplace_back();areas.back().area_index=areas.size()-1;}
         } else {
             // No guessed table/list/EBD selection: these areas bind map data only.
             areas.resize(boot_map.areas.size());
             for (size_t i=0;i<areas.size();++i) areas[i].area_index=i;
         }
-        if(g_sidecars_bound && !spawn_catalog){
+        if(g_stage==0 && g_sidecars_bound && !spawn_catalog){
             const auto path=data_path("st00.l3spawn");
             if(FILE* present=std::fopen(path.c_str(),"rb")){
                 std::fclose(present);
@@ -4814,7 +4833,7 @@ int main() {
             spawn_catalog.reset();
             boot_log(MML_BOOT_DATA,"conditional source spawn catalog bound");
         }
-        if (g_sidecars_bound) {
+        if (g_stage==0 && g_sidecars_bound) {
             messages.push_back(l3::load_l3message(read_binary(data_path("messages/st00_01.l3msg")),true));
             messages.push_back(l3::load_l3message(read_binary(data_path("messages/st00_02.l3msg")),true));
         }
@@ -4874,7 +4893,7 @@ int main() {
         // scene owners, instead of the direct hand-off spawn. opening_skip.txt
         // keeps the old direct hand-off (tutorial-route tests).
         bool title_will_run=false;
-        if(g_sidecars_bound&&use_uv_renderer()){
+        if(g_stage==0&&g_sidecars_bound&&use_uv_renderer()){
             const auto present=[](const char* p){FILE* f=std::fopen(p,"r");if(!f)return false;std::fclose(f);return true;};
             title_will_run=!present("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt")&&
                 (!g_autoplay.active||present("sdmc:/3ds/Legends3DS/diagnostic_title.txt"));
@@ -4910,6 +4929,7 @@ int main() {
 
         L3QolSettings qol{}; l3_qol_settings_defaults(&qol);
         l3::RuntimeSession session(std::move(boot_map),std::move(areas[0]),std::move(messages),qol);
+        session.set_stage(g_stage);   // 0x800C1B60
         // This native entry is a fresh diagnostic session, not a restored retail
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
@@ -4917,7 +4937,7 @@ int main() {
         session.set_reference_tables(refs);
         session.set_actor_angle_steps(actor_angle_steps?&*actor_angle_steps:nullptr);
         // 0.0.15.15: ST00 E0/06 tutorial message triggers (owner-local L3TR).
-        if(g_sidecars_bound){
+        if(g_stage==0&&g_sidecars_bound){
             const auto path=data_path("st00.l3tr");
             if(FILE* present=std::fopen(path.c_str(),"rb")){
                 std::fclose(present);
@@ -4953,7 +4973,7 @@ int main() {
         // path, so the enhanced build never reached it and booted into the
         // Area 0 inspection camera instead.
         bool handoff_spawn=false;
-        if(!g_source_event_boot) {
+        if(g_stage==0&&!g_source_event_boot) {
             constexpr auto& handoff=l3::kSourceSt00OpeningHandoff;
             if(handoff.destination_area<map.areas.size()&&
                validate_area_vertex_budget(map,render,handoff.destination_area)) {
@@ -4962,12 +4982,27 @@ int main() {
                 boot_log(MML_BOOT_DATA,"BOOT_SPAWN=SOURCE_HANDOFF_80101274 area1 opening_scene=SKIPPED");
             } else boot_log(MML_BOOT_DATA,"BOOT_SPAWN=DIAGNOSTIC handoff area unavailable");
         }
+        if(g_stage_arrival) {
+            // 0x80015EE8 at the stage request's transition lanes.
+            g_current_area=g_stage_arrival->area;
+            spawn={g_stage_arrival->position[0],g_stage_arrival->position[1],g_stage_arrival->position[2]};
+            inspection_yaw=g_stage_arrival->heading;handoff_spawn=true;
+            boot_log(MML_BOOT_DATA,"BOOT_SPAWN=STAGE_REQUEST 0x80015EE8 lanes");
+        }
         if (!handoff_spawn && terrain_xyz_active()) { const auto entry=inspection_entry(map,render,g_current_area); spawn={entry.origin.x,entry.origin.y,entry.origin.z}; inspection_yaw=entry.yaw; }
         load_diagnostic_spawn(map,render,g_current_area,spawn,inspection_yaw);
         if (g_current_area) session.transition_to_area(g_current_area,spawn,inspection_yaw);
         // New Game life: PSXRecomp reads +0x6E = +0xB0 = 80 at the Area 1
         // hand-off and on reaching Area 3 (savestates 7, 8 and 2).
         session.reset_player(spawn,inspection_yaw,80,80);
+        if(g_stage_arrival&&g_stage_carry) {
+            const bool applied=session.apply_stage_load(*g_stage_carry,*g_stage_arrival);
+            hardware_test_trace("# stage_arrival,stage=%u,area=%u,x=%d,y=%d,z=%d,heading=%u,applied=%u,hp=%u",
+                unsigned(g_stage),unsigned(session.map_area_index()),int(session.player_position().x),
+                int(session.player_position().y),int(session.player_position().z),unsigned(session.player_yaw()),
+                unsigned(applied),unsigned(session.hp()));
+        }
+        g_stage_carry.reset();g_stage_arrival.reset();
         auto player_track=l3::pbd_main_body_track_begin(animation,
             session.compat_player().bytes[0xAC], session.compat_player().bytes[0xA4]);
 
@@ -4975,12 +5010,13 @@ int main() {
         l3::MaterialCache player_materials{};
         set_e007_gate_cells(session.active_area(), map, g_current_area);
         rebuild_current_terrain(map, render, &terrain_materials, &player_materials, g_current_area);
-        if(actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
-        if(actor_metadata.event_phase2)session.bind_source_event_phase2_package(*actor_metadata.event_phase2);
-        if(actor_metadata.event_command)session.bind_source_event_command_package(*actor_metadata.event_command);
+        // The cooked event tables are ST00's (poll 0x8011ADxx, events 1/3/2).
+        if(g_stage==0&&actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
+        if(g_stage==0&&actor_metadata.event_phase2)session.bind_source_event_phase2_package(*actor_metadata.event_phase2);
+        if(g_stage==0&&actor_metadata.event_command)session.bind_source_event_command_package(*actor_metadata.event_command);
         if(actor_metadata.fade_startup)session.bind_source_fade_profile(*actor_metadata.fade_startup);
         // ST00 post-win events 3 and 2 (tools/cook_cutscene.py via the tutorial pack).
-        for(const unsigned ev:{3u,2u}) {
+        if(g_stage==0)for(const unsigned ev:{3u,2u}) {
             char name[32];std::snprintf(name,sizeof(name),"st00_event%u.l3cs",ev);
             bool bound=false;
             try {
@@ -4991,7 +5027,7 @@ int main() {
             } catch(const std::exception&) {}
             hardware_test_trace("# source_post_win_profile,event=%u,bound=%u",ev,unsigned(bound));
         }
-        if(actor_metadata.event_phase5) {
+        if(g_stage==0&&actor_metadata.event_phase5) {
             session.bind_source_event_phase5_profile(*actor_metadata.event_phase5);
             const auto admitted=session.bind_source_event_phase5_resources();
             hardware_test_trace("# source_scene_resources,status=%u,admitted=%u,binding_count=%lu,resident_EBD_SHA256_verified=%u",
@@ -4999,7 +5035,7 @@ int main() {
                 (unsigned long)session.source_event_phase5_resources().binding_count(),
                 unsigned(session.source_event_phase5_resources().admitted()));
         }
-        if(actor_metadata.event_phase6) {
+        if(g_stage==0&&actor_metadata.event_phase6) {
             const bool admitted=session.bind_source_event_phase6_profile(*actor_metadata.event_phase6);
             hardware_test_trace("# source_scene_profile,format=L3P6,admitted=%u,bytes=1180,full_scene_complete=false",unsigned(admitted));
         }
@@ -5097,7 +5133,7 @@ int main() {
         NativeMusic music;
         {
             char path[256];std::snprintf(path,sizeof(path),"%saudio/music_st00.l3mu",kDataRoot);
-            const bool ready=music.open(path);
+            const bool ready=g_stage==0&&music.open(path);   // only ST00's bank is cooked
             hardware_test_trace("# source_music_open,ready=%u,bytes=%lu,reason=%s,consumer=0x8001AC58,sequencer=SsSeqCalledTbyT_60Hz,mix=SOFTWARE_SPU_REVERB",
                 unsigned(ready),(unsigned long)music.bank_bytes(),music.error());
         }
@@ -5187,7 +5223,7 @@ int main() {
         }
         // Title and menu first, unless a diagnostic autoplay/spawn run. With
         // diagnostic_title.txt the autoplay script drives the title too.
-        if(g_sidecars_bound&&use_uv_renderer()){
+        if(g_stage==0&&g_sidecars_bound&&use_uv_renderer()){
             bool spawn_file=false,title_file=false;
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_spawn_01414.txt","r")){std::fclose(f);spawn_file=true;}
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_title.txt","r")){std::fclose(f);title_file=true;}
@@ -5229,7 +5265,25 @@ int main() {
             applied_mix_count=applied_mix_index=0;
         };
 
+        bool stage_request_held=false;
         while(aptMainLoop()) {
+            // Stage change: the hand-off named another stage. Leave the loop;
+            // the teardown below releases this stage and boot reloads.
+            if(const auto stage_request=session.source_stage_request()) {
+                const auto next_map=data_path(l3::stage_asset_path(stage_request->stage,"st00.l3map").c_str());
+                if(FILE* f=std::fopen(next_map.c_str(),"rb")) {
+                    std::fclose(f);
+                    g_stage_carry=session.make_stage_carry();
+                    g_stage_arrival=l3::source_stage_arrival(*stage_request);
+                    hardware_test_trace("# stage_request,frame=%lu,from=%u,stage=%u,area=%u,x=%d,y=%d,z=%d,heading=%u,source=%08lx",
+                        (unsigned long)session.frame_counter(),unsigned(g_stage),unsigned(stage_request->stage),unsigned(stage_request->area),
+                        int(stage_request->spawn[0]),int(stage_request->spawn[1]),int(stage_request->spawn[2]),
+                        unsigned(stage_request->heading),(unsigned long)stage_request->source_function);
+                    break;
+                }
+                if(!stage_request_held)hardware_test_trace("# stage_request_held,stage=%u,reason=stage_data_absent",unsigned(stage_request->stage));
+                stage_request_held=true;
+            }
             const u64 frame_start=svcGetSystemTick();
             g_runtime_diag.draw_calls=0;
             g_submitted_vertices=0;
@@ -5505,7 +5559,7 @@ int main() {
                         (void)l3::initialize_imported_actor_fresh_pose_proxy_subset(actor);
                     actor_revisions={session.conditional_spawn_revision(),
                         session.conditional_spawn_revision(),std::nullopt};
-                    if(actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
+                    if(g_stage==0&&actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
                     // The fade work and the 0x1F800001 budget are globals the area
                     // change does not touch; the native owner drops them with the
                     // area, so rebind the profile and the fresh ST00 budget 2
@@ -7429,6 +7483,12 @@ int main() {
         session.release_inactive_locations();
         hardware_test_area_event("gpu_unloaded",g_current_area,0,
             g_package_bytes,g_package_decoded_estimate,g_package_peak_estimate);
+        if(g_stage_arrival) {
+            g_stage=g_stage_arrival->stage;
+            g_children.initialize();
+            l3::NegativeMaterialTables().swap(g_negative_materials);
+            goto stage_reload;
+        }
     } catch(const std::exception& e) {
         consoleInit(GFX_BOTTOM,nullptr);
         boot_fail(0x014B0001u, e.what());
