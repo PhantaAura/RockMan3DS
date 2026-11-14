@@ -1115,7 +1115,7 @@ void load_terrain_ramp(size_t area) {
     g_terrain_ramp.clear();
     char rel[64];std::snprintf(rel,sizeof(rel),"%s/area_%02lu.l3cr",g_terrain_ramp_dir,static_cast<unsigned long>(area));
     try{
-        const auto bytes=read_binary(data_path(rel),1u<<20);
+        const auto bytes=read_binary(std::strcmp(g_terrain_ramp_dir,"materials")==0?stage_path(rel):data_path(rel),1u<<20);
         g_terrain_ramp=l3::load_l3clut_ramp(bytes.data(),bytes.size());
     }catch(const std::exception& e){g_terrain_ramp.clear();boot_log(MML_BOOT_DATA,e.what());}
 }
@@ -1164,7 +1164,13 @@ void rebuild_terrain_batches(const l3::RuntimeMap& map,
                             q.lods |= uint8_t(1u << lod);
     }
     g_terrain_patch_recording = false;
-    if (cpu.empty()) throw std::runtime_error("selected area produced no material batches");
+    // ST02 area 0 (the flight over the sea) has 1681 cells and no map
+    // primitives: its picture is not map terrain. Outside ST00 an empty area
+    // is legal and draws no terrain batches.
+    if (cpu.empty()) {
+        if (g_stage == 0) throw std::runtime_error("selected area produced no material batches");
+        boot_log(MML_BOOT_DATA, "area has no map terrain primitives (stage area drawn by other owners)");
+    }
 
     bool uploaded_one = false;
     g_terrain_batches.reserve(cpu.size());
