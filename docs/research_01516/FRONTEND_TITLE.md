@@ -124,12 +124,13 @@ release 0x800153CC) with a1 = work + 0x348.
   (sound 131) or 0x80098A58 bit 30, then fade 9 and back to the menu. The
   scene runs throughout; 0x80062368 draws the scrolling 64x64 tile
   backdrop (35 SPRT, CLUT 0x3E77, uv 0xC0/0x8B, OT 35; scroll 0x1F800002).
-- 0x80053A30 clears the five 196-byte channel slots at 0x800BB6B8
-  (+194 = 255) and, if any had bit 0x40000 set, calls 0x8001D494(0, 1, 0)
-  (CANDIDATE: stop a streamed channel). 0x8005382C starts a sequence from a
-  pointer (CANDIDATE: music); it calls 0x8001D494. Neither is ported: the
-  port counts the calls (calls_80053a30 / calls_8005382c). Check the
-  title/OPTION music in the final recomp-vs-3DS run.
+- 0x80053A30 clears the five 196-byte message-window slots at 0x800BB6B8
+  (+194 = 255) and, if one had bit 0x40000, calls 0x8001D494(0, 1, 0).
+  0x8005382C(slot, data, -1) opens a message window (the dialogue system;
+  `runtime_session.cpp` already models its slot-0 refusal), here slot 0
+  with the message data at 0x8008B69C. So the OPTION menu is a message-
+  window menu, not ported: the port counts the calls. Porting it means
+  decoding that message (mml_message) and showing it with its choices.
 
 ## Port plan
 1. Cook ST01 (map, EBD, TIMs) into the pack.

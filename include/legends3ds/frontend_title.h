@@ -77,7 +77,7 @@ struct FrontendFrame {
     // 0x8001A008(id, a1, 0): {id, a1} (129..131 pass a1 = 1, 166..168 a1 = 0).
     std::vector<std::array<uint8_t, 2>> sounds;
     uint8_t calls_80053a30 = 0;
-    uint8_t calls_8005382c = 0;             // OPTION 0x8005382C(0, *0x8008CB64, -1): not ported
+    uint8_t calls_8005382c = 0;             // OPTION message window 0x8005382C(0, 0x8008B69C, -1): not ported
     FrontendResult result = FrontendResult::None;
 };
 
