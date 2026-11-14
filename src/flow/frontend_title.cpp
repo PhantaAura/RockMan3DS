@@ -66,6 +66,21 @@ void frontend_backdrop_widescreen(std::vector<FrontendPacket>& packets) {
         }
 }
 
+std::vector<FrontendPacket> frontend_tiles_80062368(uint16_t scroll) {
+    const uint32_t word = kFrontendMaterialWords[6];
+    const int16_t off = int16_t(scroll & 63);
+    std::vector<FrontendPacket> chain;
+    FrontendPacket mode; mode.length = 1; mode.bucket = 35; mode.words[0] = 0xE100000Du;
+    chain.push_back(mode);
+    for (int row = 0; row < 5; ++row)
+        for (int col = 0; col < 7; ++col) {
+            const int16_t x = int16_t(-64 + 64 * col + off), y = int16_t(-64 + 64 * row + off);
+            chain.push_back(ft4(quad(word, x, y, int16_t(x + 63), int16_t(y + 63), 0xC0, 0x8B, 0xFF, 0xCA), 35));
+        }
+    // AddPrim prepends, so the chain goes in reverse to draw E1 first.
+    return std::vector<FrontendPacket>(chain.rbegin(), chain.rend());
+}
+
 psxgpu::PolyFt4 frontend_logo_80013fb8() noexcept {
     return quad(kFrontendMaterialWords[0], 0x20, 8, 0x11F, 0xA8, 0, 0, 0xFF, 0xA0);
 }
@@ -176,7 +191,7 @@ FrontendFrame frontend_step_80013420(FrontendState& s, const FrontendInput& in) 
             switch (s.selection) {
                 case 0: s.substate = uint8_t(s.substate + 2); fade(22); sound(166); break;
                 case 1: s.state = 5; s.substate = 0; fade(9); sound(167); out.result = FrontendResult::Continue; break;
-                case 2: s.state = 6; s.substate = 0; fade(9); sound(168); out.result = FrontendResult::Option; break;
+                case 2: s.state = 6; s.substate = 0; fade(9); sound(168); break;
                 case 3: {
                     const int8_t v = int8_t(s.option_value_800c1b6b + 1);
                     s.option_value_800c1b6b = v;
@@ -191,8 +206,30 @@ FrontendFrame frontend_step_80013420(FrontendState& s, const FrontendInput& in) 
         }
         return out;
     }
+    if (s.state == 6) {
+        // 0x80013E0C. 0x80062368 (tiles) runs every frame, after the state.
+        const auto tiles = [&] { for (const auto& p : frontend_tiles_80062368(s.scroll_1f800002)) out.packets.push_back(p); };
+        switch (s.substate) {
+            case 0:
+                if (in.fade_80098a72 != 0) { logo(); menu(); tiles(); return out; }
+                fade(1); ++s.substate;
+                [[fallthrough]];
+            case 1:
+                ++out.calls_80053a30; ++out.calls_8005382c; s.timer = 900; ++s.substate;
+                break;
+            case 2:
+                if (s.exit_80098a58 || (in.pressed & 0x0008u)) {
+                    if (in.pressed & 0x0008u) out.sounds.push_back({{131, 1}});
+                    fade(9); s.state = 4; s.substate = 0;
+                }
+                break;
+            default: tiles(); return out;
+        }
+        // 0x800137D4 (the scene) runs here; it rides on the tile packets.
+        tiles();
+        return out;
+    }
     if (s.state == 5) out.result = FrontendResult::Continue;
-    if (s.state == 6) out.result = FrontendResult::Option;
     return out;
 }
 

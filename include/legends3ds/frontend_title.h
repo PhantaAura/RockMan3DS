@@ -19,15 +19,17 @@ constexpr uint16_t psx_get_tpage(unsigned tp, unsigned abr, unsigned x, unsigned
 constexpr uint16_t psx_get_clut(unsigned x, unsigned y) noexcept { return uint16_t((y << 6) | (x >> 4)); }
 constexpr uint32_t psx_material_word(uint16_t clut, uint16_t tpage) noexcept { return (uint32_t(clut) << 16) | tpage; }
 
-// Logo, PRESS START, menu row, selected menu row, ruin wall (NTITLE3U), and
-// the Servbot model's one part word (DEMO_DAT.EBD class 0x20/0 bindings).
-constexpr std::array<uint32_t, 6> kFrontendMaterialWords{{
+// Logo, PRESS START, menu row, selected menu row, ruin wall (NTITLE3U), the
+// Servbot model's one part word (DEMO_DAT.EBD class 0x20/0 bindings), and
+// the OPTION/CONTINUE tile backdrop.
+constexpr std::array<uint32_t, 7> kFrontendMaterialWords{{
     psx_material_word(psx_get_clut(0, 0x1F0), psx_get_tpage(1, 0, 320, 256)),
     psx_material_word(psx_get_clut(0, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(16, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(32, 0x1F1), psx_get_tpage(0, 0, 320, 256)),
     psx_material_word(psx_get_clut(0, 0x1F2), psx_get_tpage(1, 2, 576, 256)),
     0x3D88002Bu,
+    psx_material_word(0x3E77, 0x000D),   // OPTION/CONTINUE tiles (0x80062368: E1 0x0D, SPRT CLUT 0x3E77)
 }};
 
 // One GP0 packet as the front end adds it: words, payload length and the
@@ -55,6 +57,11 @@ psxgpu::PolyFt4 frontend_menu_row_8001456c(unsigned row, int selection) noexcept
 std::vector<FrontendPacket> frontend_backdrop_80013fb8();
 // Port widescreen (400-px top screen): widens the backdrop in place.
 void frontend_backdrop_widescreen(std::vector<FrontendPacket>& packets);
+// 0x80062368: E1 0xE100000D, then 7 x 5 SPRT 64x64 (rgb 0x808080, uv
+// (0xC0,0x8B), CLUT 0x3E77) at x/y -64 + 64i + (scroll & 63), one chain at
+// OT entry 35. The translator draws polygons, so each SPRT is the equal
+// POLY_FT4; returned in AddPrim order (the chain head drawn first).
+std::vector<FrontendPacket> frontend_tiles_80062368(uint16_t scroll_1f800002);
 
 enum class FrontendResult : uint8_t { None, NewGame, Continue, Option, Attract };
 
@@ -70,6 +77,7 @@ struct FrontendFrame {
     // 0x8001A008(id, a1, 0): {id, a1} (129..131 pass a1 = 1, 166..168 a1 = 0).
     std::vector<std::array<uint8_t, 2>> sounds;
     uint8_t calls_80053a30 = 0;
+    uint8_t calls_8005382c = 0;             // OPTION 0x8005382C(0, *0x8008CB64, -1): not ported
     FrontendResult result = FrontendResult::None;
 };
 
@@ -81,11 +89,17 @@ struct FrontendState {
     bool option_row_800c1b28 = false;       // fourth menu row present
     bool option_wrap_800c1b2a = false;
     int8_t option_value_800c1b6b = 0;
+    // 0x1F800002: the tile backdrop's scroll (& 63). Its writer is not
+    // traced; it stays 0 (CANDIDATE).
+    uint16_t scroll_1f800002 = 0;
+    // 0x80098A58 bit 30, the other OPTION exit; writer not traced.
+    bool exit_80098a58 = false;
 };
 
 // One front-end frame: the thread's Start/Cross check while in state 2, then
-// the state function. States 2 (title) and 4 (menu) are ported; 5/6
-// (CONTINUE, OPTION) and the attract hand-off are reported, not run.
+// the state function. States 2 (title), 4 (menu) and 6 (OPTION's frame:
+// fade, tiles, scene, Start back) are ported; 5 (CONTINUE) and the
+// attract hand-off are reported, not run.
 FrontendFrame frontend_step_80013420(FrontendState& s, const FrontendInput& in);
 
 } // namespace l3

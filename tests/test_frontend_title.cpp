@@ -28,6 +28,19 @@ int main() {
     assert((back[3].words[0] >> 24) == 0x3A && back[3].words[4] == 0xFFFFFFu && back[4].words[0] == 0xE10000C0u);
     assert((back[5].words[0] >> 24) == 0x38 && back[5].words[6] == 0xE0FFC0u && back[5].words[7] == ((240u << 16) | 320u));
     assert(kFrontendMaterialWords[4] == 0x7C8000D9u);
+    {   // 0x80062368 tiles: E1 first in draw order (last in AddPrim order), 35 quads.
+        const auto t = frontend_tiles_80062368(70);   // scroll & 63 = 6
+        assert(t.size() == 36 && t.back().length == 1 && t.back().words[0] == 0xE100000Du);
+        assert(t[34].bucket == 35 && int16_t(t[34].words[1]) == -58);   // first tile x -64 + 6
+    }
+    {   // OPTION (state 6): fade 1, then Start -> sound 131, fade 9, menu.
+        FrontendState o; o.state = 6;
+        auto f = frontend_step_80013420(o, {});
+        assert(f.fades.size() == 1 && f.fades[0] == 1 && o.substate == 2 && f.calls_8005382c == 1 && f.packets.size() == 36);
+        FrontendInput start; start.pressed = 0x0008;
+        f = frontend_step_80013420(o, start);
+        assert(o.state == 4 && o.substate == 0 && f.fades[0] == 9 && f.sounds[0][0] == 131);
+    }
     {   // Widescreen: two wall extensions, strip and gradient span x -40..360.
         auto wide = frontend_backdrop_80013fb8();
         frontend_backdrop_widescreen(wide);
