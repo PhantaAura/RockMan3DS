@@ -263,6 +263,13 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         # E0/06 tutorial message-trigger lists (0x8011CC9C), neutral L3TR/1.
         subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_tutorial_triggers.py')),
                         '--overlay',str(stage/'R3_ST00.BIN'),'--out',str(runtime/'st00.l3tr')],check=True)
+        # Post-win events: event 3 (0x80102058, flag 0x606) and event 2
+        # (0x8010194C, flag 0x605, Area 4). Event 2's constructor loops over 14
+        # spawn records at 0x8011B388, which the importer sees as one constant.
+        for ev,extra in (('3',[]),('2',['--extra','8011B388:280'])):
+            subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
+                '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(stage/'R3_ST00.BIN'),
+                '--event',ev,'--stage','0',*extra,'--out',str(runtime/f'st00_event{ev}.l3cs')],check=True)
         # New Game opening, ST00 event 1 (0x801010C4): the flag poll table
         # (0x8011ADF8), phase-2 sound/command records (0x8001B33C/0x8001D58C),
         # the command's cold CD metadata, and the scene's lift/effect windows.

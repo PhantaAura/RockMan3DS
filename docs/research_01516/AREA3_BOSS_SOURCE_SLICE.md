@@ -292,3 +292,62 @@ attack on their next update (`class20_03_action3.cpp`, `class20_19.cpp`).
 The bursts are the corridor pop-outs, which spring up and lunge together.
 The port also started Mega Man at 100/100; the original has 80/80 at the
 Area 1 hand-off (PSXRecomp savestates 7/8) and on reaching Area 3 (slot 2).
+
+## Post-win events 3 and 2 ported (2026-11-07)
+
+Decompiled from the ST00 overlay (Ghidra headless, read-only copy).
+
+- **Event 3 `0x80102058`** (native: `src/flow/source_st00_post_win.cpp`):
+  0 `0x8005D7C0` (not ported), wait `0x80042238`; 1 `0x8001B33C`, CD
+  `0x20000001`; 2 wait `0x8001D878`, +0x0C = 30; 3 count down; 4 constructor
+  `0x80101F7C` then falls into 5; 5 fade 10 when 0x80098A72 == 0 and (+8 ==
+  0xFF or `0x8001DE84`), falls into 6; 6 callback `0x80102018`, `0x8001EC0C`,
+  `0x8001F070`, then at busy 0: `0x8005D9EC` (not ported), the hand-off,
+  `0x8001DCD0(0x606)`, +0 = 0, `0x8001D494(0,1,0)`, 0x800B51B0 |= 1,
+  `0x80042314`. A fade started at phase 5 is busy for the phase-6 check
+  of the same tick.
+- Constructor `0x80101F7C`: player +0 &= 0xFC, `0x8001E6C0(0,0,0)`, camera
+  program 0x8011BB3C, **0x800C3588 = 2** (not the boss's +8; no absolute
+  reader in the EXE or the overlay: UNKNOWN), spawns 0x8011BB14/BB28,
+  +0xA4 = 0x8011BE44, +0x0B = +0x0A = 0, +0x0C = 0.
+- Spawn record byte 0 is the event slot (+0x24 + 4n): event 3 slot 0 =
+  40/05 at (-256,-384,-640), slot 1 = 40/08 at (-256,-384,-1024) heading 0x800.
+- Event 3 callbacks (t = event +0x10): B6C t15 slot1 +9 = 1; B9C t0 slot1
+  +9 = 3, smoke `0x80116D60(pos,1,1,0,-2,0)` at t 0xE6 (two), 0xF0, 0xF5,
+  0x104 (offsets from slot 1 +0x14); D88 t0x23 slot1 +0x128 = 0x0C; DAC t0
+  slot0 +9 = 1; DE4 t0 both slots +9 = 0 and `0x80031988` on the five smoke
+  handles, t0x3C object `0x80031618` (+0 1, +2 5, +0xC 5, +0xD 0, +0xE 2,
+  pos (-256,-728,-880)); EF0 t0 slot1 +9 = 2, +0x128 = 0x0D,
+  `0x8002EE90(0x40,0x80)`; F44 t0 slot0 +9 = 0. D80, DDC, F74 are empty.
+  Every +9 write also zeroes +0x0A.
+- **Event 2 `0x8010194C`**: 0 wait busy 0; 1 wait `0x80042238`, player
+  +0 &= 0xFC; 2 `0x8001B33C`, CD `0x20000002`; 3 wait `0x8001D878`, +0x0C =
+  30; 4 count down, at 0 fade 2; 5 constructor `0x80101888`
+  (`0x8001E6C0(0,0,0)`, camera 0x8011B4B4, 14 records from 0x8011B388,
+  timeline 0x8011BA4C); 6 fade 10 on busy 0 and (Start or +8 == 0xFF),
+  falls into 7; 7 callbacks/camera/timeline, at busy 0: **356C = 2, 356E = 2
+  (stage 2), 356F = 0**, 3560..3565 = 0, 356A = 0, 356D = 0, 3570/3571 =
+  0xFF, `0x8001DCD0(0x605)`, +0 = 0, `0x8001D494(0,1,0)`, `0x80042314`.
+  Event 2 ends the tutorial by loading **stage 2**, which the port has no
+  data for: the request is retained and reported.
+- Event 2 slots: 0 = 40/05 at (500,-7169,512) (the oracle's "Mega Man"
+  position is this scene actor; the player stays hidden), 1 = 40/08,
+  2/3 = family 0xE0 class 2, 4 = 0x20/0x0A at (-112,-6232,-1408), 5/6 =
+  0x20/0x1D; records 7..13 reuse slot 5 (0x20/0x1D, +4 = 2..8).
+- Event 2 callbacks write slots 0..4: +9/+0A states 1..11 on slot 0,
+  0..3 on slot 1, +0x0B/+0x0C, +0x15E (0x2108, 0x4210), +0x56 = 0x800,
+  +0x1C..+0x24 16.16 positions, slot 1/4 +0 |= 2; 0x80101528 spawns an
+  object at (500,-7504,236); 0x801016EC calls `0x8011877C` twice. Empty:
+  618, 660, 668, 670, 78C, 83C, 880.
+- Area 4's init (`0x8010038C` case 4) shares area 0's tail: player +0 &=
+  0xFC, +8 word = 0, `0x8001DA8C(0x605)` (area 3: +0x44E = 1).
+- Camera: event 3's program interprets to its terminator in the native
+  interpreter; event 2's has op 0x80 at word 359 (not interpretable yet).
+- Local run of the real cooked packages: event 3 requests area 4 927 ticks
+  after its constructor (oracle: 1982 frames for the whole event); event 2
+  requests stage 2 2739 ticks after its constructor.
+
+Not ported: the scene actors (40/05, 40/08 and event 2's cast) — their
+commands are recorded per slot; the smoke emitters, `0x80031618` objects,
+`0x8011877C`, sound `0x8002EE90`; the XA streams 0x20000001/2 (no measured
+span in `cook_xa_stream.py`); applying the event camera to the 3DS view.

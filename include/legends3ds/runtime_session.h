@@ -28,6 +28,7 @@
 #include "legends3ds/source_event_package.h"
 #include "legends3ds/source_event_command_package.h"
 #include "legends3ds/source_door_event.h"
+#include "legends3ds/source_st00_post_win.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
 #include "legends3ds/source_target_e008.h"
@@ -326,6 +327,30 @@ public:
     bool commit_source_door_transition();
     const SourceDoorEvent0& source_door_event0() const noexcept { return source_door_event0_; }
     const std::vector<SourceDoorObject>& source_door_objects() const noexcept { return source_door_objects_; }
+    // ST00 post-win events 3 (0x80102058) and 2 (0x8010194C), started in
+    // tick() when the event poll selects them (flags 0x606 / 0x605) and run
+    // natively over the cooked L3CS tables (source_st00_post_win.h). The CD
+    // request (0x8001D58C) waits for the platform's acknowledgement
+    // (0x8001D878). Event 3's hand-off (stage 0 area 4, (0,0,0)) is offered as
+    // a transition; the commit is the loader: spawn 80015EE8 and Area 4's init
+    // prefix (flag 0x605), after which event 2 starts. Event 2's hand-off asks
+    // for stage 2, which the port does not load: it is retained and reported.
+    bool bind_source_post_win_profile(SourcePostWinProfile profile) noexcept;
+    bool source_post_win_profile_bound(uint8_t event) const noexcept {
+        return (event==3&&source_post_win_profiles_[0])||(event==2&&source_post_win_profiles_[1]);
+    }
+    const SourcePostWinEvent& source_post_win_event() const noexcept { return source_post_win_; }
+    const SourcePostWinStep& source_post_win_step() const noexcept { return source_post_win_step_; }
+    const std::optional<SourcePostWinHandoff>& source_post_win_handoff() const noexcept { return source_post_win_handoff_; }
+    std::optional<uint32_t> pending_source_post_win_cd() const noexcept {
+        return source_post_win_cd_done_?std::nullopt:source_post_win_cd_;
+    }
+    void acknowledge_source_post_win_cd(uint32_t request) noexcept {
+        if(source_post_win_cd_&&*source_post_win_cd_==request)source_post_win_cd_done_=true;
+    }
+    std::optional<SourceEventHandoffTransitionIntent> source_post_win_transition() const noexcept;
+    bool can_commit_source_post_win_transition() const noexcept;
+    bool commit_source_post_win_transition();
     // Expose a renderer work request only after the original phase-7 caller
     // reaches its missing head-UV reset owner. A frame counter is not a lease.
     std::optional<uint64_t> source_handoff_display_generation() const noexcept;
@@ -628,6 +653,7 @@ private:
     void update_player_contact();
     void update_source_door_event();
     void update_source_door_event0();
+    void update_source_post_win_event(const RuntimeInputFrame&);
     void update_source_door_objects();
     void write_idx_descriptor(uint16_t idx,uint16_t descriptor);
     std::optional<int16_t> player_packed_cell() const;
@@ -747,6 +773,13 @@ private:
     std::optional<SourceDoorRequest> source_door_request_;
     uint64_t source_door_generation_=0;
     SourceDoorEvent0 source_door_event0_{};
+    std::array<std::optional<SourcePostWinProfile>,2> source_post_win_profiles_{};   // event 3, event 2
+    SourcePostWinEvent source_post_win_{};
+    SourcePostWinStep source_post_win_step_{};
+    std::optional<SourcePostWinHandoff> source_post_win_handoff_;
+    uint64_t source_post_win_generation_=0;
+    std::optional<uint32_t> source_post_win_cd_;
+    bool source_post_win_cd_done_=false;
     std::vector<SourceDoorObject> source_door_objects_;
     // Copy-on-write map for the door objects' IDX descriptor swaps; map_
     // points at it while a swap is live in this area.
