@@ -5797,12 +5797,13 @@ int main() {
                         }
                     }
                 }
-                // Every change of the tutorial story flags 0x600..0x62F, with
-                // where Mega Man stood (WCA route evidence).
+                // Every change of the story flags 0x600..0x9FF (tutorial and
+                // M3), with where Mega Man stood; tools/compare_recomp_3ds.py
+                // diffs these against the oracle.
                 {
-                    static std::array<uint8_t,48> seen{};static bool seeded=false;
+                    static std::array<uint8_t,1024> seen{};static bool seeded=false;
                     const auto pos=session.player_position();
-                    for(uint16_t i=0;i<48;++i){
+                    for(uint16_t i=0;i<1024;++i){
                         const uint8_t now=session.story_flag(uint16_t(0x600+i))?1:0;
                         if(seeded&&now!=seen[i])
                             hardware_test_trace("# story_flag,frame=%lu,flag=0x%03x,value=%u,area=%u,pos=%d:%d:%d,dialogue=%u",
