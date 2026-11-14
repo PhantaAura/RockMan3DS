@@ -9,6 +9,9 @@ namespace l3 {
 
 constexpr uint16_t kL3St00FlowVersion = 1;
 constexpr size_t kSt00TutorialAreaCount = 5;
+// Largest area count a stage flow may carry (ST00 has five; stage overlays
+// with fewer areas fill only the first area_count rows).
+constexpr size_t kStageFlowMaxAreas = 5;
 constexpr size_t kSt00AreaSetupBlobBytes = 40;
 constexpr size_t kSt00AreaSetupSeedBytes = 8;
 constexpr size_t kSt00AuxRecordBytes = 24;
@@ -41,8 +44,30 @@ struct St00FlowArea {
 
 struct St00FlowSource {
     uint32_t overlay_load_base = 0x80100000u;
-    std::array<St00FlowArea, kSt00TutorialAreaCount> areas{};
+    uint32_t area_count = kSt00TutorialAreaCount;   // rows of `areas` that are real
+    std::array<St00FlowArea, kStageFlowMaxAreas> areas{};
 };
+
+// The fixed table addresses one stage overlay's area setup routine reads
+// (ST00 0x8010038C, ST02 0x801000B0): each indexes its table by the signed
+// current-area byte 0x800C1B61. Every value is read straight from the
+// overlay's own instructions (docs/research_01516/STAGE_LOADING.md).
+struct StageFlowAddresses {
+    uint8_t stage = 0;
+    uint32_t area_count = 0;
+    uint32_t object_ptr_table = 0;     // -> 0x8002EA50 object list
+    uint32_t aux_ptr_table = 0;        // -> scratch 0x1F800050
+    uint32_t setup_blob_table = 0;     // 40 bytes per area
+    uint32_t selector_table = 0;       // *8 into the seed table (0x800371A0)
+    uint32_t seed_table = 0;
+    uint32_t resource_ptr_table = 0;   // -> 0x80022FD4
+};
+// The known stage overlays (USA). nullptr for a stage whose routine is not traced.
+const StageFlowAddresses* stage_flow_addresses_us(uint8_t stage) noexcept;
+
+St00FlowSource parse_stage_flow_us(const std::vector<uint8_t>& overlay_payload,
+                                   const StageFlowAddresses& addresses,
+                                   uint32_t load_base = 0x80100000u);
 
 struct L3St00FlowHeader {
     uint16_t version = 0;

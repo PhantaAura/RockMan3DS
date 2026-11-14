@@ -64,50 +64,61 @@ St00AuxList parse_st00_aux_list(const std::vector<uint8_t>& data, size_t offset)
     return parse_st00_aux_list(data.data() + offset, data.size() - offset);
 }
 
-St00FlowSource parse_st00_flow_us(const std::vector<uint8_t>& d, uint32_t load_base) {
-    if (load_base != kExpectedLoadBase) {
-        throw std::runtime_error("USA ST00 flow parser currently requires overlay load base 0x80100000");
+namespace {
+// ST00 0x8010038C: lw a0,-22800 / -21700 / -21440 / blob -21420 / selector -21020 / seed -21220 (0x8012 base).
+constexpr StageFlowAddresses kSt00Flow{0, 5, kObjectPtrTableAddr, kAuxPtrTableAddr, kAreaSetupBlobAddr,
+    kSetupSelectorTableAddr, kSetupSeedTableAddr, kResourcePtrTableAddr};
+// ST02 0x801000B0 (no bound check): resource 0x801068E0, objects 0x80106940,
+// aux 0x80106968, blob 0x80106978, selector 0x80106C18, seed 0x80106A18.
+// Each table holds four rows (the fifth word ends the table: 0xFF / 0xFFFF /
+// 0x40600), and event 4 visits area byte 3 (M3_ROADMAP.md), so four areas.
+constexpr StageFlowAddresses kSt02Flow{2, 4, 0x80106940u, 0x80106968u, 0x80106978u,
+    0x80106C18u, 0x80106A18u, 0x801068E0u};
+}
+
+const StageFlowAddresses* stage_flow_addresses_us(uint8_t stage) noexcept {
+    switch (stage) {
+    case 0: return &kSt00Flow;
+    case 2: return &kSt02Flow;
+    default: return nullptr;
     }
+}
+
+St00FlowSource parse_st00_flow_us(const std::vector<uint8_t>& d, uint32_t load_base) {
+    return parse_stage_flow_us(d, kSt00Flow, load_base);
+}
+
+St00FlowSource parse_stage_flow_us(const std::vector<uint8_t>& d, const StageFlowAddresses& t, uint32_t load_base) {
+    if (load_base != kExpectedLoadBase) {
+        throw std::runtime_error("USA stage flow parser currently requires overlay load base 0x80100000");
+    }
+    if (t.area_count == 0 || t.area_count > kStageFlowMaxAreas) throw std::runtime_error("stage flow area count out of range");
+    const size_t n = t.area_count;
     // Touch/validate the complete fixed tables before following any pointer from them.
-    (void)addr_to_offset(kObjectPtrTableAddr, load_base, d.size(), kSt00TutorialAreaCount * 4u);
-    (void)addr_to_offset(kAuxPtrTableAddr, load_base, d.size(), kSt00TutorialAreaCount * 4u);
-    (void)addr_to_offset(kResourcePtrTableAddr, load_base, d.size(), kSt00TutorialAreaCount * 4u);
-    (void)addr_to_offset(kAreaSetupBlobAddr, load_base, d.size(), kSt00TutorialAreaCount * kSt00AreaSetupBlobBytes);
-    (void)addr_to_offset(kSetupSelectorTableAddr, load_base, d.size(), kSt00TutorialAreaCount * 4u);
+    (void)addr_to_offset(t.object_ptr_table, load_base, d.size(), n * 4u);
+    (void)addr_to_offset(t.aux_ptr_table, load_base, d.size(), n * 4u);
+    (void)addr_to_offset(t.resource_ptr_table, load_base, d.size(), n * 4u);
+    const size_t blob_base = addr_to_offset(t.setup_blob_table, load_base, d.size(), n * kSt00AreaSetupBlobBytes);
+    (void)addr_to_offset(t.selector_table, load_base, d.size(), n * 4u);
 
     St00FlowSource out;
     out.overlay_load_base = load_base;
-    for (size_t area = 0; area < kSt00TutorialAreaCount; ++area) {
+    out.area_count = t.area_count;
+    for (size_t area = 0; area < n; ++area) {
         auto& a = out.areas[area];
-        const uint32_t object_ptr = read_table_u32(d, kObjectPtrTableAddr, area, load_base);
-        const uint32_t aux_ptr = read_table_u32(d, kAuxPtrTableAddr, area, load_base);
-        const uint32_t resource_ptr = read_table_u32(d, kResourcePtrTableAddr, area, load_base);
-        a.source_object_offset = pointer_to_offset(object_ptr, load_base, d.size());
-        a.source_aux_offset = pointer_to_offset(aux_ptr, load_base, d.size());
-        a.source_resource_offset = pointer_to_offset(resource_ptr, load_base, d.size());
+        a.source_object_offset = pointer_to_offset(read_table_u32(d, t.object_ptr_table, area, load_base), load_base, d.size());
+        a.source_aux_offset = pointer_to_offset(read_table_u32(d, t.aux_ptr_table, area, load_base), load_base, d.size());
+        a.source_resource_offset = pointer_to_offset(read_table_u32(d, t.resource_ptr_table, area, load_base), load_base, d.size());
         a.objects = parse_stage_object_list(d, a.source_object_offset);
         a.aux = parse_st00_aux_list(d, a.source_aux_offset);
-
-        const size_t blob_off = addr_to_offset(kAreaSetupBlobAddr, load_base, d.size(),
-                                               (area + 1u) * kSt00AreaSetupBlobBytes) +
-                                area * kSt00AreaSetupBlobBytes;
-        // addr_to_offset above returns the table beginning; use a separately computed fixed offset
-        // to keep all bounds validation explicit and avoid pointer arithmetic on PS1 addresses.
-        const size_t blob_base = addr_to_offset(kAreaSetupBlobAddr, load_base, d.size(),
-                                                kSt00TutorialAreaCount * kSt00AreaSetupBlobBytes);
-        std::copy_n(d.data() + blob_base + area * kSt00AreaSetupBlobBytes,
-                    kSt00AreaSetupBlobBytes, a.setup_blob.begin());
-        (void)blob_off; // validated by the same fixed-table check; retained to make the bound proof obvious.
-
-        a.setup_selector = read_table_u32(d, kSetupSelectorTableAddr, area, load_base);
+        std::copy_n(d.data() + blob_base + area * kSt00AreaSetupBlobBytes, kSt00AreaSetupBlobBytes, a.setup_blob.begin());
+        a.setup_selector = read_table_u32(d, t.selector_table, area, load_base);
         if (a.setup_selector > (std::numeric_limits<uint32_t>::max() / kSt00AreaSetupSeedBytes)) {
-            throw std::runtime_error("ST00 setup selector overflows");
+            throw std::runtime_error("stage setup selector overflows");
         }
-        const uint64_t seed_addr64 = uint64_t(kSetupSeedTableAddr) +
-                                     uint64_t(a.setup_selector) * kSt00AreaSetupSeedBytes;
-        if (seed_addr64 > std::numeric_limits<uint32_t>::max()) throw std::runtime_error("ST00 setup seed address overflows");
-        const size_t seed_off = addr_to_offset(static_cast<uint32_t>(seed_addr64), load_base, d.size(),
-                                               kSt00AreaSetupSeedBytes);
+        const uint64_t seed_addr64 = uint64_t(t.seed_table) + uint64_t(a.setup_selector) * kSt00AreaSetupSeedBytes;
+        if (seed_addr64 > std::numeric_limits<uint32_t>::max()) throw std::runtime_error("stage setup seed address overflows");
+        const size_t seed_off = addr_to_offset(static_cast<uint32_t>(seed_addr64), load_base, d.size(), kSt00AreaSetupSeedBytes);
         std::copy_n(d.data() + seed_off, kSt00AreaSetupSeedBytes, a.setup_seed.begin());
     }
     return out;
@@ -116,7 +127,9 @@ St00FlowSource parse_st00_flow_us(const std::vector<uint8_t>& d, uint32_t load_b
 std::vector<uint8_t> cook_l3st00_flow(const St00FlowSource& flow) {
     uint64_t total_objects = 0;
     uint64_t total_aux = 0;
-    for (const auto& a : flow.areas) {
+    if (flow.area_count == 0 || flow.area_count > kStageFlowMaxAreas) throw std::runtime_error("L3SF area count out of range");
+    const auto rows = [&] { return std::vector<St00FlowArea>(flow.areas.begin(), flow.areas.begin() + flow.area_count); }();
+    for (const auto& a : rows) {
         total_objects += a.objects.records.size();
         total_aux += a.aux.records.size();
     }
@@ -124,10 +137,10 @@ std::vector<uint8_t> cook_l3st00_flow(const St00FlowSource& flow) {
     if (total_aux > std::numeric_limits<uint32_t>::max()) throw std::runtime_error("too many ST00 flow aux records");
 
     std::vector<uint8_t> o;
-    o.reserve(kL3FlowHeaderBytes + kSt00TutorialAreaCount * kL3FlowAreaBytes +
+    o.reserve(kL3FlowHeaderBytes + rows.size() * kL3FlowAreaBytes +
               size_t(total_objects) * kStageObjectRecordBytes +
               size_t(total_aux) * kSt00AuxRecordBytes +
-              kSt00TutorialAreaCount * kSt00AreaSetupBlobBytes);
+              rows.size() * kSt00AreaSetupBlobBytes);
     o.insert(o.end(), {'L','3','S','F'});
     wr_u16(o, kL3St00FlowVersion);
     wr_u16(o, static_cast<uint16_t>(kL3FlowHeaderBytes));
@@ -135,7 +148,7 @@ std::vector<uint8_t> cook_l3st00_flow(const St00FlowSource& flow) {
     // bit2: common setup copies 40 bytes per area; bit3: source pointers were converted to offsets;
     // bit4: 24-byte per-area aux stream with signed-halfword -1 sentinel is preserved.
     wr_u32(o, 0x1Fu);
-    wr_u32(o, static_cast<uint32_t>(kSt00TutorialAreaCount));
+    wr_u32(o, static_cast<uint32_t>(rows.size()));
     wr_u32(o, static_cast<uint32_t>(total_objects));
     const size_t p_areas = o.size(); wr_u32(o, 0);
     const size_t p_objects = o.size(); wr_u32(o, 0);
@@ -147,8 +160,8 @@ std::vector<uint8_t> cook_l3st00_flow(const St00FlowSource& flow) {
     const uint32_t off_areas = static_cast<uint32_t>(o.size());
     uint32_t object_first = 0;
     uint32_t aux_first = 0;
-    for (size_t area = 0; area < flow.areas.size(); ++area) {
-        const auto& a = flow.areas[area];
+    for (size_t area = 0; area < rows.size(); ++area) {
+        const auto& a = rows[area];
         wr_u32(o, static_cast<uint32_t>(area));
         wr_u32(o, object_first);
         wr_u32(o, static_cast<uint32_t>(a.objects.records.size()));
@@ -168,14 +181,14 @@ std::vector<uint8_t> cook_l3st00_flow(const St00FlowSource& flow) {
     }
 
     const uint32_t off_objects = static_cast<uint32_t>(o.size());
-    for (const auto& a : flow.areas) {
+    for (const auto& a : rows) {
         for (const auto& r : a.objects.records) o.insert(o.end(), r.raw.begin(), r.raw.end());
     }
-    for (const auto& a : flow.areas) {
+    for (const auto& a : rows) {
         for (const auto& r : a.aux.records) o.insert(o.end(), r.raw.begin(), r.raw.end());
     }
     const uint32_t off_blobs = static_cast<uint32_t>(o.size());
-    for (const auto& a : flow.areas) o.insert(o.end(), a.setup_blob.begin(), a.setup_blob.end());
+    for (const auto& a : rows) o.insert(o.end(), a.setup_blob.begin(), a.setup_blob.end());
 
     patch_u32(o, p_areas, off_areas);
     patch_u32(o, p_objects, off_objects);
@@ -195,7 +208,7 @@ L3St00FlowHeader inspect_l3st00_flow(const std::vector<uint8_t>& b, bool verify_
     h.off_areas = rd_u32(&b[20]); h.off_objects = rd_u32(&b[24]); h.off_setup_blobs = rd_u32(&b[28]);
     h.file_bytes = rd_u32(&b[32]); h.payload_crc32 = rd_u32(&b[36]);
     if (h.version != kL3St00FlowVersion || h.header_bytes != kL3FlowHeaderBytes) throw std::runtime_error("unsupported L3SF");
-    if (h.area_count != kSt00TutorialAreaCount) throw std::runtime_error("L3SF area count mismatch");
+    if (h.area_count == 0 || h.area_count > kStageFlowMaxAreas) throw std::runtime_error("L3SF area count mismatch");
     if (h.file_bytes != b.size()) throw std::runtime_error("L3SF file size mismatch");
     if (h.off_areas < kL3FlowHeaderBytes ||
         uint64_t(h.off_areas) + uint64_t(h.area_count) * kL3FlowAreaBytes > b.size()) {
@@ -236,6 +249,7 @@ St00FlowSource load_l3st00_flow(const std::vector<uint8_t>& b, bool verify_crc) 
     // L3SF v1 is the pointer-free representation of the fixed USA ST00 overlay.
     // Source addresses in each area row are offsets relative to this proven load base.
     out.overlay_load_base = kExpectedLoadBase;
+    out.area_count = h.area_count;
 
     const uint64_t aux_begin64 = uint64_t(h.off_objects) +
                                  uint64_t(h.object_count) * kStageObjectRecordBytes;

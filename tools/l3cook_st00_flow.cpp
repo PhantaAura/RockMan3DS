@@ -19,15 +19,21 @@ static void write_all(const std::string& p, const std::vector<uint8_t>& b) {
 }
 int main(int argc, char** argv) {
     try {
-        if (argc != 3) { std::cerr << "usage: l3cook_st00_flow R3_ST00.BIN out.l3flow\n"; return 2; }
+        // usage: l3cook_st00_flow R3_STxx.BIN out.l3flow [--stage N]  (default stage 0)
+        if (argc != 3 && !(argc == 5 && std::string(argv[3]) == "--stage")) {
+            std::cerr << "usage: l3cook_st00_flow R3_STxx.BIN out.l3flow [--stage N]\n"; return 2;
+        }
+        const unsigned stage = argc == 5 ? static_cast<unsigned>(std::stoul(argv[4], nullptr, 0)) : 0u;
+        const auto* table = stage <= 0xFF ? l3::stage_flow_addresses_us(static_cast<uint8_t>(stage)) : nullptr;
+        if (!table) { std::cerr << "error: stage " << stage << " area setup tables are not traced\n"; return 1; }
         const auto raw = read_all(argv[1]);
-        const auto flow = l3::parse_st00_flow_us(raw);
+        const auto flow = l3::parse_stage_flow_us(raw, *table);
         uint32_t objects = 0, aux = 0;
-        for (const auto& a : flow.areas) { objects += static_cast<uint32_t>(a.objects.records.size()); aux += static_cast<uint32_t>(a.aux.records.size()); }
+        for (size_t i = 0; i < flow.area_count; ++i) { const auto& a = flow.areas[i]; objects += static_cast<uint32_t>(a.objects.records.size()); aux += static_cast<uint32_t>(a.aux.records.size()); }
         const auto cooked = l3::cook_l3st00_flow(flow);
         write_all(argv[2], cooked);
-        std::cout << "areas=" << flow.areas.size() << " objects=" << objects << " aux=" << aux << " bytes=" << cooked.size() << "\n";
-        for (size_t i=0; i<flow.areas.size(); ++i) {
+        std::cout << "areas=" << flow.area_count << " objects=" << objects << " aux=" << aux << " bytes=" << cooked.size() << "\n";
+        for (size_t i=0; i<flow.area_count; ++i) {
             const auto& a=flow.areas[i];
             std::cout << "area" << i << " objects=" << a.objects.records.size() << " aux=" << a.aux.records.size()
                       << " list_off=0x" << std::hex << a.source_object_offset
