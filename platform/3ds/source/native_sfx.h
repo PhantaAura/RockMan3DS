@@ -17,6 +17,8 @@ public:
     l3::SourceSoundConsumeResult consume(l3::SourceAudioQueue& queue,const l3::SourceSoundListener& listener);
     void tick(uint32_t samples_44100) noexcept;
     const char* error() const noexcept{return error_;}
+    // OPTION Sound byte 0x800C1B68 (1 = mono), read by 0x8001A344.
+    void set_mono(bool mono) noexcept{settings_.mono_c1b68=mono;}
     uint32_t linear_bytes() const noexcept{return bank_size_;}
     size_t requests() const noexcept{return bank_.requests.size();}
 private:

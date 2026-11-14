@@ -50,6 +50,7 @@
 #include "legends3ds/source_intro_crawl.h"
 #include "legends3ds/source_attract_event10.h"
 #include "legends3ds/frontend_servbots.h"
+#include "legends3ds/mml_message_window.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/gameplay_clock.h"
 #include "legends3ds/actor_runtime.h"
@@ -218,6 +219,9 @@ static std::vector<GpuMaterial> g_player_materials;
 static std::vector<GpuMaterial> g_actor_materials;
 static std::vector<GpuMaterial> g_scene_materials;
 static std::vector<GpuMaterial> g_frontend_materials;   // title logo / PRESS START / menu
+// OPTION settings at their original bytes 0x800C1B64..69 (boot: all 0,
+// 0x80013360). Written by the OPTION message windows, read by gameplay.
+static l3::OptionSettings g_option_settings;
 static std::vector<GpuMaterial> g_scene_actor40_materials;
 static size_t g_current_area = 0;
 
@@ -4173,8 +4177,25 @@ l3::FrontendResult run_frontend_title(bool scripted) {
         GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
         auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
     }
+    // OPTION (state 6): the message windows 0x80053B40 over the EXE's
+    // message data, drawn with the FONT.BIN page (both optional).
+    std::unique_ptr<l3::MessageWindows> windows;
+    try {
+        const auto font = l3::load_l3material_cache(read_binary(data_path("materials/font.l3mc")), true);
+        for (const auto& e : font.entries) {
+            if (!e.resolved) continue;
+            GpuMaterial m; m.material_word = e.material_word; g_frontend_materials.push_back(m);
+            auto& owned = g_frontend_materials.back(); owned.texture_ready = upload_material_texture(&e, owned.texture);
+        }
+        windows = std::make_unique<l3::MessageWindows>(l3::load_exe_excerpt(read_binary(data_path("frontend/option.l3ex"))));
+        windows->set_settings(g_option_settings);
+        boot_log(MML_BOOT_DATA, "FRONTEND_OPTION=1 font.l3mc option.l3ex message windows 0x80053B40");
+    } catch (const std::exception& error) {
+        char line[160]; std::snprintf(line, sizeof(line), "FRONTEND_OPTION=0 %s", error.what());
+        boot_log(MML_BOOT_DATA, line);
+    }
     psx_resolver_reset();
-    boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=1 state machine 0x80013420; scene/fade/sound/CONTINUE/OPTION/attract not ported");
+    boot_log(MML_BOOT_DATA, "FRONTEND_TITLE=1 state machine 0x80013420; CONTINUE/attract demo not ported");
     // Fades 0x80017C30 types 2 (title in) and 10 (title out), callback
     // 0x80017E94, subtract tile: the ported source_fade module. 0x80013420
     // stores 0x1F800001 = 2, the callback's endpoint hold. Boot leaves no
@@ -4214,10 +4235,11 @@ l3::FrontendResult run_frontend_title(bool scripted) {
     uint8_t fade22_subtract = 0;
     while (aptMainLoop() && !new_game && !attract) {
         hidScanInput();
-        u32 down = hidKeysDown();
+        u32 down = hidKeysDown(), held_keys = hidKeysHeld();
         if (scripted) {
             u32 held = 0, up = 0; circlePosition cp{};
             if (!diagnostic_autoplay_frame(down, held, up, cp)) break;
+            held_keys = held;
         }
         if (down & KEY_START) pending |= 0x0008u;
         if (down & KEY_B) pending |= 0x4000u;      // Cross
@@ -4234,7 +4256,31 @@ l3::FrontendResult run_frontend_title(bool scripted) {
         l3::FrontendInput in;
         in.pressed = pending; pending = 0;
         in.fade_80098a72 = int16_t(uint16_t(fade.work_80098a68.raw[10] | (fade.work_80098a68.raw[11] << 8)));
+        // 0x80098A58 bit 30: a message choice was made (OPTION Close).
+        state.exit_80098a58 = windows && (windows->flags_80098a58 & 0x40000000u);
         f = l3::frontend_step_80013420(state, in);
+        if (windows) {
+            // The message windows: cleared by 0x80053A30, opened by state 6's
+            // 0x8005382C(0, 0x8008B69C, -1), run once per update after the
+            // state (CANDIDATE order: the only one in which state 6 sees the
+            // choice bit before the next tick clears it).
+            if (f.calls_80053a30) windows->clear_80053a30();
+            if (f.calls_8005382c) windows->open_8005382c(0, l3::kOptionMessage8008b69c, 255);
+            uint16_t held_psx = 0;
+            if (held_keys & KEY_START) held_psx |= 0x0008u;
+            if (held_keys & (KEY_A | KEY_B)) held_psx |= 0x4000u;
+            if (held_keys & KEY_X) held_psx |= 0x1000u;
+            if (held_keys & KEY_DUP) held_psx |= 0x0010u;
+            if (held_keys & KEY_DDOWN) held_psx |= 0x0040u;
+            if (held_keys & KEY_DLEFT) held_psx |= 0x0080u;
+            if (held_keys & KEY_DRIGHT) held_psx |= 0x0020u;
+            auto mf = windows->tick_80053b40(held_psx, in.pressed);
+            for (auto& p : mf.packets) f.packets.push_back(p);
+            for (const auto& snd : mf.sounds) f.sounds.push_back(snd);
+            g_option_settings = windows->settings();
+            if (mf.unported_opcodes)
+                hardware_test_trace("# frontend_option_unported,frame=%lu,count=%u", (unsigned long)frame, unsigned(mf.unported_opcodes));
+        }
         l3::frontend_backdrop_widescreen(f.packets);   // 400-px top screen
         for (const uint8_t type : f.fades) {
             l3::SourceFadeStartupResult started;
@@ -4354,16 +4400,22 @@ uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
     uint16_t m = 0;
     if (keys & KEY_DUP) m |= 0x0010u;
     if (keys & KEY_DDOWN) m |= 0x0040u;
-    if (keys & KEY_DLEFT) m |= 0x0400u; // Installed classic profile turns with shoulder masks.
-    if (keys & KEY_DRIGHT) m |= 0x0800u;
+    // Turn 0 (profile 0, L1/R1 turn): the port keeps the D-pad on the
+    // shoulder masks too, so it turns (port choice, not original: the PS1
+    // D-pad would slide). Turn 1 (profile 1): the D-pad and the circle pad
+    // are the PS1 directions (turn) and L/R stay L1/R1 (slide), as on the PS1.
+    const bool directional_turn = g_option_settings.turn_800c1b64 != 0;
+    const uint16_t left = directional_turn ? 0x0080u : 0x0400u, right = directional_turn ? 0x0020u : 0x0800u;
+    if (keys & KEY_DLEFT) m |= left;
+    if (keys & KEY_DRIGHT) m |= right;
     if (keys & KEY_L) m |= 0x0400u;
     if (keys & KEY_R) m |= 0x0800u;
     if (keys & KEY_B) m |= 0x4000u;
     if (keys & KEY_A) m |= 0x2000u; // Circle: profile-0 +0x134/+0x136 (door/check action).
     if (cp.dy > 28) m |= 0x0010u;
     if (cp.dy < -28) m |= 0x0040u;
-    if (cp.dx < -28) m |= 0x0400u;
-    if (cp.dx > 28) m |= 0x0800u;
+    if (cp.dx < -28) m |= left;
+    if (cp.dx > 28) m |= right;
     return m;
 }
 
@@ -5200,6 +5252,15 @@ int main() {
                 }
             }
         }
+        // OPTION settings chosen on the title (0x800C1B64..69): Turn picks the
+        // control profile (0x8003BF2C -> 0x800425FC), Sound the mono mix
+        // (0x8001A344). Free Look (0x80041F1C) and Lock-On (0x8003F224) feed the
+        // look mode 0x8003EF04, which the port does not run yet.
+        session.set_turn_setting_800c1b64(g_option_settings.turn_800c1b64);
+        sfx.set_mono(g_option_settings.sound_800c1b68!=0);
+        hardware_test_trace("# option_settings,turn=%u,free_look=%u,sound=%u,map=%u,lock_on=%u",
+            unsigned(g_option_settings.turn_800c1b64),unsigned(g_option_settings.free_look_800c1b65),
+            unsigned(g_option_settings.sound_800c1b68),unsigned(g_option_settings.map_800c1b69),unsigned(g_option_settings.lock_on_800c1b66));
         l3::GameplayClock gameplay_clock;
         u64 previous_update_clock=svcGetSystemTick();
         // Opening: game ticks follow the XA playback position (see below).
@@ -7194,7 +7255,10 @@ int main() {
             g_runtime_diag.texture_count = g_texture_count;
             const u64 ui_start=svcGetSystemTick();
             const auto ui_position=session.player_position();
-            const auto ui_map=l3::make_mockup_map_view(session.active_map(),session.map_area_index(),ui_position.x,ui_position.z,session.player_yaw());
+            // OPTION Map Off (0x800C1B69 = 1) skips the map draw 0x8005DE28;
+            // here it blanks the bottom-screen map panel (port placement).
+            const auto ui_map=g_option_settings.map_800c1b69?l3::MockupMapView{}:
+                l3::make_mockup_map_view(session.active_map(),session.map_area_index(),ui_position.x,ui_position.z,session.player_yaw());
             l3::mockup_map_update_follow(ui_state,ui_map);
             {
                 const auto& d=session.dialogue();

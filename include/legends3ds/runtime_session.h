@@ -375,6 +375,10 @@ public:
     RuntimeSession& operator=(const RuntimeSession& other);
 
     void reset_player(RuntimeVec3i position, uint16_t yaw, uint16_t hp, uint16_t hp_max);
+    // OPTION Turn byte 0x800C1B64: the player init passes it to the control
+    // profile copy 0x800425FC (0x8003BF2C). 0 = L1/R1 turn, 1 = directional turn.
+    void set_turn_setting_800c1b64(uint8_t value);
+    uint8_t turn_setting_800c1b64() const { return turn_setting_800c1b64_; }
     // Candidate diagnostic grid-boundary recovery, not retail physics. Updates
     // position mirrors and the collision snapshot without reloading the area or
     // resetting action, velocity, animation, encounter or queued scene state.
@@ -582,6 +586,7 @@ public:
     const RuntimeCombatTuning& combat_tuning() const { return combat_tuning_; }
 
 private:
+    uint8_t turn_setting_800c1b64_ = 0;
     struct SharedLocationRegistration {
         std::shared_ptr<const RuntimeMap> map;
         size_t map_area_index = 0;
