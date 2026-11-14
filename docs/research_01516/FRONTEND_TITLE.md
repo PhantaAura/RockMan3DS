@@ -117,6 +117,20 @@ release 0x800153CC) with a1 = work + 0x348.
   958 slot-updates, 0 mismatches; menu waves 4-7, 1094 updates / 2805
   slot-updates, 2 mismatches, both a slot's position left from before the
   probe window.
+## OPTION (state 6) and the front end's sound calls (2026-11-14)
+- 0x80013E0C (ported, `frontend_title.cpp`): substate 0 waits for the fade
+  with the backdrop and menu drawn, then fade 1; substate 1 calls 0x80053A30
+  and 0x8005382C(0, 0x8008B69C, -1), timer 900; substate 2 waits for Start
+  (sound 131) or 0x80098A58 bit 30, then fade 9 and back to the menu. The
+  scene runs throughout; 0x80062368 draws the scrolling 64x64 tile
+  backdrop (35 SPRT, CLUT 0x3E77, uv 0xC0/0x8B, OT 35; scroll 0x1F800002).
+- 0x80053A30 clears the five 196-byte channel slots at 0x800BB6B8
+  (+194 = 255) and, if any had bit 0x40000 set, calls 0x8001D494(0, 1, 0)
+  (CANDIDATE: stop a streamed channel). 0x8005382C starts a sequence from a
+  pointer (CANDIDATE: music); it calls 0x8001D494. Neither is ported: the
+  port counts the calls (calls_80053a30 / calls_8005382c). Check the
+  title/OPTION music in the final recomp-vs-3DS run.
+
 ## Port plan
 1. Cook ST01 (map, EBD, TIMs) into the pack.
 2. Port the front-end state machine (states 0..6, substates) as a host-tested
