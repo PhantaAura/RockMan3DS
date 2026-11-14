@@ -48,8 +48,13 @@ SEP_FORMAT = "<BBHII"           # tag, sequences, reserved, bytes, offset
 VAB_FORMAT = "<BBHIIHH"         # tag, reserved, reserved, VH bytes, VH offset, first sample, samples
 SAMPLE_FORMAT = "<IIII"         # frames, loop start (0xFFFFFFFF = none), pcm offset, pcm crc
 # Tutorial data: tag -> (container, resource header offset).
-TUTORIAL_SEPS = {0: ("ST00.BIN", 0xF5000)}
-TUTORIAL_VABS = {20: ("ST00.BIN", 0xC2800)}
+TUTORIAL_SEPS = {0: ("ST00.BIN", 0xF5000), 41: ("GAMEOVER.BIN", 0x4E800)}
+TUTORIAL_VABS = {20: ("ST00.BIN", 0xC2800), 36: ("GAMEOVER.BIN", 0x24800)}
+# Non-area requests: the game over jingle 0x41 (main phase 9 sub 2,
+# ROCK_NEO 0x8001683C, after Cd_read_comb(0x19) loads GAMEOVER.BIN; row
+# 64 29 03 00 = handler 1, VAB 36, SEP 41, slot 0, sequence 0). The native
+# bank holds it from boot; only phase 9 requests it.
+EXTRA_REQUESTS = (0x41,)
 
 
 def load_sep(container: Path, header_offset: int) -> tuple[bytes, int, int]:
@@ -85,10 +90,10 @@ def cook(exe: Exe, dat: Path, output: Path) -> dict:
             raise ValueError(f"{name}: VAB tag {found} != {tag}")
         vabs[tag] = (vh, body)
     requests = []
-    for rid in sorted({a for a in areas if a != 0xFFFF}):
+    for rid in sorted({a for a in areas if a != 0xFFFF} | set(EXTRA_REQUESTS)):
         raw = exe.read(TABLE + rid * 4, 4)
         if raw[0] >> 6 not in (0, 1) or (raw[0] & 0x3F) not in vabs or (raw[1] & 0x7F) not in seps:
-            raise ValueError(f"Area music request {rid:#x} is not a cooked sequence")
+            raise ValueError(f"Music request {rid:#x} is not a cooked sequence")
         if raw[0] >> 6 == 1 and raw[3] >= seps[raw[1] & 0x7F][1]:
             raise ValueError(f"Request {rid:#x} sequence outside the SEP")
         requests.append((rid, raw))
