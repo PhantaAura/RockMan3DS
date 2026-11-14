@@ -1,4 +1,5 @@
 #pragma once
+#include "legends3ds/source_angle.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/bottom_screen.h"
 #include "legends3ds/mml_message.h"
@@ -27,6 +28,7 @@
 #include "legends3ds/source_event_package.h"
 #include "legends3ds/source_event_command_package.h"
 #include "legends3ds/source_door_event.h"
+#include "legends3ds/source_st00_post_win.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
 #include "legends3ds/source_target_e008.h"
@@ -280,6 +282,20 @@ public:
     }
     void invalidate_source_fade_scheduler_budget() noexcept { source_fade_endpoint_hold_.reset(); }
     const SourceFadeCallbackState& source_fade_callback_state() const noexcept { return source_fade_callback_; }
+    // 0x80017C30(type) for the mode-0 types (0..3, 8..11) outside an event.
+    SourceFadeStartupResult start_source_fade_80017c30(uint8_t type) noexcept {
+        // Boot leaves no fade running (0x80098A70/72 = 0, as the title assumes).
+        for(size_t i=8;i<12;++i)if(!source_fade_context_.work_80098a68.known[i]){
+            source_fade_context_.work_80098a68.raw[i]=0;source_fade_context_.work_80098a68.known[i]=1;}
+        return consume_source_fade_startup_80017c30_mode0(source_fade_context_,
+            source_fade_profile_?&*source_fade_profile_:nullptr,&source_fade_intents_,type);
+    }
+    // 0x80098A72, the fade-busy halfword (0 when idle or unknown).
+    int16_t source_fade_busy_80098a72() const noexcept {
+        const auto& w=source_fade_context_.work_80098a68;
+        if(!w.known[10]||!w.known[11])return 0;
+        return int16_t(uint16_t(w.raw[10])|(uint16_t(w.raw[11])<<8));
+    }
     SourceFadePresentation source_fade_presentation() const noexcept {
         return describe_source_fade_presentation(source_fade_context_);
     }
@@ -311,6 +327,30 @@ public:
     bool commit_source_door_transition();
     const SourceDoorEvent0& source_door_event0() const noexcept { return source_door_event0_; }
     const std::vector<SourceDoorObject>& source_door_objects() const noexcept { return source_door_objects_; }
+    // ST00 post-win events 3 (0x80102058) and 2 (0x8010194C), started in
+    // tick() when the event poll selects them (flags 0x606 / 0x605) and run
+    // natively over the cooked L3CS tables (source_st00_post_win.h). The CD
+    // request (0x8001D58C) waits for the platform's acknowledgement
+    // (0x8001D878). Event 3's hand-off (stage 0 area 4, (0,0,0)) is offered as
+    // a transition; the commit is the loader: spawn 80015EE8 and Area 4's init
+    // prefix (flag 0x605), after which event 2 starts. Event 2's hand-off asks
+    // for stage 2, which the port does not load: it is retained and reported.
+    bool bind_source_post_win_profile(SourcePostWinProfile profile) noexcept;
+    bool source_post_win_profile_bound(uint8_t event) const noexcept {
+        return (event==3&&source_post_win_profiles_[0])||(event==2&&source_post_win_profiles_[1]);
+    }
+    const SourcePostWinEvent& source_post_win_event() const noexcept { return source_post_win_; }
+    const SourcePostWinStep& source_post_win_step() const noexcept { return source_post_win_step_; }
+    const std::optional<SourcePostWinHandoff>& source_post_win_handoff() const noexcept { return source_post_win_handoff_; }
+    std::optional<uint32_t> pending_source_post_win_cd() const noexcept {
+        return source_post_win_cd_done_?std::nullopt:source_post_win_cd_;
+    }
+    void acknowledge_source_post_win_cd(uint32_t request) noexcept {
+        if(source_post_win_cd_&&*source_post_win_cd_==request)source_post_win_cd_done_=true;
+    }
+    std::optional<SourceEventHandoffTransitionIntent> source_post_win_transition() const noexcept;
+    bool can_commit_source_post_win_transition() const noexcept;
+    bool commit_source_post_win_transition();
     // Expose a renderer work request only after the original phase-7 caller
     // reaches its missing head-UV reset owner. A frame counter is not a lease.
     std::optional<uint64_t> source_handoff_display_generation() const noexcept;
@@ -554,6 +594,26 @@ public:
     BottomScreenLayout bottom_screen_layout() const;
 
     void set_story_flag(uint16_t bit, bool value);
+    // Player hit box 0x8003C36C (radius 0x20 at +0x3E8, target +0x188, word
+    // 0x02000000): registered while +0x110 == 0 and 0x800B55F9 is clear.
+    // CANDIDATE: the original also requires work+0 & work+6 & 1, which the
+    // port does not maintain for the player.
+    bool player_hit_proxy_admitted() const noexcept {
+        return player_.bytes[0x110]==0 && !player_lock_800b55f9_ && player_.bytes[8]==1;
+    }
+    // The bank's write into the player's +0x188 target, read by the next update.
+    void deliver_player_hit_target(uint32_t packet,uint32_t flags,const std::array<int16_t,3>& point,uint16_t word0e) noexcept;
+    // 0x80042208 at the Area 3 boss's defeat (0x800B55F9 = 1).
+    void set_player_lock_800b55f9() noexcept { player_lock_800b55f9_ = true; }
+    bool player_dead() const noexcept { return player_.bytes[8]==2; }
+    // 0x80041AB0 (player state 2) sets main phase 9 / sub 0 on its first
+    // frame; the 3DS loop runs source_game_over.h from that request.
+    bool consume_game_over_request() noexcept { const bool r=game_over_request_; game_over_request_=false; return r; }
+    // 0x8005D9EC: HP from +0xB0 and the depleted flag cleared.
+    void refill_player_life_8005d9ec() noexcept;
+    void set_actor_angle_steps(const SourceAngleSteps* steps) noexcept { actor_angle_steps_ = steps; }
+    // 0x800398F8 tail: store a computed camera shake byte to 0x800A395F.
+    void set_camera_shake_800a395f(uint8_t value) { source_gameplay_camera_.shake_800a395f = value; }
     bool story_flag(uint16_t bit) const;
     RuntimeSaveState make_save_state(uint32_t checkpoint_id) const;
     void apply_save_state(const RuntimeSaveState& state);
@@ -593,6 +653,7 @@ private:
     void update_player_contact();
     void update_source_door_event();
     void update_source_door_event0();
+    void update_source_post_win_event(const RuntimeInputFrame&);
     void update_source_door_objects();
     void write_idx_descriptor(uint16_t idx,uint16_t descriptor);
     std::optional<int16_t> player_packed_cell() const;
@@ -604,6 +665,17 @@ private:
     bool player_ledge_grab_80040818();
     void update_ledge_motion_8003eb08();
     void release_ledge_8003ee68();
+    // Player damage (USA): hit section 0x8003C96C, handler 0x8004174C,
+    // action choice 0x80041A44, action 11 0x8003E6B0, action 12 0x8003E860.
+    void update_player_hit_8003c96c();
+    void player_hit_8004174c();
+    void player_hit_action_80041a44(uint32_t packet);
+    void update_player_hurt_8003e6b0();
+    void update_player_knockdown_8003e860();
+    SourceRngService* tick_rng_ = nullptr;     // valid during tick()
+    const SourceAngleSteps* actor_angle_steps_ = nullptr;
+    bool player_lock_800b55f9_ = false;
+    bool game_over_request_ = false;
     void reset_player_contact();
     void update_input_compat(const RuntimeInputFrame& input);
     void update_lock_on(const RuntimeInputFrame& input);
@@ -701,6 +773,13 @@ private:
     std::optional<SourceDoorRequest> source_door_request_;
     uint64_t source_door_generation_=0;
     SourceDoorEvent0 source_door_event0_{};
+    std::array<std::optional<SourcePostWinProfile>,2> source_post_win_profiles_{};   // event 3, event 2
+    SourcePostWinEvent source_post_win_{};
+    SourcePostWinStep source_post_win_step_{};
+    std::optional<SourcePostWinHandoff> source_post_win_handoff_;
+    uint64_t source_post_win_generation_=0;
+    std::optional<uint32_t> source_post_win_cd_;
+    bool source_post_win_cd_done_=false;
     std::vector<SourceDoorObject> source_door_objects_;
     // Copy-on-write map for the door objects' IDX descriptor swaps; map_
     // points at it while a swap is live in this area.

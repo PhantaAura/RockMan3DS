@@ -1,4 +1,5 @@
 #include "legends3ds/runtime_session.h"
+#include "legends3ds/class40_02_boss.h"
 #include "legends3ds/source_scene_view.h"
 #include <algorithm>
 #include <cmath>
@@ -375,6 +376,212 @@ void RuntimeSession::release_ledge_8003ee68(){
     l3_pl00_shot_enable_on(&player_);l3_pl00_anim_request_80041ddc(&player_,18,0,1);
 }
 
+void RuntimeSession::refill_player_life_8005d9ec() noexcept {
+    hp_=hp_max_;wr16w(player_,0x6E,hp_);actor_detection_globals_.gauge_depleted_800bbd7f=0;
+}
+
+void RuntimeSession::deliver_player_hit_target(uint32_t packet,uint32_t flags,
+    const std::array<int16_t,3>& point,uint16_t word0e) noexcept {
+    wr32w(player_,0x188,int32_t(packet));wr32w(player_,0x18C,int32_t(flags));
+    for(size_t i=0;i<3;++i)wr16w(player_,0x190+2*i,uint16_t(point[i]));
+    wr16w(player_,0x196,word0e);
+}
+
+// 0x8003C96C..0x8003CA10 of the player update: the hit handler while
+// +0x110 == 0, the post-knockdown blink (+0x111, work+6 bit 1), packet clear.
+void RuntimeSession::update_player_hit_8003c96c(){
+    // hp_ is the HUD/reward owner; +0x6E follows it unless it is already
+    // at or below zero (the death check reads a negative +0x6E).
+    if(int32_t(hp_)!=std::max<int32_t>(rds16w(player_,0x6E),0))wr16w(player_,0x6E,hp_);
+    if(static_cast<int8_t>(player_.bytes[0x449])==0){
+        const int8_t invulnerable=static_cast<int8_t>(player_.bytes[0x110]);
+        if(invulnerable==0){player_.bytes[6]|=3u;player_hit_8004174c();}
+        else if(invulnerable>0){
+            const uint8_t t=uint8_t(player_.bytes[0x111]-1u);player_.bytes[0x111]=t;
+            if(static_cast<int8_t>(t)<0){player_.bytes[0x71]=0;player_.bytes[0x110]=0;player_.bytes[6]|=3u;}
+            else if(t&2u)player_.bytes[6]&=0xFDu;
+            else player_.bytes[6]|=3u;
+        }else player_.bytes[6]|=3u;
+    }else player_.bytes[6]|=3u;
+    wr32w(player_,0x188,0);
+}
+
+// 0x8004174C. Damage applies only while the life gauge (0x800BBD78 entry,
+// actor_detection.h) is shown or HP was depleted; a hit on an idle gauge only
+// brings it in (PSXRecomp: 60 -> absorbed -> 50 -> 40).
+void RuntimeSession::player_hit_8004174c(){
+    if((source_event_work_&&source_event_work_->known[0]&&source_event_work_->active00()!=0)||source_door_event0_.active)return;
+    const uint32_t packet=uint32_t(rd32w(player_,0x188));
+    uint32_t damage=packet&0xFFFFFFu;
+    if(damage==0&&!(packet&0x01000000u)){
+        // 0x800419F0: no hit; outside actions 11/12 the stun meter decays by 4.
+        const uint8_t action=player_.bytes[0x09];
+        if(uint8_t(action-11u)>=2u){
+            const uint8_t v=uint8_t(player_.bytes[0x73]-4u);
+            player_.bytes[0x73]=static_cast<int8_t>(v)<0?0:v;
+        }
+        return;
+    }
+    if(damage){
+        const int32_t armor=static_cast<int8_t>(player_.bytes[0x16C]);
+        damage=uint32_t(int32_t(damage)-((int32_t(damage)*armor)>>2));
+        if(damage==0)damage=1;
+    }
+    const int8_t direction=static_cast<int8_t>(player_.bytes[0x71]);
+    if(direction<=0){
+        if(direction==0){
+            // Hit direction from the target point +0x190 (word +0x196 selects
+            // 0x80031198 against +0x14, else ratan2 of the point + 0x800).
+            const int16_t px=rds16w(player_,0x190),pz=rds16w(player_,0x194);
+            std::optional<uint32_t> angle;
+            if(rds16w(player_,0x196)!=0)
+                angle=source_heading_80031198(px,pz,rds16w(player_,0x14),rds16w(player_,0x18),actor_angle_steps_);
+            else if(actor_angle_steps_){
+                const auto a=source_heading_80031198(0,0,px,pz,actor_angle_steps_);   // 0x8007BFA8(x,z)+0x800
+                if(a)angle=uint32_t(*a);
+            }
+            const uint32_t a=angle.value_or(uint32_t(rd16w(player_,0x56)));
+            const uint32_t q=((a-rd16w(player_,0x56)+rd16w(player_,0x116)+0x200u)&0xFFFu)>>10;
+            player_.bytes[0x71]=uint8_t(q+1u);
+        }else if((uint8_t(direction)&0x7Fu)==1u)wr16w(player_,0x116,uint16_t(rd16w(player_,0x116)+0x800u));
+        const uint8_t q=player_.bytes[0x71]&0x7Fu;
+        if(q==2){player_.bytes[0x112]=uint8_t((player_.bytes[0x112]+1u)&3u);wr16w(player_,0x116,uint16_t(rd16w(player_,0x116)+0x400u));}
+        else if(q==4){player_.bytes[0x112]=uint8_t((player_.bytes[0x112]-1u)&3u);wr16w(player_,0x116,uint16_t(rd16w(player_,0x116)-0x400u));}
+    }
+    player_.bytes[0x174]=0;player_.bytes[0x177]=0;
+    auto& gauge=actor_detection_globals_;
+    if(packet&0x01000000u)(void)player_gauge_hit_8005d8c4(gauge,damage);
+    if(packet&0x40000000u)player_gauge_deplete_8005d98c(gauge);
+    int16_t hp=rds16w(player_,0x6E);
+    if(player_gauge_hit_8005d8c4(gauge,0)||player_gauge_depleted_8005d938(gauge)){
+        // HP (+0x6E, mirrored into hp_ for the HUD) and the stun meter.
+        if(hp>0){hp=int16_t(hp-int32_t(damage));if(hp<=0){player_gauge_deplete_8005d98c(gauge);hp=0;}}
+        else hp=int16_t(hp-int32_t(damage));
+        wr16w(player_,0x6E,uint16_t(hp));hp_=uint16_t(hp<0?0:hp);
+        player_.bytes[0x73]=uint8_t(player_.bytes[0x73]+uint8_t(damage));
+        const int32_t limit=(int32_t(static_cast<int8_t>(player_.bytes[0x16A]))+1)*16;
+        if(limit<static_cast<int8_t>(player_.bytes[0x73])){player_.bytes[0x09]=12;player_.bytes[0x0A]=1;}
+        else player_hit_action_80041a44(packet);
+    }else{
+        // 0x8004197C: an idle gauge only slides in; no HP or stun change.
+        if(hp>0)(void)player_gauge_hit_8005d8c4(gauge,damage);
+        else player_gauge_deplete_8005d98c(gauge);
+        player_hit_action_80041a44(packet);
+    }
+    // 0x800419B0: heading jitter -0x80 + (rand & 0x100), +0x0B from the side.
+    uint32_t sample=0;
+    if(tick_rng_&&tick_rng_->admitted()){
+        SourceRngUpdateTransaction t;
+        if(begin_source_rng_update(*tick_rng_,t,{frame_counter_,frame_counter_,SourceRngUpdatePhase::Class03Callbacks})==SourceRngStatus::Ready){
+            const auto staged=stage_source_rng_class03(t,{kSourcePlayerHitRngCallerRa,kSourcePlayerWork,kSourcePlayerHitRngSlot,
+                player_.bytes[8],player_.bytes[9],player_.bytes[0x0A]});
+            if(staged.status==SourceRngStatus::Ready){sample=staged.sample32a;(void)commit_source_rng_update(*tick_rng_,t);}
+            else rollback_source_rng_update(t);
+        }
+    }
+    wr16w(player_,0x56,uint16_t(rd16w(player_,0x56)-0x80u+(sample&0x100u)));
+    player_.bytes[0x0B]=(player_.bytes[0x71]&0x7Fu)==1u?1:0;
+}
+
+// 0x80041A44: 12 when airborne, pushed (0x41000000) or out of HP, else 11
+// (unless an early action-11 phase is already running).
+void RuntimeSession::player_hit_action_80041a44(uint32_t packet){
+    uint8_t action=12;
+    if(player_.bytes[0x74]==0&&!(packet&0x41000000u)&&rds16w(player_,0x6E)>0){
+        if(player_.bytes[0x09]==11&&player_.bytes[0x0A]<2)return;
+        action=11;
+    }
+    player_.bytes[0x09]=action;player_.bytes[0x0A]=0;
+}
+
+// Action 11, 0x8003E6B0 (flinch). 0x8001B2F0(0x16) (an Ss library call) and
+// 0x800395E8 are not ported.
+void RuntimeSession::update_player_hurt_8003e6b0(){
+    const bool forward=player_.bytes[0x0B]!=0;
+    const auto slide=[&]{
+        wr16w(player_,0x44,uint16_t(rds16w(player_,0x44)+(forward?-0x40:0x40)));
+        if(rds16w(player_,0x44)!=0){integrate_player_motion();return;}
+        wr16w(player_,0x44,0);++player_.bytes[0x0A];
+    };
+    switch(player_.bytes[0x0A]){
+        case 0:
+            l3_pl00_anim_request_80041ddc(&player_,forward?0x21:0x20,0,1);
+            wr16w(player_,0x44,uint16_t(forward?0x200:-0x200));wr16w(player_,0x46,0);wr16w(player_,0x48,0);
+            player_.bytes[0x168]=1;player_.bytes[0x169]=1;
+            l3_pl00_shot_enable_off(&player_);player_.bytes[0x44A]=0;
+            integrate_player_motion();
+            (void)enqueue_source_audio_8001a008(source_audio_queue_,0x97,0,0);
+            wr16w(player_,0x108,0);++player_.bytes[0x0A];return;
+        case 1:
+            if(static_cast<int8_t>(player_.bytes[0xA6])==1)++player_.bytes[0x0A];
+            slide();return;
+        case 2:
+            slide();return;
+        case 3:
+            if(static_cast<int8_t>(player_.bytes[0xA7])!=-1)return;
+            player_.bytes[0x09]=8;player_.bytes[0x0A]=6;player_.bytes[0x71]=0;
+            player_.bytes[0x168]=0;player_.bytes[0x169]=0;return;
+        default:return;
+    }
+}
+
+// Action 12, 0x8003E860 (knockdown; phases 0x80010C1C). 0x8001B2F0(0x16),
+// 0x800395E8, 0x80039A38(&0x80097D9C) and 0x8005D528 are not ported.
+void RuntimeSession::update_player_knockdown_8003e860(){
+    const auto getup=[&](uint8_t request){
+        int16_t hp=rds16w(player_,0x6E);
+        if(hp<0){player_.bytes[8]=2;player_.bytes[9]=0;return;}       // death: player state 2
+        l3_pl00_anim_request_80041ddc(&player_,request,0,1);
+        hide_player_gauge_8005d528(actor_detection_globals_);           // 0x8003EAB0
+        player_.bytes[0x112]=0;
+        wr16w(player_,0x56,uint16_t(rd16w(player_,0x56)-rd16w(player_,0x116)));wr16w(player_,0x116,0);
+        player_.bytes[0x09]=8;player_.bytes[0x0A]=6;player_.bytes[0x110]=1;player_.bytes[0x111]=0x30;
+        player_.bytes[0x71]=0;player_.bytes[0x168]=0;player_.bytes[0x169]=0;
+    };
+    const auto fall=[&]{wr16w(player_,0x46,uint16_t(rds16w(player_,0x46)+0x30));integrate_player_motion();};
+    switch(player_.bytes[0x0A]){
+        case 0: case 1:
+            l3_pl00_anim_request_80041ddc(&player_,0x22,player_.bytes[0x0A]!=0?6:0,1);
+            wr16w(player_,0x44,uint16_t(int16_t(-0x200)));l3_pl00_shot_enable_off(&player_);
+            wr16w(player_,0x46,uint16_t(int16_t(-0x160)));wr16w(player_,0x48,0);
+            player_.bytes[0x74]=1;player_.bytes[0x110]=0xFF;player_.bytes[0x168]=1;player_.bytes[0x169]=1;
+            player_.bytes[0x44A]=0;integrate_player_motion();
+            (void)enqueue_source_audio_8001a008(source_audio_queue_,0x98,0,0);
+            wr16w(player_,0x108,0);++player_.bytes[0x0A];return;
+        case 2:
+            if(player_.bytes[0x74]==0){
+                l3_pl00_anim_request_80041ddc(&player_,0x23,0,1);
+                (void)enqueue_source_audio_8001a008(source_audio_queue_,0x99,0,0);
+                ++player_.bytes[0x0A];return;
+            }
+            if(static_cast<int8_t>(player_.bytes[0xA6])==1)player_.bytes[0x0A]=uint8_t(player_.bytes[0x0A]+2u);
+            fall();return;
+        case 3:
+            if(static_cast<int8_t>(player_.bytes[0xA7])!=-1)return;
+            getup(0x25);return;
+        case 4:
+            if(player_.bytes[0x74]!=0){fall();return;}
+            l3_pl00_anim_request_80041ddc(&player_,0x24,0,1);
+            // Landing: 0x8005D8C4(8); without armour byte +0x16A, 8 more damage.
+            if(player_gauge_hit_8005d8c4(actor_detection_globals_,8)&&player_.bytes[0x16A]==0){
+                const int16_t hp=int16_t(rds16w(player_,0x6E)-8);wr16w(player_,0x6E,uint16_t(hp));hp_=uint16_t(hp<0?0:hp);
+            }
+            {
+                const auto& eye=source_gameplay_camera_.eye_800a39f0;
+                const double dx=double(int16_t(eye[0]))-rds16w(player_,0x14),dy=double(int16_t(eye[1]))-rds16w(player_,0x16),
+                             dz=double(int16_t(eye[2]))-rds16w(player_,0x18);
+                if(const auto shake=source_camera_shake_800398f8(0x1E,0x400,0x2800,uint32_t(std::sqrt(dx*dx+dy*dy+dz*dz))))
+                    source_gameplay_camera_.shake_800a395f=*shake;
+            }
+            (void)enqueue_source_audio_8001a008(source_audio_queue_,0x99,0,0);
+            ++player_.bytes[0x0A];return;
+        case 5:
+            if(static_cast<int8_t>(player_.bytes[0xA7])!=-1)return;
+            getup(0x29);return;
+        default:return;
+    }
+}
+
 void RuntimeSession::update_ledge_motion_8003eb08(){
     // USA 0x8003EB08, action 13 (ledge hang and pull-up). The table at
     // 0x80010C34 holds phases 0..6; integrate_player_motion is 0x80041E90
@@ -592,6 +799,12 @@ void RuntimeSession::update_player_motion(){
     const uint16_t held=rd16w(player_,0x11C);
     const uint16_t forward_mask=rd16w(player_,0x124);
 
+    // 0x8003C96C: hit handling, then the decision/motion dispatch.
+    update_player_hit_8003c96c();
+    // Decision 0x80040140 (action 11, phase 2) offers the side roll
+    // 0x80040764 -> action 9, which the port does not have yet: not ported.
+    if(player_.bytes[0x09]==11){update_player_hurt_8003e6b0();return;}
+    if(player_.bytes[0x09]==12){update_player_knockdown_8003e860();return;}
     // Decision 0x800400B8 (actions 7/8) runs 0x80040818 first; the motion
     // handler of the action it leaves runs the same frame (0x8003CA68..CA8C).
     if(player_.bytes[0x09]==7 || player_.bytes[0x09]==8)(void)player_ledge_grab_80040818();
@@ -1518,6 +1731,110 @@ bool RuntimeSession::commit_source_door_transition() {
     update_gameplay_camera_target();camera_.current=camera_.target;
     return true;
 }
+bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) noexcept {
+    if(!profile.loaded||(profile.event!=3&&profile.event!=2))return false;
+    source_post_win_profiles_[profile.event==3?0:1]=std::move(profile);
+    return true;
+}
+void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
+    source_post_win_step_={};
+    auto& ev=source_post_win_;
+    if(!ev.active){
+        // A retained hand-off waits for its loader (event 3) or for a stage
+        // the port does not load (event 2).
+        if(source_post_win_handoff_||!source_event_profile_||source_event_stage_!=0)return;
+        if(source_door_event0_.active||source_door_request_)return;
+        if(source_event_work_&&source_event_work_->known[0]&&source_event_work_->active00())return;
+        // The ST00 poll 0x80100598 over the bound table, as the pipeline runs
+        // it: the first set flag wins. The pipeline cannot poll after a door
+        // transition (356C is unknown there), so the native events take the
+        // poll's result here; only events 3 and 2 are started.
+        std::optional<uint8_t> selected;
+        for(const auto& r:source_event_profile_->records)
+            if(story_flag(r.flag)){selected=r.event;break;}
+        if(!selected||(*selected!=3&&*selected!=2)||!source_post_win_profiles_[*selected==3?0:1])return;
+        // 0x8001DDE4: work zeroed, +0 = 1, +1 = event (HP is never negative here).
+        ev=start_source_post_win_event(*selected);
+        source_post_win_cd_.reset();source_post_win_cd_done_=false;
+        if(source_event_work_){
+            auto& w=*source_event_work_;
+            w.raw[0]=1;w.raw[1]=*selected;w.raw[4]=0;w.known[0]=w.known[1]=w.known[4]=1;
+        }
+    }
+    const auto& profile=*source_post_win_profiles_[ev.event==3?0:1];
+    SourcePostWinInputs input;
+    // 0x80042238 has player stores, so it runs only in the phase that calls it.
+    if((ev.event==3&&ev.phase==0)||(ev.event==2&&ev.phase==1)){
+        const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
+        input.player_ready=ready&&*ready;
+    }
+    input.cd_done=source_post_win_cd_done_;
+    const auto& fw=source_fade_context_.work_80098a68;
+    // CANDIDATE: with no fade running or queued in the native scheduler,
+    // 0x80098A72 reads 0 (it is only raised while a fade runs).
+    input.fade_busy=(fw.known[10]&&fw.known[11])?uint16_t(fw.raw[10]|(uint16_t(fw.raw[11])<<8))
+        :(source_fade_callback_.running||source_fade_intents_.count?uint16_t(1):uint16_t(0));
+    input.start_skip=(in.pressed_psx_mask&0x0008u)!=0;   // 0x8001DE84 (Start, CANDIDATE bit)
+    auto step=step_source_post_win_event(ev,profile,input);
+    if(step.cd_request){source_post_win_cd_=step.cd_request;source_post_win_cd_done_=false;}
+    if(step.player_hidden)player_.bytes[0]=uint8_t(player_.bytes[0]&0xFCu);
+    if(step.fade_type){
+        auto& f=source_fade_context_.work_80098a68;
+        if(!f.known[10]||!f.known[11]){f.raw[10]=f.raw[11]=0;f.known[10]=f.known[11]=1;}  // same CANDIDATE as above
+        (void)consume_source_fade_startup_80017c30_mode0(source_fade_context_,
+            source_fade_profile_?&*source_fade_profile_:nullptr,&source_fade_intents_,step.fade_type);
+    }
+    if(step.handoff){
+        set_story_flag(step.handoff->cleared_flag,false);           // 0x8001DCD0
+        if(ev.event==3)player_.bytes[0]=uint8_t(player_.bytes[0]|1u);  // 0x800B51B0 |= 1
+        source_player_event_release_80042314(player_);
+        if(source_event_work_)source_event_work_->raw[0]=0;
+        source_post_win_handoff_=step.handoff;++source_post_win_generation_;
+    }
+    source_post_win_step_=step;
+}
+std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_win_transition() const noexcept {
+    const auto& h=source_post_win_handoff_;
+    if(!h||h->stage!=0)return std::nullopt;   // stage 2 (event 2) is not loaded by the port
+    SourceEventHandoffTransitionIntent t;
+    t.source_function=0x80102058u;t.source_generation=source_post_win_generation_;
+    t.raw=h->raw;t.known.fill(1);
+    t.spawn={{0,0,0}};t.source_stage=h->stage;t.destination_area=h->area;
+    return t;
+}
+bool RuntimeSession::can_commit_source_post_win_transition() const noexcept {
+    const auto intent=source_post_win_transition();
+    if(!intent||intent->destination_area==map_area_index_||!registered_area(intent->destination_area))return false;
+    auto player=player_;SourceEventPlayerKnown known{};known.fill(1);
+    return apply_source_handoff_spawn_80015ee8(*intent,intent->source_generation,player,known,true);
+}
+bool RuntimeSession::commit_source_post_win_transition() {
+    if(!can_commit_source_post_win_transition())return false;
+    const auto intent=*source_post_win_transition();
+    auto prepared=player_;SourceEventPlayerKnown known{};known.fill(1);
+    // Loader spawn 80015EE8 (argument6 = 1 for a new area).
+    if(!apply_source_handoff_spawn_80015ee8(intent,intent.source_generation,prepared,known,true))return false;
+    // The destination's init prefix 0x8010038C (area 4: hide, +8 = 0, flag 0x605).
+    auto flags=source_event_flags_;   // applied below through set_story_flag
+    const auto prefix=apply_source_st00_area_event_prefix(0,int8_t(intent.destination_area),flags,prepared);
+    if(!prefix.committed)return false;
+    const RuntimeVec3i spawn{rds16w(prepared,0x14),rds16w(prepared,0x16),rds16w(prepared,0x18)};
+    // The fade work 0x80098A68 is global: event 3's fade-out stays on screen
+    // through the load until event 2's fade-in.
+    const auto fade_profile=source_fade_profile_;const auto fade_context=source_fade_context_;
+    const auto fade_intents=source_fade_intents_;const auto fade_callback=source_fade_callback_;
+    const auto fade_hold=source_fade_endpoint_hold_;
+    if(!transition_to_area(intent.destination_area,spawn,rd16w(prepared,0x56)))return false;
+    source_fade_profile_=fade_profile;source_fade_context_=fade_context;source_fade_intents_=fade_intents;
+    source_fade_callback_=fade_callback;source_fade_endpoint_hold_=fade_hold;
+    player_=prepared;
+    if(intent.destination_area==4)set_story_flag(0x605,true);   // the prefix's 0x8001DA8C
+    sync_primary_position_from_fixed();
+    player_contact_={};
+    update_gameplay_camera_target();camera_.current=camera_.target;
+    source_post_win_handoff_.reset();   // the loader clears 356C
+    return true;
+}
 void RuntimeSession::update_source_door_event0(){
     auto& e=source_door_event0_;
     if(!e.active||!reference_tables_)return;
@@ -1943,6 +2260,7 @@ bool RuntimeSession::deliver_source_event_cd_receipts(const SourceEventCommandIn
 
 void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidate_rng){
     ++frame_counter_;
+    tick_rng_=candidate_rng;
     if(source_main_loop_pads_bound_)(void)service_source_main_loop_digital_pad_adapter(in.held_psx_mask,in.pressed_psx_mask);
     tick_actor_detection_globals_8005c2b8(actor_detection_globals_);
     if(active_cutscene_id_){
@@ -1967,6 +2285,14 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         }
         else if(player_.bytes[8]==3&&source_door_event0_.active){source_player_state3_80041b8c(player_);sync_primary_position_from_fixed();}
         else if(player_.bytes[8]==0)source_player_state0_8003c7b0(player_);
+        else if(player_.bytes[8]==2){
+            // 0x80041AB0: mirrors, the contact query, then main phase 9 once.
+            l3_pl00_snapshot_collision_pose(&player_);
+            player_.bytes[0x75]=player_.bytes[0x74];player_.bytes[0xAD]=player_.bytes[0xAC];player_.bytes[0x77]=player_.bytes[0x76];
+            wr16w(player_,0xB2,rd16w(player_,0x6E));
+            update_player_contact();
+            if(player_.bytes[9]==0){game_over_request_=true;++player_.bytes[9];}
+        }
         else{update_player_motion();update_player_contact();}
         update_source_door_event();
         // CANDIDATE order: event 0 after the player, then the door objects.
@@ -2090,6 +2416,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         source_event_input.candidate_rng=&candidate;
     }
     source_event_result_=step_source_event_pipeline(source_event_work_,source_event_profile_.get(),source_event_input);
+    update_source_post_win_event(in);
     // Oracle (US disc, New Game): 0x1F800074 reads 0 from phase 4 through the
     // constructor tick, where the class-40 initializer 0x8010C930 already runs
     // (same tick, after the event); the camera program writes it next tick.

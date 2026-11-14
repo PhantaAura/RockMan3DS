@@ -43,6 +43,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_bg_layers.cpp
     src/flow/source_scene_runtime.cpp
     src/flow/source_attract_event10.cpp
+    src/flow/source_st00_post_win.cpp
     src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp
     src/flow/source_event_random_tape.cpp
@@ -89,6 +90,8 @@ add_library(legends3ds_core STATIC
     src/world/class20_03_late_actions.cpp
     src/world/class20_1f_popout.cpp
     src/world/class20_19.cpp
+    src/world/class40_02_boss.cpp
+    src/flow/source_game_over.cpp
     src/world/class20_03_action3.cpp
     src/world/actor_runtime.cpp
     src/world/class20_03_behavior.cpp
@@ -1108,6 +1111,14 @@ add_executable(test_combat_owner tests/test_combat_owner.cpp)
 target_link_libraries(test_combat_owner PRIVATE legends3ds_core)
 target_compile_options(test_combat_owner PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME combat_owner COMMAND test_combat_owner)
+add_executable(test_player_damage tests/test_player_damage.cpp)
+target_link_libraries(test_player_damage PRIVATE legends3ds_core)
+target_compile_options(test_player_damage PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME player_damage COMMAND test_player_damage)
+add_executable(test_source_game_over tests/test_source_game_over.cpp)
+target_link_libraries(test_source_game_over PRIVATE legends3ds_core)
+target_compile_options(test_source_game_over PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_game_over COMMAND test_source_game_over)
 
 add_executable(test_map_edge tests/test_map_edge.cpp)
 target_link_libraries(test_map_edge PRIVATE legends3ds_core)
@@ -1158,6 +1169,10 @@ add_executable(test_class20_19 tests/test_class20_19.cpp)
 target_link_libraries(test_class20_19 PRIVATE legends3ds_core)
 target_compile_options(test_class20_19 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME class20_19 COMMAND test_class20_19)
+add_executable(test_class40_02_boss tests/test_class40_02_boss.cpp)
+target_link_libraries(test_class40_02_boss PRIVATE legends3ds_core)
+target_compile_options(test_class40_02_boss PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME class40_02_boss COMMAND test_class40_02_boss)
 
 add_executable(test_source_target_e008 tests/test_source_target_e008.cpp)
 target_link_libraries(test_source_target_e008 PRIVATE legends3ds_core)
@@ -1223,6 +1238,14 @@ add_executable(test_source_attract_event10 tests/test_source_attract_event10.cpp
 target_link_libraries(test_source_attract_event10 PRIVATE legends3ds_core)
 target_compile_options(test_source_attract_event10 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_attract_event10 COMMAND test_source_attract_event10)
+add_executable(test_source_st00_post_win tests/test_source_st00_post_win.cpp)
+target_link_libraries(test_source_st00_post_win PRIVATE legends3ds_core)
+target_compile_options(test_source_st00_post_win PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_st00_post_win COMMAND test_source_st00_post_win)
+add_executable(test_runtime_post_win tests/test_runtime_post_win.cpp)
+target_link_libraries(test_runtime_post_win PRIVATE legends3ds_core)
+target_compile_options(test_runtime_post_win PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME runtime_post_win COMMAND test_runtime_post_win)
 add_executable(test_source_scene_face tests/test_source_scene_face.cpp)
 target_link_libraries(test_source_scene_face PRIVATE legends3ds_core)
 target_compile_options(test_source_scene_face PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)

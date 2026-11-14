@@ -263,6 +263,13 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
         # E0/06 tutorial message-trigger lists (0x8011CC9C), neutral L3TR/1.
         subprocess.run([sys.executable,str(Path(__file__).with_name('cook_source_tutorial_triggers.py')),
                         '--overlay',str(stage/'R3_ST00.BIN'),'--out',str(runtime/'st00.l3tr')],check=True)
+        # Post-win events: event 3 (0x80102058, flag 0x606) and event 2
+        # (0x8010194C, flag 0x605, Area 4). Event 2's constructor loops over 14
+        # spawn records at 0x8011B388, which the importer sees as one constant.
+        for ev,extra in (('3',[]),('2',['--extra','8011B388:280'])):
+            subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
+                '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(stage/'R3_ST00.BIN'),
+                '--event',ev,'--stage','0',*extra,'--out',str(runtime/f'st00_event{ev}.l3cs')],check=True)
         # New Game opening, ST00 event 1 (0x801010C4): the flag poll table
         # (0x8011ADF8), phase-2 sound/command records (0x8001B33C/0x8001D58C),
         # the command's cold CD metadata, and the scene's lift/effect windows.
@@ -420,6 +427,16 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 manifest['frontend_materials']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                     'path':str((mout/'frontend.l3mc').relative_to(out)),
                     'source':'DEMO_DAT.BIN NTITLEU/NTITLE5U/EM0000 (CANDIDATE: the Servbot page); words from ROCK_NEO 0x80013FB8/0x80014394/0x8001456C and DEMO_DAT.EBD'}
+            # Game over (main phase 9, ROCK_NEO 0x80016798): one 256x128 4-bit
+            # quad, GetTPage(0,0,320,256) | GetClut(0,0x1F0) << 16 (0x80016DAC),
+            # whose only image is GAMEOVER.BIN (Cd_read_comb in sub-phase 2).
+            if (dat/'GAMEOVER.BIN').is_file():
+                with tempfile.TemporaryDirectory() as gtd:
+                    gw=Path(gtd)/'gameover_words.txt'; gw.write_text('7c000015\n')
+                    run(tools,'l3cook_word_materials',mout/'gameover.l3mc',gw,dat/'GAMEOVER.BIN')
+                manifest['gameover_material']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+                    'path':str((mout/'gameover.l3mc').relative_to(out)),
+                    'source':'GAMEOVER.BIN; word from ROCK_NEO 0x80016DAC'}
             # Pre-title narration (ST01 event 71, docs/research_01516/INTRO_EVENT71.md):
             # the text-crawl pages OPENG0..3 from ST01.BIN.
             # Plus the background layers (descriptor table 0x80100D5C[0], the

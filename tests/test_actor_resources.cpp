@@ -371,80 +371,30 @@ void area3_boss_owner_checks(){
     const auto duplicate=l3::source_area3_boss_spawn_spec_801076e8(stage);
     assert(duplicate.status==l3::SourceArea3BossStatus::DuplicateEventOwner&&!duplicate.spec);
 }
-std::shared_ptr<const l3::ActorAnimationBank> area3_intro_bank(){
-    l3::ActorAnimationBank bank;bank.source_row=0;
-    for(const uint8_t request:{uint8_t(0),uint8_t(1),uint8_t(2),uint8_t(3),uint8_t(11),uint8_t(12),uint8_t(13)}){
-        l3::ActorAnimationRequestCache cache;cache.request=request;
-        l3::ActorSequenceRecord record{{request,1,1,0x80,0,0,0,0}};
-        l3::ActorPoseResource pose;pose.request=request;pose.record_index=0;
-        pose.frame_index=request;pose.countdown=1;pose.next_control=-128;
-        pose.sequencing_record=record;pose.base_translation.push_back({{0,0,0}});
-        cache.sequence.records.push_back(record);cache.sequence.poses.push_back(pose);
-        bank.requests.push_back(std::move(cache));
-    }
-    return std::make_shared<const l3::ActorAnimationBank>(std::move(bank));
-}
 void area3_boss_intro_checks(){
-    using l3::source_area3_boss_action1_select_80107b48;
-    auto select=source_area3_boss_action1_select_80107b48(1024,1,5,7,0,false);
-    assert(!select.handler_complete&&select.substate==1&&select.phase==5);
-    select=source_area3_boss_action1_select_80107b48(1024,0,5,7,1,false);
-    assert(select.handler_complete&&select.substate==3&&select.saved_substate==1&&
-        select.phase==0&&!(select.flags_4e0&1));
-    select=source_area3_boss_action1_select_80107b48(1024,4,5,7,0x21,false);
-    assert(select.substate==3&&select.saved_substate==1);
-    select=source_area3_boss_action1_select_80107b48(1024,3,5,4,1,false);
-    assert(select.substate==4);
-    select=source_area3_boss_action1_select_80107b48(1024,2,5,7,1,false);
-    assert(select.substate==1);
-    select=source_area3_boss_action1_select_80107b48(1024,1,5,7,0x21,false);
-    assert(select.substate==1);
-    select=source_area3_boss_action1_select_80107b48(1024,1,5,7,1,false);
-    assert(select.substate==0);
-    select=source_area3_boss_action1_select_80107b48(0,2,5,7,1,false);
-    assert(select.substate==0&&select.death_started&&(select.flags_4e0&0x40));
-    select=source_area3_boss_action1_select_80107b48(0,2,5,7,0x41,false);
-    assert(!select.death_started&&(select.flags_4e0&0x40));
-    select=source_area3_boss_action1_select_80107b48(0,2,5,7,1,true);
-    assert(!select.death_started&&!(select.flags_4e0&0x40));
+    // The callback itself is covered by test_class40_02_boss; here the actor
+    // owner: entry hold, record binding and the world requirement.
     l3::ImportedActorInstance boss;boss.source_class=0x40;boss.subtype=2;
     boss.initializer=0x801078b8u;boss.source_origin={{-256,-385,1001}};
-    boss.source_area3_boss.emplace();auto& state=*boss.source_area3_boss;
-    state.hp=1024;state.action=1;state.phase=0;state.substate=1;
-    boss.animation_bank=area3_intro_bank();boss.pose=boss.animation_bank->requests[0].sequence.poses[0];
-    boss.animation_cursor=l3::actor_sequence_begin(0,boss.pose->sequencing_record);
+    boss.source_area3_boss.emplace();
     assert(l3::source_area3_boss_forces_player_entry(boss,-1920));
     assert(l3::source_area3_boss_forces_player_entry(boss,-1632));
-    const size_t allocations=allocation_count;
-    auto tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1920);
-    assert(tick.committed&&!tick.state_changed&&state.intro_leg==0&&boss.source_origin[2]==1001);
-    tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(tick.committed&&tick.state_changed&&state.intro_leg==1&&state.phase==3&&
-        state.phase_ticks==12&&boss.pose->request==3);
-    for(unsigned i=0;i<12;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.intro_leg==2&&state.phase==1&&boss.pose->request==1&&boss.source_origin[2]==1001);
-    for(unsigned i=0;i<83;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.intro_leg==3&&state.phase==2&&boss.pose->request==2&&boss.source_origin[2]==-327);
-    for(unsigned i=0;i<28;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.intro_leg==4&&state.phase==1&&state.substate==0&&boss.source_origin[2]==-1223);
-    tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(tick.status==l3::SourceArea3BossTickStatus::SourceBackedCombatPresentation&&
-        state.intro_leg==5&&state.action==6&&state.phase==0&&state.phase_ticks==80&&
-        boss.pose->request==2);
-    tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.phase==1&&state.phase_ticks==12&&boss.pose->request==11);
-    for(unsigned i=0;i<12;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.phase==2&&state.phase_ticks==9&&boss.pose->request==11);
-    for(unsigned i=0;i<9;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.phase==3&&state.phase_ticks==19&&boss.pose->request==12);
-    for(unsigned i=0;i<19;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.phase==4&&state.phase_ticks==9&&boss.pose->request==12);
-    for(unsigned i=0;i<9;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(state.phase==5&&state.phase_ticks==14&&boss.pose->request==13);
-    for(unsigned i=0;i<14;++i)tick=l3::tick_source_area3_boss_intro_80107b48(boss,-1632);
-    assert(tick.status==l3::SourceArea3BossTickStatus::CombatReady&&state.intro_leg==6&&
-        state.action==1&&state.phase==0&&state.phase_ticks==UINT16_MAX&&
-        boss.pose->request==13&&allocation_count==allocations);
+    assert(!l3::source_area3_boss_forces_player_entry(boss,-1600));
+    l3::SourceCombatProfiles none;
+    assert(!l3::bind_source_area3_boss_record(boss,none,uint8_t(1))&&!boss.source_record40);
+    l3::ReferenceTables refs;
+    const auto tick=l3::tick_source_area3_boss_801076e8(boss,{},refs,nullptr,std::nullopt);
+    assert(!tick.committed&&boss.source_area3_boss->state_08==0);
+    // +0x80 for the boss uses the class-20 writer (oracle frame 5516).
+    boss.source_origin={{-256,-385,-1223}};
+    const auto sample=l3::sample_imported_actor_target(boss,-335,-937,nullptr);
+    assert(sample&&sample->source_work_80==0x15748u);
+    // The proxy is only registered from a pending word with a pose point.
+    l3::SourceHitProxyBank bank;
+    assert(!l3::register_source_area3_boss_proxy(boss,bank,0xffu,{})&&bank.count==0);
+    boss.source_boss40_pending_proxy=0x04880008u;
+    assert(!l3::register_source_area3_boss_proxy(boss,bank,0xffu,{})&&!boss.source_boss40_pending_proxy);
+    boss.source_boss40_entry_released=true;
     assert(!l3::source_area3_boss_forces_player_entry(boss,-1632));
 }
 }

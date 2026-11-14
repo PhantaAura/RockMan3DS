@@ -35,8 +35,13 @@ std::optional<ImportedActorTargetSample> sample_imported_actor_target(
     const ImportedActorInstance& actor, int32_t player_x, int32_t player_z,
     const SourceAngleSteps* steps) noexcept {
     // Subtype 0x1F reads the same +0x80 distance (0x801066D8); CANDIDATE that
-    // the per-frame writer matches the subtype-3 query.
-    if (actor.source_class != 0x20 || (actor.subtype != 3 && actor.subtype != 0x1F && actor.subtype != 0x19) ||
+    // the per-frame writer matches the subtype-3 query. The Area 3 boss
+    // (class 40/02) gets the same value: PSXRecomp frame 5516, boss
+    // (-256,-1223), player (-335,-937) -> +0x80 = 0x15748 = 4*(39^2+143^2).
+    const bool class20 = actor.source_class == 0x20 &&
+        (actor.subtype == 3 || actor.subtype == 0x1F || actor.subtype == 0x19);
+    const bool boss40 = actor.source_class == 0x40 && actor.subtype == 2 && actor.source_area3_boss;
+    if ((!class20 && !boss40) ||
         player_x < INT16_MIN || player_x > INT16_MAX ||
         player_z < INT16_MIN || player_z > INT16_MAX) return std::nullopt;
     ImportedActorTargetSample sample;
@@ -304,7 +309,9 @@ SourceArea3BossSpawnResult append_source_area3_boss_801076e8(
         auto resource=std::make_shared<const ActorMeshResource>(std::move(mesh));
         auto pose=decode_ebd_scene_actor40_pose(ebd,rows.front(),*resource,
             out.spec->pose_request,out.spec->pose_record);
-        static constexpr uint8_t kIntroRequests[]={0,1,2,3,11,12,13};
+        // Requests of the reachable substates: 0 wait, 1 walk, 2 charge, 3 turn,
+        // 4 stagger, 11..13 slam.
+        static constexpr uint8_t kIntroRequests[]={0,1,2,3,4,11,12,13};
         auto bank=decode_ebd_scene_actor40_animation_bank(ebd,rows.front(),*resource,
             kIntroRequests,sizeof(kIntroRequests),cap-area.decoded_resource_bytes-decoded);
         if(bank.decoded_bytes>cap-area.decoded_resource_bytes-decoded)
@@ -322,10 +329,14 @@ SourceArea3BossSpawnResult append_source_area3_boss_801076e8(
         boss.resource=std::move(resource);boss.pose=std::move(pose);
         boss.animation_bank=std::make_shared<const ActorAnimationBank>(std::move(bank));
         boss.animation_cursor=actor_sequence_begin(0,boss.pose->sequencing_record);
-        ImportedActorInstance::SourceArea3BossState state;
-        state.hp=static_cast<int16_t>(out.spec->hp);state.action=out.spec->action;
-        state.phase=out.spec->phase;state.substate=out.spec->substate;
-        state.requested_pose=out.spec->pose_request;boss.source_area3_boss=state;
+        // Event 3 allocates class-40 slot 0 (byte0 = 3 observed); state 0
+        // (0x801078B8) runs on the first callback.
+        Class40_02State state;state.work_00=1;state.parameter_03=out.spec->parameter;
+        for(size_t axis=0;axis<3;++axis){state.raw_14[axis]=out.spec->spawn_position[axis];
+            state.fixed_1c[axis]=int32_t(uint32_t(uint16_t(out.spec->spawn_position[axis]))<<16);}
+        state.heading_56=out.spec->heading;
+        state.previous_raw_2c=state.raw_14;state.previous_fixed_34=state.fixed_1c;
+        boss.source_area3_boss=state;
         area.actors.reserve(area.actors.size()+1);
         out.actor_index=area.actors.size();area.actors.push_back(std::move(boss));
         area.decoded_resource_bytes+=decoded+bank_bytes;++area.unique_resource_count;
@@ -336,141 +347,106 @@ SourceArea3BossSpawnResult append_source_area3_boss_801076e8(
 bool source_area3_boss_forces_player_entry(const ImportedActorInstance& actor,
                                            int32_t player_z) noexcept {
     return actor.source_area3_boss&&actor.source_class==0x40&&actor.subtype==2&&
-        actor.initializer==0x801078b8u&&actor.source_area3_boss->intro_leg<6&&
-        player_z<=-1632;
+        actor.initializer==0x801078b8u&&!actor.source_boss40_entry_released&&
+        !actor.source_area3_boss->released&&player_z<=-1632;
 }
 
-SourceArea3BossAction1Selection source_area3_boss_action1_select_80107b48(
-    int16_t hp,uint8_t substate,uint8_t phase,uint8_t saved_substate,
-    uint16_t flags_4e0,bool death_suppressed) noexcept {
-    SourceArea3BossAction1Selection out;
-    out.flags_4e0=flags_4e0;out.substate=substate;out.phase=phase;
-    out.saved_substate=saved_substate;
-    if(!(flags_4e0&1u))return out;
-    out.handler_complete=true;
-    if(hp<1){
-        out.substate=0;
-        if(!death_suppressed&&!(out.flags_4e0&0x40u)){
-            out.flags_4e0|=0x40u;out.death_started=true;
-        }
-    }else if(substate==0||substate==4){
-        out.substate=3;out.saved_substate=1;
-    }else if(substate==3){
-        out.substate=saved_substate;
-    }else if(substate==2||(out.flags_4e0&0x20u)){
-        out.substate=1;
-    }else{
-        out.substate=0;
-    }
-    out.phase=0;out.flags_4e0=uint16_t(out.flags_4e0&~1u);
-    return out;
+bool bind_source_area3_boss_record(ImportedActorInstance& actor,
+    const SourceCombatProfiles& profiles,std::optional<uint8_t> selector) noexcept {
+    if(!selector||!actor.source_area3_boss||actor.source_record40||actor.initializer!=0x801078b8u)return false;
+    const auto* p=find_source_combat_profile(profiles,*selector,0x40,2,1,0);
+    if(!p||!p->unsigned_byte09)return false;
+    Class40_02Record r;r.byte08_hp=p->unsigned_byte08;r.byte09_stagger=*p->unsigned_byte09;
+    r.byte0f_detection=p->unsigned_byte0f;
+    actor.source_record40=r;
+    actor.source_detection40=ActorDetectionWork{};
+    actor.source_detection40.profile_352=r.byte0f_detection;
+    actor.source_detection40.offset_35b=-6;
+    return true;
 }
 
-SourceArea3BossTickResult tick_source_area3_boss_intro_80107b48(
-    ImportedActorInstance& actor,int32_t player_z) noexcept {
-    SourceArea3BossTickResult out;
+bool register_source_area3_boss_proxy(ImportedActorInstance& actor,SourceHitProxyBank& bank,
+    std::optional<uint32_t> mask,std::array<SourceHitProxyOwnerPoint*,24> owners) noexcept {
+    const auto word=actor.source_boss40_pending_proxy;
+    actor.source_boss40_pending_proxy.reset();
+    if(!word||!actor.source_proxy_bound||!actor.source_point_180_known||actor.source_released)return false;
+    SourceHitProxyRegistration registration;
+    const auto& p=actor.source_point_180;
+    registration.pointed_words={{uint32_t(uint16_t(p[0]))|(uint32_t(uint16_t(p[1]))<<16),
+                                 uint32_t(uint16_t(p[2]))|(uint32_t(uint16_t(p[3]))<<16)}};
+    registration.a1=0xd0;registration.a2=0;registration.a3=0x8000;
+    registration.stack10=0x40;                                     // work +1: class-40 slot 0
+    registration.stack18=*word;
+    registration.stack1c=0x00800000u;registration.stack20=0;
+    registration.target=&actor.source_proxy_target;registration.mask_80098798=mask;
+    registration.owners_800be478=owners;
+    return source_hit_proxy_register_800341bc(bank,registration).status==SourceHitProxyStatus::SourceBackedPartial;
+}
+
+SourceArea3BossTick tick_source_area3_boss_801076e8(ImportedActorInstance& actor,
+    Class40_02Inputs in,const ReferenceTables& references,SourceHitProxyBank* bank,
+    std::optional<uint32_t> mask,std::array<SourceHitProxyOwnerPoint*,24> owners) noexcept {
+    SourceArea3BossTick out;
     if(!actor.source_area3_boss||actor.source_class!=0x40||actor.subtype!=2||
-       actor.initializer!=0x801078b8u)return out;
-    auto& state=*actor.source_area3_boss;
-    if(state.intro_leg>=6){out.status=SourceArea3BossTickStatus::CombatReady;return out;}
-    if(!actor.animation_bank||!actor.animation_cursor||!actor.pose){
-        out.status=SourceArea3BossTickStatus::MissingAnimation;return out;
+       actor.initializer!=0x801078b8u||!in.world)return out;
+    auto next=*actor.source_area3_boss;
+    // The bank wrote the previous frame's hit into the +0x4F4 target.
+    next.packet_4f4=actor.source_proxy_target.packet_00;
+    Class20_03MotionWorld world=*in.world;
+    world.state74=actor.source_contact_state74;
+    if(actor.animation_cursor){
+        const uint8_t cue=actor.animation_cursor->opaque_a6;
+        world.source_a6=cue<128?int8_t(cue):int8_t(int(cue)-256);
+        in.frame_a4=actor.animation_cursor->frame_a4;
+    }else{world.source_a6.reset();in.frame_a4.reset();}
+    in.world=&world;
+    in.record=actor.source_record40;
+    const uint8_t substate_before=next.substate_09;
+    out.result=step_class40_02_801076e8(next,in);
+    actor.last_boss40_status=out.result.status;
+    if(out.result.status==Class40_02Status::Released){
+        if(out.result.released){
+            actor.source_area3_boss=next;actor.source_released=true;actor.source_hidden=true;
+            actor.source_proxy_bound=false;actor.source_proxy_target={};out.committed=true;
+        }
+        return out;
     }
-    auto request=[&](uint8_t id){
-        if(actor_animation_request_ready(*actor.animation_bank,id,*actor.pose)!=
-           ActorAnimationStatus::SourceBackedPartial)return false;
-        const auto result=actor_animation_reset(*actor.animation_bank,id,*actor.pose,
-                                                *actor.animation_cursor);
-        if(result.status!=ActorAnimationStatus::SourceBackedPartial)return false;
-        state.requested_pose=id;out.pose_changed=out.pose_changed||result.record_changed||result.request_changed;
-        return true;
-    };
-    const auto before=state;
-    const auto position_before=actor.source_origin;
-    switch(state.intro_leg){
-        case 0:
-            // Clean slot-2 observation: event 3 holds phase0 until the player
-            // reaches the scripted entry endpoint z=-1632, then selects phase3.
-            if(player_z>=-1632){state.phase=3;state.substate=1;state.phase_ticks=12;
-                if(!request(3)){out.status=SourceArea3BossTickStatus::MissingAnimation;return out;}
-                state.intro_leg=1;}
-            break;
-        case 1:
-            // 0x80108C18 stores a 12-tick countdown for phase3.
-            if(state.phase_ticks)--state.phase_ticks;
-            if(!state.phase_ticks){state.phase=1;state.substate=1;
-                if(!request(1)){out.status=SourceArea3BossTickStatus::MissingAnimation;return out;}
-                state.intro_leg=2;}
-            break;
-        case 2:
-            // Original clean entry: 1001,985,...,-327 (16 raw units/tick).
-            actor.source_origin[2]=static_cast<int16_t>(std::max<int>(-327,actor.source_origin[2]-16));
-            actor.heading=4095;
-            if(actor.source_origin[2]<=-327){state.phase=2;state.substate=1;
-                if(!request(2)){out.status=SourceArea3BossTickStatus::MissingAnimation;return out;}
-                state.intro_leg=3;}
-            break;
-        case 3:
-            // Phase2 advances twice as fast and stops exactly at -1223.
-            actor.source_origin[2]=static_cast<int16_t>(std::max<int>(-1223,actor.source_origin[2]-32));
-            actor.heading=4095;
-            if(actor.source_origin[2]<=-1223){state.phase=1;state.substate=0;state.intro_leg=4;}
-            break;
-        case 4:
-            // 0x80107FAC phase0 enters action6 with its 80-tick decision
-            // timer. The shared animation path selects request11 next.
-            state.action=6;state.phase=0;state.substate=1;state.phase_ticks=80;
-            state.intro_leg=5;
-            break;
-        case 5:
-            // Clean slot-2 replay: one complete action6 presentation cycle.
-            // These are work+A phases; request transitions and work+4E4
-            // countdowns were sampled together, not inferred from video.
-            switch(state.phase){
-                case 0:
-                    state.phase=1;state.phase_ticks=12;
-                    if(!request(11)){out.status=SourceArea3BossTickStatus::MissingAnimation;return out;}
-                    break;
-                case 1:
-                    if(state.phase_ticks)--state.phase_ticks;
-                    if(!state.phase_ticks){state.phase=2;state.phase_ticks=9;}
-                    break;
-                case 2:
-                    if(state.phase_ticks)--state.phase_ticks;
-                    if(!state.phase_ticks){state.phase=3;state.phase_ticks=19;
-                        if(!request(12)){out.status=SourceArea3BossTickStatus::MissingAnimation;return out;}}
-                    break;
-                case 3:
-                    if(state.phase_ticks)--state.phase_ticks;
-                    if(!state.phase_ticks){state.phase=4;state.phase_ticks=9;}
-                    break;
-                case 4:
-                    if(state.phase_ticks)--state.phase_ticks;
-                    if(!state.phase_ticks){state.phase=5;state.phase_ticks=14;
-                        if(!request(13)){out.status=SourceArea3BossTickStatus::MissingAnimation;return out;}}
-                    break;
-                case 5:
-                    if(state.phase_ticks)--state.phase_ticks;
-                    if(!state.phase_ticks){state.action=1;state.phase=0;
-                        state.phase_ticks=UINT16_MAX;state.intro_leg=6;}
-                    break;
-                default:
-                    out.status=SourceArea3BossTickStatus::CombatReady;return out;
-            }
-            break;
-        default:break;
+    if(out.result.status!=Class40_02Status::SourceBackedPartial)return out;
+    std::optional<ActorSequenceCursor> cursor=actor.animation_cursor;
+    if(actor.animation_bank&&actor.pose&&cursor){
+        const auto animation=out.result.animation==Class40_02Animation::Advance&&
+                actor.pose->request==next.animation_ac
+            ?actor_animation_step(*actor.animation_bank,*actor.pose,*cursor)
+            :actor_animation_reset(*actor.animation_bank,next.animation_ac,*actor.pose,*cursor);
+        if(animation.status!=ActorAnimationStatus::SourceBackedPartial){
+            actor.last_boss40_status=Class40_02Status::NeedsAnimationCue;return out;
+        }
+        out.pose_changed=animation.record_changed||animation.request_changed;
     }
-    const auto animation=actor_animation_step(*actor.animation_bank,*actor.pose,*actor.animation_cursor);
-    if(animation.status!=ActorAnimationStatus::SourceBackedPartial){
-        out.status=SourceArea3BossTickStatus::MissingAnimation;return out;
+    if(substate_before==6&&next.substate_09!=6)actor.source_boss40_entry_released=true;
+    actor.source_area3_boss=next;
+    actor.animation_cursor=cursor;
+    actor.heading=next.heading_56;
+    for(size_t i=0;i<actor.source_origin.size();++i)actor.source_origin[i]=next.raw_14[i];
+    actor.source_contact_state74=world.state74;
+    actor.source_hidden=!(next.work_00&2u);
+    actor.raw_shade=next.shade_15e;
+    actor.pose_selected_by_retail_state=true;
+    if(actor.pose){
+        ActorPoseCollisionInputs pose;
+        pose.reference=&references;pose.heading_56=next.heading_56;
+        for(size_t axis=0;axis<3;++axis)pose.raw_14[axis]=next.raw_14[axis];
+        pose.scale_158=actor.raw_scale;pose.root_translation=actor.pose->root_translation;
+        pose.flags_06=actor.source_dispatch_flag6;pose.scratch_shift_1f800074=actor.source_pose_scratch_shift;
+        pose.preserved_186=actor.source_pose_preserved_186;
+        const auto produced=produce_actor_pose_collision_point_8003346c(pose);
+        if(produced.point_180){actor.source_point_180=*produced.point_180;actor.source_point_180_known=true;}
     }
-    out.pose_changed=out.pose_changed||animation.record_changed||animation.request_changed;
-    out.committed=true;out.state_changed=state.action!=before.action||state.phase!=before.phase||
-        state.substate!=before.substate||state.intro_leg!=before.intro_leg||
-        actor.source_origin!=position_before;
-    out.status=state.intro_leg>=6?SourceArea3BossTickStatus::CombatReady:
-        state.intro_leg==5?SourceArea3BossTickStatus::SourceBackedCombatPresentation:
-        SourceArea3BossTickStatus::SourceBackedIntro;
+    actor.source_boss40_pending_proxy.reset();
+    if(out.result.register_proxy)actor.source_boss40_pending_proxy=out.result.proxy_word_18;
+    if(bank)out.proxy_registered=register_source_area3_boss_proxy(actor,*bank,mask,owners);
+    actor.source_proxy_target.packet_00=0;   // +0x4F4 cleared at the end of the callback
+    out.committed=true;
     return out;
 }
 
@@ -1462,6 +1438,13 @@ bool initialize_imported_actor_fresh_pose_proxy_subset(ImportedActorInstance& ac
         actor.source_pose_scratch_shift=0;actor.source_pose_preserved_186=0;actor.source_shadow_work76=0;
         actor.source_proxy_target={};
         actor.source_proxy_target.source_address=0x8009f108u+uint32_t(actor.original_pool_slot)*0x3c0u+0x35cu;
+        actor.source_proxy_bound=true;return true;
+    }
+    if(actor.source_class==0x40&&actor.subtype==2&&actor.initializer==0x801078b8u&&
+       actor.source_area3_boss&&!actor.source_proxy_bound){
+        actor.source_pose_scratch_shift=0;actor.source_pose_preserved_186=0;actor.source_shadow_work76=0;
+        actor.source_proxy_target={};
+        actor.source_proxy_target.source_address=0x800c3580u+0x4f4u;
         actor.source_proxy_bound=true;return true;
     }
     if(actor.source_class==0x20&&actor.subtype==0x19&&actor.initializer==0x80104A08&&
