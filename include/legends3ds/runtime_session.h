@@ -29,6 +29,7 @@
 #include "legends3ds/source_event_command_package.h"
 #include "legends3ds/source_door_event.h"
 #include "legends3ds/source_st00_post_win.h"
+#include "legends3ds/source_stage_load.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
 #include "legends3ds/source_target_e008.h"
@@ -353,6 +354,17 @@ public:
     bool commit_source_post_win_transition();
     // Expose a renderer work request only after the original phase-7 caller
     // reaches its missing head-UV reset owner. A frame counter is not a lease.
+    // Stage loading (source_stage_load.h). stage() is 0x800C1B60 for this
+    // session's cooked data. A post-win hand-off naming another stage is not
+    // an area transition: it is offered here, and the 3DS loop rebuilds the
+    // session from that stage's data (the request stays until then).
+    uint8_t stage() const noexcept { return stage_; }
+    void set_stage(uint8_t stage) noexcept { stage_ = stage; }
+    std::optional<SourceStageRequest> source_stage_request() const noexcept;
+    SourceStageCarry make_stage_carry() const;
+    // Into a freshly built session for the new stage: story flags, life,
+    // frame count and statistics selector, then the 0x80015EE8 arrival.
+    bool apply_stage_load(const SourceStageCarry& carry, const SourceStageArrival& arrival);
     std::optional<uint64_t> source_handoff_display_generation() const noexcept;
     bool bind_source_handoff_display_receipt(const SourceEventHandoffDisplayReceipt&) noexcept;
 
@@ -778,6 +790,7 @@ private:
     SourcePostWinStep source_post_win_step_{};
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;
+    uint8_t stage_=0;
     std::optional<uint32_t> source_post_win_cd_;
     bool source_post_win_cd_done_=false;
     std::vector<SourceDoorObject> source_door_objects_;

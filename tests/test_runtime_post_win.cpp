@@ -85,6 +85,9 @@ int main() {
     const auto& h = s.source_post_win_handoff();
     require(h && h->stage == 2 && h->area == 0 && !s.story_flag(0x605) && !s.source_post_win_transition(),
             "event 2 asks for stage 2; retained, not offered");
+    const auto sr = s.source_stage_request();
+    require(sr && sr->stage == 2 && sr->area == 0 && sr->spawn == std::array<int16_t,3>{0, 0, 0} && sr->heading == 0 &&
+            sr->source_function == 0x8010194Cu, "the retained hand-off is the stage-2 request");
     s.tick({});
     require(!s.source_post_win_event().active, "no restart while the stage-2 request is retained");
     if (failures) return EXIT_FAILURE;

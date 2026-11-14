@@ -1795,12 +1795,33 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
 }
 std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_win_transition() const noexcept {
     const auto& h=source_post_win_handoff_;
-    if(!h||h->stage!=0)return std::nullopt;   // stage 2 (event 2) is not loaded by the port
+    if(!h||h->stage!=stage_)return std::nullopt;   // another stage: source_stage_request()
     SourceEventHandoffTransitionIntent t;
     t.source_function=0x80102058u;t.source_generation=source_post_win_generation_;
     t.raw=h->raw;t.known.fill(1);
     t.spawn={{0,0,0}};t.source_stage=h->stage;t.destination_area=h->area;
     return t;
+}
+std::optional<SourceStageRequest> RuntimeSession::source_stage_request() const noexcept {
+    const auto& h=source_post_win_handoff_;
+    if(!h||h->stage==stage_)return std::nullopt;
+    return source_stage_request_from_lanes(h->raw,source_post_win_.event==2?0x8010194Cu:0x80102058u,source_post_win_generation_);
+}
+SourceStageCarry RuntimeSession::make_stage_carry() const {
+    SourceStageCarry c;
+    c.story_flags=story_flags_;c.hp=hp_;c.hp_max=hp_max_;c.frames=frame_counter_;c.stats_selector=source_stats_selector_;
+    return c;
+}
+bool RuntimeSession::apply_stage_load(const SourceStageCarry& carry,const SourceStageArrival& arrival) {
+    if(arrival.stage!=stage_||(arrival.area!=map_area_index_&&!has_registered_area(arrival.area)))return false;
+    const RuntimeVec3i spawn{arrival.position[0],arrival.position[1],arrival.position[2]};
+    if(arrival.area!=map_area_index_&&!transition_to_area(arrival.area,spawn,arrival.heading))return false;
+    reset_player(spawn,arrival.heading,carry.hp,carry.hp_max);
+    for(uint16_t bit=0;bit<kL3StoryFlagBytes*8u;++bit)
+        if(carry.story_flags[bit>>3u]&(1u<<(bit&7u)))set_story_flag(bit,true);
+    frame_counter_=carry.frames;source_stats_selector_=carry.stats_selector;
+    update_gameplay_camera_target();camera_.current=camera_.target;
+    return true;
 }
 bool RuntimeSession::can_commit_source_post_win_transition() const noexcept {
     const auto intent=source_post_win_transition();
