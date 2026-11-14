@@ -52,6 +52,21 @@ TYPE0_WANTED={
 }
 TYPE0_OPTIONAL={r"..\SCR\DATA\ST00.HD2":"stage/ST00.HD2"}
 
+# Stages beyond ST00, one entry each. The stage container holds the overlay and
+# map quartet (canonical loads, as tools/build_stage_catalog.py checks); each
+# area container holds that area's EBD and pages. Area i of the stage is
+# areas[i]; ebd names the EBD each area container carries. The flow tables
+# come from l3cook_st00_flow --stage N (addresses in src/flow/st00_flow.cpp).
+# Output: legends3ds/tutorial/stages/stNN/ (map.l3map, render.l3render,
+# init.l3init, flow.l3flow, ebd/area_NN.l3ebd, materials/*area_NN.l3mc).
+EXTRA_STAGES={
+    # Area 3 has no ST02_03.BIN; the stage container (which carries the same
+    # EBD and the area-0 pages) stands in for it (CANDIDATE).
+    2:{'container':'ST02.BIN','areas':('ST02_00.BIN','ST02_01.BIN','ST02_02.BIN','ST02.BIN'),
+       'ebd':r'..\EMBIN\ST02_01.EBD'},
+}
+STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
+
 @dataclass
 class Res:
     container: Path; offset:int; typ:int; size:int; load:int; internal:str
@@ -548,9 +563,72 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 if r.typ==1: run(tools,'l3cook_texture',r.container,r.internal,dst)
                 else: run(tools,'l3cook_palette',r.container,r.internal,dst)
                 manifest['resources'].append({'container':r.container.name,'internal':r.internal,'type':r.typ,'cooked':str(dst.relative_to(out))})
+        for stage_number in sorted(EXTRA_STAGES):
+            _cook_extra_stage(dat,tools,td,runtime,out,manifest,stage_number,head_selection,
+                              runtime/'player',with_material_cache)
     for p in sorted(runtime.rglob('*')):
         if p.is_file(): manifest.setdefault('outputs',[]).append({'path':str(p.relative_to(out)),'bytes':p.stat().st_size,'sha256':sha256(p)})
     (runtime/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+
+def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest:dict,
+                      number:int,head_selection:dict,pout:Path,with_material_cache:bool)->None:
+    """Cook one EXTRA_STAGES entry the same way ST00 is cooked above."""
+    spec=EXTRA_STAGES[number]; code=f'ST{number:02X}'
+    # Optional: the ST00 pack stays complete without the stage's containers.
+    absent=[n for n in (spec['container'],*spec['areas']) if not (dat/n).is_file()]
+    if absent:
+        manifest.setdefault('stages',{})[f'st{number:02x}']={'status':'ABSENT','missing':sorted(set(absent))}
+        return
+    work=td/f'stage_{number:02x}'; work.mkdir()
+    sout=runtime/'stages'/f'st{number:02x}'; (sout/'ebd').mkdir(parents=True)
+    stage_container=dat/spec['container']
+    # Keys by file-name suffix: STxx_MAP.IDX/MDT, STxx.STG/HED, R3_STxx.BIN.
+    wanted={f'\\{code}{k}':k for k in STAGE_QUARTET_LOADS}
+    wanted[f'\\R3_{code}.BIN']='overlay'
+    got={}
+    raw=stage_container.read_bytes()
+    for r in iter_resources(stage_container):
+        key=next((v for suffix,v in wanted.items() if r.internal.upper().endswith(suffix.upper())),None)
+        if key and key not in got:
+            if r.typ!=0: raise RuntimeError(f'{code} {r.internal}: expected type 0')
+            if key=='overlay' and r.load!=0x80100000: raise RuntimeError(f'{code} overlay load base unsupported')
+            if key!='overlay' and r.load!=STAGE_QUARTET_LOADS[key]: raise RuntimeError(f'{code} {r.internal}: unsupported load layout')
+            data=raw[r.payload_start:r.payload_start+r.size]
+            if len(data)!=r.size: raise RuntimeError(f'{code} {r.internal}: payload out of bounds')
+            (work/key.strip('._')).write_bytes(data); got[key]=r
+    missing=[k for k in wanted.values() if k not in got]
+    if missing: raise RuntimeError(f'{code}: missing stage resources {missing}')
+    quartet=[work/'MAP.MDT',work/'MAP.IDX',work/'STG',work/'HED']
+    run(tools,'l3cook_st00',*quartet,sout/'map.l3map')
+    run(tools,'l3cook_render',*quartet,sout/'render.l3render')
+    run(tools,'l3cook_map_init',*quartet,sout/'map.l3map',sout/'render.l3render',sout/'init.l3init','--stage0-startup')
+    run(tools,'l3cook_st00_flow',work/'overlay',sout/'flow.l3flow','--stage',str(number))
+    for area_index,cname in enumerate(spec['areas']):
+        cp=dat/cname
+        matches=[r for r in iter_resources(cp) if r.internal==spec['ebd']]
+        if len(matches)!=1 or matches[0].typ!=0: raise RuntimeError(f'{cname}: expected one type-0 {spec["ebd"]}')
+        r=matches[0]; ep=work/f'ebd_{area_index:02d}.bin'
+        ep.write_bytes(cp.read_bytes()[r.payload_start:r.payload_start+r.size])
+        run(tools,'l3cook_ebd',ep,hex(r.load),sout/'ebd'/f'area_{area_index:02d}.l3ebd')
+    if with_material_cache:
+        mout=sout/'materials'; mout.mkdir()
+        # Same VRAM order as ST00: boot/player containers, the stage container,
+        # then the area container (last writer wins). No negative-material
+        # table is known for this overlay: the renderer's fallback applies.
+        upload_prefix=[dat/'INIT_DAT.BIN',dat/head_selection['container'],dat/'ARM00R.BIN',dat/'ARM00L.BIN',dat/'LEG00.BIN',stage_container]
+        for area_index,cname in enumerate(spec['areas']):
+            area_container=dat/cname
+            run(tools,'l3cook_material_cache',*quartet,str(area_index),mout/f'area_{area_index:02d}.l3mc',
+                *upload_prefix,area_container,'--ramp-out',mout/f'area_{area_index:02d}.l3cr')
+            run(tools,'l3cook_player_material_cache',
+                pout/'body.l3model',pout/'head.l3model',pout/'right.l3model',pout/'left.l3model',pout/'feet.l3model',
+                mout/f'player_area_{area_index:02d}.l3mc',*upload_prefix,area_container)
+            run(tools,'l3cook_actor_material_cache',sout/'ebd'/f'area_{area_index:02d}.l3ebd',
+                mout/f'actor_area_{area_index:02d}.l3mc',dat/'EXIT_SUP.BIN',*upload_prefix,area_container)
+    manifest.setdefault('stages',{})[f'st{number:02x}']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
+        'areas':len(spec['areas']),'path':str(sout.relative_to(out)),
+        'flow':'l3cook_st00_flow --stage (overlay area setup tables)',
+        'not_cooked':['events/poll','conditional spawns','messages','music','BG sky']}
 
 def main():
     ap=argparse.ArgumentParser()
