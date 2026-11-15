@@ -48,7 +48,7 @@ constexpr uint32_t kMsgDecorParam8008af18 = 0x8008AF18;    // u8[9]
 constexpr uint32_t kMsgFrameColors80097f6c = 0x80097F6C;   // u8[6 x n] bg colours
 constexpr uint32_t kMsgBorderColors80097f78 = 0x80097F78;  // u8[16] edge vertex greys
 constexpr uint32_t kOptionMessage8008b69c = 0x8008B69C;
-// GetTPage(0, 0, 960, 256): the font page (FONT.BIN, 0x80054240).
+// GetTPage(0, 0, 960, 256): the font page (KAIFONT.BIN, 0x80054240).
 constexpr uint16_t kMsgFontTpage = psx_get_tpage(0, 0, 960, 256);
 
 struct MessageSlot {
