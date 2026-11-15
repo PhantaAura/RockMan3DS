@@ -541,14 +541,14 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                     'ebd':str((fout/'title.l3ebd').relative_to(out)),'scripts':str((fout/'servbots.l3ts').relative_to(out)),
                     'source':'DEMO_DAT.EBD class 0x20/0; ROCK_NEO 0x80080960..0x80082104; camera 0x80038370'}
                 # The OPTION menu (front-end state 6): message windows over the
-                # EXE's message data, drawn with the FONT.BIN page.
-                if (dat/'FONT.BIN').is_file():
-                    run(tools,'l3cook_font_materials',dat/'FONT.BIN',mout/'font.l3mc')
+                # EXE's message data, drawn with the USA font page KAIFONT.BIN.
+                if (dat/'KAIFONT.BIN').is_file():
+                    run(tools,'l3cook_font_materials',dat/'KAIFONT.BIN',mout/'font.l3mc')
                     subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_option_menu.py'),
                         str(dat.parent.parent/'ROCK_NEO.EXE'),str(fout/'option.l3ex')],check=True,stdout=subprocess.DEVNULL)
                     manifest['frontend_option']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                         'font':str((mout/'font.l3mc').relative_to(out)),'messages':str((fout/'option.l3ex').relative_to(out)),
-                        'source':'FONT.BIN page (960,256); ROCK_NEO messages 0x8008B67C..0x8008BA7C, interpreter 0x80053B40'}
+                        'source':'KAIFONT.BIN page (960,256); ROCK_NEO messages 0x8008B67C..0x8008BA7C, interpreter 0x80053B40'}
             manifest['actor_materials']={'format':1,'optional':True,'runtime_gate':'ACTOR_TEXTURES=1',
                 'default_enabled':False,'shade':'UNKNOWN','status':'SOURCE_BACKED_PARTIAL',
                 'upload_order':'inherited ordered VRAM resources; live original VRAM comparison pending'}

@@ -3,7 +3,7 @@
 Port: `include/legends3ds/mml_message_window.h`, `src/flow/mml_message_window.cpp`
 (host test `test_mml_message_window`, probe `l3probe_option_menu`). Cooks:
 `tools/cook_option_menu.py` (EXE ranges → `frontend/option.l3ex`) and
-`l3cook_font_materials` (FONT.BIN → `materials/font.l3mc`). Front-end hook:
+`l3cook_font_materials` (KAIFONT.BIN → `materials/font.l3mc`). Front-end hook:
 `run_frontend_title` (state 6). All static-disassembly evidence unless noted.
 
 ## Slots (VERIFIED_1TO1 for the fields below)
@@ -91,14 +91,27 @@ are PS1 directions, L/R are L1/R1; profile 0 keeps the D-pad on the shoulder
 masks, a port choice); Sound → NativeSfx mono; Map → bottom-screen map blank.
 Free Look and Lock-On are stored but their reader (look mode) is not ported.
 
-## Font (FONT.BIN)
-Type-3 resource "..\bg\char\font.dat": 0x8000 bytes after the 0x800 header
+## Font (KAIFONT.BIN)
+The USA message font is KAIFONT.BIN ("..\bg\char\kaifont.dat"): the oracle's
+VRAM at (960, 256) 64x256 equals it word for word during play. FONT.BIN has
+the same layout but other glyphs at the cursor (0x60) and the button icons
+(0x4E/0x58/0x5A): the first Azahar check with it showed kana there.
+Type-3 resource: 0x8000 bytes after the 0x800 header
 = 16 tiles of 32x32 halfwords, two tiles across, covering VRAM x 960..1023,
 y 256..511. The 16 CLUTs (x 960 + 16 * (c & 3), y 508 + (c >> 2)) are the
 page's own last rows; the oracle's VRAM at (960, 508) 64x4 matched the
 detiled file (read-only `vram_peek`, 2026-11-14). Pixels pack two 2-bit
 planes; CLUTs 0..3 show the low plane, the row-510/511 CLUTs the high one.
 The cook keeps colours 0..3 (OPTION uses 0 and 3).
+
+## Azahar (Old 3DS mode, build pass-option-menu-01516)
+`docs/validation_01516/autoplay/option_menu.txt` + `diagnostic_title.txt`:
+state 6 at frame 239 (215 packets), Right on Turn, A on Free Look, Close
+→ state 4 at frame 436, NEW GAME → `# option_settings,turn=1,free_look=1,
+sound=0,map=0,lock_on=0`. A window capture on the menu showed the original
+layout: "Options" title, rows and values (lit/dim), hand cursor, L1/R1 icons
+and the help window ("Down arrow moves viewpoint up." for Free Look
+Reverse), with the Servbot parade darkened behind the frame.
 
 ## Open
 - Sounds 129/130/131 come from the title banks; 132 (per character) is
