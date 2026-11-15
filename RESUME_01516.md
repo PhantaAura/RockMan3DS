@@ -251,19 +251,25 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-0. Finish M1 (the Area 3 boss):
-   - opening -> tutorial: after the event-1 hand-off no class-20 actor or
-     Buster updates (route stalls at the trap room); find the gate;
-   - Buster fires every held frame (4 live): check the original fire rate;
-   - boss charge stops at z -1095 vs -1223 in the original;
-   - post-win events 3/2 (logic ported, see Completed): draw and run their
-     scene actors (40/05 init `0x8010C930`/`0x8010D824`; 40/08's callback is
-     not in the ST00 table, CANDIDATE: EXE), apply the event camera to the
-     3DS view, smoke `0x80116D60`, `0x80031618` objects, `0x8011877C`, XA
-     0x20000001/2 spans, event 2's camera op 0x80 (word 359); decide how
-     1.0 handles event 2's stage-2 request (the tutorial's end);
-   - player damage (boss body word 8, shockwave proxies) and game over;
-   - draw the class-60/0A arms (limbs 2/4, slam Y pulse).
+0. Finish M1 (the Area 3 boss), status 2026-11-15:
+   - DONE (Azahar runs 13/14): opening -> tutorial -> 0x622 from normal boot;
+     boss AI/damage by Buster; player damage, gauge gating, death; game over
+     phase 9 holds on jingle 0x41 (now cooked from GAMEOVER.BIN); post-win
+     events 3/2 -> stage-2 request (stage-loading run 2 on this route reached
+     it: 0x606 @18508, stage-2 request @22298).
+   - Boss charge stop: explained, not a bug. The boss stops 536 short of the
+     player (port -1095 vs player -1632; original -1223 vs -1759).
+   - LEFT: one uninterrupted Azahar run that wins (route
+     `autoplay/opening_tutorial_boss.txt`, build pass-20261114-143643). Run 14
+     died at boss HP 208 after arriving with 24 HP; the fight step now walks
+     into Buster range in Area 1 (untested: run 15 stalled, screen locked).
+     The outcome varies between runs (stage-loading run 5 died 3 frames after
+     the boss).
+   - CANDIDATE: a hit delivered on the boss's defeat frame still applies
+     next update although 0x800B55F9 blocks later registrations; return to
+     title after game over (held, logged); busy 0x800A8788 = 0; player hit
+     box work+0/+6 bit; event 3/2 scene actors, camera, XA (not drawn);
+     class-60/0A arms not drawn.
 1. Then finish the front end/opening:
    - title backdrop done (wall, strip, gradient, menu box), fade 2/10, title
      sounds (sfx_title.l3sb). Left: the Servbot parade (0x80015428 ->
@@ -290,7 +296,7 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Blockers
 - Azahar `-w` stalls before boot while the Mac's current Space is a full-screen
-  app (2026-10-30).
+  app (2026-10-30) or the screen is locked (2026-11-15, run 15).
 - Effect textures: the upload order is CANDIDATE. The common page comes from
   EXIT_SUP, and Area 2 inherits ST00_01.
 - The 0x1F8001C0 back-face threshold (522) is measured in Area 1 only. Its
