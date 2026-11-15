@@ -14,6 +14,10 @@ original 1:1 behaviour stays the baseline. User-approved list.
      memory-card save data, CONTINUE on the title, front-end state 5).
    - Field saves go to a 3DS save file; their format carries a version and
      the original save block so an original-style save stays possible.
+   - Balance (user decision): only Data where he actually stands keeps his
+     original life refill (and any other restore he gives). A remote call
+     from anywhere saves only: no life or energy refill, so healing still
+     means walking to Data.
    - Option: "Call Data anywhere" (on/off). Off = only where Data stands.
 2. **Modern controls.** Circle pad moves Mega Man relative to the camera;
    L/R or ZL/ZR turn the camera; C-stick camera on New 3DS. The original
