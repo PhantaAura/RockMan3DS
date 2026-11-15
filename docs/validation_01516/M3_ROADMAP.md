@@ -1,10 +1,10 @@
 # M3 roadmap: end of the tutorial → first Tron Bonne fight (1.0 end)
 
-Status: **PARTIAL.** Segments S0–S9 are VERIFIED_1TO1 in the PSXRecomp
+Status: **ROUTE COMPLETE to the fight.** Segments S0–S10 are VERIFIED_1TO1 in the PSXRecomp
 oracle (US disc, 2026-11-13/14): from the tutorial hand-off through the
-Citizen's Card, Uptown and the start of the pirate attack (the Servbot tank
-mission, S10, in progress). The first Tron Bonne fight has not been reached
-yet: it is UNKNOWN.
+Citizen's Card, Uptown, the pirate attack and the Servbot tank mission, up to
+the start of the first Tron Bonne fight (S11, savestate at the start). The
+fight's outcome and what follows are UNKNOWN.
 
 Scope (user, 2026-10-30): 1.0 ends with the first Tron Bonne fight. M3
 starts where M1 hands back control: ST00 event 2 requests **stage 2, area 0**
@@ -299,29 +299,46 @@ Buster shots (R1 lock + Square) win it.
 - **Saves:** `m3_26_st03_car_stolen`, `m3_27_st03_attack_starts`,
   `m3_28_st04_attack`, `m3_29_st05a1_mission_start`.
 
-### S10 — Servbot tank mission (IN PROGRESS)
+### S10 — Servbot tank mission (VERIFIED_1TO1 for the route; win via oracle shortcuts)
 - Briefing: "Each of the three Servbots' robots is unique — red is built for
   combat, blue for speed, and yellow for endurance."
-- Tanks are NPC slots 2/3/4 (class 0x1C: blue (slot 2), red (3), yellow
-  (4)); class 0x1A ×3 and 0x32 ×2 ride along. For about 1,700 frames they
-  stand and fire; after enough hits they say "Let's split up and get out of
-  here!" (temp 0x605/0x610) and drive off, and three tank gauges appear.
-- Dying returns to the mission start (main phase `09xx`), not the title.
-- **Player life is `0x800A3526`** (18–20 = full). `player+0xA4` is a
-  different counter, not life.
-- User tip (to verify): after the split, go for **blue**, which carries the
-  key; spam the special weapon and Buster; getting the key wins.
-- Next: the key pickup, the end of the mission, then onward to the first
-  Tron Bonne fight.
+- Tanks are NPC slots 2/3/4 (class 0x1C: **blue = slot 2**, red = 3,
+  yellow = 4); class 0x1A ×3 and 0x32 ×2 ride along.
+- They hold fire until approached. Once hit they say "Let's split up and get
+  out of here!" (temp 0x605/0x610; the text runs in main phase `04`, closed
+  with Triangle) and drive off; three tank gauges appear.
+- **Blue carries the key** (user tip, confirmed): attacking blue right after
+  the split (Buster + special weapon) brings it down in about 17 s of real
+  time. Standing where it fell, **event 6** plays: the key is lost, the
+  Servbots retreat, Teisel Bonne on the Bonne ship, then a red mech (Tron in
+  the cockpit) drops into the street. Sets 0x386; area byte becomes 0xFF.
+- Dying returns to the mission start (main phase `09xx`).
+- Oracle shortcuts used: teleports next to blue and to its wreck. Life
+  writes were tried but none of the candidate bytes is the life the death
+  check uses (`player+0xA4` turned out to be an animation counter,
+  `0x800A3526` a display copy); the life field is still UNKNOWN.
+- **Saves:** `m3_30_st05a1_tanks_split`, `m3_31_st05a1_blue_down`.
+- **Size: large** (three vehicle enemies with AI, key hand-off, mission
+  frame and gauges, retry-on-death).
 
-### S11… — First Tron Bonne fight (UNKNOWN)
-Not reached yet.
+### S11 — First Tron Bonne fight (start VERIFIED_1TO1; outcome UNKNOWN)
+- Directly after event 6, in stage 5 area 1: Tron's red mech (the Gustaff)
+  with a boss gauge (top right). Large-actor table `0x800C3580`: entry 0
+  (class 0x00) at (1024,-1,8448) is the mech, entry 2 (class 0x09) at
+  y -1024 is Tron's cockpit.
+- **Save:** `m3_32_st05a1_tron_fight_start` (fight live, full gauge).
+- Not won in the oracle: Mega Man dies within seconds with the starting gear,
+  and without the real life field the fight can't be scripted. The win, its
+  flags and the post-fight scene are UNKNOWN. That is the end of 1.0 scope.
+- Next: find the life field (trace writes when hit: `wtrace_range` on the
+  player block and the HUD gauge), then win and save `m3_33_tron_defeated`.
 
 ## Weapons, items and gear seen so far
 - **Buster** (Square) from the start; lock-on R1.
-- **Special weapon** (Triangle): the land-mine weapon Roll builds from the
-  **Mine Parts Kit** (junk shop reward, flag 0x2F3) in her workshop (event
-  0x60). The right-hand gauge is its energy.
+- **Special weapon** (Triangle, confirmed: it drains the right-hand gauge):
+  the land-mine weapon Roll builds from the **Mine Parts Kit** (junk shop
+  reward, flag 0x2F3) in her workshop (event 0x60). Circle does not fire it
+  (Circle is talk/action).
 - **Buster parts:** the junk-shop man says the old support car can exchange
   Buster parts; none collected on this route yet.
 - **Key items:** Mine Parts Kit, Citizen's Card (0x23).
@@ -335,9 +352,15 @@ Not reached yet.
   under attack (S9).
 - So saving is first offered in **S1**, which is where the original save
   system (and the QoL "Data anywhere", QOL_PLAN.md) belongs in the order.
-- **Owning functions: UNKNOWN** so far. Next step: trace the Save choice with
-  `card_data_writes` and fntrace on the EXE to name Data's menu handler and
-  the memory-card write.
+- First talk (flag 0x608): "Hi! My name's Data! ... Come talk to me if you
+  want to save, OK?". Then the menu (event 0xFF): Recharge Energy ("Life
+  Gauge fully charged.") / Save / Tell me... / Cancel. X confirms.
+- **Owning functions: UNKNOWN.** Choosing Save in the oracle closed the menu
+  with no save screen and `card_data_writes` stayed empty, so the recomp
+  probably has no memory card mounted. Next: mount a card image in the
+  oracle, repeat (save `m3_01_st03_crash_control`, Data in NPC slot 5), and
+  read `card_data_writes` plus an EXE fntrace to name the menu handler and
+  the card write.
 
 ## Shared systems (build once)
 
@@ -374,8 +397,10 @@ Not reached yet.
 7. **Town v1 (S4):** stage 4 street, shops' doors, junk shop quest.
 8. **First dungeon (S5):** stage 9, minimap, class-0x19 enemies, rescue.
 9. **S6:** items, Roll's workshop, events 0x60/0x61.
-10. **Oracle mapping session S7+** (this document, continued) before porting
-    past the kids' gate.
+10. **S7–S9:** kids' sneak scene, Uptown (stages 5/6/0x0F), events 0x0C,
+    0x0D, 0x62, 5, the Tron/dog trigger, the attack events.
+11. **S10–S11:** tank mission (key hand-off, retry) and the Tron fight;
+    win the fight in the oracle first (life field) to pin its end flags.
 
 ## Port coverage today
 - **ST00:** tutorial Areas 0–3, events 1 (opening), 3 and 2 (post-win, on a
