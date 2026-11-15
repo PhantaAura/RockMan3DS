@@ -16,8 +16,21 @@ uint16_t narrow_u16(uint32_t v, const char* what) {
     return static_cast<uint16_t>(v);
 }
 
+template <typename Palette> uint16_t physical_width_of(const Palette&) { return 0; }
+uint16_t physical_width_of(const Type9PalettePatch& p) { return p.physical_width; }
+
 template <typename Palette> int stored_palette_row(const Palette& palette, uint16_t clut) {
     const auto c = decode_ps1_clut(clut);
+    const uint16_t wide = physical_width_of(palette);
+    if (!palette.palette_row_banked && wide > palette.palette_entries) {
+        // Type-10 64-wide upload: stored row r sits at x + (r % per) * entries, y + r / per.
+        const uint32_t per = wide / palette.palette_entries;
+        if (c.vram_x < palette.clut_x || c.vram_y < palette.clut_y) return -1;
+        const uint32_t dx = c.vram_x - palette.clut_x;
+        if (dx % palette.palette_entries || dx / palette.palette_entries >= per) return -1;
+        const uint32_t row = (c.vram_y - palette.clut_y) * per + dx / palette.palette_entries;
+        return row < palette.palette_rows ? int(row) : -1;
+    }
     if (!palette.palette_row_banked) {
         if (c.vram_x != palette.clut_x || c.vram_y < palette.clut_y ||
             c.vram_y >= uint32_t(palette.clut_y) + palette.palette_rows) return -1;
@@ -171,7 +184,8 @@ Type4ClutPatch parse_mml_type4_clut(const std::vector<uint8_t>& c, size_t h) {
 Type9PalettePatch parse_mml_type9_palette(const std::vector<uint8_t>& c, size_t h) {
     if (h > c.size() || c.size() - h < kSector) throw std::runtime_error("palette resource header out of range");
     const uint8_t* p = c.data() + h;
-    if (rd_u32(p + 0x00) != 9) throw std::runtime_error("resource is not a type-9 compiled palette patch");
+    const uint32_t type = rd_u32(p + 0x00);
+    if (type != 9 && type != 10) throw std::runtime_error("resource is not a type-9/10 compiled palette patch");
     const uint32_t source_size = rd_u32(p + 0x04);
     const uint32_t arg2 = rd_u32(p + 0x08);
     const uint32_t cx = rd_u32(p + 0x0C), cy = rd_u32(p + 0x10);
@@ -186,6 +200,10 @@ Type9PalettePatch parse_mml_type9_palette(const std::vector<uint8_t>& c, size_t 
     out.palette_entries = narrow_u16(pe, "palette_entries"); out.palette_rows = narrow_u16(pr, "palette_rows");
     out.bpp = pe == 16 ? 4 : 8;
     out.palette_row_banked = cx < 256u;
+    if (type == 10 && !out.palette_row_banked) {
+        if ((uint32_t(pe) * pr) % 64u) throw std::runtime_error("type-10 palette is not a whole number of 64-word rows");
+        out.physical_width = 64;
+    }
     out.palette_ps1.reserve(size_t(pe) * pr);
     for (size_t i = 0; i < size_t(pe) * pr; ++i) out.palette_ps1.push_back(rd_u16(c.data() + h + kPaletteOffset + i * 2));
     return out;
