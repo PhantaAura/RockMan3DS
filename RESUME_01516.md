@@ -260,11 +260,14 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
    - Boss charge stop: explained, not a bug. The boss stops 536 short of the
      player (port -1095 vs player -1632; original -1223 vs -1759).
    - LEFT: one uninterrupted Azahar run that wins (route
-     `autoplay/opening_tutorial_boss.txt`, build pass-20261114-143643). Run 14
-     died at boss HP 208 after arriving with 24 HP; the fight step now walks
-     into Buster range in Area 1 (untested: run 15 stalled, screen locked).
-     The outcome varies between runs (stage-loading run 5 died 3 frames after
-     the boss).
+     `autoplay/opening_tutorial_boss.txt`, build pass-20261114-143643).
+     Runs 16-25 (2026-11-15) all died: HP on arrival at the boss varied
+     80/40/14/20 and run 25 died before 0x622; enemy behaviour differs per
+     run and the autoplay fight step only faces and fires. Boss-only checks
+     (diagnostic spawn Area 3 -256,-385,-1632, not committed) win from 80 HP
+     with approach 500 (0x606 @525, HP 60). The original refills life only
+     after the fight (0x8005D9EC's only call is in event 3, ST00 file
+     0x29BC). Needs a smarter autoplay (dodging) or many retries.
    - CANDIDATE: a hit delivered on the boss's defeat frame still applies
      next update although 0x800B55F9 blocks later registrations; return to
      title after game over (held, logged); busy 0x800A8788 = 0; player hit
