@@ -86,10 +86,14 @@ Readers: Turn 0x8003BF2C (control profile 0x800425FC; also 0x80060C00,
 0x80063690), Free Look 0x80041F1C (axis pair 0x80041EF4 orientation),
 Lock-On 0x8003F224 (both inside the look mode 0x8003EF04), Sound
 0x8001A344.. (mono mix), Map 0x8005DE28 (map draw; Off skips it).
-Port: Turn → control profile + the 3DS pad mapping (profile 1: D-pad/circle
-are PS1 directions, L/R are L1/R1; profile 0 keeps the D-pad on the shoulder
-masks, a port choice); Sound → NativeSfx mono; Map → bottom-screen map blank.
-Free Look and Lock-On are stored but their reader (look mode) is not ported.
+Port: the 3DS pad is the PS1 pad 1:1 (D-pad / circle pad = directions,
+L/R = L1/R1); Turn installs control profile 0/1 (table 0x8008A04C, checked
+against the EXE), so profile 0 (the default: 0x80013360 zeroes the byte,
+and the oracle's New Game has 0x800C1B64..69 = 0) turns on L1/R1 and slides
+(0x8003D124 strafe) on the D-pad, profile 1 the reverse
+(`test_player_turn_profile`). Diagnostic routes turn with the profile's turn
+buttons. Sound → NativeSfx mono; Map → bottom-screen map blank. Free Look
+and Lock-On are stored but their reader (look mode) is not ported.
 
 ## Font (KAIFONT.BIN)
 The USA message font is KAIFONT.BIN ("..\bg\char\kaifont.dat"): the oracle's
