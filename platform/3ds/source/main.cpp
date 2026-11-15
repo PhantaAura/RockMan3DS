@@ -5020,7 +5020,11 @@ int main() {
         if(g_stage==0&&actor_metadata.event_poll)session.bind_source_event_profile(*actor_metadata.event_poll,0);
         if(g_stage==0&&actor_metadata.event_phase2)session.bind_source_event_phase2_package(*actor_metadata.event_phase2);
         if(g_stage==0&&actor_metadata.event_command)session.bind_source_event_command_package(*actor_metadata.event_command);
-        if(actor_metadata.fade_startup)session.bind_source_fade_profile(*actor_metadata.fade_startup);
+        // Stage initialization stores 2 at 0x1F800001 (0x8001201C/0x80013440):
+        // a boot straight into an area (diagnostic spawn, a stage reload) has no
+        // area change to rebind it, and fades would hold at their endpoint.
+        if(actor_metadata.fade_startup&&session.bind_source_fade_profile(*actor_metadata.fade_startup))
+            session.bind_source_fade_scheduler_budget(2);
         // ST00 post-win events 3 and 2 (tools/cook_cutscene.py via the tutorial pack).
         if(g_stage==0)for(const unsigned ev:{3u,2u}) {
             char name[32];std::snprintf(name,sizeof(name),"st00_event%u.l3cs",ev);
