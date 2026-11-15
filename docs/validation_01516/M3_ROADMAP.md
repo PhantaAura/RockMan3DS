@@ -1,10 +1,10 @@
 # M3 roadmap: end of the tutorial → first Tron Bonne fight (1.0 end)
 
-Status: **PARTIAL.** Segments S0–S7 are VERIFIED_1TO1 in the PSXRecomp
+Status: **PARTIAL.** Segments S0–S9 are VERIFIED_1TO1 in the PSXRecomp
 oracle (US disc, 2026-11-13/14): from the tutorial hand-off through the
-Citizen's Card and the kids' "secret meeting" at the Apple Market north
-gate. The pirate attack and the first Tron Bonne fight (S8+) have not been
-reached: those are UNKNOWN, and nothing in them comes from the original.
+Citizen's Card, Uptown and the start of the pirate attack (the Servbot tank
+mission, S10, in progress). The first Tron Bonne fight has not been reached
+yet: it is UNKNOWN.
 
 Scope (user, 2026-10-30): 1.0 ends with the first Tron Bonne fight. M3
 starts where M1 hands back control: ST00 event 2 requests **stage 2, area 0**
@@ -236,30 +236,108 @@ Buster shots (R1 lock + Square) win it.
 - **Size: medium–large** (item/key-item system, Roll's development menu,
   two events).
 
-### S7 — Kids' secret meeting at the north gate (VERIFIED up to the block)
-- Stage 4 now has no locks. At the stage 5 gate three kids hold a "secret
-  meeting" ("Get outta here!"); Mega Man: "If I'm careful, I should be able
-  to get close without them noticing"; tutorial: Circle + direction walks
-  slowly (player action 1).
-- Sneaking straight up the street at slow walk is caught at z ≈ 3580, and
-  Mega Man is put back to (-3600,-1,3600). A teleport to z 3050 is caught at
-  once. **How to get past them is UNKNOWN** (approach angle or timing, or
-  another trigger).
-- **Save:** `m3_14_st04_kids_meeting`.
+### S7 — Kids' secret meeting at the north gate (VERIFIED_1TO1)
+- At the stage 5 gate three kids (Jim, Bensley, Osh) hold a "secret
+  meeting"; Mega Man: "If I'm careful, I should be able to get close without
+  them noticing"; tutorial: Circle + direction = slow walk (player action 1).
+- Stage 4 logic (`0x8010077C`): when the player crosses z < 3584 it records
+  whether he is slow-walking; sneaking sets **0x60F**, walking normally sets
+  0x610. 0x60F moves Mega Man to (-3600,-1,3600) and starts the eavesdrop
+  scene (kid-scene controller `0x80107990`, 27 states). (The first pass took
+  that move for "caught": the scene's text box is not the kind that sets
+  player action 0x10, so nothing advanced it.)
+- Scene: the kids think "that girl" (Tron) is a pirate looking for treasure,
+  spot Mega Man ("it's that blue guy again!") and leave. Temp 0x611–0x615,
+  then **0x20**.
+- **Saves:** `m3_14_st04_kids_meeting`, `m3_15_st04_kids_gone`.
+- **Size: small–medium** (slow walk, a z-line check, one scripted scene).
 
-### S8… — Pirate attack and first Tron Bonne fight (UNKNOWN)
-Not reached. The next oracle session should start from
-`m3_14_st04_kids_meeting`:
-1. Solve the sneak (try approaching along the walls or from the side, and
-   trace `0x8001DA58` while sneaking to see what flag the kids test).
-2. Go through the stage 5 gate with the card; record events and flags up
-   to the first Tron Bonne boss gauge, and save `m3_xx_tron_fight` before
-   and after it.
+### S8 — Uptown: Tron, City Hall, the dog (VERIFIED_1TO1)
+- Stage 4 → **stage 5 area 0** with the card (spawn (5632,-1,-1536)).
+  **Event 0x0C** on arrival: Tron briefs her Servbots ("once the decision's
+  made, there's no turning back"), spots Mega Man ("What are you looking
+  at!?"). Sets **0x5**, 0x38C.
+- Stage 5 doors: back to stage 4; library (stage 5 area 2, flavour);
+  stage 6 (City Hall plaza); stage 5 area 4 / stage 0x1D area 1 / stage 8 /
+  stage 0x19 / stage 9 area 2 stay shut or locked in this part.
+- Stage 6 (plaza, spawn (512,-1,-9728)): talking to the door guard (class
+  0x24, slot 3) runs **event 0x0D** → City Hall (stage 6 area 1): Mayor
+  Amelia and Barrell, pirates after the island's legendary treasure;
+  Barrell stays, "keep an eye on Roll". Sets 0x2, 0x38B, 0x38D, clears 0x7E1.
+  Stage 6 overlay polls 0x605 → event 0x0D (`0x801008EC`); the guard's talk
+  callback `0x80112490` sets 0x605.
+- Leaving City Hall (stage 0x0F area 2 hallway → plaza): **event 0x62**,
+  Paprika the dog chases Tron ("What did I ever do to you!?"). Sets 0x47,
+  0x3E2. Stage 5's gates then lock (0x7E1/2/3/5/8): Servbots at the gate,
+  the kids and two officers in the plaza, police station (stage 0x0F area 0)
+  and bank (stage 0x0F area 3) are flavour.
+- **Trigger:** stage 5 area logic (`0x80106CCC`) with 0x2 set and 0x1 clear
+  spawns Tron as a class-9 actor behind a pole at (1836,-1,5215) and the dog
+  (class 0x2A) at (2028,-1,5215) (`0x801016F0`), then waits for **0x641 or
+  0x642** → **event 5** + **0x1**. Talk to Tron first ("What are you staring
+  at!? I'm not a circus clown!", sets 0x640), then to the dog: the dog
+  sequence (handler table `0x801318D8`, step 5 `0x80118640`) sets **0x641**;
+  event 5: Mega Man stops the dog, Tron: "You... you just mind your own
+  business!!". Sets **0x1**, 0x47F, unlocks 0x7E1/0x7E8.
+- **Saves:** `m3_16_st05_tron_meet`, `m3_17_st06_plaza`,
+  `m3_18_st06_cityhall_barrell`, `m3_19_st0f_hall`, `m3_20_st06_tron_dog`,
+  `m3_21_st05_gates_locked`, `m3_22_st06_plaza_kids`, `m3_23_st0f_a0`,
+  `m3_24_st05_tron_pole`, `m3_25_st05_event5_flag1`.
+- **Size: large** (two new stages, City Hall interiors, five events, the
+  Tron/dog trigger chain).
 
-Files involved, CANDIDATE where not seen: `ST04*` (Apple Market, seen),
-`ST05*` (behind the card gate, not seen), `ST09*` (first ruin, seen),
-`ST0C*` (forest path, seen), `ST0E*` (sealed ruin, door seen only).
-Which stage holds the first Tron fight is UNKNOWN.
+### S9 — The attack begins (VERIFIED_1TO1)
+- Back at the support car (ST03 area 2): **event 8** variant, a Servbot
+  "Aye-aye, Miss Tron! Up and away!" (0x17). Talking to Roll: she asks
+  where Gramps is, mentions the strange ships, then "Oh no! They're
+  attacking the city! Gramps is still in there!" and runs off. Sets **0x6**,
+  **0xB**.
+- Stage 4 again: 0xF set; the north gate now leads to **stage 5 area 1**.
+  **Event 0x0E**: Roll stays with the police, Mega Man runs in ("What can a
+  single boy possibly do...?"); three Servbot tanks: "We're the Bonnes! We're
+  pirates!"; **MISSION START**. Sets **0x9**, 0x38E.
+- **Saves:** `m3_26_st03_car_stolen`, `m3_27_st03_attack_starts`,
+  `m3_28_st04_attack`, `m3_29_st05a1_mission_start`.
+
+### S10 — Servbot tank mission (IN PROGRESS)
+- Briefing: "Each of the three Servbots' robots is unique — red is built for
+  combat, blue for speed, and yellow for endurance."
+- Tanks are NPC slots 2/3/4 (class 0x1C: blue (slot 2), red (3), yellow
+  (4)); class 0x1A ×3 and 0x32 ×2 ride along. For about 1,700 frames they
+  stand and fire; after enough hits they say "Let's split up and get out of
+  here!" (temp 0x605/0x610) and drive off, and three tank gauges appear.
+- Dying returns to the mission start (main phase `09xx`), not the title.
+- **Player life is `0x800A3526`** (18–20 = full). `player+0xA4` is a
+  different counter, not life.
+- User tip (to verify): after the split, go for **blue**, which carries the
+  key; spam the special weapon and Buster; getting the key wins.
+- Next: the key pickup, the end of the mission, then onward to the first
+  Tron Bonne fight.
+
+### S11… — First Tron Bonne fight (UNKNOWN)
+Not reached yet.
+
+## Weapons, items and gear seen so far
+- **Buster** (Square) from the start; lock-on R1.
+- **Special weapon** (Triangle): the land-mine weapon Roll builds from the
+  **Mine Parts Kit** (junk shop reward, flag 0x2F3) in her workshop (event
+  0x60). The right-hand gauge is its energy.
+- **Buster parts:** the junk-shop man says the old support car can exchange
+  Buster parts; none collected on this route yet.
+- **Key items:** Mine Parts Kit, Citizen's Card (0x23).
+- Zenny and shops: shop interiors exist in stage 4; nothing bought on this
+  route.
+
+## Save system (Data) on this route
+- **First appearance:** Data at the crash site (S1) once control starts;
+  talking runs event 0xFF with Recharge Energy / Save / Tell me / Cancel.
+  He later moves with Roll to the support car (S6) and appears in the city
+  under attack (S9).
+- So saving is first offered in **S1**, which is where the original save
+  system (and the QoL "Data anywhere", QOL_PLAN.md) belongs in the order.
+- **Owning functions: UNKNOWN** so far. Next step: trace the Save choice with
+  `card_data_writes` and fntrace on the EXE to name Data's menu handler and
+  the memory-card write.
 
 ## Shared systems (build once)
 
@@ -290,7 +368,8 @@ Which stage holds the first Tron fight is UNKNOWN.
 4. **ST03 area 1 + event 8:** the crash scene and first control at
    (-4584,-1,1431). Compare with `m3_01_st03_crash_control`.
 5. **Generalize doors/exits** to read each area's list (ST03 areas 1↔0 first).
-6. **NPC/dialogue + talk target + Data's menu**, then S2–S3 (stage 0x0C,
+6. **NPC/dialogue + talk target + Data's menu + the original save system**
+   (memory-card save, CONTINUE; then the QoL "Data anywhere"), then S2–S3 (stage 0x0C,
    ST03 trigger box, police and Inspector events).
 7. **Town v1 (S4):** stage 4 street, shops' doors, junk shop quest.
 8. **First dungeon (S5):** stage 9, minimap, class-0x19 enemies, rescue.
