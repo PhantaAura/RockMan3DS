@@ -410,3 +410,9 @@ Buster shots (R1 lock + Square) win it.
   campaign stage set (`ST07_00`, `_05`, `_05B`); its campaign use is UNKNOWN.
 - **Nothing else.** ST02, ST03, ST04, ST09, ST0C and everything past them
   are missing at runtime: stage loading, actors, NPCs, events and doors.
+
+## External reference
+- github.com/ChrisNonyminus/mml1 (WIP decomp, last push 2023-07): about 25
+  functions in C (most in `sub_scrn.c` and `game.c`), the rest asm stubs.
+  Useful for original file/function grouping and the sub-screen menus.
+  No license file: reference only, no code copied; verify against the oracle.
