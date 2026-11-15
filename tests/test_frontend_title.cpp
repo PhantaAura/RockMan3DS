@@ -32,6 +32,7 @@ int main() {
         const auto t = frontend_tiles_80062368(70);   // scroll & 63 = 6
         assert(t.size() == 36 && t.back().length == 1 && t.back().words[0] == 0xE100000Du);
         assert(t[34].bucket == 35 && int16_t(t[34].words[1]) == -58);   // first tile x -64 + 6
+        assert(int16_t(t[34].words[3]) == 6);   // 64 px wide: neighbours meet without a seam
     }
     {   // OPTION (state 6): fade 1, then Start -> sound 131, fade 9, menu.
         FrontendState o; o.state = 6;
