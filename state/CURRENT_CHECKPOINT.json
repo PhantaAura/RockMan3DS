@@ -155,5 +155,8 @@
   "native_build": "PASS",
   "azahar": "NOT RUN (stalled off-Space)",
   "note": "docs/research_01516/REAVERBOT_CAMERA_FIX.md"
+ },
+ "branches_not_merged": {
+  "claude/option-menu-b69b4f": "OPTION menu (message windows 0x80053B40, KAIFONT, settings 0x800C1B64..69); host 178/178, native PASS, Azahar OPTION->Close->NEW GAME"
  }
 }

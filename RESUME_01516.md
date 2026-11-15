@@ -3,6 +3,16 @@
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
+- **OPTION menu (branch `claude/option-menu-b69b4f`, 2026-11-14).** The
+  message windows 0x80053B40 are ported (`mml_message_window.cpp`): open,
+  clear, execute/draw passes, the opcodes OPTION and its help/title use,
+  the decor-2 frame, glyphs on the USA font KAIFONT.BIN. Front-end state 6
+  shows the original menu; Close/Triangle (0x80098A58 bit 30) or Start
+  returns to the title menu. Settings live at 0x800C1B64/65/66/68/69; Turn
+  (control profile + 3DS pad mapping), Sound (mono) and Map (bottom map off)
+  reach gameplay; Free Look / Lock-On wait for the look mode 0x8003EF04.
+  Azahar: OPTION -> Close -> NEW GAME with turn=1 free_look=1. Notes:
+  `docs/research_01516/MESSAGE_WINDOW.md`. Not merged.
 - **Status 2026-11-13 (main 23db7cf).** Merged into main (a4a149b): the
   ST00 event-1 opening, the ST01 intro crawl and ST07 attract scene, the
   pop-out Reaverbot fix, the bottom-screen gauges. A cold-boot Azahar run
