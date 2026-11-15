@@ -31,3 +31,4 @@ owner-data/
 sd_out/
 .sd_out-staging/
 CDDATA/
+.claude/worktrees/

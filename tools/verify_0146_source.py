@@ -81,7 +81,8 @@ def verify_source(root: Path = ROOT) -> dict:
     symlinks = []
     for path in sorted(root.rglob('*')):
         relative = path.relative_to(root)
-        if '.git' in relative.parts or '__pycache__' in relative.parts:
+        # .claude/ holds agent worktrees and scratch outside the source tree.
+        if '.git' in relative.parts or '__pycache__' in relative.parts or relative.parts[:1] == ('.claude',):
             continue
         if path.is_symlink():
             symlinks.append(relative.as_posix())

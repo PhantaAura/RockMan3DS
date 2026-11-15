@@ -22,7 +22,8 @@ def main():
   if x=='HOUR_MANIFEST.json':return 'research/push2/'+x
   return x
  missing={str(h):[x for x in xs if not (r/integrated(x)).is_file()] for h,xs in REQUIRED.items()};missing={h:x for h,x in missing.items() if x}
- bad=[p.relative_to(r).as_posix() for p in r.rglob('*') if p.is_file() and p.suffix.lower() in BAD]
+ # .claude/ holds agent worktrees and scratch outside the source tree.
+ bad=[p.relative_to(r).as_posix() for p in r.rglob('*') if p.is_file() and p.suffix.lower() in BAD and p.relative_to(r).parts[:1]!=('.claude',)]
  out={'complete':not missing and not bad,'hours_present':[h for h in range(1,11) if str(h) not in missing],'missing':missing,'prohibited_payloads':bad}
  print(json.dumps(out,indent=2));sys.exit(0 if out['complete'] else 1)
 if __name__=='__main__':main()
