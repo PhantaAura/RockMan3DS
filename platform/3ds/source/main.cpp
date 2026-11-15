@@ -1519,6 +1519,32 @@ struct DiagnosticAutoplay {
     int turn_sign=1; int last_gap=-1; bool last_turned=false;
 };
 static DiagnosticAutoplay g_autoplay;
+// Autoplay only: the Area 3 boss is winding up a slam (substate 6, phase <= 3).
+static bool g_autoplay_boss_slam=false;
+// Autoplay combat (diagnostic only): face the target and fire, keeping it in
+// a distance band. approach > 0: walk in to `approach`, backpedal (still
+// facing and firing) under approach - 200; approach == 0: only backpedal
+// under 380. (Stepping inside the slam shockwave band, 260..320, was tried
+// and dropped: the boss body hit Mega Man there.)
+static u32 autoplay_fight_keys(int tx,int tz,int heading,int approach,bool slam,u32 tick){
+    const int want=int(std::lround(std::atan2(double(-tx),double(-tz))*4096.0/6.283185307179586))&0xfff;
+    int gap=(want-heading)&0xfff;if(gap>2048)gap-=4096;
+    const int mag=gap<0?-gap:gap;
+    if(g_autoplay.last_turned&&g_autoplay.last_gap>=0&&mag>g_autoplay.last_gap+2)g_autoplay.turn_sign=-g_autoplay.turn_sign;
+    g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>64;
+    u32 keys=0;
+    if(mag>64)keys|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
+    else if(tick%8u<4u)keys|=KEY_Y;
+    const long d2=long(tx)*tx+long(tz)*tz;
+    long lo=380,hi=-1;
+    if(approach>0){hi=approach;lo=std::max(260,approach-200);}
+    (void)slam;  // stepping inside the slam band hit the boss body (Azahar check)
+    if(mag<=256){
+        if(hi>0&&d2>hi*hi)keys|=KEY_DUP;
+        else if(d2<lo*lo)keys|=KEY_DDOWN;
+    }
+    return keys;
+}
 static void load_diagnostic_autoplay() {
     FILE* file=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_autoplay.txt","r");
     if(!file)return;
@@ -5284,18 +5310,9 @@ int main() {
                     if(best&&!session.dialogue().active){
                         autoplay_quiet=0;
                         const int tx=(*best)[0]-int(pp.x),tz=(*best)[1]-int(pp.z);
-                        const int want=int(std::lround(std::atan2(double(-tx),double(-tz))*4096.0/6.283185307179586))&0xfff;
-                        int gap=(want-heading)&0xfff;if(gap>2048)gap-=4096;
-                        const int mag=gap<0?-gap:gap;
-                        if(g_autoplay.last_turned&&g_autoplay.last_gap>=0&&mag>g_autoplay.last_gap+2)g_autoplay.turn_sign=-g_autoplay.turn_sign;
-                        g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>64;
-                        if(mag>64)keys|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
-                        else if(autoplay_tick%8u<4u)keys|=KEY_Y;
-                        // Fight only: cy > 0 walks in until the target is that close
-                        // (idle enemies out of Buster range never come to us).
-                        if(autoplay_step.keys==kAutoplayFight&&autoplay_step.cy>0&&mag<=256&&
-                           long(tx)*tx+long(tz)*tz>long(autoplay_step.cy)*autoplay_step.cy)keys|=KEY_DUP;
-
+                        if(autoplay_step.keys==kAutoplayFight)
+                            keys|=autoplay_fight_keys(tx,tz,heading,autoplay_step.cy,g_autoplay_boss_slam,autoplay_tick);
+                        else keys|=autoplay_fight_keys(tx,tz,heading,0,false,autoplay_tick)&~u32(KEY_DUP|KEY_DDOWN);
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
                     held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
                 } else if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint||autoplay_step.keys==kAutoplaySteerUntil||
@@ -5312,6 +5329,17 @@ int main() {
                         goal={{int(autoplay_step.cx),int(pp.z)-160}};
                     if(autoplay_step.keys==kAutoplaySteerToPickup)for(const auto& e:g_children.effect_pool().slots)if(e[0]&&e[2]==0x87){
                         goal={{int(int16_t(uint16_t(e[0x38]|(e[0x39]<<8)))),int(int16_t(uint16_t(e[0x3c]|(e[0x3d]<<8))))}};break;}
+                    // Walks fight any enemy that comes within 600 first (diagnostic).
+                    std::optional<std::array<int,2>> threat;long threat_d=600l*600l;
+                    if((autoplay_step.keys==kAutoplaySteerUntil||autoplay_step.keys==kAutoplaySteerToPoint)&&!session.dialogue().active)
+                        for(const auto& e:g_autoplay_enemies){
+                            const long dx=e[0]-int(pp.x),dz=e[1]-int(pp.z),d=dx*dx+dz*dz;
+                            if(d<threat_d){threat_d=d;threat=e;}
+                        }
+                    if(threat){
+                        steer=autoplay_fight_keys((*threat)[0]-int(pp.x),(*threat)[1]-int(pp.z),heading,0,false,autoplay_tick);
+                        goal.reset();
+                    }
                     if(goal){
                         const int tx=(*goal)[0]-int(pp.x);
                         const int tz=(*goal)[1]-int(pp.z);
@@ -5856,12 +5884,16 @@ int main() {
                     // E0/06 type 6 reads live class-0x20 +14/+18.
                     std::vector<std::array<int16_t,2>> live;
                     g_autoplay_enemies.clear();
+                    bool boss_slam=false;
                     // Every live class-0x20 work counts: subtype 3 keeps +14/+18 in its
                     // behaviour state, 0x19 and 0x1F in source_origin.
                     for(const auto& actor:actors.actors){
                         // Autoplay only: the Area 3 boss is a fight target too.
-                        if(g_autoplay.active&&actor.source_area3_boss&&!actor.source_released&&!actor.source_hidden)
+                        if(g_autoplay.active&&actor.source_area3_boss&&!actor.source_released&&!actor.source_hidden){
                             g_autoplay_enemies.push_back({{int(actor.source_origin[0]),int(actor.source_origin[2])}});
+                            const auto& b=*actor.source_area3_boss;
+                            if(b.health_6e>0&&b.substate_09==6&&b.phase_0a<=3)boss_slam=true;
+                        }
                         if(actor.source_released||actor.source_class!=0x20)continue;
                         std::array<int16_t,2> xz{};
                         if(actor.source_behavior)xz={{actor.source_behavior->raw_14[0],actor.source_behavior->raw_14[2]}};
@@ -5871,6 +5903,7 @@ int main() {
                         if(g_autoplay.active&&!actor.source_hidden&&actor.subtype!=0x35)
                             g_autoplay_enemies.push_back({{int(xz[0]),int(xz[1])}});
                     }
+                    g_autoplay_boss_slam=boss_slam;
                     session.set_tutorial_class20_positions(std::move(live));
                 }
                 const bool dialogue_was_active=session.dialogue().active;
