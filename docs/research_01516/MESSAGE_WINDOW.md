@@ -117,6 +117,11 @@ layout: "Options" title, rows and values (lit/dim), hand cursor, L1/R1 icons
 and the help window ("Down arrow moves viewpoint up." for Free Look
 Reverse), with the Servbot parade darkened behind the frame.
 
+Turn/slide (build after 470fb92, spawn `1 2822 -1 -4833 0`, Turn 0): 3DS L
+held (psx_held 0x400) turned in place (heading 0 -> 4084, x/z unchanged);
+D-pad Left held (psx_held 0x80, action 2) slid sideways (x 2822 -> 4575,
+heading fixed at 28, z -4833 -> -4917).
+
 ## Open
 - Sounds 129/130/131 come from the title banks; 132 (per character) is
   suppressed by 0xA1 in all OPTION messages.
