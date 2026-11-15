@@ -3,6 +3,7 @@
 #include "legends3ds/l3map.h"
 #include <algorithm>
 #include <limits>
+#include <type_traits>
 #include <stdexcept>
 #include <string>
 
@@ -128,8 +129,11 @@ template <typename Palette> void upload_palette(const Palette& palette, VramRegi
         return;
     }
     const auto word_at = [&](size_t index) { return palette.palette_ps1[index]; };
-    image.upload(palette.clut_x, palette.clut_y, palette.palette_entries, palette.palette_rows, word_at);
-    clut.upload(palette.clut_x, palette.clut_y, palette.palette_entries, palette.palette_rows, word_at);
+    uint16_t w = palette.palette_entries, h = palette.palette_rows;
+    if constexpr (std::is_same_v<Palette, Type9PalettePatch>)
+        if (palette.physical_width > w) { h = uint16_t(size_t(w) * h / palette.physical_width); w = palette.physical_width; }
+    image.upload(palette.clut_x, palette.clut_y, w, h, word_at);
+    clut.upload(palette.clut_x, palette.clut_y, w, h, word_at);
 }
 
 void compose_uploads(const std::vector<IndexedResource>& resources, VramRegion& image, VramRegion& clut) {

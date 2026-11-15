@@ -23,7 +23,7 @@ std::vector<IndexedResource> scan_mml_indexed_resources(const std::vector<uint8_
     std::vector<IndexedResource> out;
     for (size_t off = 0; off + 0x800u <= b.size(); off += 0x800u) {
         const uint32_t type = rd_u32(b.data() + off);
-        if (!(type == 1u || type == 4u || type == 9u)) continue;
+        if (!(type == 1u || type == 4u || type == 9u || type == 10u)) continue;   // 10: 0x8001BF44 like 9
         try {
             IndexedResource r;
             r.header_offset = off;

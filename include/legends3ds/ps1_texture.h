@@ -60,6 +60,10 @@ struct Type4ClutPatch {
 };
 
 struct Type9PalettePatch {
+    // Type 10 shares the type-9 handler 0x8001BF44, but its non-banked
+    // upload is RECT(x, y, 64, entries * rows / 64) (0x8001C024); 0 means
+    // the plain RECT(x, y, entries, rows) of types 4/9.
+    uint16_t physical_width = 0;
     uint32_t source_size = 0;
     uint32_t source_arg2 = 0;
     uint16_t clut_x = 0;
