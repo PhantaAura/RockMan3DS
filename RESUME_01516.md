@@ -3,6 +3,29 @@
 Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
 
 ## Completed
+- **Stage loading v1 (M3 foundation, 2026-11-14, branch
+  claude/stage-loading-9d47ea, not merged).** ST02 is the first non-ST00
+  stage (`docs/research_01516/STAGE_LOADING.md`):
+  - ST02 area setup `0x801000B0` tables read from its instructions (4 areas;
+    `parse_stage_flow_us`, `stage_flow_addresses_us`);
+  - `EXTRA_STAGES` in `build_tutorial_pack.py`: one entry per stage cooks map,
+    render, init, flow, EBD and material caches into `stages/stNN/`;
+  - `RuntimeSession::source_stage_request()` / `make_stage_carry()` /
+    `apply_stage_load()` (test `test_stage_load`);
+  - `main.cpp`: a stage request leaves the loop, releases the stage and reruns
+    the boot block for the new stage (`goto stage_reload`, `stage_path()`).
+  - Azahar run 2 (normal boot, scripted route, no spawn file): 0x606 at frame
+    18508, event 3 -> Area 4, event 2 -> stage request (2, 0, lanes (0,0,0),
+    heading 0) at 22298, ST00 released, ST02 data loaded; then threw on ST02
+    area 0, which has 1681 cells and no map primitives (fixed: empty areas
+    are legal outside ST00, native PASS pass-20261114-161948). Runs 3-6 on
+    that build did not reach stage 2: run 5 traded deaths with the boss (0x606
+    at 18708, game over at 18711); runs 3, 4 and 6 were cut short (shared-SD
+    collision with another session, session restarts). **The ST02 arrival
+    after the empty-area fix is not yet seen in Azahar.**
+  - Missing in ST02: event 4 + poll 0x600 (the Flutter flight), BG sky,
+    sea drawing for area 0, music, the stage 3 hand-off. The original never
+    gives control in ST02. Arrival is source-backed; oracle check pending.
 - **Post-win events 3 and 2 (M1, 2026-11-13, branch claude/event3-postwin-90c613).**
   ST00 event 3 (`0x80102058`, phases 0..6) and event 2 (`0x8010194C`,
   phases 0..7) run natively over cooked L3CS tables
@@ -251,6 +274,9 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
+- Stage loading: one Azahar run of `autoplay/tutorial_to_stage2.txt` on the
+  stage-loading build that survives the boss (route outcome varies), to see
+  the ST02 area-0 arrival; then ST02 event 4 (poll 0x600) and the BG sky.
 0. Finish M1 (the Area 3 boss):
    - opening -> tutorial: after the event-1 hand-off no class-20 actor or
      Buster updates (route stalls at the trap room); find the gate;

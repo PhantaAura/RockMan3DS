@@ -1,6 +1,6 @@
 {
  "version": "0.0.15.16",
- "title": "Tutorial post-win: ST00 events 3 and 2 run natively (boss defeat -> Area 4 -> stage-2 request); scene actors pending",
+ "title": "Stage loading v1 (branch claude/stage-loading-9d47ea): event 2 stage-2 request reloads the session for ST02; ST02 event 4 pending",
  "created_utc": "2026-10-27T12:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
@@ -9,7 +9,7 @@
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
  "native_build": "PASS (devkitARM Old 3DS, pass-20261107-215041-m2-01516)",
- "host_tests": "180/180 PASS",
+ "host_tests": "183/183 PASS (stage-loading branch)",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
