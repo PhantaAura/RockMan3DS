@@ -4396,16 +4396,22 @@ l3::FrontendResult run_frontend_title(bool scripted) {
     return new_game ? l3::FrontendResult::NewGame : attract ? l3::FrontendResult::Attract : l3::FrontendResult::None;
 }
 
+// The 3DS key that turns left/right under the installed control profile
+// (diagnostic routes steer by turning): L/R for Turn 0, the D-pad for Turn 1.
+u32 autoplay_turn_key(bool left) {
+    if (g_option_settings.turn_800c1b64) return left ? KEY_DLEFT : KEY_DRIGHT;
+    return left ? KEY_L : KEY_R;
+}
+
 uint16_t make_psx_held(u32 keys, const circlePosition& cp) {
     uint16_t m = 0;
     if (keys & KEY_DUP) m |= 0x0010u;
     if (keys & KEY_DDOWN) m |= 0x0040u;
-    // Turn 0 (profile 0, L1/R1 turn): the port keeps the D-pad on the
-    // shoulder masks too, so it turns (port choice, not original: the PS1
-    // D-pad would slide). Turn 1 (profile 1): the D-pad and the circle pad
-    // are the PS1 directions (turn) and L/R stay L1/R1 (slide), as on the PS1.
-    const bool directional_turn = g_option_settings.turn_800c1b64 != 0;
-    const uint16_t left = directional_turn ? 0x0080u : 0x0400u, right = directional_turn ? 0x0020u : 0x0800u;
+    // 1:1 PS1 pad: D-pad / circle pad = directions, L/R = L1/R1. Which pair
+    // turns and which slides is the installed control profile (0x800425FC,
+    // table 0x8008A04C), picked by the OPTION Turn byte 0x800C1B64: 0 (boot
+    // default, 0x80013360) L1/R1 turn + D-pad slide; 1 the reverse.
+    constexpr uint16_t left = 0x0080u, right = 0x0020u;
     if (keys & KEY_DLEFT) m |= left;
     if (keys & KEY_DRIGHT) m |= right;
     if (keys & KEY_L) m |= 0x0400u;
@@ -5357,7 +5363,7 @@ int main() {
                         const int mag=gap<0?-gap:gap;
                         if(g_autoplay.last_turned&&g_autoplay.last_gap>=0&&mag>g_autoplay.last_gap+2)g_autoplay.turn_sign=-g_autoplay.turn_sign;
                         g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>64;
-                        if(mag>64)keys|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
+                        if(mag>64)keys|=autoplay_turn_key((gap>0)==(g_autoplay.turn_sign>0));
                         else if(autoplay_tick%8u<4u)keys|=KEY_Y;
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
                     held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
@@ -5387,7 +5393,7 @@ int main() {
                         // A door step ends only when z passes cy (or the area changes);
                         // stopping inside the arrival radius left Mega Man short of it.
                         const bool arrived=autoplay_step.keys!=kAutoplayDoor&&tx*tx+tz*tz<24*24;
-                        if(!arrived&&mag>48)steer|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
+                        if(!arrived&&mag>48)steer|=autoplay_turn_key((gap>0)==(g_autoplay.turn_sign>0));
                         if(!arrived&&mag<128)steer|=KEY_DUP;
                         if(autoplay_step.keys==kAutoplayDoor){
                             steer=session.dialogue().active?talk_keys():steer|(autoplay_tick%16u==8u?u32(KEY_A):0u);
