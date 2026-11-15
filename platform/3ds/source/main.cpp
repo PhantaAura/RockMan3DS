@@ -5363,6 +5363,10 @@ int main() {
                         g_autoplay.last_gap=mag;g_autoplay.last_turned=mag>64;
                         if(mag>64)keys|=((gap>0)==(g_autoplay.turn_sign>0))?KEY_DLEFT:KEY_DRIGHT;
                         else if(autoplay_tick%8u<4u)keys|=KEY_Y;
+                        // Fight only: cy > 0 walks in until the target is that close
+                        // (idle enemies out of Buster range never come to us).
+                        if(autoplay_step.keys==kAutoplayFight&&autoplay_step.cy>0&&mag<=256&&
+                           long(tx)*tx+long(tz)*tz>long(autoplay_step.cy)*autoplay_step.cy)keys|=KEY_DUP;
 
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
                     held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
