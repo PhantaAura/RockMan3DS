@@ -75,7 +75,9 @@ std::vector<FrontendPacket> frontend_tiles_80062368(uint16_t scroll) {
     for (int row = 0; row < 5; ++row)
         for (int col = 0; col < 7; ++col) {
             const int16_t x = int16_t(-64 + 64 * col + off), y = int16_t(-64 + 64 * row + off);
-            chain.push_back(ft4(quad(word, x, y, int16_t(x + 63), int16_t(y + 63), 0xC0, 0x8B, 0xFF, 0xCA), 35));
+            // SPRT 64x64 covers 64 pixels; a quad x..x+63 left 1-px seams
+            // (Azahar). The byte UV ends at 0xFF, so 63 texels span 64 px.
+            chain.push_back(ft4(quad(word, x, y, int16_t(x + 64), int16_t(y + 64), 0xC0, 0x8B, 0xFF, 0xCA), 35));
         }
     // AddPrim prepends, so the chain goes in reverse to draw E1 first.
     return std::vector<FrontendPacket>(chain.rbegin(), chain.rend());
