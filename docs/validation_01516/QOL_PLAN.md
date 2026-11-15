@@ -23,7 +23,13 @@ original 1:1 behaviour stays the baseline. User-approved list.
    L/R or ZL/ZR turn the camera; C-stick camera on New 3DS. The original
    tank controls stay selectable (and the OPTION menu's own Turn setting
    keeps working).
-3. **Bottom-screen touch shortcuts.** Switch special weapon, use an item,
+   - **Second-stick camera:** the New 3DS C-stick, and the Circle Pad Pro
+     on Old 3DS (libctru `irrst`), turn and tilt the camera freely.
+3. **PSP-version improvements.** The Japanese PSP port (Rockman DASH,
+   2005) changed parts of the game for handheld play. The QoL session
+   first lists what it actually changed (from sources, not guessed), then
+   offers the ones that suit the 3DS as options.
+4. **Bottom-screen touch shortcuts.** Switch special weapon, use an item,
    open the map, without pausing.
 
 ## After 1.0 (or when cheap)
