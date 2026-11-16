@@ -34,6 +34,14 @@ Evidence labels: VERIFIED_1TO1 (seen in the PSXRecomp oracle, US disc) / CANDIDA
   + Square and an occasional Triangle (land-mine). Winning with the Buster this way is
   impractical; the next attempt must work out how the mines/special weapon hit and how to
   stay out of the mech's reach, or find the boss HP field and its damage handler.
+- Boss HP field: **not found.** Rejected: `0x800C3594/359E/35AC/35B6` (the mech's x/z position
+  words, rewritten every frame; they read 1024 = x of (1024,-1,8448)), `0x800C3720`, `0x800C3A70`
+  (rewritten every frame), `0x800C1D18` (writing 1 changes nothing: not HP). A RAM diff between
+  gauge 62 and 61 px yielded only those. The next try: trace the enemy damage routine from the
+  Buster hit (a write with a small negative delta to a field that is NOT rewritten each frame)
+  while a hit is known to connect, or disassemble the hit path as was done for the player (§1).
+- Zeroing the boss HP (oracle-only shortcut, no flags forced) would let the game run its own
+  victory path; blocked on finding the field.
 - Outcome, post-fight scene and the end flags: **UNKNOWN**.
 
 ## 3. Disc inventory for later segments (CANDIDATE; names only, contents unread)
