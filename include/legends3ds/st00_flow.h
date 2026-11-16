@@ -11,7 +11,7 @@ constexpr uint16_t kL3St00FlowVersion = 1;
 constexpr size_t kSt00TutorialAreaCount = 5;
 // Largest area count a stage flow may carry (ST00 has five; stage overlays
 // with fewer areas fill only the first area_count rows).
-constexpr size_t kStageFlowMaxAreas = 5;
+constexpr size_t kStageFlowMaxAreas = 16;
 constexpr size_t kSt00AreaSetupBlobBytes = 40;
 constexpr size_t kSt00AreaSetupSeedBytes = 8;
 constexpr size_t kSt00AuxRecordBytes = 24;

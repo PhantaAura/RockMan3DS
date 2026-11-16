@@ -4817,7 +4817,11 @@ int main() {
             for(size_t i=0;i<flow_areas;++i){
                 char rel[64];
                 std::snprintf(rel,sizeof(rel),"ebd/area_%02lu.l3ebd",(unsigned long)i);
-                areas.push_back(l3::load_tutorial_runtime_area(flow,read_binary(stage_path(rel)),i,true));
+                // A stage area whose container is not identified yet has no
+                // cooked EBD: it binds map data only.
+                const auto ebd_path=stage_path(rel);
+                if(g_stage!=0){FILE* f=std::fopen(ebd_path.c_str(),"rb");if(!f){areas.emplace_back();areas.back().area_index=i;continue;}std::fclose(f);}
+                areas.push_back(l3::load_tutorial_runtime_area(flow,read_binary(ebd_path),i,true));
             }
             // Map areas beyond the overlay's tables bind map data only.
             while(areas.size()<boot_map.areas.size()){areas.emplace_back();areas.back().area_index=areas.size()-1;}

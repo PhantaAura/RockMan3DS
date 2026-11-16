@@ -55,7 +55,9 @@ int main() {
     const auto* st02 = stage_flow_addresses_us(2);
     require(st02 && st02->area_count == 4 && st02->object_ptr_table == 0x80106940u &&
             st02->resource_ptr_table == 0x801068E0u && st02->selector_table == 0x80106C18u, "ST02 table (0x801000B0)");
-    require(!stage_flow_addresses_us(1) && !stage_flow_addresses_us(3), "untraced stages have no table");
+    require(stage_flow_addresses_us(3) && stage_flow_addresses_us(3)->area_count == 9 && stage_flow_addresses_us(3)->aux_ptr_table == 0x80114B7Cu,
+            "ST03 table (0x80100524)");
+    require(!stage_flow_addresses_us(1) && !stage_flow_addresses_us(4), "untraced stages have no table");
 
     // Parse -> cook -> load keeps four areas and each area's rows.
     const auto flow = parse_stage_flow_us(synthetic_st02(), *st02);

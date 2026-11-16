@@ -64,6 +64,12 @@ EXTRA_STAGES={
     # EBD and the area-0 pages) stands in for it (CANDIDATE).
     2:{'container':'ST02.BIN','areas':('ST02_00.BIN','ST02_01.BIN','ST02_02.BIN','ST02.BIN'),
        'ebd':r'..\EMBIN\ST02_01.EBD','events':(4,)},
+    # ST03: the loader picks area containers by a story-dependent table, not
+    # by number. Area 1 (crash site) runs on ST03_00A.EBD from ST03_00.BIN
+    # (oracle savestate m3_01: 4 KiB of 0x8016C000 equal). None = container
+    # not identified yet; that area binds map data only.
+    3:{'container':'ST03.BIN','areas':(None,'ST03_00.BIN',None,None,None,None,None,None,None),
+       'ebd':{1:r'..\EMBIN\ST03_00A.EBD'}},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 
@@ -575,7 +581,7 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
     """Cook one EXTRA_STAGES entry the same way ST00 is cooked above."""
     spec=EXTRA_STAGES[number]; code=f'ST{number:02X}'
     # Optional: the ST00 pack stays complete without the stage's containers.
-    absent=[n for n in (spec['container'],*spec['areas']) if not (dat/n).is_file()]
+    absent=[n for n in (spec['container'],*spec['areas']) if n and not (dat/n).is_file()]
     if absent:
         manifest.setdefault('stages',{})[f'st{number:02x}']={'status':'ABSENT','missing':sorted(set(absent))}
         return
@@ -609,9 +615,11 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
             '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(work/'overlay'),
             '--event',str(event),'--stage',str(number),'--out',str(sout/f'event{event}.l3cs')],check=True,stdout=subprocess.DEVNULL)
     for area_index,cname in enumerate(spec['areas']):
+        if cname is None: continue
         cp=dat/cname
-        matches=[r for r in iter_resources(cp) if r.internal==spec['ebd']]
-        if len(matches)!=1 or matches[0].typ!=0: raise RuntimeError(f'{cname}: expected one type-0 {spec["ebd"]}')
+        ebd=spec['ebd'] if isinstance(spec['ebd'],str) else spec['ebd'][area_index]
+        matches=[r for r in iter_resources(cp) if r.internal==ebd]
+        if len(matches)!=1 or matches[0].typ!=0: raise RuntimeError(f'{cname}: expected one type-0 {ebd}')
         r=matches[0]; ep=work/f'ebd_{area_index:02d}.bin'
         ep.write_bytes(cp.read_bytes()[r.payload_start:r.payload_start+r.size])
         run(tools,'l3cook_ebd',ep,hex(r.load),sout/'ebd'/f'area_{area_index:02d}.l3ebd')
@@ -622,6 +630,7 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
         # table is known for this overlay: the renderer's fallback applies.
         upload_prefix=[dat/'INIT_DAT.BIN',dat/head_selection['container'],dat/'ARM00R.BIN',dat/'ARM00L.BIN',dat/'LEG00.BIN',stage_container]
         for area_index,cname in enumerate(spec['areas']):
+            if cname is None: continue
             area_container=dat/cname
             run(tools,'l3cook_material_cache',*quartet,str(area_index),mout/f'area_{area_index:02d}.l3mc',
                 *upload_prefix,area_container,'--ramp-out',mout/f'area_{area_index:02d}.l3cr')

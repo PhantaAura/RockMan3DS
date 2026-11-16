@@ -74,12 +74,19 @@ constexpr StageFlowAddresses kSt00Flow{0, 5, kObjectPtrTableAddr, kAuxPtrTableAd
 // 0x40600), and event 4 visits area byte 3 (M3_ROADMAP.md), so four areas.
 constexpr StageFlowAddresses kSt02Flow{2, 4, 0x80106940u, 0x80106968u, 0x80106978u,
     0x80106C18u, 0x80106A18u, 0x801068E0u};
+// ST03 0x80100524 (base 0x80110000): resource 0x801146C4, objects
+// 0x80114918, aux 0x80114B7C, blob 0x80114BA0, selector 0x80114F08, seed
+// 0x80114D08; nine rows (word 10 ends each table). ST03.BIN and ST03B.BIN
+// carry the same overlay.
+constexpr StageFlowAddresses kSt03Flow{3, 9, 0x80114918u, 0x80114B7Cu, 0x80114BA0u,
+    0x80114F08u, 0x80114D08u, 0x801146C4u};
 }
 
 const StageFlowAddresses* stage_flow_addresses_us(uint8_t stage) noexcept {
     switch (stage) {
     case 0: return &kSt00Flow;
     case 2: return &kSt02Flow;
+    case 3: return &kSt03Flow;
     default: return nullptr;
     }
 }
