@@ -16,8 +16,11 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   Since then (same branch): 1:1 pad (L/R = L1/R1, Turn picks turn vs slide);
   type-10 palettes (OPTION tile backdrop); and the in-game Start menu on the
   bottom screen (original sub-screen: tiles, LIFE/ZENNY/TIME, menu, Options
-  page). Select+Start quits now. Normal Items and Special Items pages ported
-  (item use flows, Buster Parts and Special Weapons not yet).
+  page). Select+Start quits now. Normal Items, Special Items, Buster Parts
+  and Special Weapons pages ported (af14338); the "Mega Buster" header
+  garbage was the SPRT u+w=256 wrap, now clamped. Not yet: item use flows,
+  part sorts, L1/R1 page switching (0x80060EC0), Azahar check of the
+  Special Weapons page (Azahar busy; host probe matched oracle frames). Native build PASS.
 - **Status 2026-11-13 (main 23db7cf).** Merged into main (a4a149b): the
   ST00 event-1 opening, the ST01 intro crawl and ST07 attract scene, the
   pop-out Reaverbot fix, the bottom-screen gauges. A cold-boot Azahar run
