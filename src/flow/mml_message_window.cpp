@@ -123,14 +123,7 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
     case 0x93: {                                                             // 0x80054ADC
         if (s.flags & 0x02000000u) { s.flags &= ~0x02000000u; s.decor_state = 0; }
         s.decor = mem(r + 1);
-        if (s.decor != 2 && s.decor != 4) { unported = true; return false; }
-        // Decor 2/4 exec 0x8005B85C.
-        if (s.decor_state == 0) {
-            s.decor_state = 2; s.flags |= 0x06000000u; s.read += 3;
-            s.margin = mem(r + 2); flags_80098a58 |= 0x00200000u;
-            const int16_t m = int16_t(s.margin), w = int16_t(m + s.width * 12), h = int16_t(m + s.height * 12);
-            s.box = {{int16_t(-m), int16_t(-m), w, int16_t(-m), int16_t(-m), h, w, h}};
-        } else if (s.decor_state == 2) s.flags = (s.flags | 0x10000000u) & 0xF9FFFFFFu;
+        if (!decor_exec(s)) { unported = true; return false; }
         return false;
     }
     case 0x95: return false;                                                 // 0x80054BAC: halt
@@ -201,7 +194,7 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         s.flags |= 0x20000u;
         if (s.flags & 0x04000000u) {                                         // close the frame first
             s.flags |= 0x00100000u;
-            if (s.decor_state == 2) s.flags = (s.flags | 0x10000000u) & 0xF9FFFFFFu;
+            (void)decor_exec(s);
             return false;
         }
         s.flags &= ~0x20000u; s.flags &= 0x7EFFFFFFu; s.read += 3;          // slot closed
@@ -211,10 +204,30 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
     case 0xA9:                                                               // 0x80055BB8: end
         if (s.flags & 0x04000000u) {
             s.flags |= 0x00100000u;
-            if (s.decor_state == 2) s.flags = (s.flags | 0x10000000u) & 0xF9FFFFFFu;
+            (void)decor_exec(s);
             return false;
         }
         s.read += 1; return true;
+    case 0x9F:                                                               // 0x80055688: wait for a button
+        if (!(s.flags & 0x01000000u)) { s.flags |= 0x01000000u; s.timer = 10; }
+        s.flags |= 0x10000000u;
+        if (s.timer > 0) { --s.timer; return false; }
+        if ((s.flags & 0x40000u) || (s.held & 0xF000u)) {                   // a face button held
+            flags_80098a58 |= 0x80000u; s.flags &= ~0x01000000u; s.read += 1;
+        }   // (the blinking "next" arrow 0x8001FE38 is not drawn)
+        return false;
+    case 0xC1:                                                               // 0x800576C4: call name 0x8008CBA4[gp+4044]
+        if (s.exec_depth >= s.exec_stack.size()) { unported = true; return false; }
+        s.exec_stack[s.exec_depth++] = r + 1;
+        s.read = exe_.u32(0x8008CBA4u + 4u * name_index_gp4044);
+        return true;
+    case 0xDA: {                                                             // 0x80058C28: call a name if its flag is set
+        if (s.exec_depth >= s.exec_stack.size()) { unported = true; return false; }
+        s.exec_stack[s.exec_depth++] = r + 3;
+        const uint16_t f = u16(r + 1);
+        s.read = (story_flag && story_flag(f)) ? exe_.u32(0x8008BAA4u + 4u * f) : exe_.u32(0x8008CE58u);
+        return true;
+    }
     case 0xA7:                                                               // 0x80055B14: layout start / clear
         if (u16(r + 1)) out.layout_calls.push_back({int8_t(int16_t(u16(r + 3))), -1});
         else out.layout_calls.push_back({int8_t(u16(r + 3)), int16_t(u16(r + 5))});
@@ -359,6 +372,18 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xDC: case 0xD9: case 0x98: case 0xA9: s.draw += 1; return;
     case 0x8B: case 0x84: case 0xBF: s.draw += 3; return;
     case 0xA7: s.draw += 9; return;                                          // 0x80054388
+    case 0x9F: s.draw += 1; return;
+    case 0xC1:                                                               // 0x80057708
+        if (s.draw_depth < s.draw_stack.size()) { s.draw_stack[s.draw_depth++] = d + 1; s.draw = exe_.u32(0x8008CBA4u + 4u * name_index_gp4044); }
+        else s.draw += 1;
+        return;
+    case 0xDA:                                                               // 0x80058CC8
+        if (s.draw_depth < s.draw_stack.size()) {
+            s.draw_stack[s.draw_depth++] = d + 3;
+            const uint16_t f = u16(d + 1);
+            s.draw = (story_flag && story_flag(f)) ? exe_.u32(0x8008BAA4u + 4u * f) : exe_.u32(0x8008CE58u);
+        } else s.draw += 3;
+        return;
     case 0xE1: {                                                             // 0x80059660
         if (s.draw_depth >= s.draw_stack.size()) { s.draw += 3; return; }
         s.draw_stack[s.draw_depth++] = d + 3;
@@ -488,6 +513,48 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
         return;
     }
     default: s.draw += 1; return;   // unported (counted by exec)
+    }
+}
+
+bool MessageWindows::decor_exec(MessageSlot& s) {
+    const int16_t m0 = int16_t(s.margin);
+    const auto settle = [&](int16_t m) {
+        const int16_t w = int16_t(m + s.width * 12), h = int16_t(m + s.height * 12);
+        s.box = {{int16_t(-m), int16_t(-m), w, int16_t(-m), int16_t(-m), h, w, h}};
+    };
+    if (s.decor == 2 || s.decor == 4) {                                      // 0x8005B85C
+        if (s.decor_state == 0) {
+            s.decor_state = 2; s.flags |= 0x06000000u; s.margin = mem(s.read + 2); s.read += 3;
+            flags_80098a58 |= 0x00200000u; settle(int16_t(s.margin));
+        } else if (s.decor_state == 2) s.flags = (s.flags | 0x10000000u) & 0xF9FFFFFFu;
+        return true;
+    }
+    if (s.decor != 8) return false;
+    switch (s.decor_state) {                                                 // 0x8005B98C
+    case 0: {                                                                // start collapsed at the middle
+        s.decor_step = 8; s.flags |= 0x14000000u; s.decor_saved = s.flags & 0x08000000u; s.flags |= 0x08000000u;
+        s.margin = mem(s.read + 2); s.decor_state = 1;
+        const int16_t m = int16_t(s.margin), half = int16_t(s.height * 6), w = int16_t(m + s.width * 12);
+        s.box = {{int16_t(-m), half, w, half, int16_t(-m), half, w, half}};
+        return true;
+    }
+    case 1:                                                                  // grow by 8 each update
+        s.flags |= 0x10000000u;
+        s.box[1] = int16_t(s.box[1] - s.decor_step); s.box[3] = int16_t(s.box[3] - s.decor_step);
+        s.box[5] = int16_t(s.box[5] + s.decor_step); s.box[7] = int16_t(s.box[7] + s.decor_step);
+        if (s.y - m0 < s.y + s.box[1]) return true;
+        flags_80098a58 |= 0x00200000u;
+        settle(m0); s.decor_state = 2;
+        s.flags = ((s.flags | 0x12000000u) & 0xF7FFFFFFu) | s.decor_saved;
+        s.read += 3;
+        return true;
+    case 2:                                                                  // shrink shut
+        s.flags |= 0x10000000u;
+        s.box[1] = int16_t(s.box[1] + s.decor_step); s.box[3] = int16_t(s.box[3] + s.decor_step);
+        s.box[5] = int16_t(s.box[5] - s.decor_step); s.box[7] = int16_t(s.box[7] - s.decor_step);
+        if (s.box[5] < s.box[1]) s.flags &= 0xF9FFFFFFu;
+        return true;
+    default: return true;
     }
 }
 

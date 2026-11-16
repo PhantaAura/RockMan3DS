@@ -25,6 +25,10 @@ struct SubScreenValues {
     uint8_t byte_800b531a = 0, byte_800b531b = 0, byte_800b531c = 0;   // player work (modes 9..12)
     std::array<uint8_t, 4> equipped_parts_800b5600{};   // buster parts (part + 1, 0 = empty)
     std::array<uint8_t, 64> owned_parts_800b5604{};
+    // Special weapons (player work 0x800B51B0): +370 weapon on hand, +368 arm
+    // in use, +1102 / +1103, and five level bytes per weapon at +1268 + 8 * id.
+    int8_t weapon_370 = 0, arm_368 = 0, energy_1102 = 0; uint8_t flag_1103 = 0;
+    std::array<std::array<int8_t, 5>, 14> weapon_levels{};
 };
 
 struct SubScreenFrame {
@@ -54,6 +58,10 @@ private:
     void special_items_8005f210(uint16_t pressed, SubScreenFrame& out);
     void buster_parts_800600cc(const SubScreenValues& v, SubScreenFrame& out);
     void gauges_800605dc(const SubScreenValues& v, std::vector<FrontendPacket>& out);
+    void special_weapons_80060618(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
+    void weapon_stats_80061840(int weapon, const SubScreenValues& v);
+    void bars_800602a4_mode1(std::vector<FrontendPacket>& out);
+    void animate_800602a4();
     void icons_8006430c(uint32_t first, const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     bool exit_check_80060e64(uint16_t pressed, SubScreenFrame& out);
     MessageWindows windows_;
@@ -65,6 +73,8 @@ private:
     // ctx 0x800A38F0 +6 (animation count) and +16..+54 (stat triplets
     // {from, target, shown}: attack now/with, energy, range, rapid).
     std::array<uint8_t, 64> ctx_{};
+    // Arm changes the Equip flow made (0x80060848..: +1103 / +368), for the caller.
+    int8_t arm_368_ = 0; uint8_t flag_1103_ = 0; bool arm_dirty_ = false;
     uint32_t frame_ = 0;       // 0x1F800002-style counter for mode-1 blink
 };
 

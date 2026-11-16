@@ -25,17 +25,15 @@ TEXT = 0x80010000
 RANGES = [
     (0x8008AE7C, 0x8008AF00),   # glyph widths (u8 per glyph byte 0x00..0x83)
     (0x8008AF18, 0x8008AF24),   # decor -> frame parameter
-    (0x8008B67C, 0x8008BE84),   # messages 0x25..0x32 (title, OPTION, help, sub-screen menu) + part names
-    (0x8008C79C, 0x8008C8E4),   # messages 0xDD..0xE2 (sub-screen menu help)
-    (0x8008CACC, 0x8008CACC + 4 * 0xE4),   # message pointer table
-    (0x8008BE84, 0x8008C250),   # item names (table 0x8008CCA4 + 4 * id, id -1..63)
+    (0x8008B67C, 0x8008C8E4),   # messages 0x25..0x32 (title, OPTION, help, sub-screen menu), part,
+                                # item and weapon names, sub-screen menu help (0xDD..0xE2)
+    (0x8008CACC, 0x8008CACC + 4 * 0xE4),   # message pointer table (also the name tables)
+    (0x8008D0D4, 0x8008D0D4 + 4 * 32),     # setting pointer table (15 scroll, 26 max scroll, 27/17/30 cursors)
+    (0x8008D7E8, 0x8008DB24),   # special weapon stat bytes + class index 0x8008DB08
     (0x8008DE1C, 0x8008E060),   # special item icon records (layout 2, handler 1)
-    (0x8008E09C, 0x8008E120),   # sub-screen status frame sprite list (layout 6)
-    (0x8008E12C, 0x8008E1A0),   # Buster Parts header + stat labels (layout 7)
+    (0x8008E09C, 0x8008ECDC),   # sprite lists of the other layouts (6 frame, 7/8/9.. headers, 22/23/26/27/28)
+    (0x8008ECDC, 0x8008ECDC + 8 * 30),     # layout table {handler, tpage, list}
     (0x8008FE64, 0x8008FE64 + 8 * 0x34),   # buster part stats (attack, energy, range, rapid)
-    (0x8008EC6C, 0x8008ECAC),   # list scroll arrow sprite lists (layouts 26, 27)
-    (0x8008ECDC, 0x8008ECDC + 8 * 28),     # layout table {handler, tpage, list}
-    (0x8008D0D4, 0x8008D0D4 + 4 * 32),     # setting pointer table (15 scroll, 26 max scroll, 27/17/30 remembered cursors)
     (0x80097F30, 0x80097F90),   # CLUTs, window colours, edge greys
 ]
 
@@ -56,7 +54,7 @@ def main() -> None:
     # The table entries this menu reaches must stay inside the copied block.
     for i in list(range(0x25, 0x33)) + list(range(0xDD, 0xE3)):
         ptr = struct.unpack_from("<I", image, 0x800 + 0x8008CACC + 4 * i - TEXT)[0]
-        if not (0x8008B67C <= ptr < 0x8008BE84 or 0x8008C79C <= ptr < 0x8008C8E4):
+        if not 0x8008B67C <= ptr < 0x8008C8E4:
             raise SystemExit(f"cook_option_menu: message 0x{i:02X} at 0x{ptr:08X} outside the excerpt")
     if args.sub_key:
         # SUB_KEY.BIN: SUB01.TIM, then "..\MESS\STFF_FE.MSG" (type 0, load

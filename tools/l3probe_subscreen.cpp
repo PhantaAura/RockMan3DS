@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     if (const char* key = std::getenv("SUBKEY_L3MC")) pages.add(l3::load_l3material_cache(l3::read_file(key), true));
     if (const char* wpn = std::getenv("SUBWPN_L3MC")) pages.add(l3::load_l3material_cache(l3::read_file(wpn), true));
     l3::SubScreenValues v; v.life_800b521e = 72; v.life_max_800b5260 = 80; v.zenny_800c1b2c = 0; v.play_time_800c1b1c = 30 * 120;
-    v.story_flag = [](uint16_t f) { return f == 0x527; };   // the crystal (oracle, tutorial)
+    v.story_flag = [](uint16_t f) { return f == 0x527 || f == 0x4C0; };   // crystal, Normal Arm (oracle)
     menu.enter();
     l3::SubScreenFrame f;
     // The sub-screen never clears the frame: transparent tile rows keep the

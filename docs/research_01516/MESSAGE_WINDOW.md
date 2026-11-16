@@ -223,8 +223,9 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
   first); 0x84 0x80054450 close after n updates (clears the slot); 0x8B
   0x80054700 pause n updates.
 - Buster Parts ported (page, header layout 7, stats + gauges, Equip/Sort/
-  Close with its lists on the port's parts, none yet). Open: the header's
-  weapon-name sprite (layout 7 record 1, u/v 0xC0/0x90) shows a runtime
-  VRAM upload whose writer is not found (no RECT (816,144) in the EXE): left
-  out. 0x80061740 (with-part targets), 0x80061C50 (equip list bars),
+  Close with its lists on the port's parts, none yet). The header's
+  weapon name ("Mega Buster", layout 7 record 1, u/v 0xC0/0x90, 64 wide) is
+  in SUB02U.TIM (the oracle's VRAM at (816,144) equals the cooked page); it
+  looked wrong only because u + w = 256 wrapped in the SPRT -> quad
+  conversion (fixed: the end clamps at 0xFF). 0x80061740 (with-part targets), 0x80061C50 (equip list bars),
   0x80062118 and the part sorts are not ported (empty lists).

@@ -61,7 +61,7 @@ ExeExcerpt authored() {
     options.bytes.resize(4 * 30, 0);
     put32(options.bytes, 4 * 26, 0x800989D4);
     // Layout table 0x8008ECDC: 6 = the frame list, 26/27 = arrows (one blink sprite each).
-    ExeExcerpt::Range layouts; layouts.addr = 0x8008ECDC; layouts.bytes.assign(8 * 28, 0);
+    ExeExcerpt::Range layouts; layouts.addr = 0x8008ECDC; layouts.bytes.assign(8 * 30, 0);
     put32(layouts.bytes, 8 * 6 + 4, 0x8008E09C);
     for (int l : {6, 26, 27}) layouts.bytes[size_t(8 * l + 2)] = 13;     // E1 page (+2)
     put32(layouts.bytes, 8 * 26 + 4, 0x8008E0C0); put32(layouts.bytes, 8 * 27 + 4, 0x8008E0E0);
@@ -85,6 +85,13 @@ ExeExcerpt authored() {
                                 0x96, 0x00, 0x21, 0xED, 0x15, 0x86, 0x96, 0x11, 0x02, 0xED, 0x16, 0x86, 0x96, 0x22, 0x10, 0xED, 0x17,
                                 0x97, 0xC0, 0xFF, 0xFF, 0xFF, 0x8A, 0x01, 0x00, 0x95});
     layouts.bytes[8 * 7 + 2] = 12; put32(layouts.bytes, 8 * 7 + 4, 0x8008E09C + 0x10);   // terminator only
+    for (int l : {8, 9, 22, 23, 28}) { layouts.bytes[size_t(8 * l + 2)] = 12; put32(layouts.bytes, size_t(8 * l + 4), 0x8008E09C + 0x10); }
+    // Special Weapons: 93 = status / equip / close menu, 47 = an empty grid (0xD9 only).
+    bank_msg(93, 0x200 - 0x90, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x46, 0x00, 0x54, 0x00, 0x0F, 0x03, 0x93, 0x02, 0x04,
+                                0x96, 0x00, 0x21, 0xED, 0x15, 0x86, 0x96, 0x11, 0x02, 0xED, 0x16, 0x86, 0x96, 0x22, 0x10, 0xED, 0x17,
+                                0x97, 0x80, 0xFF, 0xFF, 0xFF, 0x8A, 0x01, 0x00, 0x95});
+    bank_msg(47, 0x200 - 0xB0, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x16, 0x00, 0x20, 0x00, 0x17, 0x08, 0x93, 0x02, 0x04,
+                                0xD7, 0x00, 0x00, 0x00, 0x00, 0x4F, 0x8A, 0x01, 0x00, 0xD9});
     e.ranges = {widths, decor, colors, table, options, frame, msg, bank, layouts};
     return e;
 }
@@ -214,6 +221,22 @@ int main() {
         f = bp.update(0, 0x1000, bv);                 // Triangle: the menu cancels to Close
         for (int i = 0; i < 3; ++i) f = bp.update(0, 0, bv);
         assert(bp.page() == 0 || bp.page() == 1);
+    }
+    {   // Special Weapons (choice 3 -> page 5): five mode-1 bars (CLUT 0x3E83, v 0x90), Close leaves.
+        SubScreenMenu sw(authored());
+        SubScreenValues wv = v;
+        sw.enter();
+        for (int i = 0; i < 7; ++i) f = sw.update(0, 0, wv);
+        for (int i = 0; i < 3; ++i) f = sw.update(0, 0x40, wv);
+        f = sw.update(0, 0x4000, wv); f = sw.update(0, 0, wv);
+        assert(sw.page() == 5);
+        for (int i = 0; i < 8; ++i) f = sw.update(0, 0, wv);
+        size_t bars = 0;
+        for (const auto& p : f.packets) bars += p.length == 9 && (p.words[2] >> 16) == 0x3E83 && uint8_t(p.words[2] >> 8) == 0x90;
+        assert(f.unported_opcodes == 0 && bars == 10);
+        f = sw.update(0, 0x40, wv); f = sw.update(0, 0x40, wv); f = sw.update(0, 0x4000, wv);   // Close
+        for (int i = 0; i < 3; ++i) f = sw.update(0, 0, wv);
+        assert(sw.page() == 0 || sw.page() == 1);
     }
     std::cout << "subscreen_menu: ok\n";
     return 0;

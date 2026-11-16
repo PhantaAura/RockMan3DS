@@ -17,8 +17,11 @@ FrontendPacket sprt(int x, int y, int w, int h, uint8_t u, uint8_t v, uint16_t c
     q.code_rgb = 0x2C808080u;
     q.x = {{int16_t(x), int16_t(x + w), int16_t(x), int16_t(x + w)}};
     q.y = {{int16_t(y), int16_t(y), int16_t(y + h), int16_t(y + h)}};
-    q.u = {{u, uint8_t(u + w), u, uint8_t(u + w)}};
-    q.v = {{v, v, uint8_t(v + h), uint8_t(v + h)}};
+    // A SPRT reaching the page edge (u + w = 256, e.g. the "Mega Buster"
+    // name at u 0xC0, 64 wide) must not wrap to u 0: end at 0xFF.
+    const uint8_t u1 = uint8_t(std::min(255, int(u) + w)), v1 = uint8_t(std::min(255, int(v) + h));
+    q.u = {{u, u1, u, u1}};
+    q.v = {{v, v, v1, v1}};
     q.clut = clut; q.tpage = tpage;
     FrontendPacket p; p.length = 9; p.bucket = bucket;
     psxgpu::write_poly_ft4(p.words.data(), q);
@@ -94,10 +97,6 @@ void SubScreenMenu::layout_draw(uint16_t list, const SubScreenValues& v, std::ve
         const auto u16 = [&](unsigned k) { return uint16_t(p[k] | (p[k + 1] << 8)); };
         int x = int16_t(u16(4)), y = int16_t(u16(6)), w = u16(12), h = u16(14);
         uint8_t u = p[8]; const uint8_t vv = p[9]; const uint16_t clut = u16(10);
-        // Layout 7 record 1 (u/v 0xC0/0x90, 64 x 16): the left-arm weapon name
-        // ("Mega Buster"), uploaded into the page at run time by code not
-        // traced; SUB02U.TIM holds other pixels there. Left out (CANDIDATE).
-        if (list == 7 && r == first + 16) continue;
         if (m == 1 && (frame_ & 16)) continue;                                   // blink
         if (m == 2 && (((v.play_time_800c1b1c / 15u) % 60u) & 1u)) continue;    // TIME colon
         if (m == 3 && v.life_max_800b5260 >= 81) {                               // LIFE box grows
@@ -131,7 +130,8 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
             else if (c == 0) { page_ = 2; options_sub_ = 0; }
             else if (c == 1) { page_ = 3; options_sub_ = 0; }
             else if (c == 2) { page_ = 4; options_sub_ = 0; }
-            else page_ = 0;   // page 5 not ported: reopen the menu (CANDIDATE)
+            else if (c == 3) { page_ = 5; options_sub_ = 0; }
+            else page_ = 0;
         } else if (pressed & 0x0008u) page_ = 8;               // Start (Select page 7 not ported)
         break;
     case 6:                                                    // 0x80060B00
@@ -152,6 +152,7 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
     case 2: normal_items_8005ed9c(pressed, out); break;
     case 3: special_items_8005f210(pressed, out); break;
     case 4: buster_parts_800600cc(v, out); break;
+    case 5: special_weapons_80060618(pressed, v, out); break;
     case 8:                                                    // 0x80060DB8
         windows_.clear_80053a30(); layouts_.fill(-1);
         out.exited = true;
@@ -268,14 +269,8 @@ void SubScreenMenu::gauges_800605dc(const SubScreenValues& v, std::vector<Fronte
         const int t = std::clamp(now[k], 0, kMax[k]);
         ctx_[size_t(kNow[k])] = ctx_[size_t(kWith[k])] = uint8_t(t);
     }
-    // 0x800602A4: shown = target - (target - from) * n / 4 while n (+6) counts down.
+    animate_800602a4();
     static constexpr int kTriplets[10] = {16, 19, 24, 27, 32, 35, 40, 43, 48, 51};
-    const int n = int8_t(ctx_[6]);
-    for (int t : kTriplets) {
-        const int from = ctx_[size_t(t)], target = ctx_[size_t(t + 1)];
-        ctx_[size_t(t + 2)] = uint8_t(n ? target - (((target - from) * n) >> 2) : target);
-    }
-    if (n) ctx_[6] = uint8_t(n - 1);
     std::vector<FrontendPacket> chain;
     const auto quad = [&](int x0, int x1, int y0, int y1, uint8_t u0, uint8_t u1, uint8_t v0, uint8_t v1, uint16_t clut) {
         psxgpu::PolyFt4 q; q.code_rgb = 0x2C808080u;
@@ -297,6 +292,130 @@ void SubScreenMenu::gauges_800605dc(const SubScreenValues& v, std::vector<Fronte
                 quad(value == 70 ? x + 24 : x + 10, (value == 70 ? x + 24 : x + 10) + 24, y, y + 6, 0x28, 0x40, 0xF0, 0xF6, 0x3E82);
         }
     add_chain(out, std::move(chain));
+}
+
+// 0x800602A4: shown = target - (target - from) * n / 4 while n (+6) counts down.
+void SubScreenMenu::animate_800602a4() {
+    static constexpr int kTriplets[10] = {16, 19, 24, 27, 32, 35, 40, 43, 48, 51};
+    const int n = int8_t(ctx_[6]);
+    for (int t : kTriplets) {
+        const int from = ctx_[size_t(t)], target = ctx_[size_t(t + 1)];
+        ctx_[size_t(t + 2)] = uint8_t(n ? target - (((target - from) * n) >> 2) : target);
+    }
+    if (n) ctx_[6] = uint8_t(n - 1);
+}
+
+// 0x80061840: a weapon's five stats (attack, energy, range, rapid, special)
+// from table 0x8008D7E8 (20 bytes per class 0x8008DB08[id], 4 per stat,
+// indexed by the weapon's level byte); 255 = INFINITY (88 + flag).
+void SubScreenMenu::weapon_stats_80061840(int weapon, const SubScreenValues& v) {
+    static constexpr int kTarget[5] = {17, 25, 33, 41, 49}, kFlag[5] = {22, 30, 38, 46, 54};
+    for (int k = 0; k < 5; ++k) {
+        int value = 0, inf = 0;
+        if (weapon >= 0 && weapon < 14) {
+            const uint8_t* cls = exe_.at(uint32_t(0x8008DB08 + 2 * weapon));
+            const int idx = cls ? (cls[0] | (cls[1] << 8)) : 0;
+            const uint8_t* b = exe_.at(uint32_t(0x8008D7E8 + idx * 20 + 4 * k + v.weapon_levels[size_t(weapon)][size_t(k)]));
+            value = b ? *b : 0;
+            if (value == 255) { value = 88; inf = 1; }
+        }
+        ctx_[size_t(kTarget[k])] = uint8_t(value); ctx_[size_t(kFlag[k])] = uint8_t(inf);
+    }
+}
+
+// 0x800602A4 mode 1: five 0x80061C50(164, 158 + 10k, shown, infinity) bars.
+void SubScreenMenu::bars_800602a4_mode1(std::vector<FrontendPacket>& out) {
+    animate_800602a4();
+    static constexpr int kShown[5] = {18, 26, 34, 42, 50}, kFlag[5] = {22, 30, 38, 46, 54};
+    std::vector<FrontendPacket> chain;
+    const auto quad = [&](int x0, int x1, int y0, int y1, uint8_t u0, uint8_t u1, uint8_t v0, uint8_t v1, uint16_t clut) {
+        psxgpu::PolyFt4 q; q.code_rgb = 0x2C808080u;
+        q.x = {{int16_t(x0), int16_t(x1), int16_t(x0), int16_t(x1)}};
+        q.y = {{int16_t(y0), int16_t(y0), int16_t(y1), int16_t(y1)}};
+        q.u = {{u0, u1, u0, u1}}; q.v = {{v0, v0, v1, v1}};
+        q.clut = clut; q.tpage = 0x000C;
+        FrontendPacket p; p.length = 9; p.bucket = 30; psxgpu::write_poly_ft4(p.words.data(), q);
+        chain.push_back(p);
+    };
+    for (int k = 0; k < 5; ++k) {
+        const int x = 164, y = 158 + 10 * k, value = ctx_[size_t(kShown[k])];
+        quad(x, x + value, y, y + 8, 0x48, 0x49, 0x90, 0x98, 0x3E83);         // body
+        quad(x + value, x + value + 4, y, y + 8, 0x4C, 0x50, 0x90, 0x98, 0x3E83);   // cap
+        if (ctx_[size_t(kFlag[k])] && value == 88)                            // INFINITY
+            quad(x + 24, x + 64, y, y + 8, 0x28, 0x50, 0xF8, 0xFF, 0x3E82);
+    }
+    add_chain(out, std::move(chain));
+}
+
+// 0x80060618 Special Weapons (jump table 0x8001134C). Equip changes the arm
+// bytes (+1103 / +368) only in this menu's copy (no weapons in the port yet);
+// 0x8005C218 and the "next" arrow are not ported.
+void SubScreenMenu::special_weapons_80060618(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out) {
+    const uint32_t g = windows_.flags_80098a58;
+    const bool chose = g & 0x40000000u;
+    const auto bars = [&] { bars_800602a4_mode1(out.packets); };
+    switch (options_sub_) {
+    case 0:
+        windows_.clear_80053a30(); layouts_.fill(-1); ctx_[5] = 0;      // + loader 0x8001D440(205)
+        if (!arm_dirty_) { arm_368_ = v.arm_368; flag_1103_ = v.flag_1103; }
+        ++options_sub_;
+        break;
+    case 1:
+        windows_.open_8005382c(0, kBank801f2000, arm_368_ ? 92 : 93);
+        if (!(windows_.flags_80098a58 & 0x04000000u)) windows_.open_8005382c(1, kBank801f2000, 47);
+        if (v.weapon_370 == 0) layouts_[0] = 28;
+        layouts_[1] = 9; layouts_[2] = 23; layouts_[3] = 8;
+        weapon_stats_80061840(0, v);
+        bars();
+        ++options_sub_;
+        break;
+    case 2:
+        if (chose) {
+            const uint8_t c = uint8_t(g);
+            if (c == 0) { out.sounds.push_back({{130, 1}}); options_sub_ = 3; }
+            else if (c == 1) {
+                if (v.weapon_370 == 0) windows_.open_8005382c(0, kBank801f2000, 97);
+                else if (v.energy_1102 <= 0) windows_.open_8005382c(0, kBank801f2000, 96);
+                else if (flag_1103_ == 0) { windows_.open_8005382c(0, kBank801f2000, 94); flag_1103_ = 1; arm_368_ = v.weapon_370; arm_dirty_ = true; }
+                else { windows_.open_8005382c(0, kBank801f2000, 95); flag_1103_ = 0; arm_368_ = 0; arm_dirty_ = true; }
+                options_sub_ = 5;
+            } else if (c == 2) {
+                out.sounds.push_back({{131, 1}});
+                windows_.clear_80053a30(); layouts_.fill(-1);               // + loader 22
+                options_sub_ = 6;
+            }
+        }                                                                   // (0x80060EC0 L1/R1: not ported)
+        bars();
+        break;
+    case 3: {                                                               // browse the weapon grid (slot 1)
+        const int cursor = windows_.slot(1).cursor;                         // byte 0x80098B2D (CANDIDATE source)
+        const int id = cursor ? cursor + 1 : 0;
+        ctx_[4] = uint8_t(cursor); ctx_[5] = uint8_t(id);
+        const bool owned = cursor < 13 && v.story_flag && v.story_flag(uint16_t(1216 + id));
+        if (owned) {
+            layouts_[1] = int16_t(9 + cursor);
+            layouts_[0] = v.weapon_370 == id ? 28 : -1;
+            weapon_stats_80061840(id, v);
+        } else {
+            ctx_[5] = 0; layouts_[1] = 22; layouts_[0] = -1;
+            weapon_stats_80061840(-1, v);
+        }
+        if (windows_.slot_bits_gp4812 & 0x40000u) {                        // 0x80060248
+            for (int t : {16, 19, 24, 27, 32, 35, 40, 43, 48, 51}) ctx_[size_t(t)] = ctx_[size_t(t + 2)];
+            ctx_[6] = 3;
+        }
+        if (chose) {
+            if (cursor == 13) { out.sounds.push_back({{130, 1}}); options_sub_ = 5; }
+            else if (owned) { out.sounds.push_back({{130, 1}}); windows_.open_8005382c(0, kBank801f2000, uint8_t(228 + cursor)); options_sub_ = 4; }
+            else out.sounds.push_back({{131, 1}});
+        } else if (pressed & 0x1008u) { out.sounds.push_back({{131, 1}}); options_sub_ = 5; }
+        bars();
+        break;
+    }
+    case 4: if (!(windows_.flags_80098a58 & 0x08000000u)) options_sub_ = 3; bars(); break;
+    case 5: if (!(windows_.flags_80098a58 & 0x08000000u)) { options_sub_ = 1; ctx_[2] = 0; } bars(); break;
+    default: page_ = 0; options_sub_ = 0; break;                           // 6: loader idle -> menu
+    }
 }
 
 // 0x800600CC Buster Parts (message 29 -> 30, header layout 7, gauges). The
