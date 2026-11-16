@@ -28,8 +28,11 @@ RANGES = [
     (0x8008B67C, 0x8008BA7C),   # messages 0x25..0x32 (title, OPTION, help, sub-screen menu)
     (0x8008C79C, 0x8008C8E4),   # messages 0xDD..0xE2 (sub-screen menu help)
     (0x8008CACC, 0x8008CACC + 4 * 0xE4),   # message pointer table
+    (0x8008BE84, 0x8008C250),   # item names (table 0x8008CCA4 + 4 * id, id -1..63)
     (0x8008E09C, 0x8008E120),   # sub-screen status frame sprite list (layout 6)
-    (0x8008D0D4, 0x8008D0D4 + 4 * 10),     # setting pointer table
+    (0x8008EC6C, 0x8008ECAC),   # list scroll arrow sprite lists (layouts 26, 27)
+    (0x8008ECDC, 0x8008ECDC + 8 * 28),     # layout table {handler, tpage, list}
+    (0x8008D0D4, 0x8008D0D4 + 4 * 30),     # setting pointer table (26 = list max scroll)
     (0x80097F30, 0x80097F90),   # CLUTs, window colours, edge greys
 ]
 
@@ -38,6 +41,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("exe", type=Path)
     ap.add_argument("out", type=Path)
+    ap.add_argument("--sub-key", type=Path, help="SUB_KEY.BIN: adds STFF_FE.MSG at 0x801F2000 (sub-screen item pages)")
     args = ap.parse_args()
     image = args.exe.read_bytes()
     if hashlib.sha256(image).hexdigest() != EXE_SHA:
@@ -51,6 +55,16 @@ def main() -> None:
         ptr = struct.unpack_from("<I", image, 0x800 + 0x8008CACC + 4 * i - TEXT)[0]
         if not (0x8008B67C <= ptr < 0x8008BA7C or 0x8008C79C <= ptr < 0x8008C8E4):
             raise SystemExit(f"cook_option_menu: message 0x{i:02X} at 0x{ptr:08X} outside the excerpt")
+    if args.sub_key:
+        # SUB_KEY.BIN: SUB01.TIM, then "..\MESS\STFF_FE.MSG" (type 0, load
+        # 0x801F2000, 0x38C7 bytes) whose payload follows its 0x800 header.
+        sub = args.sub_key.read_bytes()
+        hdr = sub.find(b"..\\MESS\\STFF_FE.MSG") - 0x40
+        typ, size, _, load = struct.unpack_from("<IIII", sub, hdr)
+        if hdr < 0 or typ != 0 or load != 0x801F2000:
+            raise SystemExit("cook_option_menu: SUB_KEY.BIN has no STFF_FE.MSG at 0x801F2000")
+        out[8:12] = struct.pack("<I", len(RANGES) + 1)
+        out += struct.pack("<II", load, size) + sub[hdr + 0x800:hdr + 0x800 + size]
     out += struct.pack("<I", zlib.crc32(out) & 0xFFFFFFFF)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_bytes(out)

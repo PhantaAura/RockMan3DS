@@ -18,6 +18,7 @@ struct SubScreenValues {
     int16_t life_800b521e = 0, life_max_800b5260 = 0;
     uint32_t zenny_800c1b2c = 0;
     uint32_t play_time_800c1b1c = 0;   // 30 Hz updates
+    std::array<uint8_t, 8> owned_items_800be420{};   // normal items owned (bit 0x80 >> (id & 7))
 };
 
 struct SubScreenFrame {
@@ -42,11 +43,15 @@ public:
 private:
     void status_bar_80061e0c(const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     void status_frame_800640f0(const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
+    void layout_draw(uint16_t list, const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
+    void normal_items_8005ed9c(uint16_t pressed, SubScreenFrame& out);
+    bool exit_check_80060e64(uint16_t pressed, SubScreenFrame& out);
     MessageWindows windows_;
     ExeExcerpt exe_;
     uint8_t page_ = 0;
     uint8_t options_sub_ = 0;
-    bool layout6_ = false;     // layout slot 0 (0x800C3528) running list 6
+    std::array<int16_t, 4> layouts_{{-1, -1, -1, -1}};   // slots 0x800C3528: running list, -1 = off
+    uint8_t item_code_ = 255;  // page +4
     uint32_t frame_ = 0;       // 0x1F800002-style counter for mode-1 blink
 };
 

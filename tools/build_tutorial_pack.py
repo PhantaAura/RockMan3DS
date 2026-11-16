@@ -527,7 +527,7 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                     # (status bar) and 0x3E77 (tile backdrop) for the bottom screen.
                     run(tools,'l3cook_frontend_materials',dat/'DEMO_DAT.BIN',mout/'subscreen.l3mc','3E75000D','3E77000D')
                     subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_option_menu.py'),
-                        str(dat.parent.parent/'ROCK_NEO.EXE'),str(fout/'option.l3ex')],check=True,stdout=subprocess.DEVNULL)
+                        str(dat.parent.parent/'ROCK_NEO.EXE'),str(fout/'option.l3ex')]+(['--sub-key',str(dat/'SUB_KEY.BIN')] if (dat/'SUB_KEY.BIN').is_file() else []),check=True,stdout=subprocess.DEVNULL)
                     manifest['frontend_option']={'format':1,'status':'SOURCE_BACKED_PARTIAL',
                         'font':str((mout/'font.l3mc').relative_to(out)),'messages':str((fout/'option.l3ex').relative_to(out)),
                         'source':'KAIFONT.BIN page (960,256); ROCK_NEO messages 0x8008B67C..0x8008BA7C, interpreter 0x80053B40'}

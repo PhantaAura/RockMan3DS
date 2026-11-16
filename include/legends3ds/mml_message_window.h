@@ -81,6 +81,8 @@ struct MessageSlot {
     uint16_t held = 0, pressed = 0;  // +184, +186
     uint16_t repeat = 0;        // +188
     uint16_t index = 255;       // +194
+    std::array<uint32_t, 8> exec_stack{}; uint16_t exec_depth = 0;   // +76 / +192 (0xE0 / 0x91)
+    std::array<uint32_t, 8> draw_stack{}; uint16_t draw_depth = 0;   // +24 / +190
 };
 
 struct MessageWindowFrame {
@@ -89,6 +91,9 @@ struct MessageWindowFrame {
     std::vector<FrontendPacket> packets;
     std::vector<std::array<uint8_t, 2>> sounds;   // 0x8001A008(id, a1, ...)
     uint32_t unported_opcodes = 0;
+    // Layout calls the list choice 0xDC makes: 0x80063F28(slot) clears a
+    // slot (list = -1), 0x80063FC0(slot, 0x20000 | list) starts one.
+    std::vector<std::pair<int8_t, int16_t>> layout_calls;
 };
 
 class MessageWindows {
@@ -106,6 +111,12 @@ public:
     uint32_t flags_80098a58 = 0;
     // 0x800C1B10 main phase: 4 lets Start cancel a choice (front end: 3).
     int8_t phase_800c1b10 = 3;
+    // Item list state (0xDF/0xDD/0xDC/0xE0): owned normal items, a 64-bit
+    // field at 0x800BE420 (bit 0x80 >> (id & 7) of byte id >> 3).
+    std::array<uint8_t, 8> owned_items_800be420{};
+    std::array<uint8_t, 128> list_800be2f8{};   // list ids, 255 = empty
+    uint8_t list_scroll_gp4408 = 0, list_max_scroll_gp4464 = 0, list_picked_gp4077 = 255;
+    uint32_t list_count_gp4420 = 0, slot_bits_gp4812 = 0, frame_gp4348 = 0;
     OptionSettings settings() const;
     void set_settings(const OptionSettings& s);
     const MessageSlot& slot(int i) const { return slots_[size_t(i)]; }
@@ -124,6 +135,9 @@ private:
     std::array<MessageSlot, 5> slots_{};
     std::array<uint8_t, 16> ram_800c1b60{};   // settings bytes 0x800C1B60..6F
     uint8_t dummy_8009879c = 0;               // pointer table index 7 (Close row)
+    int cur_slot_ = 0;                        // slot the tick is running
+    uint8_t list_at(int index) const { return index >= 0 && index < 128 ? list_800be2f8[size_t(index)] : 255; }
+    uint32_t name_ptr(int8_t id) const { return exe_.u32(uint32_t(0x8008CCA4 + 4 * int32_t(id))); }   // item names
 };
 
 } // namespace l3

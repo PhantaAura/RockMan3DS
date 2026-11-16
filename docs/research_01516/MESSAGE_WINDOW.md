@@ -148,3 +148,28 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
 - Message-tick vs front-end-thread order is CANDIDATE (front end first).
 - The voice calls (0x8001D494/0x8001D878, slot bit 0x40000) are not ported.
 - Not oracle-compared frame by frame (the oracle was in use by other sessions).
+
+## Sub-screen item pages (in progress, 2026-11-15)
+- Pages 2..5 load their data with the loader queue (0x8001D440 cmd 6, file
+  table 0x80082CD0 {sector, bytes, type}): page 2/3 entry 204 = SUB_KEY.BIN
+  (SUB01.TIM + `..\MESS\STFF_FE.MSG` loaded to 0x801F2000, 248 messages),
+  entry 205 = SUB_WPN.BIN (same size; weapon pages). Leaving loads entry 22 =
+  EXIT_SUB.BIN (KOUKA00/KOUKA04/SH1100 effect pages back into VRAM).
+- Normal Items 0x8005ED9C (jump table 0x80011264): 0 clear + load 204;
+  1 open(1, 0x801F2000, 20) = "Normal Items" title, which opens 21 (the list)
+  in slot 2; 2 wait for a pick (item byte 0x80098B30, 255 = cancel, sound
+  131) else 0x80060E64 (exit -> sub 7) / 0x80060EC0 (L1/R1 pages); 3 confirm
+  per item: 64 -> 80/88 (0x8005D95C), 65 -> 58/59/82 (table 0x8008DB08,
+  0x80037604), 66 -> 84, 67 -> 86, else 90 (< 88) / 91; 4 on yes: 64 81 +
+  0x8005D9C4, 65 83 + 0x80037594, 66 85 + 0x8005EBB4(1800), 67 87 +
+  0x8005EBA4(900), sound code 1344 + n (0x8001DCD0 at sub 6); 5/6 wait for
+  the window, back to 2; 7 wait loader -> page 0.
+- List message 21: 0xAC 1A 2C (setting 26 = 0x800989D4 <- 0x2C), 0xDF
+  (exec: list 0x800BE2F8 = 255 x128, scroll gp+4408 = 0; draw: owned item
+  ids from the 64-bit field 0x800BE420, bit 0x80 >> (id & 7)), 20 x 0xDD
+  rows (args left/right/up/down) + 0xE0 (item name) in two columns, 0xDE 03
+  A4, 0xDC. Picks go through 0xE8 = the 0x97 handler (low byte = list id).
+- Handlers still to port: 0xDD draw 0x80058F18 (scrolling list), 0xDE draw
+  0x80056558, 0xDC exec 0x800592FC, 0xE0 0x800594CC/0x80059530, 0xD0
+  0x80057AD0/0x80057B24, 0x9F 0x80055688, 0xA9 0x80055C1C, 0x84 0x80054450,
+  decor 8 exec 0x8005B98C.

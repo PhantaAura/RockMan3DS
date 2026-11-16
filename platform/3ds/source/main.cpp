@@ -5078,12 +5078,12 @@ int main() {
         // original shows it on the TV). Optional: missing data = no menu.
         std::unique_ptr<l3::SubScreenMenu> subscreen;
         l3::MessageFont subscreen_pages;
-        std::vector<unsigned char> subscreen_rgb;
+        std::vector<unsigned char> subscreen_rgb, subscreen_rgb2;   // PS1-style double buffer (never cleared)
         try {
             subscreen=std::make_unique<l3::SubScreenMenu>(l3::load_exe_excerpt(read_binary(data_path("frontend/option.l3ex"))));
             subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/font.l3mc")),true));
             subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/subscreen.l3mc")),true));
-            subscreen_rgb.assign(320u*240u*3u,0);
+            subscreen_rgb.assign(320u*240u*3u,0);subscreen_rgb2.assign(320u*240u*3u,0);
             boot_log(MML_BOOT_DATA,"SUBSCREEN=1 option.l3ex font.l3mc subscreen.l3mc (Start menu on the bottom screen)");
         } catch(const std::exception& error) {
             subscreen.reset();
@@ -5371,7 +5371,7 @@ int main() {
                session.camera().owner==l3::RuntimeCameraOwner::Gameplay){
                 subscreen_open=true;subscreen->windows().set_settings(g_option_settings);subscreen->enter();subscreen_pending=0;subscreen_clock.reset();
                 down&=~u32(KEY_START);held&=~u32(KEY_START);
-                std::fill(subscreen_rgb.begin(),subscreen_rgb.end(),0);
+                std::fill(subscreen_rgb.begin(),subscreen_rgb.end(),0);std::fill(subscreen_rgb2.begin(),subscreen_rgb2.end(),0);
                 hardware_test_trace("# subscreen,frame=%lu,open=1",(unsigned long)session.frame_counter());
             }
             if(subscreen_open){
@@ -5403,8 +5403,11 @@ int main() {
                     for(const auto& snd:frame.sounds)(void)l3::enqueue_source_audio_8001a008(session.source_audio_queue(),snd[0],snd[1],0);
                     if(sfx.ready()){(void)sfx.consume(session.source_audio_queue(),l3::SourceSoundListener{});sfx.tick(44100u/30u);}
                     else l3::finish_source_audio_queue_batch_8001a1d0(session.source_audio_queue());
-                    (void)l3::rasterize_message_windows(frame.packets,subscreen_pages,subscreen_rgb.data());
-                    mockup_hud_set_fullscreen(subscreen_rgb.data(),++subscreen_hash);
+                    // The sub-screen never clears: each update draws over the
+                    // buffer from two updates earlier (the PS1 double buffer).
+                    auto& target=(++subscreen_hash&1)?subscreen_rgb2:subscreen_rgb;
+                    (void)l3::rasterize_message_windows(frame.packets,subscreen_pages,target.data());
+                    mockup_hud_set_fullscreen(target.data(),subscreen_hash);
                     if(frame.settings_applied){
                         // 0x80060BFC: the control profile follows the Turn byte.
                         g_option_settings=subscreen->windows().settings();
