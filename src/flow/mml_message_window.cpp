@@ -594,9 +594,15 @@ MessageWindowFrame MessageWindows::tick_80053b40(uint16_t held, uint16_t pressed
     ++frame_gp4348;
     if (flags_80098a58 & 0x00400000u) return out;
     flags_80098a58 &= 0x3043FFFFu;
+    cursors_gp4808 = 0;
+    // 0x800541D4: after each slot (open or not) slots 0..3 OR their cursor
+    // (+113, lb) into byte 0x80098B2C + n.
+    const auto keep_cursor = [&](int n) {
+        if (n < 4) cursors_gp4808 |= uint32_t(int32_t(slots_[size_t(n)].cursor)) << (8 * n);
+    };
     for (int n = 0; n < 5; ++n) {
         MessageSlot& s = slots_[size_t(n)];
-        if (!(s.flags & 0x80000000u)) { flags_80098a58 &= ~(0x10000u >> s.pad_owner); continue; }
+        if (!(s.flags & 0x80000000u)) { flags_80098a58 &= ~(0x10000u >> s.pad_owner); keep_cursor(n); continue; }
         flags_80098a58 |= 0x80000000u | (kSlotBit >> n);
         if (!(flags_80098a58 & 0x00040000u) && !(flags_80098a58 & (0x10000u >> s.pad_owner))) { s.held = held; s.pressed = pressed; }
         else s.held = s.pressed = 0;
@@ -623,7 +629,7 @@ MessageWindowFrame MessageWindows::tick_80053b40(uint16_t held, uint16_t pressed
             if (more) continue;
             if (s.speed != 0 || (s.flags & 0x10000000u)) break;
         }
-        if (unported) { ++out.unported_opcodes; s.flags = 0; continue; }
+        if (unported) { ++out.unported_opcodes; s.flags = 0; keep_cursor(n); continue; }
         // Draw pass.
         s.brightness = 128; s.pen_x = s.x; s.pen_y = int16_t(s.y + s.scroll);
         s.color = s.default_color; s.row_draw = 0; s.draw = s.page;
@@ -649,6 +655,7 @@ MessageWindowFrame MessageWindows::tick_80053b40(uint16_t held, uint16_t pressed
             ++s.draw;
         }
         if (s.flags & 0x04000000u) draw_frame(s, out);
+        keep_cursor(n);
         s.flags &= 0xAF7FFFFFu;
     }
     // 0x80054240: the font draw mode at OT entry 31.

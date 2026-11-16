@@ -144,14 +144,14 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
                 windows_.clear_80053a30();
                 out.settings_applied = true;                   // 0x800425FC(player, 0x800C1B64)
                 ++options_sub_;
-            }                                                  // else 0x80060EC0 (L1/R1 pages: not ported)
+            } else pages_80060ec0(pressed, out);              // 0x80060C34
             break;
         default: page_ = 0; options_sub_ = 0; break;           // sw zero, 0(s0)
         }
         break;
     case 2: normal_items_8005ed9c(pressed, out); break;
     case 3: special_items_8005f210(pressed, out); break;
-    case 4: buster_parts_800600cc(v, out); break;
+    case 4: buster_parts_800600cc(pressed, v, out); break;
     case 5: special_weapons_80060618(pressed, v, out); break;
     case 8:                                                    // 0x80060DB8
         windows_.clear_80053a30(); layouts_.fill(-1);
@@ -181,6 +181,18 @@ bool SubScreenMenu::exit_check_80060e64(uint16_t pressed, SubScreenFrame& out) {
     out.sounds.push_back({{131, 1}});
     windows_.clear_80053a30(); layouts_.fill(-1);
     return true;
+}
+
+// 0x80060EC0: L1 / R1 (pressed 0x400 / 0x800, edge word 0x800C0C2A) step
+// the item pages 2..6 (L1 first, wrapping 2 <-> 6): sound 130, windows and
+// layouts cleared, ctx +1 (sub-state) and +2..3 zeroed.
+void SubScreenMenu::pages_80060ec0(uint16_t pressed, SubScreenFrame& out) {
+    if (!(pressed & 0x0C00u)) return;
+    out.sounds.push_back({{130, 1}});
+    windows_.clear_80053a30(); layouts_.fill(-1);
+    if (pressed & 0x0400u) { if (int8_t(--page_) < 2) page_ = 6; }
+    else if (int8_t(++page_) >= 7) page_ = 2;
+    options_sub_ = 0; ctx_[2] = ctx_[3] = 0;
 }
 
 // 0x8006430C: the special item icons of a layout list (see MESSAGE_WINDOW.md).
@@ -246,6 +258,7 @@ void SubScreenMenu::special_items_8005f210(uint16_t pressed, SubScreenFrame& out
     case 2:
         if (chose) { item_code_ = 0; out.unported_opcodes += 0; }  // use dispatch not ported
         else if (exit_check_80060e64(pressed, out)) { page_ = 0; options_sub_ = 0; }   // sw zero, 0(s0)
+        else pages_80060ec0(pressed, out);                         // 0x8005F31C
         break;
     default: options_sub_ = 2; break;
     }
@@ -384,11 +397,11 @@ void SubScreenMenu::special_weapons_80060618(uint16_t pressed, const SubScreenVa
                 windows_.clear_80053a30(); layouts_.fill(-1);               // + loader 22
                 options_sub_ = 6;
             }
-        }                                                                   // (0x80060EC0 L1/R1: not ported)
+        }
         bars();
         break;
     case 3: {                                                               // browse the weapon grid (slot 1)
-        const int cursor = windows_.slot(1).cursor;                         // byte 0x80098B2D (CANDIDATE source)
+        const int cursor = uint8_t(windows_.cursors_gp4808 >> 8);         // byte 0x80098B2D (slot 1 cursor)
         const int id = cursor ? cursor + 1 : 0;
         ctx_[4] = uint8_t(cursor); ctx_[5] = uint8_t(id);
         const bool owned = cursor < 13 && v.story_flag && v.story_flag(uint16_t(1216 + id));
@@ -409,6 +422,7 @@ void SubScreenMenu::special_weapons_80060618(uint16_t pressed, const SubScreenVa
             else if (owned) { out.sounds.push_back({{130, 1}}); windows_.open_8005382c(0, kBank801f2000, uint8_t(228 + cursor)); options_sub_ = 4; }
             else out.sounds.push_back({{131, 1}});
         } else if (pressed & 0x1008u) { out.sounds.push_back({{131, 1}}); options_sub_ = 5; }
+        else pages_80060ec0(pressed, out);                                  // 0x80060A60
         bars();
         break;
     }
@@ -421,7 +435,7 @@ void SubScreenMenu::special_weapons_80060618(uint16_t pressed, const SubScreenVa
 // 0x800600CC Buster Parts (message 29 -> 30, header layout 7, gauges). The
 // Equip list / Sort work on the port's parts (none yet); 0x80061C50 (the
 // equip list's part bars) and 0x80062118 are not ported.
-void SubScreenMenu::buster_parts_800600cc(const SubScreenValues& v, SubScreenFrame& out) {
+void SubScreenMenu::buster_parts_800600cc(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out) {
     switch (options_sub_) {
     case 0: windows_.clear_80053a30(); layouts_.fill(-1); ++options_sub_; break;   // + loader 0x8001D440(205)
     case 1:
@@ -440,7 +454,8 @@ void SubScreenMenu::buster_parts_800600cc(const SubScreenValues& v, SubScreenFra
                 ctx_[6] = 3;
             }
         }
-        gauges_800605dc(v, out.packets);                                    // (0x80060EC0 L1/R1: not ported)
+        gauges_800605dc(v, out.packets);
+        pages_80060ec0(pressed, out);                                       // 0x8006020C
         break;
     }
     default: page_ = 0; options_sub_ = 0; break;
@@ -461,7 +476,8 @@ void SubScreenMenu::normal_items_8005ed9c(uint16_t pressed, SubScreenFrame& out)
                 windows_.flags_80098a58 |= 0x4000u;
                 ++options_sub_;
             } else out.sounds.push_back({{131, 1}});
-        } else if (exit_check_80060e64(pressed, out)) options_sub_ = 7;   // (0x80060EC0 L1/R1 pages: not ported)
+        } else if (exit_check_80060e64(pressed, out)) options_sub_ = 7;
+        else pages_80060ec0(pressed, out);                            // 0x8005EED0
         break;
     case 3:
         // Items 0..3 (codes 64..67) have their own use flows (0x8005D95C,

@@ -56,7 +56,8 @@ private:
     void layout_draw(uint16_t list, const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     void normal_items_8005ed9c(uint16_t pressed, SubScreenFrame& out);
     void special_items_8005f210(uint16_t pressed, SubScreenFrame& out);
-    void buster_parts_800600cc(const SubScreenValues& v, SubScreenFrame& out);
+    void buster_parts_800600cc(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
+    void pages_80060ec0(uint16_t pressed, SubScreenFrame& out);
     void gauges_800605dc(const SubScreenValues& v, std::vector<FrontendPacket>& out);
     void special_weapons_80060618(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
     void weapon_stats_80061840(int weapon, const SubScreenValues& v);
