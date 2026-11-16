@@ -150,7 +150,7 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
         }
         break;
     case 2: normal_items_8005ed9c(pressed, v, out); break;
-    case 3: special_items_8005f210(pressed, out); break;
+    case 3: special_items_8005f210(pressed, v, out); break;
     case 4: buster_parts_800600cc(pressed, v, out); break;
     case 5: special_weapons_80060618(pressed, v, out); break;
     case 8:                                                    // 0x80060DB8
@@ -249,7 +249,7 @@ void SubScreenMenu::icons_8006430c(uint32_t first, const SubScreenValues& v, std
 // 0x8005F210 Special Items: the grid (message 26) and icons (layout 2). The
 // use dispatch (table 0x80011284, story events) is not ported: a pick
 // returns to the grid (CANDIDATE).
-void SubScreenMenu::special_items_8005f210(uint16_t pressed, SubScreenFrame& out) {
+void SubScreenMenu::special_items_8005f210(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out) {
     const bool chose = windows_.flags_80098a58 & 0x40000000u;
     switch (options_sub_) {
     case 0: windows_.clear_80053a30(); layouts_.fill(-1); ++options_sub_; break;   // + loader 0x8001D440(204)
@@ -259,11 +259,119 @@ void SubScreenMenu::special_items_8005f210(uint16_t pressed, SubScreenFrame& out
         ++options_sub_;
         break;
     case 2:
-        if (chose) { item_code_ = 0; out.unported_opcodes += 0; }  // use dispatch not ported
+        if (chose) { ++options_sub_; item_code_ = uint8_t(windows_.cursors_gp4808 >> 16); }   // byte 0x80098B2E
         else if (exit_check_80060e64(pressed, out)) { page_ = 0; options_sub_ = 0; }   // sw zero, 0(s0)
         else pages_80060ec0(pressed, out);                         // 0x8005F31C
         break;
+    case 3: special_use_80011284(v, out); break;                   // 0x8005F32C
     default: options_sub_ = 2; break;
+    }
+}
+
+// 0x8005F32C: the use dispatch (table 0x80011284, code = item_code_, step =
+// ctx +2). Every handler ends with "wait for window 0 to close, then sub 2".
+void SubScreenMenu::special_use_80011284(const SubScreenValues& v, SubScreenFrame& out) {
+    uint8_t& step = ctx_[2];
+    const auto flag = [&](int f) { return v.story_flag && v.story_flag(uint16_t(f)); };
+    const auto open = [&](uint8_t id) { windows_.open_8005382c(0, kBank801f2000, id); };
+    const auto snd = [&](uint8_t id) { out.sounds.push_back({{id, 1}}); };
+    const auto closed = [&] { return !(windows_.flags_80098a58 & 0x08000000u); };
+    const auto done = [&] { options_sub_ = 2; step = 0; };
+    const uint8_t* map = exe_.at(0x8008DAF4u + item_code_);              // code -> owned flag 1312 + n
+    const int own = map ? 1312 + *map : -1;
+    const uint8_t c = item_code_;
+    if (c >= 18) return;
+    if (c == 0) {                                                        // 0x8005F3D0: life from the reserve
+        const int life = v.life_800b521e, max = v.life_max_800b5260, res = v.byte_800c1b8c;
+        if (step == 0) {
+            if (!flag(1316)) { snd(131); step += 2; }
+            else if (life == max) { snd(130); open(64); step += 2; }
+            else if (res == 0) { snd(130); open(65); step += 2; }
+            else { open(66); step += 1; }
+        } else if (step == 1) {
+            const uint32_t g = windows_.flags_80098a58;
+            if (!(g & 0x40000000u)) return;
+            if (!uint8_t(g)) {
+                const int need = (max - (uint16_t(life) & 0xF0)) >> 4;
+                if (res < need) { open(68); out.life_800b521e = (uint16_t(life) & 0xF0) + res * 16; out.byte_800c1b8c = 0; }
+                else { open(67); out.byte_800c1b8c = res - need; out.life_800b521e = max; }
+            }
+            step += 1;
+        } else if (step == 2 && closed()) done();
+        return;
+    }
+    if (c <= 4) {                                                        // 0x8005F608: equipment toggles
+        const bool on1 = v.byte_800b531a != 0, on2 = v.byte_800b531b & 2, on3 = v.byte_800b531b & 1, on4 = v.byte_800b531c != 0;
+        if (step == 0) {
+            if (!flag(own)) { snd(131); step += 2; return; }
+            open(c == 1 ? (on1 ? 51 : 50) : c == 2 ? (on2 ? 57 : 56) : c == 3 ? (on3 ? 53 : 52) : (on4 ? 73 : 72));
+            step += 1;
+        } else if (step == 1) {
+            const uint32_t g = windows_.flags_80098a58;
+            if (!(g & 0x40000000u)) return;
+            if (!uint8_t(g)) {
+                if (c == 1) { open(on1 ? 61 : 60); out.byte_800b531a = v.byte_800b531a ^ 1; }
+                else if (c == 2) { open(on2 ? 63 : 62); out.byte_800b531b = v.byte_800b531b ^ 2; }
+                else if (c == 3) { open(on3 ? 55 : 54); out.byte_800b531b = v.byte_800b531b ^ 1; }
+                else if (on4) { open(75); out.byte_800b531c = 0; }
+                else { open(74); out.byte_800b531c = flag(1338) + flag(1339) + flag(1340); }
+            }
+            step += 1;
+        } else if (step == 2 && closed()) done();
+        return;
+    }
+    if (c == 12) {                                                       // 0x8005FBB4: the warp item (table 0x800112CC)
+        if (step == 0) {
+            if (flag(own)) { snd(130); open(76); step += 1; }
+            else { snd(131); done(); }
+        } else if (step == 1) {
+            int dest = -1, sub = 0;
+            const int r = warp_target_8005fde4(v, dest, sub);
+            if (r == 0) { open(77); warp_ = int16_t(dest); warp_sub_ = int16_t(sub); step += 2; }
+            else { open(r == 1 ? 78 : 79); step += 1; }
+        } else if (step == 2) { if (closed()) done(); }
+        else if (step == 3) {
+            // 0x8005FD18: once closed, 0x8003B140, area bytes +80/+81 <- +121/+122,
+            // 0x80017C30(23), 0x8001D854(16) (not ported: the caller warps).
+            if (closed()) { out.warp_800c1b60 = warp_; out.warp_800c1b61 = warp_sub_; step += 1; }
+        } else if (step == 4) {
+            // 0x8005FD6C: stage reload calls, then 0x800C1B10 = 5, +1 = 2 (leave the sub-screen).
+            windows_.clear_80053a30(); layouts_.fill(-1);
+            out.exited = true; page_ = 0; options_sub_ = 0; step = 0;
+        }
+        return;
+    }
+    if (step == 0) {                                                     // 0x8005FAE4 / 0x8005FFBC: info
+        bool have;
+        uint8_t id;
+        if (c >= 14) { have = flag(own) || flag(own + 1) || flag(own + 2); id = 71; }
+        else { have = flag(own); id = c == 5 ? 69 : c <= 8 ? 70 : 71; ctx_[5] = id; }
+        if (have) { snd(130); open(id); } else snd(131);
+        step += 1;
+    } else if (closed()) done();
+}
+
+// 0x8005FDE4 on 0x800C1B10: 0 = warp to +121 / +122, 1 = not here, 2 = not
+// yet (byte +120 0, flag missing, or the sub-area does not allow it). Table
+// 0x800112E4 by area (+80) - 3.
+int SubScreenMenu::warp_target_8005fde4(const SubScreenValues& v, int& dest, int& sub) const {
+    const auto flag = [&](int f) { return v.story_flag && v.story_flag(uint16_t(f)); };
+    if (!v.byte_800c1b88) return 2;
+    const int area = v.area_800c1b60, s81 = v.area_800c1b61;
+    switch (area) {
+    case 3: case 27:
+        if (!flag(792) || s81 >= 3) return 2;
+        dest = flag(85) ? 27 : 3; sub = 1; return 0;
+    case 5: if (!flag(793)) return 2; dest = 5; sub = 0; return 0;
+    case 6: case 15: if (!flag(794)) return 2; dest = 6; sub = 0; return 0;
+    case 8:
+        if (!flag(795)) return 2;
+        if (s81 >= 3 && s81 != 5) return 2;
+        dest = 8; sub = 0; return 0;
+    case 12: if (!flag(796) || s81 != 0) return 2; dest = 12; sub = 0; return 0;
+    case 18: if (!flag(799)) return 2; dest = 18; sub = 0; return 0;
+    case 25: if (!flag(797) || s81 < 2) return 2; dest = 25; sub = 3; return 0;
+    default: return 1;
     }
 }
 

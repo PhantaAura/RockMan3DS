@@ -5421,6 +5421,11 @@ int main() {
                     if(frame.item_used)   // effects 0x8005D9C4 / +1274 / 0x800BBD94/96 have no port subsystem yet
                         hardware_test_trace("# subscreen,item_used=%u,energy=%d,t94=%u,t96=%u",unsigned(frame.item_used),
                             int(frame.weapon_energy_1274),unsigned(frame.timer_800bbd94),unsigned(frame.timer_800bbd96));
+                    if(frame.life_800b521e>=0||frame.byte_800b531a>=0||frame.byte_800b531b>=0||frame.byte_800b531c>=0||frame.warp_800c1b60>=0)
+                        // Special Items use: life / reserve, equipment bytes, warp target (no port subsystem yet).
+                        hardware_test_trace("# subscreen,special_use,life=%d,reserve=%d,531a=%d,531b=%d,531c=%d,warp=%d/%d",
+                            int(frame.life_800b521e),int(frame.byte_800c1b8c),int(frame.byte_800b531a),int(frame.byte_800b531b),
+                            int(frame.byte_800b531c),int(frame.warp_800c1b60),int(frame.warp_800c1b61));
                     if(frame.settings_applied){
                         // 0x80060BFC: the control profile follows the Turn byte.
                         g_option_settings=subscreen->windows().settings();

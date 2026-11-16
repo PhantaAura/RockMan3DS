@@ -98,6 +98,11 @@ ExeExcerpt authored() {
                          0x96, 0x00, 0x11, 0xED, 0x15, 0x86, 0x96, 0x11, 0x00, 0xED, 0x16,
                          0x97, 0x80, 0xFF, 0xFF, 0x8A, 0x01, 0x00, 0x95});
     bank_msg(85, 0x440, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x16, 0x00, 0x20, 0x00, 0x17, 0x02, 0x93, 0x02, 0x04, 0x15, 0x84, 0x03, 0x00});
+    // Special item 0 use: 66 = Yes / No, 68 = closes itself.
+    bank_msg(66, 0x460, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x46, 0x00, 0x54, 0x00, 0x0F, 0x02, 0x93, 0x02, 0x04,
+                         0x96, 0x00, 0x11, 0xED, 0x15, 0x86, 0x96, 0x11, 0x00, 0xED, 0x16,
+                         0x97, 0x80, 0xFF, 0xFF, 0x8A, 0x01, 0x00, 0x95});
+    bank_msg(68, 0x4A0, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x16, 0x00, 0x20, 0x00, 0x17, 0x02, 0x93, 0x02, 0x04, 0x15, 0x84, 0x03, 0x00});
     e.ranges = {widths, decor, colors, table, options, frame, msg, bank, layouts};
     return e;
 }
@@ -265,6 +270,38 @@ int main() {
         }
         if (f.clear_story_flag >= 0) cleared = f.clear_story_flag;
         assert(used && cleared == 1346 && n.options_substate() == 2);
+    }
+    {   // Special item 0 (0x8005F3D0): life 32/80, reserve 2 -> message 68, life 64, reserve 0.
+        SubScreenMenu sp(authored());
+        SubScreenValues sv = v;
+        sv.life_800b521e = 32; sv.life_max_800b5260 = 80; sv.byte_800c1b8c = 2;
+        sv.story_flag = [](uint16_t fl) { return fl == 1316 || fl == 0x527; };
+        sp.enter();
+        for (int i = 0; i < 7; ++i) f = sp.update(0, 0, sv);
+        f = sp.update(0, 0x40, sv); f = sp.update(0, 0x4000, sv); f = sp.update(0, 0, sv);
+        assert(sp.page() == 3);
+        for (int i = 0; i < 6; ++i) f = sp.update(0, 0, sv);
+        f = sp.update(0, 0x4000, sv);                                  // Cross on cell 0
+        for (int i = 0; i < 10; ++i) f = sp.update(0, 0, sv);
+        assert(sp.options_substate() == 3);
+        int life = -1, res = -1;
+        f = sp.update(0, 0x4000, sv);                                  // Yes
+        for (int i = 0; i < 40 && sp.options_substate() == 3; ++i) {
+            if (f.life_800b521e >= 0) { life = f.life_800b521e; res = f.byte_800c1b8c; }
+            f = sp.update(0, 0, sv);
+        }
+        assert(life == 64 && res == 0 && sp.options_substate() == 2);
+        // Warp table: area 5 needs flag 793; area 3 goes to 27 once flag 85 is set; others "not here".
+        SubScreenValues wv = v;
+        int dest = -1, sub = -1;
+        wv.byte_800c1b88 = 1; wv.area_800c1b60 = 5;
+        wv.story_flag = [](uint16_t fl) { return fl == 793; };
+        assert(sp.warp_target_8005fde4(wv, dest, sub) == 0 && dest == 5 && sub == 0);
+        wv.area_800c1b60 = 3; wv.story_flag = [](uint16_t fl) { return fl == 792 || fl == 85; };
+        assert(sp.warp_target_8005fde4(wv, dest, sub) == 0 && dest == 27 && sub == 1);
+        wv.area_800c1b61 = 3; assert(sp.warp_target_8005fde4(wv, dest, sub) == 2);
+        wv.area_800c1b60 = 4; assert(sp.warp_target_8005fde4(wv, dest, sub) == 1);
+        wv.byte_800c1b88 = 0; assert(sp.warp_target_8005fde4(wv, dest, sub) == 2);
     }
     {   // L1/R1 0x80060EC0: from Normal Items (page 2) L1 wraps to 6, R1 wraps 6 -> 2.
         SubScreenMenu n(authored());

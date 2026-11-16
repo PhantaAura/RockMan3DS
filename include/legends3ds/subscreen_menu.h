@@ -31,6 +31,8 @@ struct SubScreenValues {
     std::array<std::array<int8_t, 5>, 14> weapon_levels{};
     std::array<int16_t, 14> weapon_energy_1274{};   // +1274 + 8 * id: current energy
     uint8_t byte_800bbd87 = 0;                       // item 64 state (0x8005D95C)
+    // Warp item (0x8005FDE4 on 0x800C1B10): area +80, sub-area +81, enable +120.
+    int8_t area_800c1b60 = 0, area_800c1b61 = 0; uint8_t byte_800c1b88 = 0;
 };
 
 struct SubScreenFrame {
@@ -50,6 +52,10 @@ struct SubScreenFrame {
     int16_t weapon_energy_1274 = -1;
     uint16_t timer_800bbd94 = 0, timer_800bbd96 = 0;
     int16_t clear_story_flag = -1;
+    // Special Items use (0x8005F32C): new values for the caller, -1 = unchanged.
+    int32_t life_800b521e = -1, byte_800c1b8c = -1;
+    int16_t byte_800b531a = -1, byte_800b531b = -1, byte_800b531c = -1;
+    int16_t warp_800c1b60 = -1, warp_800c1b61 = -1;   // warp item: destination area / sub-area
 };
 
 class SubScreenMenu {
@@ -62,6 +68,8 @@ public:
     uint8_t options_substate() const { return options_sub_; }
     MessageWindows& windows() { return windows_; }
     uint16_t scroll_1f800002 = 0;
+    // 0x8005FDE4: warp item destination (0 = go to dest/sub, 1 = not here, 2 = not yet).
+    int warp_target_8005fde4(const SubScreenValues& v, int& dest, int& sub) const;
 
 private:
     void status_bar_80061e0c(const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
@@ -69,7 +77,8 @@ private:
     void layout_draw(uint16_t list, const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     void normal_items_8005ed9c(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
     int weapon_energy_max_80037604(const SubScreenValues& v) const;
-    void special_items_8005f210(uint16_t pressed, SubScreenFrame& out);
+    void special_use_80011284(const SubScreenValues& v, SubScreenFrame& out);
+    void special_items_8005f210(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
     void buster_parts_800600cc(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
     void pages_80060ec0(uint16_t pressed, SubScreenFrame& out);
     void gauges_800605dc(const SubScreenValues& v, std::vector<FrontendPacket>& out);
@@ -85,6 +94,7 @@ private:
     uint8_t options_sub_ = 0;
     std::array<int16_t, 4> layouts_{{-1, -1, -1, -1}};   // slots 0x800C3528: running list, -1 = off
     uint8_t item_code_ = 255;  // page +4
+    int16_t warp_ = -1, warp_sub_ = 0;   // +121 / +122 of 0x800C1B10 (warp destination)
     uint16_t used_flag_ = 0;   // page +12: story flag 1344 + item, cleared after use
     // ctx 0x800A38F0 +6 (animation count) and +16..+54 (stat triplets
     // {from, target, shown}: attack now/with, energy, range, rapid).

@@ -254,8 +254,22 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
   0x800BE420, so the item is used up). The port reports the effects in
   SubScreenFrame; main.cpp clears the flag and logs the rest (no subsystem
   for 0x800BBD94/96 / 0x8005D528 / weapon energy yet).
-- Special Items use dispatch 0x80011284 (18 codes -> 0x8005F3D0 / F608 /
-  FAE4 (codes 5..13 with ctx +5 = 69/70/71) / FBB4 / FFBC, ~780 instructions:
-  messages, story flags, sounds and a few world calls 0x8003B140, 0x8001F3C8,
-  0x8001F23C, 0x8001D854, 0x8001B33C/B314, 0x80019C20, 0x80017C30,
-  0x80016D64): not ported yet.
+- Special Items use (ported): sub 2 pick -> code = byte 0x80098B2E (slot 2
+  cursor), sub 3 dispatch 0x80011284, step = ctx +2, owned flag 1312 +
+  0x8008DAF4[code]. Code 0 0x8005F3D0: no flag 1316 -> 131; life == max ->
+  64; reserve 0x800C1B8C == 0 -> 65; else 66 (Yes/No): need = (max - (life &
+  0xF0)) >> 4; reserve < need -> 68, life = (life & 0xF0) + 16 * reserve,
+  reserve 0; else 67, reserve -= need, life = max. Codes 1..4 0x8005F608:
+  50/51, 56/57, 52/53, 72/73 by 0x800B531A, 531B & 2, 531B & 1, 531C; Yes
+  toggles (60/61, 62/63, 54/55; 531C: 75 -> 0, 74 -> flags 1338 + 1339 +
+  1340). Codes 5..11, 13 0x8005FAE4: message 69 / 70 / 71 if owned. Codes
+  14..17 0x8005FFBC: 71 if any of the three flags. Code 12 (warp) 0x8005FBB4
+  (table 0x800112CC): 76, then 0x8005FDE4 on 0x800C1B10 (+120 0 -> 2; by
+  area +80: 3/27 flag 792 and +81 < 3 -> 27 if flag 85 else 3, sub 1; 5 flag
+  793; 6/15 flag 794 -> 6; 8 flag 795 and +81 < 3 or == 5; 12 flag 796 and
+  +81 == 0; 18 flag 799; 25 flag 797 and +81 >= 2 -> sub 3; else 1): 0 -> 77
+  then warp (0x8003B140, +80/+81 <- +121/+122, 0x80017C30(23), 0x8001D854(16),
+  reload calls, 0x800C1B10 = 5 / +1 = 2); 1 -> 78; 2 -> 79. The port reports
+  life / reserve / equipment bytes / warp target in SubScreenFrame; main.cpp
+  logs them (no session setters or warp loader hooked up yet: CANDIDATE
+  gameplay side).
