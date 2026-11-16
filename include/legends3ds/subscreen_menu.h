@@ -23,6 +23,8 @@ struct SubScreenValues {
     std::function<bool(uint16_t)> story_flag;          // 0x8001DA58 (special item icons)
     uint8_t byte_800c1b8c = 0, byte_800c1b8d = 0;      // counters shown as digits (modes 5..8)
     uint8_t byte_800b531a = 0, byte_800b531b = 0, byte_800b531c = 0;   // player work (modes 9..12)
+    std::array<uint8_t, 4> equipped_parts_800b5600{};   // buster parts (part + 1, 0 = empty)
+    std::array<uint8_t, 64> owned_parts_800b5604{};
 };
 
 struct SubScreenFrame {
@@ -50,6 +52,8 @@ private:
     void layout_draw(uint16_t list, const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     void normal_items_8005ed9c(uint16_t pressed, SubScreenFrame& out);
     void special_items_8005f210(uint16_t pressed, SubScreenFrame& out);
+    void buster_parts_800600cc(const SubScreenValues& v, SubScreenFrame& out);
+    void gauges_800605dc(const SubScreenValues& v, std::vector<FrontendPacket>& out);
     void icons_8006430c(uint32_t first, const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     bool exit_check_80060e64(uint16_t pressed, SubScreenFrame& out);
     MessageWindows windows_;
@@ -58,6 +62,9 @@ private:
     uint8_t options_sub_ = 0;
     std::array<int16_t, 4> layouts_{{-1, -1, -1, -1}};   // slots 0x800C3528: running list, -1 = off
     uint8_t item_code_ = 255;  // page +4
+    // ctx 0x800A38F0 +6 (animation count) and +16..+54 (stat triplets
+    // {from, target, shown}: attack now/with, energy, range, rapid).
+    std::array<uint8_t, 64> ctx_{};
     uint32_t frame_ = 0;       // 0x1F800002-style counter for mode-1 blink
 };
 

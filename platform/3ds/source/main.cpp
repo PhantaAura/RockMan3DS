@@ -5086,6 +5086,9 @@ int main() {
             // SUB01.TIM (SUB_KEY.BIN): the Special Items grid and icons. Optional.
             try{subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/subscreen_key.l3mc")),true));}
             catch(const std::exception&){boot_log(MML_BOOT_DATA,"SUBSCREEN_KEY=0 subscreen_key.l3mc absent");}
+            // SUB02U.TIM (SUB_WPN.BIN): the Buster Parts header, labels and gauges. Optional.
+            try{subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/subscreen_wpn.l3mc")),true));}
+            catch(const std::exception&){boot_log(MML_BOOT_DATA,"SUBSCREEN_WPN=0 subscreen_wpn.l3mc absent");}
             subscreen_rgb.assign(320u*240u*3u,0);subscreen_rgb2.assign(320u*240u*3u,0);
             boot_log(MML_BOOT_DATA,"SUBSCREEN=1 option.l3ex font.l3mc subscreen.l3mc (Start menu on the bottom screen)");
         } catch(const std::exception& error) {

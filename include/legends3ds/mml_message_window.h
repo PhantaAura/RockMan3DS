@@ -116,6 +116,10 @@ public:
     // field at 0x800BE420 (bit 0x80 >> (id & 7) of byte id >> 3).
     std::array<uint8_t, 8> owned_items_800be420{};
     std::function<bool(uint16_t)> story_flag;   // 0x8001DA58 for 0x9C (unset: all clear)
+    // Buster parts (player work 0x800B51B0 + 1104 / + 1108): equipped slots
+    // (part + 1, 0 = empty) and the owned list, for 0xE1.
+    std::array<uint8_t, 4> equipped_parts_800b5600{};
+    std::array<uint8_t, 64> owned_parts_800b5604{};
     std::array<uint8_t, 128> list_800be2f8{};   // list ids, 255 = empty
     uint8_t list_scroll_gp4408 = 0, list_max_scroll_gp4464 = 0, list_picked_gp4077 = 255;
     uint32_t list_count_gp4420 = 0, slot_bits_gp4812 = 0, frame_gp4348 = 0;

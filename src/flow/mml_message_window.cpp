@@ -1,6 +1,7 @@
 #include "legends3ds/mml_message_window.h"
 #include "legends3ds/endian_io.h"
 #include "legends3ds/l3map.h"
+#include <algorithm>
 #include <stdexcept>
 
 namespace l3 {
@@ -63,8 +64,15 @@ uint8_t& MessageWindows::mem(uint32_t addr) {
     if (addr >= 0x800C1B60u && addr < 0x800C1B70u) return ram_800c1b60[addr - 0x800C1B60u];
     if (addr == 0x8009879Cu) return dummy_8009879c;
     if (addr == 0x800989D4u) return list_max_scroll_gp4464;          // gp+4464 (settings entry 26)
+    if (addr == 0x8009899Cu) return list_scroll_gp4408;              // gp+4408 (settings entry 15)
+    if (addr >= 0x800BB6B8u && addr < 0x800BB6B8u + 5u * 196u) {   // slot +121..+123: remembered cursors
+        const uint32_t o = (addr - 0x800BB6B8u) % 196u, n = (addr - 0x800BB6B8u) / 196u;
+        if (o >= 121u && o <= 123u) return slots_[n].remembered[o - 121u];
+    }
     if (addr >= 0x800BE2F8u && addr < 0x800BE378u) return list_800be2f8[addr - 0x800BE2F8u];
     if (addr >= 0x800BE420u && addr < 0x800BE428u) return owned_items_800be420[addr - 0x800BE420u];
+    if (addr >= 0x800B5600u && addr < 0x800B5604u) return equipped_parts_800b5600[addr - 0x800B5600u];
+    if (addr >= 0x800B5604u && addr < 0x800B5644u) return owned_parts_800b5604[addr - 0x800B5604u];
     if (uint8_t* p = exe_.at(addr)) return *p;
     throw std::runtime_error("message windows: read outside the EXE excerpt");
 }
@@ -126,6 +134,7 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         return false;
     }
     case 0x95: return false;                                                 // 0x80054BAC: halt
+    case 0xEA: case 0xE8:
     case 0x97: {                                                             // 0x80054E54
         if (!(s.flags & 0x01000000u)) {
             s.flags = (s.flags | 0x01000000u) & 0xFFFF7FFFu;
@@ -147,7 +156,9 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         } else if (cross) sound(out, 130, 1);
         else { s.brightness = 128; return false; }
         flags_80098a58 &= ~0xFFu;
-        if (mem(r) == 0xE8 || mem(r) == 0xEA) { unported = true; return false; }
+        if (mem(r) == 0xE8) { unported = true; return false; }
+        // 0xEA (Sort): rows 1..4 sort the parts list (0x80060F84..0x80061224);
+        // the port's list is empty (no parts yet), so the sort is a no-op.
         flags_80098a58 |= 0x40000000u | uint8_t(s.cursor);
         if (s.cursor_byte) mem(s.cursor_byte) = 0xED;
         s.timer = 5;
@@ -182,6 +193,54 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
     case 0xAC: setting(mem(r + 1)) = mem(r + 2); s.read += 3; return true;   // 0x80055C80
     case 0xDE: s.read += 3; return true;                                     // 0x800543E0
     case 0x98: s.flags &= ~0x08000000u; s.read += 1; return true;           // 0x8005531C
+    case 0x8B: case 0x84: {                                                  // 0x80054700 pause / 0x80054450 close
+        if (!(s.flags & 0x01000000u)) { s.flags |= 0x01000000u; s.timer = int16_t(u16(r + 1)); }
+        s.flags |= 0x10000000u;
+        if (s.timer > 0) { --s.timer; return false; }
+        if (op == 0x8B) { s.flags &= ~0x01000000u; s.read += 3; return false; }
+        s.flags |= 0x20000u;
+        if (s.flags & 0x04000000u) {                                         // close the frame first
+            s.flags |= 0x00100000u;
+            if (s.decor_state == 2) s.flags = (s.flags | 0x10000000u) & 0xF9FFFFFFu;
+            return false;
+        }
+        s.flags &= ~0x20000u; s.flags &= 0x7EFFFFFFu; s.read += 3;          // slot closed
+        s.index = 255; s.flags &= ~0x40000u;
+        return false;
+    }
+    case 0xA9:                                                               // 0x80055BB8: end
+        if (s.flags & 0x04000000u) {
+            s.flags |= 0x00100000u;
+            if (s.decor_state == 2) s.flags = (s.flags | 0x10000000u) & 0xF9FFFFFFu;
+            return false;
+        }
+        s.read += 1; return true;
+    case 0xA7:                                                               // 0x80055B14: layout start / clear
+        if (u16(r + 1)) out.layout_calls.push_back({int8_t(int16_t(u16(r + 3))), -1});
+        else out.layout_calls.push_back({int8_t(u16(r + 3)), int16_t(u16(r + 5))});
+        s.read += 9; return true;
+    case 0xBF: {                                                             // 0x80057408: jump to message d2
+        if (mem(r) == 0xD5) { unported = true; return false; }
+        const uint8_t target = mem(r + 2);
+        if (target == 255) { s.read += 3; return true; }
+        s.index = target;
+        s.page = s.read = s.index_base ? s.index_base + u16(s.index_base + 2u * target) : exe_.u32(kMsgTable8008cacc + 4u * target);
+        s.color = 0; s.rows = 0;
+        return true;
+    }
+    case 0xE1: {                                                             // 0x8005958C: call a part name
+        if (s.exec_depth >= s.exec_stack.size()) { unported = true; return false; }
+        s.exec_stack[s.exec_depth++] = r + 3;
+        int8_t part;
+        if (mem(r + 1)) part = int8_t(owned_parts_800b5604[std::min<size_t>(63, size_t(mem(r + 2)) + list_scroll_gp4408)]);
+        else {
+            mem(r - 1) = 0;
+            if ((flags_80098a58 & 0x20000u) && mem(r + 2) == uint8_t(s.cursor)) mem(r - 1) = 3;
+            part = int8_t(equipped_parts_800b5600[mem(r + 2) & 3]);
+        }
+        s.read = exe_.u32(uint32_t(0x8008CBA0 + 4 * int32_t(part)));
+        return true;
+    }
     case 0x9C: {                                                             // 0x80055438: branch on a story flag
         const bool set = story_flag && story_flag(u16(r + 1));
         const uint8_t target = mem(r + (set ? 3u : 4u));
@@ -297,7 +356,22 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xED: s.pen_x = int16_t(s.pen_x + 12); s.draw += 1; return;        // 0x8005A858
     case 0x91: if (s.draw_depth) s.draw = s.draw_stack[--s.draw_depth]; else s.draw += 1; return;   // 0x80054AB4
     case 0xAC: s.draw += 3; return;
-    case 0xDC: case 0xD9: case 0x98: s.draw += 1; return;
+    case 0xDC: case 0xD9: case 0x98: case 0xA9: s.draw += 1; return;
+    case 0x8B: case 0x84: case 0xBF: s.draw += 3; return;
+    case 0xA7: s.draw += 9; return;                                          // 0x80054388
+    case 0xE1: {                                                             // 0x80059660
+        if (s.draw_depth >= s.draw_stack.size()) { s.draw += 3; return; }
+        s.draw_stack[s.draw_depth++] = d + 3;
+        int8_t part;
+        if (mem(d + 1)) part = int8_t(owned_parts_800b5604[std::min<size_t>(63, size_t(mem(d + 2)) + list_scroll_gp4408)]);
+        else {
+            mem(d - 1) = 0;
+            if ((flags_80098a58 & 0x20000u) && mem(d + 3) == uint8_t(s.cursor)) mem(d - 1) = 3;
+            part = int8_t(equipped_parts_800b5600[mem(d + 2) & 3]);
+        }
+        s.draw = exe_.u32(uint32_t(0x8008CBA0 + 4 * int32_t(part)));
+        return;
+    }
     case 0x9C: s.draw += 5; return;                                         // 0x8005434C
     case 0xD7: {                                                             // 0x800587F8: grid cell
         mem(d + 5) = 0xED; s.brightness = 0;
