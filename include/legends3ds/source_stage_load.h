@@ -53,6 +53,13 @@ struct SourceStageArrival {
 };
 SourceStageArrival source_stage_arrival(const SourceStageRequest& request) noexcept;
 
+// DIAGNOSTIC stage boot (diagnostic_stage_01516.txt), for testing stages past
+// ST00 without playing to them: "stage S area A" with an optional
+// "x y z heading". Boot then loads stage S as a stage request would, with a
+// fresh session's state (no carry: story flags, life and the visit byte are
+// defaults, not what the original would hold). Not original behaviour.
+std::optional<SourceStageArrival> parse_diagnostic_stage_boot(const std::string& text) noexcept;
+
 // Cooked-pack layout: ST00 lives at the pack root (historic names st00.*);
 // every other stage under stages/stNN/ with generic names (map.l3map,
 // render.l3render, init.l3init, flow.l3flow); ebd/ and materials/ keep their
