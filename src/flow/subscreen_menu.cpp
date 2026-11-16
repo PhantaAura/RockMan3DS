@@ -55,7 +55,7 @@ SubScreenMenu::SubScreenMenu(ExeExcerpt exe) : windows_(exe), exe_(std::move(exe
     if (!exe_.at(exe_.u32(kMsgTable8008cacc + 4u * kMenuMessageId))) throw std::runtime_error("sub-screen: menu message missing");
 }
 
-void SubScreenMenu::enter() { page_ = 0; options_sub_ = 0; layouts_.fill(-1); }
+void SubScreenMenu::enter() { page_ = 0; options_sub_ = 0; layouts_.fill(-1); parts_dirty_ = false; }
 
 void SubScreenMenu::status_bar_80061e0c(const SubScreenValues& v, std::vector<FrontendPacket>& out) const {
     std::vector<FrontendPacket> chain;
@@ -149,7 +149,7 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
         default: page_ = 0; options_sub_ = 0; break;           // sw zero, 0(s0)
         }
         break;
-    case 2: normal_items_8005ed9c(pressed, out); break;
+    case 2: normal_items_8005ed9c(pressed, v, out); break;
     case 3: special_items_8005f210(pressed, out); break;
     case 4: buster_parts_800600cc(pressed, v, out); break;
     case 5: special_weapons_80060618(pressed, v, out); break;
@@ -163,12 +163,15 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
     windows_.owned_items_800be420 = v.owned_items_800be420;
     windows_.story_flag = v.story_flag;
     windows_.equipped_parts_800b5600 = v.equipped_parts_800b5600;
-    windows_.owned_parts_800b5604 = v.owned_parts_800b5604;
+    if (!parts_dirty_) windows_.owned_parts_800b5604 = v.owned_parts_800b5604;   // a Sort keeps its order
+    windows_.parts_sorted = false;
     windows_.phase_800c1b10 = 4;   // main phase 4: Start may cancel a choice
     auto w = windows_.tick_80053b40(held, pressed);
     for (auto& p : w.packets) out.packets.push_back(p);
     for (auto& s : w.sounds) out.sounds.push_back(s);
     out.unported_opcodes = w.unported_opcodes;
+    if (windows_.parts_sorted) { parts_dirty_ = true; out.parts_sorted = true; }
+    out.owned_parts_800b5604 = windows_.owned_parts_800b5604;
     for (const auto& [slot, list] : w.layout_calls)
         if (slot >= 0 && slot < 4) layouts_[size_t(slot)] = list;
     return out;
@@ -463,7 +466,23 @@ void SubScreenMenu::buster_parts_800600cc(uint16_t pressed, const SubScreenValue
 }
 
 // 0x8005ED9C Normal Items (sub-state in options_sub_, jump table 0x80011264).
-void SubScreenMenu::normal_items_8005ed9c(uint16_t pressed, SubScreenFrame& out) {
+// 0x80037604 for the weapon on hand (+370): the energy of its level byte
+// (+1269 + 8w) from the level table 0x80089EAC[w] (+2 of an 8-byte entry), or
+// -1 when 0x8008D7EC + 20 * class(0x8008DB08[w]) + level holds 255.
+int SubScreenMenu::weapon_energy_max_80037604(const SubScreenValues& v) const {
+    const int w = v.weapon_370;
+    if (w < 0 || w >= 14) return -1;
+    const int lvl = v.weapon_levels[size_t(w)][1];
+    const uint8_t* c = exe_.at(0x8008DB08u + 2u * uint32_t(w));
+    if (!c) return -1;
+    const uint8_t* gate = exe_.at(uint32_t(0x8008D7EC + (c[0] | (c[1] << 8)) * 20 + lvl));
+    if (!gate || *gate == 255) return -1;
+    if (!exe_.at(0x80089EACu + 4u * uint32_t(w))) return -1;
+    const uint8_t* e = exe_.at(exe_.u32(0x80089EACu + 4u * uint32_t(w)) + 8u * uint32_t(lvl) + 2u);
+    return e ? int(int16_t(uint16_t(e[0] | (e[1] << 8)))) : -1;
+}
+
+void SubScreenMenu::normal_items_8005ed9c(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out) {
     const bool chose = windows_.flags_80098a58 & 0x40000000u;
     switch (options_sub_) {
     case 0: windows_.clear_80053a30(); layouts_.fill(-1); ++options_sub_; break;   // + loader 0x8001D440(204)
@@ -479,14 +498,40 @@ void SubScreenMenu::normal_items_8005ed9c(uint16_t pressed, SubScreenFrame& out)
         } else if (exit_check_80060e64(pressed, out)) options_sub_ = 7;
         else pages_80060ec0(pressed, out);                            // 0x8005EED0
         break;
-    case 3:
-        // Items 0..3 (codes 64..67) have their own use flows (0x8005D95C,
-        // 0x80037604, ...): not ported, they take the generic message.
-        windows_.open_8005382c(0, kBank801f2000, item_code_ < 88 ? 90 : 91);
-        options_sub_ = 5;
+    case 3: {                                                       // 0x8005EEE0: per item
+        uint8_t id = item_code_ < 88 ? 90 : 91;
+        bool ask = false;
+        if (item_code_ == 64) { ask = v.byte_800bbd87 != 0; id = ask ? 80 : 88; }   // 0x8005D95C
+        else if (item_code_ == 65) {
+            // Weapon energy: class 0x8008DB08[w], level byte +1269 + 8w; 255 in
+            // 0x8008D7EC + 20 * class + level = no refill (59); full (58); else ask (82).
+            const int w = v.weapon_370;
+            const int max = weapon_energy_max_80037604(v);
+            if (max < 0) id = 59;
+            else if (max == v.weapon_energy_1274[size_t(w)]) id = 58;
+            else { id = 82; ask = true; }
+        } else if (item_code_ == 66) { id = 84; ask = true; }
+        else if (item_code_ == 67) { id = 86; ask = true; }
+        windows_.open_8005382c(0, kBank801f2000, id);
+        options_sub_ = ask ? 4 : 5;
         break;
-    case 5: case 6:
+    }
+    case 4: {                                                       // 0x8005F074: yes / no
+        const uint32_t g = windows_.flags_80098a58;
+        if (!(g & 0x40000000u)) break;
+        if (uint8_t(g)) { options_sub_ = 5; break; }                 // No
+        if (item_code_ == 64) { windows_.open_8005382c(0, kBank801f2000, 81); out.item_used = 64; used_flag_ = 1344; }   // + 0x8005D9C4
+        else if (item_code_ == 65) {
+            windows_.open_8005382c(0, kBank801f2000, 83);           // 0x80037594: energy = max
+            out.item_used = 65; out.weapon_energy_1274 = int16_t(weapon_energy_max_80037604(v)); used_flag_ = 1345;
+        } else if (item_code_ == 66) { windows_.open_8005382c(0, kBank801f2000, 85); out.item_used = 66; out.timer_800bbd96 = 1800; used_flag_ = 1346; }
+        else if (item_code_ == 67) { windows_.open_8005382c(0, kBank801f2000, 87); out.item_used = 67; out.timer_800bbd94 = 900; used_flag_ = 1347; }
+        options_sub_ = 6;
+        break;
+    }
+    case 5: case 6:                                                 // 0x8005F188
         if (windows_.flags_80098a58 & 0x08000000u) break;           // window 0 still open
+        if (options_sub_ == 6) out.clear_story_flag = int16_t(used_flag_);   // 0x8001DCD0(ctx +12): the item is used up
         windows_.flags_80098a58 &= ~0x4000u;
         options_sub_ = 2;
         break;

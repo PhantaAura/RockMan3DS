@@ -5405,6 +5405,8 @@ int main() {
                     values.zenny_800c1b2c=uint32_t(std::max<int32_t>(0,status.money));
                     values.play_time_800c1b1c=uint32_t(session.frame_counter());   // CANDIDATE: session updates, not the save clock
                     values.story_flag=[&session](uint16_t bit){return session.story_flag(bit);};   // 0x800BE378 bit array
+                    // 0x800BE420 = story flag bytes 168..175: normal item id owned = flag 1344 + id.
+                    for(int id=0;id<64;++id)if(session.story_flag(uint16_t(1344+id)))values.owned_items_800be420[size_t(id>>3)]|=uint8_t(0x80u>>(id&7));
                     const auto frame=subscreen->update(bits(held),subscreen_pending,values);
                     subscreen_pending=0;
                     for(const auto& snd:frame.sounds)(void)l3::enqueue_source_audio_8001a008(session.source_audio_queue(),snd[0],snd[1],0);
@@ -5415,6 +5417,10 @@ int main() {
                     auto& target=(++subscreen_hash&1)?subscreen_rgb2:subscreen_rgb;
                     (void)l3::rasterize_message_windows(frame.packets,subscreen_pages,target.data());
                     mockup_hud_set_fullscreen(target.data(),subscreen_hash);
+                    if(frame.clear_story_flag>=0)session.set_story_flag(uint16_t(frame.clear_story_flag),false);   // 0x8001DCD0: item used up
+                    if(frame.item_used)   // effects 0x8005D9C4 / +1274 / 0x800BBD94/96 have no port subsystem yet
+                        hardware_test_trace("# subscreen,item_used=%u,energy=%d,t94=%u,t96=%u",unsigned(frame.item_used),
+                            int(frame.weapon_energy_1274),unsigned(frame.timer_800bbd94),unsigned(frame.timer_800bbd96));
                     if(frame.settings_applied){
                         // 0x80060BFC: the control profile follows the Turn byte.
                         g_option_settings=subscreen->windows().settings();

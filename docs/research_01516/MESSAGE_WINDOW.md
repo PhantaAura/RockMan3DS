@@ -236,8 +236,26 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
 - Byte 0x80098B2D: the tick 0x80053B40 clears word 0x80098B2C and, after
   each slot 0..3 (open or not), ORs that slot's cursor (+113) into byte n.
   Special Weapons now reads it (was CANDIDATE slot(1).cursor).
-- Part sorts 0x80060F84 / 0x80061064 / 0x80061144 / 0x80061224 (traced, NOT
-  ported): 31 bubble passes over owned parts 0x800B5604 (32 bytes, part + 1),
+- Part sorts 0x80060F84 / 0x80061064 / 0x80061144 / 0x80061224 (ported:
+  0x97 handler at 0x800550AC, 0xEA rows 1..4 sort and stay, brightness 128): 31 bubble passes over owned parts 0x800B5604 (32 bytes, part + 1),
   swap (0x80061304) when the left is empty or its stat byte
   0x8008FE64 + 8 * (part - 1) + k (k = 0 attack, 1 energy, 2 range, 3 rapid)
   is smaller than the right's: descending, empties last.
+- 0xE8 (0x80055150): the pick is 0x40000000 | list 0x800BE2F8[cursor] (ported).
+- Normal Items use (ported): sub 3 0x8005EEE0: 64 -> byte 0x800BBD87 ? 80 (ask)
+  : 88; 65 -> on-hand weapon w (+370): 255 at 0x8008D7EC + 20 * class
+  (0x8008DB08[w]) + level (+1269 + 8w) -> 59, energy max (0x80037604: level
+  table 0x80089EAC[w] + 8 * level + 2) == current (+1274 + 8w) -> 58, else 82;
+  66 -> 84; 67 -> 86; others 90 (< 88) / 91. Sub 4 0x8005F074 on Yes (low
+  byte 0): 64 81 + 0x8005D9C4 (0x800BBD87 = 0, 0x8005D528), 65 83 + 0x80037594
+  (energy = max), 66 85 + halfword 0x800BBD96 = 1800, 67 87 + 0x800BBD94 =
+  900; ctx +12 = 1344 + n. Sub 6, once window 0 closes: 0x8001DCD0(ctx +12)
+  clears that story flag (base 0x800BE378: flags 1344.. = the owned-item bits
+  0x800BE420, so the item is used up). The port reports the effects in
+  SubScreenFrame; main.cpp clears the flag and logs the rest (no subsystem
+  for 0x800BBD94/96 / 0x8005D528 / weapon energy yet).
+- Special Items use dispatch 0x80011284 (18 codes -> 0x8005F3D0 / F608 /
+  FAE4 (codes 5..13 with ctx +5 = 69/70/71) / FBB4 / FFBC, ~780 instructions:
+  messages, story flags, sounds and a few world calls 0x8003B140, 0x8001F3C8,
+  0x8001F23C, 0x8001D854, 0x8001B33C/B314, 0x80019C20, 0x80017C30,
+  0x80016D64): not ported yet.

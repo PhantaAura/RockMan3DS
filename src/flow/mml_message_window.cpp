@@ -149,10 +149,16 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         } else if (cross) sound(out, 130, 1);
         else { s.brightness = 128; return false; }
         flags_80098a58 &= ~0xFFu;
-        if (mem(r) == 0xE8) { unported = true; return false; }
-        // 0xEA (Sort): rows 1..4 sort the parts list (0x80060F84..0x80061224);
-        // the port's list is empty (no parts yet), so the sort is a no-op.
-        flags_80098a58 |= 0x40000000u | uint8_t(s.cursor);
+        // 0x800550AC: 0xEA (Sort) rows 1..4 sort the owned parts by attack /
+        // energy / range / rapid (0x80060F84 / 61064 / 61144 / 61224) and stay
+        // on the menu (brightness 128, no pick).
+        if (mem(r) == 0xEA && s.cursor >= 1 && s.cursor <= 4) {
+            sort_parts_80060f84(s.cursor - 1);
+            s.brightness = 128;
+            return false;
+        }
+        // 0x80055150: 0xE8 picks the list entry 0x800BE2F8[cursor]; others the cursor.
+        flags_80098a58 |= 0x40000000u | (mem(r) == 0xE8 ? list_800be2f8[size_t(uint8_t(s.cursor)) & 127] : uint8_t(s.cursor));
         if (s.cursor_byte) mem(s.cursor_byte) = 0xED;
         s.timer = 5;
         s.flags = (s.flags | 0x00400000u) & 0xEEFF97FFu;
@@ -587,6 +593,21 @@ void MessageWindows::draw_frame(MessageSlot& s, MessageWindowFrame& out) {
     };
     f4(bg); mode(0);          // +152: average
     f4(bg + 3); mode(2);      // +156: subtract (drawn first)
+}
+
+// 0x80060F84 (k = 0) .. 0x80061224 (k = 3): 31 bubble passes over the 32
+// owned part bytes 0x800B5604 (part + 1, 0 = empty); 0x80061304 swaps i and
+// i + 1 when i + 1 holds a part and i is empty or its signed stat byte
+// 0x8008FE64 + 8 * (part - 1) + k is smaller: descending, empties last.
+void MessageWindows::sort_parts_80060f84(int k) {
+    auto& a = owned_parts_800b5604;
+    const auto stat = [&](uint8_t part) { return int8_t(byte(0x8008FE64u + 8u * uint32_t(part - 1) + uint32_t(k))); };
+    for (int pass = 0; pass < 31; ++pass)
+        for (int i = 0; i < 31 - pass; ++i) {
+            if (!a[size_t(i + 1)]) continue;
+            if (!a[size_t(i)] || stat(a[size_t(i)]) < stat(a[size_t(i + 1)])) std::swap(a[size_t(i)], a[size_t(i + 1)]);
+        }
+    parts_sorted = true;
 }
 
 MessageWindowFrame MessageWindows::tick_80053b40(uint16_t held, uint16_t pressed) {

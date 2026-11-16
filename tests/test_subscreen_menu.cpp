@@ -43,10 +43,11 @@ ExeExcerpt authored() {
     // Item names: table 0x8008CCA4 + 4 * id (inside the message table range).
     put32(table.bytes, (0x8008CCA4 - 0x8008CACC) - 4, 0x8008BC00);         // id -1: empty name
     put32(table.bytes, (0x8008CCA4 - 0x8008CACC) + 4, 0x8008BC04);         // id 1
+    put32(table.bytes, (0x8008CCA4 - 0x8008CACC) + 8, 0x8008BC04);         // id 2 (same name)
     msg.bytes[0x8008BC00 - msg.addr] = 0x91;
     for (uint8_t b : {uint8_t(0x1A), uint8_t(0x1B), uint8_t(0x91)}) msg.bytes[0x8008BC04 - msg.addr + (b == 0x1A ? 0 : b == 0x1B ? 1 : 2)] = b;
     // Bank 0x801F2000 (STFF_FE.MSG layout: u16 offsets): 20 title -> 21 list.
-    ExeExcerpt::Range bank; bank.addr = 0x801F2000; bank.bytes.assign(0x400, 0);
+    ExeExcerpt::Range bank; bank.addr = 0x801F2000; bank.bytes.assign(0x500, 0);
     const auto bank_msg = [&](unsigned id, uint16_t at, const std::vector<uint8_t>& m) {
         bank.bytes[2 * id] = uint8_t(at); bank.bytes[2 * id + 1] = uint8_t(at >> 8);
         std::memcpy(bank.bytes.data() + at, m.data(), m.size());
@@ -92,6 +93,11 @@ ExeExcerpt authored() {
                                 0x97, 0x80, 0xFF, 0xFF, 0xFF, 0x8A, 0x01, 0x00, 0x95});
     bank_msg(47, 0x200 - 0xB0, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x16, 0x00, 0x20, 0x00, 0x17, 0x08, 0x93, 0x02, 0x04,
                                 0xD7, 0x00, 0x00, 0x00, 0x00, 0x4F, 0x8A, 0x01, 0x00, 0xD9});
+    // Item 66 use: 84 = Yes / No (0x97 0x80), 85 = "used" text that closes itself (0x84).
+    bank_msg(84, 0x400, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x46, 0x00, 0x54, 0x00, 0x0F, 0x02, 0x93, 0x02, 0x04,
+                         0x96, 0x00, 0x11, 0xED, 0x15, 0x86, 0x96, 0x11, 0x00, 0xED, 0x16,
+                         0x97, 0x80, 0xFF, 0xFF, 0x8A, 0x01, 0x00, 0x95});
+    bank_msg(85, 0x440, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x16, 0x00, 0x20, 0x00, 0x17, 0x02, 0x93, 0x02, 0x04, 0x15, 0x84, 0x03, 0x00});
     e.ranges = {widths, decor, colors, table, options, frame, msg, bank, layouts};
     return e;
 }
@@ -237,6 +243,54 @@ int main() {
         f = sw.update(0, 0x40, wv); f = sw.update(0, 0x40, wv); f = sw.update(0, 0x4000, wv);   // Close
         for (int i = 0; i < 3; ++i) f = sw.update(0, 0, wv);
         assert(sw.page() == 0 || sw.page() == 1);
+    }
+    {   // Normal Items use 0x8005F074: item 2 (code 66) -> 84 Yes -> 85, timer 1800, flag 1346 cleared.
+        SubScreenMenu n(authored());
+        SubScreenValues iv = v; iv.owned_items_800be420[0] = 0x20;
+        n.enter();
+        for (int i = 0; i < 7; ++i) f = n.update(0, 0, iv);
+        f = n.update(0, 0x4000, iv); f = n.update(0, 0, iv);
+        for (int i = 0; i < 9; ++i) f = n.update(0, 0, iv);
+        assert(n.windows().list_800be2f8[0] == 2);
+        f = n.update(0, 0x4000, iv); f = n.update(0, 0, iv);
+        assert(n.options_substate() == 3 || n.options_substate() == 4);
+        for (int i = 0; i < 10; ++i) f = n.update(0, 0, iv);
+        assert(n.options_substate() == 4);
+        bool used = false; int cleared = -1;
+        f = n.update(0, 0x4000, iv);
+        for (int i = 0; i < 40 && n.options_substate() != 2; ++i) {
+            used |= f.item_used == 66 && f.timer_800bbd96 == 1800;
+            if (f.clear_story_flag >= 0) cleared = f.clear_story_flag;
+            f = n.update(0, 0, iv);
+        }
+        if (f.clear_story_flag >= 0) cleared = f.clear_story_flag;
+        assert(used && cleared == 1346 && n.options_substate() == 2);
+    }
+    {   // L1/R1 0x80060EC0: from Normal Items (page 2) L1 wraps to 6, R1 wraps 6 -> 2.
+        SubScreenMenu n(authored());
+        n.enter();
+        for (int i = 0; i < 7; ++i) f = n.update(0, 0, v);
+        f = n.update(0, 0x4000, v); f = n.update(0, 0, v);
+        assert(n.page() == 2);
+        for (int i = 0; i < 9; ++i) f = n.update(0, 0, v);
+        f = n.update(0, 0x0400, v);
+        assert(n.page() == 6 && n.options_substate() == 0 && sound(f, 130));
+        for (int i = 0; i < 3; ++i) f = n.update(0, 0, v);
+        f = n.update(0, 0x0800, v);
+        assert(n.page() == 2 && n.options_substate() == 0);
+    }
+    {   // Sort 0x80060F84..: descending by the stat byte, empties last.
+        ExeExcerpt e = authored();
+        ExeExcerpt::Range st; st.addr = 0x8008FE64; st.bytes.assign(8 * 4, 0);
+        st.bytes[0] = 1; st.bytes[8] = 5; st.bytes[16] = 3;          // attack of parts 1, 2, 3
+        st.bytes[1 + 0] = 9; st.bytes[1 + 8] = uint8_t(-2); st.bytes[1 + 16] = 4;   // energy
+        e.ranges.push_back(st);
+        MessageWindows w(e);
+        w.owned_parts_800b5604[0] = 1; w.owned_parts_800b5604[2] = 2; w.owned_parts_800b5604[5] = 3;
+        w.sort_parts_80060f84(0);
+        assert(w.parts_sorted && w.owned_parts_800b5604[0] == 2 && w.owned_parts_800b5604[1] == 3 && w.owned_parts_800b5604[2] == 1 && w.owned_parts_800b5604[3] == 0);
+        w.sort_parts_80060f84(1);
+        assert(w.owned_parts_800b5604[0] == 1 && w.owned_parts_800b5604[1] == 3 && w.owned_parts_800b5604[2] == 2);
     }
     std::cout << "subscreen_menu: ok\n";
     return 0;

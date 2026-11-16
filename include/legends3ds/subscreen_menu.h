@@ -10,9 +10,9 @@
 // 0x8008DBB0[page] (page byte 0x800A38F0). Ported pages: 0 0x8005EC80
 // (open the menu message 0x32, start status layout 6), 1 0x8005ECE0 (status
 // bar 0x80061E0C, the choice), 6 0x80060B00 (Options: message 0x26), 8 exit.
-// The item/parts/weapon pages (2..5) and the Select page (7) are not ported:
-// choosing them reopens the menu (CANDIDATE presentation). The loader calls
-// 0x8001D440/0x8001D7AC on the Options page are not ported.
+// Pages 2..5 (Normal / Special Items, Buster Parts, Special Weapons) and the
+// L1/R1 page switch 0x80060EC0 are ported; item use, the Select page (7) and
+// the loader calls 0x8001D440/0x8001D7AC are not.
 namespace l3 {
 
 struct SubScreenValues {
@@ -29,6 +29,8 @@ struct SubScreenValues {
     // in use, +1102 / +1103, and five level bytes per weapon at +1268 + 8 * id.
     int8_t weapon_370 = 0, arm_368 = 0, energy_1102 = 0; uint8_t flag_1103 = 0;
     std::array<std::array<int8_t, 5>, 14> weapon_levels{};
+    std::array<int16_t, 14> weapon_energy_1274{};   // +1274 + 8 * id: current energy
+    uint8_t byte_800bbd87 = 0;                       // item 64 state (0x8005D95C)
 };
 
 struct SubScreenFrame {
@@ -37,6 +39,17 @@ struct SubScreenFrame {
     bool exited = false;          // page 8 reached: resume gameplay
     bool settings_applied = false;   // Options page closed (0x800425FC reinstalled)
     uint32_t unported_opcodes = 0;
+    bool parts_sorted = false;   // a Sort pick reordered the parts: write owned_parts_800b5604 back
+    std::array<uint8_t, 64> owned_parts_800b5604{};
+    // Normal Items use (0x8005F074), for the caller to apply: item code 64..67
+    // on Yes; 64 = 0x8005D9C4 (byte 0x800BBD87 = 0, then 0x8005D528); 65 = the
+    // on-hand weapon's energy (+1274); 66 / 67 = halfwords 0x800BBD96 /
+    // 0x800BBD94; then, when the message closes, 0x8001DCD0 clears story flag
+    // 1344 + item (the owned bit in 0x800BE420).
+    uint8_t item_used = 0;
+    int16_t weapon_energy_1274 = -1;
+    uint16_t timer_800bbd94 = 0, timer_800bbd96 = 0;
+    int16_t clear_story_flag = -1;
 };
 
 class SubScreenMenu {
@@ -54,7 +67,8 @@ private:
     void status_bar_80061e0c(const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     void status_frame_800640f0(const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
     void layout_draw(uint16_t list, const SubScreenValues& v, std::vector<FrontendPacket>& out) const;
-    void normal_items_8005ed9c(uint16_t pressed, SubScreenFrame& out);
+    void normal_items_8005ed9c(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
+    int weapon_energy_max_80037604(const SubScreenValues& v) const;
     void special_items_8005f210(uint16_t pressed, SubScreenFrame& out);
     void buster_parts_800600cc(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out);
     void pages_80060ec0(uint16_t pressed, SubScreenFrame& out);
@@ -71,11 +85,13 @@ private:
     uint8_t options_sub_ = 0;
     std::array<int16_t, 4> layouts_{{-1, -1, -1, -1}};   // slots 0x800C3528: running list, -1 = off
     uint8_t item_code_ = 255;  // page +4
+    uint16_t used_flag_ = 0;   // page +12: story flag 1344 + item, cleared after use
     // ctx 0x800A38F0 +6 (animation count) and +16..+54 (stat triplets
     // {from, target, shown}: attack now/with, energy, range, rapid).
     std::array<uint8_t, 64> ctx_{};
     // Arm changes the Equip flow made (0x80060848..: +1103 / +368), for the caller.
     int8_t arm_368_ = 0; uint8_t flag_1103_ = 0; bool arm_dirty_ = false;
+    bool parts_dirty_ = false;   // menu copy of the parts after a Sort
     uint32_t frame_ = 0;       // 0x1F800002-style counter for mode-1 blink
 };
 

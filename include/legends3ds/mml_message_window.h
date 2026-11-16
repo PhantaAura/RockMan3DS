@@ -122,6 +122,8 @@ public:
     // (part + 1, 0 = empty) and the owned list, for 0xE1.
     std::array<uint8_t, 4> equipped_parts_800b5600{};
     std::array<uint8_t, 64> owned_parts_800b5604{};
+    bool parts_sorted = false;   // set by a Sort pick; the caller writes owned_parts_800b5604 back
+    void sort_parts_80060f84(int k);
     uint8_t name_index_gp4044 = 0;               // 0xC1 name (table 0x8008CBA4)
     std::array<uint8_t, 128> list_800be2f8{};   // list ids, 255 = empty
     uint8_t list_scroll_gp4408 = 0, list_max_scroll_gp4464 = 0, list_picked_gp4077 = 255;
