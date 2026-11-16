@@ -196,4 +196,5 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
   Items drew the original grid on the bottom screen (no crystal: the direct
   spawn skips the opening that sets flag 0x527). The autoplay step log froze
   at step 3 while the menu kept reacting, so the final Triangle/Start exit
-  was not confirmed in Azahar (host test covers it).
+  was not confirmed in that run. A second run confirmed it: Start -> Normal
+  Items -> Triangle -> Start logged `# subscreen,open=0` and gameplay resumed.
