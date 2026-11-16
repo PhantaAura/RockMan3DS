@@ -5,11 +5,15 @@
 namespace l3 {
 
 void MessageFont::add(const MaterialCache& cache) {
+    // One page per TPAGE per cache: two caches may hold different images for
+    // the same TPAGE (SUB01 / SUB02U both load to page 12); lookups then go
+    // by TPAGE and CLUT.
+    const size_t first = pages.size();
     for (const auto& e : cache.entries) {
         if (!e.resolved || e.palette_ps1.size() != 16 || e.indices.size() != 256u * 256u) continue;
         const uint16_t tpage = uint16_t(e.material_word);
         Page* page = nullptr;
-        for (auto& pg : pages) if (pg.tpage == tpage) page = &pg;
+        for (size_t i = first; i < pages.size(); ++i) if (pages[i].tpage == tpage) page = &pages[i];
         if (!page) { pages.push_back({}); page = &pages.back(); page->tpage = tpage; page->indices = e.indices; }
         std::array<uint16_t, 16> pal{};
         std::copy(e.palette_ps1.begin(), e.palette_ps1.end(), pal.begin());
@@ -75,10 +79,12 @@ size_t rasterize_message_windows(const std::vector<FrontendPacket>& packets, con
             if ((code & 0xFC) == 0x2C && p.length == 9) {          // textured quad (glyph)
                 const uint16_t clut = uint16_t(w[2] >> 16), tpage = uint16_t(w[4] >> 16);
                 const MessageFont::Page* page = nullptr;
-                for (const auto& pg : font.pages) if (pg.tpage == tpage) page = &pg;
-                if (!page) continue;
                 const std::array<uint16_t, 16>* pal = nullptr;
-                for (const auto& [c, colours] : page->palettes) if (c == clut) pal = &colours;
+                for (const auto& pg : font.pages) {
+                    if (pg.tpage != tpage) continue;
+                    for (const auto& [c, colours] : pg.palettes) if (c == clut) { page = &pg; pal = &colours; }
+                    if (pal) break;
+                }
                 if (!pal) continue;
                 const uint32_t rgbm = w[0] & 0xFFFFFF;
                 const auto tv = [&](unsigned k) {   // xy words 1,3,5,7; uv words 2,4,6,8

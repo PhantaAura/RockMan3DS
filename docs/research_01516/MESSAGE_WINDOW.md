@@ -198,3 +198,34 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
   at step 3 while the menu kept reacting, so the final Triangle/Start exit
   was not confirmed in that run. A second run confirmed it: Start -> Normal
   Items -> Triangle -> Start logged `# subscreen,open=0` and gameplay resumed.
+- Buster Parts 0x800600CC: 0 clear + load 205 (SUB_WPN.BIN: SUB02U.TIM +
+  the same STFF_FE.MSG); 1 open(0, bank, 29) (0xAC x4, 0xBF -> 30: header
+  windows 0x25 (equipped names, 0x9C flag 0x526) / 0x26 (parts list, 14 x
+  0xE1 01 n), Equip/Sort/Close 0x96 menu, help 0xD6 03 1F, choice 0x97 C0
+  -> 0x22 Equip / 0x28 Sort (0xEA: 0x97 + sorts 0x80060F84..0x80061224) /
+  Close), layout(2, 7) (SUB02U header + ATTACK/ENERGY/RANGE/RAPID labels),
+  0x800605DC; 2 exit when (0x80098A58 & 0x480000FF) == 0x48000002, else
+  re-snapshot (0x80060248) on list cursor bits, 0x800605DC every update,
+  0x80060EC0; 3 loader idle -> page 0.
+- 0x800605DC = 0x8006147C (targets: zero, then per equipped part
+  0x800B5600[i] (2 slots, 3 with flag 0x526) add 10 x the part's four
+  signed stat bytes from 0x8008FE64 + 8 * part, clamp 70/70/70/40) +
+  0x800602A4(ctx 0x800A38F0, 0): animate displayed = target - (target -
+  from) * n / 4 while +6 counts down, then 8 x 0x80061A2C(203, 40..70,
+  value, half): body quad u 96..97 stretched to value + 6, cap u 111..115,
+  v 144 + 8 * half, CLUT 0x3E83, tpage 12; "max" sprite (u/v 0x28/0xF0,
+  CLUT 0x3E82, 24 x 6) at value 70 (rows 40..60) / 40 (row 70).
+- 0xE1 0x8005958C: call the part name (table 0x8008CBA0 + 4 * part): d1 = 0
+  equipped slot 0x800B5600 + d2 (sets the 0x89 colour before it to 3 when
+  0x80098A58 & 0x20000 and the cursor is on that slot), else list
+  0x800B5604 + d2 + scroll. 0xBF 0x80057408 jump to message d2 (255 = next);
+  0xA7 0x80055B14 layout start/clear; 0xA9 0x80055BB8 end (closes the frame
+  first); 0x84 0x80054450 close after n updates (clears the slot); 0x8B
+  0x80054700 pause n updates.
+- Buster Parts ported (page, header layout 7, stats + gauges, Equip/Sort/
+  Close with its lists on the port's parts, none yet). The header's
+  weapon name ("Mega Buster", layout 7 record 1, u/v 0xC0/0x90, 64 wide) is
+  in SUB02U.TIM (the oracle's VRAM at (816,144) equals the cooked page); it
+  looked wrong only because u + w = 256 wrapped in the SPRT -> quad
+  conversion (fixed: the end clamps at 0xFF). 0x80061740 (with-part targets), 0x80061C50 (equip list bars),
+  0x80062118 and the part sorts are not ported (empty lists).

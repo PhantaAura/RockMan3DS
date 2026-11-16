@@ -1,4 +1,5 @@
 #include "legends3ds/subscreen_menu.h"
+#include <algorithm>
 #include <stdexcept>
 
 namespace l3 {
@@ -11,14 +12,17 @@ constexpr uint32_t kStatusFrameList8008e09c = 0x8008E09C;   // layout 6
 constexpr uint32_t kBank801f2000 = 0x801F2000;           // STFF_FE.MSG (SUB_KEY.BIN)
 
 // SPRT (0x64, rgb 0x808080) as the equal POLY_FT4, like frontend_tiles_80062368.
-FrontendPacket sprt(int x, int y, int w, int h, uint8_t u, uint8_t v, uint16_t clut, uint16_t bucket) {
+FrontendPacket sprt(int x, int y, int w, int h, uint8_t u, uint8_t v, uint16_t clut, uint16_t bucket, uint16_t tpage = kGaugeTpage) {
     psxgpu::PolyFt4 q;
     q.code_rgb = 0x2C808080u;
     q.x = {{int16_t(x), int16_t(x + w), int16_t(x), int16_t(x + w)}};
     q.y = {{int16_t(y), int16_t(y), int16_t(y + h), int16_t(y + h)}};
-    q.u = {{u, uint8_t(u + w), u, uint8_t(u + w)}};
-    q.v = {{v, v, uint8_t(v + h), uint8_t(v + h)}};
-    q.clut = clut; q.tpage = kGaugeTpage;
+    // A SPRT reaching the page edge (u + w = 256, e.g. the "Mega Buster"
+    // name at u 0xC0, 64 wide) must not wrap to u 0: end at 0xFF.
+    const uint8_t u1 = uint8_t(std::min(255, int(u) + w)), v1 = uint8_t(std::min(255, int(v) + h));
+    q.u = {{u, u1, u, u1}};
+    q.v = {{v, v, v1, v1}};
+    q.clut = clut; q.tpage = tpage;
     FrontendPacket p; p.length = 9; p.bucket = bucket;
     psxgpu::write_poly_ft4(p.words.data(), q);
     return p;
@@ -80,10 +84,11 @@ void SubScreenMenu::layout_draw(uint16_t list, const SubScreenValues& v, std::ve
     const uint32_t first = exe_.u32(kLayoutTable8008ecdc + 8u * list + 4u);
     const uint8_t* entry = exe_.at(kLayoutTable8008ecdc + 8u * list);
     if (entry && entry[0] == 1) { icons_8006430c(first, v, out); return; }   // handler table 0x8008DD64[1]
+    const uint16_t tpage = entry ? uint16_t(entry[2] | (entry[3] << 8)) : kGaugeTpage;   // the E1 page (+2)
     std::vector<FrontendPacket> chain;
     // Layout slot OT layer 2 (+5) -> entry 28 + 2 = 30, shared with the status
     // bar; added after it, so drawn first (the cells sit on the frame).
-    FrontendPacket mode; mode.length = 1; mode.bucket = 30; mode.words[0] = 0xE1000000u | kGaugeTpage;
+    FrontendPacket mode; mode.length = 1; mode.bucket = 30; mode.words[0] = 0xE1000000u | tpage;
     chain.push_back(mode);
     for (uint32_t r = first; ; r += 16) {
         const uint8_t* p = exe_.at(r);
@@ -98,7 +103,7 @@ void SubScreenMenu::layout_draw(uint16_t list, const SubScreenValues& v, std::ve
             const int k = 5 * ((v.life_max_800b5260 - 65) >> 4);
             u = uint8_t(u - k); w += k;
         }
-        chain.push_back(sprt(x, y, w, h, u, vv, clut, 30));
+        chain.push_back(sprt(x, y, w, h, u, vv, clut, 30, tpage));
     }
     add_chain(out, std::move(chain));
 }
@@ -124,7 +129,9 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
             else if (c == 5) page_ = 8;
             else if (c == 0) { page_ = 2; options_sub_ = 0; }
             else if (c == 1) { page_ = 3; options_sub_ = 0; }
-            else page_ = 0;   // pages 4..5 not ported: reopen the menu (CANDIDATE)
+            else if (c == 2) { page_ = 4; options_sub_ = 0; }
+            else if (c == 3) { page_ = 5; options_sub_ = 0; }
+            else page_ = 0;
         } else if (pressed & 0x0008u) page_ = 8;               // Start (Select page 7 not ported)
         break;
     case 6:                                                    // 0x80060B00
@@ -144,6 +151,8 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
         break;
     case 2: normal_items_8005ed9c(pressed, out); break;
     case 3: special_items_8005f210(pressed, out); break;
+    case 4: buster_parts_800600cc(v, out); break;
+    case 5: special_weapons_80060618(pressed, v, out); break;
     case 8:                                                    // 0x80060DB8
         windows_.clear_80053a30(); layouts_.fill(-1);
         out.exited = true;
@@ -153,6 +162,8 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
     for (const int16_t l : layouts_) if (l >= 0) layout_draw(uint16_t(l), v, out.packets);   // 0x80064060
     windows_.owned_items_800be420 = v.owned_items_800be420;
     windows_.story_flag = v.story_flag;
+    windows_.equipped_parts_800b5600 = v.equipped_parts_800b5600;
+    windows_.owned_parts_800b5604 = v.owned_parts_800b5604;
     windows_.phase_800c1b10 = 4;   // main phase 4: Start may cancel a choice
     auto w = windows_.tick_80053b40(held, pressed);
     for (auto& p : w.packets) out.packets.push_back(p);
@@ -237,6 +248,202 @@ void SubScreenMenu::special_items_8005f210(uint16_t pressed, SubScreenFrame& out
         else if (exit_check_80060e64(pressed, out)) { page_ = 0; options_sub_ = 0; }   // sw zero, 0(s0)
         break;
     default: options_sub_ = 2; break;
+    }
+}
+
+// 0x800605DC: stat targets (0x8006147C) then the animated gauges
+// (0x800602A4 mode 0 -> 8 x 0x80061A2C). The "with part" targets use the
+// same equipped parts (0x80061740 is not traced: no candidate part, CANDIDATE).
+void SubScreenMenu::gauges_800605dc(const SubScreenValues& v, std::vector<FrontendPacket>& out) {
+    static constexpr int kNow[4] = {17, 25, 33, 41}, kWith[4] = {20, 28, 36, 44}, kMax[4] = {70, 70, 70, 40};
+    int now[4] = {0, 0, 0, 0};
+    const int slots = (v.story_flag && v.story_flag(0x526)) ? 3 : 2;
+    for (int i = 0; i < slots; ++i) {
+        const uint8_t part = v.equipped_parts_800b5600[size_t(i)];
+        if (!part) continue;
+        const uint8_t* st = exe_.at(uint32_t(0x8008FE64 + 8 * (part - 1)));
+        if (!st) continue;
+        for (int k = 0; k < 4; ++k) now[k] += 10 * int8_t(st[k]);
+    }
+    for (int k = 0; k < 4; ++k) {
+        const int t = std::clamp(now[k], 0, kMax[k]);
+        ctx_[size_t(kNow[k])] = ctx_[size_t(kWith[k])] = uint8_t(t);
+    }
+    animate_800602a4();
+    static constexpr int kTriplets[10] = {16, 19, 24, 27, 32, 35, 40, 43, 48, 51};
+    std::vector<FrontendPacket> chain;
+    const auto quad = [&](int x0, int x1, int y0, int y1, uint8_t u0, uint8_t u1, uint8_t v0, uint8_t v1, uint16_t clut) {
+        psxgpu::PolyFt4 q; q.code_rgb = 0x2C808080u;
+        q.x = {{int16_t(x0), int16_t(x1), int16_t(x0), int16_t(x1)}};
+        q.y = {{int16_t(y0), int16_t(y0), int16_t(y1), int16_t(y1)}};
+        q.u = {{u0, u1, u0, u1}}; q.v = {{v0, v0, v1, v1}};
+        q.clut = clut; q.tpage = 0x000C;
+        FrontendPacket p; p.length = 9; p.bucket = 30; psxgpu::write_poly_ft4(p.words.data(), q);
+        chain.push_back(p);
+    };
+    for (int row = 0; row < 4; ++row)
+        for (int half = 0; half < 2; ++half) {                               // 0x80061A2C(203, y, value, half)
+            const int x = 203, y = 40 + 10 * row, value = ctx_[size_t(kTriplets[2 * row + half] + 2)];
+            const int y0 = y + 2 * half, y1 = y0 + 5;
+            const uint8_t v0 = uint8_t(144 + 8 * half), v1 = uint8_t(149 + 8 * half);
+            quad(x, x + value + 6, y0, y1, 96, 97, v0, v1, 0x3E83);           // body
+            quad(x + value + 6, x + value + 10, y0, y1, 111, 115, v0, v1, 0x3E83);   // cap
+            if (half == 0 && ((y != 70 && value == 70) || (y == 70 && value == 40)))   // "max"
+                quad(value == 70 ? x + 24 : x + 10, (value == 70 ? x + 24 : x + 10) + 24, y, y + 6, 0x28, 0x40, 0xF0, 0xF6, 0x3E82);
+        }
+    add_chain(out, std::move(chain));
+}
+
+// 0x800602A4: shown = target - (target - from) * n / 4 while n (+6) counts down.
+void SubScreenMenu::animate_800602a4() {
+    static constexpr int kTriplets[10] = {16, 19, 24, 27, 32, 35, 40, 43, 48, 51};
+    const int n = int8_t(ctx_[6]);
+    for (int t : kTriplets) {
+        const int from = ctx_[size_t(t)], target = ctx_[size_t(t + 1)];
+        ctx_[size_t(t + 2)] = uint8_t(n ? target - (((target - from) * n) >> 2) : target);
+    }
+    if (n) ctx_[6] = uint8_t(n - 1);
+}
+
+// 0x80061840: a weapon's five stats (attack, energy, range, rapid, special)
+// from table 0x8008D7E8 (20 bytes per class 0x8008DB08[id], 4 per stat,
+// indexed by the weapon's level byte); 255 = INFINITY (88 + flag).
+void SubScreenMenu::weapon_stats_80061840(int weapon, const SubScreenValues& v) {
+    static constexpr int kTarget[5] = {17, 25, 33, 41, 49}, kFlag[5] = {22, 30, 38, 46, 54};
+    for (int k = 0; k < 5; ++k) {
+        int value = 0, inf = 0;
+        if (weapon >= 0 && weapon < 14) {
+            const uint8_t* cls = exe_.at(uint32_t(0x8008DB08 + 2 * weapon));
+            const int idx = cls ? (cls[0] | (cls[1] << 8)) : 0;
+            const uint8_t* b = exe_.at(uint32_t(0x8008D7E8 + idx * 20 + 4 * k + v.weapon_levels[size_t(weapon)][size_t(k)]));
+            value = b ? *b : 0;
+            if (value == 255) { value = 88; inf = 1; }
+        }
+        ctx_[size_t(kTarget[k])] = uint8_t(value); ctx_[size_t(kFlag[k])] = uint8_t(inf);
+    }
+}
+
+// 0x800602A4 mode 1: five 0x80061C50(164, 158 + 10k, shown, infinity) bars.
+void SubScreenMenu::bars_800602a4_mode1(std::vector<FrontendPacket>& out) {
+    animate_800602a4();
+    static constexpr int kShown[5] = {18, 26, 34, 42, 50}, kFlag[5] = {22, 30, 38, 46, 54};
+    std::vector<FrontendPacket> chain;
+    const auto quad = [&](int x0, int x1, int y0, int y1, uint8_t u0, uint8_t u1, uint8_t v0, uint8_t v1, uint16_t clut) {
+        psxgpu::PolyFt4 q; q.code_rgb = 0x2C808080u;
+        q.x = {{int16_t(x0), int16_t(x1), int16_t(x0), int16_t(x1)}};
+        q.y = {{int16_t(y0), int16_t(y0), int16_t(y1), int16_t(y1)}};
+        q.u = {{u0, u1, u0, u1}}; q.v = {{v0, v0, v1, v1}};
+        q.clut = clut; q.tpage = 0x000C;
+        FrontendPacket p; p.length = 9; p.bucket = 30; psxgpu::write_poly_ft4(p.words.data(), q);
+        chain.push_back(p);
+    };
+    for (int k = 0; k < 5; ++k) {
+        const int x = 164, y = 158 + 10 * k, value = ctx_[size_t(kShown[k])];
+        quad(x, x + value, y, y + 8, 0x48, 0x49, 0x90, 0x98, 0x3E83);         // body
+        quad(x + value, x + value + 4, y, y + 8, 0x4C, 0x50, 0x90, 0x98, 0x3E83);   // cap
+        if (ctx_[size_t(kFlag[k])] && value == 88)                            // INFINITY
+            quad(x + 24, x + 64, y, y + 8, 0x28, 0x50, 0xF8, 0xFF, 0x3E82);
+    }
+    add_chain(out, std::move(chain));
+}
+
+// 0x80060618 Special Weapons (jump table 0x8001134C). Equip changes the arm
+// bytes (+1103 / +368) only in this menu's copy (no weapons in the port yet);
+// 0x8005C218 and the "next" arrow are not ported.
+void SubScreenMenu::special_weapons_80060618(uint16_t pressed, const SubScreenValues& v, SubScreenFrame& out) {
+    const uint32_t g = windows_.flags_80098a58;
+    const bool chose = g & 0x40000000u;
+    const auto bars = [&] { bars_800602a4_mode1(out.packets); };
+    switch (options_sub_) {
+    case 0:
+        windows_.clear_80053a30(); layouts_.fill(-1); ctx_[5] = 0;      // + loader 0x8001D440(205)
+        if (!arm_dirty_) { arm_368_ = v.arm_368; flag_1103_ = v.flag_1103; }
+        ++options_sub_;
+        break;
+    case 1:
+        windows_.open_8005382c(0, kBank801f2000, arm_368_ ? 92 : 93);
+        if (!(windows_.flags_80098a58 & 0x04000000u)) windows_.open_8005382c(1, kBank801f2000, 47);
+        if (v.weapon_370 == 0) layouts_[0] = 28;
+        layouts_[1] = 9; layouts_[2] = 23; layouts_[3] = 8;
+        weapon_stats_80061840(0, v);
+        bars();
+        ++options_sub_;
+        break;
+    case 2:
+        if (chose) {
+            const uint8_t c = uint8_t(g);
+            if (c == 0) { out.sounds.push_back({{130, 1}}); options_sub_ = 3; }
+            else if (c == 1) {
+                if (v.weapon_370 == 0) windows_.open_8005382c(0, kBank801f2000, 97);
+                else if (v.energy_1102 <= 0) windows_.open_8005382c(0, kBank801f2000, 96);
+                else if (flag_1103_ == 0) { windows_.open_8005382c(0, kBank801f2000, 94); flag_1103_ = 1; arm_368_ = v.weapon_370; arm_dirty_ = true; }
+                else { windows_.open_8005382c(0, kBank801f2000, 95); flag_1103_ = 0; arm_368_ = 0; arm_dirty_ = true; }
+                options_sub_ = 5;
+            } else if (c == 2) {
+                out.sounds.push_back({{131, 1}});
+                windows_.clear_80053a30(); layouts_.fill(-1);               // + loader 22
+                options_sub_ = 6;
+            }
+        }                                                                   // (0x80060EC0 L1/R1: not ported)
+        bars();
+        break;
+    case 3: {                                                               // browse the weapon grid (slot 1)
+        const int cursor = windows_.slot(1).cursor;                         // byte 0x80098B2D (CANDIDATE source)
+        const int id = cursor ? cursor + 1 : 0;
+        ctx_[4] = uint8_t(cursor); ctx_[5] = uint8_t(id);
+        const bool owned = cursor < 13 && v.story_flag && v.story_flag(uint16_t(1216 + id));
+        if (owned) {
+            layouts_[1] = int16_t(9 + cursor);
+            layouts_[0] = v.weapon_370 == id ? 28 : -1;
+            weapon_stats_80061840(id, v);
+        } else {
+            ctx_[5] = 0; layouts_[1] = 22; layouts_[0] = -1;
+            weapon_stats_80061840(-1, v);
+        }
+        if (windows_.slot_bits_gp4812 & 0x40000u) {                        // 0x80060248
+            for (int t : {16, 19, 24, 27, 32, 35, 40, 43, 48, 51}) ctx_[size_t(t)] = ctx_[size_t(t + 2)];
+            ctx_[6] = 3;
+        }
+        if (chose) {
+            if (cursor == 13) { out.sounds.push_back({{130, 1}}); options_sub_ = 5; }
+            else if (owned) { out.sounds.push_back({{130, 1}}); windows_.open_8005382c(0, kBank801f2000, uint8_t(228 + cursor)); options_sub_ = 4; }
+            else out.sounds.push_back({{131, 1}});
+        } else if (pressed & 0x1008u) { out.sounds.push_back({{131, 1}}); options_sub_ = 5; }
+        bars();
+        break;
+    }
+    case 4: if (!(windows_.flags_80098a58 & 0x08000000u)) options_sub_ = 3; bars(); break;
+    case 5: if (!(windows_.flags_80098a58 & 0x08000000u)) { options_sub_ = 1; ctx_[2] = 0; } bars(); break;
+    default: page_ = 0; options_sub_ = 0; break;                           // 6: loader idle -> menu
+    }
+}
+
+// 0x800600CC Buster Parts (message 29 -> 30, header layout 7, gauges). The
+// Equip list / Sort work on the port's parts (none yet); 0x80061C50 (the
+// equip list's part bars) and 0x80062118 are not ported.
+void SubScreenMenu::buster_parts_800600cc(const SubScreenValues& v, SubScreenFrame& out) {
+    switch (options_sub_) {
+    case 0: windows_.clear_80053a30(); layouts_.fill(-1); ++options_sub_; break;   // + loader 0x8001D440(205)
+    case 1:
+        windows_.open_8005382c(0, kBank801f2000, 29);
+        layouts_[2] = 7;                                                    // 0x80063FC0(2, 0x20007)
+        gauges_800605dc(v, out.packets);
+        ++options_sub_;
+        break;
+    case 2: {
+        const uint32_t g = windows_.flags_80098a58;
+        if ((g & 0x480000FFu) == 0x48000002u) { ++options_sub_; break; }   // Close (+ loader 22)
+        if (!(g & 0x08000000u)) {
+            const uint32_t w = windows_.slot_bits_gp4812;
+            if ((w & 0x10000u) ? (w & 0x40000u) : (w & 0x80000u)) {        // 0x80060248: re-snapshot
+                for (int t : {16, 19, 24, 27, 32, 35, 40, 43, 48, 51}) ctx_[size_t(t)] = ctx_[size_t(t + 2)];
+                ctx_[6] = 3;
+            }
+        }
+        gauges_800605dc(v, out.packets);                                    // (0x80060EC0 L1/R1: not ported)
+        break;
+    }
+    default: page_ = 0; options_sub_ = 0; break;
     }
 }
 

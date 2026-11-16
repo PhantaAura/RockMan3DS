@@ -76,6 +76,8 @@ struct MessageSlot {
     std::array<uint8_t, 3> remembered{};   // +121..+123
     uint8_t decor = 0;          // +124
     uint8_t decor_state = 0;    // +125
+    uint8_t decor_step = 8;     // +133 (decor 8)
+    uint32_t decor_saved = 0;   // +128 (decor 8)
     uint8_t width = 0, height = 0;   // +126, +127 (characters)
     std::array<int16_t, 8> box{};    // +136..+150 corner offsets
     uint16_t margin = 0;        // +180/+182
@@ -116,6 +118,11 @@ public:
     // field at 0x800BE420 (bit 0x80 >> (id & 7) of byte id >> 3).
     std::array<uint8_t, 8> owned_items_800be420{};
     std::function<bool(uint16_t)> story_flag;   // 0x8001DA58 for 0x9C (unset: all clear)
+    // Buster parts (player work 0x800B51B0 + 1104 / + 1108): equipped slots
+    // (part + 1, 0 = empty) and the owned list, for 0xE1.
+    std::array<uint8_t, 4> equipped_parts_800b5600{};
+    std::array<uint8_t, 64> owned_parts_800b5604{};
+    uint8_t name_index_gp4044 = 0;               // 0xC1 name (table 0x8008CBA4)
     std::array<uint8_t, 128> list_800be2f8{};   // list ids, 255 = empty
     uint8_t list_scroll_gp4408 = 0, list_max_scroll_gp4464 = 0, list_picked_gp4077 = 255;
     uint32_t list_count_gp4420 = 0, slot_bits_gp4812 = 0, frame_gp4348 = 0;
@@ -131,6 +138,8 @@ private:
     bool exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, bool& unported);
     void draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, int slot_index);
     void draw_frame(MessageSlot& s, MessageWindowFrame& out);
+    // Decor exec 0x8008AAC0[decor]: 2/4 = 0x8005B85C, 8 = 0x8005B98C (grows open / shrinks shut).
+    bool decor_exec(MessageSlot& s);
     void sound(MessageWindowFrame& out, uint8_t id, uint8_t a1) { out.sounds.push_back({{id, a1}}); }
 
     ExeExcerpt exe_;
