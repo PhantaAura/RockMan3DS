@@ -1732,8 +1732,9 @@ bool RuntimeSession::commit_source_door_transition() {
     return true;
 }
 bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) noexcept {
-    if(!profile.loaded||(profile.event!=3&&profile.event!=2))return false;
-    source_post_win_profiles_[profile.event==3?0:1]=std::move(profile);
+    if(!profile.loaded||(profile.event!=3&&profile.event!=2&&profile.event!=4))return false;
+    const size_t i=profile.event==3?0:profile.event==2?1:2;
+    source_post_win_profiles_[i]=std::move(profile);
     return true;
 }
 void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
@@ -1742,29 +1743,39 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
     if(!ev.active){
         // A retained hand-off waits for its loader (event 3) or for a stage
         // the port does not load (event 2).
-        if(source_post_win_handoff_||!source_event_profile_||source_event_stage_!=0)return;
-        if(source_door_event0_.active||source_door_request_)return;
-        if(source_event_work_&&source_event_work_->known[0]&&source_event_work_->active00())return;
+        if(source_post_win_handoff_)return;
+        if(stage_==2){
+            // ST02 poll 0x80100238: on the first visit (byte 0x800989FC == 0,
+            // CANDIDATE for a fresh game) 0x80100204 sets 0x600 and counts the
+            // visit; table 0x80106C28 then starts event 4 from flag 0x600.
+            if(!source_stage_visit_800989fc_){set_story_flag(0x600,true);source_stage_visit_800989fc_=1;}
+            if(!story_flag(0x600)||!source_post_win_profiles_[2])return;
+            ev=start_source_post_win_event(4);
+            source_post_win_cd_.reset();source_post_win_cd_done_=false;
+        }
+        else if(!source_event_profile_||source_event_stage_!=0)return;
+        if(!ev.active&&(source_door_event0_.active||source_door_request_))return;
+        if(!ev.active&&source_event_work_&&source_event_work_->known[0]&&source_event_work_->active00())return;
         // The ST00 poll 0x80100598 over the bound table, as the pipeline runs
         // it: the first set flag wins. The pipeline cannot poll after a door
         // transition (356C is unknown there), so the native events take the
         // poll's result here; only events 3 and 2 are started.
         std::optional<uint8_t> selected;
-        for(const auto& r:source_event_profile_->records)
+        if(!ev.active)for(const auto& r:source_event_profile_->records)
             if(story_flag(r.flag)){selected=r.event;break;}
-        if(!selected||(*selected!=3&&*selected!=2)||!source_post_win_profiles_[*selected==3?0:1])return;
+        if(!ev.active&&(!selected||(*selected!=3&&*selected!=2)||!source_post_win_profiles_[*selected==3?0:1]))return;
         // 0x8001DDE4: work zeroed, +0 = 1, +1 = event (HP is never negative here).
-        ev=start_source_post_win_event(*selected);
+        if(!ev.active)ev=start_source_post_win_event(*selected);
         source_post_win_cd_.reset();source_post_win_cd_done_=false;
-        if(source_event_work_){
+        if(source_event_work_&&selected){
             auto& w=*source_event_work_;
             w.raw[0]=1;w.raw[1]=*selected;w.raw[4]=0;w.known[0]=w.known[1]=w.known[4]=1;
         }
     }
-    const auto& profile=*source_post_win_profiles_[ev.event==3?0:1];
+    const auto& profile=*source_post_win_profiles_[ev.event==3?0:ev.event==2?1:2];
     SourcePostWinInputs input;
     // 0x80042238 has player stores, so it runs only in the phase that calls it.
-    if((ev.event==3&&ev.phase==0)||(ev.event==2&&ev.phase==1)){
+    if(((ev.event==3||ev.event==4)&&ev.phase==0)||(ev.event==2&&ev.phase==1)){
         const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
         input.player_ready=ready&&*ready;
     }
@@ -1786,7 +1797,8 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
     }
     if(step.handoff){
         set_story_flag(step.handoff->cleared_flag,false);           // 0x8001DCD0
-        if(ev.event==3)player_.bytes[0]=uint8_t(player_.bytes[0]|1u);  // 0x800B51B0 |= 1
+        if(ev.event==4)set_story_flag(0,false);                          // 0x8001DCD0(0)
+        if(ev.event==3||ev.event==4)player_.bytes[0]=uint8_t(player_.bytes[0]|1u);  // 0x800B51B0 |= 1
         source_player_event_release_80042314(player_);
         if(source_event_work_)source_event_work_->raw[0]=0;
         source_post_win_handoff_=step.handoff;++source_post_win_generation_;
@@ -1805,7 +1817,8 @@ std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_wi
 std::optional<SourceStageRequest> RuntimeSession::source_stage_request() const noexcept {
     const auto& h=source_post_win_handoff_;
     if(!h||h->stage==stage_)return std::nullopt;
-    return source_stage_request_from_lanes(h->raw,source_post_win_.event==2?0x8010194Cu:0x80102058u,source_post_win_generation_);
+    return source_stage_request_from_lanes(h->raw,source_post_win_.event==4?0x80101CC0u:
+        source_post_win_.event==2?0x8010194Cu:0x80102058u,source_post_win_generation_);
 }
 SourceStageCarry RuntimeSession::make_stage_carry() const {
     SourceStageCarry c;

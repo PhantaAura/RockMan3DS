@@ -338,7 +338,7 @@ public:
     // for stage 2, which the port does not load: it is retained and reported.
     bool bind_source_post_win_profile(SourcePostWinProfile profile) noexcept;
     bool source_post_win_profile_bound(uint8_t event) const noexcept {
-        return (event==3&&source_post_win_profiles_[0])||(event==2&&source_post_win_profiles_[1]);
+        const size_t i=event==3?0:event==2?1:event==4?2:3;return i<3&&source_post_win_profiles_[i].has_value();
     }
     const SourcePostWinEvent& source_post_win_event() const noexcept { return source_post_win_; }
     const SourcePostWinStep& source_post_win_step() const noexcept { return source_post_win_step_; }
@@ -785,7 +785,8 @@ private:
     std::optional<SourceDoorRequest> source_door_request_;
     uint64_t source_door_generation_=0;
     SourceDoorEvent0 source_door_event0_{};
-    std::array<std::optional<SourcePostWinProfile>,2> source_post_win_profiles_{};   // event 3, event 2
+    std::array<std::optional<SourcePostWinProfile>,3> source_post_win_profiles_{};   // ST00 event 3, event 2, ST02 event 4
+    uint8_t source_stage_visit_800989fc_=0;   // ST02 first-visit byte (0x80100204 increments it)
     SourcePostWinEvent source_post_win_{};
     SourcePostWinStep source_post_win_step_{};
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;

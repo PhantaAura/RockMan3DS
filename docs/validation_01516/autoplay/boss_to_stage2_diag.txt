@@ -1,9 +1,10 @@
 # DIAGNOSTIC (needs diagnostic_spawn_01414.txt '3 -256 -385 -1632 0'): skips the tutorial, fights the Area 3 boss,
-# then the real post-win chain: event 3 -> Area 4 -> event 2 -> stage-2 request -> ST02 load; idle/walk in ST02 area 0.
+# then the real post-win chain: event 3 -> Area 4 -> event 2 -> stage-2 request -> ST02 load; ST02 event 4 runs (~4400 frames) to the stage 3 area 1 request (held: ST03 not cooked).
 6000 ffffa 4000 500
 3000 ffffc 1542 0
 1800 0 0 0
 3600 0 0 0
+4800 0 0 0
 300 0 0 0
 240 40 0 0
 60 20 0 0

@@ -63,7 +63,7 @@ EXTRA_STAGES={
     # Area 3 has no ST02_03.BIN; the stage container (which carries the same
     # EBD and the area-0 pages) stands in for it (CANDIDATE).
     2:{'container':'ST02.BIN','areas':('ST02_00.BIN','ST02_01.BIN','ST02_02.BIN','ST02.BIN'),
-       'ebd':r'..\EMBIN\ST02_01.EBD'},
+       'ebd':r'..\EMBIN\ST02_01.EBD','events':(4,)},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 
@@ -603,6 +603,11 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
     run(tools,'l3cook_render',*quartet,sout/'render.l3render')
     run(tools,'l3cook_map_init',*quartet,sout/'map.l3map',sout/'render.l3render',sout/'init.l3init','--stage0-startup')
     run(tools,'l3cook_st00_flow',work/'overlay',sout/'flow.l3flow','--stage',str(number))
+    # Stage events (tools/cook_cutscene.py): eventN.l3cs, bound by the runtime.
+    for event in spec.get('events',()):
+        subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
+            '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(work/'overlay'),
+            '--event',str(event),'--stage',str(number),'--out',str(sout/f'event{event}.l3cs')],check=True,stdout=subprocess.DEVNULL)
     for area_index,cname in enumerate(spec['areas']):
         cp=dat/cname
         matches=[r for r in iter_resources(cp) if r.internal==spec['ebd']]

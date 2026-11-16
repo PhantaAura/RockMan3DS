@@ -6,6 +6,10 @@ constexpr uint32_t kTimeline3 = 0x8011BE44u, kCamera3 = 0x8011BB3Cu;
 constexpr uint32_t kSpawn3a = 0x8011BB14u, kSpawn3b = 0x8011BB28u;
 constexpr uint32_t kTimeline2 = 0x8011BA4Cu, kCamera2 = 0x8011B4B4u, kSpawns2 = 0x8011B388u;
 constexpr size_t kSpawnCount2 = 14;
+// ST02 event 4 (handler 0x80101CC0, constructor 0x80101B2C): timeline
+// 0x8010738C, camera 0x80106C30, five spawns 0x80107328 + 20n.
+constexpr uint32_t kTimeline4 = 0x8010738Cu, kCamera4 = 0x80106C30u, kSpawns4 = 0x80107328u;
+constexpr size_t kSpawnCount4 = 5;
 
 int16_t rec16(const std::array<uint8_t,20>& r, size_t at) noexcept {
     return int16_t(uint16_t(r[at] | (uint16_t(r[at + 1]) << 8)));
@@ -28,10 +32,11 @@ std::array<int16_t,3> slot_pos(const SourcePostWinEvent& ev, const SourcePostWin
 void state(SourcePostWinEvent& ev, size_t slot, uint8_t s9) noexcept {
     auto& s = ev.slots[slot]; s.state_09 = s9; s.sub_0a = 0; s.writes += 2;
 }
-SourcePostWinHandoff handoff(uint8_t stage, uint8_t area, uint16_t flag) noexcept {
+SourcePostWinHandoff handoff(uint8_t stage, uint8_t area, uint16_t flag, uint8_t b3570 = 0xFF) noexcept {
     SourcePostWinHandoff h;
-    // 3560..3565 = 0, 356A = 0, 356C = 2, 356D = 0, 356E stage, 356F area, 3570/3571 = 0xFF.
-    h.raw[12] = 2; h.raw[14] = stage; h.raw[15] = area; h.raw[16] = h.raw[17] = 0xFF;
+    // 3560..3565 = 0, 356A = 0, 356C = 2, 356D = 0, 356E stage, 356F area,
+    // 3570 = 0xFF (ST00 events) or 2 (ST02 event 4), 3571 = 0xFF.
+    h.raw[12] = 2; h.raw[14] = stage; h.raw[15] = area; h.raw[16] = b3570; h.raw[17] = 0xFF;
     h.stage = stage; h.area = area; h.cleared_flag = flag;
     return h;
 }
@@ -39,12 +44,19 @@ SourcePostWinHandoff handoff(uint8_t stage, uint8_t area, uint16_t flag) noexcep
 
 bool bind_source_post_win_profile(const SourceScenePackage& p, uint8_t event, SourcePostWinProfile& out) {
     out = {};
-    if (!p.loaded || p.stage != 0 || p.event != event || (event != 3 && event != 2)) return false;
-    const auto* t = p.timeline(event == 3 ? kTimeline3 : kTimeline2);
+    const bool st02 = event == 4;
+    if (!p.loaded || p.event != event || p.stage != (st02 ? 2 : 0) || (event != 3 && event != 2 && !st02)) return false;
+    const auto* t = p.timeline(event == 3 ? kTimeline3 : event == 2 ? kTimeline2 : kTimeline4);
     if (!t || t->records.empty()) return false;
     out.timeline = *t;
-    if (const auto* c = p.camera(event == 3 ? kCamera3 : kCamera2)) out.camera = *c;
-    if (event == 3) {
+    if (const auto* c = p.camera(event == 3 ? kCamera3 : event == 2 ? kCamera2 : kCamera4)) out.camera = *c;
+    if (st02) {
+        for (size_t i = 0; i < kSpawnCount4; ++i) {
+            bool found = false;
+            for (const auto& sp : p.spawns) if (sp.token == kSpawns4 + 20u * i) { out.spawns.push_back(sp.bytes); found = true; }
+            if (!found) return false;
+        }
+    } else if (event == 3) {
         if (!out.camera) return false;   // the cooker accepts event 3's program
         for (const uint32_t token : {kSpawn3a, kSpawn3b}) {
             bool found = false;
@@ -184,8 +196,8 @@ SourcePostWinStep step_source_post_win_event(SourcePostWinEvent& ev, const Sourc
     // later in the same tick reads it busy.
     uint16_t busy = in.fade_busy;
     const auto fade = [&](uint8_t type) { out.fade_type = type; busy = 0xFFFF; };
-    const auto finish = [&](uint8_t stage, uint8_t area, uint16_t flag) {
-        out.handoff = handoff(stage, area, flag);
+    const auto finish = [&](uint8_t stage, uint8_t area, uint16_t flag, uint8_t b3570 = 0xFF) {
+        out.handoff = handoff(stage, area, flag, b3570);
         ev.active = false;   // *event = 0
     };
     if (ev.event == 3) {
@@ -208,6 +220,35 @@ SourcePostWinStep step_source_post_win_event(SourcePostWinEvent& ev, const Sourc
             scene_tick(ev, profile, in, out);
             // 0x8005D9EC (not ported) precedes the stores.
             if (ev.phase == 6 && busy == 0) finish(0, 4, 0x606);
+            break;
+        default: break;
+        }
+    } else if (ev.event == 4) {
+        // 0x80101CC0, phase table 0x80100004.
+        switch (ev.phase) {
+        case 0: if (in.player_ready) { out.player_hidden = true; ev.phase = 1; } break;
+        case 1: out.cd_request = 0x20000004u; ev.phase = 2; break;
+        case 2: if (in.cd_done) { ev.countdown = 20; ev.phase = 3; } break;
+        case 3: if (--ev.countdown == 0) { fade(2); ev.phase = 4; } break;
+        case 4: case 5: case 6:
+            if (ev.phase == 4) {
+                // 0x80101B2C: 0x8001E6C0(0,0,0), camera 0x80106C30, five
+                // 0x8001EAE8 spawns, one 0x80031618 object (b00/b02/b0c/b0d = 1,
+                // +0x1C = 80, +0x1E = 64), five 0x800316BC children (not
+                // simulated), 0x8010A5E0 = 0, timeline 0x8010738C.
+                out.camera_reset_8001e6c0 = true; out.camera_program = kCamera4; ev.camera = {};
+                for (const auto& r : profile.spawns) {
+                    const uint8_t slot = spawn_record(ev, r);
+                    if (out.spawn_count < out.spawned_slots.size()) out.spawned_slots[out.spawn_count] = slot;
+                    ++out.spawn_count;
+                }
+                SourcePostWinObject o; o.b00 = o.b02 = o.b0c = o.b0d = 1; out.object = o;
+                ev.record = 0; ev.constructed = true; out.constructed = true;
+                ev.phase = 5;
+            }
+            if (ev.phase == 5 && busy == 0 && (ev.counters.e8 == 0xFF || in.start_skip)) { fade(10); ev.phase = 6; }
+            scene_tick(ev, profile, in, out);   // 0x80101C80, 0x8001EC0C, 0x8001F070
+            if (ev.phase == 6 && busy == 0) finish(3, 1, 0x600, 2);
             break;
         default: break;
         }

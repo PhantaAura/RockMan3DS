@@ -5037,6 +5037,16 @@ int main() {
             } catch(const std::exception&) {}
             hardware_test_trace("# source_post_win_profile,event=%u,bound=%u",ev,unsigned(bound));
         }
+        // Stage events beyond ST00: ST02 event 4 (stages/st02/event4.l3cs).
+        if(g_stage==2) {
+            bool bound=false;
+            try {
+                l3::SourceScenePackage package;l3::SourcePostWinProfile profile;
+                bound=l3::load_source_scene_package(read_binary(stage_path("event4.l3cs"),l3::kSourceScenePackageMaxBytes),package)&&
+                      l3::bind_source_post_win_profile(package,4,profile)&&session.bind_source_post_win_profile(std::move(profile));
+            } catch(const std::exception&) {}
+            hardware_test_trace("# source_post_win_profile,stage=2,event=4,bound=%u",unsigned(bound));
+        }
         if(g_stage==0&&actor_metadata.event_phase5) {
             session.bind_source_event_phase5_profile(*actor_metadata.event_phase5);
             const auto admitted=session.bind_source_event_phase5_resources();

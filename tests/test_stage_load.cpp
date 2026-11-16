@@ -112,6 +112,33 @@ int main() {
     require(st2b.apply_stage_load(carry, a1) && st2b.map_area_index() == 1 && st2b.player_position().x == 100, "arrival into area 1");
     SourceStageArrival wrong = arrival; wrong.stage = 3;
     require(!st2.apply_stage_load(carry, wrong), "a load for another stage is refused");
+    // ST02 event 4: the first-visit poll sets 0x600 and starts it; it ends
+    // with the stage 3 area 1 request (3570 = 2) and clears 0x600.
+    {
+        auto s4 = make_session(4); s4.set_stage(2);
+        SourcePostWinProfile p4; p4.loaded = true; p4.event = 4;
+        p4.timeline.token = 0x8010738Cu;
+        p4.timeline.records = {{{0x50000u, 0x80101000u}}, {{0xffu, 0u}}};
+        for (uint8_t i = 0; i < 5; ++i) { std::array<uint8_t,20> r{}; r[0] = i; p4.spawns.push_back(r); }
+        require(s4.bind_source_post_win_profile(p4) && s4.source_post_win_profile_bound(4), "event 4 profile binds");
+        s4.reset_player({0, 0, 0}, 0, 80, 80);
+        s4.tick({});
+        require(s4.story_flag(0x600) && s4.source_post_win_event().active && s4.source_post_win_event().event == 4,
+                "first visit: 0x80100204 sets 0x600, table 0x80106C28 starts event 4");
+        int guard = 0;
+        while (!s4.pending_source_post_win_cd() && guard++ < 10) s4.tick({});
+        require(s4.pending_source_post_win_cd() == 0x20000004u, "XA 0x20000004 requested");
+        s4.acknowledge_source_post_win_cd(0x20000004u);
+        guard = 0;
+        while (!s4.source_post_win_handoff() && guard++ < 300) s4.tick({});
+        const auto r4 = s4.source_stage_request();
+        require(r4 && r4->stage == 3 && r4->area == 1 && r4->source_function == 0x80101CC0u &&
+                s4.source_post_win_handoff()->raw[16] == 2 && s4.source_post_win_handoff()->raw[17] == 0xFF,
+                "event 4 requests stage 3 area 1 (3570 = 2)");
+        require(!s4.story_flag(0x600) && !s4.source_post_win_transition(), "0x600 cleared; not an area transition");
+        s4.tick({});
+        require(!s4.source_post_win_event().active, "event 4 does not restart (visit byte counted)");
+    }
     if (failures) return EXIT_FAILURE;
     std::puts("stage_load: ok");
     return 0;
