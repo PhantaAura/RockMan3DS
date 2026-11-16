@@ -23,6 +23,7 @@ from pathlib import Path
 EXE_SHA = "10d2008f2837c466b8a3c3f56ff9b0946096ef29d7f26f09010d78ed4b2568f0"
 TEXT = 0x80010000
 RANGES = [
+    (0x80089B2C, 0x80089EEC),   # weapon level tables (8 x 8 bytes per weapon) + pointers 0x80089EAC (item 65)
     (0x8008AE7C, 0x8008AF00),   # glyph widths (u8 per glyph byte 0x00..0x83)
     (0x8008AF18, 0x8008AF24),   # decor -> frame parameter
     (0x8008B67C, 0x8008C8E4),   # messages 0x25..0x32 (title, OPTION, help, sub-screen menu), part,

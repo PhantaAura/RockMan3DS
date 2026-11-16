@@ -18,8 +18,10 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   bottom screen (original sub-screen: tiles, LIFE/ZENNY/TIME, menu, Options
   page). Select+Start quits now. Normal Items, Special Items, Buster Parts
   and Special Weapons pages ported (af14338); the "Mega Buster" header
-  garbage was the SPRT u+w=256 wrap, now clamped. Not yet: item use flows,
-  part sorts, L1/R1 page switching (0x80060EC0), Azahar check of the
+  garbage was the SPRT u+w=256 wrap, now clamped. Since then: L1/R1 page
+  switching, part sorts, Normal and Special Items use (menu side 1:1; the
+  gameplay effects are reported and logged, not applied: no session setters
+  / warp hook yet). Azahar check of the
   Special Weapons page (Azahar busy; host probe matched oracle frames). Native build PASS.
 - **Status 2026-11-13 (main 23db7cf).** Merged into main (a4a149b): the
   ST00 event-1 opening, the ST01 intro crawl and ST07 attract scene, the
