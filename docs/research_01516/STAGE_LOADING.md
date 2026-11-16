@@ -65,3 +65,23 @@ Flutter, sea and crash), the ST02 BG sky (`ST02BG*.TIM`), the stage's
 negative-material table, music/SFX, and the request to stage 3 area 1.
 Without event 4 the player stands at (0,0,0) with control; the original
 never gives control in ST02.
+
+## Azahar evidence (2026-11-15, run 11)
+
+Diagnostic boot (Area 3 boss spawn; the tutorial is skipped), then the real
+post-win chain: 0x606 at frame 629, event 3 -> Area 4 at 1617, event 2 ->
+stage request at 4419 (stage 2, area 0, lanes (0,0,0), heading 0), ST00
+unloaded, ST02 loaded, `apply_stage_load` applied (area 0, (0,0,0), HP 20).
+Terrain faces are drawn (743 at frame 4680). Mega Man then free-falls: ST02
+area 0 has no floor for a standing player (y wraps through int16). Found on
+the way: the fade budget byte 0x1F800001 = 2 (stage initialization,
+0x8001201C/0x80013440) was only rebound on an area change, so fade 10 held
+at its endpoint after any direct boot; now bound at boot.
+
+ST02 event 4 cooks with `tools/cook_cutscene.py --event 4 --stage 2`
+(MAX_RECORDS raised to 256): handler 0x80101CC0, phase table 0x80100004
+(7), timeline 0x8010738C (37 records), camera 0x80106C30 (446 words), spawns
+0x80107328..0x80107378 (5), XA 0x20000004, and 12 area requests from its
+callbacks (areas 0/1/2/3). The handler has event 2's shape: player-ready
+wait, XA, CD wait, 20-tick countdown, fade 2, constructor 0x80101B2C,
+timeline until fade 10.

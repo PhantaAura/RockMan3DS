@@ -21,8 +21,17 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
     are legal outside ST00, native PASS pass-20261114-161948). Runs 3-6 on
     that build did not reach stage 2: run 5 traded deaths with the boss (0x606
     at 18708, game over at 18711); runs 3, 4 and 6 were cut short (shared-SD
-    collision with another session, session restarts). **The ST02 arrival
-    after the empty-area fix is not yet seen in Azahar.**
+    collision with another session, session restarts).
+  - **Azahar run 11 (2026-11-15, diagnostic Area 3 boss spawn
+    `autoplay/boss_to_stage2_diag.txt`, then the real chain; pass-20261115-
+    150931):** 0x606 @629 -> event 3 -> Area 4 @1617 -> event 2 -> stage
+    request @4419 -> ST00 released -> ST02 loaded -> arrival applied: area 0,
+    (0,0,0), heading 0, HP 20 carried. Fade budget 2 (0x1F800001) is now bound
+    at boot; without it fade 10 held at its endpoint after a direct boot.
+    In ST02 area 0 Mega Man free-falls (no floor; y wraps) because the area
+    has no collision for a standing player: the original hides him during
+    event 4 and never gives control there. A normal-boot run to ST02 still
+    needs a route that survives the boss (runs 5/7 died).
   - Missing in ST02: event 4 + poll 0x600 (the Flutter flight), BG sky,
     sea drawing for area 0, music, the stage 3 hand-off. The original never
     gives control in ST02. Arrival is source-backed; oracle check pending.
@@ -274,9 +283,11 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-- Stage loading: one Azahar run of `autoplay/tutorial_to_stage2.txt` on the
-  stage-loading build that survives the boss (route outcome varies), to see
-  the ST02 area-0 arrival; then ST02 event 4 (poll 0x600) and the BG sky.
+- Stage loading: ST02 event 4 (poll 0x600, handler 0x80101CC0, 7 phases,
+  timeline 0x8010738C x37, camera 0x80106C30, 5 spawns, XA 0x20000004, 12
+  area cuts; `cook_cutscene.py --event 4 --stage 2` now cooks it), then the
+  stage 3 area 1 request and ST03 event 8. A normal-boot run to ST02 when
+  the boss route is reliable.
 0. Finish M1 (the Area 3 boss), status 2026-11-15:
    - DONE (Azahar runs 13/14): opening -> tutorial -> 0x622 from normal boot;
      boss AI/damage by Buster; player damage, gauge gating, death; game over
