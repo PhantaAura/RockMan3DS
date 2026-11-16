@@ -85,3 +85,31 @@ ST02 event 4 cooks with `tools/cook_cutscene.py --event 4 --stage 2`
 callbacks (areas 0/1/2/3). The handler has event 2's shape: player-ready
 wait, XA, CD wait, 20-tick countdown, fade 2, constructor 0x80101B2C,
 timeline until fade 10.
+
+## ST02 event 4 records and area cuts (SOURCE_BACKED_PARTIAL)
+
+The 36 record callbacks (0x80100450..0x801019DC) are ported in
+`source_st00_post_win.cpp` (`run_st02_event4_callback`; the ST02 overlay
+loads at 0x80100000 like ST00's, so 0x801014BC exists in both event 2 and
+event 4 and the callbacks dispatch by event). Ported: the slot commands
+(+0 bit 1 drawn, +9/+0x0A state, +0x0C, +0x0D, +0x1C..+0x24 positions,
++0x56 heading, +0x15E), the 0x8002EE90(64, 128) sounds and the area cuts.
+Not ported (no native owner): the 0x800BBA90.. / 0x800BBC88.. globals, the
+0x8010A5D4 object (+0x0D, +0x1E), the 0x80105884 / 0x80105724 / 0x80104448
+effects and the 0x8010A5E0.. overlay bytes.
+
+0x801002C8(area) is an **area cut inside the running event**: 356C = 0xFF,
+356E = 2, 356F = area, 3560..3565 = 0, 356A = 0, 356D = 0, 3570 = 3571 = 0xFF.
+The main phase (0x800163DC) sends any nonzero 356C to the load subphase 6;
+with 356C = 0xFF the loader 0x8001F408 skips 0x8001D440, 0x8001F5E4,
+0x8001D888, the 0x3FE sound and 0x80031AA4 (player spawn, music and camera
+set-up) but still calls the area's set-up routine, and 0x80022FD4 skips the
+area resources while an event runs. The timeline cuts 1, 0, 1, 0, 1, 0, 1,
+0, 2, 1, 3, 1 (records 3, 13, 14, 15, 16, 21, 25, 30, 31, 32, 34, 35).
+
+The port keeps the cut as a post-win hand-off with `event_cut()`: the event
+waits while it is pending (the load subphase does not tick events), the
+loader commit (`commit_source_post_win_transition`) switches the area with
+the player and the fade work untouched, and main.cpp skips the music change.
+A cut to the current area is kept (the original reloads it; ST02's areas own
+no objects; CANDIDATE).
