@@ -84,7 +84,9 @@ struct MessageSlot {
 };
 
 struct MessageWindowFrame {
-    std::vector<FrontendPacket> packets;   // AddPrim order, bucket = OT entry
+    // AddPrim order; bucket = front-end OT numbering (0x80098934 + 112 +
+    // 4 * layer -> 28 + layer, so layer 3 is entry 31 like the font mode).
+    std::vector<FrontendPacket> packets;
     std::vector<std::array<uint8_t, 2>> sounds;   // 0x8001A008(id, a1, ...)
     uint32_t unported_opcodes = 0;
 };

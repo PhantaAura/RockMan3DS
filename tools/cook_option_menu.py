@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cook the OPTION menu's message data from the owner's ROCK_NEO.EXE (USA).
+"""Cook the OPTION menu's (and in-game sub-screen's) message data from the owner's ROCK_NEO.EXE (USA).
 
 The front end's OPTION state (0x80013E0C) opens message window 0 with the
 data at 0x8008B69C (0x8005382C(0, 0x8008B69C, -1)). That message opens the
@@ -25,8 +25,10 @@ TEXT = 0x80010000
 RANGES = [
     (0x8008AE7C, 0x8008AF00),   # glyph widths (u8 per glyph byte 0x00..0x83)
     (0x8008AF18, 0x8008AF24),   # decor -> frame parameter
-    (0x8008B67C, 0x8008BA7C),   # messages 0x25..0x32 (title, OPTION, help)
-    (0x8008CACC, 0x8008CACC + 4 * 0x40),   # message pointer table
+    (0x8008B67C, 0x8008BA7C),   # messages 0x25..0x32 (title, OPTION, help, sub-screen menu)
+    (0x8008C79C, 0x8008C8E4),   # messages 0xDD..0xE2 (sub-screen menu help)
+    (0x8008CACC, 0x8008CACC + 4 * 0xE4),   # message pointer table
+    (0x8008E09C, 0x8008E120),   # sub-screen status frame sprite list (layout 6)
     (0x8008D0D4, 0x8008D0D4 + 4 * 10),     # setting pointer table
     (0x80097F30, 0x80097F90),   # CLUTs, window colours, edge greys
 ]
@@ -45,9 +47,9 @@ def main() -> None:
         off = 0x800 + lo - TEXT
         out += struct.pack("<II", lo, hi - lo) + image[off:off + hi - lo]
     # The table entries this menu reaches must stay inside the copied block.
-    for i in range(0x25, 0x32):
+    for i in list(range(0x25, 0x33)) + list(range(0xDD, 0xE3)):
         ptr = struct.unpack_from("<I", image, 0x800 + 0x8008CACC + 4 * i - TEXT)[0]
-        if not 0x8008B67C <= ptr < 0x8008BA7C:
+        if not (0x8008B67C <= ptr < 0x8008BA7C or 0x8008C79C <= ptr < 0x8008C8E4):
             raise SystemExit(f"cook_option_menu: message 0x{i:02X} at 0x{ptr:08X} outside the excerpt")
     out += struct.pack("<I", zlib.crc32(out) & 0xFFFFFFFF)
     args.out.parent.mkdir(parents=True, exist_ok=True)

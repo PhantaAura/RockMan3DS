@@ -38,9 +38,14 @@ struct GaugeArt {
     bool loaded=false;
 };
 GaugeArt g_gauge{};
+// Full-screen 320x240 RGB image (the in-game Start sub-screen, drawn by the
+// message-window rasterizer); replaces the HUD while set.
+struct Fullscreen { const unsigned char* rgb=nullptr; uint64_t hash=0; };
+Fullscreen g_fullscreen{};
 RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel& status,
                      const l3::MockupMapView& map) {
     RasterKey key{};
+    if(g_fullscreen.rgb) { key[0]=0xF5; key[1]=g_fullscreen.hash; return key; }
     key[21]=g_dialogue.active?g_dialogue.hash:0;
     key[0]=state.companion_visible;
     if(!state.companion_visible) return key;
@@ -382,6 +387,13 @@ void mockup_hud_raster(unsigned char* buffer, const l3::MockupUiState& state,
                        const MMLRuntimeDiag* diagnostics) {
     if (!buffer) return;
     Raster r(buffer);
+    if(g_fullscreen.rgb) {
+        for(int y=0;y<240;++y) for(int x=0;x<320;++x) {
+            const unsigned char* c=g_fullscreen.rgb+(size_t(y)*320u+size_t(x))*3u;
+            r.pixel(x,y,Color{c[0],c[1],c[2]});
+        }
+        return;
+    }
     r.fill(0,0,320,240,kBackground);
     if(!state.companion_visible) {
         r.text(103,111,"COMPANION OFF",kMuted);
@@ -448,6 +460,9 @@ bool mockup_hud_load_gauge(const unsigned char* data, size_t size) {
     g_gauge.loaded=true;
     mockup_hud_invalidate();
     return true;
+}
+void mockup_hud_set_fullscreen(const unsigned char* rgb, uint64_t hash) {
+    g_fullscreen.rgb=rgb; g_fullscreen.hash=hash;
 }
 void mockup_hud_init() {
     mockup_hud_invalidate();

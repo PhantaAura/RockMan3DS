@@ -2,8 +2,11 @@
 // windows and prints each window's glyphs as text with their positions.
 #include "legends3ds/mml_message.h"
 #include "legends3ds/mml_message_window.h"
+#include "legends3ds/message_window_raster.h"
+#include "legends3ds/material_cache.h"
 #include "legends3ds/st00_source.h"
 #include <cstdio>
+#include <cstdlib>
 #include <map>
 
 int main(int argc, char** argv) {
@@ -19,6 +22,16 @@ int main(int argc, char** argv) {
             w.settings().turn_800c1b64, w.settings().free_look_800c1b65, w.settings().lock_on_800c1b66,
             w.settings().sound_800c1b68, w.settings().map_800c1b69);
         if (i < argc) continue;
+        if (const char* font_path = std::getenv("FONT_L3MC")) {   // optional PPM of the windows
+            const auto font = l3::message_font_from_cache(l3::load_l3material_cache(l3::read_file(font_path), true));
+            std::vector<uint8_t> rgb(320u * 240u * 3u, 0);
+            for (size_t k = 0; k < rgb.size(); k += 3) { rgb[k] = 30; rgb[k + 1] = 60; rgb[k + 2] = 140; }
+            const size_t drawn = l3::rasterize_message_windows(f.packets, font, rgb.data());
+            if (std::FILE* out = std::fopen(std::getenv("PPM_OUT") ? std::getenv("PPM_OUT") : "option.ppm", "wb")) {
+                std::fprintf(out, "P6 320 240 255\n"); std::fwrite(rgb.data(), 1, rgb.size(), out); std::fclose(out);
+            }
+            std::printf("raster: %zu primitives\n", drawn);
+        }
         std::map<std::pair<int, int>, std::string> lines;
         for (const auto& p : f.packets) {
             const uint8_t code = uint8_t(p.words[0] >> 24);

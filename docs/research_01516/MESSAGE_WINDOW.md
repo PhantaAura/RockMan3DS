@@ -122,6 +122,26 @@ held (psx_held 0x400) turned in place (heading 0 -> 4084, x/z unchanged);
 D-pad Left held (psx_held 0x80, action 2) slid sideways (x 2822 -> 4575,
 heading fixed at 28, z -4833 -> -4917).
 
+## In-game Start sub-screen (bottom screen, 2026-11-15)
+Main phase 4. 0x8005EC34 draws the tiles, then page task 0x8008DBB0[page]
+(byte 0x800A38F0): 0 0x8005EC80 opens message 0x32 (0x96 rows, 0xD6 help
+ids 0xDD + row) and status layout 6; 1 0x8005ECE0 draws the status bar
+0x80061E0C and dispatches the choice (0..3 -> pages 2..5, 4 -> 6 Options
+0x80060B00, 5 Close -> 8 exit 0x80060DB8; Select -> 7, Start -> 8). The
+Options page clears the windows and layouts, opens message 0x26, and on a
+choice or Start (sound 131) reinstalls the control profile from 0x800C1B64
+(0x80060BFC), then returns to page 0. Status frame: sprite list 0x8008E09C
+(layout 6, handler 0x800640F0: mode 1 blink, 2 TIME colon, 3 LIFE box grows
+with max HP). Status bar: cells at x 49 + 5i (full/half/empty u 0x70/0x78/
+0x80, v 0xB8), zenny and h:mm digits via 0x80062028. OT: windows/status
+use 0x80098934 + 112 + 4 * layer (front-end entry 28 + layer). The tile art
+is 61 rows in the 64-row SPRT; the sub-screen never clears the frame, so the
+previous frame fills the gap (the CPU raster keeps its buffer).
+Port: SubScreenMenu (pages 0/1/6/8; 2..5 and 7 reopen the menu, CANDIDATE),
+rasterized on the CPU into the bottom framebuffer. Azahar (Old 3DS mode):
+Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
+`# subscreen,open=0,turn=1`; the game stayed paused (frame 189).
+
 ## Open
 - Sounds 129/130/131 come from the title banks; 132 (per character) is
   suppressed by 0xA1 in all OPTION messages.

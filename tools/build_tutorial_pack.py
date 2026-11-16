@@ -544,6 +544,9 @@ def _cook_pack(dat:Path,tools:Path,out:Path,with_indexed:bool,with_material_cach
                 # EXE's message data, drawn with the USA font page KAIFONT.BIN.
                 if (dat/'KAIFONT.BIN').is_file():
                     run(tools,'l3cook_font_materials',dat/'KAIFONT.BIN',mout/'font.l3mc')
+                    # In-game Start sub-screen: the GAUGE01u page CLUTs 0x3E75
+                    # (status bar) and 0x3E77 (tile backdrop) for the bottom screen.
+                    run(tools,'l3cook_frontend_materials',dat/'DEMO_DAT.BIN',mout/'subscreen.l3mc','3E75000D','3E77000D')
                     subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_option_menu.py'),
                         str(dat.parent.parent/'ROCK_NEO.EXE'),str(fout/'option.l3ex')],check=True,stdout=subprocess.DEVNULL)
                     manifest['frontend_option']={'format':1,'status':'SOURCE_BACKED_PARTIAL',

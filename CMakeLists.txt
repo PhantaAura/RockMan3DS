@@ -127,6 +127,8 @@ add_library(legends3ds_core STATIC
     src/animation/player_pose.cpp
     src/flow/mml_message.cpp
     src/flow/mml_message_window.cpp
+    src/ui/message_window_raster.cpp
+    src/flow/subscreen_menu.cpp
     src/flow/source_tutorial_triggers.cpp
     src/flow/source_gate_e007.cpp
     src/flow/source_target_e008.cpp
@@ -1219,8 +1221,14 @@ add_executable(test_palette_type10 tests/test_palette_type10.cpp)
 target_link_libraries(test_palette_type10 PRIVATE legends3ds_core)
 target_compile_options(test_palette_type10 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME palette_type10 COMMAND test_palette_type10)
+add_executable(test_subscreen_menu tests/test_subscreen_menu.cpp)
+target_link_libraries(test_subscreen_menu PRIVATE legends3ds_core)
+target_compile_options(test_subscreen_menu PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME subscreen_menu COMMAND test_subscreen_menu)
 add_executable(l3cook_font_materials tools/l3cook_font_materials.cpp)
 target_link_libraries(l3cook_font_materials PRIVATE legends3ds_core)
+add_executable(l3probe_subscreen tools/l3probe_subscreen.cpp)
+target_link_libraries(l3probe_subscreen PRIVATE legends3ds_core)
 add_executable(l3probe_option_menu tools/l3probe_option_menu.cpp)
 target_link_libraries(l3probe_option_menu PRIVATE legends3ds_core)
 add_executable(test_source_scene_tracked_camera tests/test_source_scene_tracked_camera.cpp)
