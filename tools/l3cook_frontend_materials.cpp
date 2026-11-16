@@ -15,12 +15,15 @@
 
 int main(int argc, char** argv) {
     try {
-        if (argc != 3) {
-            std::cerr << "usage: l3cook_frontend_materials DEMO_DAT.BIN OUT.l3mc\n";
+        if (argc < 3) {
+            std::cerr << "usage: l3cook_frontend_materials DEMO_DAT.BIN OUT.l3mc [material words (hex)...]\n";
             return 2;
         }
         const auto resources = l3::scan_mml_indexed_resources(l3::read_file(argv[1]));
-        const std::vector<uint32_t> words(l3::kFrontendMaterialWords.begin(), l3::kFrontendMaterialWords.end());
+        // Optional word list instead of the title's (the in-game sub-screen
+        // cooks its GAUGE01u page CLUTs 0x3E75 / 0x3E77 this way).
+        std::vector<uint32_t> words(l3::kFrontendMaterialWords.begin(), l3::kFrontendMaterialWords.end());
+        if (argc > 3) { words.clear(); for (int i = 3; i < argc; ++i) words.push_back(uint32_t(std::stoul(argv[i], nullptr, 16))); }
         std::vector<l3::MaterialVramDiagnostics> diagnostics;
         const auto cache = l3::build_material_cache(words, resources, &diagnostics);
         for (const auto& d : diagnostics)

@@ -38,3 +38,8 @@ bool mockup_hud_raster_cached(unsigned char* framebuffer,
 // Tutorial message box on the bottom screen. Text is ASCII (decoded glyphs and
 // '\n' line breaks); options > 1 shows the YES/NO cursor at choice.
 void mockup_hud_set_dialogue(bool active, const char* text, int options, int choice, bool waiting_next);
+
+// Full-screen 320x240 row-major RGB image shown instead of the HUD (the
+// in-game Start sub-screen); nullptr restores the HUD. Change hash whenever
+// the pixels change so the raster cache redraws.
+void mockup_hud_set_fullscreen(const unsigned char* rgb, uint64_t hash);

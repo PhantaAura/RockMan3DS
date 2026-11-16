@@ -51,6 +51,8 @@
 #include "legends3ds/source_attract_event10.h"
 #include "legends3ds/frontend_servbots.h"
 #include "legends3ds/mml_message_window.h"
+#include "legends3ds/subscreen_menu.h"
+#include "legends3ds/message_window_raster.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/gameplay_clock.h"
 #include "legends3ds/actor_runtime.h"
@@ -5071,6 +5073,24 @@ int main() {
         // Effect requests (0x8008241C handler 2) with the stage's VAB tones,
         // cooked by tools/cook_sfx_bank.py. Optional: absent bank = silent.
         NativeSfx sfx;
+        // The in-game Start sub-screen (0x8005EC34) on the bottom screen,
+        // drawn by the CPU message-window rasterizer (port presentation; the
+        // original shows it on the TV). Optional: missing data = no menu.
+        std::unique_ptr<l3::SubScreenMenu> subscreen;
+        l3::MessageFont subscreen_pages;
+        std::vector<unsigned char> subscreen_rgb;
+        try {
+            subscreen=std::make_unique<l3::SubScreenMenu>(l3::load_exe_excerpt(read_binary(data_path("frontend/option.l3ex"))));
+            subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/font.l3mc")),true));
+            subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/subscreen.l3mc")),true));
+            subscreen_rgb.assign(320u*240u*3u,0);
+            boot_log(MML_BOOT_DATA,"SUBSCREEN=1 option.l3ex font.l3mc subscreen.l3mc (Start menu on the bottom screen)");
+        } catch(const std::exception& error) {
+            subscreen.reset();
+            char line[160];std::snprintf(line,sizeof(line),"SUBSCREEN=0 %s",error.what());boot_log(MML_BOOT_DATA,line);
+        }
+        bool subscreen_open=false;uint16_t subscreen_pending=0;uint64_t subscreen_hash=0;
+        l3::GameplayClock subscreen_clock;
         {
             char path[256];std::snprintf(path,sizeof(path),"%saudio/sfx_st00.l3sb",kDataRoot);
             const bool ready=sfx.open(path);
@@ -5342,7 +5362,60 @@ int main() {
                         (unsigned long)session.frame_counter(),(unsigned long)g_autoplay.index,(unsigned long)held,
                         int(autoplay_circle.dx),int(autoplay_circle.dy));
             }
-            if(down&KEY_START) break;
+            // Start opens the original sub-screen (main phase 4, paused) on the
+            // bottom screen; Select+Start quits (the old Start-to-exit).
+            if((down&KEY_START)&&(held&KEY_SELECT)) break;
+            if(subscreen&&!subscreen_open&&(down&KEY_START)&&!opening_skip&&
+               !(g_new_game_opening&&session.source_event_work()&&session.source_event_work()->active00())&&
+               !session.dialogue().active&&!session.cutscene_active()&&
+               session.camera().owner==l3::RuntimeCameraOwner::Gameplay){
+                subscreen_open=true;subscreen->windows().set_settings(g_option_settings);subscreen->enter();subscreen_pending=0;subscreen_clock.reset();
+                down&=~u32(KEY_START);held&=~u32(KEY_START);
+                std::fill(subscreen_rgb.begin(),subscreen_rgb.end(),0);
+                hardware_test_trace("# subscreen,frame=%lu,open=1",(unsigned long)session.frame_counter());
+            }
+            if(subscreen_open){
+                const auto bits=[](u32 k){
+                    uint16_t m=0;
+                    if(k&KEY_START)m|=0x0008u; if(k&KEY_SELECT)m|=0x0001u;
+                    if(k&(KEY_A|KEY_B))m|=0x4000u; if(k&KEY_X)m|=0x1000u;
+                    if(k&(KEY_DUP|KEY_CPAD_UP))m|=0x0010u; if(k&(KEY_DDOWN|KEY_CPAD_DOWN))m|=0x0040u;
+                    if(k&(KEY_DLEFT|KEY_CPAD_LEFT))m|=0x0080u; if(k&(KEY_DRIGHT|KEY_CPAD_RIGHT))m|=0x0020u;
+                    if(k&KEY_L)m|=0x0400u; if(k&KEY_R)m|=0x0800u;
+                    return m;
+                };
+                subscreen_pending|=bits(down);
+                const u64 now_tick=svcGetSystemTick();
+                subscreen_clock.advance((now_tick-previous_update_clock)/CPU_TICKS_PER_USEC,false);
+                while(subscreen_open&&subscreen_clock.consume()){
+                    l3::SubScreenValues values;
+                    const auto status=session.bottom_screen_model();
+                    values.life_800b521e=int16_t(status.hp);values.life_max_800b5260=int16_t(status.hp_max);
+                    values.zenny_800c1b2c=uint32_t(std::max<int32_t>(0,status.money));
+                    values.play_time_800c1b1c=uint32_t(session.frame_counter());   // CANDIDATE: session updates, not the save clock
+                    const auto frame=subscreen->update(bits(held),subscreen_pending,values);
+                    subscreen_pending=0;
+                    for(const auto& snd:frame.sounds)(void)l3::enqueue_source_audio_8001a008(session.source_audio_queue(),snd[0],snd[1],0);
+                    if(sfx.ready()){(void)sfx.consume(session.source_audio_queue(),l3::SourceSoundListener{});sfx.tick(44100u/30u);}
+                    else l3::finish_source_audio_queue_batch_8001a1d0(session.source_audio_queue());
+                    (void)l3::rasterize_message_windows(frame.packets,subscreen_pages,subscreen_rgb.data());
+                    mockup_hud_set_fullscreen(subscreen_rgb.data(),++subscreen_hash);
+                    if(frame.settings_applied){
+                        // 0x80060BFC: the control profile follows the Turn byte.
+                        g_option_settings=subscreen->windows().settings();
+                        session.set_turn_setting_800c1b64(g_option_settings.turn_800c1b64);
+                        sfx.set_mono(g_option_settings.sound_800c1b68!=0);
+                    }
+                    if(frame.exited){
+                        subscreen_open=false;mockup_hud_set_fullscreen(nullptr,0);mockup_hud_invalidate();
+                        hardware_test_trace("# subscreen,frame=%lu,open=0,turn=%u,free_look=%u,sound=%u,map=%u,lock_on=%u",
+                            (unsigned long)session.frame_counter(),unsigned(g_option_settings.turn_800c1b64),
+                            unsigned(g_option_settings.free_look_800c1b65),unsigned(g_option_settings.sound_800c1b68),
+                            unsigned(g_option_settings.map_800c1b69),unsigned(g_option_settings.lock_on_800c1b66));
+                    }
+                }
+                down=0;held=0;   // the paused game sees no input
+            }
             if(g_render_submissions==1)boot_log(MML_BOOT_FIRST_FRAME,"waiting for first 3D GPU submission");
             const u64 gpu_wait_us=acquire_gpu_frame("gameplay frame");
             if(g_render_submissions==1)boot_log(MML_BOOT_FIRST_FRAME,"first 3D GPU submission synchronized");
@@ -5562,7 +5635,7 @@ int main() {
                 }
                 xa_clock_bound=true;xa_clock_frames=position;
             } else xa_clock_bound=false;
-            gameplay_clock.advance(elapsed_us,ui_focus);
+            gameplay_clock.advance(elapsed_us,ui_focus||subscreen_open);
             previous_update_clock=update_clock;
             if (ui_focus) {
                 pending_fire=pending_lock=pending_dialogue=false;pending_psx_pressed=0;

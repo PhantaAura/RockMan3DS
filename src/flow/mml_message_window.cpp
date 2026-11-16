@@ -166,7 +166,7 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         else open_8005382c(n, exe_.u32(kMsgTable8008cacc + 4u * id), 255);
         return true;
     }
-    case 0xA0: case 0xAE: s.read += 3; return true;                          // 0x800543E0
+    case 0xA0: case 0xAE: case 0xD6: s.read += 3; return true;               // 0x800543E0
     case 0xA1: s.flags |= 0x20000000u; s.read += 1; return true;             // 0x8005563C
     case 0xAD: s.repeat = 0; ++s.rows; s.flags |= 0x00404000u; s.read += 7; return true;   // 0x80055CC4
     case 0x96: s.repeat = 0; ++s.rows; s.flags |= 0x00400800u; s.read += 3; return true;   // 0x80054BB4
@@ -187,7 +187,45 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0x8C: s.draw += 7; return;                                          // 0x80054374
     case 0x95: case 0xA1: s.draw += 1; return;                               // 0x800542FC
     case 0x97: s.draw += uint32_t(s.rows) + 2u; return;                      // 0x80055304
-    case 0x96: s.draw += 3; return;
+    case 0x96: {                                                             // 0x80054BEC
+        // Selection row: args (left/right nav, up/down nav); cursor glyph
+        // byte after the command. Rows draw at 80, the cursor row at 128.
+        mem(d + 3) = 0xED;
+        s.brightness = 0;
+        if (s.cursor == s.row_draw && !(s.flags & 0x00C00000u)) {
+            const int8_t old = s.cursor;
+            const uint8_t lr = mem(d + 1), ud = mem(d + 2);
+            const uint32_t pad = uint32_t(s.held) | (uint32_t(s.pressed) << 16);
+            const auto repeat = [&](int8_t target) {
+                if (s.repeat < 13) ++s.repeat; else { s.repeat = 12; s.cursor = target; }
+            };
+            if (!(s.pressed & 0x4000u)) {
+                if (s.pressed & 0x10u) { s.repeat = 0; s.cursor = int8_t(ud >> 4); }
+                else if ((pad & 0x100010u) == 0x10u) repeat(int8_t(ud >> 4));
+                else if (s.pressed & 0x40u) { s.repeat = 0; s.cursor = int8_t(ud & 15); }
+                else if ((pad & 0x400040u) == 0x40u) repeat(int8_t(ud & 15));
+                else if (s.pressed & 0x80u) { s.repeat = 0; s.cursor = int8_t(lr >> 4); }
+                else if ((pad & 0x800080u) == 0x80u) repeat(int8_t(lr >> 4));
+                else if (s.pressed & 0x20u) { s.repeat = 0; s.cursor = int8_t(lr & 15); }
+                else if ((pad & 0x200020u) == 0x20u) repeat(int8_t(lr & 15));
+            }
+            mem(d + 3) = 0x60;
+            s.brightness = uint8_t(s.brightness + 48);
+            s.cursor_byte = d + 3;
+            s.flags |= 0x00800000u;
+            if (old != s.cursor) sound(out, 129, 1);
+        }
+        ++s.row_draw; s.brightness = uint8_t(s.brightness + 80); s.draw += 3;
+        return;
+    }
+    case 0xD6: {                                                             // 0x800564C8
+        // Help for the cursor row: message (arg2 + cursor) in slot arg1.
+        const uint8_t slot = mem(d + 1), base = mem(d + 2);
+        if (s.index_base) open_8005382c(slot, s.index_base, uint8_t(base + uint8_t(s.cursor)));
+        else open_8005382c(slot, exe_.u32(kMsgTable8008cacc + 4u * uint32_t(uint8_t(base + s.cursor))), 255);
+        s.draw += 3;
+        return;
+    }
     case 0xA0: s.pen_x = int16_t(s.pen_x + int16_t(u16(d + 1))); s.draw += 3; return;   // 0x800555F4
     case 0xAE: s.brightness = setting(mem(d + 1)) == mem(d + 2) ? 128 : 64; s.draw += 3; return;   // 0x800560D0
     case 0xAF: s.pen_x = s.x; s.color = s.default_color; s.pen_y = int16_t(s.pen_y + mem(d + 1)); s.draw += 2; return;   // 0x80056148
@@ -241,7 +279,7 @@ void MessageWindows::draw_frame(MessageSlot& s, MessageWindowFrame& out) {
     const auto& b = s.box;
     const int X = s.x, Y = s.y;
     const auto edge = [&](int i, int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
-        FrontendPacket p; p.length = 8; p.bucket = s.ot_layer;
+        FrontendPacket p; p.length = 8; p.bucket = uint16_t(28 + s.ot_layer);
         const uint32_t c = kMsgBorderColors80097f78 + 4u * uint32_t(i);
         p.words = {{0x38000000u | grey(mem(c)), xy(x0, y0), grey(mem(c + 1)), xy(x1, y1),
                     grey(mem(c + 2)), xy(x2, y2), grey(mem(c + 3)), xy(x3, y3), 0}};
@@ -252,13 +290,13 @@ void MessageWindows::draw_frame(MessageSlot& s, MessageWindowFrame& out) {
     edge(2, X + b[0] - 1, Y + b[1] - 1, X + b[0], Y + b[1], X + b[4] - 1, Y + b[5] + 1, X + b[4], Y + b[5]);   // +168
     edge(3, X + b[2], Y + b[3], X + b[2] + 1, Y + b[3] - 1, X + b[6], Y + b[7], X + b[6] + 1, Y + b[7] + 1);   // +172
     const auto f4 = [&](uint32_t c) {
-        FrontendPacket p; p.length = 5; p.bucket = s.ot_layer;
+        FrontendPacket p; p.length = 5; p.bucket = uint16_t(28 + s.ot_layer);
         p.words = {{0x2A000000u | uint32_t(mem(c)) | (uint32_t(mem(c + 1)) << 8) | (uint32_t(mem(c + 2)) << 16),
                     xy(X + b[0], Y + b[1]), xy(X + b[2], Y + b[3]), xy(X + b[4], Y + b[5]), xy(X + b[6], Y + b[7]), 0, 0, 0, 0}};
         out.packets.push_back(p);
     };
     const auto mode = [&](unsigned abr) {
-        FrontendPacket p; p.length = 1; p.bucket = s.ot_layer; p.words[0] = 0xE1000000u | psx_get_tpage(0, abr, 960, 256);
+        FrontendPacket p; p.length = 1; p.bucket = uint16_t(28 + s.ot_layer); p.words[0] = 0xE1000000u | psx_get_tpage(0, abr, 960, 256);
         out.packets.push_back(p);
     };
     f4(bg); mode(0);          // +152: average
@@ -315,7 +353,7 @@ MessageWindowFrame MessageWindows::tick_80053b40(uint16_t held, uint16_t pressed
                 q.v = {{v, v, uint8_t(v + 12), uint8_t(v + 12)}};
                 q.clut = uint16_t(mem(kMsgClutTable80097f30 + 2u * s.color) | (mem(kMsgClutTable80097f30 + 2u * s.color + 1) << 8));
                 q.tpage = kMsgFontTpage;
-                FrontendPacket p; p.length = 9; p.bucket = s.ot_layer;
+                FrontendPacket p; p.length = 9; p.bucket = uint16_t(28 + s.ot_layer);
                 psxgpu::write_poly_ft4(p.words.data(), q);
                 out.packets.push_back(p);
                 s.pen_x = int16_t(s.pen_x + mem(kMsgGlyphWidths8008ae7c + op));
