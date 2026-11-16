@@ -5837,7 +5837,12 @@ int main() {
                     g_current_area=next_area;spawn=next_spawn;inspection_yaw=next_yaw;
                     // 0x80019C20 fades the music when the destination's differs;
                     // 0x80019D18 then queues it (the same request keeps playing).
-                    if(music.ready()){
+                    // An event area cut (356C = 0xFF, ST02 0x801002C8) skips the
+                    // music change (0x8001F408).
+                    const bool event_cut=door_transition&&door_handoff->raw[12]==0xFFu;
+                    if(event_cut)hardware_test_trace("# source_event_area_cut,frame=%lu,stage=%u,area=%u",
+                        (unsigned long)session.frame_counter(),unsigned(g_stage),unsigned(next_area));
+                    if(music.ready()&&!event_cut){
                         const uint16_t incoming=music.area_request(next_area);
                         if(incoming!=0xFFFF&&incoming!=outgoing_music)music.fade_out();
                         area_music_80019d18(next_area);
