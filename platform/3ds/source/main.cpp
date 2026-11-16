@@ -5329,17 +5329,6 @@ int main() {
                         goal={{int(autoplay_step.cx),int(pp.z)-160}};
                     if(autoplay_step.keys==kAutoplaySteerToPickup)for(const auto& e:g_children.effect_pool().slots)if(e[0]&&e[2]==0x87){
                         goal={{int(int16_t(uint16_t(e[0x38]|(e[0x39]<<8)))),int(int16_t(uint16_t(e[0x3c]|(e[0x3d]<<8))))}};break;}
-                    // Walks fight any enemy that comes within 600 first (diagnostic).
-                    std::optional<std::array<int,2>> threat;long threat_d=600l*600l;
-                    if((autoplay_step.keys==kAutoplaySteerUntil||autoplay_step.keys==kAutoplaySteerToPoint)&&!session.dialogue().active)
-                        for(const auto& e:g_autoplay_enemies){
-                            const long dx=e[0]-int(pp.x),dz=e[1]-int(pp.z),d=dx*dx+dz*dz;
-                            if(d<threat_d){threat_d=d;threat=e;}
-                        }
-                    if(threat){
-                        steer=autoplay_fight_keys((*threat)[0]-int(pp.x),(*threat)[1]-int(pp.z),heading,0,false,autoplay_tick);
-                        goal.reset();
-                    }
                     if(goal){
                         const int tx=(*goal)[0]-int(pp.x);
                         const int tz=(*goal)[1]-int(pp.z);
