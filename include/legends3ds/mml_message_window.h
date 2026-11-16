@@ -126,6 +126,7 @@ public:
     std::array<uint8_t, 128> list_800be2f8{};   // list ids, 255 = empty
     uint8_t list_scroll_gp4408 = 0, list_max_scroll_gp4464 = 0, list_picked_gp4077 = 255;
     uint32_t list_count_gp4420 = 0, slot_bits_gp4812 = 0, frame_gp4348 = 0;
+    uint32_t cursors_gp4808 = 0;   // bytes 0x80098B2C..2F: cursors of slots 0..3 after the last tick
     OptionSettings settings() const;
     void set_settings(const OptionSettings& s);
     const MessageSlot& slot(int i) const { return slots_[size_t(i)]; }

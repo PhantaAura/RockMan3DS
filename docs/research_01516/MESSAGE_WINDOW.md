@@ -229,3 +229,15 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
   looked wrong only because u + w = 256 wrapped in the SPRT -> quad
   conversion (fixed: the end clamps at 0xFF). 0x80061740 (with-part targets), 0x80061C50 (equip list bars),
   0x80062118 and the part sorts are not ported (empty lists).
+- L1/R1 0x80060EC0 ported: pressed 0x400 (L1, checked first) / 0x800 (R1)
+  step pages 2..6 with wrap, sound 130, windows/layouts cleared, ctx +1..3
+  zeroed. Called from Normal Items sub 2, Special Items sub 2, Buster Parts
+  sub 2, Special Weapons sub 3 (grid browse) and Options sub 2.
+- Byte 0x80098B2D: the tick 0x80053B40 clears word 0x80098B2C and, after
+  each slot 0..3 (open or not), ORs that slot's cursor (+113) into byte n.
+  Special Weapons now reads it (was CANDIDATE slot(1).cursor).
+- Part sorts 0x80060F84 / 0x80061064 / 0x80061144 / 0x80061224 (traced, NOT
+  ported): 31 bubble passes over owned parts 0x800B5604 (32 bytes, part + 1),
+  swap (0x80061304) when the left is empty or its stat byte
+  0x8008FE64 + 8 * (part - 1) + k (k = 0 attack, 1 energy, 2 range, 3 rapid)
+  is smaller than the right's: descending, empties last.
