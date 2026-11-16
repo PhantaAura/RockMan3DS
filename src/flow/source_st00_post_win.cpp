@@ -40,7 +40,27 @@ SourcePostWinHandoff handoff(uint8_t stage, uint8_t area, uint16_t flag, uint8_t
     h.stage = stage; h.area = area; h.cleared_flag = flag;
     return h;
 }
+// Event 4 slot helpers: +0 bit 1 (drawn) and the 16.16 position +0x1C..+0x24.
+void show(SourcePostWinEvent& ev, size_t slot, bool on) noexcept {
+    auto& s = ev.slots[slot];
+    s.flags_00 = uint8_t(on ? (s.flags_00 | 2u) : (s.flags_00 & ~2u)); ++s.writes;
+}
+void fixed(SourcePostWinEvent& ev, size_t slot, std::optional<int32_t> x, std::optional<int32_t> y,
+           std::optional<int32_t> z) noexcept {
+    auto& s = ev.slots[slot];
+    if (x) s.fixed_1c = x;
+    if (y) s.fixed_20 = y;
+    if (z) s.fixed_24 = z;
+    ++s.writes;
+}
 } // namespace
+
+SourcePostWinHandoff source_st02_event_area_cut(uint8_t area) noexcept {
+    SourcePostWinHandoff h;
+    h.raw[12] = 0xFF; h.raw[14] = 2; h.raw[15] = area; h.raw[16] = 0xFF; h.raw[17] = 0xFF;
+    h.stage = 2; h.area = area;
+    return h;
+}
 
 bool bind_source_post_win_profile(const SourceScenePackage& p, uint8_t event, SourcePostWinProfile& out) {
     out = {};
@@ -82,8 +102,123 @@ SourcePostWinEvent start_source_post_win_event(uint8_t event) noexcept {
     return ev;
 }
 
+namespace {
+// ST02 event 4's records. The ST02 overlay loads at 0x80100000 like ST00's,
+// so its callback addresses overlap event 2's (0x801014BC is in both).
+void run_st02_event4_callback(SourcePostWinEvent& ev, uint32_t callback, SourcePostWinStep& out) noexcept {
+    const uint32_t t = ev.counters.c10;
+    auto& s0 = ev.slots[0]; auto& s1 = ev.slots[1];
+    const auto s3 = [](SourcePostWinEvent& e) -> SourceSceneSlotCommands& { return e.slots[3]; };
+    switch (callback) {
+    // ---- ST02 event 4 (slots 0..4 = +0x24..+0x34). Globals, effects and
+    // the 0x8010A5D4 object are not ported (header). ----
+    case 0x80100450u:
+        if (t == 191) { fixed(ev, 3, 0, 0, 0x06500000); state(ev, 3, 2); show(ev, 3, true); }
+        if (t == 349) { s3(ev).colour_15e = 6276; ++s3(ev).writes; }
+        break;
+    case 0x80100524u:
+        if (t == 0) { state(ev, 3, 6); fixed(ev, 3, 0, 0, 0); s3(ev).colour_15e = 16912; }
+        break;
+    case 0x80100728u:
+        if (t == 0) {
+            out.area_cut = 1; out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}};
+            show(ev, 0, true); show(ev, 1, true); show(ev, 2, true); show(ev, 3, false); show(ev, 4, true);
+        }
+        break;
+    case 0x80100830u:   // +0x24, +0x20, +0x24 as the source stores them
+        if (t == 0) { fixed(ev, 0, std::nullopt, int32_t(0xFE8D0000u), int32_t(0xFFA80000u)); state(ev, 0, 0); }
+        break;
+    case 0x80100874u:
+        if (t == 0) {
+            fixed(ev, 0, int32_t(0xF6C10000u), int32_t(0xFF9F0000u), int32_t(0xFEA00000u));
+            state(ev, 0, 1); s0.heading_56 = 0; state(ev, 1, 3);
+        }
+        if (t == 108) state(ev, 0, 2);   // a1 still holds slot 0 when t != 0
+        break;
+    case 0x801008D8u: if (t == 50) state(ev, 0, 3); if (t == 0) state(ev, 1, 0); break;
+    case 0x80100914u: if (t == 30) state(ev, 1, 3); if (t == 180) state(ev, 1, 4); break;
+    case 0x80100970u:
+        if (t == 0) { state(ev, 0, 5); s0.byte_0d = 1; state(ev, 1, 3); }
+        if (t == 79) { s0.byte_0d = 0; ++s0.writes; }
+        break;
+    case 0x801009F4u: if (t == 0) state(ev, 1, 5); break;
+    case 0x80100A28u:
+        if (t == 0) {
+            out.area_cut = 0; out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}};
+            show(ev, 0, false); show(ev, 1, false); show(ev, 2, false); show(ev, 3, true); show(ev, 4, false);
+        }
+        break;
+    case 0x80100B6Cu:
+        if (t == 0) { out.area_cut = 1; out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}}; show(ev, 2, true); show(ev, 3, false); }
+        break;
+    case 0x80100C90u:
+        if (t == 0) { out.area_cut = 0; out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}}; show(ev, 2, false); show(ev, 3, true); }
+        break;
+    case 0x80100D78u:
+        if (t == 0) {
+            out.area_cut = 1; out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}};
+            fixed(ev, 0, int32_t(0xF6500000u), int32_t(0xFF9F0000u), int32_t(0xFF700000u)); show(ev, 0, true);
+            state(ev, 1, 6); s1.byte_0c = 1; show(ev, 1, true); show(ev, 3, false); show(ev, 4, true);
+        }
+        if (t == 200) { s1.byte_0c = 0; ++s1.writes; }
+        break;
+    case 0x80100E74u: if (t == 0) { s0.heading_56 = 1024; state(ev, 0, 6); } break;
+    case 0x80100EE4u: if (t == 0) { show(ev, 0, false); state(ev, 1, 2); } break;
+    case 0x80100F88u:
+        if (t == 0) {
+            out.area_cut = 0; state(ev, 3, 1); fixed(ev, 3, 0, 0, 0);
+            show(ev, 0, false); show(ev, 1, false); show(ev, 2, false); show(ev, 4, false); show(ev, 3, true);
+        }
+        break;
+    case 0x80101154u:
+        if (t == 0) { fixed(ev, 3, 0, 0, 0); state(ev, 3, 0); s3(ev).heading_56 = 0; out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}}; }
+        break;
+    case 0x801012E8u:
+        if (t == 0) { out.area_cut = 1; show(ev, 2, true); out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}}; }
+        break;
+    case 0x80101420u:
+        if (t == 0) { show(ev, 0, true); show(ev, 1, true); show(ev, 4, true); state(ev, 1, 0); out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}}; }
+        break;
+    case 0x801014BCu:
+        if (t == 0) { state(ev, 0, 7); fixed(ev, 0, int32_t(0xF6C00000u), int32_t(0xFF9F0000u), int32_t(0xFE620000u)); s0.heading_56 = 0; }
+        break;
+    case 0x801015B0u:
+        if (t == 0) {
+            out.area_cut = 0; fixed(ev, 3, 0, 0, 0); state(ev, 3, 4); show(ev, 3, true);
+            show(ev, 0, false); show(ev, 1, false); show(ev, 2, false); show(ev, 4, false);
+        }
+        break;
+    case 0x8010176Cu:
+        if (t == 0) {
+            out.area_cut = 2; out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}};
+            fixed(ev, 3, 0x07D00000, int32_t(0xFA880000u), int32_t(0xE8900000u)); state(ev, 3, 5);
+        }
+        break;
+    case 0x80101800u:
+        if (t == 0) { out.area_cut = 1; state(ev, 0, 8); show(ev, 0, true); state(ev, 1, 8); show(ev, 1, true); show(ev, 4, true); }
+        break;
+    case 0x8010189Cu: if (t == 0) { state(ev, 0, 9); state(ev, 1, 9); } break;
+    case 0x801018DCu:
+        if (t == 0) { show(ev, 1, false); out.area_cut = 3; }
+        if (t == 59) out.sound_8002ee90 = std::array<uint16_t,2>{{64, 128}};
+        break;
+    case 0x801019DCu:
+        if (t == 0) {
+            out.area_cut = 1; state(ev, 2, 2);
+            fixed(ev, 2, int32_t(0xF8680000u), 0, 0x08000000); ev.slots[2].heading_56 = 304; show(ev, 2, true);
+        }
+        break;
+    // Event 4 records with only global/effect writes: 0x80100694, 0x801009D4,
+    // 0x80100EA4, 0x80101240, 0x801012A0, 0x80101500, 0x80101588; empty:
+    // 0x80100828, 0x8010086C, 0x80100F80.
+    default: break;
+    }
+}
+} // namespace
+
 void run_source_post_win_callback(SourcePostWinEvent& ev, uint32_t callback, const SourcePostWinInputs& in,
                                   SourcePostWinStep& out) noexcept {
+    if (ev.event == 4) { run_st02_event4_callback(ev, callback, out); return; }
     const uint32_t t = ev.counters.c10;
     auto& s0 = ev.slots[0]; auto& s1 = ev.slots[1];
     switch (callback) {

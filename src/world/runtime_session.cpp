@@ -1749,6 +1749,9 @@ bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) 
 void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
     source_post_win_step_={};
     auto& ev=source_post_win_;
+    // An event area cut (356C = 0xFF) sends the main phase to the load
+    // subphase (0x800163DC), so the event does not tick until the loader ran.
+    if(ev.active&&source_post_win_handoff_)return;
     if(!ev.active){
         // A retained hand-off waits for its loader (event 3) or for a stage
         // the port does not load (event 2).
@@ -1811,6 +1814,10 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
         source_player_event_release_80042314(player_);
         if(source_event_work_)source_event_work_->raw[0]=0;
         source_post_win_handoff_=step.handoff;++source_post_win_generation_;
+    }else if(step.area_cut&&*step.area_cut!=map_area_index_&&registered_area(*step.area_cut)){
+        // 0x801002C8. A cut to the current area reloads it in the original;
+        // the port keeps it (ST02's areas own no objects; CANDIDATE).
+        source_post_win_handoff_=source_st02_event_area_cut(*step.area_cut);++source_post_win_generation_;
     }
     source_post_win_step_=step;
 }
@@ -1818,7 +1825,7 @@ std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_wi
     const auto& h=source_post_win_handoff_;
     if(!h||h->stage!=stage_)return std::nullopt;   // another stage: source_stage_request()
     SourceEventHandoffTransitionIntent t;
-    t.source_function=0x80102058u;t.source_generation=source_post_win_generation_;
+    t.source_function=h->event_cut()?0x801002C8u:0x80102058u;t.source_generation=source_post_win_generation_;
     t.raw=h->raw;t.known.fill(1);
     t.spawn={{0,0,0}};t.source_stage=h->stage;t.destination_area=h->area;
     return t;
@@ -1848,12 +1855,30 @@ bool RuntimeSession::apply_stage_load(const SourceStageCarry& carry,const Source
 bool RuntimeSession::can_commit_source_post_win_transition() const noexcept {
     const auto intent=source_post_win_transition();
     if(!intent||intent->destination_area==map_area_index_||!registered_area(intent->destination_area))return false;
+    if(source_post_win_handoff_->event_cut())return true;
     auto player=player_;SourceEventPlayerKnown known{};known.fill(1);
     return apply_source_handoff_spawn_80015ee8(*intent,intent->source_generation,player,known,true);
 }
 bool RuntimeSession::commit_source_post_win_transition() {
     if(!can_commit_source_post_win_transition())return false;
     const auto intent=*source_post_win_transition();
+    if(source_post_win_handoff_->event_cut()){
+        // 0x8001F408 skips the player spawn, music and camera set-up when
+        // 356C = 0xFF; the area's set-up routine still runs. The player and
+        // the global fade work are untouched.
+        const auto player=player_;
+        const auto fade_profile=source_fade_profile_;const auto fade_context=source_fade_context_;
+        const auto fade_intents=source_fade_intents_;const auto fade_callback=source_fade_callback_;
+        const auto fade_hold=source_fade_endpoint_hold_;
+        const RuntimeVec3i at{rds16w(player,0x14),rds16w(player,0x16),rds16w(player,0x18)};
+        if(!transition_to_area(intent.destination_area,at,rd16w(player,0x56)))return false;
+        source_fade_profile_=fade_profile;source_fade_context_=fade_context;source_fade_intents_=fade_intents;
+        source_fade_callback_=fade_callback;source_fade_endpoint_hold_=fade_hold;
+        player_=player;
+        sync_primary_position_from_fixed();
+        source_post_win_handoff_.reset();
+        return true;
+    }
     auto prepared=player_;SourceEventPlayerKnown known{};known.fill(1);
     // Loader spawn 80015EE8 (argument6 = 1 for a new area).
     if(!apply_source_handoff_spawn_80015ee8(intent,intent.source_generation,prepared,known,true))return false;

@@ -141,6 +141,50 @@ int main() {
         s4.tick({});
         require(!s4.source_post_win_event().active, "event 4 does not restart (visit byte counted)");
     }
+    // Event 4's records: slot commands and the 0x801002C8 area cut (356C = 0xFF).
+    {
+        auto ev = start_source_post_win_event(4);
+        SourcePostWinStep out; SourcePostWinInputs in;
+        run_source_post_win_callback(ev, 0x80100728u, in, out);
+        require(out.area_cut == 1 && out.sound_8002ee90 && (ev.slots[0].flags_00 & 2) && (ev.slots[4].flags_00 & 2) &&
+                !(ev.slots[3].flags_00 & 2), "0x80100728: cut to area 1, slots 0..2/4 drawn, slot 3 hidden");
+        run_source_post_win_callback(ev, 0x801014BCu, in, out);
+        require(ev.slots[0].state_09 == 7 && ev.slots[0].fixed_1c == int32_t(0xF6C00000u), "event 4's 0x801014BC (state 7)");
+        auto ev2 = start_source_post_win_event(2);
+        run_source_post_win_callback(ev2, 0x801014BCu, in, out);
+        require(ev2.slots[0].state_09 == 5, "event 2's 0x801014BC is a different callback (state 5)");
+        ev.counters.c10 = 108; run_source_post_win_callback(ev, 0x80100874u, in, out);
+        require(ev.slots[0].state_09 == 2, "0x80100874 at t = 108 writes slot 0 (a1 kept)");
+        const auto cut = source_st02_event_area_cut(3);
+        require(cut.event_cut() && cut.raw[14] == 2 && cut.raw[15] == 3 && cut.raw[16] == 0xFF, "0x801002C8 lanes");
+
+        auto s4 = make_session(4); s4.set_stage(2);
+        for (size_t i = 1; i < 4; ++i) { TutorialRuntimeArea a; a.area_index = i; s4.register_area(i, a); }
+        SourcePostWinProfile p4; p4.loaded = true; p4.event = 4;
+        p4.timeline.token = 0x8010738Cu;
+        p4.timeline.records = {{{0x50000u, 0x80100728u}}, {{0x50001u, 0x80100A28u}}, {{0xffu, 0u}}};
+        for (uint8_t i = 0; i < 5; ++i) { std::array<uint8_t,20> r{}; r[0] = i; p4.spawns.push_back(r); }
+        require(s4.bind_source_post_win_profile(p4), "event 4 profile binds (cuts)");
+        s4.reset_player({10, 0, 20}, 0, 80, 80);
+        int guard = 0, cuts = 0;
+        std::vector<size_t> areas;
+        while (!s4.source_stage_request() && guard++ < 400) {
+            s4.tick({});
+            if (const auto cd = s4.pending_source_post_win_cd()) s4.acknowledge_source_post_win_cd(*cd);
+            if (const auto t = s4.source_post_win_transition()) {
+                require(t->source_function == 0x801002C8u && s4.can_commit_source_post_win_transition(), "cut offered");
+                const uint32_t ticks = s4.source_post_win_event().ticks;
+                s4.tick({});
+                require(s4.source_post_win_event().ticks == ticks, "the event waits for the cut's load");
+                require(s4.commit_source_post_win_transition(), "cut commits");
+                ++cuts; areas.push_back(s4.map_area_index());
+                require(s4.source_post_win_event().active && s4.player_position().x == 10 && s4.player_position().z == 20,
+                        "cut keeps the event running and the player in place");
+            }
+        }
+        require(cuts == 2 && areas == std::vector<size_t>({1, 0}), "event 4 cuts to area 1, then area 0");
+        require(s4.source_stage_request() && s4.source_stage_request()->stage == 3, "event 4 still ends with stage 3");
+    }
     if (failures) return EXIT_FAILURE;
     std::puts("stage_load: ok");
     return 0;

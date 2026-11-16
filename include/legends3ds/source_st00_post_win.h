@@ -24,8 +24,8 @@ struct SourceSceneSlotCommands {
     uint8_t family = 0, object_class = 0, byte_04 = 0;   // record [3], [1], [4]
     std::array<int16_t,3> spawn{};                       // record [12..17]
     uint16_t spawn_heading = 0;                          // record [18..19]
-    uint8_t flags_00 = 0;                                // |= 2 (drawn) by event 2 callbacks
-    uint8_t state_09 = 0, sub_0a = 0, byte_0b = 0, byte_0c = 0, byte_128 = 0;
+    uint8_t flags_00 = 0;                                // bit 1 (2) = drawn; set/cleared by the callbacks
+    uint8_t state_09 = 0, sub_0a = 0, byte_0b = 0, byte_0c = 0, byte_0d = 0, byte_128 = 0;
     std::optional<uint16_t> heading_56, colour_15e;
     std::optional<int32_t> fixed_1c, fixed_20, fixed_24;  // 16.16 position writes
     uint32_t writes = 0;                                 // count of callback writes (diagnostic)
@@ -38,7 +38,14 @@ struct SourcePostWinHandoff {
     std::array<uint8_t,18> raw{};
     uint8_t stage = 0, area = 0;
     uint16_t cleared_flag = 0;
+    // 356C = 0xFF: an area cut inside a running event (ST02 0x801002C8).
+    // The loader (0x8001F408 / 0x80022FD4) then skips the player spawn, the
+    // music change and the area resources; the event keeps running.
+    bool event_cut() const noexcept { return raw[12] == 0xFF; }
 };
+// ST02 0x801002C8(area): 356C = 0xFF, 356E = 2, 356F = area, 3560..3565 = 0,
+// 356A = 0, 356D = 0, 3570 = 3571 = 0xFF.
+SourcePostWinHandoff source_st02_event_area_cut(uint8_t area) noexcept;
 
 // One requested object spawn (0x80031618 caller fills; not drawn natively yet).
 struct SourcePostWinObject {
@@ -67,6 +74,7 @@ struct SourcePostWinStep {
     std::array<std::array<int16_t,5>,2> fx_8011877c{};
     uint8_t fx_8011877c_count = 0;
     std::optional<SourcePostWinHandoff> handoff;   // the event ended this tick
+    std::optional<uint8_t> area_cut;                // 0x801002C8 this tick (ST02 event 4)
 };
 
 struct SourcePostWinInputs {
@@ -78,6 +86,10 @@ struct SourcePostWinInputs {
     // without an owner reads its spawn position.
     std::array<std::optional<std::array<int16_t,3>>,5> slot_position{};
 };
+// Event 4's record callbacks (0x80100450..0x801019DC) write, besides the
+// slots: 0x800BBA90.. / 0x800BBC88.. globals and the 0x8010A5D4 object
+// (+0x0D, +0x1E), the 0x80105884 / 0x80105724 / 0x80104448 effects and the
+// 0x8010A5E0.. overlay bytes. None of these have a native owner yet.
 
 struct SourcePostWinEvent {
     uint8_t event = 0;            // 3 or 2 (event +1)
