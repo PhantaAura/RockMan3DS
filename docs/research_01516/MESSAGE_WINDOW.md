@@ -191,3 +191,9 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
   0x3C48); 13 icon if f; 1 icon if n else box; 2 icon if n; 3 u + (n-1)*8;
   4 u + (n-1)*32 else box; 5/7 tens of byte 0x800C1B8C/8D (>= 10, needs f);
   6/8 ones; 9..12 icon if f and 0x800B531A / 531B & 2 / 531B & 1 / 531C.
+- Special Items: ported (65449aa) without the use dispatch. Azahar (Old 3DS
+  mode, direct Area 1 spawn): Start menu -> Normal Items -> back -> Special
+  Items drew the original grid on the bottom screen (no crystal: the direct
+  spawn skips the opening that sets flag 0x527). The autoplay step log froze
+  at step 3 while the menu kept reacting, so the final Triangle/Start exit
+  was not confirmed in Azahar (host test covers it).
