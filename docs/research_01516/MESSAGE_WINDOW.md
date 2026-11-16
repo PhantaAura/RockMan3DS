@@ -148,3 +148,53 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
 - Message-tick vs front-end-thread order is CANDIDATE (front end first).
 - The voice calls (0x8001D494/0x8001D878, slot bit 0x40000) are not ported.
 - Not oracle-compared frame by frame (the oracle was in use by other sessions).
+
+## Sub-screen item pages (in progress, 2026-11-15)
+- Pages 2..5 load their data with the loader queue (0x8001D440 cmd 6, file
+  table 0x80082CD0 {sector, bytes, type}): page 2/3 entry 204 = SUB_KEY.BIN
+  (SUB01.TIM + `..\MESS\STFF_FE.MSG` loaded to 0x801F2000, 248 messages),
+  entry 205 = SUB_WPN.BIN (same size; weapon pages). Leaving loads entry 22 =
+  EXIT_SUB.BIN (KOUKA00/KOUKA04/SH1100 effect pages back into VRAM).
+- Normal Items 0x8005ED9C (jump table 0x80011264): 0 clear + load 204;
+  1 open(1, 0x801F2000, 20) = "Normal Items" title, which opens 21 (the list)
+  in slot 2; 2 wait for a pick (item byte 0x80098B30, 255 = cancel, sound
+  131) else 0x80060E64 (exit -> sub 7) / 0x80060EC0 (L1/R1 pages); 3 confirm
+  per item: 64 -> 80/88 (0x8005D95C), 65 -> 58/59/82 (table 0x8008DB08,
+  0x80037604), 66 -> 84, 67 -> 86, else 90 (< 88) / 91; 4 on yes: 64 81 +
+  0x8005D9C4, 65 83 + 0x80037594, 66 85 + 0x8005EBB4(1800), 67 87 +
+  0x8005EBA4(900), sound code 1344 + n (0x8001DCD0 at sub 6); 5/6 wait for
+  the window, back to 2; 7 wait loader -> page 0.
+- List message 21: 0xAC 1A 2C (setting 26 = 0x800989D4 <- 0x2C), 0xDF
+  (exec: list 0x800BE2F8 = 255 x128, scroll gp+4408 = 0; draw: owned item
+  ids from the 64-bit field 0x800BE420, bit 0x80 >> (id & 7)), 20 x 0xDD
+  rows (args left/right/up/down) + 0xE0 (item name) in two columns, 0xDE 03
+  A4, 0xDC. Picks go through 0xE8 = the 0x97 handler (low byte = list id).
+- Handlers still to port: 0xDD draw 0x80058F18 (scrolling list), 0xDE draw
+  0x80056558, 0xDC exec 0x800592FC, 0xE0 0x800594CC/0x80059530, 0xD0
+  0x80057AD0/0x80057B24, 0x9F 0x80055688, 0xA9 0x80055C1C, 0x84 0x80054450,
+  decor 8 exec 0x8005B98C.
+- Normal Items: ported (d615644). Special Items 0x8005F210: 0 clear + load
+  204; 1 open(1, bank, 25) ("Special Items" -> 26 grid) + layout(0, 2);
+  2 choice -> code byte 0x80098B2E, use dispatch table 0x80011284 (18 codes
+  -> 0x8005F3D0/F608/FAE4/FBB4/FFBC: story events, NOT ported) else
+  0x80060E64 exit (page 0) / L1/R1.
+- Grid message 26: 18 x 0xD7 cells (exec 0x80058788: rows++, flags
+  0x400800, +5; draw 0x800587F8: up/down/left/right bytes, repeat, no input
+  while slot 0 is open, cursor glyph 0x60 unless 0x80098A58 & 0x20000),
+  0xD6 03 84 help, 0xD9 choice (0x80058AEC: Cross -> 0x40000000 | cursor,
+  Triangle -> 0x20000000 | rows-1; 0x20000 mirrors slot 0 open).
+- Layout handler 1 0x8006430C (list 2 = 0x8008DE1C, records {u16 cell |
+  mode << 8, s16 flag, s16 dx, s16 dy, u8 u, u8 v, u16 clut, u16 w, u16 h}):
+  E1 0x0C (SUB01.TIM page), SPRT at (cell % 6 * 44 + 34 + dx, cell / 6 * 40
+  + 60 + dy); n = flags(f) + flags(f+1) + flags(f+2) (0x8001DA58); modes
+  (table 0x800113D8): 0 icon if f else empty box (u/v 0x80/0x40, CLUT
+  0x3C48); 13 icon if f; 1 icon if n else box; 2 icon if n; 3 u + (n-1)*8;
+  4 u + (n-1)*32 else box; 5/7 tens of byte 0x800C1B8C/8D (>= 10, needs f);
+  6/8 ones; 9..12 icon if f and 0x800B531A / 531B & 2 / 531B & 1 / 531C.
+- Special Items: ported (65449aa) without the use dispatch. Azahar (Old 3DS
+  mode, direct Area 1 spawn): Start menu -> Normal Items -> back -> Special
+  Items drew the original grid on the bottom screen (no crystal: the direct
+  spawn skips the opening that sets flag 0x527). The autoplay step log froze
+  at step 3 while the menu kept reacting, so the final Triangle/Start exit
+  was not confirmed in that run. A second run confirmed it: Start -> Normal
+  Items -> Triangle -> Start logged `# subscreen,open=0` and gameplay resumed.

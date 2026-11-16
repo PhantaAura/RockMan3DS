@@ -62,6 +62,9 @@ MessageWindows::MessageWindows(ExeExcerpt exe) : exe_(std::move(exe)) {
 uint8_t& MessageWindows::mem(uint32_t addr) {
     if (addr >= 0x800C1B60u && addr < 0x800C1B70u) return ram_800c1b60[addr - 0x800C1B60u];
     if (addr == 0x8009879Cu) return dummy_8009879c;
+    if (addr == 0x800989D4u) return list_max_scroll_gp4464;          // gp+4464 (settings entry 26)
+    if (addr >= 0x800BE2F8u && addr < 0x800BE378u) return list_800be2f8[addr - 0x800BE2F8u];
+    if (addr >= 0x800BE420u && addr < 0x800BE428u) return owned_items_800be420[addr - 0x800BE420u];
     if (uint8_t* p = exe_.at(addr)) return *p;
     throw std::runtime_error("message windows: read outside the EXE excerpt");
 }
@@ -173,6 +176,66 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
     case 0xAF: ++s.lines; s.read += 2; return true;                          // 0x80056128
     case 0xDB: s.read += 5; return true;                                     // 0x800543F8
     case 0xED: s.read += 1; return true;                                     // 0x800543B0
+    case 0x91:                                                               // 0x80054A84: return
+        if (!s.exec_depth) { unported = true; return false; }
+        s.read = s.exec_stack[--s.exec_depth]; return true;
+    case 0xAC: setting(mem(r + 1)) = mem(r + 2); s.read += 3; return true;   // 0x80055C80
+    case 0xDE: s.read += 3; return true;                                     // 0x800543E0
+    case 0x98: s.flags &= ~0x08000000u; s.read += 1; return true;           // 0x8005531C
+    case 0x9C: {                                                             // 0x80055438: branch on a story flag
+        const bool set = story_flag && story_flag(u16(r + 1));
+        const uint8_t target = mem(r + (set ? 3u : 4u));
+        if (target == 255) { s.read += 5; return true; }
+        if (!s.index_base) { unported = true; return false; }
+        s.index = target;
+        s.read = s.page = s.index_base + u16(s.index_base + 2u * target);
+        return true;
+    }
+    case 0xD7:                                                               // 0x80058788: grid cell
+        s.repeat = 0; ++s.rows; s.flags |= 0x00400800u; s.read += 5;
+        slot_bits_gp4812 &= ~(0x20000u << cur_slot_);
+        return true;
+    case 0xD9: {                                                             // 0x80058AEC: grid choice
+        if (!(s.flags & 0x01000000u)) { s.flags = (s.flags | 0x01000000u) & 0xFFFF7FFFu; s.timer = 5; }
+        s.flags &= 0xFFBFFFFFu;
+        if (flags_80098a58 & 0x08000000u) flags_80098a58 |= 0x20000u; else flags_80098a58 &= ~0x20000u;
+        if (s.timer > 0) --s.timer;
+        else if (s.pressed & 0x4000u) flags_80098a58 = (flags_80098a58 & ~0xFFu) | 0x40000000u | uint8_t(s.cursor);
+        else if (s.pressed & 0x1000u) flags_80098a58 = (flags_80098a58 & ~0xFFu) | 0x20000000u | uint8_t(s.rows - 1);
+        s.brightness = 128;
+        return false;
+    }
+    case 0xDF:                                                               // 0x80058DB4
+        list_800be2f8.fill(255); list_scroll_gp4408 = 0; s.read += 1; return true;
+    case 0xDD:                                                               // 0x80058EA0
+        s.repeat = 0; ++s.rows; s.flags |= 0x00402800u; s.read += 5;
+        list_picked_gp4077 = 255; slot_bits_gp4812 &= ~(0x20000u << cur_slot_);
+        return true;
+    case 0xE0:                                                               // 0x800594CC: call the item name
+        if (s.exec_depth >= s.exec_stack.size()) { unported = true; return false; }
+        s.exec_stack[s.exec_depth++] = r + 1;
+        s.read = name_ptr(int8_t(list_at(int(list_scroll_gp4408) + s.rows - 1)));
+        return true;
+    case 0xDC: {                                                             // 0x800592FC: list choice
+        if (!(s.flags & 0x01000000u)) { s.flags = (s.flags | 0x01000000u) & 0xFFFF7FFFu; s.timer = 5; }
+        s.flags &= 0xFFBFFFFFu;
+        if (s.timer > 0) --s.timer;
+        else {
+            out.layout_calls.push_back({0, -1}); out.layout_calls.push_back({1, -1});   // 0x80063F28(0), (1)
+            if (s.pressed & 0x4000u) {
+                flags_80098a58 &= ~0xFFu;
+                const uint8_t id = list_at(int(list_scroll_gp4408) + s.cursor);
+                flags_80098a58 |= id != 255 ? 0x40000000u | uint8_t(id + 64) : 0x400000FFu;
+            } else if (list_scroll_gp4408 != 0) {
+                out.layout_calls.push_back({0, 26});                         // up arrow
+                if (list_scroll_gp4408 < list_max_scroll_gp4464) out.layout_calls.push_back({1, 27});
+            } else if (list_scroll_gp4408 < list_max_scroll_gp4464) out.layout_calls.push_back({0, 27});   // down arrow
+        }
+        const uint8_t id = list_at(int(list_scroll_gp4408) + s.cursor);    // 0x80059470
+        slot_bits_gp4812 = id == 255 ? 255u : uint8_t(id + 64);
+        s.brightness = 128;
+        return false;
+    }
     default: unported = true; return false;
     }
 }
@@ -232,6 +295,88 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xB0: s.brightness = mem(d + 1); s.draw += 2; return;               // 0x80056180
     case 0xDB: s.pen_x = int16_t(u16(d + 1)); s.pen_y = int16_t(u16(d + 3)); s.draw += 5; return;   // 0x80058D64
     case 0xED: s.pen_x = int16_t(s.pen_x + 12); s.draw += 1; return;        // 0x8005A858
+    case 0x91: if (s.draw_depth) s.draw = s.draw_stack[--s.draw_depth]; else s.draw += 1; return;   // 0x80054AB4
+    case 0xAC: s.draw += 3; return;
+    case 0xDC: case 0xD9: case 0x98: s.draw += 1; return;
+    case 0x9C: s.draw += 5; return;                                         // 0x8005434C
+    case 0xD7: {                                                             // 0x800587F8: grid cell
+        mem(d + 5) = 0xED; s.brightness = 0;
+        if (s.cursor == s.row_draw && !(s.flags & 0x00C00000u)) {
+            const uint32_t bit = 0x20000u << cur_slot_;
+            slot_bits_gp4812 &= ~bit;
+            const int8_t old = s.cursor;
+            if (!(slots_[0].flags & 0x80000000u) && !(s.pressed & 0x4000u)) {   // no input under a slot-0 window
+                const uint32_t pad = uint32_t(s.held) | (uint32_t(s.pressed) << 16);
+                const auto step = [&](uint8_t target, uint32_t press, uint32_t mask) {
+                    if (s.pressed & press) { s.repeat = 0; s.cursor = int8_t(target); return true; }
+                    if ((pad & mask) != press) return false;
+                    if (s.repeat < 13) ++s.repeat; else { s.repeat = 12; s.cursor = int8_t(target); }
+                    return true;
+                };
+                if (!step(mem(d + 1), 0x10u, 0x100010u) && !step(mem(d + 2), 0x40u, 0x400040u) &&
+                    !step(mem(d + 3), 0x80u, 0x800080u)) (void)step(mem(d + 4), 0x20u, 0x200020u);
+            }
+            mem(d + 5) = (flags_80098a58 & 0x20000u) ? 0xED : 0x60;
+            s.brightness = 48; s.cursor_byte = d + 5; s.flags |= 0x00800000u;
+            if (old != s.cursor) { sound(out, 129, 1); slot_bits_gp4812 |= bit; }
+        }
+        ++s.row_draw; s.brightness = uint8_t(s.brightness + 80); s.draw += 5;
+        return;
+    }
+    case 0xDF: {                                                             // 0x80058DEC: owned ids -> list
+        list_count_gp4420 = 0;
+        for (unsigned id = 0; id < 64; ++id)
+            if (owned_items_800be420[id >> 3] & (0x80u >> (id & 7))) list_800be2f8[list_count_gp4420++] = uint8_t(id);
+        for (uint32_t i = list_count_gp4420; i < 128; ++i) list_800be2f8[i] = 255;
+        s.draw += 1; return;
+    }
+    case 0xDE: {                                                             // 0x80056558: help for the item
+        const uint8_t slot = mem(d + 1), base = mem(d + 2);
+        const int8_t id = int8_t(list_at(int(list_scroll_gp4408) + s.cursor));
+        if (s.index_base) open_8005382c(slot, s.index_base, uint8_t(base + uint8_t(id)));
+        else open_8005382c(slot, exe_.u32(kMsgTable8008cacc + uint32_t(4 * (int32_t(base) + id))), 255);
+        s.draw += 3; return;
+    }
+    case 0xE0:                                                               // 0x80059530
+        if (s.draw_depth < s.draw_stack.size()) {
+            s.draw_stack[s.draw_depth++] = d + 1;
+            s.draw = name_ptr(int8_t(list_at(int(list_scroll_gp4408) + s.row_draw - 1)));
+        } else s.draw += 1;
+        return;
+    case 0xDD: {                                                             // 0x80058F18: list row
+        const int here = int(s.row_draw) + list_scroll_gp4408;
+        if (list_picked_gp4077 == here && (frame_gp4348 & 1)) { mem(d + 5) = 0x60; s.brightness = 16; }
+        else { mem(d + 5) = 0xED; s.brightness = 0; }
+        if (s.cursor == s.row_draw && !(s.flags & 0x00C00000u)) {
+            const uint32_t bit = 0x20000u << cur_slot_;
+            slot_bits_gp4812 &= ~bit;
+            const int8_t old = s.cursor;
+            const uint32_t pad = uint32_t(s.held) | (uint32_t(s.pressed) << 16);
+            const auto step = [&](uint8_t target, uint32_t press, uint32_t mask, int dir) {
+                bool moved_now = false;
+                if (s.pressed & press) { s.repeat = 0; s.cursor = int8_t(target); moved_now = true; }
+                else if ((pad & mask) == press) {
+                    if (s.repeat < 13) { ++s.repeat; return true; }
+                    s.repeat = 12; s.cursor = int8_t(target); moved_now = true;
+                } else return false;
+                if (moved_now && dir && s.cursor == old) {                    // at the edge: scroll the list
+                    const bool can = dir < 0 ? list_scroll_gp4408 != 0 : list_scroll_gp4408 < list_max_scroll_gp4464;
+                    if (can) { slot_bits_gp4812 |= bit; sound(out, 129, 1); list_scroll_gp4408 = uint8_t(list_scroll_gp4408 + 2 * dir); }
+                }
+                return true;
+            };
+            if (!(s.pressed & 0x4000u)) {
+                if (!step(mem(d + 1), 0x10u, 0x100010u, -1))
+                    if (!step(mem(d + 2), 0x40u, 0x400040u, +1))
+                        if (!step(mem(d + 3), 0x80u, 0x800080u, 0))
+                            (void)step(mem(d + 4), 0x20u, 0x200020u, 0);
+            }
+            mem(d + 5) = 0x60; s.brightness = 48; s.cursor_byte = d + 5; s.flags |= 0x00800000u;
+            if (old != s.cursor) { sound(out, 129, 1); slot_bits_gp4812 |= bit; }
+        }
+        ++s.row_draw; s.brightness = uint8_t(s.brightness + 80); s.draw += 5;
+        return;
+    }
     case 0xAD: {                                                             // 0x80055CFC
         mem(d + 7) = 0xED;
         s.brightness = 0;
@@ -305,6 +450,7 @@ void MessageWindows::draw_frame(MessageSlot& s, MessageWindowFrame& out) {
 
 MessageWindowFrame MessageWindows::tick_80053b40(uint16_t held, uint16_t pressed) {
     MessageWindowFrame out;
+    ++frame_gp4348;
     if (flags_80098a58 & 0x00400000u) return out;
     flags_80098a58 &= 0x3043FFFFu;
     for (int n = 0; n < 5; ++n) {
@@ -313,6 +459,7 @@ MessageWindowFrame MessageWindows::tick_80053b40(uint16_t held, uint16_t pressed
         flags_80098a58 |= 0x80000000u | (kSlotBit >> n);
         if (!(flags_80098a58 & 0x00040000u) && !(flags_80098a58 & (0x10000u >> s.pad_owner))) { s.held = held; s.pressed = pressed; }
         else s.held = s.pressed = 0;
+        cur_slot_ = n;
         bool unported = false;
         for (int guard = 0; guard < 4096 && !unported; ++guard) {
             const uint8_t op = mem(s.read);
