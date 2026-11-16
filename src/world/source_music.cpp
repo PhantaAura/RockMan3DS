@@ -133,6 +133,13 @@ SourceMusicPlayer::Seq* SourceMusicPlayer::seq(int16_t owner) noexcept {
 }
 
 // ---- game side -----------------------------------------------------------
+bool SourceMusicPlayer::playing_8001a0a8(size_t i) noexcept {
+    if (i >= slots_.size()) return false;
+    const auto& s = slots_[i];
+    if (s.type == 0xFF || s.access == -1) return false;
+    const Seq* q = seq(owner_id(s.access, s.sequence));
+    return q && q->playing_14;
+}
 size_t SourceMusicPlayer::consume_8001a110(const SourceAudioQueue& queue) noexcept {
     if (!bank_) return 0;
     volumes_8001aef0();

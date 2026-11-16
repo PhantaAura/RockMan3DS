@@ -170,7 +170,7 @@ void test_save_restore_context() {
 }
 void test_cooked_setup_mode() {
     St00FlowSource flow;
-    for (size_t i = 0; i < flow.areas.size(); ++i) {
+    for (size_t i = 0; i < flow.area_count; ++i) {
         flow.areas[i].setup_blob[37] = 0xD1;
         flow.areas[i].setup_blob[38] = static_cast<uint8_t>(i * 53);
         flow.areas[i].setup_blob[39] = 0xE2;
@@ -178,7 +178,7 @@ void test_cooked_setup_mode() {
     }
     const auto cooked_flow = cook_l3st00_flow(flow);
     const auto cooked_ebd = cook_l3ebd_directory(EbdDirectory{});
-    for (size_t i = 0; i < flow.areas.size(); ++i) {
+    for (size_t i = 0; i < flow.area_count; ++i) {
         auto loaded = load_tutorial_runtime_area(cooked_flow, cooked_ebd, i);
         require(loaded.source_render_scratch_75 == std::optional<uint8_t>(flow.areas[i].setup_blob[38]),
                 "cooked source mode not setup low byte38");

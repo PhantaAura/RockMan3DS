@@ -241,7 +241,7 @@ RuntimeEstimate runtime_preflight(const std::vector<uint8_t>& bytes, size_t map_
         const auto* row = bytes.data() + rows + size_t(i) * kRuntimeRow;
         const uint32_t local = rd_u32(row), source = rd_u32(row + 4);
         const uint32_t offset = rd_u32(row + 8), size = rd_u32(row + 12);
-        require(local < map_areas && source < kSt00TutorialAreaCount && (!i || local > prior_local),
+        require(local < map_areas && source < flow.area_count && (!i || local > prior_local),
                 "runtime binding area index invalid or duplicate");
         require(!require_source_identity || local == source,
                 "ST00 spawn catalog requires identity runtime area selectors");

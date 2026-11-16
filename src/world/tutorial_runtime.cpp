@@ -6,8 +6,9 @@ TutorialRuntimeArea load_tutorial_runtime_area(const std::vector<uint8_t>& l3flo
                                                const std::vector<uint8_t>& l3ebd_bytes,
                                                size_t area_index,
                                                bool verify_crc) {
-    if (area_index >= kSt00TutorialAreaCount) throw std::runtime_error("tutorial area index out of range");
+    if (area_index >= kStageFlowMaxAreas) throw std::runtime_error("tutorial area index out of range");
     const auto flow = load_l3st00_flow(l3flow_bytes, verify_crc);
+    if (area_index >= flow.area_count) throw std::runtime_error("stage area index beyond the flow's area count");
     TutorialRuntimeArea out;
     out.area_index = area_index;
     out.flow = flow.areas[area_index];

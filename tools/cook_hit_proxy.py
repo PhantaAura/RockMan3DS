@@ -11,8 +11,10 @@ from cook_actor_combat import OwnerExe, OWNER_SHA
 
 def build_metadata(image):
     owner = OwnerExe(image)
-    payload = owner.read(0x80097D00, 8)
-    header = struct.pack('<4sHHIIII', b'L3PR', 1, 24, 32, 8, zlib.crc32(payload), 0)
+    # v2: the pair-rule table 0x80097D00 (8 bytes), then the effect-128 proxy
+    # damage table 0x80097DDC (indexed by effect +0x0D, 0..3; 0x80044200).
+    payload = owner.read(0x80097D00, 8) + owner.read(0x80097DDC, 4)
+    header = struct.pack('<4sHHIIII', b'L3PR', 2, 24, 36, 12, zlib.crc32(payload), 0)
     return header + payload
 
 
@@ -32,8 +34,8 @@ def main():
     path = args.out / 'hit_proxy_rules.l3pr'
     path.write_bytes(package)
     evidence = {'schema':'mml-hit-proxy-cook/1','status':'SOURCE_BACKED_PARTIAL',
-                'source_sha256':OWNER_SHA,'source_table':'0x80097D00',
-                'unsigned_table_entries':8,'package_bytes':len(package),
+                'source_sha256':OWNER_SHA,'source_table':'0x80097D00','effect_damage_table':'0x80097DDC',
+                'unsigned_table_entries':12,'package_bytes':len(package),
                 'package_sha256':hashlib.sha256(package).hexdigest(),
                 'retail_payload_embedded_in_source':False,'retail_parity':False}
     (args.out/'hit_proxy_rules_evidence.json').write_text(json.dumps(evidence,indent=2)+'\n')

@@ -27,6 +27,10 @@ PROVED_DETECTION_PROFILES = {3: {4}, 0x19: {6}}
 # reads record word 0 of records 0..2 through 0x80047228.
 E0_TABLES = {1: (0x8008F048, 0), 2: (0x8008F2E4, 1)}
 E0_SUBTYPES = ((5, 3),)
+# ST00 Area 3 boss class 40/02 parameter 1: record 0x8009884C[2] + 16
+# (PSXRecomp: 0x8009884C -> 0x8008EF64 on a fresh selector-1 boot).
+CLASS40_TABLES = {1: (0x8008EF64, 0), 2: (0x8008F200, 1)}
+CLASS40_SUBTYPE, CLASS40_RECORD, CLASS40_DETECTION = 2, 1, 5
 
 
 def sha(data):
@@ -85,6 +89,27 @@ def build_metadata(owner):
                         'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
                         'action4_variant32E': 0,
                         'retained_values_in_evidence': False})
+    # L3CB rows are ordered by identity (class first): 0x20, 0x40, 0xE0.
+    for selector, (table, variant) in sorted(CLASS40_TABLES.items()):
+        slot = table + CLASS40_SUBTYPE * 4
+        record = owner.word(slot)
+        if record & 3:
+            raise ValueError('Selected source record is unaligned')
+        address = record + 16 * CLASS40_RECORD
+        fields = owner.read(address, 16)
+        if fields[15] != CLASS40_DETECTION:
+            raise ValueError('Selected detector profile outside the proved contract')
+        rows.append(bytes((0x40, CLASS40_SUBTYPE, selector, variant, CLASS40_RECORD, 0,
+                           fields[8], fields[10], fields[15], fields[12], 15, fields[9])) +
+                    fields[:4] + bytes((fields[11], 0, 0, 0)))
+        profile_ids.add(fields[15])
+        origins.append({'raw_stats_selector': selector, 'source_variant': variant,
+                        'source_class': 0x40, 'subtype': CLASS40_SUBTYPE,
+                        'record_index0C': CLASS40_RECORD, 'context_high0F': 0,
+                        'source_table_pointer_slot': hex(slot), 'source_record': hex(address),
+                        'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
+                        'action4_variant32E': 0,
+                        'retained_values_in_evidence': False})
     for subtype, count in E0_SUBTYPES:
         for selector, (table, variant) in sorted(E0_TABLES.items()):
             slot = table + subtype * 4
@@ -103,6 +128,10 @@ def build_metadata(owner):
                                 'retained_offsets': [0, 8, 9, 10, 11, 12, 15],
                                 'action4_variant32E': 0,
                                 'retained_values_in_evidence': False})
+    # The runtime loader rejects rows that are not strictly ordered by the
+    # identity bytes 0..5 (class, subtype, selector, variant, index, context).
+    if any(rows[i - 1][:6] >= rows[i][:6] for i in range(1, len(rows))):
+        raise ValueError('Combat rows are not strictly ordered by source identity')
     combat_payload = b''.join(rows)
     combat = header(b'L3CB', len(rows), 20, combat_payload, version=5) + combat_payload
     detection_payload = b''.join(bytes((profile,)) +
@@ -132,7 +161,7 @@ def build_metadata(owner):
                 'retail_values_embedded_in_source': False, 'retail_parity': False,
                 'outputs': {name: {'bytes': len(data), 'sha256': sha(data)}
                             for name, data in packages.items()},
-                'limits': ['Only class20 subtypes 03 and 19 with index0C0/context0F0 and raw selector1/2 are retained.',
+                'limits': ['Only class20 subtypes 03 and 19 with index0C0/context0F0, class E0/05 records 0..2 and class 40/02 record 1 with raw selector1/2 are retained.',
                            'No generic selector, object, restored game or alternate-context fallback.',
                            'Sparse records preserve original word00 and unsigned fields08/09/A/B/C/F only.',
                            'Action4 byteC is selected for actor variant32E0 only; source_variant tags stats table selection, not actor variant32E.',

@@ -17,7 +17,7 @@ int main(int argc,char** argv){
         const auto source=l3::load_tutorial_runtime_area(read(argv[1]),read(argv[2]),std::stoul(argv[3]));
         l3::ActorAreaRuntime actors;
         const auto result=l3::append_source_area3_boss_801076e8(actors,source.stage,source.ebd,3);
-        std::cout<<"{\"schema\":\"source-area3-boss-probe/1\",\"status\":"<<unsigned(result.status)
+        std::cout<<"{\"schema\":\"source-area3-boss-probe/2\",\"status\":"<<unsigned(result.status)
             <<",\"actors\":"<<actors.actors.size();
         if(result.spec)std::cout<<",\"event_source_index\":"<<result.spec->event_source_index
             <<",\"callback\":\"0x801076e8\",\"initializer\":\"0x801078b8\"";
@@ -26,10 +26,8 @@ int main(int argc,char** argv){
             std::cout<<",\"row\":"<<boss.row<<",\"parts\":"<<boss.resource->model.parts.size()
                 <<",\"pose_request\":"<<unsigned(boss.pose->request)
                 <<",\"pose_record\":"<<unsigned(boss.pose->record_index)
-                <<",\"hp\":"<<(boss.source_area3_boss?boss.source_area3_boss->hp:0)
-                <<",\"action\":"<<unsigned(boss.source_area3_boss?boss.source_area3_boss->action:0)
-                <<",\"phase\":"<<unsigned(boss.source_area3_boss?boss.source_area3_boss->phase:0)
-                <<",\"substate\":"<<unsigned(boss.source_area3_boss?boss.source_area3_boss->substate:0)
+                <<",\"state\":"<<unsigned(boss.source_area3_boss?boss.source_area3_boss->state_08:0)
+                <<",\"substate\":"<<unsigned(boss.source_area3_boss?boss.source_area3_boss->substate_09:0)
                 <<",\"spawn_z\":"<<boss.source_origin[2]
                 <<",\"decoded_bytes\":"<<actors.decoded_resource_bytes;
         }

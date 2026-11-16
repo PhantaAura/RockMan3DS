@@ -209,6 +209,12 @@ int main(int argc, char** argv) {
     }
     auto truncated=bytes;truncated.pop_back();assert(!decode_source_hit_proxy_rules(truncated,decoded));
     auto oversized=bytes;oversized.push_back(0);assert(!decode_source_hit_proxy_rules(oversized,decoded));
+    // v2 adds the effect-128 damage bytes (authored values).
+    auto v2=bytes;put16(v2,4,2);put32(v2,8,36);put32(v2,12,12);
+    for (const std::uint8_t d : {std::uint8_t(10),std::uint8_t(12),std::uint8_t(16),std::uint8_t(8)}) v2.push_back(d);
+    put32(v2,16,crc32(v2.data()+24,12));
+    assert(decode_source_hit_proxy_rules(v2,decoded)&&decoded.effect128_damage_80097ddc&&(*decoded.effect128_damage_80097ddc)[2]==16);
+    assert(decode_source_hit_proxy_rules(bytes,decoded)&&!decoded.effect128_damage_80097ddc);
 
     SourceHitProxyBank bank;
     SourceHitProxyTarget target;

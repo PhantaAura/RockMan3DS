@@ -65,6 +65,8 @@ public:
 
     struct Slot { int16_t access = -1; uint8_t type = 0xFF; int8_t priority = 0; uint8_t sequence = 0, playing = 0; uint16_t request = 0; };
     const Slot& slot(size_t i) const noexcept { return slots_[i]; }
+    // 0x8001A0A8(slot): SsIsEos of the slot's sequence (0 when the slot is free).
+    bool playing_8001a0a8(size_t slot) noexcept;
     uint8_t volume_ad152() const noexcept { return volume_ad152_; }
     size_t sounding_voices() const noexcept;
     uint32_t key_ons() const noexcept { return key_ons_; }

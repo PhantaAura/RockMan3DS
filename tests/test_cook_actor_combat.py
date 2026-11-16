@@ -29,6 +29,11 @@ class SyntheticOwner:
         for selector, record in self.fields19.items():
             record[:4] = struct.pack('<I', 0x103)
             record[8], record[9], record[10], record[15] = 32 * selector, 16 * selector, 16 * selector, 6
+        # Class 40/02 record 1 rows (detection profile 5).
+        self.fields40 = {1: bytearray(16), 2: bytearray(16)}
+        for selector, record in self.fields40.items():
+            record[:4] = struct.pack('<I', 0x4050 + selector)
+            record[8], record[9], record[10], record[11], record[12], record[15] = 32 * selector, 80, 16, 0, 0, 5
         self.bounds = (-9, 9, -11, 11, -13, 13)
 
     def word(self, address):
@@ -40,6 +45,9 @@ class SyntheticOwner:
         for selector, (table, _) in module.E0_TABLES.items():
             if address == table + 5 * 4:
                 return 0x3000 + selector * 0x100
+        for selector, (table, _) in module.CLASS40_TABLES.items():
+            if address == table + 2 * 4:
+                return 0x4000 + selector * 0x100
         raise ValueError('Unexpected authored pointer read')
 
     def read(self, address, size):
@@ -53,6 +61,11 @@ class SyntheticOwner:
             for index in range(3):
                 if address == 0x3000 + selector * 0x100 + 16 * index and size == 16:
                     return struct.pack('<I', 0x3020305 + index) + bytes(4) + bytes((10, 64, 10, 34)) + bytes(4)
+        for selector, data in self.fields40.items():
+            if address == 0x4000 + selector * 0x100 + 16 and size == 16:
+                return bytes(data)
+        if address == module.DETECTION_PROFILE_TABLE + 20 and size == 3:
+            return bytes((40, 120, 24))
         if address == module.DETECTION_PROFILE_TABLE + 16 and size == 3:
             return bytes((27, 18, 19))
         if address == module.DETECTION_PROFILE_TABLE + 24 and size == 3:
@@ -71,17 +84,19 @@ class CookActorCombatTests(unittest.TestCase):
                                          'actor_normalization.l3nr', 'actor_detection_bounds.l3db'})
         combat = packages['actor_combat.l3cb']
         self.assertEqual(struct.unpack('<4sHH6I', combat[:32]),
-                         (b'L3CB', 5, 32, 1, 10, 20, 232, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
+                         (b'L3CB', 5, 32, 1, 12, 20, 272, zlib.crc32(combat[32:]) & 0xFFFFFFFF, 0))
         self.assertEqual(combat[32:52], bytes((32,3,1,0,0,0,12,24,4,36,15,48,65,48,32,16,60,0,0,0)))
         self.assertEqual(combat[52:72], bytes((32,3,2,1,0,0,13,25,4,37,15,49,66,48,32,16,61,0,0,0)))
         self.assertEqual(evidence['combat_format_version'], 5)
-        self.assertEqual([o['subtype'] for o in evidence['selection_origins']], [3, 3, 0x19, 0x19, 5, 5, 5, 5, 5, 5])
-        self.assertEqual(combat[112:132], bytes((0xE0,5,1,0,0,0,10,10,0,0,15,64,5,3,2,3,34,0,0,0)))
+        self.assertEqual([o['subtype'] for o in evidence['selection_origins']], [3, 3, 0x19, 0x19, 2, 2, 5, 5, 5, 5, 5, 5])
+        self.assertEqual(combat[112:132], bytes((0x40,2,1,0,1,0,32,16,5,0,15,80,0x51,0x40,0,0,0,0,0,0)))
+        self.assertEqual(combat[132:152], bytes((0x40,2,2,1,1,0,64,16,5,0,15,80,0x52,0x40,0,0,0,0,0,0)))
+        self.assertEqual(combat[152:172], bytes((0xE0,5,1,0,0,0,10,10,0,0,15,64,5,3,2,3,34,0,0,0)))
         for origin in evidence['selection_origins']:
             self.assertEqual(origin['retained_offsets'], [0, 8, 9, 10, 11, 12, 15])
             self.assertEqual(origin['action4_variant32E'], 0)
         self.assertEqual(combat[72:92], bytes((32,0x19,1,0,0,0,32,16,6,0,15,16,3,1,0,0,0,0,0,0)))
-        self.assertEqual(len(packages['actor_detection.l3dp']), 40)
+        self.assertEqual(len(packages['actor_detection.l3dp']), 44)
         self.assertEqual(len(packages['actor_normalization.l3nr']), 416)
         self.assertEqual(len(packages['actor_detection_bounds.l3db']), 44)
         self.assertFalse(evidence['retail_values_embedded_in_source'])
@@ -110,6 +125,12 @@ class CookActorCombatTests(unittest.TestCase):
         with self.assertRaises(ValueError): module.build_metadata(owner)
         owner = SyntheticOwner(); owner.bounds = (-9, -9, -11, 11, -13, 13)
         with self.assertRaises(ValueError): module.build_metadata(owner)
+
+    def test_rows_strictly_ordered_for_the_loader(self):
+        combat = module.build_metadata(SyntheticOwner())[0]['actor_combat.l3cb']
+        keys = [combat[32 + 20 * i:38 + 20 * i] for i in range(12)]
+        self.assertEqual(keys, sorted(keys))
+        self.assertEqual(len(set(keys)), 12)
 
     def test_exact_owner_hash_guard(self):
         with self.assertRaises(ValueError): module.cook(bytes(2048))

@@ -259,7 +259,7 @@ int main() {
         for(size_t j=0;j<40;++j) flowraw[blobtbl+ai*40+j]=static_cast<uint8_t>(ai*40+j);
     }
     const auto flow=l3::parse_st00_flow_us(flowraw,flowbase);
-    assert(flow.areas.size()==5 && flow.areas[0].objects.records.size()==1 && flow.areas[4].objects.records[0].id==5);
+    assert(flow.area_count==5 && flow.areas[0].objects.records.size()==1 && flow.areas[4].objects.records[0].id==5);
     assert(flow.areas[2].source_object_offset==0x1080 && flow.areas[3].setup_selector==3 && flow.areas[1].setup_seed[0]==0x28);
     assert(flow.areas[0].aux.records.empty() && flow.areas[0].aux.bytes_consumed==24);
     assert(flow.areas[1].aux.records.size()==1 && flow.areas[1].aux.records[0].halfwords[0]==static_cast<int16_t>(0x8000) && flow.areas[1].aux.bytes_consumed==48);

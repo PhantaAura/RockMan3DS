@@ -18,6 +18,7 @@
 #include "legends3ds/actor_detection_preparation.h"
 #include "legends3ds/actor_pose_runtime.h"
 #include "legends3ds/class20_03_proxy.h"
+#include "legends3ds/class40_02_boss.h"
 #include "legends3ds/source_actor_consumers.h"
 #include "legends3ds/class20_1f_popout.h"
 #include "legends3ds/class20_19.h"
@@ -130,18 +131,17 @@ struct ImportedActorInstance {
     bool source_hidden = false;                       // work +0 bit 1 clear
     Class20_19Status last_reaverbot19_status = Class20_19Status::SourceBackedPartial;
     // ST00 Area 3 event 3 owns a dynamic class40/02 boss rather than a placed
-    // class40 record. AI/damage/defeat remain separate evidence gates.
-    struct SourceArea3BossState {
-        int16_t hp = 0;
-        uint8_t action = 0, phase = 0, substate = 0;
-        uint8_t requested_pose = 0;
-        uint16_t phase_ticks = 0;
-        // 0: wait for the scripted player entry; 1: phase3 turn; 2: slow
-        // approach; 3: fast approach; 4: action6 handoff; 5: first action6
-        // presentation cycle; 6: next action1 selection boundary.
-        uint8_t intro_leg = 0;
-    };
-    std::optional<SourceArea3BossState> source_area3_boss;
+    // class40 record: callback 0x801076E8 (class40_02_boss.h).
+    std::optional<Class40_02State> source_area3_boss;
+    std::optional<Class40_02Record> source_record40;
+    ActorDetectionWork source_detection40{};          // +0x504 (profile at +0x50A)
+    Class40_02Status last_boss40_status = Class40_02Status::SourceBackedPartial;
+    // Scripted entry hold (CANDIDATE end): released when the boss leaves its
+    // first slam, the boundary the earlier validated build used.
+    bool source_boss40_entry_released = false;
+    // 0x800341BC word of this update, registered after the frame's proxy
+    // queues are reset (the tick runs before that point).
+    std::optional<uint32_t> source_boss40_pending_proxy;
 };
 
 struct ActorAreaRuntime {
@@ -182,34 +182,28 @@ SourceArea3BossSpawnResult append_source_area3_boss_801076e8(
     ActorAreaRuntime&,const StageRuntimeArea&,const EbdDirectory&,size_t source_area_index,
     size_t decoded_memory_cap=512*1024);
 
-enum class SourceArea3BossTickStatus : uint8_t {
-    NotBoss, SourceBackedIntro, SourceBackedCombatPresentation, CombatReady,
-    MissingAnimation
+// Binds the class 40/02 parameter-1 stats record (byte08 HP, byte09 stagger,
+// byte0F detection) and the 0x80036478(+0x504, byte0F, -0x60) detection work.
+bool bind_source_area3_boss_record(ImportedActorInstance&,const SourceCombatProfiles&,
+                                   std::optional<uint8_t> selector) noexcept;
+struct SourceArea3BossTick {
+    Class40_02Result result;
+    bool committed = false, proxy_registered = false, pose_changed = false;
 };
-struct SourceArea3BossTickResult {
-    SourceArea3BossTickStatus status = SourceArea3BossTickStatus::NotBoss;
-    bool committed = false, state_changed = false, pose_changed = false;
-};
-// 0x80107B48 plus intro substates 0/3/1/2 and the first bounded 0x80107FAC
-// action-6 presentation cycle observed from a clean original Area 3 entry.
-// Attack selection after the returned action1 boundary, damage, camera, HUD
-// and defeat are intentionally not inferred here.
-SourceArea3BossTickResult tick_source_area3_boss_intro_80107b48(
-    ImportedActorInstance&,int32_t player_z) noexcept;
+// One 0x801076E8 callback: packet intake from the proxy target, reducer,
+// animation step, 0x800341BC registration (radius 0xD0) from the 0x8003346C
+// pose point and the +0x4F4 clear. Shockwaves, sounds, flag 0x606 and the
+// gauge are returned for the caller. Allocation-free.
+SourceArea3BossTick tick_source_area3_boss_801076e8(ImportedActorInstance&,
+    Class40_02Inputs inputs,const ReferenceTables& references,SourceHitProxyBank* bank,
+    std::optional<uint32_t> mask_80098798,
+    std::array<SourceHitProxyOwnerPoint*,24> owners_800be478 = {}) noexcept;
 bool source_area3_boss_forces_player_entry(const ImportedActorInstance&,
                                            int32_t player_z) noexcept;
-
-struct SourceArea3BossAction1Selection {
-    uint16_t flags_4e0 = 0;
-    uint8_t substate = 0, phase = 0, saved_substate = 0;
-    bool handler_complete = false, death_started = false;
-};
-// Pure post-dispatch chooser from 0x80107B48. flags_4e0 is the value after
-// 0x8003648C refreshed proximity bit 0x20; bit 0 is the dispatched handler's
-// completion receipt. Sound/effect calls are returned as death_started.
-SourceArea3BossAction1Selection source_area3_boss_action1_select_80107b48(
-    int16_t hp,uint8_t substate,uint8_t phase,uint8_t saved_substate,
-    uint16_t flags_4e0,bool death_suppressed) noexcept;
+// Registers (and clears) the pending boss proxy: radius 0xD0 at the pose
+// point, work+1 = 0x40, target +0x4F4. Call after the frame queue reset.
+bool register_source_area3_boss_proxy(ImportedActorInstance&,SourceHitProxyBank& bank,
+    std::optional<uint32_t> mask_80098798,std::array<SourceHitProxyOwnerPoint*,24> owners_800be478) noexcept;
 
 struct ImportedActorTargetSample {
     uint32_t source_work_80 = 0;

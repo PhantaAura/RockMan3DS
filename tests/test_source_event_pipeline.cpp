@@ -185,7 +185,16 @@ void original_initialization_differential(const char* path){
     L3PlayerCompatWork player{};auto flags=l3::initialize_source_story_flags_8001d8c0();
     require(!l3::apply_source_st00_area_event_prefix(1,0,flags,player).committed&&
         !l3::apply_source_st00_area_event_prefix(0,-1,flags,player).committed&&
-        !l3::apply_source_st00_area_event_prefix(0,3,flags,player).committed,"unknown stage/area lifecycle invented");
+        !l3::apply_source_st00_area_event_prefix(0,5,flags,player).committed,"unknown stage/area lifecycle invented");
+    {   // 0x8010038C case 3 (+0x44E = 1) and case 4 (+0 &= 0xFC, +8 word 0, flag 0x605, no 0x8009888C).
+        L3PlayerCompatWork p3{};auto f3=flags;
+        const auto r3=l3::apply_source_st00_area_event_prefix(0,3,f3,p3);
+        require(r3.committed&&p3.bytes[0x44e]==1&&p3.bytes[0]==0&&!r3.store_8009888c,"source area3 prefix diverged");
+        L3PlayerCompatWork p4{};p4.bytes[0]=0xff;for(size_t i=8;i<12;++i)p4.bytes[i]=0x5a;auto f4=flags;
+        const auto r4=l3::apply_source_st00_area_event_prefix(0,4,f4,p4);
+        require(r4.committed&&p4.bytes[0]==0xfc&&p4.bytes[8]==0&&p4.bytes[11]==0&&!r4.store_8009888c&&
+            (f4.values[0x605>>3]&(1u<<(0x605&7)))&&(f4.known[0x605>>3]&(1u<<(0x605&7))),"source area4 prefix diverged");
+    }
     auto p=profile();l3::SourceEventInputs input;input.flags=&flags;input.stage_800c1b60=0;input.transition_status_800c356c=0;
     input.player_hp_800b521e=1;input.busy_80098a72=0;
     std::optional<l3::SourceEventWork> work;work.emplace();l3::reset_source_event_work_8001d928(*work);

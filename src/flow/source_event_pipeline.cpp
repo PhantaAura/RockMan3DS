@@ -86,14 +86,18 @@ SourceEventAreaPrefixResult apply_source_st00_area_event_prefix(
     int8_t source_stage,int8_t source_area,
     SourceEventFlagSnapshot& flags,L3PlayerCompatWork& player) noexcept {
     SourceEventAreaPrefixResult out;
-    if(source_stage!=0||source_area<0||source_area>2)return out;
-    if(source_area==0){
+    if(source_stage!=0||source_area<0||source_area>4)return out;
+    if(source_area==0||source_area==4){
+        // 0x8010038C cases 0 and 4 (0x801004E0): player +0 &= 0xFC, +8 word
+        // = 0, 0x8001DA8C(0x604 or 0x605); case 0 also stores 0x8009888C.
+        const uint16_t flag=source_area==0?0x604:0x605;
         player.bytes[0]&=0xfc;
         for(size_t i=8;i<12;++i)player.bytes[i]=0;
-        flags.values[1540>>3]|=static_cast<uint8_t>(1u<<(1540&7));
-        flags.known[1540>>3]|=static_cast<uint8_t>(1u<<(1540&7));
-        out.store_8009888c=0x80000000u;
+        flags.values[flag>>3]|=static_cast<uint8_t>(1u<<(flag&7));
+        flags.known[flag>>3]|=static_cast<uint8_t>(1u<<(flag&7));
+        if(source_area==0)out.store_8009888c=0x80000000u;
     }else{
+        // Cases 1..3: 0x800B55FE (player +0x44E) = 1; case 1 also sets +0 |= 3.
         player.bytes[0x44e]=1;
         if(source_area==1)player.bytes[0]|=3;
     }

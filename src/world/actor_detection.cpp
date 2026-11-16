@@ -33,6 +33,33 @@ ActorDetectionGlobals initialize_actor_detection_globals_8005c258() noexcept {
 void tick_actor_detection_globals_8005c2b8(ActorDetectionGlobals& globals) noexcept {
     if (globals.halfword_800bbd94 > 0) --globals.halfword_800bbd94;
     if (globals.halfword_800bbd96 > 0) --globals.halfword_800bbd96;
+    // Gauge timers (observed: 2 -> 1 after 28 updates, 3 -> 0 after 6).
+    // CANDIDATE: the HUD's own hide condition at 0x8005C800 is not modelled.
+    auto& g = globals;
+    if ((g.gauge_state_800bbd7d == 2 || g.gauge_state_800bbd7d == 3) && g.gauge_timer_800bbd79) {
+        if (--g.gauge_timer_800bbd79 == 0) g.gauge_state_800bbd7d = g.gauge_state_800bbd7d == 2 ? 1 : 0;
+    }
+}
+void show_player_gauge_8005d4f8(ActorDetectionGlobals& g) noexcept {
+    if (g.gauge_state_800bbd7d == 0) { g.gauge_state_800bbd7d = 2; g.gauge_timer_800bbd79 = 0x1c; }
+}
+bool player_gauge_hit_8005d8c4(ActorDetectionGlobals& g, uint32_t amount) noexcept {
+    if (g.halfword_800bbd94 > 0) return false;
+    if (g.gauge_state_800bbd7d != 0 && g.gauge_state_800bbd7d != 3) return true;
+    if (!amount) return false;
+    show_player_gauge_8005d4f8(g);
+    return true;
+}
+bool player_gauge_depleted_8005d938(const ActorDetectionGlobals& g) noexcept {
+    return g.halfword_800bbd94 <= 0 && g.gauge_depleted_800bbd7f != 0;
+}
+void player_gauge_deplete_8005d98c(ActorDetectionGlobals& g) noexcept {
+    if (g.halfword_800bbd94 > 0) return;
+    g.gauge_depleted_800bbd7f = 1; show_player_gauge_8005d4f8(g);
+}
+void hide_player_gauge_8005d528(ActorDetectionGlobals& g) noexcept {
+    if (g.gauge_depleted_800bbd7f == 1) return;
+    if (g.gauge_state_800bbd7d == 1 || g.gauge_state_800bbd7d == 2) { g.gauge_state_800bbd7d = 3; g.gauge_timer_800bbd79 = 6; }
 }
 void set_actor_detection_countdown_8005ebb4(ActorDetectionGlobals& globals,
                                            uint16_t bits) noexcept {

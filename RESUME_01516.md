@@ -31,6 +31,78 @@ Repo: GitHub `PhantaAura/RockMan3DS`, branch `main`. Parent: 0.0.15.15.
   oracle (`claude/m3-roadmap-661ae9`). OPTION (state 6) is mapped: fade 1,
   0x80053A30/0x8005382C (untraced), Start -> sound 131 + fade 9 -> menu;
   0x80062368 is the scrolling 64x64 tile backdrop (35 SPRT at OT 35).
+- **Stage loading v1 (M3 foundation, 2026-11-14, branch
+  claude/stage-loading-9d47ea, not merged).** ST02 is the first non-ST00
+  stage (`docs/research_01516/STAGE_LOADING.md`):
+  - ST02 area setup `0x801000B0` tables read from its instructions (4 areas;
+    `parse_stage_flow_us`, `stage_flow_addresses_us`);
+  - `EXTRA_STAGES` in `build_tutorial_pack.py`: one entry per stage cooks map,
+    render, init, flow, EBD and material caches into `stages/stNN/`;
+  - `RuntimeSession::source_stage_request()` / `make_stage_carry()` /
+    `apply_stage_load()` (test `test_stage_load`);
+  - `main.cpp`: a stage request leaves the loop, releases the stage and reruns
+    the boot block for the new stage (`goto stage_reload`, `stage_path()`).
+  - Azahar run 2 (normal boot, scripted route, no spawn file): 0x606 at frame
+    18508, event 3 -> Area 4, event 2 -> stage request (2, 0, lanes (0,0,0),
+    heading 0) at 22298, ST00 released, ST02 data loaded; then threw on ST02
+    area 0, which has 1681 cells and no map primitives (fixed: empty areas
+    are legal outside ST00, native PASS pass-20261114-161948). Runs 3-6 on
+    that build did not reach stage 2: run 5 traded deaths with the boss (0x606
+    at 18708, game over at 18711); runs 3, 4 and 6 were cut short (shared-SD
+    collision with another session, session restarts).
+  - **Azahar run 11 (2026-11-15, diagnostic Area 3 boss spawn
+    `autoplay/boss_to_stage2_diag.txt`, then the real chain; pass-20261115-
+    150931):** 0x606 @629 -> event 3 -> Area 4 @1617 -> event 2 -> stage
+    request @4419 -> ST00 released -> ST02 loaded -> arrival applied: area 0,
+    (0,0,0), heading 0, HP 20 carried. Fade budget 2 (0x1F800001) is now bound
+    at boot; without it fade 10 held at its endpoint after a direct boot.
+    In ST02 area 0 Mega Man free-falls (no floor; y wraps) because the area
+    has no collision for a standing player: the original hides him during
+    event 4 and never gives control there. A normal-boot run to ST02 still
+    needs a route that survives the boss (runs 5/7 died).
+  - **ST02 event 4 (fef4b3d), Azahar run 12 (same diagnostic boot):** ST02
+    first-visit poll sets 0x600 @4412, event 4 runs (XA 0x20000004), hand-off
+    @8827 -> stage 3 area 1 (356E 3, 356F 1, 3570 2), 0x600 cleared; the stage
+    3 request is held (ST03 not cooked). Callbacks (area cuts, Flutter/scene
+    actors), camera wobble and the five children are not ported, so nothing
+    of the flight is drawn yet; the event's length is 4415 frames (oracle
+    ~6300).
+  - Missing in ST02: event 4 + poll 0x600 (the Flutter flight), BG sky,
+    sea drawing for area 0, music, the stage 3 hand-off. The original never
+    gives control in ST02. Arrival is source-backed; oracle check pending.
+- **Post-win events 3 and 2 (M1, 2026-11-13, branch claude/event3-postwin-90c613).**
+  ST00 event 3 (`0x80102058`, phases 0..6) and event 2 (`0x8010194C`,
+  phases 0..7) run natively over cooked L3CS tables
+  (`src/flow/source_st00_post_win.cpp`, tests `test_source_st00_post_win`,
+  `test_runtime_post_win`): timeline, camera program (event 3), spawns,
+  every record callback (actor writes recorded per slot), fades, hand-offs.
+  RuntimeSession takes the ST00 poll result (0x606 -> 3, 0x605 -> 2), commits
+  event 3's area-4 request through the door plumbing with Area 4's prefix
+  (0x8010038C case 4: hide, flag 0x605) and retains event 2's **stage 2**
+  request (the port has no stage 2). Azahar run 2 (normal boot,
+  `tutorial_full_boss.txt`): 0x606 @12464 -> event 3 -> fade 10 @13424 ->
+  Area 4 @13453 -> event 2 @13455 -> stage-2 request @16255 (RESULTS.md).
+  Host 180/180, native PASS (`pass-20261107-215041-m2-01516`). Missing: the
+  scene actors (40/05, 40/08, event 2's cast) are not drawn or simulated,
+  the event camera is not applied to the 3DS view, smoke/objects/sounds,
+  XA voice 0x20000001/2 (no measured span), event 2's camera op 0x80.
+- **Area 3 boss callback (M1, 2026-11-01, branch claude/tutorial-boss-4a9127).**
+  The real class 40/02 callback `0x801076E8` replaces the replayed intro:
+  init `0x801078B8`, chooser `0x80107B48`, substates 0/1/2/3/4/6, hit
+  `0x8010A448`, release (`src/world/class40_02_boss.cpp`, test
+  `test_class40_02_boss`). Wired in Area 3 with detection +0x504, rand() RA
+  0x80107774, the 0x800341BC proxy (radius 0xD0) so Buster hits land, cooked
+  stats record (L3CB class 40/02 record 1, HP 1024), sounds, effect128/0x42
+  shockwaves, camera shake, the bottom-screen TARGET gauge and flag 0x606 at
+  defeat. Event-1 loader fade cap fixed (opening was being skipped). Host
+  178/178, native PASS (`pass-20261101-183506-m2-01516`). Azahar route
+  Azahar run 9 (2026-11-06, `autoplay/tutorial_full_boss.txt`, normal boot,
+  direct hand-off): 0x622 at 11631, boss visible, Buster hits of 24, HP 0 at
+  12090, flag 0x606 at 12105 (see RESULTS.md). The opening -> tutorial route
+  still stalls (no class-20 or Buster updates after the opening hand-off). Missing: player damage + game over (no such
+  system in the port), the post-win event 3 (mapped in
+  `docs/research_01516/AREA3_BOSS_SOURCE_SLICE.md`), arm drawing, the two
+  arms' rand() calls.
 - **Area 3 boss intro (SOURCE_BACKED_PARTIAL).** PSXRecomp proves Area 3
   event 3 dynamically owns class `40/02` (not a placed actor), wrapper
   `0x801076E8`, initializer `0x801078B8`. A clean original Area 3 replay proves
@@ -246,12 +318,33 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-0. Continue the Area 3 boss (current user order):
-   - bind the recovered `0x80107B48` chooser to original `+0x504` detection
-     ownership and the work `+0x80` writer, then port `0x80107FAC` movement;
-   - bind the original hit proxy, Buster reaction, HP +0x6E and boss gauge;
-   - then attacks, player damage/game over, defeat and post-win event.
-   Do not fake defeat or skip the unknown state handlers.
+- Stage loading: ST03 into EXTRA_STAGES (area setup tables from its
+  overlay, area variants), then ST03 area 1 + event 8 (first control at
+  (-4584,-1,1431), savestate m3_01). Then event 4's callbacks/scene actors
+  and the ST02 sky. A normal-boot run to ST02 when the boss route is
+  reliable.
+0. Finish M1 (the Area 3 boss), status 2026-11-15:
+   - DONE (Azahar runs 13/14): opening -> tutorial -> 0x622 from normal boot;
+     boss AI/damage by Buster; player damage, gauge gating, death; game over
+     phase 9 holds on jingle 0x41 (now cooked from GAMEOVER.BIN); post-win
+     events 3/2 -> stage-2 request (stage-loading run 2 on this route reached
+     it: 0x606 @18508, stage-2 request @22298).
+   - Boss charge stop: explained, not a bug. The boss stops 536 short of the
+     player (port -1095 vs player -1632; original -1223 vs -1759).
+   - LEFT: one uninterrupted Azahar run that wins (route
+     `autoplay/opening_tutorial_boss.txt`, build pass-20261114-143643).
+     Runs 16-25 (2026-11-15) all died: HP on arrival at the boss varied
+     80/40/14/20 and run 25 died before 0x622; enemy behaviour differs per
+     run and the autoplay fight step only faces and fires. Boss-only checks
+     (diagnostic spawn Area 3 -256,-385,-1632, not committed) win from 80 HP
+     with approach 500 (0x606 @525, HP 60). The original refills life only
+     after the fight (0x8005D9EC's only call is in event 3, ST00 file
+     0x29BC). Needs a smarter autoplay (dodging) or many retries.
+   - CANDIDATE: a hit delivered on the boss's defeat frame still applies
+     next update although 0x800B55F9 blocks later registrations; return to
+     title after game over (held, logged); busy 0x800A8788 = 0; player hit
+     box work+0/+6 bit; event 3/2 scene actors, camera, XA (not drawn);
+     class-60/0A arms not drawn.
 1. Then finish the front end/opening:
    - title backdrop done (wall, strip, gradient, menu box), fade 2/10, title
      sounds (sfx_title.l3sb). Left: the Servbot parade (0x80015428 ->
@@ -278,7 +371,7 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Blockers
 - Azahar `-w` stalls before boot while the Mac's current Space is a full-screen
-  app (2026-10-30).
+  app (2026-10-30) or the screen is locked (2026-11-15, run 15).
 - Effect textures: the upload order is CANDIDATE. The common page comes from
   EXIT_SUP, and Area 2 inherits ST00_01.
 - The 0x1F8001C0 back-face threshold (522) is measured in Area 1 only. Its

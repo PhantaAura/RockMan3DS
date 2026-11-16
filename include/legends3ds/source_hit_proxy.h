@@ -11,6 +11,8 @@ namespace l3 {
 // Neutral owner-local metadata; never compile the retail table into the program.
 struct SourceHitProxyRules {
     std::array<std::uint8_t, 8> unsigned_80097d00{};
+    // L3PR v2: effect-128 proxy damage by effect +0x0D (0x80097DDC).
+    std::optional<std::array<std::uint8_t, 4>> effect128_damage_80097ddc;
 };
 bool decode_source_hit_proxy_rules(const std::vector<std::uint8_t>& bytes,
                                    SourceHitProxyRules& out);

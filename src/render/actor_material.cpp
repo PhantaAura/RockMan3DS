@@ -41,6 +41,17 @@ std::vector<uint32_t> collect_admitted_actor_material_words(const EbdDirectory& 
         if(words.size()>kActorMaterialEntryLimit)
             throw std::runtime_error("actor material area count policy exceeded");
     }
+    // The Area 3 boss (class 40/02, spawned by event 3 rather than placed)
+    // draws through the same pages; its runtime mesh is the NEAR scene
+    // decode of the first 40/02 row.
+    const auto boss=find_ebd_entries(ebd,0x40,2);
+    if(!boss.empty()&&!ebd.source_payload.empty()){
+        const auto mesh=decode_ebd_scene_actor40_mesh(ebd,boss.front(),ActorMeshTier::NEAR,512*1024);
+        const auto row_words=collect_actor_material_words(mesh);
+        words.insert(row_words.begin(),row_words.end());
+        if(words.size()>kActorMaterialEntryLimit)
+            throw std::runtime_error("actor material area count policy exceeded");
+    }
     return {words.begin(),words.end()};
 }
 std::vector<uint32_t> collect_admitted_e0_object_material_words(const EbdDirectory& ebd) {

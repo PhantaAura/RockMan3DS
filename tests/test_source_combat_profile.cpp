@@ -1,3 +1,4 @@
+#include <string>
 #include "legends3ds/source_combat_profile.h"
 #include "legends3ds/l3map.h"
 #include "legends3ds/endian_io.h"
@@ -255,7 +256,31 @@ void owner_package(const char* path, const char* expected_path) {
     }
 }
 } // namespace
+// The Area 3 boss row (class 40/02 record 1) sits between the class-20 and
+// E0 rows: the loader needs identities strictly ordered, class first.
+void class40_order_tests() {
+    const auto row = [](uint8_t cls, uint8_t sub, uint8_t index) {
+        l3::SourceCombatProfile p; p.identity.source_class = cls; p.identity.subtype = sub;
+        p.identity.raw_stats_selector = 1; p.identity.record_index_0c = index;
+        p.unsigned_byte08 = 0x20; p.unsigned_byte09 = 0x50; p.unsigned_byte0f = 5; p.unsigned_byte0c = 0;
+        p.reward_word00 = 0; p.unsigned_byte0b = 0; return p;
+    };
+    l3::SourceCombatProfiles ordered; ordered.format_version = 5;
+    ordered.entries[0] = row(0x20, 3, 0); ordered.entries[1] = row(0x40, 2, 1); ordered.entries[2] = row(0xE0, 5, 0);
+    ordered.count = 3;
+    const auto bytes = l3::encode_l3source_combat_profiles(ordered);
+    const auto loaded = l3::load_l3source_combat_profiles(bytes.data(), bytes.size());
+    const auto* boss = l3::find_source_combat_profile(loaded, 1, 0x40, 2, 1, 0);
+    assert(boss && boss->unsigned_byte08 == 0x20 && boss->unsigned_byte09 == 0x50 && boss->unsigned_byte0f == 5);
+    assert(!l3::find_source_combat_profile(loaded, 1, 0x40, 2, 0, 0));      // only record 1 is admitted
+    auto unordered = ordered; std::swap(unordered.entries[1], unordered.entries[2]);   // 0x40 after 0xE0
+    bool rejected = false;
+    try { (void)l3::encode_l3source_combat_profiles(unordered); }
+    catch (const std::runtime_error& error) { rejected = std::string(error.what()).find("unordered") != std::string::npos; }
+    assert(rejected);
+}
 int main(int argc, char** argv) {
+    class40_order_tests();
     package_tests();
     version2_tests();
     version3_tests();

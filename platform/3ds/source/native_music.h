@@ -18,6 +18,7 @@ public:
     // 0x8001A110 handler-1 records; the caller still resets the queue.
     size_t consume(const l3::SourceAudioQueue& queue) noexcept{return dsp_ready_?player_.consume_8001a110(queue):0;}
     void stop_all() noexcept{if(dsp_ready_)player_.stop_all_8001b33c();}
+    bool playing(size_t slot) noexcept{return dsp_ready_&&player_.playing_8001a0a8(slot);}
     void fade_out() noexcept{if(dsp_ready_)player_.request_fade_out_8001d854();}
     void stage_loaded() noexcept{if(dsp_ready_)player_.set_stage_reverb_80019f94();}
     uint16_t area_request(size_t area) const noexcept{return l3::source_area_music_80019d18(bank_,area);}
