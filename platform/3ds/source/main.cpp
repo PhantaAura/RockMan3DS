@@ -5083,6 +5083,9 @@ int main() {
             subscreen=std::make_unique<l3::SubScreenMenu>(l3::load_exe_excerpt(read_binary(data_path("frontend/option.l3ex"))));
             subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/font.l3mc")),true));
             subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/subscreen.l3mc")),true));
+            // SUB01.TIM (SUB_KEY.BIN): the Special Items grid and icons. Optional.
+            try{subscreen_pages.add(l3::load_l3material_cache(read_binary(data_path("materials/subscreen_key.l3mc")),true));}
+            catch(const std::exception&){boot_log(MML_BOOT_DATA,"SUBSCREEN_KEY=0 subscreen_key.l3mc absent");}
             subscreen_rgb.assign(320u*240u*3u,0);subscreen_rgb2.assign(320u*240u*3u,0);
             boot_log(MML_BOOT_DATA,"SUBSCREEN=1 option.l3ex font.l3mc subscreen.l3mc (Start menu on the bottom screen)");
         } catch(const std::exception& error) {
@@ -5398,6 +5401,7 @@ int main() {
                     values.life_800b521e=int16_t(status.hp);values.life_max_800b5260=int16_t(status.hp_max);
                     values.zenny_800c1b2c=uint32_t(std::max<int32_t>(0,status.money));
                     values.play_time_800c1b1c=uint32_t(session.frame_counter());   // CANDIDATE: session updates, not the save clock
+                    values.story_flag=[&session](uint16_t bit){return session.story_flag(bit);};   // 0x800BE378 bit array
                     const auto frame=subscreen->update(bits(held),subscreen_pending,values);
                     subscreen_pending=0;
                     for(const auto& snd:frame.sounds)(void)l3::enqueue_source_audio_8001a008(session.source_audio_queue(),snd[0],snd[1],0);

@@ -68,6 +68,17 @@ ExeExcerpt authored() {
     const uint8_t dn[16] = {0, 1, 0, 0, 152, 0, 173, 0, 0x50, 0x78, 0x77, 0x3E, 16, 0, 8, 0};
     std::memcpy(frame.bytes.data() + 0x24, up, 16); frame.bytes[0x34] = 0xFF; frame.bytes[0x35] = 0xFF;
     std::memcpy(frame.bytes.data() + 0x44, dn, 16); frame.bytes[0x54] = 0xFF; frame.bytes[0x55] = 0xFF;
+    // Special Items: bank 25 (title -> 26), 26 = two 0xD7 cells + 0xD9; layout 2
+    // (handler 1): cell 0 mode 0 on flag 0x527, cell 1 mode 2 on flag 0x530.
+    bank_msg(25, 0x380, {0x99, 0x02, 0x1A, 0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x16, 0x00, 0x20, 0x00, 0x17, 0x01, 0x93, 0x02, 0x04, 0x1C, 0x8A, 0x01, 0x00, 0x95});
+    bank_msg(26, 0x3A0, {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x16, 0x00, 0x38, 0x00, 0x17, 0x0A, 0x93, 0x02, 0x04,
+                         0xD7, 0x00, 0x00, 0x01, 0x01, 0x4F, 0xD7, 0x01, 0x01, 0x00, 0x00, 0x4F, 0x8A, 0x01, 0x00, 0xD9});
+    layouts.bytes[8 * 2] = 1;                                   // handler 1
+    put32(layouts.bytes, 8 * 2 + 4, 0x8008E100);
+    const uint8_t icon0[16] = {0, 0, 0x27, 0x05, 0, 0, 0, 0, 0x60, 0x20, 0x48, 0x3C, 32, 0, 32, 0};
+    const uint8_t icon1[16] = {1, 2, 0x30, 0x05, 0, 0, 0, 0, 0x40, 0x40, 0x49, 0x3C, 32, 0, 32, 0};
+    std::memcpy(frame.bytes.data() + 0x64, icon0, 16); std::memcpy(frame.bytes.data() + 0x74, icon1, 16);
+    frame.bytes.resize(0x86, 0); frame.bytes[0x84] = 0xFF; frame.bytes[0x85] = 0xFF;
     e.ranges = {widths, decor, colors, table, options, frame, msg, bank, layouts};
     return e;
 }
@@ -157,6 +168,31 @@ int main() {
         f = o.update(0, 0x4000, iv);
         f = o.update(0, 0, iv);
         assert(sound(f, 130) && o.options_substate() == 3);
+    }
+    {   // Special Items (choice 1 -> page 3): icons follow the story flags.
+        const auto icons = [](const SubScreenFrame& fr, uint16_t clut) {
+            size_t n = 0;
+            for (const auto& p : fr.packets) if (p.length == 9 && (p.words[4] >> 16) == 0x000C && (p.words[2] >> 16) == clut) ++n;
+            return n;
+        };
+        for (const bool owned : {false, true}) {
+            SubScreenMenu sp(authored());
+            SubScreenValues sv = v;
+            sv.story_flag = [owned](uint16_t fl) { return owned && fl == 0x527; };
+            sp.enter();
+            for (int i = 0; i < 7; ++i) f = sp.update(0, 0, sv);
+            f = sp.update(0, 0x40, sv); f = sp.update(0, 0x4000, sv); f = sp.update(0, 0, sv);
+            assert(sp.page() == 3);
+            for (int i = 0; i < 4; ++i) f = sp.update(0, 0, sv);
+            assert(f.unported_opcodes == 0);
+            // Cell 0: the icon (CLUT 0x3C48 from its record) when owned, else the empty box (also 0x3C48).
+            assert(icons(f, 0x3C48) == 1 && icons(f, 0x3C49) == 0);   // cell 1 (mode 2, flag 0x530 clear) hidden
+            size_t icon_u = 0;
+            for (const auto& p : f.packets) if (p.length == 9 && (p.words[4] >> 16) == 0x000C) icon_u = uint8_t(p.words[2]);
+            assert(icon_u == (owned ? 0x60u : 0x80u));
+            f = sp.update(0, 0x1000, sv);                             // Triangle leaves to the menu
+            assert(sound(f, 131) && sp.page() == 0);
+        }
     }
     std::cout << "subscreen_menu: ok\n";
     return 0;

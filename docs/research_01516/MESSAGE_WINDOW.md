@@ -173,3 +173,21 @@ Start opened it at frame 189, Options -> Turn Right -> Close -> Start exit,
   0x80056558, 0xDC exec 0x800592FC, 0xE0 0x800594CC/0x80059530, 0xD0
   0x80057AD0/0x80057B24, 0x9F 0x80055688, 0xA9 0x80055C1C, 0x84 0x80054450,
   decor 8 exec 0x8005B98C.
+- Normal Items: ported (d615644). Special Items 0x8005F210: 0 clear + load
+  204; 1 open(1, bank, 25) ("Special Items" -> 26 grid) + layout(0, 2);
+  2 choice -> code byte 0x80098B2E, use dispatch table 0x80011284 (18 codes
+  -> 0x8005F3D0/F608/FAE4/FBB4/FFBC: story events, NOT ported) else
+  0x80060E64 exit (page 0) / L1/R1.
+- Grid message 26: 18 x 0xD7 cells (exec 0x80058788: rows++, flags
+  0x400800, +5; draw 0x800587F8: up/down/left/right bytes, repeat, no input
+  while slot 0 is open, cursor glyph 0x60 unless 0x80098A58 & 0x20000),
+  0xD6 03 84 help, 0xD9 choice (0x80058AEC: Cross -> 0x40000000 | cursor,
+  Triangle -> 0x20000000 | rows-1; 0x20000 mirrors slot 0 open).
+- Layout handler 1 0x8006430C (list 2 = 0x8008DE1C, records {u16 cell |
+  mode << 8, s16 flag, s16 dx, s16 dy, u8 u, u8 v, u16 clut, u16 w, u16 h}):
+  E1 0x0C (SUB01.TIM page), SPRT at (cell % 6 * 44 + 34 + dx, cell / 6 * 40
+  + 60 + dy); n = flags(f) + flags(f+1) + flags(f+2) (0x8001DA58); modes
+  (table 0x800113D8): 0 icon if f else empty box (u/v 0x80/0x40, CLUT
+  0x3C48); 13 icon if f; 1 icon if n else box; 2 icon if n; 3 u + (n-1)*8;
+  4 u + (n-1)*32 else box; 5/7 tens of byte 0x800C1B8C/8D (>= 10, needs f);
+  6/8 ones; 9..12 icon if f and 0x800B531A / 531B & 2 / 531B & 1 / 531C.

@@ -29,6 +29,7 @@ RANGES = [
     (0x8008C79C, 0x8008C8E4),   # messages 0xDD..0xE2 (sub-screen menu help)
     (0x8008CACC, 0x8008CACC + 4 * 0xE4),   # message pointer table
     (0x8008BE84, 0x8008C250),   # item names (table 0x8008CCA4 + 4 * id, id -1..63)
+    (0x8008DE1C, 0x8008E060),   # special item icon records (layout 2, handler 1)
     (0x8008E09C, 0x8008E120),   # sub-screen status frame sprite list (layout 6)
     (0x8008EC6C, 0x8008ECAC),   # list scroll arrow sprite lists (layouts 26, 27)
     (0x8008ECDC, 0x8008ECDC + 8 * 28),     # layout table {handler, tpage, list}

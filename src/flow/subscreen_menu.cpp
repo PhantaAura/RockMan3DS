@@ -78,6 +78,8 @@ void SubScreenMenu::status_frame_800640f0(const SubScreenValues& v, std::vector<
 // negative mode), OT layer 2 (+5) = front-end entry 30.
 void SubScreenMenu::layout_draw(uint16_t list, const SubScreenValues& v, std::vector<FrontendPacket>& out) const {
     const uint32_t first = exe_.u32(kLayoutTable8008ecdc + 8u * list + 4u);
+    const uint8_t* entry = exe_.at(kLayoutTable8008ecdc + 8u * list);
+    if (entry && entry[0] == 1) { icons_8006430c(first, v, out); return; }   // handler table 0x8008DD64[1]
     std::vector<FrontendPacket> chain;
     // Layout slot OT layer 2 (+5) -> entry 28 + 2 = 30, shared with the status
     // bar; added after it, so drawn first (the cells sit on the frame).
@@ -121,7 +123,8 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
             if (c == 4) { page_ = 6; options_sub_ = 0; }
             else if (c == 5) page_ = 8;
             else if (c == 0) { page_ = 2; options_sub_ = 0; }
-            else page_ = 0;   // pages 3..5 not ported: reopen the menu (CANDIDATE)
+            else if (c == 1) { page_ = 3; options_sub_ = 0; }
+            else page_ = 0;   // pages 4..5 not ported: reopen the menu (CANDIDATE)
         } else if (pressed & 0x0008u) page_ = 8;               // Start (Select page 7 not ported)
         break;
     case 6:                                                    // 0x80060B00
@@ -140,6 +143,7 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
         }
         break;
     case 2: normal_items_8005ed9c(pressed, out); break;
+    case 3: special_items_8005f210(pressed, out); break;
     case 8:                                                    // 0x80060DB8
         windows_.clear_80053a30(); layouts_.fill(-1);
         out.exited = true;
@@ -148,6 +152,7 @@ SubScreenFrame SubScreenMenu::update(uint16_t held, uint16_t pressed, const SubS
     }
     for (const int16_t l : layouts_) if (l >= 0) layout_draw(uint16_t(l), v, out.packets);   // 0x80064060
     windows_.owned_items_800be420 = v.owned_items_800be420;
+    windows_.story_flag = v.story_flag;
     windows_.phase_800c1b10 = 4;   // main phase 4: Start may cancel a choice
     auto w = windows_.tick_80053b40(held, pressed);
     for (auto& p : w.packets) out.packets.push_back(p);
@@ -165,6 +170,74 @@ bool SubScreenMenu::exit_check_80060e64(uint16_t pressed, SubScreenFrame& out) {
     out.sounds.push_back({{131, 1}});
     windows_.clear_80053a30(); layouts_.fill(-1);
     return true;
+}
+
+// 0x8006430C: the special item icons of a layout list (see MESSAGE_WINDOW.md).
+void SubScreenMenu::icons_8006430c(uint32_t first, const SubScreenValues& v, std::vector<FrontendPacket>& out) const {
+    std::vector<FrontendPacket> chain;
+    FrontendPacket mode; mode.length = 1; mode.bucket = 30; mode.words[0] = 0xE100000Cu;
+    chain.push_back(mode);
+    const auto flag = [&](int f) { return v.story_flag && f >= 0 ? int(v.story_flag(uint16_t(f))) : 0; };
+    for (uint32_t r = first; ; r += 16) {
+        const uint8_t* p = exe_.at(r);
+        if (!p || int16_t(uint16_t(p[0] | (p[1] << 8))) < 0) break;
+        const auto s16 = [&](unsigned k) { return int16_t(uint16_t(p[k] | (p[k + 1] << 8))); };
+        const int cell = p[0], m = int8_t(p[1]), f = s16(2);
+        const int x = cell % 6 * 44 + s16(4) + 34, y = cell / 6 * 40 + s16(6) + 60;
+        const int w = s16(12), h = s16(14);
+        const int s4 = flag(f), n = s4 + flag(f + 1) + flag(f + 2);
+        uint8_t u = p[8], vv = p[9]; uint16_t clut = uint16_t(p[10] | (p[11] << 8));
+        bool draw = false, box = false;
+        switch (m) {
+        case 0: case 13: draw = s4 != 0; box = !s4 && m == 0; break;
+        case 1: draw = n != 0; box = !n; break;
+        case 2: draw = n != 0; break;
+        case 3: if (n) { draw = true; u = uint8_t(u + (n - 1) * 8); } break;
+        case 4: if (n) { draw = true; u = uint8_t(u + (n - 1) * 32); } else box = true; break;
+        case 5: case 7: { const int c = m == 5 ? v.byte_800c1b8c : v.byte_800c1b8d;
+                          if (s4 && c >= 10) { draw = true; u = uint8_t(u + c / 10 * 8); } break; }
+        case 6: case 8: { const int c = m == 6 ? v.byte_800c1b8c : v.byte_800c1b8d;
+                          if (s4) { draw = true; u = uint8_t(u + c % 10 * 8); } break; }
+        case 9:  draw = s4 && int8_t(v.byte_800b531a) != 0; break;
+        case 10: draw = s4 && (v.byte_800b531b & 2); break;
+        case 11: draw = s4 && (v.byte_800b531b & 1); break;
+        case 12: draw = s4 && int8_t(v.byte_800b531c) != 0; break;
+        default: break;
+        }
+        if (box) { u = 0x80; vv = 0x40; clut = 0x3C48; }   // 0x3C484080: the empty slot
+        if (!draw && !box) continue;
+        psxgpu::PolyFt4 q;
+        q.code_rgb = 0x2C808080u;
+        q.x = {{int16_t(x), int16_t(x + w), int16_t(x), int16_t(x + w)}};
+        q.y = {{int16_t(y), int16_t(y), int16_t(y + h), int16_t(y + h)}};
+        q.u = {{u, uint8_t(u + w), u, uint8_t(u + w)}};
+        q.v = {{vv, vv, uint8_t(vv + h), uint8_t(vv + h)}};
+        q.clut = clut; q.tpage = 0x000C;
+        FrontendPacket pk; pk.length = 9; pk.bucket = 30;
+        psxgpu::write_poly_ft4(pk.words.data(), q);
+        chain.push_back(pk);
+    }
+    add_chain(out, std::move(chain));
+}
+
+// 0x8005F210 Special Items: the grid (message 26) and icons (layout 2). The
+// use dispatch (table 0x80011284, story events) is not ported: a pick
+// returns to the grid (CANDIDATE).
+void SubScreenMenu::special_items_8005f210(uint16_t pressed, SubScreenFrame& out) {
+    const bool chose = windows_.flags_80098a58 & 0x40000000u;
+    switch (options_sub_) {
+    case 0: windows_.clear_80053a30(); layouts_.fill(-1); ++options_sub_; break;   // + loader 0x8001D440(204)
+    case 1:
+        windows_.open_8005382c(1, kBank801f2000, 25);              // "Special Items" -> grid 26
+        layouts_[0] = 2;                                            // 0x80063FC0(0, 0x20002)
+        ++options_sub_;
+        break;
+    case 2:
+        if (chose) { item_code_ = 0; out.unported_opcodes += 0; }  // use dispatch not ported
+        else if (exit_check_80060e64(pressed, out)) { page_ = 0; options_sub_ = 0; }   // sw zero, 0(s0)
+        break;
+    default: options_sub_ = 2; break;
+    }
 }
 
 // 0x8005ED9C Normal Items (sub-state in options_sub_, jump table 0x80011264).

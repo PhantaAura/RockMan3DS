@@ -181,6 +181,30 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         s.read = s.exec_stack[--s.exec_depth]; return true;
     case 0xAC: setting(mem(r + 1)) = mem(r + 2); s.read += 3; return true;   // 0x80055C80
     case 0xDE: s.read += 3; return true;                                     // 0x800543E0
+    case 0x98: s.flags &= ~0x08000000u; s.read += 1; return true;           // 0x8005531C
+    case 0x9C: {                                                             // 0x80055438: branch on a story flag
+        const bool set = story_flag && story_flag(u16(r + 1));
+        const uint8_t target = mem(r + (set ? 3u : 4u));
+        if (target == 255) { s.read += 5; return true; }
+        if (!s.index_base) { unported = true; return false; }
+        s.index = target;
+        s.read = s.page = s.index_base + u16(s.index_base + 2u * target);
+        return true;
+    }
+    case 0xD7:                                                               // 0x80058788: grid cell
+        s.repeat = 0; ++s.rows; s.flags |= 0x00400800u; s.read += 5;
+        slot_bits_gp4812 &= ~(0x20000u << cur_slot_);
+        return true;
+    case 0xD9: {                                                             // 0x80058AEC: grid choice
+        if (!(s.flags & 0x01000000u)) { s.flags = (s.flags | 0x01000000u) & 0xFFFF7FFFu; s.timer = 5; }
+        s.flags &= 0xFFBFFFFFu;
+        if (flags_80098a58 & 0x08000000u) flags_80098a58 |= 0x20000u; else flags_80098a58 &= ~0x20000u;
+        if (s.timer > 0) --s.timer;
+        else if (s.pressed & 0x4000u) flags_80098a58 = (flags_80098a58 & ~0xFFu) | 0x40000000u | uint8_t(s.cursor);
+        else if (s.pressed & 0x1000u) flags_80098a58 = (flags_80098a58 & ~0xFFu) | 0x20000000u | uint8_t(s.rows - 1);
+        s.brightness = 128;
+        return false;
+    }
     case 0xDF:                                                               // 0x80058DB4
         list_800be2f8.fill(255); list_scroll_gp4408 = 0; s.read += 1; return true;
     case 0xDD:                                                               // 0x80058EA0
@@ -273,7 +297,32 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xED: s.pen_x = int16_t(s.pen_x + 12); s.draw += 1; return;        // 0x8005A858
     case 0x91: if (s.draw_depth) s.draw = s.draw_stack[--s.draw_depth]; else s.draw += 1; return;   // 0x80054AB4
     case 0xAC: s.draw += 3; return;
-    case 0xDC: s.draw += 1; return;
+    case 0xDC: case 0xD9: case 0x98: s.draw += 1; return;
+    case 0x9C: s.draw += 5; return;                                         // 0x8005434C
+    case 0xD7: {                                                             // 0x800587F8: grid cell
+        mem(d + 5) = 0xED; s.brightness = 0;
+        if (s.cursor == s.row_draw && !(s.flags & 0x00C00000u)) {
+            const uint32_t bit = 0x20000u << cur_slot_;
+            slot_bits_gp4812 &= ~bit;
+            const int8_t old = s.cursor;
+            if (!(slots_[0].flags & 0x80000000u) && !(s.pressed & 0x4000u)) {   // no input under a slot-0 window
+                const uint32_t pad = uint32_t(s.held) | (uint32_t(s.pressed) << 16);
+                const auto step = [&](uint8_t target, uint32_t press, uint32_t mask) {
+                    if (s.pressed & press) { s.repeat = 0; s.cursor = int8_t(target); return true; }
+                    if ((pad & mask) != press) return false;
+                    if (s.repeat < 13) ++s.repeat; else { s.repeat = 12; s.cursor = int8_t(target); }
+                    return true;
+                };
+                if (!step(mem(d + 1), 0x10u, 0x100010u) && !step(mem(d + 2), 0x40u, 0x400040u) &&
+                    !step(mem(d + 3), 0x80u, 0x800080u)) (void)step(mem(d + 4), 0x20u, 0x200020u);
+            }
+            mem(d + 5) = (flags_80098a58 & 0x20000u) ? 0xED : 0x60;
+            s.brightness = 48; s.cursor_byte = d + 5; s.flags |= 0x00800000u;
+            if (old != s.cursor) { sound(out, 129, 1); slot_bits_gp4812 |= bit; }
+        }
+        ++s.row_draw; s.brightness = uint8_t(s.brightness + 80); s.draw += 5;
+        return;
+    }
     case 0xDF: {                                                             // 0x80058DEC: owned ids -> list
         list_count_gp4420 = 0;
         for (unsigned id = 0; id < 64; ++id)
