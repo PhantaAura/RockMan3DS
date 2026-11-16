@@ -1,0 +1,5 @@
+# DIAGNOSTIC (needs diagnostic_stage_01516.txt 'stage 2 area 0'): boots straight into ST02 area 0 with a
+# fresh session; the first-visit poll starts event 4, which cuts between areas 0..3 and requests stage 3 area 1.
+6000 0 0 0
+3600 0 0 0
+600 0 0 0

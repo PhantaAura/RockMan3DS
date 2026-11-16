@@ -113,3 +113,27 @@ loader commit (`commit_source_post_win_transition`) switches the area with
 the player and the fade work untouched, and main.cpp skips the music change.
 A cut to the current area is kept (the original reloads it; ST02's areas own
 no objects; CANDIDATE).
+
+## ST02 event 4 actors: dispatch (VERIFIED from the instructions)
+
+The object update 0x8001E070 takes the family from object byte [1]
+(0x8002FE74) and dispatches through the stage's scratch tables, which the
+stage init writes (ST02 0x80100054..0x801000A4, ST00 0x80100330..0x80100380):
+family 0x40 -> `1F80005C[byte 2][byte 4]`, family 0x20 ->
+`1F800058[byte 2][byte 4]` (byte 2 == 0x10 goes to 0x80031824 instead),
+0x60 -> `1F800060[byte 2]`, 0xE0 -> `1F80006C[byte 2]`. Byte 2 is the
+subtype (spawn record [1]); byte 4 is the variant (spawn record [2]).
+
+| Table | ST00 | ST02 |
+|---|---|---|
+| 1F800058 (family 0x20) | 0x8011A4D0 | 0x801067A4 |
+| 1F80005C (family 0x40) | 0x8011A5B0 | 0x80106844 |
+| 1F800060 / 64 / 68 / 6C | 0x8011A5D4 / 0x8011A604 / 0x8011A644 / 0x8011A6CC | 0x80106864 / 0x80106868 / 0x8010688C / 0x801068A8 |
+
+Event 4's five spawns all use variant 4: 40/05 -> 0x80103360,
+40/06 -> 0x80103D18, 40/07 -> 0x80104154, 20/0A -> 0x80102888,
+20/27 -> 0x80102990, all ST02 overlay code. Correction for ST00
+(AREA3_BOSS_SOURCE_SLICE.md "fitted on 40/02"): the class-40 row is chosen
+by the subtype and indexed by the variant; ST00 row 5 is
+[0, 0x8010D824, 0x8010E500, 0x8010EC54], so event 3's 40/05 with record
+[2] = 3 runs 0x8010EC54, and the opening's variant 1 runs 0x8010D824.

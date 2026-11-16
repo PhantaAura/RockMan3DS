@@ -185,6 +185,17 @@ int main() {
         require(cuts == 2 && areas == std::vector<size_t>({1, 0}), "event 4 cuts to area 1, then area 0");
         require(s4.source_stage_request() && s4.source_stage_request()->stage == 3, "event 4 still ends with stage 3");
     }
+    // DIAGNOSTIC stage boot file.
+    {
+        const auto a = parse_diagnostic_stage_boot("stage 2 area 0\n");
+        require(a && a->stage == 2 && a->area == 0 && a->position == std::array<int16_t,3>{} && a->heading == 0, "stage 2 area 0");
+        const auto b = parse_diagnostic_stage_boot("stage 3 area 1 -4584 -1 1431 2048");
+        require(b && b->stage == 3 && b->area == 1 && b->position[0] == -4584 && b->position[2] == 1431 && b->heading == 2048,
+                "stage 3 area 1 with a position");
+        require(!parse_diagnostic_stage_boot("stage 0 area 0") && !parse_diagnostic_stage_boot("stage 2") &&
+                !parse_diagnostic_stage_boot("stage 2 area 0 1 2") && !parse_diagnostic_stage_boot("stage 2 area 0 0 0 0 5000") &&
+                !parse_diagnostic_stage_boot("stage 2 area 0 0 0 0 0 x"), "malformed stage boots are refused");
+    }
     if (failures) return EXIT_FAILURE;
     std::puts("stage_load: ok");
     return 0;

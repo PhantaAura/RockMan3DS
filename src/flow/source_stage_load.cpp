@@ -1,4 +1,5 @@
 #include "legends3ds/source_stage_load.h"
+#include <cstdio>
 
 namespace l3 {
 
@@ -32,6 +33,18 @@ std::string stage_asset_path(uint8_t stage, const std::string& rel) {
     };
     for (const auto& [from, to] : renamed) if (rel == from) return dir + to;
     return dir + rel;
+}
+
+std::optional<SourceStageArrival> parse_diagnostic_stage_boot(const std::string& text) noexcept {
+    unsigned stage = 0, area = 0, heading = 0; long x = 0, y = 0, z = 0; char extra = 0;
+    const int n = std::sscanf(text.c_str(), " stage %u area %u %ld %ld %ld %u %c", &stage, &area, &x, &y, &z, &heading, &extra);
+    if (n != 2 && n != 6) return std::nullopt;
+    if (stage == 0 || stage > 99 || area > 15 || heading > 4095) return std::nullopt;
+    for (const long v : {x, y, z}) if (v < -32768 || v > 32767) return std::nullopt;
+    SourceStageArrival a;
+    a.stage = uint8_t(stage); a.area = uint8_t(area);
+    a.position = {{int16_t(x), int16_t(y), int16_t(z)}}; a.heading = uint16_t(heading);
+    return a;
 }
 
 } // namespace l3

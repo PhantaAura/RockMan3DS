@@ -4780,6 +4780,16 @@ int main() {
         // after the outgoing stage's resources are released: the whole
         // session and renderer are rebuilt from the new stage's data, as the
         // original reloads the overlay, map and area set.
+        // DIAGNOSTIC stage boot (source_stage_load.h): straight into a later
+        // stage, with no carry, when its cooked data is present.
+        if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_stage_01516.txt","r")) {
+            char text[96]{};const size_t got=std::fread(text,1,sizeof(text)-1,f);std::fclose(f);
+            const auto boot=l3::parse_diagnostic_stage_boot(std::string(text,got));
+            FILE* present=boot?std::fopen(data_path(l3::stage_asset_path(boot->stage,"st00.l3map").c_str()).c_str(),"rb"):nullptr;
+            if(present){std::fclose(present);g_stage=boot->stage;g_stage_arrival=*boot;}
+            hardware_test_trace("# diagnostic_stage_boot,accepted=%u,stage=%u,area=%u",unsigned(present!=nullptr),
+                unsigned(boot?boot->stage:0),unsigned(boot?boot->area:0));
+        }
     stage_reload:
         if(g_stage!=0){g_source_event_boot=false;g_new_game_opening=false;}
         hardware_test_trace("# stage_load,stage=%u,arrival=%u,area=%u",unsigned(g_stage),unsigned(g_stage_arrival.has_value()),
