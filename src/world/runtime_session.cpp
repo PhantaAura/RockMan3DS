@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0;
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1201,17 +1201,28 @@ void RuntimeSession::update_action_check_800411dc(){
     if((player_.bytes[0x174]&0xC0u)||player_.bytes[0x177])return;
     if(!reference_tables_)return;
     const uint16_t held=rd16w(player_,0x11C),action=rd16w(player_,0x136);
-    if(!(held&action)||player_.bytes[0x74]){player_check_target_.reset();return;}
+    if(!(held&action)||player_.bytes[0x74]){player_check_target_.reset();player_check_npc_.reset();return;}
     std::vector<SourceActionCheckCandidate> candidates;std::vector<size_t> owner;
     for(size_t i=0;i<e008_objects_.size();++i){
         const auto& o=e008_objects_[i];
         if(o.released||!o.check_box)continue;
         candidates.push_back({o.position,*o.check_box});owner.push_back(i);
     }
+    // Shared NPC talk: objects that registered with 0x80051B68 kind 1 on
+    // their last update (ST03's generic NPCs), with their +0x10 check box.
+    // CANDIDATE: only kind 1 is a candidate.
+    const size_t e008_count=owner.size();
+    for(size_t i=0;i<st03_objects_.size();++i){
+        if(!st03_objects_[i].w.live||!st03_object_ticks_[i].checkable)continue;
+        const auto& b=kSt03NpcCheckBox;
+        candidates.push_back({st03_objects_[i].w.raw_14,SourceE008Box{b[0],b[1],b[2],b[3],b[4],b[5]}});owner.push_back(i);
+    }
     const uint16_t heading=uint16_t(player_.bytes[0x56]|(uint16_t(player_.bytes[0x57])<<8))&0xFFFu;
     const auto r=source_action_check_800411dc(*reference_tables_,
         {{int16_t(player_position_.x),int16_t(player_position_.y),int16_t(player_position_.z)}},heading,candidates);
-    if(r.index){player_check_target_=owner[*r.index];player_check_distance_=r.distance_182;}
+    player_check_npc_.reset();
+    if(r.index&&*r.index>=e008_count){player_check_target_.reset();player_check_npc_=owner[*r.index];player_check_distance_=r.distance_182;}
+    else if(r.index){player_check_target_=owner[*r.index];player_check_distance_=r.distance_182;}
     else player_check_target_.reset();
 }
 void RuntimeSession::reset_tutorial_triggers(){
@@ -2006,6 +2017,8 @@ void RuntimeSession::update_st03_objects(){
     // after the event in the same frame. 0x80048E6C is not run for them
     // (they keep the record's y; CANDIDATE); rand is a local 0x8007FE50.
     if(stage_!=3)return;
+    // The talk runner's block +0 clears once the talk's window closed.
+    if(st03_talk_active_&&!dialogue_.active)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
         if(!o.w.live||!o.generic)continue;
@@ -2015,7 +2028,19 @@ void RuntimeSession::update_st03_objects(){
         const uint32_t next=st03_npc_seed_*1103515245u+12345u;
         in.rand=uint16_t((next>>16)&0x7fffu);
         in.animation_finished=!st03_object_current_[i]||int8_t(st03_object_cursor_[i].opaque_a7)<0;
+        in.player_targets_me=player_check_npc_&&*player_check_npc_==i;
+        in.heading_to_player=source_heading_80031198(o.w.raw_14[0],o.w.raw_14[2],rds16w(player_,0x14),rds16w(player_,0x18),actor_angle_steps_);
+        in.window_open=dialogue_.active;   // 0x80098A58 & 0x00200000 (CANDIDATE: any open window)
+        in.talk_active=st03_talk_active_;
         t=step_st03_npc(o,in);
+        if(t.talk_target_taken)player_check_npc_.reset();
+        if(t.talk_start){
+            // 0x80063BC8 + the talk runner: message +0x0C in slot 0 of the
+            // area's bank; player action 16 (talk pose) is not ported.
+            st03_talk_active_=true;
+            if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.talk_start});}
+                catch(const std::exception&){}
+        }
         if(t.rand_used)st03_npc_seed_=next;
         const auto& bank=st03_object_models_[i].bank;
         if(t.anim_request){

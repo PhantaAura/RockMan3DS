@@ -534,6 +534,8 @@ public:
     // Player +0x184 (0x800B5334): the object 0x800411DC picked, as an index
     // into e008_objects(); +0x182 its distance.
     std::optional<size_t> player_check_target() const { return player_check_target_; }
+    std::optional<size_t> player_check_npc() const { return player_check_npc_; }
+    bool st03_talk_active() const noexcept { return st03_talk_active_; }
     // ST00 E0/05 boxes from the conditional list (0x80113EE0); each owns its
     // +0x30 hit record. Proxy and reward requests are consumed by the caller.
     struct E005Box {
@@ -840,7 +842,9 @@ private:
     std::array<uint8_t,kSt03ObjectSlots> st03_model_class_{};
     std::array<const ActorAnimationRequestCache*,kSt03ObjectSlots> st03_object_current_{};
     std::array<ActorSequenceCursor,kSt03ObjectSlots> st03_object_cursor_{};
-    uint32_t st03_npc_seed_=0;   // CANDIDATE: 0x8007FE50's seed and caller order are not modelled
+    uint32_t st03_npc_seed_=0;
+    bool st03_talk_active_=false;              // 0x800987B0 for an NPC talk
+    std::optional<size_t> player_check_npc_;   // player +0x184 when it names an ST03 scene object   // CANDIDATE: 0x8007FE50's seed and caller order are not modelled
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;
     uint8_t stage_=0;

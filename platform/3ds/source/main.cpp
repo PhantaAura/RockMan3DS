@@ -7748,6 +7748,14 @@ int main() {
                     hardware_test_trace("# st02_event4_actors,frame=%lu,drawn=%lu,slots=%02x,area=%u",
                         (unsigned long)session.frame_counter(),(unsigned long)drawn,unsigned(slots),unsigned(session.map_area_index()));
             }
+            if(session.stage()==3){
+                static bool talk_was=false;static std::optional<size_t> target_was;
+                const bool talk=session.st03_talk_active();const auto target=session.player_check_npc();
+                if(talk!=talk_was||target!=target_was)
+                    hardware_test_trace("# st03_npc_talk,frame=%lu,active=%u,target=%d,dialogue=%u,block=%u",
+                        (unsigned long)session.frame_counter(),unsigned(talk),target?int(*target):-1,unsigned(session.dialogue().active),unsigned(session.dialogue().ref.block));
+                talk_was=talk;target_was=target;
+            }
             if(use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All&&session.stage()==3){
                 uint16_t slots=0;const size_t drawn=draw_st03_objects_uv(session,slots);
                 if(session.frame_counter()%60u==0u){
