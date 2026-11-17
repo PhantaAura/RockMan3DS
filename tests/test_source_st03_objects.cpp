@@ -159,7 +159,7 @@ int main() {
         St03ObjectRecord br; br.slot = 1; br.object_class = 0x25; br.subtype = 1; br.family = 0x20; br.byte_04 = 1;
         br.word_08 = {0x2D, 0, 0, 0}; br.position = {-2816, -1, 1280}; br.heading = 2048;
         auto b = spawn_st03_object(br);
-        CHECK(b.barrell1 && !b.generic && b.check_box[5] == 32);
+        CHECK(b.scene_v1 && !b.generic && b.check_box[5] == 32);
         St03NpcInputs k; k.refs = &refs; k.player_x = -2816 + 400; k.player_z = 1280;   // on the x axis (no angle table needed)
         auto r = step_st03_npc(b, k);
         const auto ahead = reference_player_motion_delta(refs, 2048, 256, 0, 0);
@@ -191,6 +191,44 @@ int main() {
         // Behaviour 2 needs the target too.
         b.w.state_09 = 2; b.w.sub_0a = 0; k.id_target.reset();
         r = step_st03_npc(b, k); CHECK(r.id_target_missing && b.w.sub_0a == 1);
+    }
+    // Variant switch (+4 = 1): the Inspector and the officer as scene NPCs.
+    {
+        ReferenceTables refs; refs.trig.fill({0, 4096});
+        St03ObjectRecord ir; ir.slot = 3; ir.object_class = 0x26; ir.family = 0x20; ir.word_08 = {0x2A, 0, 0, 0};
+        ir.position = {-2816, -1, 1536};
+        auto in0 = spawn_st03_object(ir);
+        CHECK(in0.generic && !in0.scene_v1);
+        st03_object_set_variant(in0, 1); in0.w.state_08 = 0;
+        CHECK(!in0.generic && in0.scene_v1);
+        St03NpcInputs k; k.refs = &refs; k.player_x = -2000; k.player_z = 1536;
+        auto r = step_st03_npc(in0, k);
+        CHECK(in0.w.state_09 == 3 && in0.w.word_15c == 471 && !r.checkable);   // starts gesturing
+        k.window_open = true; r = step_st03_npc(in0, k); CHECK(in0.w.pose_ac == 8 && in0.w.sub_0a == 2);
+        k.window_open = false;
+        // Behaviour 1: walk to (-3003, -1, 1339); the test trig walks -z, so put him just above it.
+        in0.w.state_09 = 1; in0.w.sub_0a = 0;
+        in0.w.raw_14 = {-3003, -1, 1400}; in0.w.fixed_1c = {int32_t(uint32_t(uint16_t(-3003)) << 16), int32_t(0xFFFF0000u), int32_t(1400u << 16)};
+        int n = 0; r = {};
+        while (!r.flag_set && n < 100) { r = step_st03_npc(in0, k); ++n; }
+        CHECK(r.flag_set && *r.flag_set == 0x606 && in0.w.sub_0a == 2 && in0.speed_44 == 0);
+        // Behaviour 2: needs +0x0C, then walks to +0x0D.
+        in0.w.state_09 = 2; in0.w.sub_0a = 0;
+        r = step_st03_npc(in0, k); CHECK(r.id_target_missing);
+        k.id_target = std::array<int16_t,3>{int16_t(in0.w.raw_14[0] + 300), -1, in0.w.raw_14[2]};   // x axis: heading 0xC00
+        n = 0; r = {};
+        while (!r.flag_set && n < 100) { r = step_st03_npc(in0, k); ++n; }
+        CHECK(r.flag_set && in0.w.sub_0a == 2 && in0.w.rot_54[1] == 0xC00);
+        r = step_st03_npc(in0, k); CHECK(r.id_target_missing && in0.w.sub_0a == 2);
+        // Officer: starts standing, scale 538; behaviour 2 is the gesture.
+        St03ObjectRecord orr = ir; orr.slot = 4; orr.object_class = 0x24; orr.subtype = 1;
+        auto of = spawn_st03_object(orr); CHECK(of.scene_v1);
+        St03NpcInputs k2; k2.refs = &refs;
+        r = step_st03_npc(of, k2); CHECK(of.w.state_09 == 0 && of.w.word_15c == 538 && of.w.sub_0a == 1);
+        of.w.state_09 = 2; of.w.sub_0a = 0; k2.window_open = true;
+        r = step_st03_npc(of, k2); CHECK(of.w.pose_ac == 8);
+        // Restart bit: the officer goes back to behaviour 0.
+        of.flags_348 = 1; r = step_st03_npc(of, k2); CHECK(of.w.state_09 == 0 && of.w.sub_0a == 0);
     }
     // Requests.
     CHECK(st03_npc_idle_request(0x11) == 1 && st03_npc_idle_request(0x05) == 0);

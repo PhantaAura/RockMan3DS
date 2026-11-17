@@ -5,7 +5,8 @@
 // the Inspector 0x26 and the officer 0x24). Ported: spawn, init (state 0),
 // the tick (state 1) with its range check, floor and animation, behaviour 0
 // (idle and fidget), behaviour 1 (walk) and the talk (0x8010A344, behaviour
-// 4); Barrell variant 1 (0x8010D0F4: init, tick, behaviours 0..5).
+// 4); the variant-1 scene NPCs (Barrell 0x8010D0F4, the Inspector 0x8010D968,
+// the officer 0x8010C66C: init, tick, all their behaviours; sounds reported).
 // Generic behaviours 2, 3, 5..7, shadows and the family-0x60 police car
 // are reported, not run.
 // Original addresses are identity tokens.
@@ -53,7 +54,9 @@ struct St03Npc {
     uint8_t pose_ad = 0;                       // +0xAD previous request
     uint8_t byte_0e = 0, byte_0f = 0;          // +0x0E / +0x0F (record [10..11])
     bool generic = false;                      // handled by 0x80107B84 (family 0x20, +3 == 0)
-    bool barrell1 = false;                     // Barrell variant 1 0x8010D0F4 (class 0x25, record [2] == 1)
+    uint8_t variant = 0;                       // work +4 (record [2]): the class row's column
+    bool scene_v1 = false;                     // variant 1 of Barrell 0x25 (0x8010D0F4), the Inspector
+                                               // 0x26 (0x8010D968), the officer 0x24 (0x8010C66C)
     std::array<int16_t,6> check_box = kSt03NpcCheckBox;   // +0x10
     // Talk block +0x348..: +0x34A saved request, +0x34B talk sub-state,
     // +0x34C saved heading, +0x34E turn step.
@@ -70,7 +73,9 @@ struct St03Npc {
 // 0x8001EAE8 + 0x8001E968 for one record, then 0x80107BC0 (state 0) when
 // the class is one of the generic NPCs.
 St03Npc spawn_st03_object(const St03ObjectRecord& r);
-bool st03_generic_npc_class(uint8_t object_class, uint8_t byte_04) noexcept;
+bool st03_generic_npc_class(uint8_t object_class, uint8_t variant) noexcept;
+// A +4 write (and the spawn): picks the object for the class row's column.
+void st03_object_set_variant(St03Npc& n, uint8_t variant) noexcept;
 
 struct St03NpcInputs {
     int16_t player_x = 0, player_z = 0;        // 0x800B51C4 / 0x800B51C8
@@ -84,6 +89,7 @@ struct St03NpcInputs {
     // Barrell variant 1:
     const SourceAngleSteps* angle_steps = nullptr;         // 0x80031198 for 0x80031BEC
     std::optional<std::array<int16_t,3>> id_target;        // 0x80036294(+0x0C)->+0x14 (resolved by the caller)
+    std::optional<std::array<int16_t,3>> id_target2;       // 0x80036294(+0x0D)->+0x14
     bool animation_finished = false;           // +0xA7 < 0
     const std::array<uint8_t,64>* idle_timers = nullptr;   // 0x80116E68
     // Talk (shared NPC talk path):

@@ -289,28 +289,52 @@ int16_t turn_toward(const St03Npc& n, int16_t tx, int16_t tz, int16_t limit, con
 }
 bool window_open(const St03NpcInputs& in) noexcept { return in.window_open; }   // 0x80098A58 & 0x00200000
 
-// Barrell variant 1 behaviours (0x80117110 by +9, sub-state +0x0A).
+// Shared pieces of the variant-1 scene NPCs (Barrell 0x8010D0F4, the
+// Inspector 0x8010D968, the officer 0x8010C66C; behaviours by +9 from
+// 0x80117110 / 0x8011714C / 0x801170EC, sub-state +0x0A).
+void v1_stand(St03Npc& n) noexcept {   // 0x8010D3E4 / 0x8010DC54 / 0x8010C954
+    if (n.w.sub_0a == 0) { n.w.sub_0a = 1; n.w.pose_ac = 0; }
+}
+void v1_gesture(St03Npc& n, const St03NpcInputs& in) noexcept {   // 0x8010D730 / 0x8010E014 / 0x8010CAB8
+    auto& w = n.w;
+    if (w.sub_0a == 0) { w.sub_0a = 1; w.pose_ac = 0; }
+    if (w.sub_0a == 1) { if (window_open(in)) { w.pose_ac = 8; w.sub_0a = 2; } }
+    else if (w.sub_0a == 2 && in.animation_finished) { w.sub_0a = 1; w.pose_ac = 0; }
+}
+// Gesture at sub-states `at` / `at + 1` (the tail of the Inspector's walk).
+void v1_gesture_at(St03Npc& n, const St03NpcInputs& in, uint8_t at) noexcept {
+    auto& w = n.w;
+    if (w.sub_0a == at) { if (window_open(in)) { ++w.sub_0a; w.pose_ac = 8; } }
+    else if (w.sub_0a == at + 1 && in.animation_finished) { --w.sub_0a; w.pose_ac = 0; }
+}
+// The walk toward +0x354 (turn by +0x64, 0x8002FEA4 at +0x44), flag 0x606
+// within distance^2 2048. Returns true on arrival.
+bool v1_walk_to_home(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    add_heading(n, turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out));
+    walk_forward(n, in, out);
+    const int32_t dx = int32_t(w.raw_14[0]) - n.home_354[0], dz = int32_t(w.raw_14[2]) - n.home_354[2];
+    if (dx * dx + dz * dz >= 2048) return false;
+    ++w.sub_0a; w.pose_ac = 0; n.speed_44 = 0; n.target_heading_64 = 0; out.flag_set = 0x606;
+    return true;
+}
+// Barrell / officer behaviour 1: walk to the +0x0C object (0x8010D5EC / 0x8010C974).
+void v1_walk_to_id(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out, int16_t speed) noexcept {
+    auto& w = n.w;
+    if (w.sub_0a == 0) {
+        if (!in.id_target) { out.id_target_missing = true; return; }
+        w.sub_0a = 1; w.pose_ac = 1; n.speed_44 = speed; n.target_heading_64 = 32;
+        n.home_354 = *in.id_target;
+    } else if (w.sub_0a != 1) return;
+    v1_walk_to_home(n, in, out);
+}
+
+// Barrell variant 1 behaviours (0x80117110).
 void barrell1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
     auto& w = n.w;
     switch (w.state_09) {
-    case 0:   // 0x8010D3E4: stand
-        if (w.sub_0a == 0) { w.sub_0a = 1; w.pose_ac = 0; }
-        return;
-    case 1:   // 0x8010D5EC: walk to the +0x0C object, flag 0x606 on arrival
-        if (w.sub_0a == 0) {
-            if (!in.id_target) { out.id_target_missing = true; return; }
-            w.sub_0a = 1; w.pose_ac = 1; n.speed_44 = 48; n.target_heading_64 = 32;
-            n.home_354 = *in.id_target;
-        } else if (w.sub_0a != 1) return;
-        add_heading(n, turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out));
-        walk_forward(n, in, out);
-        {
-            const int32_t dx = int32_t(w.raw_14[0]) - n.home_354[0], dz = int32_t(w.raw_14[2]) - n.home_354[2];
-            if (dx * dx + dz * dz < 2048) {
-                ++w.sub_0a; w.pose_ac = 0; n.speed_44 = 0; n.target_heading_64 = 0; out.flag_set = 0x606;
-            }
-        }
-        return;
+    case 0: v1_stand(n); return;
+    case 1: v1_walk_to_id(n, in, out, 48); return;   // sound 269 on +0xA6 == 1 (not ported)
     case 2:   // 0x8010D404: face the +0x0C object
         if (w.sub_0a > 1) return;
         if (w.sub_0a == 0) { ++w.sub_0a; w.pose_ac = 0; n.target_heading_64 = 32; }
@@ -318,11 +342,7 @@ void barrell1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) n
         n.home_354 = *in.id_target;
         add_heading(n, turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out));
         return;
-    case 3:   // 0x8010D730: gesture while a window is open
-        if (w.sub_0a == 0) { w.sub_0a = 1; w.pose_ac = 0; }
-        if (w.sub_0a == 1) { if (window_open(in)) { w.pose_ac = 8; w.sub_0a = 2; } }
-        else if (w.sub_0a == 2 && in.animation_finished) { w.sub_0a = 1; w.pose_ac = 0; }
-        return;
+    case 3: v1_gesture(n, in); return;
     case 4:   // 0x8010D4C0: face the player, then gesture while a window is open
         switch (w.sub_0a) {
         case 0: w.sub_0a = 1; w.pose_ac = 0; n.target_heading_64 = 32; [[fallthrough]];
@@ -334,8 +354,7 @@ void barrell1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) n
             w.pose_ac = 0; ++w.sub_0a;
             [[fallthrough]];
         }
-        case 2: if (window_open(in)) { w.pose_ac = 8; ++w.sub_0a; } return;
-        case 3: if (in.animation_finished) { w.sub_0a = 2; w.pose_ac = 0; } return;
+        case 2: case 3: v1_gesture_at(n, in, 2); return;
         default: return;
         }
     case 5:   // 0x8010D7C4: wait for the player's check; flag 0x604; face the player
@@ -349,13 +368,9 @@ void barrell1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) n
             n.speed_44 = 0;
             return;
         }
-        case 1:
+        case 1: case 2:
             add_heading(n, turn_toward(n, in.player_x, in.player_z, int16_t(n.target_heading_64), in, out));
-            if (window_open(in)) { w.pose_ac = 8; ++w.sub_0a; }
-            return;
-        case 2:
-            add_heading(n, turn_toward(n, in.player_x, in.player_z, int16_t(n.target_heading_64), in, out));
-            if (in.animation_finished) { --w.sub_0a; w.pose_ac = 0; }
+            v1_gesture_at(n, in, 1);
             return;
         default: return;
         }
@@ -363,11 +378,60 @@ void barrell1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) n
     }
 }
 
-// 0x8010D130 (state 0): init; then 0x8010D268 (state 1) the same frame.
-void barrell1_init(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+// The Inspector's variant 1 behaviours (0x8011714C).
+void inspector1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    switch (w.state_09) {
+    case 0: v1_stand(n); return;
+    case 1:   // 0x8010DC74: walk to (-3003, -1, 1339), then gesture (sound 268 not ported)
+        if (w.sub_0a == 0) {
+            w.sub_0a = 1; w.pose_ac = 1; n.speed_44 = 60; n.target_heading_64 = 32;
+            n.home_354 = {-3003, -1, 1339};
+        }
+        if (w.sub_0a == 1) { v1_walk_to_home(n, in, out); return; }
+        v1_gesture_at(n, in, 2);
+        return;
+    case 2:   // 0x8010DE18: face the +0x0C object (0x606), then walk to the +0x0D object (0x606)
+        switch (w.sub_0a) {
+        case 0:
+            if (!in.id_target) { out.id_target_missing = true; return; }
+            w.pose_ac = 1; n.speed_44 = 60; n.target_heading_64 = 32; ++w.sub_0a;
+            n.home_354 = *in.id_target;
+            [[fallthrough]];
+        case 1: {
+            const int16_t d = turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out);
+            add_heading(n, d);
+            if (d == 0) { out.flag_set = 0x606; ++w.sub_0a; }
+            return;
+        }
+        case 2:
+            if (!in.id_target2) { out.id_target_missing = true; return; }
+            ++w.sub_0a; n.home_354 = *in.id_target2;
+            [[fallthrough]];
+        case 3: v1_walk_to_home(n, in, out); return;
+        default: return;
+        }
+    case 3: v1_gesture(n, in); return;
+    default: out.behaviour_unported = true; return;
+    }
+}
+
+// The officer's variant 1 behaviours (0x801170EC).
+void officer1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    switch (n.w.state_09) {
+    case 0: v1_stand(n); return;
+    case 1: v1_walk_to_id(n, in, out, 44); return;   // sound 266 not ported
+    case 2: v1_gesture(n, in); return;
+    default: out.behaviour_unported = true; return;
+    }
+}
+
+// 0x8010D130 / 0x8010D9A4 / 0x8010C6A8 (state 0): init; the tick follows the same frame.
+void scene_v1_init(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
     auto& w = n.w;
     w.flags_00 = uint8_t(w.flags_00 | 2u);
-    w.word_158 = 0x02000200u; w.word_15c = 512; w.colour_15e = 0x4210;
+    const uint16_t scale = n.object_class == 0x26 ? 471 : n.object_class == 0x24 ? 538 : 512;
+    w.word_158 = (uint32_t(scale) << 16) | scale; w.word_15c = scale; w.colour_15e = 0x4210;
     n.flags_348 = 0;
     // 0x8002FFC4: the point 256 ahead of the spawn position.
     n.home_354 = w.raw_14;
@@ -378,22 +442,30 @@ void barrell1_init(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexce
             n.home_354[a] = reference_fixed_to_short_80030150(int32_t(uint32_t(w.fixed_1c[a]) + uint32_t(delta[a])));
     } else out.refs_missing = true;
     w.rot_54[0] = w.rot_54[2] = 0; w.rot_44[0] = w.rot_44[1] = 0; n.speed_44 = 0;
-    w.state_08 = 1; w.state_09 = w.byte_03 ? 5 : 0; w.sub_0a = 0; w.byte_0b = 0;
+    w.state_08 = 1; w.sub_0a = 0; w.byte_0b = 0;
+    w.state_09 = n.object_class == 0x25 ? (w.byte_03 ? 5 : 0) : n.object_class == 0x26 ? 3 : 0;
     w.pose_ac = 0;   // 0x800322A8(work, 0, 0)
 }
 
-St03NpcTick step_barrell1(St03Npc& n, const St03NpcInputs& in) noexcept {
+St03NpcTick step_scene_v1(St03Npc& n, const St03NpcInputs& in) noexcept {
     St03NpcTick out;
     auto& w = n.w;
-    if (w.state_08 == 0) { barrell1_init(n, in, out); out.anim_request = 0; }
+    if (w.state_08 == 0) { scene_v1_init(n, in, out); out.anim_request = 0; }
     if (w.state_08 != 1) return out;
     out.in_range = true;
     n.pose_ad = w.pose_ac;
     w.colour_15e = 0x4210;
     out.rand_used = true;   // +0x34A = 0x8007FE50() every tick
-    barrell1_behaviour(n, in, out);
-    if (n.flags_348 & 1u) { w.sub_0a = 0; w.byte_0b = 0; n.flags_348 = uint16_t(n.flags_348 & ~1u); }
-    out.checkable = true;   // 0x80051B68(work, 3, -1, 0) (CANDIDATE: kind 3 is a check candidate)
+    if (n.object_class == 0x25) barrell1_behaviour(n, in, out);
+    else if (n.object_class == 0x26) inspector1_behaviour(n, in, out);
+    else officer1_behaviour(n, in, out);
+    if (n.flags_348 & 1u) {   // restart: Barrell keeps +9, the others go to 0
+        if (n.object_class != 0x25) w.state_09 = 0;
+        w.sub_0a = 0; w.byte_0b = 0; n.flags_348 = uint16_t(n.flags_348 & ~1u);
+    }
+    // 0x80051B68(work, 3, -1, 0): a check candidate only with a +0x10 box
+    // (Barrell's 0x80117134; the others store 0). CANDIDATE: kind 3 checks.
+    out.checkable = n.object_class == 0x25;
     if (n.pose_ad != w.pose_ac) out.anim_request = w.pose_ac; else if (!out.anim_request) out.anim_advance = true;
     return out;
 }
@@ -421,8 +493,15 @@ std::vector<St03ObjectRecord> st03_object_set(const SourceScenePackage& package,
     return out;
 }
 
-bool st03_generic_npc_class(uint8_t c, uint8_t byte_04) noexcept {
-    return byte_04 == 0 && (c == 0x05 || c == 0x25 || c == 0x11 || c == 0x26 || c == 0x24);
+bool st03_generic_npc_class(uint8_t c, uint8_t variant) noexcept {
+    return variant == 0 && (c == 0x05 || c == 0x25 || c == 0x11 || c == 0x26 || c == 0x24);
+}
+
+void st03_object_set_variant(St03Npc& n, uint8_t variant) noexcept {
+    n.variant = variant;
+    n.generic = n.family == 0x20 && st03_generic_npc_class(n.object_class, variant);
+    n.scene_v1 = n.family == 0x20 && variant == 1 && (n.object_class == 0x25 || n.object_class == 0x26 || n.object_class == 0x24);
+    n.check_box = n.scene_v1 && n.object_class == 0x25 ? kSt03Barrell1CheckBox : kSt03NpcCheckBox;
 }
 
 St03Npc spawn_st03_object(const St03ObjectRecord& r) {
@@ -435,10 +514,7 @@ St03Npc spawn_st03_object(const St03ObjectRecord& r) {
     for (size_t a = 0; a < 3; ++a) { w.raw_14[a] = r.position[a]; w.fixed_1c[a] = int32_t(uint32_t(uint16_t(r.position[a])) << 16); }
     w.rot_54[1] = r.heading;
     w.state_08 = 0;
-    n.generic = r.family == 0x20 && st03_generic_npc_class(r.object_class, r.byte_04);
-    n.barrell1 = r.family == 0x20 && r.object_class == 0x25 && r.subtype == 1;
-    if (n.barrell1) n.check_box = kSt03Barrell1CheckBox;
-    (void)r.subtype;
+    st03_object_set_variant(n, r.subtype);   // work +4 = record [2]
     return n;
 }
 
@@ -456,7 +532,7 @@ uint8_t st03_npc_fidget_request(uint8_t c, uint16_t rand) noexcept {
 St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
     St03NpcTick out;
     auto& w = n.w;
-    if (w.live && n.barrell1) return step_barrell1(n, in);
+    if (w.live && n.scene_v1) return step_scene_v1(n, in);
     if (!w.live || !n.generic) return out;
     bool fresh = false;
     if (w.state_08 == 0) { init_80107bc0(n); fresh = true; out.anim_request = 0; }

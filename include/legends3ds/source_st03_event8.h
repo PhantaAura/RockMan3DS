@@ -56,6 +56,9 @@ struct St03ObjectWrite {
     std::optional<uint8_t> variant_04, state_08, state_09;   // +9 writes also clear +0x0A
     std::optional<uint16_t> heading_56;
     bool clear_0a_0b = false;            // halfword +0x0A = 0
+    bool clear_0b = false;               // byte +0x0B = 0
+    std::optional<uint8_t> byte_0c_from, byte_0d_from;   // +0x0C / +0x0D = slot k's +1 (its id)
+    std::optional<uint8_t> byte_0f_or;   // +0x0F |= n
 };
 
 struct St03Event8Inputs {
@@ -72,7 +75,8 @@ struct St03Event8Inputs {
 
 struct St03Event8Step {
     std::optional<St03PlayerTarget> player;
-    std::array<St03ObjectWrite,4> objects{};      // *(0x8011CB30 + 4 * i); 3 = the police car (0x8011CB3C)
+    std::array<St03ObjectWrite,6> objects{};      // *(0x8011CB30 + 4 * i) (set 0: 3 = the police car; set 1: 5)
+    uint16_t release_slots = 0;                   // 0x80103CC4(i) for each bit i
     std::optional<uint8_t> player_anim_448;       // player +0x448
     std::optional<int16_t> player_heading_add;    // +0x442 = (+0x442 + n) & 0xFFF
     std::optional<uint16_t> sound_8001a008;       // 0x8001A008(n, 0, 0)
