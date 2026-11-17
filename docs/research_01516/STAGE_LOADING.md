@@ -291,6 +291,45 @@ record with the same counter resets as 0x8001F070, +0x10 = 0).
 
 The roadmap's oracle run (M3_ROADMAP.md S1) matches: control at
 (-4584, -1, 1431), flags 0x0A then 0x03. Area 1's messages are
-`..\mess\st03_00.msg` inside ST03_00.BIN (not cooked yet). Scenes 1..4
-(police car, Inspector, ...) and the ST03 scene objects' handlers are
-not read yet.
+`..\mess\st03_00.msg` inside ST03_00.BIN, cooked as the stage's
+`messages/area_01.l3msg`. Scenes 1..4 (police car, Inspector, ...) and the
+ST03 scene objects' handlers are not read yet.
+
+**No walk (VERIFIED_1TO1, oracle from `m3_00_stage2_event4`).** The player
+is not walked to the target: two frames after event 8 starts, player state
+is 3/2 with the pose already at (-4584, -1, 1431) (heading 0), because
+state 3 (0x80041B8C) copies the targets +0x438/+0x428/+0x440 into the pose
+every frame. Heading becomes 1255 when state 4 ends; after the event ends
+the player returns to state 1/0. The port now writes the same targets and
+state 3/1 and lets the ported state 3 move the pose (no direct pose write).
+
+## Recomp comparison: ST02 event 4 → ST03 event 8 (PROCESS rule 4)
+
+Oracle: `m3_00_stage2_event4` loaded into slot 10, `tools/compare_recomp_3ds.py`
+(now also snapshotting flags 0x000..0x3FF at 0x800BE378), Circle taps to
+advance messages, no Start skip. 3DS: run21 (f4e5687) and the run after
+this change; the 3DS trace now logs story flags 0x000..0x9FF. A flag write
+trace (`wtrace_arm 0x800BE378..0x800BE4B8`) named each writer:
+
+| Oracle frame | Flag | Writer | Port before | Port now |
+|---|---|---|---|---|
+| event 4 end | clear 0x600 | ST02 event 4 (0x80101F8C) | yes | yes |
+| event 4 end | set 0x384 | dispatcher 0x8001D9F0: event +0 went 0, so 0x380 + event id | missing | set (also 0x383/0x382 for ST00 events 3/2) |
+| ST03 load | set 0x7E1, 0x7E2, 0x7E4, 0x7E8 | ST03 stage init 0x801007B4 → 0x8001E4C4 → 0x8001E460 (door list 0x801152E4, states 0x801152EC + 8 × byte 0x800C1B62, overrides by flags 2 / 14 / 0) | missing | missing: doors slice |
+| ST03 load + 1 | set 0x1FF | area-enter table 0x80115124[area] (area 1: 0x80101778; door locks there need flag 0x235) via 0x8010089C | missing | missing: doors slice |
+| event 8, message 4 | set 0x0A | message opcode 0x9A (0x800553A8; 0x9B clears, 0x800553F0) inside the scene's message | missing | set |
+| event 8 end | set 0x03 | scene 0 state 11 (0x80102110) | yes | yes |
+| event 8 end | set 0x388 | dispatcher 0x8001D9F0 (0x380 + 8) | missing | set |
+
+Oracle frames (ring frames from the slot-10 load): 0x384 / 0x600 at 1870,
+door locks 2167, 0x1FF 2168, 0x0A 4103, 0x03 + 0x388 4746. Message opcode
+0x9A is the table entry 0x8008AB84 (base 0x8008AB1C, op − 0x80); the draw
+table 0x8008ACC4 skips 0x9A/0x9B as 3 bytes (0x80054324), as the port's
+message cursor already does.
+
+**3DS result (run29, 7304def, Azahar):** `compare_recomp_3ds.py` reports
+order matches; the port sets 0x384 with 0x600's clear (frame 4392), 0x0A
+during message 4 (5325), 0x03 and 0x388 together at the end (5657). Only
+the door locks 0x7E1/0x7E2/0x7E4/0x7E8 and 0x1FF are missing (doors
+slice). The player reaches (-4584, -1, 1431) by frame 4396, within 2–3
+frames of event 8 starting (4393), with no game over.

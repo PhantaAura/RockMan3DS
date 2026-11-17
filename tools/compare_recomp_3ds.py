@@ -7,8 +7,9 @@
           ("# story_flag,frame=..,flag=0x..,value=..,area=.." lines).
 
 Flag n lives at 0x800BE378 + (n >> 3), bit 0x80 >> (n & 7). The arm step
-snapshots flags 0x600..0x9FF (0x800BE438, 128 bytes) and the stage/event
-bytes. Outputs are local evidence only; keep them out of the repo.
+snapshots flags 0x600..0x9FF (0x800BE438, 128 bytes), flags 0x000..0x3FF
+(0x800BE378, 128 bytes; M3's story flags such as 0x03, 0x0A, 0x384) and the
+stage/event bytes. The ring keeps 36000 frames. Outputs are local evidence only; keep them out of the repo.
 """
 import argparse
 import csv
@@ -19,13 +20,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from psxrecomp_dbg import call  # noqa: E402
 
-FLAGS_ADDR, FLAG_BASE = 0x800BE438, 0x600
+FLAGS_ADDR = 0x800BE438         # flags 0x600..0x9FF
+LOW_FLAGS_ADDR = 0x800BE378   # flags 0x000..0x3FF
 STAGE_ADDR = 0x800C1B60
 EVENT_ADDR = 0x800C4C48
 
 
 def arm():
-    for slot, addr in ((0, FLAGS_ADDR), (1, STAGE_ADDR & ~0x7F), (2, EVENT_ADDR & ~0x7F)):
+    for slot, addr in ((0, FLAGS_ADDR), (1, STAGE_ADDR & ~0x7F), (2, EVENT_ADDR & ~0x7F),
+                       (3, LOW_FLAGS_ADDR)):
         print(call('set_snapshot', slot=slot, addr=hex(addr)))
 
 
@@ -38,9 +41,11 @@ def record(lo, hi, out):
     prev = None
     rows = []
     for f in range(lo, hi):
-        flags = frame_bytes(f, FLAGS_ADDR, 128)
-        if flags is None:
+        hi_flags = frame_bytes(f, FLAGS_ADDR, 128)
+        lo_flags = frame_bytes(f, LOW_FLAGS_ADDR, 128)
+        if hi_flags is None or lo_flags is None:
             continue
+        flags = lo_flags + bytes(64) + hi_flags   # 0x000..0x3FF, gap, 0x600..0x9FF
         stage = frame_bytes(f, STAGE_ADDR, 1)
         event = frame_bytes(f, EVENT_ADDR, 4)
         if prev is not None:
@@ -48,7 +53,7 @@ def record(lo, hi, out):
                 for bit in range(8):
                     m = 0x80 >> bit
                     if (a ^ b) & m:
-                        rows.append((f, FLAG_BASE + i * 8 + bit, 1 if b & m else 0,
+                        rows.append((f, i * 8 + bit, 1 if b & m else 0,
                                      stage[0] if stage else -1, event.hex() if event else ''))
         prev = flags
     with open(out, 'w', newline='') as fh:

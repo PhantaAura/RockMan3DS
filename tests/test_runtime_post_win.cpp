@@ -66,6 +66,7 @@ int main() {
     const auto t = s.source_post_win_transition();
     require(t && t->destination_area == 4 && t->source_function == 0x80102058u && !s.story_flag(0x606) && (s.compat_player().bytes[0] & 1),
             "hand-off: area 4 offered, 0x606 cleared, player visible");
+    require(s.story_flag(0x383), "event 3 ended: the dispatcher sets 0x380 + 3 (0x8001D9F0)");
     require(!s.can_commit_source_post_win_transition(), "unregistered area 4 refused");
     TutorialRuntimeArea a4; s.register_area(4, a4);
     require(s.can_commit_source_post_win_transition() && s.commit_source_post_win_transition(), "commit");
@@ -85,6 +86,7 @@ int main() {
     const auto& h = s.source_post_win_handoff();
     require(h && h->stage == 2 && h->area == 0 && !s.story_flag(0x605) && !s.source_post_win_transition(),
             "event 2 asks for stage 2; retained, not offered");
+    require(s.story_flag(0x382), "event 2 ended: 0x380 + 2");
     const auto sr = s.source_stage_request();
     require(sr && sr->stage == 2 && sr->area == 0 && sr->spawn == std::array<int16_t,3>{0, 0, 0} && sr->heading == 0 &&
             sr->source_function == 0x8010194Cu, "the retained hand-off is the stage-2 request");

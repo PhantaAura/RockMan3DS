@@ -1328,6 +1328,12 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
                         dialogue_.call_stack.push_back({dialogue_.ref.block,uint16_t(dialogue_cursor_->token_index())});
                         dialogue_.ref.block=ev.args[1];dialogue_cursor_->start_block(ev.args[1]);break;
                     }
+                    if((ev.opcode==0x9A||ev.opcode==0x9B)&&ev.args.size()>=2){ // 0x800553A8 / 0x800553F0
+                        // The port's flag array covers 0x000..0x7FF; higher ids are dropped.
+                        const uint16_t id=uint16_t(ev.args[0]|(uint16_t(ev.args[1])<<8));
+                        if(id<kL3StoryFlagBytes*8u)set_story_flag(id,ev.opcode==0x9A);
+                        break;
+                    }
                     break; // window, colour, pad, portrait, sound-effect controls: presentation only
                 }
                 dialogue_.script_requests.push_back({dialogue_.ref,ev.opcode,ev.kind,ev.args});dialogue_.waiting_for_script=true; return;
@@ -1773,18 +1779,22 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     input.start_pressed=(in.pressed_psx_mask&0x0008u)!=0;
     auto step=step_st03_event8(ev,*st03_event8_profile_,input);
     if(step.player){
-        // Player state 3/1 walks to this target (0x80048754 / 0x80048898);
-        // the port places the player there instead (CANDIDATE).
+        // The event writes player state 3/1's targets (+0x428 16.16, +0x438
+        // shorts via 0x80030150, heading +0x442); player state 3
+        // (0x80041B8C) copies them into the pose every frame. The oracle
+        // shows no walk: state 3/2 with the pose at the target two frames
+        // after event 8 starts (VERIFIED_1TO1, m3_00 run).
         const auto& p=*step.player;
         for(size_t a=0;a<3;++a){
-            const int32_t f=int32_t(uint32_t(uint16_t(p.position[a]))<<16);
-            wr32w(player_,0x1C+a*4,f);wr32w(player_,0x34+a*4,f);
-            wr16w(player_,0x2C+a*2,uint16_t(p.position[a]));
-            wr32w(player_,0x428+a*4,f);wr16w(player_,0x438+a*2,uint16_t(p.position[a]));
+            wr32w(player_,0x428+a*4,int32_t(uint32_t(uint16_t(p.position[a]))<<16));
+            wr16w(player_,0x438+a*2,uint16_t(p.position[a]));
         }
-        if(p.heading){wr16w(player_,0x442,*p.heading);wr16w(player_,0x56,*p.heading);}
-        if(p.walk){player_.bytes[0x448]=48;player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x10u);}
-        sync_primary_position_from_fixed();
+        if(p.walk){
+            player_.bytes[8]=3;player_.bytes[9]=1;
+            wr16w(player_,0x440,0);wr16w(player_,0x442,0);wr16w(player_,0x444,0);
+            player_.bytes[0x448]=48;player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x10u);
+        }
+        if(p.heading)wr16w(player_,0x442,*p.heading);
     }
     for(uint8_t m=0;m<step.message_count;++m){
         // 0x80053A08(0, n): opens block n of the area's bank; an absent bank
@@ -1797,6 +1807,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(step.flag_set)set_story_flag(*step.flag_set,true);
     if(step.player_release)source_player_event_release_80042314(player_);
     if(step.spawn_set)st03_area1_object_set_=*step.spawn_set;
+    if(step.ended)set_story_flag(0x388,true);   // 0x8001D9F0: 0x380 + event 8
     st03_event8_step_=step;
 }
 bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) noexcept {
@@ -1872,6 +1883,9 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
         if(ev.event==3||ev.event==4)player_.bytes[0]=uint8_t(player_.bytes[0]|1u);  // 0x800B51B0 |= 1
         source_player_event_release_80042314(player_);
         if(source_event_work_)source_event_work_->raw[0]=0;
+        // 0x8001D9F0: event +0 went to 0 in its handler, so the dispatcher
+        // sets flag 0x380 + event id (oracle: 0x384 with 0x600's clear).
+        set_story_flag(uint16_t(0x380+ev.event),true);
         source_post_win_handoff_=step.handoff;++source_post_win_generation_;
     }else if(step.area_cut&&*step.area_cut!=map_area_index_&&registered_area(*step.area_cut)){
         // 0x801002C8. A cut to the current area reloads it in the original;
@@ -2472,7 +2486,10 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
             sync_primary_position_to_compat();
             player_contact_={};
         }
-        else if(player_.bytes[8]==3&&source_door_event0_.active){source_player_state3_80041b8c(player_);sync_primary_position_from_fixed();}
+        // Player state 3 runs for the events that own it (door event 0, ST03
+        // event 8) and for the release step (+9 = 3) after either ended.
+        else if(player_.bytes[8]==3&&(source_door_event0_.active||st03_event8_.active||player_.bytes[9]==3)){
+            source_player_state3_80041b8c(player_);sync_primary_position_from_fixed();}
         else if(player_.bytes[8]==0)source_player_state0_8003c7b0(player_);
         else if(player_.bytes[8]==2){
             // 0x80041AB0: mirrors, the contact query, then main phase 9 once.

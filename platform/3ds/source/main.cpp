@@ -6518,17 +6518,17 @@ int main() {
                         }
                     }
                 }
-                // Every change of the story flags 0x600..0x9FF (tutorial and
-                // M3), with where Mega Man stood; tools/compare_recomp_3ds.py
-                // diffs these against the oracle.
+                // Every change of the story flags 0x000..0x9FF (tutorial and
+                // M3, e.g. 0x03/0x0A/0x384), with where Mega Man stood;
+                // tools/compare_recomp_3ds.py diffs these against the oracle.
                 {
-                    static std::array<uint8_t,1024> seen{};static bool seeded=false;
+                    static std::array<uint8_t,0xA00> seen{};static bool seeded=false;
                     const auto pos=session.player_position();
-                    for(uint16_t i=0;i<1024;++i){
-                        const uint8_t now=session.story_flag(uint16_t(0x600+i))?1:0;
+                    for(uint16_t i=0;i<0xA00;++i){
+                        const uint8_t now=session.story_flag(i)?1:0;
                         if(seeded&&now!=seen[i])
                             hardware_test_trace("# story_flag,frame=%lu,flag=0x%03x,value=%u,area=%u,pos=%d:%d:%d,dialogue=%u",
-                                (unsigned long)session.frame_counter(),unsigned(0x600+i),unsigned(now),unsigned(g_current_area),
+                                (unsigned long)session.frame_counter(),unsigned(i),unsigned(now),unsigned(g_current_area),
                                 int(pos.x),int(pos.y),int(pos.z),unsigned(session.dialogue().active));
                         seen[i]=now;
                     }
