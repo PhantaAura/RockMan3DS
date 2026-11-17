@@ -80,7 +80,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={};
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false;
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1825,13 +1825,26 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
 void RuntimeSession::update_source_st02_event4_actors(const SourcePostWinProfile& profile){
     // The object update (0x8001E070) for event 4's spawned slots. CANDIDATE
     // order: after the event handler in the same frame, slots 0..4 in turn;
-    // 1F800002 is taken from the frame counter (CANDIDATE phase). No class-40
-    // sequence data is bound yet, so 40/xx key tests report
-    // SequenceUnavailable and wait.
+    // 1F800002 is taken from the frame counter (CANDIDATE phase). The class-40
+    // sequences come from the stage EBD (one ST02_01.EBD for every area),
+    // decoded once when a class-40 slot first spawns, within 512 KB; a slot
+    // whose bank does not decode reports SequenceUnavailable and waits.
     auto& ev=source_post_win_;
+    if(!source_st02_banks_tried_&&(ev.slots[0].spawned||ev.slots[1].spawned||ev.slots[2].spawned)){
+        source_st02_banks_tried_=true;
+        size_t budget=512u*1024u;
+        for(const auto& r:profile.spawns){
+            if(r[0]>2||r[3]!=0x40)continue;
+            auto bank=decode_st02_event4_actor_bank(area_.ebd,r[1],budget);
+            if(!bank)continue;
+            budget-=std::min(budget,bank->decoded_bytes);
+            source_st02_sequence_.banks[r[0]]=std::move(bank);
+        }
+    }
     St02ActorContext ctx;
     ctx.refs=reference_tables_?&*reference_tables_:nullptr;ctx.frame_1f800002=uint16_t(frame_counter_);
     ctx.roll_801079e4=profile.st02_prop_roll.empty()?nullptr:&profile.st02_prop_roll;
+    ctx.sequence=&source_st02_sequence_;
     for(size_t i=0;i<source_st02_actors_.size();++i){
         auto& w=source_st02_actors_[i];auto& tick=source_st02_actor_ticks_[i];tick={};
         if(!ev.slots[i].spawned){w={};continue;}

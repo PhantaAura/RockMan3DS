@@ -315,6 +315,41 @@ int main() {
         t = step_st02_event4_actor(w, c); CHECK(t.sequence_steps == 1);
     }
 
+    // ---- St02ActorBankSequence: 0x800322A8 / 0x80032488 over decoded records ----
+    {
+        auto bank = std::make_shared<ActorAnimationBank>();
+        const auto rec = [](uint8_t key, uint8_t dur, uint8_t ctrl) { return ActorSequenceRecord{{key, dur, 0, ctrl, 0, 0, 0, 0}}; };
+        ActorAnimationRequestCache a; a.request = 1;
+        a.sequence.records = {rec(10, 2, 0), rec(11, 1, 0), rec(12, 1, 0x80)};   // loops to record 0
+        ActorAnimationRequestCache b; b.request = 2;
+        b.sequence.records = {rec(0, 1, 0), rec(71, 1, 0xFF)};                    // holds on 71
+        bank->requests = {a, b};
+        St02ActorBankSequence seq; seq.banks[2] = bank;
+        CHECK(!seq.key(2));
+        seq.restart(2, 1); CHECK(seq.key(2) && *seq.key(2) == 10);
+        seq.advance(2); CHECK(*seq.key(2) == 10);     // countdown 2 -> 1
+        seq.advance(2); CHECK(*seq.key(2) == 11);
+        seq.advance(2); CHECK(*seq.key(2) == 12);
+        seq.advance(2); CHECK(*seq.key(2) == 10);     // control 0x80 -> record 0
+        seq.restart(2, 9); CHECK(!seq.key(2));        // request not in the bank
+        seq.advance(2); CHECK(!seq.key(2));
+        seq.restart(2, 2); seq.advance(2); CHECK(*seq.key(2) == 71);
+        seq.advance(2); seq.advance(2); CHECK(*seq.key(2) == 71);   // -1 repeats
+        CHECK(!seq.key(0));                          // slot without a bank
+        // 40/07 on it: pose 1 for 30 frames, pose 2 until key 71, back to state 0.
+        St02ActorContext c; c.sequence = &seq;
+        auto w = spawn_st02_event4_actor(record40(2, 0x07));
+        step_st02_event4_actor(w, c); step_st02_event4_actor(w, c);
+        for (int i = 0; i < 30; ++i) step_st02_event4_actor(w, c);
+        CHECK(w.state_09 == 1);
+        step_st02_event4_actor(w, c);                // pose 2 (key 0)
+        step_st02_event4_actor(w, c);                // step onto 71: back to state 0
+        CHECK(w.state_09 == 0 && w.sub_0a == 0);
+        // A missing EBD row decodes no bank.
+        EbdDirectory empty;
+        CHECK(!decode_st02_event4_actor_bank(empty, 5, 1u << 20) && !decode_st02_event4_actor_bank(empty, 0x0A, 1u << 20));
+    }
+
     if (failures) { std::printf("%d failure(s)\n", failures); return 1; }
     std::printf("source_st02_event4_actors: ok\n");
     return 0;

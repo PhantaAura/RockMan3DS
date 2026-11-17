@@ -347,6 +347,7 @@ public:
     // ST02 event 4's family-0x20 actors (slots 3 and 4) and their last update.
     const std::array<St02EventActorWork,5>& source_st02_event4_actors() const noexcept { return source_st02_actors_; }
     const std::array<St02EventActorTick,5>& source_st02_event4_actor_ticks() const noexcept { return source_st02_actor_ticks_; }
+    const St02ActorBankSequence& source_st02_event4_sequence() const noexcept { return source_st02_sequence_; }
     const std::optional<SourcePostWinHandoff>& source_post_win_handoff() const noexcept { return source_post_win_handoff_; }
     std::optional<uint32_t> pending_source_post_win_cd() const noexcept {
         return source_post_win_cd_done_?std::nullopt:source_post_win_cd_;
@@ -805,6 +806,8 @@ private:
     SourcePostWinStep source_post_win_step_{};
     std::array<St02EventActorWork,5> source_st02_actors_{};
     std::array<St02EventActorTick,5> source_st02_actor_ticks_{};
+    St02ActorBankSequence source_st02_sequence_{};
+    bool source_st02_banks_tried_=false;
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;
     uint8_t stage_=0;

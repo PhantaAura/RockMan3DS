@@ -361,6 +361,46 @@ void apply_st02_event4_slot_writes(St02EventActorWork& w, SourceSceneSlotCommand
     if (s.colour_15e) w.colour_15e = *s.colour_15e;
 }
 
+void St02ActorBankSequence::restart(uint8_t slot, uint8_t request) {
+    if (slot >= banks.size()) return;
+    current[slot] = banks[slot] ? find_actor_animation_request(*banks[slot], request) : nullptr;
+    if (current[slot] && actor_sequence_reset(cursor[slot], current[slot]->sequence.records.data(),
+                                              current[slot]->sequence.records.size()) != ActorSequenceStatus::SourceBackedPartial)
+        current[slot] = nullptr;
+}
+void St02ActorBankSequence::advance(uint8_t slot) {
+    if (slot >= banks.size() || !current[slot]) return;
+    const auto& r = current[slot]->sequence.records;
+    if (actor_sequence_step(cursor[slot], r.data(), r.size()).status != ActorSequenceStatus::SourceBackedPartial)
+        current[slot] = nullptr;
+}
+std::optional<uint8_t> St02ActorBankSequence::key(uint8_t slot) const {
+    if (slot >= banks.size() || !current[slot]) return std::nullopt;
+    return cursor[slot].frame_a4;
+}
+
+std::shared_ptr<const ActorAnimationBank> decode_st02_event4_actor_bank(const EbdDirectory& ebd, uint8_t subtype,
+                                                                        size_t cap) noexcept {
+    static const uint8_t r05[] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
+    static const uint8_t r06[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    static const uint8_t r07[] = {1, 2, 3};
+    const uint8_t* req = subtype == 5 ? r05 : subtype == 6 ? r06 : subtype == 7 ? r07 : nullptr;
+    const size_t count = subtype == 5 ? sizeof r05 : subtype == 6 ? sizeof r06 : sizeof r07;
+    if (!req) return nullptr;
+    try {
+        const auto rows = find_ebd_entries(ebd, 0x40, subtype);
+        if (rows.empty() || ebd.source_payload.empty()) return nullptr;
+        const auto mesh = decode_ebd_scene_actor40_mesh(ebd, rows.front(), ActorMeshTier::NEAR, cap);
+        if (mesh.footprint.decoded_bytes > cap) return nullptr;
+        auto bank = decode_ebd_scene_actor40_animation_bank(ebd, rows.front(), mesh, req, count,
+                                                            cap - mesh.footprint.decoded_bytes);
+        if (bank.requests.size() != count) return nullptr;
+        return std::make_shared<const ActorAnimationBank>(std::move(bank));
+    } catch (...) {
+        return nullptr;
+    }
+}
+
 St02EventActorTick step_st02_event4_actor(St02EventActorWork& w, const St02ActorContext& c) noexcept {
     St02EventActorTick t;
     if (!w.live) return t;
