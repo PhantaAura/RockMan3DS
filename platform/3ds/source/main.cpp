@@ -7791,6 +7791,19 @@ int main() {
                     hardware_test_trace("# st02_event4_actors,frame=%lu,drawn=%lu,slots=%02x,area=%u",
                         (unsigned long)session.frame_counter(),(unsigned long)drawn,unsigned(slots),unsigned(session.map_area_index()));
             }
+            {   // Door event 0x80050C2C result on change (types 1 / 3 / 8).
+                static int door_was=-1;static uint32_t sample_was=0;
+                const auto& dr=session.source_door_result();
+                const uint32_t sk=dr.sample?(uint32_t(dr.sample->type)<<24)^uint32_t(uint16_t(dr.sample->x))^(uint32_t(uint16_t(dr.sample->z))<<8):0u;
+                if(int(dr.status)!=door_was||sk!=sample_was){
+                    const auto pp=session.player_position();
+                    hardware_test_trace("# door_event,frame=%lu,status=%s,query=%u,type=%d,sample=%d/%d/%d,record=%d,player=%d/%d/%d,heading=%u",
+                        (unsigned long)session.frame_counter(),l3::source_door_status_name(dr.status),unsigned(dr.query_status),
+                        dr.sample?int(dr.sample->type):-1,dr.sample?int(dr.sample->x):0,dr.sample?int(dr.sample->y):0,dr.sample?int(dr.sample->z):0,
+                        dr.aux_record_index?int(*dr.aux_record_index):-1,int(pp.x),int(pp.y),int(pp.z),unsigned(session.player_yaw()));
+                    door_was=int(dr.status);sample_was=sk;
+                }
+            }
             if(session.stage()==3){
                 static bool talk_was=false;static std::optional<size_t> target_was;
                 const bool talk=session.st03_talk_active();const auto target=session.player_check_npc();
