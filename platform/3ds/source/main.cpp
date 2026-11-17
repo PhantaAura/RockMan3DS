@@ -1557,7 +1557,7 @@ static u32 autoplay_fight_keys(int tx,int tz,int heading,int approach,bool slam,
     u32 keys=0;
     // The Turn setting picks the turn buttons (L/R by default, D-pad when swapped).
     if(mag>64)keys|=autoplay_turn_key((gap>0)==(g_autoplay.turn_sign>0));
-    else if(tick%8u<4u)keys|=KEY_Y;
+    else if(tick%4u<2u)keys|=KEY_Y;  // fire on every non-slam frame window (aligned)
     const long d2=long(tx)*tx+long(tz)*tz;
     long lo=380,hi=-1;
     if(approach>0){hi=approach;lo=std::max(260,approach-200);}
@@ -5566,6 +5566,25 @@ int main() {
                         if(autoplay_step.keys==kAutoplayFight)
                             keys|=autoplay_fight_keys(tx,tz,heading,autoplay_step.cy,g_autoplay_boss_slam,autoplay_tick);
                         else keys|=autoplay_fight_keys(tx,tz,heading,0,false,autoplay_tick)&~u32(KEY_DUP|KEY_DDOWN);
+                        // Slam (substate 6): the boss's heading is fixed for the whole windup (0x80109638
+                        // never turns); its three floor shockwaves lie ahead on that line with radius up to
+                        // ~228 (+0x20 player) and a jump does not clear them (oracle, slot 9). Slide off the
+                        // line, toward +x first (the -479 wall is the near one at the spawn), calibrating the
+                        // key by the measured x displacement every 6 frames; no fire while sliding.
+                        // CANDIDATE route behaviour, not a source constant. Turn keys stay (profile 0).
+                        static bool slam_was=false,key_left=true;static int want=1,slide_frames=0,sx=0;
+                        const bool slam_now=autoplay_step.keys==kAutoplayFight&&g_autoplay_boss_slam&&!g_option_settings.turn_800c1b64;
+                        if(slam_now){
+                            if(!slam_was){sx=int(pp.x);slide_frames=0;}
+                            if(++slide_frames%6==0){
+                                const int dx=int(pp.x)-sx;
+                                if(dx>=-12&&dx<=12){want=-want;key_left=!key_left;}   // blocked: go the other way
+                                else if((dx>0)!=(want>0))key_left=!key_left;          // wrong way: other key
+                                sx=int(pp.x);
+                            }
+                            keys=(keys&~u32(KEY_DUP|KEY_DDOWN|KEY_DLEFT|KEY_DRIGHT|KEY_Y))|(key_left?KEY_DLEFT:KEY_DRIGHT);
+                        }
+                        slam_was=slam_now;
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
                     held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
                 } else if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint||autoplay_step.keys==kAutoplaySteerUntil||
@@ -6238,6 +6257,9 @@ int main() {
                             g_autoplay_enemies.push_back({{int(actor.source_origin[0]),int(actor.source_origin[2])}});
                             const auto& b=*actor.source_area3_boss;
                             if(b.health_6e>0&&b.substate_09==6&&b.phase_0a<=3)boss_slam=true;
+                            static int last_boss_hp=-1;
+                            if(b.health_6e!=last_boss_hp){last_boss_hp=b.health_6e;
+                                hardware_test_trace("# boss_hp,frame=%lu,hp=%d,evidence=FRONTEND_DIAGNOSTIC",(unsigned long)session.frame_counter(),int(b.health_6e));}
                         }
                         if(actor.source_released||actor.source_class!=0x20)continue;
                         std::array<int16_t,2> xz{};
