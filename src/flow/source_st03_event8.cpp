@@ -188,6 +188,11 @@ bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profi
     const auto* pt = package.timeline(kPoliceTimeline);
     const auto* pc = package.camera(kPoliceCamera);
     if (pt && pc && !pt->records.empty()) { out.police = *pt; out.police_camera = *pc; out.police_loaded = true; }
+    for (uint8_t n = 0; n < out.object_sets.size(); ++n) out.object_sets[n] = st03_object_set(package, n);
+    if (const auto* t = package.data_at(kSt03NpcIdleTimers); t && t->bytes.size() >= 64) {
+        for (size_t i = 0; i < 64; ++i) out.idle_timers[i] = t->bytes[i];
+        out.idle_timers_loaded = true;
+    }
     return true;
 }
 
