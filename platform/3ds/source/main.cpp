@@ -1542,6 +1542,7 @@ struct DiagnosticAutoplay {
 static DiagnosticAutoplay g_autoplay;
 // Autoplay only: the Area 3 boss is winding up a slam (substate 6, phase <= 3).
 static bool g_autoplay_boss_slam=false;
+static int g_autoplay_boss_x=0;
 // Autoplay combat (diagnostic only): face the target and fire, keeping it in
 // a distance band. approach > 0: walk in to `approach`, backpedal (still
 // facing and firing) under approach - 200; approach == 0: only backpedal
@@ -5675,7 +5676,12 @@ int main() {
                                 else if((dx>0)!=(want>0))key_left=!key_left;          // wrong way: other key
                                 sx=int(pp.x);
                             }
-                            keys=(keys&~u32(KEY_DUP|KEY_DDOWN|KEY_DLEFT|KEY_DRIGHT|KEY_Y))|(key_left?KEY_DLEFT:KEY_DRIGHT);
+                            // Keep sliding until clear of the shockwave line (radius scale/2 + 0x20 = 260 at
+                            // full scale; CANDIDATE margin 280), then hold still. No fire in substate 6.
+                            const int lateral=int(pp.x)-g_autoplay_boss_x;
+                            const bool clear=(lateral<0?-lateral:lateral)>=280;
+                            keys&=~u32(KEY_DUP|KEY_DDOWN|KEY_DLEFT|KEY_DRIGHT|KEY_Y);
+                            if(!clear)keys|=(key_left?KEY_DLEFT:KEY_DRIGHT);
                         }
                         slam_was=slam_now;
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
@@ -6349,7 +6355,7 @@ int main() {
                         if(g_autoplay.active&&actor.source_area3_boss&&!actor.source_released&&!actor.source_hidden){
                             g_autoplay_enemies.push_back({{int(actor.source_origin[0]),int(actor.source_origin[2])}});
                             const auto& b=*actor.source_area3_boss;
-                            if(b.health_6e>0&&b.substate_09==6&&b.phase_0a<=3)boss_slam=true;
+                            if(b.health_6e>0&&b.substate_09==6&&b.phase_0a<=3){boss_slam=true;g_autoplay_boss_x=int(actor.source_origin[0]);}
                             static int last_boss_hp=-1;
                             if(b.health_6e!=last_boss_hp){last_boss_hp=b.health_6e;
                                 hardware_test_trace("# boss_hp,frame=%lu,hp=%d,evidence=FRONTEND_DIAGNOSTIC",(unsigned long)session.frame_counter(),int(b.health_6e));}

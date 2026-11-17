@@ -388,3 +388,6 @@ and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 - The work80 writer for 0x1F is CANDIDATE.
 - The box's E0 pool slot (15 = static E0 count + conditional order) is
   CANDIDATE. It only feeds the RNG work check and the proxy's byte.
+
+## Tutorial boss status (side session)
+Boss fight wins from the diagnostic spawn (heading 2048) but the uninterrupted normal-boot run (run 31) lost without damaging the boss; M1 proof open. Next: fix the approach/fight route from the normal path (boss never hit), then re-run; hardware profiling waits for the user's boot_01516.log / hardware_01516_*.csv. See docs/validation_01516/RESULTS.md.
