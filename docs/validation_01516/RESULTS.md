@@ -702,3 +702,20 @@ Run 1 (`pass-20261107-210933`) held at 13993 after fade 10: the session's
 fade scheduler and its draw ran only with `SOURCE_EVENT_BOOT=1`. Fixed.
 Not shown: the scene actors (no model drawn for slots 40/05, 40/08 or event
 2's cast), the event camera on the 3DS view, smoke/objects, XA voice.
+
+## Tutorial boss, runs 26-31 (Azahar, Old 3DS mode; not physical hardware)
+
+- Boss shockwave (effect-128 proxy, radius = scale/2 + 0x20, damage 10/20/30) verified 1:1 vs the oracle; a jump does not clear it in the original either.
+- Spawn heading 0 faces away from the boss; the diagnostic spawn needs heading 2048.
+- Run 30 (diagnostic spawn, heading 2048, Buster only): boss HP 1024 -> 0 at frame 1787, player at 2 HP, then event 3 -> Area 4 hand-off (2843) -> event 2. A close win, not reliable. CANDIDATE route behaviour (slide on slam, fire on every non-slam window).
+- Run 31 (M1 proof, normal boot via diagnostic_title.txt + opening_tutorial_boss.txt): LOST. Boss area reached at frame ~9541 with 80 HP; no boss HP change was logged (boss never damaged), player at 0 HP at 9968, game over at 16214. The walk from the normal route does not enter the fight with the geometry/heading the diagnostic spawn has. M1 proof NOT achieved. Runs 31a/b stalled at frame ~189 because diagnostic_title.txt was missing.
+
+### Runs 32-34 (route fixes, Azahar Old 3DS mode)
+- Run 31's loss was NOT the boss approach: the corridor fight steps (commit 7c117d8) stood still for ~3000 ticks firing at a target that never died, and corridor enemies then killed the player in Area 1 (never reached the boss). Removed them; the route walks the corridor again (talk step restored).
+- Added `900 ffffb -256 -1632` (walk, no teleport) before the boss fight. Run 34 (normal start, no spawn): reached the boss with 80 HP at frame ~22741, stood exactly on the winning spawn point at heading 2048, boss HP 1024 -> 688 by frame 22967, then repeated slam hits (10/10/20/20/10/30) took 80 -> 0 at 23374; game over 23402. LOST, boss at 688. The slam slide stopped at x=-33 and the boss slammed again before fire resumed. M1 proof still open; the fight is marginal (diagnostic win ended at 2 HP).
+- Run 32 (spawn in Area 1 corridor) was invalid: a spawn skips the opening state, no actors admitted (pause=1).
+
+### Runs 35-37 (slam dodge tuning, Azahar Old 3DS mode)
+- Run 35 (diagnostic spawn, dodge = slide until |x - boss x| >= 320, no fire in substate 6 incl. late phases): LOST. Boss 1024 -> 784, then the player slid to the +x wall (479) and stopped firing; 80 -> 0 at frame 721. Reverted the all-phase no-fire; margin 280, slam = substate 6 phase <= 3 as before.
+- Runs 36 and 37 (normal start): both died in the Area 1 corridor (80 -> 0 at frames 9781 / 8355, enemy touch packets 0x04000000/10), never reaching the boss. Run 34 had cleared the same corridor at full HP, so the unarmed corridor walk is variable.
+- Status: fight reached and winnable from the diagnostic spawn (run 30), autoplay dodge marginal; normal-start corridor survival unreliable. Route work stopped per the main session's budget. M1 uninterrupted proof NOT achieved.

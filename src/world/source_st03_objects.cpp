@@ -150,6 +150,51 @@ int16_t turn_80031d5c(uint16_t target, uint16_t heading, int16_t step) noexcept 
     return int16_t(v);
 }
 
+// Behaviour 7 (0x80109CF8, sub-state +0x34B via 0x80117040): Data's talk and menu
+// (docs/research_01516/DATA_MENU.md). The event-0xFF camera (0x80039FAC / 0x80039E18,
+// gated by 0x800A3962) and the player's talk pose are not ported: the camera is
+// treated as settled at once (CANDIDATE).
+void behaviour7_80109cf8(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    switch (n.talk_34b) {
+    case 0: {   // 0x80109D34
+        n.saved_heading_34c = w.rot_54[1]; n.saved_34a = w.pose_ac;
+        w.pose_ac = st03_npc_idle_request(n.object_class);
+        const int16_t d = turn_to_player(n, in, 0x800);
+        n.turn_step_34e = int16_t(d < 0 ? (uint16_t(-d) >> 3) : (d >> 3));
+        ++n.talk_34b;
+        return;
+    }
+    case 1:     // 0x80109E94
+        out.talk_start = w.byte_0c;   // 0x80063BC8(npc + 0x14, 0xD, 0, +0x0C)
+        ++n.talk_34b;
+        add_heading(n, turn_to_player(n, in, n.turn_step_34e));
+        return;
+    case 2:     // 0x80109F1C
+        add_heading(n, turn_to_player(n, in, n.turn_step_34e));
+        if (in.talk_active) { if (in.save_phase) ++n.talk_34b; }
+        else {
+            n.flags_348 = uint16_t(n.flags_348 & ~4u);
+            n.talk_34b = uint8_t(n.talk_34b + 2);
+            w.pose_ac = st03_npc_idle_request(n.object_class);
+        }
+        return;
+    case 3:     // 0x80109FD4
+        if (!in.save_phase) { out.reopen_menu = 0xDC; --n.talk_34b; }
+        return;
+    case 4: {   // 0x8010A02C
+        const int16_t d = turn_80031d5c(n.saved_heading_34c, w.rot_54[1], n.turn_step_34e);
+        if (d == 0 || (w.byte_0d & 0x80u)) {   // (camera settled, see above)
+            w.pose_ac = n.saved_34a; w.state_09 = uint8_t(w.byte_0d & 7u);
+            n.flags_348 = uint16_t(n.flags_348 | 2u);
+        }
+        add_heading(n, d);
+        return;
+    }
+    default: return;
+    }
+}
+
 // 0x8010A45C(class): the walk request.
 uint8_t walk_request_8010a45c(uint8_t c) noexcept {
     if (c == 57) return 0;
@@ -619,6 +664,7 @@ St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
     if (w.state_09 == 0) behaviour0_80107f5c(n, in, out);
     else if (w.state_09 == 1) behaviour1_80108100(n, in, out);
     else if (w.state_09 == 4) behaviour4_8010940c(n, in, out);
+    else if (w.state_09 == 7) behaviour7_80109cf8(n, in, out);
     else if (w.state_09 >= 6) out.talk_unported = true;
     else out.behaviour_unported = true;
     if (!(w.byte_0d & 0x20u) && in.floor_y) { w.raw_14[1] = *in.floor_y; w.fixed_1c[1] = int32_t(uint32_t(uint16_t(*in.floor_y)) << 16); }

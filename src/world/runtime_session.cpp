@@ -1294,6 +1294,15 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
     }
     if(dialogue_.waiting_for_advance){if(!in.advance_dialogue)return;dialogue_.waiting_for_advance=false;}
     if(dialogue_.waiting_for_script)return;
+    if(dialogue_.pending_step_op){
+        // 0xB2 life +2 per update to the maximum (0x8005DA78); 0xB3 special weapon (0x8005DAEC) and
+        // 0xB4 shield (0x8005DA1C) have nothing to do in the port yet (CANDIDATE: done at once).
+        if(dialogue_.pending_step_op==0xB2){
+            if(uint32_t(hp_)+2u<hp_max_){hp_=uint16_t(hp_+2);wr16w(player_,0x6E,hp_);return;}
+            hp_=hp_max_;wr16w(player_,0x6E,hp_);
+        }
+        dialogue_.pending_step_op=0;
+    }
     unsigned budget=settings_.text_speed==L3_TEXT_SPEED_INSTANT?64u:(settings_.text_speed==L3_TEXT_SPEED_FAST?4u:1u);
     MmlRuntimeEvent ev;
     while(budget--&&dialogue_cursor_->next(ev)){
@@ -1334,6 +1343,35 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
                         dialogue_.choice=0;dialogue_.waiting_for_choice=!dialogue_.choice_targets.empty();
                         if(dialogue_.waiting_for_choice)return;
                         break;
+                    }
+                    if(ev.opcode==0xAC&&ev.args.size()>=2){ // 0x80055C80: byte table[arg1] = arg2; 8..11 are 0x800C1B10..13
+                        if(ev.args[0]==8&&ev.args[1]==6){   // main phase 6: Data's Save screen
+                            RuntimeSaveState st=make_save_state(0x80000000u|(uint32_t(stage_)<<8)|uint32_t(map_area_index_&0xFFu));
+                            save_result_=(save_writer_&&save_writer_(st))?1:(save_writer_?-1:0);
+                            save_screen_frames_=3;stop_dialogue();return;
+                        }
+                        break;
+                    }
+                    if(ev.opcode==0xB2||ev.opcode==0xB3||ev.opcode==0xB4){dialogue_.pending_step_op=ev.opcode;return;}
+                    if(ev.opcode==0xB5&&ev.args.size()>=4){ // 0x80056280: shield ok? / weapon full? picks the block
+                        // Special weapons and the shield are not in the port: both read "done" (CANDIDATE),
+                        // so the life-only text block runs.
+                        const uint8_t target=ev.args[3];
+                        if(target!=0xFF){
+                            if(target>=(*message_banks_)[dialogue_.ref.bank].blocks.size()){stop_dialogue();return;}
+                            dialogue_.ref.block=target;dialogue_cursor_->start_block(target);
+                        }
+                        break;
+                    }
+                    if(ev.opcode==0xBF&&ev.args.size()>=2){ // 0x80057408: jump to block arg2 (bank arg1 = 0)
+                        if(ev.args[0]!=0||ev.args[1]>=(*message_banks_)[dialogue_.ref.bank].blocks.size()){stop_dialogue();return;}
+                        dialogue_.ref.block=ev.args[1];dialogue_cursor_->start_block(ev.args[1]);break;
+                    }
+                    if(ev.opcode==0x99&&ev.args.size()>=2&&ev.args[0]!=0){
+                        // 0x80055344 opens block arg2 in window slot arg1 (Data's menu: the "What do you
+                        // want to do?" header in slot 1, closed again by block 0xE3). The port has one
+                        // dialogue window: the side window is recorded, not drawn (CANDIDATE).
+                        dialogue_.side_window_block=ev.args[1];break;
                     }
                     if(ev.opcode==0x99&&ev.args.size()>=2){ // CALL bank 0, block
                         if(ev.args[0]!=0||ev.args[1]>=(*message_banks_)[dialogue_.ref.bank].blocks.size()){stop_dialogue();return;}
@@ -2095,7 +2133,7 @@ void RuntimeSession::update_st03_objects(){
     // (they keep the record's y; CANDIDATE); rand is a local 0x8007FE50.
     if(stage_!=3)return;
     // The talk runner's block +0 clears once the talk's window closed.
-    if(st03_talk_active_&&!dialogue_.active)st03_talk_active_=false;
+    if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
         if(!o.w.live||!(o.generic||o.scene_v1||o.car))continue;
@@ -2126,10 +2164,15 @@ void RuntimeSession::update_st03_objects(){
             return std::nullopt;
         };
         in.id_target=resolve(o.w.byte_0c);in.id_target2=resolve(o.w.byte_0d);
-        in.talk_active=st03_talk_active_;
+        in.talk_active=st03_talk_active_;in.save_phase=save_screen_frames_!=0;
         t=step_st03_npc(o,in);
         if(t.talk_target_taken||t.clear_player_target)player_check_npc_.reset();
         if(t.flag_set)set_story_flag(*t.flag_set,true);
+        if(t.reopen_menu){   // Data state 3: 0x80053A30(0) then 0x80053A08(0, 0xDC)
+            st03_talk_active_=true;
+            if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.reopen_menu});}
+                catch(const std::exception&){}
+        }
         if(t.talk_start){
             // 0x80063BC8 + the talk runner: message +0x0C in slot 0 of the
             // area's bank; player action 16 (talk pose) is not ported.
@@ -2708,6 +2751,9 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     if(gameplay_owned){
         RuntimeInputFrame selected=in;
         if(in.source_event_player_position)selected.held_psx_mask=selected.pressed_psx_mask=0;
+        // ST03 NPC talk: the original puts the player in action 0x10 (talk pose), which takes no
+        // pad input; the pose itself is not ported, the pad is held off instead (CANDIDATE).
+        if(stage_==3&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
         update_input_compat(selected);
         // 0x8003C07C: +0xBD 0x40 zeroes the pad, 0x20 takes event 0's 0x800C0F96.
         (void)source_player_input_select_8003c07c(player_,source_door_event0_.forced_pad);
@@ -2888,6 +2934,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
             source_event_busy_=static_cast<int16_t>(bits<=32767?int32_t(bits):int32_t(bits)-65536);
         }
     }
+    if(save_screen_frames_)--save_screen_frames_;   // main phase 6 stand-in (Data's Save)
     update_projectiles();update_dialogue(in);update_camera();
 }
 

@@ -1542,6 +1542,7 @@ struct DiagnosticAutoplay {
 static DiagnosticAutoplay g_autoplay;
 // Autoplay only: the Area 3 boss is winding up a slam (substate 6, phase <= 3).
 static bool g_autoplay_boss_slam=false;
+static int g_autoplay_boss_x=0;
 // Autoplay combat (diagnostic only): face the target and fire, keeping it in
 // a distance band. approach > 0: walk in to `approach`, backpedal (still
 // facing and firing) under approach - 200; approach == 0: only backpedal
@@ -1557,7 +1558,7 @@ static u32 autoplay_fight_keys(int tx,int tz,int heading,int approach,bool slam,
     u32 keys=0;
     // The Turn setting picks the turn buttons (L/R by default, D-pad when swapped).
     if(mag>64)keys|=autoplay_turn_key((gap>0)==(g_autoplay.turn_sign>0));
-    else if(tick%8u<4u)keys|=KEY_Y;
+    else if(tick%4u<2u)keys|=KEY_Y;  // fire on every non-slam frame window (aligned)
     const long d2=long(tx)*tx+long(tz)*tz;
     long lo=380,hi=-1;
     if(approach>0){hi=approach;lo=std::max(260,approach-200);}
@@ -5179,6 +5180,21 @@ int main() {
         L3QolSettings qol{}; l3_qol_settings_defaults(&qol);
         l3::RuntimeSession session(std::move(boot_map),std::move(areas[0]),std::move(messages),qol);
         session.set_stage(g_stage);   // 0x800C1B60
+        // Data's Save (ST03 message op 0xAC, main phase 6): the 3DS save file stands in for the
+        // memory card (CANDIDATE: no card/slot screen, one slot; the native .l3sv format has no stage
+        // field, so the checkpoint id carries stage << 8 | area behind a marker bit).
+        session.set_save_writer([](const l3::RuntimeSaveState& st)->bool{
+            std::vector<uint8_t> bytes;
+            try{bytes=l3::cook_l3save(st);}catch(...){return false;}
+            const char* tmp="sdmc:/3ds/Legends3DS/save_01516.l3sv.tmp";const char* dst="sdmc:/3ds/Legends3DS/save_01516.l3sv";
+            FILE* f=std::fopen(tmp,"wb");if(!f)return false;
+            const bool ok=std::fwrite(bytes.data(),1,bytes.size(),f)==bytes.size();
+            if(std::fclose(f)!=0||!ok){std::remove(tmp);return false;}
+            std::remove(dst);   // rename onto an existing file fails on the SD devoptab
+            if(std::rename(tmp,dst)!=0){std::remove(tmp);return false;}
+            hardware_test_trace("# data_save,written=1,bytes=%lu,area=%u,hp=%u",(unsigned long)bytes.size(),unsigned(st.area_id),unsigned(st.hp));
+            return true;
+        });
         // This native entry is a fresh diagnostic session, not a restored retail
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
@@ -5659,6 +5675,30 @@ int main() {
                         if(autoplay_step.keys==kAutoplayFight)
                             keys|=autoplay_fight_keys(tx,tz,heading,autoplay_step.cy,g_autoplay_boss_slam,autoplay_tick);
                         else keys|=autoplay_fight_keys(tx,tz,heading,0,false,autoplay_tick)&~u32(KEY_DUP|KEY_DDOWN);
+                        // Slam (substate 6): the boss's heading is fixed for the whole windup (0x80109638
+                        // never turns); its three floor shockwaves lie ahead on that line with radius up to
+                        // ~228 (+0x20 player) and a jump does not clear them (oracle, slot 9). Slide off the
+                        // line, toward +x first (the -479 wall is the near one at the spawn), calibrating the
+                        // key by the measured x displacement every 6 frames; no fire while sliding.
+                        // CANDIDATE route behaviour, not a source constant. Turn keys stay (profile 0).
+                        static bool slam_was=false,key_left=true;static int want=1,slide_frames=0,sx=0;
+                        const bool slam_now=autoplay_step.keys==kAutoplayFight&&g_autoplay_boss_slam&&!g_option_settings.turn_800c1b64;
+                        if(slam_now){
+                            if(!slam_was){sx=int(pp.x);slide_frames=0;}
+                            if(++slide_frames%6==0){
+                                const int dx=int(pp.x)-sx;
+                                if(dx>=-12&&dx<=12){want=-want;key_left=!key_left;}   // blocked: go the other way
+                                else if((dx>0)!=(want>0))key_left=!key_left;          // wrong way: other key
+                                sx=int(pp.x);
+                            }
+                            // Keep sliding until clear of the shockwave line (radius scale/2 + 0x20 = 260 at
+                            // full scale; CANDIDATE margin 280), then hold still. No fire in substate 6.
+                            const int lateral=int(pp.x)-g_autoplay_boss_x;
+                            const bool clear=(lateral<0?-lateral:lateral)>=280;
+                            keys&=~u32(KEY_DUP|KEY_DDOWN|KEY_DLEFT|KEY_DRIGHT|KEY_Y);
+                            if(!clear)keys|=(key_left?KEY_DLEFT:KEY_DRIGHT);
+                        }
+                        slam_was=slam_now;
                     } else if(!best&&++autoplay_quiet>=60)finish_step();
                     held=keys;down=held&~g_autoplay.previous;up_keys=g_autoplay.previous&~held;g_autoplay.previous=held;
                 } else if(autoplay_step.keys==kAutoplaySteerToPickup||autoplay_step.keys==kAutoplaySteerToPoint||autoplay_step.keys==kAutoplaySteerUntil||
@@ -6330,7 +6370,10 @@ int main() {
                         if(g_autoplay.active&&actor.source_area3_boss&&!actor.source_released&&!actor.source_hidden){
                             g_autoplay_enemies.push_back({{int(actor.source_origin[0]),int(actor.source_origin[2])}});
                             const auto& b=*actor.source_area3_boss;
-                            if(b.health_6e>0&&b.substate_09==6&&b.phase_0a<=3)boss_slam=true;
+                            if(b.health_6e>0&&b.substate_09==6&&b.phase_0a<=3){boss_slam=true;g_autoplay_boss_x=int(actor.source_origin[0]);}
+                            static int last_boss_hp=-1;
+                            if(b.health_6e!=last_boss_hp){last_boss_hp=b.health_6e;
+                                hardware_test_trace("# boss_hp,frame=%lu,hp=%d,evidence=FRONTEND_DIAGNOSTIC",(unsigned long)session.frame_counter(),int(b.health_6e));}
                         }
                         if(actor.source_released||actor.source_class!=0x20)continue;
                         std::array<int16_t,2> xz{};
@@ -7755,6 +7798,15 @@ int main() {
                     hardware_test_trace("# st03_npc_talk,frame=%lu,active=%u,target=%d,dialogue=%u,block=%u",
                         (unsigned long)session.frame_counter(),unsigned(talk),target?int(*target):-1,unsigned(session.dialogue().active),unsigned(session.dialogue().ref.block));
                 talk_was=talk;target_was=target;
+                {   // Data's menu (diagnostic): dialogue block / choice / advance changes
+                    static uint32_t dlg_key_was=0xFFFFFFFFu;
+                    const auto& dg=session.dialogue();
+                    const uint32_t key=(dg.active?1u<<31:0u)|(uint32_t(dg.ref.block)<<16)|(dg.waiting_for_choice?1u<<15:0u)|(uint32_t(dg.choice)<<8)|(dg.waiting_for_advance?1u:0u);
+                    if(key!=dlg_key_was){dlg_key_was=key;
+                        hardware_test_trace("# st03_dialogue,frame=%lu,active=%u,block=%u,choice_wait=%u,choice=%u,advance_wait=%u,save_screen=%u",
+                            (unsigned long)session.frame_counter(),unsigned(dg.active),unsigned(dg.ref.block),unsigned(dg.waiting_for_choice),
+                            unsigned(dg.choice),unsigned(dg.waiting_for_advance),unsigned(session.save_screen_active()));}
+                }
                 // Per-slot behaviour (scene 2 against the oracle): variant, +9, +0x0A, position.
                 static std::array<uint32_t,6> obj_was{};
                 const auto& objs=session.st03_objects();
