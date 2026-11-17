@@ -423,3 +423,17 @@ same 0x80107B84: ST03's generic NPC. Barrell variant 1 is 0x8010D0F4.
   with 1 (+0x0D 0x21 / 0x01), Data with 0.
 Not read yet: the behaviours, 0x8010A344 / 0x80051B68 (talk), family 0x60
 (the police car).
+
+**Port (slice A, run31 on Azahar, 3be2aad).** Object sets spawn from the
+cooked tables; the generic NPC's init, tick, range check and behaviour 0
+run; NPCs draw through the ST02 scene-actor path. With the DIAGNOSTIC route
+`stage2_to_police.txt` (stage-2 boot, then steering into the trigger box):
+set 0 at the crash site draws Roll, Barrell and Data (slots 0..2; the
+police car slot 3 is family 0x60, not handled); the route enters the box
+at (-2191, -1, 5662), frame 13795: 0x605, scene 1 runs in-game (target
+(-2496, -1, 5065)), flag 4 at 14052 and set 1 spawns (slots 0..5 live;
+Roll, Data, Inspector, officer drawn; Barrell variant 1 0x8010D0F4 and the
+police car not handled). No game over. Still unported: behaviours 1..7
+(Roll and Barrell use 1, a wander loop: random choice table 0x80116ED4 by
++0x0D & 0x30, move 0x8002FEA4 at speed 0x8010A49C, stop near the player),
+talk, shadows, family 0x60.
