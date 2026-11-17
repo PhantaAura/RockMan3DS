@@ -470,6 +470,73 @@ St03NpcTick step_scene_v1(St03Npc& n, const St03NpcInputs& in) noexcept {
     return out;
 }
 
+// The police car 0x801104C0 (family 0x60, class 0x0E; states 0x80117254,
+// behaviours 0x80117260).
+void car_init_801105b8(St03Npc& n) noexcept {
+    auto& w = n.w;
+    w.rot_54 = {0, uint16_t((uint32_t(w.byte_0c) << 9) & 0xE00u), 0};
+    w.rot_44 = {0, 0, 0}; n.speed_44 = 0; n.strafe_48 = 0;
+    w.flags_00 = uint8_t(w.flags_00 | 4u);
+    n.car_restart = false; n.car_timer_c0 = 0;
+    w.word_158 = 0x02000200u; w.word_15c = 512;
+    w.state_08 = 1; w.state_09 = 0; w.sub_0a = 0; w.byte_0b = 0;
+}
+void car_drive_801107fc(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    const bool back = (n.byte_0f & 0x40u) != 0;
+    if (w.sub_0a == 0) {
+        w.sub_0a = 1; n.car_timer_c0 = 30; w.flags_00 = uint8_t(w.flags_00 | 2u);
+        if (back) { n.car_last = 4; n.speed_44 = 0; } else { n.car_last = 5; n.speed_44 = 576; }
+        n.accel_4c = 22; n.strafe_48 = 0; n.car_index_c4 = 1;
+    } else if (w.sub_0a != 1) return;
+    if (!in.car_paths) { out.table_missing = true; return; }
+    const size_t base = (back ? 48u : 0u) + size_t(n.car_index_c4) * 8u;
+    if (base + 8 > in.car_paths->size()) { out.table_missing = true; return; }
+    const auto* e = in.car_paths->data() + base;
+    const int16_t ex = s16le(e), ez = s16le(e + 2), ew = s16le(e + 4), eh = s16le(e + 6);
+    const int16_t d = turn_toward(n, ex, ez, 32, in, out);
+    n.strafe_48 = int16_t(d * 4);
+    w.rot_54[2] = uint16_t((uint32_t(int32_t(d)) << 19) >> 20);
+    add_heading(n, d);
+    if (in.refs) {
+        const auto m = reference_player_motion_delta(*in.refs, w.rot_54[1], n.speed_44, 0, n.strafe_48);
+        const std::array<int32_t,3> delta{{m.dx_fixed, m.dy_fixed, m.dz_fixed}};
+        for (size_t a = 0; a < 3; ++a) {
+            w.fixed_1c[a] = int32_t(uint32_t(w.fixed_1c[a]) + uint32_t(delta[a]));
+            w.raw_14[a] = reference_fixed_to_short_80030150(w.fixed_1c[a]);
+        }
+        out.moved = true;
+    } else out.refs_missing = true;
+    const uint32_t bx = uint32_t(int32_t(w.raw_14[0]) - (int32_t(ex) - (ew >> 1)));
+    const uint32_t bz = uint32_t(int32_t(w.raw_14[2]) - (int32_t(ez) - (eh >> 1)));
+    if (bx < uint32_t(int32_t(ew)) && bz < uint32_t(int32_t(eh))) {
+        if (n.car_index_c4 == n.car_last) {
+            n.car_restart = true; n.speed_44 = 0; n.strafe_48 = 0; w.rot_54[0] = 0; w.rot_54[2] = 0;
+        }
+        ++n.car_index_c4;
+    }
+    const int32_t dx = int16_t(ex - w.raw_14[0]), dz = int16_t(ez - w.raw_14[2]);
+    if (dx * dx + dz * dz > 16384) { if (n.speed_44 < 800) n.speed_44 = int16_t(n.speed_44 + n.accel_4c); }
+    else if (n.speed_44 >= 353) n.speed_44 = int16_t(n.speed_44 - n.accel_4c);
+    out.car_dust = true;   // 0x80031618 x 4 every 4th frame (not ported)
+}
+St03NpcTick step_car(St03Npc& n, const St03NpcInputs& in) noexcept {
+    St03NpcTick out;
+    auto& w = n.w;
+    out.rand_used = true;   // +0xBE = 0x8007FE50()
+    if (w.state_08 == 0) { car_init_801105b8(n); return out; }
+    if (w.state_08 != 1) return out;
+    out.in_range = true;
+    if (in.flag4) w.flags_00 = uint8_t(w.flags_00 | 2u);
+    if (w.state_09 == 0) {   // 0x80110788: idle; restarts every 30 frames
+        if (w.sub_0a == 0) { w.sub_0a = 1; n.car_timer_c0 = 30; n.speed_44 = 0; n.strafe_48 = 0; }
+        else if (w.sub_0a == 1 && --n.car_timer_c0 < 0) n.car_restart = true;
+    } else if (w.state_09 == 1) car_drive_801107fc(n, in, out);
+    else out.behaviour_unported = true;
+    if (n.car_restart) { w.state_09 = 0; w.sub_0a = 0; w.byte_0b = 0; n.car_restart = false; }
+    return out;
+}
+
 } // namespace
 
 std::vector<St03ObjectRecord> st03_object_set(const SourceScenePackage& package, uint8_t n) {
@@ -502,6 +569,7 @@ void st03_object_set_variant(St03Npc& n, uint8_t variant) noexcept {
     n.generic = n.family == 0x20 && st03_generic_npc_class(n.object_class, variant);
     n.scene_v1 = n.family == 0x20 && variant == 1 && (n.object_class == 0x25 || n.object_class == 0x26 || n.object_class == 0x24);
     n.check_box = n.scene_v1 && n.object_class == 0x25 ? kSt03Barrell1CheckBox : kSt03NpcCheckBox;
+    n.car = n.family == 0x60 && n.object_class == 0x0E;
 }
 
 St03Npc spawn_st03_object(const St03ObjectRecord& r) {
@@ -533,6 +601,7 @@ St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
     St03NpcTick out;
     auto& w = n.w;
     if (w.live && n.scene_v1) return step_scene_v1(n, in);
+    if (w.live && n.car) return step_car(n, in);
     if (!w.live || !n.generic) return out;
     bool fresh = false;
     if (w.state_08 == 0) { init_80107bc0(n); fresh = true; out.anim_request = 0; }

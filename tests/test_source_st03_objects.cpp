@@ -9,6 +9,7 @@ static int failures = 0;
 #define CHECK(c) do { if (!(c)) { std::printf("FAIL %s:%d %s\n", __FILE__, __LINE__, #c); ++failures; } } while (0)
 
 static void put32(std::vector<uint8_t>& b, size_t o, uint32_t v) { for (int i = 0; i < 4; ++i) b[o + i] = uint8_t(v >> (8 * i)); }
+template <size_t N> static void put16v(std::array<uint8_t,N>& b, size_t o, int16_t v) { b[o] = uint8_t(v); b[o + 1] = uint8_t(uint16_t(v) >> 8); }
 static void put16(std::vector<uint8_t>& b, size_t o, int16_t v) { b[o] = uint8_t(v); b[o + 1] = uint8_t(uint16_t(v) >> 8); }
 
 int main() {
@@ -229,6 +230,30 @@ int main() {
         r = step_st03_npc(of, k2); CHECK(of.w.pose_ac == 8);
         // Restart bit: the officer goes back to behaviour 0.
         of.flags_348 = 1; r = step_st03_npc(of, k2); CHECK(of.w.state_09 == 0 && of.w.sub_0a == 0);
+    }
+    // The police car (family 0x60, class 0x0E): idle restarts, then the
+    // drive to the path-B waypoints (test trig: forward is -z).
+    {
+        ReferenceTables refs; refs.trig.fill({0, 4096});
+        std::array<uint8_t,88> paths{};
+        // Path B entry 1: 200 below the car, box 128 x 128.
+        put16v(paths, 48 + 8, 0); put16v(paths, 48 + 10, -200); put16v(paths, 48 + 12, 128); put16v(paths, 48 + 14, 128);
+        St03ObjectRecord cr; cr.slot = 5; cr.object_class = 0x0E; cr.family = 0x60; cr.word_08 = {0, 0, 0, 0x80};
+        auto c = spawn_st03_object(cr);
+        CHECK(c.car && !c.generic && !c.scene_v1);
+        St03NpcInputs k; k.refs = &refs; k.car_paths = &paths;
+        auto r = step_st03_npc(c, k);                      // init
+        CHECK(c.w.state_08 == 1 && c.w.state_09 == 0 && !(c.w.flags_00 & 2));
+        k.flag4 = true;
+        r = step_st03_npc(c, k); CHECK(c.w.sub_0a == 1 && c.car_timer_c0 == 30 && (c.w.flags_00 & 2));
+        int n = 0; while (c.w.sub_0a == 1 && n < 40) { step_st03_npc(c, k); ++n; }
+        CHECK(n == 31 && c.w.sub_0a == 0 && c.w.state_09 == 0);   // restart after the countdown
+        // Scene 2: +0x0F |= 0x40, +9 = 1: path B, from speed 0 accelerating by 22.
+        c.byte_0f |= 0x40; c.w.state_09 = 1; c.w.sub_0a = 0;
+        r = step_st03_npc(c, k);
+        CHECK(r.moved && c.car_last == 4 && c.car_index_c4 == 1 && c.speed_44 == 22);
+        n = 0; while (c.car_index_c4 == 1 && n < 400) { step_st03_npc(c, k); ++n; }
+        CHECK(c.car_index_c4 == 2 && c.w.raw_14[2] < -136 && c.w.raw_14[2] > -264);
     }
     // Requests.
     CHECK(st03_npc_idle_request(0x11) == 1 && st03_npc_idle_request(0x05) == 0);

@@ -28,6 +28,8 @@ struct St03Event8Profile {
     bool walk_loaded = false;
     std::array<uint8_t,112> walk_speeds{};         // 0x80116DAC
     std::array<uint8_t,112> walk_tables{};         // 0x80116ED4
+    bool car_paths_loaded = false;
+    std::array<uint8_t,88> car_paths{};            // 0x80117274
 };
 bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profile& out);
 

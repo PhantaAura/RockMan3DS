@@ -198,6 +198,10 @@ bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profi
         for (size_t i = 0; i < 112; ++i) { out.walk_speeds[i] = ws->bytes[i]; out.walk_tables[i] = wt->bytes[i]; }
         out.walk_loaded = true;
     }
+    if (const auto* cp = package.data_at(kSt03CarPaths); cp && cp->bytes.size() >= 88) {
+        for (size_t i = 0; i < 88; ++i) out.car_paths[i] = cp->bytes[i];
+        out.car_paths_loaded = true;
+    }
     return true;
 }
 

@@ -2028,7 +2028,7 @@ void RuntimeSession::update_st03_objects(){
     if(st03_talk_active_&&!dialogue_.active)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
-        if(!o.w.live||!(o.generic||o.scene_v1))continue;
+        if(!o.w.live||!(o.generic||o.scene_v1||o.car))continue;
         St03NpcInputs in;
         in.player_x=rds16w(player_,0x14);in.player_z=rds16w(player_,0x18);
         in.idle_timers=st03_event8_profile_&&st03_event8_profile_->idle_timers_loaded?&st03_event8_profile_->idle_timers:nullptr;
@@ -2043,6 +2043,8 @@ void RuntimeSession::update_st03_objects(){
         in.heading_to_player=source_heading_80031198(o.w.raw_14[0],o.w.raw_14[2],rds16w(player_,0x14),rds16w(player_,0x18),actor_angle_steps_);
         in.window_open=dialogue_.active;   // 0x80098A58 & 0x00200000 (CANDIDATE: any open window)
         in.angle_steps=actor_angle_steps_;
+        if(st03_event8_profile_&&st03_event8_profile_->car_paths_loaded)in.car_paths=&st03_event8_profile_->car_paths;
+        in.flag4=story_flag(4);
         in.player_y=rds16w(player_,0x16);
         // 0x80036294(+0x0C / +0x0D): id 0 is the player; an ST03 object's id
         // (its +1) is family | slot here (CANDIDATE: the original's +1 is

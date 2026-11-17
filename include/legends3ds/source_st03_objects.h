@@ -5,7 +5,8 @@
 // the Inspector 0x26 and the officer 0x24). Ported: spawn, init (state 0),
 // the tick (state 1) with its range check, floor and animation, behaviour 0
 // (idle and fidget), behaviour 1 (walk) and the talk (0x8010A344, behaviour
-// 4); the variant-1 scene NPCs (Barrell 0x8010D0F4, the Inspector 0x8010D968,
+// 4); the police car (0x801104C0: idle and the waypoint drive; its mesh and
+// dust are not drawn); the variant-1 scene NPCs (Barrell 0x8010D0F4, the Inspector 0x8010D968,
 // the officer 0x8010C66C: init, tick, all their behaviours; sounds reported).
 // Generic behaviours 2, 3, 5..7, shadows and the family-0x60 police car
 // are reported, not run.
@@ -25,6 +26,7 @@ constexpr uint32_t kSt03ObjectSetRecordsA = 0x801154B0u, kSt03ObjectSetRecordsB 
 constexpr uint32_t kSt03NpcIdleTimers = 0x80116E68u;    // 4 rows x 16 bytes
 constexpr uint32_t kSt03NpcWalkSpeeds = 0x80116DACu;    // byte per class
 constexpr uint32_t kSt03NpcWalkTables = 0x80116ED4u;    // 4 choice rows + 3 timer rows
+constexpr uint32_t kSt03CarPaths = 0x80117274u;         // police car waypoints {x, z, w, h}
 constexpr size_t kSt03ObjectSlots = 10;
 
 struct ReferenceTables;
@@ -55,6 +57,12 @@ struct St03Npc {
     uint8_t byte_0e = 0, byte_0f = 0;          // +0x0E / +0x0F (record [10..11])
     bool generic = false;                      // handled by 0x80107B84 (family 0x20, +3 == 0)
     uint8_t variant = 0;                       // work +4 (record [2]): the class row's column
+    bool car = false;                          // the police car, family 0x60 class 0x0E (0x801104C0)
+    // Police car: +0x48 strafe, +0x4C acceleration, +0xBC bit 0 restart,
+    // +0xC0 timer, +0xC4 waypoint index, 0x8011CB28 last waypoint.
+    int16_t strafe_48 = 0, accel_4c = 0, car_timer_c0 = 0, car_index_c4 = 0;
+    uint8_t car_last = 0;
+    bool car_restart = false;
     bool scene_v1 = false;                     // variant 1 of Barrell 0x25 (0x8010D0F4), the Inspector
                                                // 0x26 (0x8010D968), the officer 0x24 (0x8010C66C)
     std::array<int16_t,6> check_box = kSt03NpcCheckBox;   // +0x10
@@ -90,6 +98,9 @@ struct St03NpcInputs {
     const SourceAngleSteps* angle_steps = nullptr;         // 0x80031198 for 0x80031BEC
     std::optional<std::array<int16_t,3>> id_target;        // 0x80036294(+0x0C)->+0x14 (resolved by the caller)
     std::optional<std::array<int16_t,3>> id_target2;       // 0x80036294(+0x0D)->+0x14
+    // Police car:
+    const std::array<uint8_t,88>* car_paths = nullptr;     // 0x80117274 (path A, 6 x 8) + 0x801172A4 (path B, 5 x 8)
+    bool flag4 = false;                                    // 0x8001DA58(4): the car is drawn
     bool animation_finished = false;           // +0xA7 < 0
     const std::array<uint8_t,64>* idle_timers = nullptr;   // 0x80116E68
     // Talk (shared NPC talk path):
@@ -108,6 +119,7 @@ struct St03NpcTick {
     bool table_missing = false;                // walk_speeds / walk_tables absent
     bool refs_missing = false;                 // refs absent (no walk, no ahead check)
     bool moved = false;                        // 0x8002FEA4 ran
+    bool car_dust = false;                     // the car's 0x80031618 dust (not ported)
     bool id_target_missing = false;            // behaviour 1/2 needed 0x80036294(+0x0C)
     bool clear_player_target = false;          // *(0x800B5334) = 0
     std::optional<uint16_t> flag_set;          // 0x8001DA8C(flag)
