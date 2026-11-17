@@ -106,3 +106,24 @@ main.cpp adds the other OPTION bytes. Not modelled (written as 0, UNKNOWN): the 
 Azahar run 42: `save_01516_slot1.blk` passes mml_retail_save_verify, its icon/CLUT bytes equal an
 oracle-written card's, the title reads "MEGAMAN LEGENDS[1]00:01:42" in the same format.
 Still open: the card/slot/confirm screen (phase 6, 0x800665FC).
+
+## Save/slot screen 0x800665FC (research, not ported yet)
+Work struct 0x80098910: +0 u16, +2 u16 mode arg (a0: 1 = save), +4 state (table 0x8008FD10:
+0x80066664 init / 0x800666D8 / 0x80066714 run sub / 0x80066750 exit -> returns 1 so phase 6
+goes to 3/2), +5 sub (table 0x8008FD20: 0x80066764, 0x8006689C, 0x80066D60, 0x80066E48,
+0x80066F40, 0x80067174, 0x8006779C), +6 inner step, +7 "bad data seen", +8/+0xA pad
+pressed/held (0x800C0C2A / 0x800C0C26), +0xC timer. The windows are message scripts in slots
+0..2 opened with 0x8005382C from the message pointer table (save: 0x8008CAEC/F0/F4; load:
+0x8008CB40/44/48), choices come back through 0x80098A58 (bit 30 | row).
+* sub 0 (0x80066764): title, "Save to which Memory card?", Memory card 1 / 2 / Cancel. Row 0/1 ->
+  gp+0x11E4 = card, sub 1; Cancel -> state 3.
+* sub 1 (0x8006689C): "Memory card n" + "Checking data..." (0x8008CAF8+card, 0x8008CB00), 15-frame
+  wait, then reads the first 0x180 bytes of the five files (names 0x8009 80AC[i], 0x80064EA4)
+  into 0x800BAF38 + i*0x180 and patches the list strings (pointer tables 0x8008D168 / 0x8008D184):
+  valid -> stage name 0x8008CE94 + 13*stage and the time glyphs from +0x101; empty -> "No data!"
+  0x80097FAC and 0x80097FFC; broken -> 0x80097FC0, +7 = 1. +0x109 per record: 1 ok, 2 empty, 3 bad.
+  Result codes from 0x80064EA4 go through the jump table 0x80011410 (6 cases).
+* subs 2..6 (slot list, confirm, writing, complete, errors) still to trace.
+Port plan: run these scripts on the existing MessageWindows engine (mml_message_window.cpp,
+already used by OPTION and the Start sub-screen) with the 3DS save file as card 1 and card 2
+absent; draw on the bottom screen like the sub-screen (CANDIDATE placement).
