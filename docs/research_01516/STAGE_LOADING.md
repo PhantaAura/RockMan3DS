@@ -326,3 +326,10 @@ door locks 2167, 0x1FF 2168, 0x0A 4103, 0x03 + 0x388 4746. Message opcode
 0x9A is the table entry 0x8008AB84 (base 0x8008AB1C, op − 0x80); the draw
 table 0x8008ACC4 skips 0x9A/0x9B as 3 bytes (0x80054324), as the port's
 message cursor already does.
+
+**3DS result (run29, 7304def, Azahar):** `compare_recomp_3ds.py` reports
+order matches; the port sets 0x384 with 0x600's clear (frame 4392), 0x0A
+during message 4 (5325), 0x03 and 0x388 together at the end (5657). Only
+the door locks 0x7E1/0x7E2/0x7E4/0x7E8 and 0x1FF are missing (doors
+slice). The player reaches (-4584, -1, 1431) by frame 4396, within 2–3
+frames of event 8 starting (4393), with no game over.
