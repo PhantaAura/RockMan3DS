@@ -348,6 +348,10 @@ public:
     const std::array<St02EventActorWork,5>& source_st02_event4_actors() const noexcept { return source_st02_actors_; }
     const std::array<St02EventActorTick,5>& source_st02_event4_actor_ticks() const noexcept { return source_st02_actor_ticks_; }
     const St02ActorBankSequence& source_st02_event4_sequence() const noexcept { return source_st02_sequence_; }
+    // The event-4 actors to draw this frame (live, drawn bit set, model and
+    // pose resolved), with their part matrices in raw terrain units.
+    struct St02ActorDraw { uint8_t slot=0; const ActorMeshResource* mesh=nullptr; ImportedActorPoseMatrices matrices{}; };
+    size_t source_st02_event4_draws(std::array<St02ActorDraw,5>& out) const noexcept;
     const std::optional<SourcePostWinHandoff>& source_post_win_handoff() const noexcept { return source_post_win_handoff_; }
     std::optional<uint32_t> pending_source_post_win_cd() const noexcept {
         return source_post_win_cd_done_?std::nullopt:source_post_win_cd_;
@@ -808,6 +812,8 @@ private:
     std::array<St02EventActorTick,5> source_st02_actor_ticks_{};
     St02ActorBankSequence source_st02_sequence_{};
     bool source_st02_banks_tried_=false;
+    std::array<St02ActorModel,5> source_st02_models_{};
+    std::array<St02ActorModel,2> source_st02_prop_models_{};
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;
     uint8_t stage_=0;
