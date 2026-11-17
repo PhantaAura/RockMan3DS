@@ -57,6 +57,7 @@ int mml_message_fixed_arg_bytes(uint8_t op) {
         case 0xB2: return 0;
         case 0xB3: return 0;
         case 0xB4: return 0;
+        case 0xB5: return 4; // IF shield/weapon: 0x80056280 picks one of four blocks
         case 0xB9: return 3; // IF
         case 0xBA: return 0; // COST
         case 0xBF: return 2; // JUMP

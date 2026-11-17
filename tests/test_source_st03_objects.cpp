@@ -152,7 +152,18 @@ int main() {
         CHECK(o.w.state_09 == 0 && o.w.rot_54[1] == 0 && (o.flags_348 & 2u) && !(o.flags_348 & 4u));
         // Data's talk is behaviour 7 (reported).
         auto d2 = spawn_st03_object(set[0]); step_st03_npc(d2, k);
-        k.player_targets_me = true; r = step_st03_npc(d2, k); CHECK(d2.w.state_09 == 7 && r.talk_unported);
+        k.player_targets_me = true; k.talk_active = true; r = step_st03_npc(d2, k);
+        CHECK(d2.w.state_09 == 7 && !r.talk_unported && d2.talk_34b == 1 && !r.talk_start);   // state 0 ran
+        k.player_targets_me = false;
+        r = step_st03_npc(d2, k); CHECK(d2.talk_34b == 2 && r.talk_start && *r.talk_start == d2.w.byte_0c);   // state 1 starts the talk
+        r = step_st03_npc(d2, k); CHECK(d2.talk_34b == 2);                       // waits while the talk runs
+        k.save_phase = true; r = step_st03_npc(d2, k); CHECK(d2.talk_34b == 3);   // Save: main phase 6
+        r = step_st03_npc(d2, k); CHECK(d2.talk_34b == 3 && !r.reopen_menu);
+        k.save_phase = false; r = step_st03_npc(d2, k);
+        CHECK(d2.talk_34b == 2 && r.reopen_menu && *r.reopen_menu == 0xDC);       // back to the menu
+        k.talk_active = false; r = step_st03_npc(d2, k); CHECK(d2.talk_34b == 4);   // talk over
+        int m = 0; while (d2.w.state_09 == 7 && m < 64) { step_st03_npc(d2, k); ++m; }
+        CHECK(d2.w.state_09 == (d2.w.byte_0d & 7u) && (d2.flags_348 & 2u));
     }
     // Barrell variant 1 (set 1 record: class 0x25, [2] = 1, [4] = 1).
     {

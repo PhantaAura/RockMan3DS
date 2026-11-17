@@ -108,6 +108,7 @@ struct St03NpcInputs {
     std::optional<uint16_t> heading_to_player; // 0x80031198(npc +0x14, player +0x14) (result bits)
     bool window_open = false;                  // 0x80098A58 & 0x00200000
     bool talk_active = false;                  // 0x800987B0 (the talk runner's block +0)
+    bool save_phase = false;                   // main phase 0x800C1B10 == 6 (Data's Save, see DATA_MENU.md)
 };
 struct St03NpcTick {
     bool in_range = false;                     // 0x8010A4EC
@@ -128,6 +129,7 @@ struct St03NpcTick {
     bool talk_target_taken = false;            // 0x8010A344 switched to the talk behaviour
     std::optional<uint8_t> talk_start;         // 0x80063BC8(npc, 0, 0, +0x0C): message id
     bool checkable = false;                    // 0x80051B68(work, 1, -1, 0): a talk candidate this frame
+    std::optional<uint8_t> reopen_menu;        // Data state 3: 0x80053A08(0, 0xDC) after the save screen
 };
 St03NpcTick step_st03_npc(St03Npc& npc, const St03NpcInputs& in) noexcept;
 

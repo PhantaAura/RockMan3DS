@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include "legends3ds/source_angle.h"
 #include "legends3ds/source_gameplay_camera.h"
 #include "legends3ds/bottom_screen.h"
@@ -43,6 +44,7 @@
 #include <vector>
 #include <unordered_map>
 #include <array>
+#include <functional>
 
 namespace l3 {
 struct SourceSceneViewProfile;
@@ -181,6 +183,7 @@ struct RuntimeDialogueState {
     uint8_t choice = 0;
     std::vector<uint8_t> choice_targets;                 // per 0x96 option; 0xFF continues
     std::vector<uint16_t> option_glyph_at;               // visible_glyphs index of each option
+    uint8_t pending_step_op = 0;                         // 0xB2 / 0xB3 / 0xB4: recharge step still running
 };
 
 struct RuntimeCheckpoint {
@@ -536,6 +539,11 @@ public:
     std::optional<size_t> player_check_target() const { return player_check_target_; }
     std::optional<size_t> player_check_npc() const { return player_check_npc_; }
     bool st03_talk_active() const noexcept { return st03_talk_active_; }
+    // Data's Save (message op 0xAC writing main phase 6, docs/research_01516/DATA_MENU.md): the
+    // writer stores the 3DS save file; the port has no memory-card screen (CANDIDATE).
+    void set_save_writer(std::function<bool(const RuntimeSaveState&)> writer) { save_writer_ = std::move(writer); }
+    bool save_screen_active() const noexcept { return save_screen_frames_ != 0; }
+    int save_result() const noexcept { return save_result_; }   // 0 none, 1 written, -1 failed
     // ST00 E0/05 boxes from the conditional list (0x80113EE0); each owns its
     // +0x30 hit record. Proxy and reward requests are consumed by the caller.
     struct E005Box {
@@ -844,6 +852,9 @@ private:
     std::array<ActorSequenceCursor,kSt03ObjectSlots> st03_object_cursor_{};
     uint32_t st03_npc_seed_=0;
     bool st03_talk_active_=false;              // 0x800987B0 for an NPC talk
+    std::function<bool(const RuntimeSaveState&)> save_writer_;
+    uint8_t save_screen_frames_=0;             // main phase 6 stand-in
+    int save_result_=0;
     std::optional<size_t> player_check_npc_;   // player +0x184 when it names an ST03 scene object   // CANDIDATE: 0x8007FE50's seed and caller order are not modelled
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;

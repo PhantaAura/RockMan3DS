@@ -5180,6 +5180,21 @@ int main() {
         L3QolSettings qol{}; l3_qol_settings_defaults(&qol);
         l3::RuntimeSession session(std::move(boot_map),std::move(areas[0]),std::move(messages),qol);
         session.set_stage(g_stage);   // 0x800C1B60
+        // Data's Save (ST03 message op 0xAC, main phase 6): the 3DS save file stands in for the
+        // memory card (CANDIDATE: no card/slot screen, one slot; the native .l3sv format has no stage
+        // field, so the checkpoint id carries stage << 8 | area behind a marker bit).
+        session.set_save_writer([](const l3::RuntimeSaveState& st)->bool{
+            std::vector<uint8_t> bytes;
+            try{bytes=l3::cook_l3save(st);}catch(...){return false;}
+            const char* tmp="sdmc:/3ds/Legends3DS/save_01516.l3sv.tmp";const char* dst="sdmc:/3ds/Legends3DS/save_01516.l3sv";
+            FILE* f=std::fopen(tmp,"wb");if(!f)return false;
+            const bool ok=std::fwrite(bytes.data(),1,bytes.size(),f)==bytes.size();
+            if(std::fclose(f)!=0||!ok){std::remove(tmp);return false;}
+            std::remove(dst);   // rename onto an existing file fails on the SD devoptab
+            if(std::rename(tmp,dst)!=0){std::remove(tmp);return false;}
+            hardware_test_trace("# data_save,written=1,bytes=%lu,area=%u,hp=%u",(unsigned long)bytes.size(),unsigned(st.area_id),unsigned(st.hp));
+            return true;
+        });
         // This native entry is a fresh diagnostic session, not a restored retail
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
