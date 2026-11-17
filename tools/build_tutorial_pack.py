@@ -77,7 +77,7 @@ EXTRA_STAGES={
     # (oracle savestate m3_01: 4 KiB of 0x8016C000 equal). None = container
     # not identified yet; that area binds map data only.
     3:{'container':'ST03.BIN','areas':(None,'ST03_00.BIN',None,None,None,None,None,None,None),
-       'ebd':{1:r'..\EMBIN\ST03_00A.EBD'}},
+       'ebd':{1:r'..\EMBIN\ST03_00A.EBD'},'events':(8,)},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 

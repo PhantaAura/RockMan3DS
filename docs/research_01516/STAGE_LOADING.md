@@ -237,3 +237,60 @@ parts, 157; 40/07 13 parts, 155; 20/0A 2 parts, 1920 (the ship); 20/27 2
 parts, 79 per variant; 352 KB for all six models (768 KB budget). Shading,
 GTE rounding, OT order and the face UV channels are not covered; nothing
 has been seen on hardware yet.
+
+## ST03 area 1 and event 8 (VERIFIED from the instructions unless marked)
+
+**Start.** ST03 area 1's set-up 0x80100990 (state byte +4) tests story
+flags with 0x8001DA58: flag 12 -> object set 5; 14 -> set 4; 13 -> set 3;
+0 -> set 2; 4 -> set 1; 3 -> set 0; none of them (the first arrival) ->
+set 0, then 0x8001DDE4(8) with event +4 = 0 (scene 0). Object sets
+(0x80103AB0(n)): table 0x80116578 + 8n = {count, records}; each 20-byte
+record goes through 0x8001EAE8 and its object pointer is kept at
+0x8011CB30 + 4 * record[0], with a bitmask at 0x8011536C. 0x80103BA0
+releases the current set (family 0x20: +8 = 2; family 0x60: own path).
+
+**Event 8** (handler 0x80101D18) runs one of five scenes by event +4
+(table 0x80115370: 0x80101D54, 0x80102224, 0x8010263C, 0x80103578,
+0x80102DBC), each a state machine on +6. Each scene has its own
+timelines and camera programs (cook_cutscene: six timelines, every record
+calling 0x80103A88 = 0x8001EC0C camera step + 0x8001F070 timeline step).
+Records with duration 0xFFFF hold; the scene moves past them with
+0x8001F158 (unconditional next record: +0xA4 += 8, +8/+9 from the new
+record with the same counter resets as 0x8001F070, +0x10 = 0).
+0x8001F1DC zeroes +8, +9, +0x10, +0x18, +0x1C.
+
+**Scene 0** (the crash site, 0x80101D54, states via 0x80100004):
+- 0: next. 1: when 0x80042238(player) is ready: 0x8001F1DC,
+  0x8001E6C0(0, 0, 0), camera program 0x80115FC4, timeline 0x80115FB4;
+  falls into 2.
+- 2: player +8 = 3, +9 = 1 (walk to target), target 16.16 at +0x428 =
+  (-4584, -1, 1431), shorts via 0x80030150 into +0x438, +0x440..+0x444 =
+  0, +0x448 = 48, +0xBD |= 0x10; scene object 0 (0x8011CB30): +4 = 2,
+  +8 = 0, heading 3703; object 1 (0x8011CB34): +4 = 1, +8 = 0, heading
+  3790.
+- 3: waits for the main-loop subphase byte 0x800C1B11 == 2; +7 = 1;
+  0x8001F1DC, 0x8001E6C0(0, 0, 0), camera 0x80116034, timeline 0x8011600C;
+  falls into 4.
+- 4: when the current record's byte 1 (event +9) is 1: target again,
+  heading +0x442 = 1255, countdown +0x0C = 15.
+- 5: countdown below 0: message block 1 (0x80053A08(0, 1)); object 1
+  +9 = 3, +0x0A = 0.
+- 6..8 (fall through while the slot-0 window flag 0x80098A58 &
+  0x08000000 is clear; opening a message sets it at once, so one message
+  per frame): message 2 with object 0 +9 = 1, object 1 +9 = 0; next record
+  and message 3 with object 0 +9 = 0, object 1 +9 = 3; next record with
+  object 1 +9 = 4.
+- At the timeline's end record (byte 0 == 0xFF): message 4; then once the
+  window closes, countdown 8; at zero: 0x80042314(player) release, event
+  +0 = 0, 0x8009395C = 1, flag 3 (0x8001DA8C), release the set
+  (0x80103BA0) and spawn set 0.
+- Every frame from state 2 the current record's callback runs; in states
+  3..10 Start (0x8001DE84) skips: 0x80053A30, 0x80063BA8, 0x8001D494(0,
+  1, 0), 0x8001B314, 0x8001A008(264, 0, 0), flag 10, state 11 with
+  countdown 1, and the player target is placed again.
+
+The roadmap's oracle run (M3_ROADMAP.md S1) matches: control at
+(-4584, -1, 1431), flags 0x0A then 0x03. Area 1's messages are
+`..\mess\st03_00.msg` inside ST03_00.BIN (not cooked yet). Scenes 1..4
+(police car, Inspector, ...) and the ST03 scene objects' handlers are
+not read yet.

@@ -30,6 +30,7 @@
 #include "legends3ds/source_door_event.h"
 #include "legends3ds/source_st00_post_win.h"
 #include "legends3ds/source_st02_event4_actors.h"
+#include "legends3ds/source_st03_event8.h"
 #include "legends3ds/source_stage_load.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
@@ -339,6 +340,11 @@ public:
     // prefix (flag 0x605), after which event 2 starts. Event 2's hand-off asks
     // for stage 2, which the port does not load: it is retained and reported.
     bool bind_source_post_win_profile(SourcePostWinProfile profile) noexcept;
+    // ST03 event 8 (scene 0 only); see source_st03_event8.h.
+    bool bind_st03_event8_profile(St03Event8Profile profile) noexcept;
+    const St03Event8& st03_event8() const noexcept { return st03_event8_; }
+    const St03Event8Step& st03_event8_step() const noexcept { return st03_event8_step_; }
+    std::optional<uint8_t> st03_area1_object_set() const noexcept { return st03_area1_object_set_; }
     bool source_post_win_profile_bound(uint8_t event) const noexcept {
         const size_t i=event==3?0:event==2?1:event==4?2:3;return i<3&&source_post_win_profiles_[i].has_value();
     }
@@ -685,6 +691,7 @@ private:
     void update_source_door_event0();
     void update_source_post_win_event(const RuntimeInputFrame&);
     void update_source_st02_event4_actors(const SourcePostWinProfile&);
+    void update_st03_event8(const RuntimeInputFrame&);
     void update_source_door_objects();
     void write_idx_descriptor(uint16_t idx,uint16_t descriptor);
     std::optional<int16_t> player_packed_cell() const;
@@ -814,6 +821,11 @@ private:
     bool source_st02_banks_tried_=false;
     std::array<St02ActorModel,5> source_st02_models_{};
     std::array<St02ActorModel,2> source_st02_prop_models_{};
+    std::optional<St03Event8Profile> st03_event8_profile_;
+    St03Event8 st03_event8_{};
+    St03Event8Step st03_event8_step_{};
+    bool st03_area1_setup_done_=false;
+    std::optional<uint8_t> st03_area1_object_set_;
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;
     uint8_t stage_=0;
