@@ -302,6 +302,12 @@ bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profi
         for (size_t i = 0; i < 112; ++i) { out.walk_speeds[i] = ws->bytes[i]; out.walk_tables[i] = wt->bytes[i]; }
         out.walk_loaded = true;
     }
+    if (const auto* d = package.data_at(kSt03Doors); d && d->bytes.size() >= 128) {
+        for (size_t i = 0; i < 8; ++i) out.doors[i] = d->bytes[i];
+        for (size_t r = 0; r < out.door_states.size(); ++r)
+            for (size_t i = 0; i < 8; ++i) out.door_states[r][i] = d->bytes[8 + r * 8 + i];
+        out.doors_loaded = true;
+    }
     if (const auto* cp = package.data_at(kSt03CarPaths); cp && cp->bytes.size() >= 88) {
         for (size_t i = 0; i < 88; ++i) out.car_paths[i] = cp->bytes[i];
         out.car_paths_loaded = true;

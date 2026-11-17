@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1765,8 +1765,24 @@ bool RuntimeSession::bind_st03_event8_profile(St03Event8Profile profile) noexcep
 }
 void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     st03_event8_step_={};
-    // 0x80100990 runs on every load of area 1.
-    if(stage_!=3||map_area_index_!=1){st03_area1_setup_done_=false;st03_area1_setup_state_=0;release_st03_objects();return;}
+    // Stage / area loads into ST03: the stage init's door locks (0x801007B4)
+    // on a stage load, the area loader's 0x1FF clear (0x8001F554) on every
+    // load, then the area-enter call 0x8010089C until it sets 0x1FF; the
+    // per-area update (area 1: 0x80100990) runs only once 0x1FF is set.
+    const int area_key=stage_==3?int(map_area_index_):-1;
+    if(area_key!=st03_area_key_){
+        const auto flag=[&](uint16_t f){return story_flag(f);};
+        const auto set=[&](uint16_t f,bool v){set_story_flag(f,v);};
+        if(area_key>=0&&st03_area_key_<0&&st03_event8_profile_)
+            st03_stage_init_door_locks_801007b4(*st03_event8_profile_,0,flag,set);   // 0x800C1B62 = 0 (CANDIDATE)
+        if(area_key>=0)set_story_flag(0x1FF,false);
+        st03_area_key_=area_key;
+    }
+    if(stage_==3&&!story_flag(0x1FF))
+        st03_area_enter_ported_=st03_area_enter_8010089c(uint8_t(map_area_index_),0,   // block +4 = 0 (CANDIDATE)
+            [&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
+    // 0x80100990 runs on every load of area 1, after the area-enter call.
+    if(stage_!=3||map_area_index_!=1||!story_flag(0x1FF)){st03_area1_setup_done_=false;st03_area1_setup_state_=0;release_st03_objects();return;}
     // ST03 area 1 set-up 0x80100990 every frame (its byte +4 restarts at 0
     // on each area-1 entry: CANDIDATE). Object sets (0x80103AB0) are not
     // ported; the chosen set is kept for traces.

@@ -180,6 +180,35 @@ int main() {
         CHECK(s.skipped && e2.state == 11 && s.release_slots == 0x3A && s.player->walk && s.player->position[0] == -2601);
         r.start_pressed = false; s = step_st03_event8(e2, q, r); CHECK(!e2.active && *s.flag_set == 0);
     }
+    // Door locks: 0x8001E4C4 on ST03's list and rows (synthetic copy of 0x801152E4).
+    {
+        St03Event8Profile d; d.doors_loaded = true;
+        d.doors = {3, 4, 8, 2, 1, 0, 0, 0};
+        d.door_states[0] = {0, 1, 1, 1, 1, 0, 0, 0};
+        d.door_states[14] = {0, 1, 1, 0, 0, 0, 0, 0};
+        d.door_states[13] = {0, 1, 1, 0, 0, 0, 0, 0};
+        d.door_states[12] = {0, 1, 1, 1, 0, 0, 0, 0};
+        std::array<bool, 0x800> fl{}; fl[0x7E3] = true; fl[0x7C1] = true;
+        const auto get = [&](uint16_t f) { return fl[f]; };
+        const auto set = [&](uint16_t f, bool v) { fl[f] = v; };
+        st03_stage_init_door_locks_801007b4(d, 0, get, set);
+        CHECK(fl[0x7E1] && fl[0x7E2] && !fl[0x7E3] && fl[0x7E4] && fl[0x7E8] && !fl[0x7C1] && !fl[0x7E0]);
+        fl[2] = true; st03_stage_init_door_locks_801007b4(d, 0, get, set);   // flag 2: row 14 unlocks 2 and 1
+        CHECK(!fl[0x7E1] && !fl[0x7E2] && fl[0x7E4] && fl[0x7E8]);
+        // 0xFF leaves a door alone; bit 1 sets 0x7C0 + id.
+        std::array<uint8_t,8> st{0xFF, 3, 0, 0, 0, 0, 0, 0};
+        fl[0x7E3] = true; source_door_locks_8001e4c4(d.doors, st, set);
+        CHECK(fl[0x7E3] && fl[0x7E4] && fl[0x7C4]);
+        // Area enter: 0x1FF once; 0x235 adds the locks 2/3/4/8 in areas 0..2.
+        std::array<bool, 0x800> a{};
+        const auto ag = [&](uint16_t f) { return a[f]; };
+        const auto as = [&](uint16_t f, bool v) { a[f] = v; };
+        CHECK(st03_area_enter_8010089c(1, 0, ag, as) && a[0x1FF] && !a[0x7E2]);
+        a[0x1FF] = false; a[0x235] = true;
+        CHECK(st03_area_enter_8010089c(2, 0, ag, as) && a[0x1FF] && a[0x7E2] && a[0x7E3] && a[0x7E4] && a[0x7E8]);
+        a = {}; CHECK(st03_area_enter_8010089c(0, 0xFF, ag, as) && !a[0x1FF]);
+        CHECK(!st03_area_enter_8010089c(7, 0, ag, as) && a[0x1FF]);   // reported, still sets 0x1FF
+    }
     // 0x80100990 state machine: trigger box (cells x -5..-4, z 11..12).
     {
         uint8_t st = 0;

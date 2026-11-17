@@ -835,6 +835,8 @@ private:
     St03Event8Step st03_event8_step_{};
     bool st03_area1_setup_done_=false;
     uint8_t st03_area1_setup_state_=0;   // 0x80100990's byte +4
+    int st03_area_key_=-1;                 // the ST03 area of the last frame (-1: not in ST03)
+    bool st03_area_enter_ported_=true;     // the last 0x8010089C area function was ported
     std::optional<uint8_t> st03_area1_object_set_;
     std::array<St03Npc,kSt03ObjectSlots> st03_objects_{};
     std::array<St03NpcTick,kSt03ObjectSlots> st03_object_ticks_{};
