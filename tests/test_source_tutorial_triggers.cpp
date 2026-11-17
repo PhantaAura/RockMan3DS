@@ -112,7 +112,9 @@ MmlMessageFile bank() {
     using K = MmlMessageTokenKind;
     MmlMessageFile m; m.blocks.resize(2);
     // Block 0: "Hi" NEXT CLEAR "W" CALL(0,1) END. Block 1: "Q" SEL "Y" SEL "N" MULTI(80,01,FF) END.
-    m.blocks[0].tokens = {{K::Glyph, 0x1C, {}}, {K::Glyph, 0x38, {}}, {K::Control, 0x9F, {}}, {K::Control, 0x87, {0, 0}},
+    // Block 0 also sets flag 0x0A and sets then clears 0x388 (0x9A / 0x9B) before NEXT.
+    m.blocks[0].tokens = {{K::Glyph, 0x1C, {}}, {K::Glyph, 0x38, {}}, {K::Control, 0x9A, {0x0A, 0x00}},
+        {K::Control, 0x9A, {0x88, 0x03}}, {K::Control, 0x9B, {0x88, 0x03}}, {K::Control, 0x9F, {}}, {K::Control, 0x87, {0, 0}},
         {K::Glyph, 0x2C, {}}, {K::Control, 0x99, {0, 1}}, {K::Control, 0xA9, {}}, {K::Control, 0x84, {2, 0}}};
     m.blocks[1].tokens = {{K::Glyph, 0x25, {}}, {K::Control, 0x96, {1, 0}}, {K::Glyph, 0x2E, {}},
         {K::Control, 0x96, {1, 0x11}}, {K::Glyph, 0x22, {}}, {K::Control, 0x97, {0x80, 1, 0xFF}}, {K::Control, 0xA9, {}}};
@@ -129,6 +131,7 @@ void dialogue() {
     RuntimeInputFrame right{}; right.dialogue_right = true;
     s.tick(none);
     assert(s.dialogue().waiting_for_advance && s.dialogue().visible_glyphs.size() == 2);
+    assert(s.story_flag(0x0A) && !s.story_flag(0x388));
     s.tick(a);  // clear, "W", call block 1, options, MULTI
     assert(s.dialogue().waiting_for_choice && s.dialogue().ref.block == 1 && s.dialogue().option_glyph_at.size() == 2);
     // Yes (choice 0) restarts block 1: the instructions repeat.
