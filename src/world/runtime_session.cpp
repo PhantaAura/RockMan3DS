@@ -1767,9 +1767,9 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     // CANDIDATE: the main-loop subphase 0x800C1B11 reads 2 once the arrival
     // fade is over; the port has no loader subphases after a stage load.
     input.subphase_2=!source_fade_callback_.running&&!source_fade_intents_.count;
-    // Area 1's messages (st03_00.msg) are not cooked, so no window opens and
-    // the message waits pass at once (CANDIDATE timing until they are).
-    input.message_open=false;
+    // The slot-0 window flag: open while a dialogue runs (area 1's bank is
+    // st03_00.msg, the runtime's bank for area index 1).
+    input.message_open=dialogue_.active;
     input.start_pressed=(in.pressed_psx_mask&0x0008u)!=0;
     auto step=step_st03_event8(ev,*st03_event8_profile_,input);
     if(step.player){
@@ -1786,6 +1786,14 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(p.walk){player_.bytes[0x448]=48;player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x10u);}
         sync_primary_position_from_fixed();
     }
+    for(uint8_t m=0;m<step.message_count;++m){
+        // 0x80053A08(0, n): opens block n of the area's bank; an absent bank
+        // or block opens nothing (and the scene's waits pass).
+        if(dialogue_.active)break;   // 0x8005382C refuses while slot 0 runs
+        try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),step.messages[m]});}
+        catch(const std::exception&){}
+    }
+    if(step.skipped&&dialogue_.active)stop_dialogue();   // 0x80053A30 closes the windows
     if(step.flag_set)set_story_flag(*step.flag_set,true);
     if(step.player_release)source_player_event_release_80042314(player_);
     if(step.spawn_set)st03_area1_object_set_=*step.spawn_set;
