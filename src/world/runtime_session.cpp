@@ -1214,7 +1214,7 @@ void RuntimeSession::update_action_check_800411dc(){
     const size_t e008_count=owner.size();
     for(size_t i=0;i<st03_objects_.size();++i){
         if(!st03_objects_[i].w.live||!st03_object_ticks_[i].checkable)continue;
-        const auto& b=kSt03NpcCheckBox;
+        const auto& b=st03_objects_[i].check_box;
         candidates.push_back({st03_objects_[i].w.raw_14,SourceE008Box{b[0],b[1],b[2],b[3],b[4],b[5]}});owner.push_back(i);
     }
     const uint16_t heading=uint16_t(player_.bytes[0x56]|(uint16_t(player_.bytes[0x57])<<8))&0xFFFu;
@@ -1840,18 +1840,25 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(step.skipped&&dialogue_.active)stop_dialogue();   // 0x80053A30 closes the windows
     if(step.flag_set)set_story_flag(*step.flag_set,true);
     if(step.player_release)source_player_event_release_80042314(player_);
-    // Scene-object writes (*(0x8011CB30 + 4 * i)).
-    for(size_t i=0;i<step.objects.size();++i){
+    if(step.release_set)release_st03_objects();   // 0x80103BA0
+    if(step.spawn_set){st03_area1_object_set_=*step.spawn_set;spawn_st03_object_set(*step.spawn_set);}
+    // Scene-object writes (*(0x8011CB30 + 4 * i)), after a respawn in the
+    // same tick (scene 2 state 2 respawns set 1, then writes +4 / +8).
+    for(size_t i=0;i<step.objects.size()&&i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];const auto& wr=step.objects[i];
         if(!o.w.live)continue;
-        if(wr.variant_04)o.w.byte_03=*wr.variant_04;   // CANDIDATE: +4 kept beside +3 in the shared work
+        if(wr.variant_04)st03_object_set_variant(o,*wr.variant_04);   // +4: the class row's column
         if(wr.state_08)o.w.state_08=*wr.state_08;
         if(wr.state_09){o.w.state_09=*wr.state_09;o.w.sub_0a=0;}
         if(wr.clear_0a_0b){o.w.sub_0a=0;o.w.byte_0b=0;}
         if(wr.heading_56)o.w.rot_54[1]=*wr.heading_56;
+        auto id_of=[&](uint8_t k)->uint8_t{return k<st03_objects_.size()?uint8_t(st03_objects_[k].family|k):0;};
+        if(wr.byte_0c_from)o.w.byte_0c=id_of(*wr.byte_0c_from);
+        if(wr.byte_0d_from)o.w.byte_0d=id_of(*wr.byte_0d_from);
+        if(wr.byte_0f_or)o.byte_0f=uint8_t(o.byte_0f|*wr.byte_0f_or);
+        if(wr.clear_0b)o.w.byte_0b=0;
     }
-    if(step.release_set)release_st03_objects();   // 0x80103BA0
-    if(step.spawn_set){st03_area1_object_set_=*step.spawn_set;spawn_st03_object_set(*step.spawn_set);}
+    if(step.release_slots)for(size_t i=0;i<st03_objects_.size();++i)if(step.release_slots&(1u<<i)){st03_objects_[i]={};st03_object_current_[i]=nullptr;}   // 0x80103CC4(i)
     if(step.ended)set_story_flag(0x388,true);   // 0x8001D9F0: 0x380 + event 8
     if(step.unsupported_scene&&ev.active&&ev.scene>1)ev.active=false;   // scenes 2..4 not ported: no hang
     st03_event8_step_=step;
@@ -2021,19 +2028,38 @@ void RuntimeSession::update_st03_objects(){
     if(st03_talk_active_&&!dialogue_.active)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
-        if(!o.w.live||!o.generic)continue;
+        if(!o.w.live||!(o.generic||o.scene_v1||o.car))continue;
         St03NpcInputs in;
         in.player_x=rds16w(player_,0x14);in.player_z=rds16w(player_,0x18);
         in.idle_timers=st03_event8_profile_&&st03_event8_profile_->idle_timers_loaded?&st03_event8_profile_->idle_timers:nullptr;
         const uint32_t next=st03_npc_seed_*1103515245u+12345u;
         in.rand=uint16_t((next>>16)&0x7fffu);
+        const uint32_t next2=next*1103515245u+12345u;
+        in.rand2=uint16_t((next2>>16)&0x7fffu);
+        in.refs=reference_tables_?&*reference_tables_:nullptr;
+        if(st03_event8_profile_&&st03_event8_profile_->walk_loaded){in.walk_speeds=&st03_event8_profile_->walk_speeds;in.walk_tables=&st03_event8_profile_->walk_tables;}
         in.animation_finished=!st03_object_current_[i]||int8_t(st03_object_cursor_[i].opaque_a7)<0;
         in.player_targets_me=player_check_npc_&&*player_check_npc_==i;
         in.heading_to_player=source_heading_80031198(o.w.raw_14[0],o.w.raw_14[2],rds16w(player_,0x14),rds16w(player_,0x18),actor_angle_steps_);
         in.window_open=dialogue_.active;   // 0x80098A58 & 0x00200000 (CANDIDATE: any open window)
+        in.angle_steps=actor_angle_steps_;
+        if(st03_event8_profile_&&st03_event8_profile_->car_paths_loaded)in.car_paths=&st03_event8_profile_->car_paths;
+        in.flag4=story_flag(4);
+        in.player_y=rds16w(player_,0x16);
+        // 0x80036294(+0x0C / +0x0D): id 0 is the player; an ST03 object's id
+        // (its +1) is family | slot here (CANDIDATE: the original's +1 is
+        // its pool index; the scenes only copy one object's +1 into another).
+        auto resolve=[&](uint8_t id)->std::optional<std::array<int16_t,3>>{
+            if(id==0)return std::array<int16_t,3>{rds16w(player_,0x14),rds16w(player_,0x16),rds16w(player_,0x18)};
+            const size_t k=id&31u;
+            if(k<st03_objects_.size()&&st03_objects_[k].w.live&&st03_objects_[k].family==(id&0xE0u))return st03_objects_[k].w.raw_14;
+            return std::nullopt;
+        };
+        in.id_target=resolve(o.w.byte_0c);in.id_target2=resolve(o.w.byte_0d);
         in.talk_active=st03_talk_active_;
         t=step_st03_npc(o,in);
-        if(t.talk_target_taken)player_check_npc_.reset();
+        if(t.talk_target_taken||t.clear_player_target)player_check_npc_.reset();
+        if(t.flag_set)set_story_flag(*t.flag_set,true);
         if(t.talk_start){
             // 0x80063BC8 + the talk runner: message +0x0C in slot 0 of the
             // area's bank; player action 16 (talk pose) is not ported.
@@ -2041,7 +2067,7 @@ void RuntimeSession::update_st03_objects(){
             if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.talk_start});}
                 catch(const std::exception&){}
         }
-        if(t.rand_used)st03_npc_seed_=next;
+        if(t.rand2_used)st03_npc_seed_=next2;else if(t.rand_used)st03_npc_seed_=next;
         const auto& bank=st03_object_models_[i].bank;
         if(t.anim_request){
             st03_object_current_[i]=bank?find_actor_animation_request(*bank,*t.anim_request):nullptr;

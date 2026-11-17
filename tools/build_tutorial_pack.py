@@ -78,7 +78,7 @@ EXTRA_STAGES={
     # not identified yet; that area binds map data only.
     3:{'container':'ST03.BIN','areas':(None,'ST03_00.BIN',None,None,None,None,None,None,None),
        'ebd':{1:r'..\EMBIN\ST03_00A.EBD'},'events':(8,),
-       'event_extra':{8:['80116578:64','801154B0:280','801158E8:340','80116E68:64']}},
+       'event_extra':{8:['80116578:64','801154B0:280','801158E8:340','80116E68:64','80116DAC:112','80116ED4:112','80117274:88']}},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 
