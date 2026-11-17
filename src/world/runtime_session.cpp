@@ -1770,7 +1770,8 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     // load, then the area-enter call 0x8010089C until it sets 0x1FF; the
     // per-area update (area 1: 0x80100990) runs only once 0x1FF is set.
     const int area_key=stage_==3?int(map_area_index_):-1;
-    if(area_key!=st03_area_key_){
+    const bool loaded_now=area_key!=st03_area_key_;
+    if(loaded_now){
         const auto flag=[&](uint16_t f){return story_flag(f);};
         const auto set=[&](uint16_t f,bool v){set_story_flag(f,v);};
         if(area_key>=0&&st03_area_key_<0&&st03_event8_profile_)
@@ -1778,7 +1779,9 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(area_key>=0)set_story_flag(0x1FF,false);
         st03_area_key_=area_key;
     }
-    if(stage_==3&&!story_flag(0x1FF))
+    // The area-enter call runs from the frame after the load (oracle: the
+    // locks at frame 2167, 0x1FF at 2168).
+    if(stage_==3&&!loaded_now&&!story_flag(0x1FF))
         st03_area_enter_ported_=st03_area_enter_8010089c(uint8_t(map_area_index_),0,   // block +4 = 0 (CANDIDATE)
             [&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
     // 0x80100990 runs on every load of area 1, after the area-enter call.
