@@ -72,12 +72,13 @@ EXTRA_STAGES={
        'ebd':r'..\EMBIN\ST02_01.EBD','events':(4,),
        # 40/06's prop roll tables (0x80103D8C reads them by key).
        'event_extra':{4:['801079E4:198']}},
-    # ST03: the loader picks area containers by a story-dependent table, not
-    # by number. Area 1 (crash site) runs on ST03_00A.EBD from ST03_00.BIN
-    # (oracle savestate m3_01: 4 KiB of 0x8016C000 equal). None = container
-    # not identified yet; that area binds map data only.
-    3:{'container':'ST03.BIN','areas':(None,'ST03_00.BIN',None,None,None,None,None,None,None),
-       'ebd':{1:r'..\EMBIN\ST03_00A.EBD'},'events':(8,),
+    # ST03: areas 0, 1 and 2 (the open field) all run on ST03_00.BIN
+    # (ST03_00A.EBD, st03_00.msg) with ST03.BIN's map quartet: 4 KiB at
+    # 0x8016C000 equal in oracle saves m3_01 (area 1), m3_02 (area 0), m3_13
+    # and m3_26 (area 2). Areas 3..8 use their own containers, not
+    # identified yet (None: map data only).
+    3:{'container':'ST03.BIN','areas':('ST03_00.BIN','ST03_00.BIN','ST03_00.BIN',None,None,None,None,None,None),
+       'ebd':{0:r'..\EMBIN\ST03_00A.EBD',1:r'..\EMBIN\ST03_00A.EBD',2:r'..\EMBIN\ST03_00A.EBD'},'events':(8,),
        'event_extra':{8:['80116578:64','801154B0:280','801158E8:340','80116E68:64','80116DAC:112','80116ED4:112','80117274:88','801152E4:128']}},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}

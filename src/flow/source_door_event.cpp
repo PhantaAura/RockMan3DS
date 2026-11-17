@@ -25,6 +25,7 @@ const char* source_door_status_name(SourceDoorStatus s) noexcept {
         case SourceDoorStatus::NoEvent:return "NO_EVENT";
         case SourceDoorStatus::PlayerBusy:return "PLAYER_BUSY";
         case SourceDoorStatus::UnsupportedType:return "UNSUPPORTED_TYPE";
+        case SourceDoorStatus::ExitRequested:return "EXIT_REQUESTED";
         case SourceDoorStatus::GateClosed:return "GATE_CLOSED";
         case SourceDoorStatus::NoAuxMatch:return "NO_AUX_MATCH";
         case SourceDoorStatus::Locked:return "LOCKED";
@@ -52,6 +53,23 @@ SourceDoorResult evaluate_source_door_event_80050c2c(const RuntimeEventPrimitive
     // branch also returns early while +0xBD is nonzero.
     const bool player_owner=(p.bytes[1]&0xF0u)==0;
     if(player_owner&&p.bytes[0xBD]!=0){out.status=SourceDoorStatus::PlayerBusy;return out;}
+    if(s.type==1){   // 0x80050CB8: a1 must be the player
+        if(!player_owner){out.status=SourceDoorStatus::GateClosed;return out;}
+        out.status=SourceDoorStatus::NoAuxMatch;
+        for(size_t i=0;i<aux.records.size();++i){
+            const auto& r=aux.records[i];const auto& h=r.halfwords;
+            if(h[0]==-1)break;
+            if(h[4]!=s.x||h[5]!=s.y||h[6]!=s.z)continue;
+            SourceDoorRequest q1;q1.aux_record_index=i;q1.music_check_8001f6c4=false;q1.sound_id=0;q1.sound_argument=0;
+            const auto put16=[&](size_t at,uint16_t value){q1.raw[at]=uint8_t(value);q1.raw[at+1]=uint8_t(value>>8);q1.known[at]=q1.known[at+1]=1;};
+            const auto put8=[&](size_t at,uint8_t value){q1.raw[at]=value;q1.known[at]=1;};
+            put8(20,0xFF);
+            put16(8,uint16_t(h[8]+rd16(p,0x14)-h[4]));put16(10,uint16_t(rd16(p,0x16)));put16(12,uint16_t(h[10]+rd16(p,0x18)-h[6]));
+            put16(18,uint16_t(rd16(p,0x56)));put8(22,r.raw[6]);put8(21,0);put8(23,r.raw[7]);
+            out.aux_record_index=i;out.request=q1;out.status=SourceDoorStatus::ExitRequested;return out;
+        }
+        return out;
+    }
     if(s.type!=3){out.status=SourceDoorStatus::UnsupportedType;return out;}
     if(!player_owner||!source_door_gate_80051970(p)){out.status=SourceDoorStatus::GateClosed;return out;}
     out.status=SourceDoorStatus::NoAuxMatch;

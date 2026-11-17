@@ -21,6 +21,7 @@ enum class SourceDoorStatus : uint8_t {
     Locked,              // 0x800519E4 returned 1 (flag 0x7E0 or 0x7E0|id)
     LocalDoorOpened,     // record halfword 0 bit 15 clear: flag 0x7B1 set
     TransitionRequested, // bit 15 set: 0x800C3558..71 written, flag 0x7B0 set
+    ExitRequested,       // type 1 (0x80050CB8 -> 0x80051360): walk-through exit, 356C = 0xFF
 };
 const char* source_door_status_name(SourceDoorStatus) noexcept;
 
@@ -47,7 +48,11 @@ struct SourceDoorResult {
 // 0x80051970 with a0 = player (0x80050C2C passes null when +1 & 0xF0 != 0).
 bool source_door_gate_80051970(const L3PlayerCompatWork& player) noexcept;
 
-// Exact 0x80050C2C prefix + case 3 + 0x800519E4 over one 0x800514FC result.
+// Exact 0x80050C2C prefix + cases 1 and 3 (+ 0x800519E4) over one 0x800514FC result.
+// Case 1 (the walk-through exit): the sample equals a record's hw4..hw6;
+// 0x80051360 writes 356C = 0xFF, 3560 = hw8 + x - hw4, 3562 = the player's y,
+// 3564 = hw10 + z - hw6, 356A = +0x56, 356D = 0, 356E/356F = record bytes 6/7
+// (no event 0, no sound, no flag).
 // Flags are read from `flags` (byte_count bytes); the three source flag writes
 // are returned, not applied. No side effect is performed for other types.
 SourceDoorResult evaluate_source_door_event_80050c2c(

@@ -497,3 +497,21 @@ Ported the shared 0x8001E4C4 / 0x8001E460 lock helper, ST03's stage init 0x80100
 `compare_recomp_3ds.py` against the ST02 -> ST03 oracle log: all 9 oracle flags set, order matches, 0x1FF one frame after the locks as on the oracle.
 Scene 2 still ends with flag 0 (frame 20351), no game over.
 CANDIDATE: 0x800C1B62 and block 0x800989F8 +4 read 0.
+
+## ST03 areas 0/2 and walk-through exits (run39, f600b7d, pass-20261117-154233)
+
+- **Containers:** areas 0, 1 and 2 share ST03_00.BIN (ST03_00A.EBD, st03_00.msg) and ST03.BIN's map quartet. Oracle 0x8016C000 matches in m3_01 / m3_02 / m3_13 / m3_26.
+- **Field exits** are door event type 1 (0x80050CB8 -> 0x80051360):
+  - the sample must equal the record's hw4..6;
+  - it writes 356C = 0xFF and the spawn = hw8/hw10 plus the player's offset from the sample;
+  - there is no event 0.
+- **Area 2 set-up 0x80100BF8:** the first pass is ported.
+- **Run39** (route stage2_to_area2.txt along the police car's path A):
+  - the area 1 -> 2 exit fires at frame 19418;
+  - 0x1FF is cleared, then set at 19419 with 0x60A;
+  - set 6 spawns (8 objects; the two generic officers drawn);
+  - the route ends with no game over.
+- **Not ported yet:**
+  - set 6's other classes (0x00, 0x13, the family-0x60 cars 0x0C / 0x15, 0xE0 0x38);
+  - exits to another stage (the stage-change request);
+  - area 2's states 2..5.
