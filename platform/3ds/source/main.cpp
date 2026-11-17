@@ -1768,15 +1768,24 @@ void draw_imported_actors_uv(const l3::ActorAreaRuntime& area) {
 // mesh parts through their float hierarchy matrices and the area actor
 // material cache, like the imported actors above. Shading, GTE rounding and
 // OT order are CANDIDATE (same gates as draw_imported_actors_uv).
+size_t draw_scene_actor_list_uv(const l3::RuntimeSession::St02ActorDraw* draws, size_t count, uint16_t& slots);
 size_t draw_st02_event4_actors_uv(const l3::RuntimeSession& session, uint8_t& slots) {
     std::array<l3::RuntimeSession::St02ActorDraw,5> draws{};
-    const size_t count=session.source_st02_event4_draws(draws);
+    uint16_t s16=0;const size_t n=draw_scene_actor_list_uv(draws.data(),session.source_st02_event4_draws(draws),s16);
+    slots=uint8_t(s16);return n;
+}
+// ST03's scene objects (generic NPCs) through the same path.
+size_t draw_st03_objects_uv(const l3::RuntimeSession& session, uint16_t& slots) {
+    std::array<l3::RuntimeSession::St02ActorDraw,l3::kSt03ObjectSlots> draws{};
+    return draw_scene_actor_list_uv(draws.data(),session.source_st03_object_draws(draws),slots);
+}
+size_t draw_scene_actor_list_uv(const l3::RuntimeSession::St02ActorDraw* draws, size_t count, uint16_t& slots) {
     slots=0;
     if(!count)return 0;
     configure_immediate_attributes_uv();
     for(size_t d=0;d<count;++d){
         const auto& draw=draws[d];const auto& mesh=*draw.mesh;const auto& pose=draw.matrices;
-        slots=uint8_t(slots|(1u<<draw.slot));
+        slots=uint16_t(slots|(1u<<draw.slot));
         bool open=false,textured=false;uint32_t active_word=0;
         for(size_t i=0;i<pose.part_count&&i<mesh.model.parts.size();++i){
             if(!pose.draw_enabled[i])continue;
@@ -7738,6 +7747,18 @@ int main() {
                 if(session.frame_counter()%60u==0u&&session.source_post_win_event().event==4)
                     hardware_test_trace("# st02_event4_actors,frame=%lu,drawn=%lu,slots=%02x,area=%u",
                         (unsigned long)session.frame_counter(),(unsigned long)drawn,unsigned(slots),unsigned(session.map_area_index()));
+            }
+            if(use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All&&session.stage()==3){
+                uint16_t slots=0;const size_t drawn=draw_st03_objects_uv(session,slots);
+                if(session.frame_counter()%60u==0u){
+                    uint16_t live=0,generic=0,unported=0;
+                    const auto& objs=session.st03_objects();const auto& ticks=session.st03_object_ticks();
+                    for(size_t i=0;i<objs.size();++i){if(objs[i].w.live)live|=uint16_t(1u<<i);if(objs[i].generic)generic|=uint16_t(1u<<i);
+                        if(ticks[i].behaviour_unported||ticks[i].talk_unported)unported|=uint16_t(1u<<i);}
+                    hardware_test_trace("# st03_objects,frame=%lu,set=%d,live=%03x,generic=%03x,drawn=%lu,slots=%03x,unported=%03x,area=%u",
+                        (unsigned long)session.frame_counter(),session.st03_area1_object_set()?int(*session.st03_area1_object_set()):-1,
+                        unsigned(live),unsigned(generic),(unsigned long)drawn,unsigned(slots),unsigned(unported),unsigned(session.map_area_index()));
+                }
             }
             const u64 e0_start=svcGetSystemTick();g_frame_split.actors+=e0_start-actors_start;
             if(scene_e0&&(!scene_e0->resident_in(session.active_area().ebd)||!session.source_event_phase5_resources().resident_in(session.active_area().ebd))){scene_e0.reset();release_scene_materials();}

@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area1_object_set_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0;
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1755,7 +1755,7 @@ bool RuntimeSession::bind_st03_event8_profile(St03Event8Profile profile) noexcep
 void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     st03_event8_step_={};
     // 0x80100990 runs on every load of area 1.
-    if(stage_!=3||map_area_index_!=1){st03_area1_setup_done_=false;st03_area1_setup_state_=0;return;}
+    if(stage_!=3||map_area_index_!=1){st03_area1_setup_done_=false;st03_area1_setup_state_=0;release_st03_objects();return;}
     // ST03 area 1 set-up 0x80100990 every frame (its byte +4 restarts at 0
     // on each area-1 entry: CANDIDATE). Object sets (0x80103AB0) are not
     // ported; the chosen set is kept for traces.
@@ -1763,7 +1763,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     {
         const auto setup=st03_area1_setup_step(st03_area1_setup_state_,[&](uint16_t f){return story_flag(f);},
             rds16w(player_,0x14),rds16w(player_,0x18));
-        if(setup.object_set)st03_area1_object_set_=*setup.object_set;
+        if(setup.object_set){st03_area1_object_set_=*setup.object_set;spawn_st03_object_set(*setup.object_set);}
         if(setup.flag_set)set_story_flag(*setup.flag_set,true);
         if(setup.flag_clear)set_story_flag(*setup.flag_clear,false);
         if(setup.event8_scene&&st03_event8_profile_)st03_event8_=start_st03_event8(*setup.event8_scene);
@@ -1829,7 +1829,18 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(step.skipped&&dialogue_.active)stop_dialogue();   // 0x80053A30 closes the windows
     if(step.flag_set)set_story_flag(*step.flag_set,true);
     if(step.player_release)source_player_event_release_80042314(player_);
-    if(step.spawn_set)st03_area1_object_set_=*step.spawn_set;
+    // Scene-object writes (*(0x8011CB30 + 4 * i)).
+    for(size_t i=0;i<step.objects.size();++i){
+        auto& o=st03_objects_[i];const auto& wr=step.objects[i];
+        if(!o.w.live)continue;
+        if(wr.variant_04)o.w.byte_03=*wr.variant_04;   // CANDIDATE: +4 kept beside +3 in the shared work
+        if(wr.state_08)o.w.state_08=*wr.state_08;
+        if(wr.state_09){o.w.state_09=*wr.state_09;o.w.sub_0a=0;}
+        if(wr.clear_0a_0b){o.w.sub_0a=0;o.w.byte_0b=0;}
+        if(wr.heading_56)o.w.rot_54[1]=*wr.heading_56;
+    }
+    if(step.release_set)release_st03_objects();   // 0x80103BA0
+    if(step.spawn_set){st03_area1_object_set_=*step.spawn_set;spawn_st03_object_set(*step.spawn_set);}
     if(step.ended)set_story_flag(0x388,true);   // 0x8001D9F0: 0x380 + event 8
     if(step.unsupported_scene&&ev.active&&ev.scene>1)ev.active=false;   // scenes 2..4 not ported: no hang
     st03_event8_step_=step;
@@ -1966,6 +1977,71 @@ void RuntimeSession::update_source_st02_event4_actors(const SourcePostWinProfile
         if(tick.pose_restart)seq.restart(uint8_t(i),0);
         for(uint8_t s=0;s<tick.sequence_steps;++s)seq.advance(uint8_t(i));
     }
+}
+void RuntimeSession::release_st03_objects() noexcept {
+    for(auto& o:st03_objects_)o={};
+    st03_object_current_.fill(nullptr);st03_object_ticks_={};
+}
+void RuntimeSession::spawn_st03_object_set(uint8_t n){
+    // 0x80103AB0(n): 0x8001EAE8 for each record of set n into its slot.
+    if(!st03_event8_profile_||n>=st03_event8_profile_->object_sets.size())return;
+    size_t budget=1024u*1024u;
+    for(const auto& m:st03_object_models_)budget-=std::min(budget,m.decoded_bytes);
+    for(const auto& r:st03_event8_profile_->object_sets[n]){
+        if(r.slot>=kSt03ObjectSlots)continue;
+        auto& m=st03_object_models_[r.slot];
+        const bool same=m.mesh&&m.bank&&st03_model_class_[r.slot]==r.object_class;
+        st03_objects_[r.slot]=spawn_st03_object(r);
+        st03_object_current_[r.slot]=nullptr;
+        if(r.family!=0x20){budget+=m.decoded_bytes;m={};st03_model_class_[r.slot]=0xFF;continue;}
+        if(!same){
+            st03_model_class_[r.slot]=r.object_class;
+            budget+=m.decoded_bytes;m=decode_st03_npc_model(area_.ebd,r.object_class,budget);
+            budget-=std::min(budget,m.decoded_bytes);
+        }
+    }
+}
+void RuntimeSession::update_st03_objects(){
+    // The object update for the ST03 scene objects: slot order (CANDIDATE),
+    // after the event in the same frame. 0x80048E6C is not run for them
+    // (they keep the record's y; CANDIDATE); rand is a local 0x8007FE50.
+    if(stage_!=3)return;
+    for(size_t i=0;i<st03_objects_.size();++i){
+        auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
+        if(!o.w.live||!o.generic)continue;
+        St03NpcInputs in;
+        in.player_x=rds16w(player_,0x14);in.player_z=rds16w(player_,0x18);
+        in.idle_timers=st03_event8_profile_&&st03_event8_profile_->idle_timers_loaded?&st03_event8_profile_->idle_timers:nullptr;
+        const uint32_t next=st03_npc_seed_*1103515245u+12345u;
+        in.rand=uint16_t((next>>16)&0x7fffu);
+        in.animation_finished=!st03_object_current_[i]||int8_t(st03_object_cursor_[i].opaque_a7)<0;
+        t=step_st03_npc(o,in);
+        if(t.rand_used)st03_npc_seed_=next;
+        const auto& bank=st03_object_models_[i].bank;
+        if(t.anim_request){
+            st03_object_current_[i]=bank?find_actor_animation_request(*bank,*t.anim_request):nullptr;
+            if(st03_object_current_[i]&&actor_sequence_reset(st03_object_cursor_[i],st03_object_current_[i]->sequence.records.data(),
+                st03_object_current_[i]->sequence.records.size())!=ActorSequenceStatus::SourceBackedPartial)st03_object_current_[i]=nullptr;
+        }
+        if(t.anim_advance&&st03_object_current_[i]){
+            const auto& r=st03_object_current_[i]->sequence.records;
+            if(actor_sequence_step(st03_object_cursor_[i],r.data(),r.size()).status!=ActorSequenceStatus::SourceBackedPartial)
+                st03_object_current_[i]=nullptr;
+        }
+    }
+}
+size_t RuntimeSession::source_st03_object_draws(std::array<St02ActorDraw,kSt03ObjectSlots>& out) const noexcept {
+    size_t n=0;
+    for(size_t i=0;i<st03_objects_.size();++i){
+        const auto& o=st03_objects_[i];const auto& m=st03_object_models_[i];
+        if(!o.w.live||!(o.w.flags_00&2u)||!m.mesh||!m.bank||!st03_object_current_[i])continue;
+        const auto* pose=select_st02_event4_actor_pose(*m.bank,o.w.pose_ac,st03_object_cursor_[i]);
+        if(!pose)continue;
+        auto mx=build_st02_event4_actor_matrices(*m.mesh,*pose,o.w);
+        if(!mx.part_count)continue;
+        out[n++]={uint8_t(i),m.mesh.get(),mx};
+    }
+    return n;
 }
 size_t RuntimeSession::source_st02_event4_draws(std::array<St02ActorDraw,5>& out) const noexcept {
     size_t n=0;
@@ -2648,6 +2724,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     source_event_result_=step_source_event_pipeline(source_event_work_,source_event_profile_.get(),source_event_input);
     update_source_post_win_event(in);
     update_st03_event8(in);
+    update_st03_objects();
     // Oracle (US disc, New Game): 0x1F800074 reads 0 from phase 4 through the
     // constructor tick, where the class-40 initializer 0x8010C930 already runs
     // (same tick, after the event); the camera program writes it next tick.

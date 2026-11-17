@@ -8,6 +8,7 @@
 // the message window and the story flags for the runtime to apply.
 // Original addresses are identity tokens.
 #include "legends3ds/source_scene_runtime.h"
+#include "legends3ds/source_st03_objects.h"
 #include <array>
 #include <cstdint>
 #include <optional>
@@ -21,6 +22,9 @@ struct St03Event8Profile {
     bool police_loaded = false;                    // scene 1
     SourceSceneTimeline police;                    // 0x8011614C
     SourceSceneCameraProgram police_camera;        // 0x80116164
+    std::array<std::vector<St03ObjectRecord>,8> object_sets;   // 0x80116578 (cooked extras)
+    bool idle_timers_loaded = false;
+    std::array<uint8_t,64> idle_timers{};          // 0x80116E68
 };
 bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profile& out);
 
