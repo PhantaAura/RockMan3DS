@@ -94,3 +94,15 @@ save-slot UI, "Checking data", memory card 2, load/continue.
   Recharge (HP 40 -> 80) and the whole Save (card 1, slot 1, "Save complete") change no flags.
   VERIFIED_1TO1 for these flags. After "Save complete" four more Cross presses left main phase at
   0x0600 within ~6 s (the return to phase 3 was not observed).
+
+## Save block (slice 2a, 2026-11-17)
+`build_source_save_block_80065064` (src/flow/source_save_block.cpp) builds the 8 KiB block
+byte for byte as 0x80065064 + 0x80064CB8 + 0x800679B8/0x80067D10 + 0x80065384 lay it out; the
+EXE header ranges (icon, CLUT, title, digit tables) come from frontend/option.l3ex.
+`RuntimeSession::source_save_block_inputs` fills play time (frame counter, CANDIDATE), money,
+stage/area, Turn, the player work with life/max life (+0x6E/+0xB0, 0x8005DA78) and the flags;
+main.cpp adds the other OPTION bytes. Not modelled (written as 0, UNKNOWN): the rest of
+0x800C1B10.., 0x800BD3B8 (0x8003B140's per-stage table), 0x800BC9B8; seeds use a local LCG.
+Azahar run 42: `save_01516_slot1.blk` passes mml_retail_save_verify, its icon/CLUT bytes equal an
+oracle-written card's, the title reads "MEGAMAN LEGENDS[1]00:01:42" in the same format.
+Still open: the card/slot/confirm screen (phase 6, 0x800665FC).

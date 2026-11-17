@@ -36,6 +36,9 @@ RANGES = [
     (0x8008ECDC, 0x8008ECDC + 8 * 30),     # layout table {handler, tpage, list}
     (0x8008FE64, 0x8008FE64 + 8 * 0x34),   # buster part stats (attack, energy, range, rapid)
     (0x80097F30, 0x80097F90),   # CLUTs, window colours, edge greys
+    (0x8008D028, 0x8008D034),   # save block: digit -> message glyph (0x800679B8)
+    (0x8008F9BC, 0x8008FAA4),   # save block: icon, CLUT, title (0x80064CB8 / 0x80067D10)
+    (0x80098124, 0x8009813A),   # save block: Shift-JIS digits (0x80067D10)
 ]
 
 

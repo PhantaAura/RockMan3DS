@@ -38,7 +38,7 @@ TUTORIAL_SCRIPTS = (
     "cook_hit_proxy.py", "cook_intro_bg.py", "cook_cutscene.py", "cook_class60_06.py", "cook_reaction_profile.py", "cook_actor_angle.py",
     "cook_source_player_target.py", "cook_source_reward_profile.py",
     "cook_source_event_poll.py", "cook_source_event_phase2.py", "cook_source_event_command.py",
-    "cook_source_prop_lift.py", "cook_source_effect_dispatch.py", "cook_source_palette_c0.py",
+    "cook_source_prop_lift.py", "cook_source_effect_dispatch.py", "cook_source_palette_c0.py", "cook_option_menu.py",
 )
 TUTORIAL_TOOLS = (
     "l3cook_st00", "l3cook_render", "l3cook_map_init", "l3cook_st00_flow", "l3cook_st00_spawn", "l3cook_pbd",

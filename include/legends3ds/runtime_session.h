@@ -10,6 +10,7 @@
 #include "legends3ds/reference_tables.h"
 #include "legends3ds/st00_event.h"
 #include "legends3ds/save_state.h"
+#include "legends3ds/source_save_block.h"
 #include "legends3ds/tutorial_runtime.h"
 #include "legends3ds/l3map.h"
 #include "legends3ds/actor_detection.h"
@@ -545,6 +546,11 @@ public:
     void set_save_writer(std::function<bool(const RuntimeSaveState&)> writer) { save_writer_ = std::move(writer); }
     bool save_screen_active() const noexcept { return save_screen_frames_ != 0; }
     int save_result() const noexcept { return save_result_; }   // 0 none, 1 written, -1 failed
+    // The 0x80065064 inputs from the port's state: play time (+0x0C, the session frame counter,
+    // CANDIDATE), money (+0x1C), stage/area (+0x50/+0x51), Turn (+0x54), player work with life /
+    // max life at +0x6E / +0xB0, flags.
+    // Fields the port does not model stay 0 (UNKNOWN); seeds come from a local LCG (CANDIDATE).
+    SourceSaveBlockInputs source_save_block_inputs(uint8_t slot) const;
     // ST00 E0/05 boxes from the conditional list (0x80113EE0); each owns its
     // +0x30 hit record. Proxy and reward requests are consumed by the caller.
     struct E005Box {
