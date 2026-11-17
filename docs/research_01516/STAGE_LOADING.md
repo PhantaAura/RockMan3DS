@@ -482,3 +482,11 @@ Run32 used route `stage2_police_talk.txt` (DIAGNOSTIC). Results:
 - The Inspector's walk ends at (-2972, -1, 1366) facing 551 (equal to the oracle), with 0x606 at 18962.
 - States 5..10 run through messages 47 / 49 / 51, the countdown and the car drive. The player is placed at (-2601, -1, 1108).
 - Flag 0 at frame 19879, then the event ends. No game over.
+
+## Visual gaps (one batch before the 1.0 compare)
+
+Logic runs and matches the oracle; only the look is missing:
+- The police car's mesh (no family-0x60 mesh decoder) and its dust (0x80031618 x4 every 4th frame, particle class 131, offsets 0x801172CC).
+- The focus camera 0x80039FFC / 0x8003A13C / 0x80039E50 (scene 2 states 0..2): reported, never busy.
+- Player hide (+0 bit 1, +0xBD bit 0x40) during scene 2 states 0..3: written, not read by the port's player draw.
+- NPC sounds: 266 (officer), 268 (Inspector), 269 (Barrell) on +0xA6 == 1 while walking.
