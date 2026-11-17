@@ -702,3 +702,10 @@ Run 1 (`pass-20261107-210933`) held at 13993 after fade 10: the session's
 fade scheduler and its draw ran only with `SOURCE_EVENT_BOOT=1`. Fixed.
 Not shown: the scene actors (no model drawn for slots 40/05, 40/08 or event
 2's cast), the event camera on the 3DS view, smoke/objects, XA voice.
+
+## Tutorial boss, runs 26-31 (Azahar, Old 3DS mode; not physical hardware)
+
+- Boss shockwave (effect-128 proxy, radius = scale/2 + 0x20, damage 10/20/30) verified 1:1 vs the oracle; a jump does not clear it in the original either.
+- Spawn heading 0 faces away from the boss; the diagnostic spawn needs heading 2048.
+- Run 30 (diagnostic spawn, heading 2048, Buster only): boss HP 1024 -> 0 at frame 1787, player at 2 HP, then event 3 -> Area 4 hand-off (2843) -> event 2. A close win, not reliable. CANDIDATE route behaviour (slide on slam, fire on every non-slam window).
+- Run 31 (M1 proof, normal boot via diagnostic_title.txt + opening_tutorial_boss.txt): LOST. Boss area reached at frame ~9541 with 80 HP; no boss HP change was logged (boss never damaged), player at 0 HP at 9968, game over at 16214. The walk from the normal route does not enter the fight with the geometry/heading the diagnostic spawn has. M1 proof NOT achieved. Runs 31a/b stalled at frame ~189 because diagnostic_title.txt was missing.
