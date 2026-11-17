@@ -88,5 +88,9 @@ save-slot UI, "Checking data", memory card 2, load/continue.
   `autoplay/st03_data_save.txt`): talk block 9 -> menu 0xDC waits for the choice -> Right ->
   Save (block 0xDE) -> file written -> Data reopens 0xDC (twice); player stays at
   (-5010,1299); the written file loads (stage 3 area 1, HP 80/80, flag 3 set).
-- Flags: the talk sets 0x608 through block 9's own 0x9A (script, not forced). The oracle
-  comparison is still open (compare_recomp_3ds.py not run: the shared oracle was busy).
+- Flags (oracle, `m3_01`, own instance, 2026-11-17; flag words 0x800BE378 (0x000..0x7FF) and
+  0x800BE438 (0x600..0x9FF) diffed directly, the same regions compare_recomp_3ds.py arms):
+  0x608 is clear before and set by the talk, as on the 3DS (block 9's own 0x9A).
+  Recharge (HP 40 -> 80) and the whole Save (card 1, slot 1, "Save complete") change no flags.
+  VERIFIED_1TO1 for these flags. After "Save complete" four more Cross presses left main phase at
+  0x0600 within ~6 s (the return to phase 3 was not observed).
