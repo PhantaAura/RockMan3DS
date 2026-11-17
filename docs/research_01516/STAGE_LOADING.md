@@ -169,3 +169,37 @@ Port: `source_st02_event4_actors.{h,cpp}`, run by
 (CANDIDATE order); 1F800002 is the frame counter (CANDIDATE phase). Effects
 and model/pose requests are reported per update, not drawn yet. 40/05..07
 are the next slice.
+
+## ST02 event 4 actors: 40/05, 40/06, 40/07 (SOURCE_BACKED_PARTIAL)
+
+All three resolve their model with a null variant and key their state
+changes on byte 0 of the current pose record (`*(+0x98)`); 0x800322A8
+stores the request at +0xAC and points +0x98 at that sequence's first
+record, and 0x80032488 steps it. A key test therefore sees the record the
+previous frame's step landed on.
+
+- 40/05 (slot 0, 0x80103360; runs only when work +3 == 0): init 0x80102D54
+  (pose 16, heading 0x800). +9 via 0x80107720: 0 = rise (+0x20 += 0x23333)
+  counting frames on key 27 until 4, pose 17, wait key 7, rise 0x30000 until
+  key 17; 1..8 = poses 18..25 once; 9 = pose 26, wait key 16, +0x24 +=
+  0x268000 until key 24. Then, unless (int8)+0x0D (event 0x80100970 freeze),
+  shorts and a step. 0x80102C44 runs the face cues (streams 0x80107644 /
+  0x80107688, scripts 0x801075F0 / 0x80107614; not ported).
+- 40/06 (slot 1, 0x80103D18): init 0x80103704 (no pose; +0x143 = +0x147 =
+  0xFF; face streams 0x80107868 / 0x801078D0). +9 via 0x801079BC: 0/1 =
+  pose 1, 2 = pose 7, 3 = key 0 -> pose 2, key 34 -> pose 4, 4 = key 0 ->
+  pose 3, key 0 -> pose 1, 5..8 = poses 5..8, 9 = pose 9, key 18, +0x24 +=
+  0x2C0000 until key 23. Step unless (int8)+0x0C (event 0x80100D78 freeze).
+  Then 0x801035F4 (face) and 0x80103D8C, which writes event slot 4
+  (`*(0x800C4C7C)`, the 20/27 prop): +0x0C = 1 and, by +0xAC, +0x58 =
+  -0x801079E4[key] (1..3), -0x80107A26[key] (4), 318 (5), -63 (6),
+  -0x80107A6C[key] below key 31 else -284 per frame with +0x0C = 0 (7),
+  -318 (8), -318 with +0x0C = 0 from key 18 (9). The 20/27 then re-resolves
+  its model when +0x0C changed. The table at 0x80107984 has no reference.
+- 40/07 (slot 2, 0x80104154; work +3 == 0): init 0x80103F08 (no pose).
+  0 = pose 1, 30 frames, then state 1; 1 = pose 2 until key 71, then state 0
+  (an idle loop); 2 = pose 3, stepping.
+
+The roll tables are cooked as an event-4 extra (`--extra 801079E4:198`).
+The runtime binds no class-40 sequence data yet, so these actors' key tests
+report SequenceUnavailable and wait; the drawing slice supplies it.

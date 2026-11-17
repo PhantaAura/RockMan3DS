@@ -76,6 +76,7 @@ bool bind_source_post_win_profile(const SourceScenePackage& p, uint8_t event, So
             for (const auto& sp : p.spawns) if (sp.token == kSpawns4 + 20u * i) { out.spawns.push_back(sp.bytes); found = true; }
             if (!found) return false;
         }
+        if (const auto* d = p.data_at(0x801079E4u); d && d->bytes.size() >= 0xC6) out.st02_prop_roll = d->bytes;
     } else if (event == 3) {
         if (!out.camera) return false;   // the cooker accepts event 3's program
         for (const uint32_t token : {kSpawn3a, kSpawn3b}) {

@@ -69,7 +69,9 @@ EXTRA_STAGES={
     # Area 3 has no ST02_03.BIN; the stage container (which carries the same
     # EBD and the area-0 pages) stands in for it (CANDIDATE).
     2:{'container':'ST02.BIN','areas':('ST02_00.BIN','ST02_01.BIN','ST02_02.BIN','ST02.BIN'),
-       'ebd':r'..\EMBIN\ST02_01.EBD','events':(4,)},
+       'ebd':r'..\EMBIN\ST02_01.EBD','events':(4,),
+       # 40/06's prop roll tables (0x80103D8C reads them by key).
+       'event_extra':{4:['801079E4:198']}},
     # ST03: the loader picks area containers by a story-dependent table, not
     # by number. Area 1 (crash site) runs on ST03_00A.EBD from ST03_00.BIN
     # (oracle savestate m3_01: 4 KiB of 0x8016C000 equal). None = container
@@ -650,7 +652,8 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
     for event in spec.get('events',()):
         subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),
             '--exe',str(dat.parent.parent/'ROCK_NEO.EXE'),'--overlay',str(work/'overlay'),
-            '--event',str(event),'--stage',str(number),'--out',str(sout/f'event{event}.l3cs')],check=True,stdout=subprocess.DEVNULL)
+            '--event',str(event),'--stage',str(number),'--out',str(sout/f'event{event}.l3cs'),
+            *[a for x in spec.get('event_extra',{}).get(event,()) for a in ('--extra',x)]],check=True,stdout=subprocess.DEVNULL)
     for area_index,cname in enumerate(spec['areas']):
         if cname is None: continue
         cp=dat/cname
