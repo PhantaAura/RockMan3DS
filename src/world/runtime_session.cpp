@@ -80,7 +80,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false;
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={};
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1825,20 +1825,25 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
 void RuntimeSession::update_source_st02_event4_actors(const SourcePostWinProfile& profile){
     // The object update (0x8001E070) for event 4's spawned slots. CANDIDATE
     // order: after the event handler in the same frame, slots 0..4 in turn;
-    // 1F800002 is taken from the frame counter (CANDIDATE phase). The class-40
-    // sequences come from the stage EBD (one ST02_01.EBD for every area),
-    // decoded once when a class-40 slot first spawns, within 512 KB; a slot
-    // whose bank does not decode reports SequenceUnavailable and waits.
+    // 1F800002 is taken from the frame counter (CANDIDATE phase). Models and
+    // pose banks come from the stage EBD (one ST02_01.EBD for every area),
+    // decoded once when the first slot spawns, within 768 KB; a class-40 slot
+    // without a bank reports SequenceUnavailable and waits, any slot without
+    // a model is simply not drawn.
     auto& ev=source_post_win_;
-    if(!source_st02_banks_tried_&&(ev.slots[0].spawned||ev.slots[1].spawned||ev.slots[2].spawned)){
+    if(!source_st02_banks_tried_&&(ev.slots[0].spawned||ev.slots[1].spawned||ev.slots[2].spawned||
+                                   ev.slots[3].spawned||ev.slots[4].spawned)){
         source_st02_banks_tried_=true;
-        size_t budget=512u*1024u;
+        size_t budget=768u*1024u;
+        const auto take=[&](uint8_t cls,uint8_t sub,uint8_t variant){
+            auto m=decode_st02_event4_actor_model(area_.ebd,cls,sub,variant,budget);
+            budget-=std::min(budget,m.decoded_bytes);return m;
+        };
         for(const auto& r:profile.spawns){
-            if(r[0]>2||r[3]!=0x40)continue;
-            auto bank=decode_st02_event4_actor_bank(area_.ebd,r[1],budget);
-            if(!bank)continue;
-            budget-=std::min(budget,bank->decoded_bytes);
-            source_st02_sequence_.banks[r[0]]=std::move(bank);
+            if(r[0]>4)continue;
+            if(r[0]==4){source_st02_prop_models_[0]=take(r[3],r[1],0);source_st02_prop_models_[1]=take(r[3],r[1],1);continue;}
+            source_st02_models_[r[0]]=take(r[3],r[1],0);
+            source_st02_sequence_.banks[r[0]]=source_st02_models_[r[0]].bank;
         }
     }
     St02ActorContext ctx;
@@ -1853,7 +1858,30 @@ void RuntimeSession::update_source_st02_event4_actors(const SourcePostWinProfile
         apply_st02_event4_slot_writes(w,ev.slots[i]);
         ctx.prop=i==1?&source_st02_actors_[4]:nullptr;
         tick=step_st02_event4_actor(w,ctx);
+        if(i<3)continue;   // class 40 drove its own sequence
+        // Class 20: 0x8002F9C4 (20/27: variant +0x0C picks the row), request 0
+        // through 0x800322A8, then 0x80032538 steps with 0x80032488's rules.
+        if(i==4&&tick.model_init){
+            source_st02_models_[4]=source_st02_prop_models_[tick.model_variant&&*tick.model_variant?1:0];
+            source_st02_sequence_.banks[4]=source_st02_models_[4].bank;
+        }
+        auto& seq=source_st02_sequence_;
+        if(tick.pose_restart)seq.restart(uint8_t(i),0);
+        for(uint8_t s=0;s<tick.sequence_steps;++s)seq.advance(uint8_t(i));
     }
+}
+size_t RuntimeSession::source_st02_event4_draws(std::array<St02ActorDraw,5>& out) const noexcept {
+    size_t n=0;
+    for(size_t i=0;i<source_st02_actors_.size();++i){
+        const auto& w=source_st02_actors_[i];const auto& m=source_st02_models_[i];
+        if(!w.live||!(w.flags_00&2u)||!m.mesh||!m.bank||!source_st02_sequence_.current[i])continue;
+        const auto* pose=select_st02_event4_actor_pose(*m.bank,i<3?w.pose_ac:uint8_t(0),source_st02_sequence_.cursor[i]);
+        if(!pose)continue;
+        auto mx=build_st02_event4_actor_matrices(*m.mesh,*pose,w);
+        if(!mx.part_count)continue;
+        out[n++]={uint8_t(i),m.mesh.get(),mx};
+    }
+    return n;
 }
 std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_win_transition() const noexcept {
     const auto& h=source_post_win_handoff_;

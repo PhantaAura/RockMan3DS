@@ -1764,6 +1764,53 @@ void draw_imported_actors_uv(const l3::ActorAreaRuntime& area) {
         if(open)C3D_ImmDrawEnd();
     }
 }
+// ST02 event 4's scene actors (slots 0..4) from the runtime's draw list:
+// mesh parts through their float hierarchy matrices and the area actor
+// material cache, like the imported actors above. Shading, GTE rounding and
+// OT order are CANDIDATE (same gates as draw_imported_actors_uv).
+size_t draw_st02_event4_actors_uv(const l3::RuntimeSession& session, uint8_t& slots) {
+    std::array<l3::RuntimeSession::St02ActorDraw,5> draws{};
+    const size_t count=session.source_st02_event4_draws(draws);
+    slots=0;
+    if(!count)return 0;
+    configure_immediate_attributes_uv();
+    for(size_t d=0;d<count;++d){
+        const auto& draw=draws[d];const auto& mesh=*draw.mesh;const auto& pose=draw.matrices;
+        slots=uint8_t(slots|(1u<<draw.slot));
+        bool open=false,textured=false;uint32_t active_word=0;
+        for(size_t i=0;i<pose.part_count&&i<mesh.model.parts.size();++i){
+            if(!pose.draw_enabled[i])continue;
+            const auto& part=mesh.model.parts[i];
+            if(part.triangles.empty()&&part.quads.empty())continue;
+            const auto raw=mesh.bindings[i].material_word;
+            const uint32_t word=(raw&0xffff0000u)|uint16_t(raw|0x20u);
+            if(!open||word!=active_word){
+                if(open)C3D_ImmDrawEnd();
+                const GpuMaterial* material=nullptr;
+                if(actor_textures_requested())for(const auto& m:g_actor_materials)
+                    if(m.material_word==word&&m.texture_ready){material=&m;break;}
+                textured=material!=nullptr;
+                if(material)C3D_TexBind(0,const_cast<C3D_Tex*>(&material->texture));
+                configure_texenv_uv(textured);
+                ++g_runtime_diag.draw_calls;C3D_ImmDrawBegin(GPU_TRIANGLES);
+                active_word=word;open=true;
+            }
+            const auto vertex=[&](uint8_t index,uint8_t u,uint8_t source_v){
+                const auto& v=part.vertices[index];
+                const auto world=l3::player_pose_transform_point(pose.world[i],{float(v.x),float(v.y),float(v.z)});
+                const auto uv=l3::actor_render_uv(u,source_v);
+                const float color=textured?1.f:128.f/255.f;
+                send_immediate_uv(world.x,world.y,world.z,color,color,color,uv[0],uv[1]);
+            };
+            for(const auto& tri:part.triangles)for(size_t k=0;k<tri.index.size();++k)
+                vertex(tri.index[k],tri.uv[k*2],tri.uv[k*2+1]);
+            for(const auto& quad:part.quads)for(const auto index:l3::kPs1QuadTriangleIndices)
+                vertex(quad.index[index],quad.uv[index*2],quad.uv[index*2+1]);
+        }
+        if(open)C3D_ImmDrawEnd();
+    }
+    return count;
+}
 // Real retained E0 meshes, not stand-in actors or the class20 pose hierarchy.
 // This diagnostic renderer deliberately leaves texture/CLUT, source camera
 // depth and GTE shade unacknowledged. ABR/STP are gated below; original
@@ -7647,6 +7694,12 @@ int main() {
                     (unsigned long)session.frame_counter(),unsigned(g_source_scene_actor40_only),unsigned(draw_legacy_player));
             const u64 actors_start=svcGetSystemTick();g_frame_split.player+=actors_start-player_start;
             if (use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) draw_imported_actors_uv(actors);
+            if(use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All&&session.stage()==2){
+                uint8_t slots=0;const size_t drawn=draw_st02_event4_actors_uv(session,slots);
+                if(session.frame_counter()%60u==0u&&session.source_post_win_event().event==4)
+                    hardware_test_trace("# st02_event4_actors,frame=%lu,drawn=%lu,slots=%02x,area=%u",
+                        (unsigned long)session.frame_counter(),(unsigned long)drawn,unsigned(slots),unsigned(session.map_area_index()));
+            }
             const u64 e0_start=svcGetSystemTick();g_frame_split.actors+=e0_start-actors_start;
             if(scene_e0&&(!scene_e0->resident_in(session.active_area().ebd)||!session.source_event_phase5_resources().resident_in(session.active_area().ebd))){scene_e0.reset();release_scene_materials();}
             if(g_hardware_scene_draw==HardwareSceneDraw::All&&scene_actor40&&scene_actor40_prefix_ready&&scene_actor40_pose_ready&&session.source_event_phase5_resources().resident_in(session.active_area().ebd)) {

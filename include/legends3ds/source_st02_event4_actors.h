@@ -11,6 +11,7 @@
 // (0x80105724 smoke, 0x80105C28) are reported, not performed.
 // Original addresses are identity tokens.
 #include "legends3ds/actor_animation_bank.h"
+#include "legends3ds/actor_runtime.h"
 #include "legends3ds/actor_sequence.h"
 #include "legends3ds/ebd_directory.h"
 #include "legends3ds/reference_tables.h"
@@ -109,9 +110,9 @@ St02EventActorTick step_st02_event4_actor(St02EventActorWork& w, const Reference
 // decoded records (actor_sequence.h). A request missing from a bank leaves
 // that slot keyless (key() == nullopt) until the next restart.
 struct St02ActorBankSequence final : St02ActorSequence {
-    std::array<std::shared_ptr<const ActorAnimationBank>,3> banks{};
-    std::array<const ActorAnimationRequestCache*,3> current{};
-    std::array<ActorSequenceCursor,3> cursor{};
+    std::array<std::shared_ptr<const ActorAnimationBank>,5> banks{};   // slots 0..4
+    std::array<const ActorAnimationRequestCache*,5> current{};
+    std::array<ActorSequenceCursor,5> cursor{};
     void restart(uint8_t slot, uint8_t request) override;
     void advance(uint8_t slot) override;
     std::optional<uint8_t> key(uint8_t slot) const override;
@@ -120,6 +121,30 @@ struct St02ActorBankSequence final : St02ActorSequence {
 // or exceeds `cap` bytes).
 std::shared_ptr<const ActorAnimationBank> decode_st02_event4_actor_bank(const EbdDirectory& ebd, uint8_t subtype,
                                                                         size_t cap) noexcept;
+// One slot's resident model: the mesh 0x8002F9C4 resolves and its pose bank.
+// Class 0x40 rows decode as scene actors with the handler's requests; class
+// 0x20 rows (20/0A, 20/27) as class-20 actors with request 0, the only one
+// they issue. `variant` picks the row among the (class, subtype) matches:
+// 0 = first (null variant), 1 = second (20/27 with +0x0C = 1; CANDIDATE order).
+struct St02ActorModel {
+    std::shared_ptr<const ActorMeshResource> mesh;
+    std::shared_ptr<const ActorAnimationBank> bank;
+    size_t decoded_bytes = 0;
+};
+St02ActorModel decode_st02_event4_actor_model(const EbdDirectory& ebd, uint8_t object_class, uint8_t subtype,
+                                              uint8_t variant, size_t cap) noexcept;
+// The pose record the slot's cursor points at, or null.
+const ActorPoseResource* select_st02_event4_actor_pose(const ActorAnimationBank& bank, uint8_t request,
+                                                       const ActorSequenceCursor& cursor) noexcept;
+// Float presentation of the 0x80033598 hierarchy for one actor, as
+// build_source_scene_actor40_pose_matrices does for the ST00 scene actor:
+// position +0x14, rotation RotMatrix(+0x54) applied before the root and
+// child rotations (the class-40 handlers only set yaw), scale +0x158/+0x15A/
+// +0x15C (Q12) applied once to each final matrix. Integer/GTE rounding and
+// the per-part scale bit stay separate gates. part_count 0 = not drawable.
+ImportedActorPoseMatrices build_st02_event4_actor_matrices(const ActorMeshResource& mesh,
+                                                           const ActorPoseResource& pose,
+                                                           const St02EventActorWork& w) noexcept;
 constexpr uint32_t kSt02PropRollTable = 0x801079E4u;
 constexpr size_t kSt02PropRollBytes = 0xC6;
 

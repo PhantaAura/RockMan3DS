@@ -1,4 +1,5 @@
 #include "legends3ds/source_st02_event4_actors.h"
+#include "legends3ds/player_pose.h"
 
 namespace l3 {
 namespace {
@@ -379,26 +380,91 @@ std::optional<uint8_t> St02ActorBankSequence::key(uint8_t slot) const {
     return cursor[slot].frame_a4;
 }
 
-std::shared_ptr<const ActorAnimationBank> decode_st02_event4_actor_bank(const EbdDirectory& ebd, uint8_t subtype,
-                                                                        size_t cap) noexcept {
+St02ActorModel decode_st02_event4_actor_model(const EbdDirectory& ebd, uint8_t object_class, uint8_t subtype,
+                                              uint8_t variant, size_t cap) noexcept {
     static const uint8_t r05[] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
     static const uint8_t r06[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     static const uint8_t r07[] = {1, 2, 3};
-    const uint8_t* req = subtype == 5 ? r05 : subtype == 6 ? r06 : subtype == 7 ? r07 : nullptr;
-    const size_t count = subtype == 5 ? sizeof r05 : subtype == 6 ? sizeof r06 : sizeof r07;
-    if (!req) return nullptr;
+    static const uint8_t r20[] = {0};
+    const uint8_t* req = nullptr; size_t count = 0;
+    if (object_class == 0x40 && subtype == 5) { req = r05; count = sizeof r05; }
+    else if (object_class == 0x40 && subtype == 6) { req = r06; count = sizeof r06; }
+    else if (object_class == 0x40 && subtype == 7) { req = r07; count = sizeof r07; }
+    else if (object_class == 0x20 && (subtype == 0x0A || subtype == 0x27)) { req = r20; count = 1; }
+    St02ActorModel out;
+    if (!req) return out;
     try {
-        const auto rows = find_ebd_entries(ebd, 0x40, subtype);
-        if (rows.empty() || ebd.source_payload.empty()) return nullptr;
-        const auto mesh = decode_ebd_scene_actor40_mesh(ebd, rows.front(), ActorMeshTier::NEAR, cap);
-        if (mesh.footprint.decoded_bytes > cap) return nullptr;
-        auto bank = decode_ebd_scene_actor40_animation_bank(ebd, rows.front(), mesh, req, count,
-                                                            cap - mesh.footprint.decoded_bytes);
-        if (bank.requests.size() != count) return nullptr;
-        return std::make_shared<const ActorAnimationBank>(std::move(bank));
+        const auto rows = find_ebd_entries(ebd, object_class, subtype);
+        if (rows.size() <= variant || ebd.source_payload.empty()) return out;
+        const size_t row = rows[variant];
+        auto mesh = object_class == 0x40 ? decode_ebd_scene_actor40_mesh(ebd, row, ActorMeshTier::NEAR, cap)
+                                         : decode_ebd_actor_mesh(ebd, row, ActorMeshTier::NEAR, cap);
+        const size_t mesh_bytes = mesh.footprint.decoded_bytes;
+        if (mesh_bytes > cap) return out;
+        auto bank = object_class == 0x40
+            ? decode_ebd_scene_actor40_animation_bank(ebd, row, mesh, req, count, cap - mesh_bytes)
+            : decode_ebd_actor_animation_bank(ebd, row, mesh, req, count, cap - mesh_bytes);
+        if (bank.requests.size() != count) return out;
+        out.decoded_bytes = mesh_bytes + bank.decoded_bytes;
+        out.mesh = std::make_shared<const ActorMeshResource>(std::move(mesh));
+        out.bank = std::make_shared<const ActorAnimationBank>(std::move(bank));
     } catch (...) {
-        return nullptr;
+        return St02ActorModel{};
     }
+    return out;
+}
+
+std::shared_ptr<const ActorAnimationBank> decode_st02_event4_actor_bank(const EbdDirectory& ebd, uint8_t subtype,
+                                                                        size_t cap) noexcept {
+    return decode_st02_event4_actor_model(ebd, 0x40, subtype, 0, cap).bank;
+}
+
+const ActorPoseResource* select_st02_event4_actor_pose(const ActorAnimationBank& bank, uint8_t request,
+                                                       const ActorSequenceCursor& cursor) noexcept {
+    const auto* r = find_actor_animation_request(bank, request);
+    if (!r || cursor.record_index >= r->sequence.poses.size()) return nullptr;
+    return &r->sequence.poses[cursor.record_index];
+}
+
+ImportedActorPoseMatrices build_st02_event4_actor_matrices(const ActorMeshResource& mesh, const ActorPoseResource& pose,
+                                                           const St02EventActorWork& w) noexcept {
+    ImportedActorPoseMatrices out;
+    const auto& b = mesh.bindings;
+    if (b.empty() || b.size() > kActorDrawDescriptorSlots || b.size() != pose.base_translation.size() ||
+        mesh.model.parts.size() != b.size()) return out;
+    const auto q12 = [](uint32_t v) { return float(int16_t(uint16_t(v))) / 4096.f; };
+    const std::array<float,3> scale{{q12(w.word_158), q12(w.word_158 >> 16), q12(w.word_15c)}};
+    std::array<PlayerPoseMatrix,kActorDrawDescriptorSlots> rotation{};
+    std::array<PlayerPosePoint,kActorDrawDescriptorSlots> position{};
+    std::array<bool,kActorDrawDescriptorSlots> valid{};
+    const auto body = player_pose_rotation_xyz(w.rot_54[0], w.rot_54[1], w.rot_54[2]);
+    const auto& root = pose.rotations[0];
+    rotation[0] = player_pose_mul(body, player_pose_rotation_xyz(root[0], root[1], root[2]));
+    const auto delta = player_pose_transform_point(body, {float(pose.root_translation[0]) * 8.f * scale[0],
+        float(pose.root_translation[1]) * 8.f * scale[1], float(pose.root_translation[2]) * 8.f * scale[2]});
+    position[0] = {float(w.raw_14[0]) + delta.x, float(w.raw_14[1]) + delta.y, float(w.raw_14[2]) + delta.z};
+    valid[0] = true; out.draw_enabled[0] = b[0].draw_control >= 0;
+    for (size_t i = 1; i < b.size(); ++i) {
+        if (b[i].parent < 0) continue;
+        const auto parent = size_t(b[i].parent);
+        if (parent >= i || b[i].rotation_translation_index >= pose.rotations.size()) return {};
+        if (b[i].rotation_translation_index && !valid[parent]) continue;
+        valid[i] = true; out.draw_enabled[i] = b[i].draw_control >= 0;
+        if (!b[i].rotation_translation_index) { rotation[i] = rotation[0]; position[i] = position[0]; continue; }
+        const auto& a = pose.rotations[b[i].rotation_translation_index];
+        rotation[i] = player_pose_mul(rotation[parent], player_pose_rotation_xyz(a[0], a[1], a[2]));
+        const auto& tr = pose.base_translation[i];
+        const auto d = player_pose_transform_point(rotation[parent],
+            {float(tr[0]) * scale[0], float(tr[1]) * scale[1], float(tr[2]) * scale[2]});
+        position[i] = {position[parent].x + d.x, position[parent].y + d.y, position[parent].z + d.z};
+    }
+    for (size_t i = 0; i < b.size(); ++i) {
+        auto& m = out.world[i]; m = rotation[i];
+        for (size_t row = 0; row < 3; ++row) for (size_t c = 0; c < 3; ++c) m.m[row * 4 + c] *= scale[c];
+        m.m[3] = position[i].x; m.m[7] = position[i].y; m.m[11] = position[i].z;
+    }
+    out.part_count = b.size();
+    return out;
 }
 
 St02EventActorTick step_st02_event4_actor(St02EventActorWork& w, const St02ActorContext& c) noexcept {

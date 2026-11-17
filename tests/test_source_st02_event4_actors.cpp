@@ -350,6 +350,44 @@ int main() {
         CHECK(!decode_st02_event4_actor_bank(empty, 5, 1u << 20) && !decode_st02_event4_actor_bank(empty, 0x0A, 1u << 20));
     }
 
+    // ---- draw: model decode and the float hierarchy matrices ----
+    {
+        EbdDirectory empty;
+        const auto m = decode_st02_event4_actor_model(empty, 0x20, 0x27, 1, 1u << 20);
+        CHECK(!m.mesh && !m.bank && m.decoded_bytes == 0);
+        CHECK(!decode_st02_event4_actor_model(empty, 0x60, 1, 0, 1u << 20).mesh);   // not an event-4 actor
+
+        ActorMeshResource mesh;
+        mesh.model.parts.resize(3);
+        mesh.bindings.resize(3);
+        mesh.bindings[0].parent = -1;
+        mesh.bindings[1].parent = 0; mesh.bindings[1].rotation_translation_index = 1;
+        mesh.bindings[2].parent = 0; mesh.bindings[2].rotation_translation_index = 2; mesh.bindings[2].draw_control = -1;
+        ActorPoseResource pose;
+        pose.root_translation = {{1, 0, 0}};
+        pose.base_translation = {{{0, 0, 0}}, {{0, 100, 0}}, {{50, 0, 0}}};
+        auto w = spawn_st02_event4_actor(record40(0, 0x05));
+        w.raw_14 = {{10, 20, 30}};
+        w.word_158 = 0x10001000u; w.word_15c = 0x00001000u;   // scale 1.0
+        auto mx = build_st02_event4_actor_matrices(mesh, pose, w);
+        const auto near = [](float a, float b) { return std::fabs(a - b) < 0.01f; };
+        CHECK(mx.part_count == 3 && mx.draw_enabled[0] && mx.draw_enabled[1] && !mx.draw_enabled[2]);
+        CHECK(near(mx.world[0].m[3], 18) && near(mx.world[0].m[7], 20) && near(mx.world[0].m[11], 30));   // root * 8
+        CHECK(near(mx.world[1].m[3], 18) && near(mx.world[1].m[7], 120) && near(mx.world[1].m[11], 30));
+        // Yaw 0x400 (90 degrees) turns the root and child offsets in x/z only.
+        w.rot_54[1] = 0x400;
+        mx = build_st02_event4_actor_matrices(mesh, pose, w);
+        CHECK(near(mx.world[0].m[7], 20) && near(std::fabs(mx.world[0].m[3] - 10) + std::fabs(mx.world[0].m[11] - 30), 8));
+        CHECK(near(mx.world[2].m[7], 20) && near(std::fabs(mx.world[2].m[3] - mx.world[0].m[3]) + std::fabs(mx.world[2].m[11] - mx.world[0].m[11]), 50));
+        // The handlers' 0x0200 scale is 1/8 on every axis, applied once.
+        w.rot_54[1] = 0; w.word_158 = 0x02000200u; w.word_15c = 0x42100200u;
+        mx = build_st02_event4_actor_matrices(mesh, pose, w);
+        CHECK(near(mx.world[0].m[0], 0.125f) && near(mx.world[1].m[7], 20 + 12.5f) && near(mx.world[0].m[3], 11));
+        // Inconsistent resources are not drawable.
+        pose.base_translation.pop_back();
+        CHECK(build_st02_event4_actor_matrices(mesh, pose, w).part_count == 0);
+    }
+
     if (failures) { std::printf("%d failure(s)\n", failures); return 1; }
     std::printf("source_st02_event4_actors: ok\n");
     return 0;

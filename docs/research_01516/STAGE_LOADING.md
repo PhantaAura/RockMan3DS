@@ -219,3 +219,21 @@ row 4, 20/27 = rows 5 and 6 (its two variants); all 23 requests decode
 (about 297 KB with poses). The keys match the handlers: 40/05 request 16
 loops on key 27, 40/06 request 3 counts 34 down to 0, 40/07 request 2
 reaches 71.
+
+### Drawing the event-4 actors (CANDIDATE presentation)
+
+Each slot's model is the 0x8002F9C4 row (first match; 20/27's +0x0C picks
+the first or second row, CANDIDATE order) decoded once with its pose bank:
+class 40 as scene actors with the handlers' requests, class 20 with request
+0 (0x800322A8(work, 0, 0), then 0x80032538 steps under 0x80032488's rules).
+The draw list takes live slots whose +0 bit 1 is set, the pose record the
+slot's cursor points at, and the float 0x80033598 hierarchy of
+`build_source_scene_actor40_pose_matrices` with RotMatrix(+0x54) in place
+of yaw alone and the +0x158/+0x15C Q12 scale (0x0200 = 1/8 for all five).
+The 3DS renderer draws them through the area actor material cache.
+
+On the cooked ST02_01.EBD: 40/05 18 parts, about 139 units tall; 40/06 18
+parts, 157; 40/07 13 parts, 155; 20/0A 2 parts, 1920 (the ship); 20/27 2
+parts, 79 per variant; 352 KB for all six models (768 KB budget). Shading,
+GTE rounding, OT order and the face UV channels are not covered; nothing
+has been seen on hardware yet.
