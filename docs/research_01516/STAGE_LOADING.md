@@ -315,8 +315,8 @@ trace (`wtrace_arm 0x800BE378..0x800BE4B8`) named each writer:
 |---|---|---|---|---|
 | event 4 end | clear 0x600 | ST02 event 4 (0x80101F8C) | yes | yes |
 | event 4 end | set 0x384 | dispatcher 0x8001D9F0: event +0 went 0, so 0x380 + event id | missing | set (also 0x383/0x382 for ST00 events 3/2) |
-| ST03 load | set 0x7E1, 0x7E2, 0x7E4, 0x7E8 | ST03 stage init 0x801007B4 → 0x8001E4C4 → 0x8001E460 (door list 0x801152E4, states 0x801152EC + 8 × byte 0x800C1B62, overrides by flags 2 / 14 / 0) | missing | missing: doors slice |
-| ST03 load + 1 | set 0x1FF | area-enter table 0x80115124[area] (area 1: 0x80101778; door locks there need flag 0x235) via 0x8010089C | missing | missing: doors slice |
+| ST03 load | set 0x7E1, 0x7E2, 0x7E4, 0x7E8 | ST03 stage init 0x801007B4 → 0x8001E4C4 → 0x8001E460 (door list 0x801152E4, states 0x801152EC + 8 × byte 0x800C1B62, overrides by flags 2 / 14 / 0) | yes | yes (run36) |
+| ST03 load + 1 | set 0x1FF | area-enter table 0x80115124[area] (area 1: 0x80101778; door locks there need flag 0x235) via 0x8010089C | yes | yes (run36) |
 | event 8, message 4 | set 0x0A | message opcode 0x9A (0x800553A8; 0x9B clears, 0x800553F0) inside the scene's message | missing | set |
 | event 8 end | set 0x03 | scene 0 state 11 (0x80102110) | yes | yes |
 | event 8 end | set 0x388 | dispatcher 0x8001D9F0 (0x380 + 8) | missing | set |
@@ -490,3 +490,10 @@ Logic runs and matches the oracle; only the look is missing:
 - The focus camera 0x80039FFC / 0x8003A13C / 0x80039E50 (scene 2 states 0..2): reported, never busy.
 - Player hide (+0 bit 1, +0xBD bit 0x40) during scene 2 states 0..3: written, not read by the port's player draw.
 - NPC sounds: 266 (officer), 268 (Inspector), 269 (Barrell) on +0xA6 == 1 while walking.
+
+## Door locks (run36, a8d442e, pass-20261117-144348)
+
+Ported the shared 0x8001E4C4 / 0x8001E460 lock helper, ST03's stage init 0x801007B4 (row 0x800C1B62 of 0x801152EC, flag 2 / 14 / 0 overrides) and the area-enter gate 0x8010089C (0x1FF, cleared by the area loader 0x8001F554; it runs from the frame after the load).
+`compare_recomp_3ds.py` against the ST02 -> ST03 oracle log: all 9 oracle flags set, order matches, 0x1FF one frame after the locks as on the oracle.
+Scene 2 still ends with flag 0 (frame 20351), no game over.
+CANDIDATE: 0x800C1B62 and block 0x800989F8 +4 read 0.
