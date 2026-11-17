@@ -76,10 +76,75 @@ int main() {
         auto e2 = start_st03_event8(0);
         s = step_st03_event8(e2, p, k); CHECK(!s.skipped);
     }
-    // Scenes 1..4 are not ported.
+    // Scenes 2..4 are not ported; scene 1 needs its timeline.
     {
         auto ev = start_st03_event8(2);
         CHECK(step_st03_event8(ev, p, in).unsupported_scene);
+        auto e1 = start_st03_event8(1);
+        CHECK(step_st03_event8(e1, p, in).unsupported_scene);   // profile without 0x8011614C
+    }
+    // Scene 1 (0x80102224), the police car, on a synthetic 0x8011614C.
+    {
+        auto q = p;
+        q.police.token = 0x8011614Cu; q.police_camera.token = 0x80116164u;
+        q.police.records = {{{0x00030000u, 0x80103A88u}}, {{0x00040100u, 0x80103A88u}}, {{0xFFu, 0}}};
+        q.police_loaded = true;
+        St03Event8Inputs k;
+        auto ev = start_st03_event8(1);
+        auto s = step_st03_event8(ev, q, k); CHECK(ev.state == 0 && !s.player);   // waits for 0x80042238
+        k.player_ready = true;
+        s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 2 && ev.byte_07 == 10 && s.player && s.player->from_pose && s.player->walk && *s.player_anim_448 == 48);
+        int n = 0;
+        while (ev.byte_07 && n < 20) { s = step_st03_event8(ev, q, k); ++n; }
+        CHECK(n == 10);
+        s = step_st03_event8(ev, q, k); CHECK(ev.state == 2);                     // not on the floor yet
+        k.player_on_floor = true; k.turn_delta = 32;
+        s = step_st03_event8(ev, q, k); CHECK(ev.state == 2 && *s.player_anim_448 == 13 && *s.player_heading_add == 32);
+        k.turn_delta = 0;
+        s = step_st03_event8(ev, q, k); CHECK(ev.state == 3 && *s.player_anim_448 == 48 && s.messages[0] == 31);
+        k.message_open = true; s = step_st03_event8(ev, q, k); CHECK(ev.state == 3);
+        k.message_open = false;
+        s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 4 && *s.sound_8001a008 == 270 && ev.timeline == &q.police && s.player && !s.player->walk &&
+              s.player->position[0] == -2496 && s.player->position[2] == 5065 && *s.player->heading == 2240);
+        CHECK(*s.objects[3].state_09 == 1 && s.objects[3].clear_0a_0b && *s.objects[3].heading_56 == 1536 && ev.byte_07 == 10);
+        n = 0;
+        while (ev.state == 4 && n < 40) { s = step_st03_event8(ev, q, k); ++n; }
+        CHECK(ev.state == 5 && s.messages[0] == 32);
+        k.message_open = true; s = step_st03_event8(ev, q, k); CHECK(ev.state == 5);
+        k.message_open = false; s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 7 && s.player_heading_zero && s.flag_8009395c && *s.flag_set == 4 && s.release_set && *s.spawn_set == 1 && !s.ended);
+        s = step_st03_event8(ev, q, k);
+        CHECK(!ev.active && s.ended && s.player_release);
+        // Start in states 2..3 jumps to state 6 (flag 4, set 1), then 7.
+        auto e2 = start_st03_event8(1);
+        St03Event8Inputs r; r.player_ready = true;
+        step_st03_event8(e2, q, r); CHECK(e2.state == 2);
+        r.start_pressed = true;
+        s = step_st03_event8(e2, q, r); CHECK(s.skipped && e2.state == 6 && s.player && s.player->position[0] == -2496);
+        r.start_pressed = false;
+        s = step_st03_event8(e2, q, r); CHECK(e2.state == 7 && *s.flag_set == 4 && *s.spawn_set == 1);
+        s = step_st03_event8(e2, q, r); CHECK(!e2.active && s.ended);
+    }
+    // 0x80100990 state machine: trigger box (cells x -5..-4, z 11..12).
+    {
+        uint8_t st = 0;
+        bool f3 = true, f4 = false, f605 = false, f0 = false, f604 = false;
+        const auto flags = [&](uint16_t f) { return (f == 3 && f3) || (f == 4 && f4) || (f == 0x605 && f605) || (f == 0 && f0) || (f == 0x604 && f604); };
+        auto o = st03_area1_setup_step(st, flags, 0, 0);
+        CHECK(st == 1 && *o.object_set == 0 && !o.event8_scene && *o.call_80101918 == 0);
+        o = st03_area1_setup_step(st, flags, -1536, 6000); CHECK(!o.event8_scene);    // x cell -3: outside
+        o = st03_area1_setup_step(st, flags, -2000, 6656); CHECK(!o.event8_scene);    // z cell 13: outside
+        o = st03_area1_setup_step(st, flags, -2561, 6000); CHECK(!o.event8_scene);    // x cell -6: outside
+        o = st03_area1_setup_step(st, flags, -2560, 6655);
+        CHECK(*o.event8_scene == 1 && *o.flag_set == 0x605);
+        f605 = true; o = st03_area1_setup_step(st, flags, -2560, 6655); CHECK(!o.event8_scene);
+        f4 = true; o = st03_area1_setup_step(st, flags, 0, 0); CHECK(st == 2);
+        f604 = true; o = st03_area1_setup_step(st, flags, 0, 0); CHECK(*o.event8_scene == 2 && *o.flag_clear == 0x604);
+        f0 = true; o = st03_area1_setup_step(st, flags, 0, 0); CHECK(st == 3);
+        uint8_t s0 = 0; o = st03_area1_setup_step(s0, [](uint16_t) { return false; }, 0, 0); CHECK(s0 == 1 && *o.event8_scene == 0);
+        uint8_t s12 = 0; o = st03_area1_setup_step(s12, [](uint16_t f) { return f == 12; }, 0, 0); CHECK(s12 == 255 && !o.call_80101918 && *o.object_set == 5);
     }
     // Area 1 set-up 0x80100990.
     {

@@ -7,6 +7,8 @@ constexpr uint32_t kIntroTimeline = 0x80115FB4u, kCrashTimeline = 0x8011600Cu;
 constexpr uint32_t kIntroCamera = 0x80115FC4u, kCrashCamera = 0x80116034u;
 constexpr uint32_t kRecordCallback = 0x80103A88u;   // 0x8001EC0C + 0x8001F070
 constexpr std::array<int16_t,3> kCrashTarget{{-4584, -1, 1431}};   // 0xEE180000, 0xFFFF0000, 0x05970000
+constexpr uint32_t kPoliceTimeline = 0x8011614Cu, kPoliceCamera = 0x80116164u;
+constexpr std::array<int16_t,3> kPoliceTarget{{-2496, -1, 5065}};  // 0xF6400000, 0xFFFF0000, 0x13C90000
 
 uint32_t header(const St03Event8& ev) noexcept {
     return ev.timeline && ev.record < ev.timeline->records.size() ? ev.timeline->records[ev.record][0] : 0xFFu;
@@ -112,6 +114,65 @@ void scene0(St03Event8& ev, const St03Event8Profile& p, const St03Event8Inputs& 
     }
 }
 
+// Scene 1 (0x80102224, states via table 0x80100034): the police car.
+void scene1(St03Event8& ev, const St03Event8Profile& p, const St03Event8Inputs& in, St03Event8Step& out) noexcept {
+    bool open = in.message_open;
+    const auto place = [&](std::optional<uint16_t> heading) {
+        St03PlayerTarget t; t.position = kPoliceTarget; t.heading = heading; out.player = t;   // 0x80030150
+    };
+    const auto finish = [&] {   // 0x8010251C
+        out.flag_set = 4; out.release_set = true; out.spawn_set = 1;
+    };
+    switch (ev.state) {
+    case 0: case 1:   // 0x8010226C
+        if (!in.player_ready) break;
+        ev.byte_07 = 10; ev.state = uint8_t(ev.state + 2);
+        { St03PlayerTarget t; t.from_pose = true; t.walk = true; out.player = t; }   // +8 = 3, +9 = 1, +0xBD |= 0x10
+        out.player_anim_448 = 48;
+        break;
+    case 2:   // 0x80102310
+        if (ev.byte_07) { --ev.byte_07; break; }
+        if (!in.player_on_floor) break;
+        if (in.turn_delta != 0) { out.player_anim_448 = 13; out.player_heading_add = in.turn_delta; break; }
+        out.player_anim_448 = 48; ++ev.state; message(out, open, 31);
+        break;
+    case 3:   // 0x80102384
+        if (open) break;
+        out.sound_8001a008 = 270;
+        begin(ev, out, p.police, p.police_camera);
+        place(uint16_t(2240));
+        out.objects[3].state_09 = 1; out.objects[3].clear_0a_0b = true; out.objects[3].heading_56 = 1536;
+        ev.byte_07 = 10; ++ev.state;
+        break;
+    case 4: {  // 0x80102450
+        if (uint8_t(header(ev) >> 8) == 1) {
+            if (ev.byte_07) --ev.byte_07; else out.player_heading_add = 32;
+        } else if (at_end(ev)) { ++ev.state; message(out, open, 32); }
+        break;
+    }
+    case 5:   // 0x801024C8
+        if (open) break;
+        ev.state = 7; out.player_heading_zero = true; out.flag_8009395c = true; finish();
+        break;
+    case 6:   // 0x80102508
+        ++ev.state; out.player_heading_zero = true; finish();
+        break;
+    case 7:   // 0x8010253C
+        ev.active = false; out.player_release = true; out.ended = true;
+        break;
+    default: break;
+    }
+    if (ev.state == 4 && !at_end(ev) && ev.timeline->records[ev.record][1] == kRecordCallback) {
+        if (ev.camera_program) step_source_camera_program_8001ec0c(ev.camera, *ev.camera_program, ev.counters);
+        step_source_timeline_8001f070(ev.counters, ev.record, *ev.timeline);
+    }
+    if (ev.state >= 2 && ev.state <= 5 && in.start_pressed) {   // 0x8010259C
+        out.skipped = true;
+        ev.state = ev.state < 4 ? 6 : 5;
+        place(std::nullopt);
+    }
+}
+
 } // namespace
 
 bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profile& out) {
@@ -124,6 +185,9 @@ bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profi
     if (!a || !b || !ca || !cb || a->records.empty() || b->records.empty()) return false;
     out.intro = *a; out.crash = *b; out.intro_camera = *ca; out.crash_camera = *cb;
     out.loaded = true;
+    const auto* pt = package.timeline(kPoliceTimeline);
+    const auto* pc = package.camera(kPoliceCamera);
+    if (pt && pc && !pt->records.empty()) { out.police = *pt; out.police_camera = *pc; out.police_loaded = true; }
     return true;
 }
 
@@ -136,8 +200,8 @@ St03Event8Step step_st03_event8(St03Event8& ev, const St03Event8Profile& profile
     St03Event8Step out;
     if (!ev.active) return out;
     ++ev.ticks;
-    if (ev.scene != 0 || !profile.loaded) { out.unsupported_scene = true; return out; }
-    scene0(ev, profile, in, out);
+    if (!profile.loaded || (ev.scene == 1 && !profile.police_loaded) || ev.scene > 1) { out.unsupported_scene = true; return out; }
+    if (ev.scene == 0) scene0(ev, profile, in, out); else scene1(ev, profile, in, out);
     return out;
 }
 

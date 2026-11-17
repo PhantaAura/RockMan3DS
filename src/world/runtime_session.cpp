@@ -1,4 +1,5 @@
 #include "legends3ds/runtime_session.h"
+#include "legends3ds/class20_03_behavior.h"
 #include "legends3ds/class40_02_boss.h"
 #include "legends3ds/source_scene_view.h"
 #include <algorithm>
@@ -80,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_object_set_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area1_object_set_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1754,19 +1755,23 @@ bool RuntimeSession::bind_st03_event8_profile(St03Event8Profile profile) noexcep
 void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     st03_event8_step_={};
     // 0x80100990 runs on every load of area 1.
-    if(stage_!=3||map_area_index_!=1){st03_area1_setup_done_=false;return;}
-    // ST03 area 1 set-up 0x80100990 (first pass on arrival). Object sets
-    // (0x80103AB0) are not ported; the chosen set is kept for traces.
-    if(!st03_area1_setup_done_){
-        st03_area1_setup_done_=true;
-        const auto setup=st03_area1_setup_80100990([&](uint16_t f){return story_flag(f);});
-        st03_area1_object_set_=setup.object_set;
-        if(setup.start_event8&&st03_event8_profile_)st03_event8_=start_st03_event8(0);
+    if(stage_!=3||map_area_index_!=1){st03_area1_setup_done_=false;st03_area1_setup_state_=0;return;}
+    // ST03 area 1 set-up 0x80100990 every frame (its byte +4 restarts at 0
+    // on each area-1 entry: CANDIDATE). Object sets (0x80103AB0) are not
+    // ported; the chosen set is kept for traces.
+    st03_area1_setup_done_=true;
+    {
+        const auto setup=st03_area1_setup_step(st03_area1_setup_state_,[&](uint16_t f){return story_flag(f);},
+            rds16w(player_,0x14),rds16w(player_,0x18));
+        if(setup.object_set)st03_area1_object_set_=*setup.object_set;
+        if(setup.flag_set)set_story_flag(*setup.flag_set,true);
+        if(setup.flag_clear)set_story_flag(*setup.flag_clear,false);
+        if(setup.event8_scene&&st03_event8_profile_)st03_event8_=start_st03_event8(*setup.event8_scene);
     }
     auto& ev=st03_event8_;
     if(!ev.active||!st03_event8_profile_)return;
     St03Event8Inputs input;
-    if(ev.scene==0&&ev.state==1){   // 0x80042238 runs only in the state that calls it
+    if((ev.scene==0&&ev.state==1)||(ev.scene==1&&ev.state<=1)){   // 0x80042238 runs only in the state that calls it
         const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
         input.player_ready=ready&&*ready;
     }
@@ -1777,6 +1782,13 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     // st03_00.msg, the runtime's bank for area index 1).
     input.message_open=dialogue_.active;
     input.start_pressed=(in.pressed_psx_mask&0x0008u)!=0;
+    if(ev.scene==1&&ev.state==2){
+        // CANDIDATE: 0x80048E6C(player) as the port's floor query under the pose.
+        input.player_on_floor=player_contact_.floor_y&&*player_contact_.floor_y==rds16w(player_,0x16);
+        // 0x80031BEC(+0x14, (-2240, 7000) from 0x801164DC, +0x56, 32).
+        const auto target=source_heading_80031198(rds16w(player_,0x14),rds16w(player_,0x18),-2240,7000,actor_angle_steps_);
+        input.turn_delta=target?class20_03_turn_step(uint16_t(*target),rd16w(player_,0x56),32):0;
+    }
     auto step=step_st03_event8(ev,*st03_event8_profile_,input);
     if(step.player){
         // The event writes player state 3/1's targets (+0x428 16.16, +0x438
@@ -1785,17 +1797,28 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         // shows no walk: state 3/2 with the pose at the target two frames
         // after event 8 starts (VERIFIED_1TO1, m3_00 run).
         const auto& p=*step.player;
-        for(size_t a=0;a<3;++a){
-            wr32w(player_,0x428+a*4,int32_t(uint32_t(uint16_t(p.position[a]))<<16));
-            wr16w(player_,0x438+a*2,uint16_t(p.position[a]));
-        }
-        if(p.walk){
-            player_.bytes[8]=3;player_.bytes[9]=1;
-            wr16w(player_,0x440,0);wr16w(player_,0x442,0);wr16w(player_,0x444,0);
-            player_.bytes[0x448]=48;player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x10u);
+        if(p.from_pose){
+            // Scene 1 state 0: +8 = 3, +9 = 1, +0xBD |= 0x10, targets = pose.
+            player_.bytes[8]=3;player_.bytes[9]=1;player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x10u);
+            for(size_t k=0;k<8;++k){player_.bytes[0x438+k]=player_.bytes[0x14+k];player_.bytes[0x440+k]=player_.bytes[0x54+k];}
+            for(size_t k=0;k<16;++k)player_.bytes[0x428+k]=player_.bytes[0x1C+k];
+        }else{
+            for(size_t a=0;a<3;++a){
+                wr32w(player_,0x428+a*4,int32_t(uint32_t(uint16_t(p.position[a]))<<16));
+                wr16w(player_,0x438+a*2,uint16_t(p.position[a]));
+            }
+            if(p.walk){
+                player_.bytes[8]=3;player_.bytes[9]=1;
+                wr16w(player_,0x440,0);wr16w(player_,0x442,0);wr16w(player_,0x444,0);
+                player_.bytes[0x448]=48;player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x10u);
+            }
         }
         if(p.heading)wr16w(player_,0x442,*p.heading);
     }
+    if(step.player_anim_448)player_.bytes[0x448]=*step.player_anim_448;
+    if(step.player_heading_add)wr16w(player_,0x442,uint16_t((rd16w(player_,0x442)+uint16_t(*step.player_heading_add))&0xFFFu));
+    if(step.player_heading_zero)wr16w(player_,0x442,0);
+    if(step.sound_8001a008)(void)enqueue_source_audio_8001a008(source_audio_queue_,*step.sound_8001a008,0,0);
     for(uint8_t m=0;m<step.message_count;++m){
         // 0x80053A08(0, n): opens block n of the area's bank; an absent bank
         // or block opens nothing (and the scene's waits pass).
@@ -1808,6 +1831,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(step.player_release)source_player_event_release_80042314(player_);
     if(step.spawn_set)st03_area1_object_set_=*step.spawn_set;
     if(step.ended)set_story_flag(0x388,true);   // 0x8001D9F0: 0x380 + event 8
+    if(step.unsupported_scene&&ev.active&&ev.scene>1)ev.active=false;   // scenes 2..4 not ported: no hang
     st03_event8_step_=step;
 }
 bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) noexcept {

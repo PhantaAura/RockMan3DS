@@ -333,3 +333,48 @@ during message 4 (5325), 0x03 and 0x388 together at the end (5657). Only
 the door locks 0x7E1/0x7E2/0x7E4/0x7E8 and 0x1FF are missing (doors
 slice). The player reaches (-4584, -1, 1431) by frame 4396, within 2–3
 frames of event 8 starting (4393), with no game over.
+
+## ST03 trigger box and event 8 scene 1 (police car)
+
+**Area 1 set-up state machine (0x80100990, byte +4, every frame).**
+- 0: the first pass (object set by flags 12 / 14 / 13 / 0 / 4 / 3);
+  +4 = 255 for 12, 14, 13, 0; 2 for 4; 1 for 3 or none (none also starts
+  scene 0). 0x80101918(1) after 14 / 13, (0) after 0 / 4 / 3 / none; not
+  ported (reported).
+- 1 (0x80100ADC, the trigger box): needs flag 3; flag 4 moves on to 2;
+  with 0x605 clear, the player cell (raw x / z >> 9) minus box origin
+  (0x80114F2C: -5, 11), unsigned, below the size (2, 2) - x -2560..-1536,
+  z 5632..6656 - sets 0x605 and starts event 8 scene 1.
+- 2 (0x80100B90): flag 0 moves on to 3; otherwise flag 0x604 is cleared
+  and event 8 scene 2 starts (the Inspector talk).
+- The byte restarting at 0 on each area-1 entry is CANDIDATE.
+
+**Scene 1 (0x80102224, states via 0x80100034).**
+- 0/1: 0x80042238; byte 7 = 10, state 2; player +8 = 3, +9 = 1,
+  +0xBD |= 0x10, targets = the current pose, +0x448 = 48.
+- 2: byte 7 counts down; then waits until player +0x16 equals
+  0x80048E6C(player); then 0x80031BEC(pose, (-2240, 7000) from 0x801164DC,
+  heading, 32): a non-zero delta adds to +0x442 with +0x448 = 13; zero
+  gives +0x448 = 48, message 31, state 3.
+- 3: when the window closes: 0x8001A008(270), 0x8001F1DC, 0x8001E6C0,
+  camera 0x80116164, timeline 0x8011614C, target (-2496, -1, 5065) with
+  heading 2240, police object *(0x8011CB3C): +9 = 1, +0x0A = 0, +0x56 =
+  1536; byte 7 = 10, state 4.
+- 4: while the record's byte 1 is 1, byte 7 counts down, then +0x442 += 32
+  per frame; at the end record message 32, state 5. The record callback
+  runs only in state 4.
+- 5: when the window closes: state 7, +0x442 = 0, 0x8009395C = 1, flag 4,
+  0x80103BA0, 0x80103AB0(1). 6 (Start path): the same without 0x8009395C.
+  7: event +0 = 0, 0x80042314. Start in states 2..5 goes to 6 (from 2..3)
+  or 5 (from 4..5) and places the target (-2496, -1, 5065).
+
+**Oracle (VERIFIED_1TO1, `m3_01_st03_crash_control`, an oracle-only position
+write just outside the box, then walking in):** 0x605 and scene 1 start on
+entering; byte 7 counts 10 → 0; the player turns +32 per frame with
+animation 13 from 1255 to 2129, then message 31; state 4 places the player
+at (-2496, -1, 5065) heading 2240 and the police car (+9 = 1) drives in;
+heading +32 per frame after the countdown; state 5 → 7 with heading 0,
+flag 4 and a new object set; the player returns to state 1/0. The port's
+scene 1 follows the same steps (host test). The police car's own handler
+(its drive) belongs to the ST03 scene objects, not ported yet; the port's
+floor check for state 2 uses its floor query (CANDIDATE mapping).
