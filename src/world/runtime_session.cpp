@@ -1329,7 +1329,10 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
                         dialogue_.ref.block=ev.args[1];dialogue_cursor_->start_block(ev.args[1]);break;
                     }
                     if((ev.opcode==0x9A||ev.opcode==0x9B)&&ev.args.size()>=2){ // 0x800553A8 / 0x800553F0
-                        set_story_flag(uint16_t(ev.args[0]|(uint16_t(ev.args[1])<<8)),ev.opcode==0x9A);break;
+                        // The port's flag array covers 0x000..0x7FF; higher ids are dropped.
+                        const uint16_t id=uint16_t(ev.args[0]|(uint16_t(ev.args[1])<<8));
+                        if(id<kL3StoryFlagBytes*8u)set_story_flag(id,ev.opcode==0x9A);
+                        break;
                     }
                     break; // window, colour, pad, portrait, sound-effect controls: presentation only
                 }
