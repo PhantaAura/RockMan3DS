@@ -203,3 +203,19 @@ previous frame's step landed on.
 The roll tables are cooked as an event-4 extra (`--extra 801079E4:198`).
 The runtime binds no class-40 sequence data yet, so these actors' key tests
 report SequenceUnavailable and wait; the drawing slice supplies it.
+
+### Class-40 sequence binding (SOURCE_BACKED_PARTIAL)
+
+0x800322A8(work, request, b) stores the request at +0xAC, +0x94 = the
+request's sequence (+0x90 table), +0x98 = +0x94 + 8b, +0xA4 = that
+record's first word; 0x80032488 counts +0xA5 down and at zero follows
+record byte 3 (>= 0 next, -1 replay, else record & 0x7F), reloading +0xA4.
+The port's `actor_sequence_step` implements this; `St02ActorBankSequence`
+runs it over `decode_ebd_scene_actor40_animation_bank` for the first
+(0x40, subtype) row of the stage EBD (0x8002F9C4, null variant), with the
+requests the handlers issue. In the cooked ST02_01.EBD (same for every area):
+40/05 = row 1 (18 parts), 40/06 = row 2 (18), 40/07 = row 3 (13), 20/0A =
+row 4, 20/27 = rows 5 and 6 (its two variants); all 23 requests decode
+(about 297 KB with poses). The keys match the handlers: 40/05 request 16
+loops on key 27, 40/06 request 3 counts 34 down to 0, 40/07 request 2
+reaches 71.

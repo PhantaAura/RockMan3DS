@@ -10,10 +10,14 @@
 // 0x80032538 sequence step, 0x800334C4 draw submit) and the overlay effects
 // (0x80105724 smoke, 0x80105C28) are reported, not performed.
 // Original addresses are identity tokens.
+#include "legends3ds/actor_animation_bank.h"
+#include "legends3ds/actor_sequence.h"
+#include "legends3ds/ebd_directory.h"
 #include "legends3ds/reference_tables.h"
 #include "legends3ds/source_st00_post_win.h"
 #include <array>
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -98,6 +102,24 @@ struct St02ActorContext {
 St02EventActorTick step_st02_event4_actor(St02EventActorWork& w, const St02ActorContext& ctx) noexcept;
 St02EventActorTick step_st02_event4_actor(St02EventActorWork& w, const ReferenceTables* refs,
                                           uint16_t frame_1f800002) noexcept;
+// The class-40 sequences of slots 0..2 from the stage EBD: 0x8002F9C4 with a
+// null variant takes the first (0x40, subtype) row; the requests decoded are
+// the ones the handlers issue (40/05: 16..26, 40/06: 1..9, 40/07: 1..3).
+// restart/advance/key follow 0x800322A8 / 0x80032488 / +0xA4 over the
+// decoded records (actor_sequence.h). A request missing from a bank leaves
+// that slot keyless (key() == nullopt) until the next restart.
+struct St02ActorBankSequence final : St02ActorSequence {
+    std::array<std::shared_ptr<const ActorAnimationBank>,3> banks{};
+    std::array<const ActorAnimationRequestCache*,3> current{};
+    std::array<ActorSequenceCursor,3> cursor{};
+    void restart(uint8_t slot, uint8_t request) override;
+    void advance(uint8_t slot) override;
+    std::optional<uint8_t> key(uint8_t slot) const override;
+};
+// Decodes one slot's bank (nullptr when the row is missing or the decode fails
+// or exceeds `cap` bytes).
+std::shared_ptr<const ActorAnimationBank> decode_st02_event4_actor_bank(const EbdDirectory& ebd, uint8_t subtype,
+                                                                        size_t cap) noexcept;
 constexpr uint32_t kSt02PropRollTable = 0x801079E4u;
 constexpr size_t kSt02PropRollBytes = 0xC6;
 
