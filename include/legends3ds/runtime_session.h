@@ -29,6 +29,7 @@
 #include "legends3ds/source_event_command_package.h"
 #include "legends3ds/source_door_event.h"
 #include "legends3ds/source_st00_post_win.h"
+#include "legends3ds/source_st02_event4_actors.h"
 #include "legends3ds/source_stage_load.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
@@ -343,6 +344,9 @@ public:
     }
     const SourcePostWinEvent& source_post_win_event() const noexcept { return source_post_win_; }
     const SourcePostWinStep& source_post_win_step() const noexcept { return source_post_win_step_; }
+    // ST02 event 4's family-0x20 actors (slots 3 and 4) and their last update.
+    const std::array<St02EventActorWork,5>& source_st02_event4_actors() const noexcept { return source_st02_actors_; }
+    const std::array<St02EventActorTick,5>& source_st02_event4_actor_ticks() const noexcept { return source_st02_actor_ticks_; }
     const std::optional<SourcePostWinHandoff>& source_post_win_handoff() const noexcept { return source_post_win_handoff_; }
     std::optional<uint32_t> pending_source_post_win_cd() const noexcept {
         return source_post_win_cd_done_?std::nullopt:source_post_win_cd_;
@@ -675,6 +679,7 @@ private:
     void update_source_door_event();
     void update_source_door_event0();
     void update_source_post_win_event(const RuntimeInputFrame&);
+    void update_source_st02_event4_actors(const SourcePostWinProfile&);
     void update_source_door_objects();
     void write_idx_descriptor(uint16_t idx,uint16_t descriptor);
     std::optional<int16_t> player_packed_cell() const;
@@ -798,6 +803,8 @@ private:
     uint8_t source_stage_visit_800989fc_=0;   // ST02 first-visit byte (0x80100204 increments it)
     SourcePostWinEvent source_post_win_{};
     SourcePostWinStep source_post_win_step_{};
+    std::array<St02EventActorWork,5> source_st02_actors_{};
+    std::array<St02EventActorTick,5> source_st02_actor_ticks_{};
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;
     uint8_t stage_=0;
