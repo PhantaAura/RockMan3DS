@@ -1,6 +1,7 @@
 #include "legends3ds/source_st03_objects.h"
 #include "legends3ds/actor_animation_bank.h"
 #include "legends3ds/class20_03_behavior.h"
+#include "legends3ds/reference_tables.h"
 
 namespace l3 {
 namespace {
@@ -36,12 +37,16 @@ void init_80107bc0(St03Npc& n) noexcept {
     w.pose_ac = 0;   // 0x800322A8(work, 0, 0)
 }
 
-bool in_range_8010a4ec(const St03Npc& n, int16_t px, int16_t pz) noexcept {
-    // Offset 0 (a1 = 0): the rotated vector from 0x80030058 is zero.
-    const int32_t lim = int32_t(n.radius_368), twice = lim * 2;
-    const int32_t dx = int32_t(uint16_t(n.w.raw_14[0] - px + lim));
-    const int32_t dz = int32_t(uint16_t(n.w.raw_14[2] - pz + lim));
+// 0x8010A4EC(work, forward, limit): the player within `limit` of the point
+// 0x80030058 puts `forward << 4` ahead of the NPC (x/z high halves).
+bool in_range_8010a4ec(const St03Npc& n, int16_t px, int16_t pz, int16_t off_x, int16_t off_z, int32_t limit) noexcept {
+    const int32_t lim = int32_t(uint16_t(limit)), twice = lim * 2;
+    const int32_t dx = int32_t(uint16_t(n.w.raw_14[0] + off_x - px + lim));
+    const int32_t dz = int32_t(uint16_t(n.w.raw_14[2] + off_z - pz + lim));
     return dx < twice && dz < twice;
+}
+bool in_range_8010a4ec(const St03Npc& n, int16_t px, int16_t pz) noexcept {
+    return in_range_8010a4ec(n, px, pz, 0, 0, n.radius_368);   // offset 0: the rotated vector is zero
 }
 
 void behaviour0_80107f5c(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
@@ -132,6 +137,149 @@ void behaviour4_8010940c(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
     }
 }
 
+
+// 0x80031D5C(target, heading, step): the signed turn toward target, clamped to step.
+int16_t turn_80031d5c(uint16_t target, uint16_t heading, int16_t step) noexcept {
+    int32_t a1 = int32_t(target) - int32_t(heading);
+    if (int16_t(a1) < 0) a1 += 4096;
+    const int16_t a0 = int16_t(a1);
+    int32_t v = step;
+    if (a0 < 2048) { if (a0 < step) v = a1; }
+    else if (!(4096 - a0 < step)) v = -step; else v = a1 - 4096;
+    return int16_t(v);
+}
+
+// 0x8010A45C(class): the walk request.
+uint8_t walk_request_8010a45c(uint8_t c) noexcept {
+    if (c == 57) return 0;
+    if (c < 57) return 1;
+    return (c >= 76 && c < 78) ? 0 : 1;
+}
+
+// 0x8010A49C(work, mode): walk speed (+0x44).
+int16_t walk_speed_8010a49c(const St03Npc& n, uint8_t mode, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    if (mode == 1) {
+        if (!in.walk_speeds) { out.table_missing = true; return 0; }
+        return int16_t((*in.walk_speeds)[n.object_class < in.walk_speeds->size() ? n.object_class : 0]);
+    }
+    return n.object_class == 42 ? 64 : n.object_class == 5 ? 320 : 384;
+}
+
+// The behaviour-1 range check: 64 ahead (forward 1024), limit 100.
+bool ahead_in_range(const St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    if (!in.refs) { out.refs_missing = true; return false; }
+    const auto d = reference_player_motion_delta(*in.refs, n.w.rot_54[1], int16_t(64 << 4), 0, 0);
+    return in_range_8010a4ec(n, in.player_x, in.player_z, int16_t(d.dx_fixed >> 16), int16_t(d.dz_fixed >> 16), 100);
+}
+
+// 0x8002FEA4(work, +0x44, 0, 0).
+void walk_forward(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    if (!in.refs) { out.refs_missing = true; return; }
+    auto& w = n.w;
+    const auto d = reference_player_motion_delta(*in.refs, w.rot_54[1], n.speed_44, 0, 0);
+    const std::array<int32_t,3> delta{{d.dx_fixed, d.dy_fixed, d.dz_fixed}};
+    for (size_t a = 0; a < 3; ++a) {
+        w.fixed_1c[a] = int32_t(uint32_t(w.fixed_1c[a]) + uint32_t(delta[a]));
+        w.raw_14[a] = reference_fixed_to_short_80030150(w.fixed_1c[a]);
+    }
+    out.moved = true;
+}
+
+uint16_t walk_heading(const St03Npc& n) noexcept {
+    return n.walk_dir_35c ? n.heading_352 : uint16_t((n.heading_352 + 2048) & 0xFFFu);
+}
+
+// Behaviour 1 (0x80108100, sub-state +0x0A via 0x80116EA8): walk out along
+// the home heading and back, with stops, fidgets and the player-ahead stop.
+void behaviour1_80108100(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    switch (w.sub_0a) {
+    case 0:   // 0x8010813C
+        n.walk_dir_35c = 0; n.leg_len_366 = int16_t(n.byte_0e << 3); n.leg_left_35e = n.leg_len_366;
+        n.speed_44 = walk_speed_8010a49c(n, 1, in, out);
+        ++w.sub_0a;
+        return;
+    case 1: {   // 0x80108194: pick walk / idle / turn back, then a timer
+        if (!in.rand || !in.rand2 || !in.walk_tables) { out.rand_missing = !in.rand || !in.rand2; out.table_missing |= !in.walk_tables; return; }
+        out.rand_used = out.rand2_used = true;
+        const auto& t = *in.walk_tables;   // 0x80116ED4: choices [0..63], timers [64..111]
+        uint8_t choice = t[(w.byte_0d & 0x30u) + (*in.rand & 15u)];
+        size_t timers = 64;   // 0x80116F14
+        if (choice == 0) { w.pose_ac = walk_request_8010a45c(n.object_class); n.speed_44 = walk_speed_8010a49c(n, 1, in, out); }
+        else if (choice == 1) { w.pose_ac = st03_npc_idle_request(n.object_class); timers = 80; }
+        else if (n.leg_left_35e == n.leg_len_366) choice = 255;
+        else { w.pose_ac = walk_request_8010a45c(n.object_class); n.target_heading_64 = walk_heading(n); timers = 96; }
+        n.timer_350 = int16_t(t[timers + (*in.rand2 & 15u)]);
+        if (choice != 255) w.sub_0a = uint8_t(w.sub_0a + choice + 1);
+        return;
+    }
+    case 2:   // 0x801082F8: walk
+        walk_forward(n, in, out);
+        if (--n.leg_left_35e == 0) {
+            n.target_heading_64 = uint16_t((n.walk_dir_35c ? (n.byte_0f & 15u) : (n.byte_0f >> 4)) << 8);
+            w.sub_0a = 5;
+        } else if (--n.timer_350 == 0) w.sub_0a = 1;
+        else if (ahead_in_range(n, in, out)) { w.pose_ac = st03_npc_idle_request(n.object_class); n.timer_350 = 60; w.sub_0a = 9; }
+        return;
+    case 3:   // 0x801083DC
+        if (--n.timer_350 == 0) w.sub_0a = 1;
+        return;
+    case 4: {   // 0x80108404: turn back, swap direction
+        const int16_t d = turn_80031d5c(n.target_heading_64, w.rot_54[1], 64);
+        if (d == 0) { w.sub_0a = 1; n.walk_dir_35c = int16_t(1 - n.walk_dir_35c); n.leg_left_35e = int16_t(n.leg_len_366 - n.leg_left_35e); }
+        add_heading(n, d);
+        return;
+    }
+    case 5: {   // 0x80108480: turn to the end heading
+        const int16_t d = turn_80031d5c(n.target_heading_64, w.rot_54[1], 64);
+        if (d == 0) { n.timer_350 = 20; w.pose_ac = st03_npc_idle_request(n.object_class); ++w.sub_0a; }
+        add_heading(n, d);
+        return;
+    }
+    case 6:   // 0x801084FC
+        if (--n.timer_350 == 0) {
+            if (n.object_class == 0x53) { if (!in.rand) { out.rand_missing = true; ++n.timer_350; return; } out.rand_used = true; }
+            w.pose_ac = st03_npc_fidget_request(n.object_class, in.rand.value_or(0));
+            n.timer_350 = 70; ++w.sub_0a;
+        }
+        return;
+    case 7:   // 0x80108560
+        if (in.animation_finished && n.object_class != 73) w.pose_ac = st03_npc_idle_request(n.object_class);
+        if (--n.timer_350 == 0) {
+            if (n.object_class == 73) { w.pose_ac = 9; w.sub_0a = 10; }
+            else { w.pose_ac = walk_request_8010a45c(n.object_class); ++w.sub_0a; }
+            n.target_heading_64 = walk_heading(n);
+            n.leg_left_35e = n.leg_len_366;
+        }
+        return;
+    case 8: {   // 0x80108648: turn for the next leg; snap home after the return leg
+        const int16_t d = turn_80031d5c(n.target_heading_64, w.rot_54[1], 64);
+        add_heading(n, d);
+        if (d != 0) return;
+        w.sub_0a = 1;
+        if (n.walk_dir_35c != 0) {
+            w.raw_14 = n.home_354;
+            for (size_t a = 0; a < 3; ++a) w.fixed_1c[a] = int32_t(uint32_t(uint16_t(w.raw_14[a])) << 16);
+            w.rot_54[1] = n.heading_352;
+        }
+        n.walk_dir_35c = int16_t(1 - n.walk_dir_35c);
+        return;
+    }
+    case 9:   // 0x80108704: stopped for the player ahead
+        if (--n.timer_350 != 0) return;
+        if (!ahead_in_range(n, in, out)) { w.sub_0a = 1; return; }
+        if (n.leg_left_35e < n.leg_len_366 - 5) {
+            w.pose_ac = walk_request_8010a45c(n.object_class); w.sub_0a = 4;
+            n.target_heading_64 = uint16_t((w.rot_54[1] + 2048) & 0xFFFu);
+        } else n.timer_350 = 60;
+        return;
+    case 10:   // 0x801087A8 (class 73)
+        if (in.animation_finished) { w.sub_0a = 8; w.pose_ac = walk_request_8010a45c(n.object_class); }
+        return;
+    default: return;
+    }
+}
+
 } // namespace
 
 std::vector<St03ObjectRecord> st03_object_set(const SourceScenePackage& package, uint8_t n) {
@@ -203,6 +351,7 @@ St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
         out.talk_target_taken = true;
     }
     if (w.state_09 == 0) behaviour0_80107f5c(n, in, out);
+    else if (w.state_09 == 1) behaviour1_80108100(n, in, out);
     else if (w.state_09 == 4) behaviour4_8010940c(n, in, out);
     else if (w.state_09 >= 6) out.talk_unported = true;
     else out.behaviour_unported = true;

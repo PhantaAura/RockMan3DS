@@ -1,5 +1,6 @@
 // ST03 object sets (0x80103AB0) and the generic NPC 0x80107B84 on synthetic data.
 #include "legends3ds/source_st03_objects.h"
+#include "legends3ds/reference_tables.h"
 #include <cstdio>
 
 using namespace l3;
@@ -57,7 +58,74 @@ int main() {
     auto roll = spawn_st03_object(roll_rec);
     in.player_x = -5000; in.rand = 1;
     t = step_st03_npc(roll, in);
-    CHECK(roll.w.state_09 == 1 && roll.radius_368 == 5000 && t.behaviour_unported && *t.anim_request == 0);
+    CHECK(roll.w.state_09 == 1 && roll.radius_368 == 5000 && t.table_missing && *t.anim_request == 0);
+    // Behaviour 1 (walk) with tables: Roll, +0x0E = 1 -> leg length 8.
+    {
+        ReferenceTables refs; refs.trig.fill({0, 4096});
+        std::array<uint8_t,112> speeds{}, tables{};
+        speeds[5] = 64;
+        tables[0x20 + 1] = 0;                 // choice 0: walk
+        tables[0x20 + 2] = 1;                 // choice 1: idle
+        for (size_t i = 64; i < 112; ++i) tables[i] = 50;
+        in.refs = &refs; in.walk_speeds = &speeds; in.walk_tables = &tables;
+        auto r = spawn_st03_object(roll_rec);
+        in.rand = 1; in.rand2 = 0;
+        t = step_st03_npc(r, in);             // init + state 0
+        CHECK(r.w.sub_0a == 1 && r.leg_len_366 == 8 && r.leg_left_35e == 8 && r.speed_44 == 64);
+        t = step_st03_npc(r, in);             // state 1: walk, timer 50
+        CHECK(t.rand_used && t.rand2_used && r.w.sub_0a == 2 && r.w.pose_ac == 1 && r.timer_350 == 50 && *t.anim_request == 1);
+        const auto start = r.w.raw_14;
+        int k = 0;
+        while (r.w.sub_0a == 2 && k < 20) { t = step_st03_npc(r, in); ++k; }
+        CHECK(k == 8 && r.w.sub_0a == 5 && r.target_heading_64 == 0 && r.timer_350 == 50 - 7 && r.w.raw_14 != start);
+        k = 0;
+        while (r.w.sub_0a == 5 && k < 100) { t = step_st03_npc(r, in); ++k; }
+        CHECK(r.w.rot_54[1] == 0 && r.w.sub_0a == 6 && r.timer_350 == 20 && r.w.pose_ac == 0);
+        k = 0;
+        while (r.w.sub_0a == 6 && k < 100) { t = step_st03_npc(r, in); ++k; }
+        CHECK(k == 20 && r.w.sub_0a == 7 && r.timer_350 == 70 && r.w.pose_ac == 8);
+        k = 0;
+        while (r.w.sub_0a == 7 && k < 100) { t = step_st03_npc(r, in); ++k; }
+        CHECK(k == 70 && r.w.sub_0a == 8 && r.w.pose_ac == 1 && r.leg_left_35e == 8 && r.target_heading_64 == ((0x0E77 + 2048) & 0xFFF));
+        k = 0;
+        while (r.w.sub_0a == 8 && k < 100) { t = step_st03_npc(r, in); ++k; }
+        CHECK(r.w.sub_0a == 1 && r.walk_dir_35c == 1 && r.w.rot_54[1] == ((0x0E77 + 2048) & 0xFFF));
+        // Second leg back, then state 8 snaps home.
+        in.rand = 1;
+        t = step_st03_npc(r, in); CHECK(r.w.sub_0a == 2);
+        k = 0;
+        while (r.w.sub_0a == 2 && k < 20) { t = step_st03_npc(r, in); ++k; }
+        CHECK(k == 8 && r.w.sub_0a == 5);
+        // Choice 2 with a full leg left re-rolls (stays in state 1).
+        tables[0x20 + 3] = 2; r.w.sub_0a = 1; r.leg_left_35e = r.leg_len_366; in.rand = 3;
+        t = step_st03_npc(r, in); CHECK(r.w.sub_0a == 1);
+        // The player 64 ahead stops the walk (state 9, timer 60).
+        auto a = spawn_st03_object(roll_rec);
+        in.rand = 1;
+        step_st03_npc(a, in); step_st03_npc(a, in);
+        CHECK(a.w.sub_0a == 2);
+        const auto d = reference_player_motion_delta(refs, a.w.rot_54[1], int16_t(64 << 4), 0, 0);
+        in.player_x = int16_t(a.w.raw_14[0] + (d.dx_fixed >> 16)); in.player_z = int16_t(a.w.raw_14[2] + (d.dz_fixed >> 16));
+        t = step_st03_npc(a, in);
+        CHECK(a.w.sub_0a == 9 && a.timer_350 == 60 && a.w.pose_ac == 0);
+        // Still ahead after 60 with only 1 step walked: wait again (0x35E >= 0x366 - 5).
+        k = 0;
+        while (a.timer_350 > 1 && k < 100) { t = step_st03_npc(a, in); ++k; }
+        t = step_st03_npc(a, in);
+        CHECK(k == 59 && a.w.sub_0a == 9 && a.timer_350 == 60 && a.leg_left_35e == 7);
+        // With 6 steps walked: turn back (state 4), then the leg is swapped.
+        a.leg_left_35e = 2; a.timer_350 = 1;
+        t = step_st03_npc(a, in);
+        CHECK(a.w.sub_0a == 4 && a.w.pose_ac == 1 && a.target_heading_64 == ((0x0E77 + 2048) & 0xFFF));
+        k = 0;
+        while (a.w.sub_0a == 4 && k < 100) { t = step_st03_npc(a, in); ++k; }
+        CHECK(a.w.sub_0a == 1 && a.walk_dir_35c == 1 && a.leg_left_35e == 6);
+        // Player gone: state 9 resumes at state 1.
+        a.w.sub_0a = 9; a.timer_350 = 1; in.player_x = -5000; in.player_z = 1300;
+        t = step_st03_npc(a, in); CHECK(a.w.sub_0a == 1);
+        in.refs = nullptr; in.walk_speeds = nullptr; in.walk_tables = nullptr; in.rand2.reset();
+        in.player_x = -5000; in.player_z = 1300;
+    }
     auto big = roll_rec; big.word_08[1] = 0x10; big.object_class = 0x26;
     auto insp = spawn_st03_object(big); step_st03_npc(insp, in);
     CHECK(insp.radius_368 == 10000 && insp.w.word_15c == 471);

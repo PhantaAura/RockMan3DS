@@ -2027,6 +2027,10 @@ void RuntimeSession::update_st03_objects(){
         in.idle_timers=st03_event8_profile_&&st03_event8_profile_->idle_timers_loaded?&st03_event8_profile_->idle_timers:nullptr;
         const uint32_t next=st03_npc_seed_*1103515245u+12345u;
         in.rand=uint16_t((next>>16)&0x7fffu);
+        const uint32_t next2=next*1103515245u+12345u;
+        in.rand2=uint16_t((next2>>16)&0x7fffu);
+        in.refs=reference_tables_?&*reference_tables_:nullptr;
+        if(st03_event8_profile_&&st03_event8_profile_->walk_loaded){in.walk_speeds=&st03_event8_profile_->walk_speeds;in.walk_tables=&st03_event8_profile_->walk_tables;}
         in.animation_finished=!st03_object_current_[i]||int8_t(st03_object_cursor_[i].opaque_a7)<0;
         in.player_targets_me=player_check_npc_&&*player_check_npc_==i;
         in.heading_to_player=source_heading_80031198(o.w.raw_14[0],o.w.raw_14[2],rds16w(player_,0x14),rds16w(player_,0x18),actor_angle_steps_);
@@ -2041,7 +2045,7 @@ void RuntimeSession::update_st03_objects(){
             if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.talk_start});}
                 catch(const std::exception&){}
         }
-        if(t.rand_used)st03_npc_seed_=next;
+        if(t.rand2_used)st03_npc_seed_=next2;else if(t.rand_used)st03_npc_seed_=next;
         const auto& bank=st03_object_models_[i].bank;
         if(t.anim_request){
             st03_object_current_[i]=bank?find_actor_animation_request(*bank,*t.anim_request):nullptr;

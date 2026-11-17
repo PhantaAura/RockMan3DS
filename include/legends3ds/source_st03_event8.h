@@ -25,6 +25,9 @@ struct St03Event8Profile {
     std::array<std::vector<St03ObjectRecord>,8> object_sets;   // 0x80116578 (cooked extras)
     bool idle_timers_loaded = false;
     std::array<uint8_t,64> idle_timers{};          // 0x80116E68
+    bool walk_loaded = false;
+    std::array<uint8_t,112> walk_speeds{};         // 0x80116DAC
+    std::array<uint8_t,112> walk_tables{};         // 0x80116ED4
 };
 bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profile& out);
 
