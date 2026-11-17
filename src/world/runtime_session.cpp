@@ -1705,7 +1705,8 @@ void RuntimeSession::update_source_door_event(){
     source_door_result_=evaluate_source_door_event_80050c2c(query,player_,area_.flow.aux,
         story_flags_.data(),story_flags_.size());
     if(source_door_result_.flag_set)set_story_flag(*source_door_result_.flag_set,true);
-    if(source_door_result_.status==SourceDoorStatus::ExitRequested&&source_door_result_.request){
+    if((source_door_result_.status==SourceDoorStatus::ExitRequested||source_door_result_.status==SourceDoorStatus::LoadRequested)&&
+       source_door_result_.request){
         // Type 1 (walk-through exit): 356C = 0xFF, no event 0; the main loop
         // loads the area at once.
         source_exit_request_=source_door_result_.request;++source_door_generation_;
@@ -2186,6 +2187,15 @@ std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_wi
     return t;
 }
 std::optional<SourceStageRequest> RuntimeSession::source_stage_request() const noexcept {
+    // A door / exit request (types 1 and 8) to another stage.
+    if(source_exit_request_){
+        const auto& q=*source_exit_request_;
+        if(q.raw[22]!=stage_){
+            std::array<uint8_t,18> lanes{};
+            for(size_t i=0;i<lanes.size();++i)lanes[i]=q.raw[8+i];
+            return source_stage_request_from_lanes(lanes,0x80050C2Cu,source_door_generation_);
+        }
+    }
     const auto& h=source_post_win_handoff_;
     if(!h||h->stage==stage_)return std::nullopt;
     return source_stage_request_from_lanes(h->raw,source_post_win_.event==4?0x80101CC0u:

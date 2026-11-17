@@ -26,6 +26,7 @@ const char* source_door_status_name(SourceDoorStatus s) noexcept {
         case SourceDoorStatus::PlayerBusy:return "PLAYER_BUSY";
         case SourceDoorStatus::UnsupportedType:return "UNSUPPORTED_TYPE";
         case SourceDoorStatus::ExitRequested:return "EXIT_REQUESTED";
+        case SourceDoorStatus::LoadRequested:return "LOAD_REQUESTED";
         case SourceDoorStatus::GateClosed:return "GATE_CLOSED";
         case SourceDoorStatus::NoAuxMatch:return "NO_AUX_MATCH";
         case SourceDoorStatus::Locked:return "LOCKED";
@@ -67,6 +68,25 @@ SourceDoorResult evaluate_source_door_event_80050c2c(const RuntimeEventPrimitive
             put16(8,uint16_t(h[8]+rd16(p,0x14)-h[4]));put16(10,uint16_t(rd16(p,0x16)));put16(12,uint16_t(h[10]+rd16(p,0x18)-h[6]));
             put16(18,uint16_t(rd16(p,0x56)));put8(22,r.raw[6]);put8(21,0);put8(23,r.raw[7]);
             out.aux_record_index=i;out.request=q1;out.status=SourceDoorStatus::ExitRequested;return out;
+        }
+        return out;
+    }
+    if(s.type==8){   // 0x80050F68
+        if(!player_owner||!source_door_gate_80051970(p)){out.status=SourceDoorStatus::GateClosed;return out;}
+        out.status=SourceDoorStatus::NoAuxMatch;
+        for(size_t i=0;i<aux.records.size();++i){
+            const auto& r=aux.records[i];const auto& h=r.halfwords;
+            if(h[0]==-1)break;
+            if(h[4]!=s.x||h[5]!=s.y||h[6]!=s.z)continue;
+            out.aux_record_index=i;
+            if(locked_800519e4(r,flags,bytes,out)){out.status=SourceDoorStatus::Locked;return out;}
+            SourceDoorRequest q8;q8.aux_record_index=i;q8.sound_id=0;q8.sound_argument=0;q8.music_check_8001f6c4=true;
+            const auto put16=[&](size_t at,uint16_t value){q8.raw[at]=uint8_t(value);q8.raw[at+1]=uint8_t(value>>8);q8.known[at]=q8.known[at+1]=1;};
+            const auto put8=[&](size_t at,uint8_t value){q8.raw[at]=value;q8.known[at]=1;};
+            put8(20,2);
+            put16(8,uint16_t(h[8]));put16(10,uint16_t(h[9]));put16(12,uint16_t(h[10]));put16(14,uint16_t(h[11]));
+            put16(18,uint16_t(h[11]));put8(22,r.raw[6]);put8(21,0);put8(25,21);put8(24,2);put8(23,r.raw[7]);
+            out.request=q8;out.status=SourceDoorStatus::LoadRequested;return out;
         }
         return out;
     }
