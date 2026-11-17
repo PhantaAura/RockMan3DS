@@ -9,6 +9,9 @@ constexpr uint32_t kRecordCallback = 0x80103A88u;   // 0x8001EC0C + 0x8001F070
 constexpr std::array<int16_t,3> kCrashTarget{{-4584, -1, 1431}};   // 0xEE180000, 0xFFFF0000, 0x05970000
 constexpr uint32_t kPoliceTimeline = 0x8011614Cu, kPoliceCamera = 0x80116164u;
 constexpr std::array<int16_t,3> kPoliceTarget{{-2496, -1, 5065}};  // 0xF6400000, 0xFFFF0000, 0x13C90000
+constexpr uint32_t kInspectorTimeline = 0x801161D0u, kInspectorCamera = 0x801161F8u;
+constexpr std::array<int16_t,3> kInspectorWalk{{-2924, -1, 1164}};   // 0xF4940000, 0xFFFF0000, 0x048C0000
+constexpr std::array<int16_t,3> kInspectorEnd{{-2601, -1, 1108}};    // 0xF5D70000, 0xFFFF0000, 0x04540000
 
 uint32_t header(const St03Event8& ev) noexcept {
     return ev.timeline && ev.record < ev.timeline->records.size() ? ev.timeline->records[ev.record][0] : 0xFFu;
@@ -173,6 +176,104 @@ void scene1(St03Event8& ev, const St03Event8Profile& p, const St03Event8Inputs& 
     }
 }
 
+// Scene 2 (0x8010263C, states via table 0x80100054): the Inspector talk.
+// Slots of set 1: 1 Barrell, 3 the Inspector, 4 the officer, 5 the car.
+void scene2(St03Event8& ev, const St03Event8Profile& p, const St03Event8Inputs& in, St03Event8Step& out) noexcept {
+    bool open = in.message_open;
+    const auto behaviour = [&](size_t slot, uint8_t s9) { out.objects[slot].state_09 = s9; out.objects[slot].clear_0a_0b = true; };
+    const auto clear_flag = [&](uint16_t f) { if (out.flag_clear_count < out.flag_clears.size()) out.flag_clears[out.flag_clear_count++] = f; };
+    const auto release = [&] { out.release_slots = uint16_t((1u << 3) | (1u << 4) | (1u << 1)); };
+    switch (ev.state) {
+    case 0: {   // 0x80102684: the focus camera on Barrell; the player hidden
+        St03Event8Step::CameraFocus f;
+        f.point = {in.barrell[0], int16_t(in.barrell[1] - 80), in.barrell[2]};
+        f.distance = 300; f.yaw = uint16_t(in.heading_barrell_to_player + 32);
+        out.camera_focus = f; out.player_hide = true; ++ev.state;
+        break;
+    }
+    case 1:     // 0x80102714
+        if (in.camera_busy) break;
+        ++ev.state; message(out, open, 45);
+        break;
+    case 2: {   // 0x80102740
+        if (open || !in.player_ready) break;
+        out.camera_restore_80039e50 = true; ++ev.state;
+        begin(ev, out, p.inspector, p.inspector_camera);
+        message(out, open, 46);
+        St03PlayerTarget t; t.position = kInspectorWalk; t.walk = true; t.heading = uint16_t(2092); out.player = t;
+        out.player_anim_448 = 48;
+        out.release_set = true; out.spawn_set = 1;
+        clear_flag(0x606); clear_flag(0x607);
+        for (size_t slot : {size_t(3), size_t(4), size_t(1)}) { out.objects[slot].variant_04 = 1; out.objects[slot].state_08 = 0; }
+        break;
+    }
+    case 3:     // 0x8010287C
+        if (open) break;
+        ++ev.state; out.player_show = true; next_record_8001f158(ev);
+        behaviour(3, 1); out.objects[1].state_09 = 2; out.objects[1].byte_0c_from = 3;
+        break;
+    case 4:     // 0x801028F0
+        if (!in.flag_606) break;
+        clear_flag(0x606); ++ev.state; message(out, open, 47);
+        behaviour(3, 3); out.objects[1].state_09 = 0;
+        break;
+    case 5:     // 0x80102944
+        if (open) break;
+        ++ev.state; message(out, open, 49);
+        behaviour(3, 0); behaviour(4, 2);
+        break;
+    case 6:     // 0x8010299C
+        if (open) break;
+        ++ev.state; message(out, open, 51);
+        behaviour(3, 3); behaviour(4, 0);
+        break;
+    case 7:     // 0x801029F4
+        if (open) break;
+        ++ev.state; behaviour(3, 2); out.objects[3].byte_0c_from = 4; out.objects[3].byte_0d_from = 5;
+        ev.countdown = 200;
+        break;
+    case 8:     // 0x80102A6C
+        if (--ev.countdown == 140) { behaviour(1, 1); out.objects[1].byte_0c_from = 5; }
+        if (ev.countdown == 80) { ++ev.state; behaviour(4, 1); out.objects[4].byte_0c_from = 5; }
+        break;
+    case 9:     // 0x80102AF8
+        if (--ev.countdown >= 0) break;
+        next_record_8001f158(ev); ++ev.state;
+        { St03PlayerTarget t; t.position = kInspectorEnd; out.player = t; }
+        out.player_heading_56 = 1740;
+        release(); out.sound_8001a008 = 271; ev.countdown = 180;
+        out.objects[5].heading_56 = 2048; out.objects[5].byte_0f_or = 0x40; out.objects[5].state_09 = 1;
+        out.objects[5].clear_0a_0b = true;
+        break;
+    case 10:    // 0x80102BD8
+        if (--ev.countdown >= 0) break;
+        out.player_heading_442 = 2048; ++ev.state;
+        break;
+    case 11:    // 0x80102C08
+        out.player_release = true; out.flag_8009395c = true;   // 0x800A395C = 1, then 0x80039820
+        out.release_slots = uint16_t(out.release_slots | (1u << 5));
+        out.flag_set = 0; ev.active = false; out.ended = true;
+        break;
+    case 12:    // 0x80102C40 (skipped before the talk)
+        out.camera_restore_80039e50 = true; out.player_release = true;
+        out.flag_set = 0; ev.active = false; out.ended = true; out.player_show = true;
+        break;
+    default: break;
+    }
+    // 0x80102C74: the record callback for states 3..10.
+    if (ev.active && ev.state >= 3 && ev.state <= 10 && !at_end(ev) && ev.timeline->records[ev.record][1] == kRecordCallback) {
+        if (ev.camera_program) step_source_camera_program_8001ec0c(ev.camera, *ev.camera_program, ev.counters);
+        step_source_timeline_8001f070(ev.counters, ev.record, *ev.timeline);
+    }
+    if (ev.active && ev.state < 11 && in.start_pressed) {   // 0x80102CC8: the skip
+        out.release_slots = uint16_t((1u << 3) | (1u << 4) | (1u << 1) | (1u << 5));
+        out.skipped = true;
+        ev.state = ev.state < 2 ? 12 : 11;
+        St03PlayerTarget t; t.position = kInspectorEnd; t.walk = true; t.heading = uint16_t(2048); out.player = t;
+        out.player_anim_448 = 0;
+    }
+}
+
 } // namespace
 
 bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profile& out) {
@@ -188,6 +289,9 @@ bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profi
     const auto* pt = package.timeline(kPoliceTimeline);
     const auto* pc = package.camera(kPoliceCamera);
     if (pt && pc && !pt->records.empty()) { out.police = *pt; out.police_camera = *pc; out.police_loaded = true; }
+    const auto* it = package.timeline(kInspectorTimeline);
+    const auto* ic = package.camera(kInspectorCamera);
+    if (it && ic && !it->records.empty()) { out.inspector = *it; out.inspector_camera = *ic; out.inspector_loaded = true; }
     for (uint8_t n = 0; n < out.object_sets.size(); ++n) out.object_sets[n] = st03_object_set(package, n);
     if (const auto* t = package.data_at(kSt03NpcIdleTimers); t && t->bytes.size() >= 64) {
         for (size_t i = 0; i < 64; ++i) out.idle_timers[i] = t->bytes[i];
@@ -214,8 +318,12 @@ St03Event8Step step_st03_event8(St03Event8& ev, const St03Event8Profile& profile
     St03Event8Step out;
     if (!ev.active) return out;
     ++ev.ticks;
-    if (!profile.loaded || (ev.scene == 1 && !profile.police_loaded) || ev.scene > 1) { out.unsupported_scene = true; return out; }
-    if (ev.scene == 0) scene0(ev, profile, in, out); else scene1(ev, profile, in, out);
+    if (!profile.loaded || (ev.scene == 1 && !profile.police_loaded) || (ev.scene == 2 && !profile.inspector_loaded) || ev.scene > 2) {
+        out.unsupported_scene = true; return out;
+    }
+    if (ev.scene == 0) scene0(ev, profile, in, out);
+    else if (ev.scene == 1) scene1(ev, profile, in, out);
+    else scene2(ev, profile, in, out);
     return out;
 }
 

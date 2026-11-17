@@ -1782,7 +1782,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     auto& ev=st03_event8_;
     if(!ev.active||!st03_event8_profile_)return;
     St03Event8Inputs input;
-    if((ev.scene==0&&ev.state==1)||(ev.scene==1&&ev.state<=1)){   // 0x80042238 runs only in the state that calls it
+    if((ev.scene==0&&ev.state==1)||(ev.scene==1&&ev.state<=1)||(ev.scene==2&&ev.state==2)){   // 0x80042238 runs only in the state that calls it
         const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
         input.player_ready=ready&&*ready;
     }
@@ -1799,6 +1799,17 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         // 0x80031BEC(+0x14, (-2240, 7000) from 0x801164DC, +0x56, 32).
         const auto target=source_heading_80031198(rds16w(player_,0x14),rds16w(player_,0x18),-2240,7000,actor_angle_steps_);
         input.turn_delta=target?class20_03_turn_step(uint16_t(*target),rd16w(player_,0x56),32):0;
+    }
+    if(ev.scene==2){
+        // CANDIDATE: the port has no focus camera (0x80039FFC), so
+        // 0x8003A13C reads "settled" at once.
+        input.camera_busy=false;
+        input.flag_606=story_flag(0x606);
+        if(st03_objects_.size()>1&&st03_objects_[1].w.live){
+            input.barrell=st03_objects_[1].w.raw_14;
+            const auto h=source_heading_80031198(input.barrell[0],input.barrell[2],rds16w(player_,0x14),rds16w(player_,0x18),actor_angle_steps_);
+            input.heading_barrell_to_player=h?uint16_t(*h):0;
+        }
     }
     auto step=step_st03_event8(ev,*st03_event8_profile_,input);
     if(step.player){
@@ -1829,6 +1840,13 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(step.player_anim_448)player_.bytes[0x448]=*step.player_anim_448;
     if(step.player_heading_add)wr16w(player_,0x442,uint16_t((rd16w(player_,0x442)+uint16_t(*step.player_heading_add))&0xFFFu));
     if(step.player_heading_zero)wr16w(player_,0x442,0);
+    if(step.player_heading_442)wr16w(player_,0x442,*step.player_heading_442);
+    if(step.player_heading_56)wr16w(player_,0x56,*step.player_heading_56);
+    // Player +0 bit 1 (drawn) with +0xBD bit 0x40 (CANDIDATE: the port's
+    // player draw does not read +0 yet).
+    if(step.player_hide){player_.bytes[0]=uint8_t(player_.bytes[0]&~2u);player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x40u);}
+    if(step.player_show){player_.bytes[0]=uint8_t(player_.bytes[0]|2u);player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]&~0x40u);}
+    for(uint8_t f=0;f<step.flag_clear_count;++f)set_story_flag(step.flag_clears[f],false);
     if(step.sound_8001a008)(void)enqueue_source_audio_8001a008(source_audio_queue_,*step.sound_8001a008,0,0);
     for(uint8_t m=0;m<step.message_count;++m){
         // 0x80053A08(0, n): opens block n of the area's bank; an absent bank
@@ -1860,7 +1878,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     }
     if(step.release_slots)for(size_t i=0;i<st03_objects_.size();++i)if(step.release_slots&(1u<<i)){st03_objects_[i]={};st03_object_current_[i]=nullptr;}   // 0x80103CC4(i)
     if(step.ended)set_story_flag(0x388,true);   // 0x8001D9F0: 0x380 + event 8
-    if(step.unsupported_scene&&ev.active&&ev.scene>1)ev.active=false;   // scenes 2..4 not ported: no hang
+    if(step.unsupported_scene&&ev.active)ev.active=false;   // scenes 3..4 (or missing data): no hang
     st03_event8_step_=step;
 }
 bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) noexcept {

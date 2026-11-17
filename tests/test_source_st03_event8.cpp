@@ -76,10 +76,12 @@ int main() {
         auto e2 = start_st03_event8(0);
         s = step_st03_event8(e2, p, k); CHECK(!s.skipped);
     }
-    // Scenes 2..4 are not ported; scene 1 needs its timeline.
+    // Scenes 3..4 are not ported; scenes 1 and 2 need their timelines.
     {
         auto ev = start_st03_event8(2);
-        CHECK(step_st03_event8(ev, p, in).unsupported_scene);
+        CHECK(step_st03_event8(ev, p, in).unsupported_scene);   // profile without 0x801161D0
+        auto e3 = start_st03_event8(3);
+        CHECK(step_st03_event8(e3, p, in).unsupported_scene);
         auto e1 = start_st03_event8(1);
         CHECK(step_st03_event8(e1, p, in).unsupported_scene);   // profile without 0x8011614C
     }
@@ -126,6 +128,57 @@ int main() {
         r.start_pressed = false;
         s = step_st03_event8(e2, q, r); CHECK(e2.state == 7 && *s.flag_set == 4 && *s.spawn_set == 1);
         s = step_st03_event8(e2, q, r); CHECK(!e2.active && s.ended);
+    }
+    // Scene 2 (0x8010263C), the Inspector talk, on a synthetic 0x801161D0.
+    {
+        auto q = p;
+        q.inspector.token = 0x801161D0u; q.inspector_camera.token = 0x801161F8u;
+        q.inspector.records = {{{0x00030000u, 0x80103A88u}}, {{0x00040100u, 0x80103A88u}}, {{0x00050000u, 0x80103A88u}}, {{0xFFu, 0}}};
+        q.inspector_loaded = true;
+        St03Event8Inputs k; k.barrell = {-2816, -1, 1280}; k.heading_barrell_to_player = 1000;
+        auto ev = start_st03_event8(2);
+        auto s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 1 && s.camera_focus && s.camera_focus->point[1] == -81 && s.camera_focus->distance == 300 &&
+              s.camera_focus->yaw == 1032 && s.player_hide);
+        k.camera_busy = true; s = step_st03_event8(ev, q, k); CHECK(ev.state == 1);
+        k.camera_busy = false; s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 2 && s.message_count == 1 && s.messages[0] == 45);
+        k.message_open = true; s = step_st03_event8(ev, q, k); CHECK(ev.state == 2);   // waits for the window
+        k.message_open = false; s = step_st03_event8(ev, q, k); CHECK(ev.state == 2);  // and for 0x80042238
+        k.player_ready = true; s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 3 && s.messages[0] == 46 && s.player && s.player->walk && s.player->position[0] == -2924 &&
+              *s.player->heading == 2092 && s.release_set && *s.spawn_set == 1 && s.flag_clear_count == 2 &&
+              s.flag_clears[0] == 0x606 && s.flag_clears[1] == 0x607 && *s.objects[3].variant_04 == 1 &&
+              *s.objects[4].state_08 == 0 && *s.objects[1].variant_04 == 1 && s.camera_restore_80039e50 && ev.timeline == &q.inspector);
+        k.player_ready = false;
+        s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 4 && s.player_show && *s.objects[3].state_09 == 1 && *s.objects[1].state_09 == 2 && *s.objects[1].byte_0c_from == 3);
+        s = step_st03_event8(ev, q, k); CHECK(ev.state == 4);   // waits for 0x606
+        k.flag_606 = true; s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 5 && s.messages[0] == 47 && s.flag_clears[0] == 0x606 && *s.objects[3].state_09 == 3 && *s.objects[1].state_09 == 0);
+        k.flag_606 = false;
+        s = step_st03_event8(ev, q, k); CHECK(ev.state == 6 && s.messages[0] == 49 && *s.objects[4].state_09 == 2);
+        s = step_st03_event8(ev, q, k); CHECK(ev.state == 7 && s.messages[0] == 51 && *s.objects[3].state_09 == 3);
+        s = step_st03_event8(ev, q, k);
+        CHECK(ev.state == 8 && ev.countdown == 200 && *s.objects[3].byte_0c_from == 4 && *s.objects[3].byte_0d_from == 5);
+        int n = 0; bool barrell = false;
+        while (ev.state == 8 && n < 300) { s = step_st03_event8(ev, q, k); ++n; if (s.objects[1].state_09) barrell = n == 60; }
+        CHECK(n == 120 && barrell && *s.objects[4].state_09 == 1 && *s.objects[4].byte_0c_from == 5 && ev.countdown == 80);
+        n = 0; while (ev.state == 9 && n < 300) { s = step_st03_event8(ev, q, k); ++n; }
+        CHECK(n == 81 && ev.state == 10 && s.release_slots == 0x1A && *s.sound_8001a008 == 271 && *s.player_heading_56 == 1740 &&
+              *s.objects[5].state_09 == 1 && *s.objects[5].byte_0f_or == 0x40 && *s.objects[5].heading_56 == 2048 && !s.player->walk);
+        n = 0; while (ev.state == 10 && n < 300) { s = step_st03_event8(ev, q, k); ++n; }
+        CHECK(n == 181 && *s.player_heading_442 == 2048);
+        s = step_st03_event8(ev, q, k);
+        CHECK(!ev.active && s.ended && *s.flag_set == 0 && s.player_release && (s.release_slots & 0x20));
+        // Start during the talk: releases 1, 3, 4, 5 and ends through state 11.
+        auto e2 = start_st03_event8(2);
+        St03Event8Inputs r; r.barrell = k.barrell;
+        step_st03_event8(e2, q, r); step_st03_event8(e2, q, r); r.player_ready = true; step_st03_event8(e2, q, r);
+        CHECK(e2.state == 3);
+        r.start_pressed = true; s = step_st03_event8(e2, q, r);
+        CHECK(s.skipped && e2.state == 11 && s.release_slots == 0x3A && s.player->walk && s.player->position[0] == -2601);
+        r.start_pressed = false; s = step_st03_event8(e2, q, r); CHECK(!e2.active && *s.flag_set == 0);
     }
     // 0x80100990 state machine: trigger box (cells x -5..-4, z 11..12).
     {
