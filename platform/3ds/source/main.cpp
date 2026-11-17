@@ -5180,6 +5180,21 @@ int main() {
         L3QolSettings qol{}; l3_qol_settings_defaults(&qol);
         l3::RuntimeSession session(std::move(boot_map),std::move(areas[0]),std::move(messages),qol);
         session.set_stage(g_stage);   // 0x800C1B60
+        // Data's Save (ST03 message op 0xAC, main phase 6): the 3DS save file stands in for the
+        // memory card (CANDIDATE: no card/slot screen, one slot; the native .l3sv format has no stage
+        // field, so the checkpoint id carries stage << 8 | area behind a marker bit).
+        session.set_save_writer([](const l3::RuntimeSaveState& st)->bool{
+            std::vector<uint8_t> bytes;
+            try{bytes=l3::cook_l3save(st);}catch(...){return false;}
+            const char* tmp="sdmc:/3ds/Legends3DS/save_01516.l3sv.tmp";const char* dst="sdmc:/3ds/Legends3DS/save_01516.l3sv";
+            FILE* f=std::fopen(tmp,"wb");if(!f)return false;
+            const bool ok=std::fwrite(bytes.data(),1,bytes.size(),f)==bytes.size();
+            if(std::fclose(f)!=0||!ok){std::remove(tmp);return false;}
+            std::remove(dst);   // rename onto an existing file fails on the SD devoptab
+            if(std::rename(tmp,dst)!=0){std::remove(tmp);return false;}
+            hardware_test_trace("# data_save,written=1,bytes=%lu,area=%u,hp=%u",(unsigned long)bytes.size(),unsigned(st.area_id),unsigned(st.hp));
+            return true;
+        });
         // This native entry is a fresh diagnostic session, not a restored retail
         // save. The original fresh initializer proves selector1 only here.
         session.initialize_fresh_source_statistics_8001326c();
@@ -7783,6 +7798,15 @@ int main() {
                     hardware_test_trace("# st03_npc_talk,frame=%lu,active=%u,target=%d,dialogue=%u,block=%u",
                         (unsigned long)session.frame_counter(),unsigned(talk),target?int(*target):-1,unsigned(session.dialogue().active),unsigned(session.dialogue().ref.block));
                 talk_was=talk;target_was=target;
+                {   // Data's menu (diagnostic): dialogue block / choice / advance changes
+                    static uint32_t dlg_key_was=0xFFFFFFFFu;
+                    const auto& dg=session.dialogue();
+                    const uint32_t key=(dg.active?1u<<31:0u)|(uint32_t(dg.ref.block)<<16)|(dg.waiting_for_choice?1u<<15:0u)|(uint32_t(dg.choice)<<8)|(dg.waiting_for_advance?1u:0u);
+                    if(key!=dlg_key_was){dlg_key_was=key;
+                        hardware_test_trace("# st03_dialogue,frame=%lu,active=%u,block=%u,choice_wait=%u,choice=%u,advance_wait=%u,save_screen=%u",
+                            (unsigned long)session.frame_counter(),unsigned(dg.active),unsigned(dg.ref.block),unsigned(dg.waiting_for_choice),
+                            unsigned(dg.choice),unsigned(dg.waiting_for_advance),unsigned(session.save_screen_active()));}
+                }
                 // Per-slot behaviour (scene 2 against the oracle): variant, +9, +0x0A, position.
                 static std::array<uint32_t,6> obj_was{};
                 const auto& objs=session.st03_objects();
