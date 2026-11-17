@@ -19,7 +19,7 @@ MmlMessageFile bank() {
     using K = MmlMessageTokenKind;
     MmlMessageFile m; m.blocks.resize(4);
     // 0 (menu): rows Recharge -> 1, Save -> 2, Cancel -> 0xFF; then END.
-    m.blocks[0].tokens = {{K::Glyph, 0x25, {}}, {K::Control, 0x96, {0, 0}}, {K::Glyph, 0x26, {}}, {K::Control, 0x96, {0, 0}},
+    m.blocks[0].tokens = {{K::Control, 0x99, {1, 3}}, {K::Glyph, 0x25, {}}, {K::Control, 0x96, {0, 0}}, {K::Glyph, 0x26, {}}, {K::Control, 0x96, {0, 0}},
         {K::Glyph, 0x27, {}}, {K::Control, 0x96, {0, 0}}, {K::Control, 0x97, {0x80, 1, 2, 0xFF}}, {K::Control, 0xA9, {}}};
     // 1 (Recharge): CALL close-less text, 0xB5 {ff, 3, 3, 3} -> block 3, which is life only.
     m.blocks[1].tokens = {{K::Control, 0xB5, {0xFF, 3, 3, 3}}, {K::Glyph, 0x30, {}}, {K::Control, 0x9A, {0x77, 0x00}}};
@@ -47,7 +47,7 @@ int main() {
     {   // Recharge: life +2 per update to the maximum, then the text, NEXT, the jump back to the menu.
         auto s = make(40);
         s.start_source_tutorial_dialogue({0, 0});
-        s.tick(none); assert(s.dialogue().waiting_for_choice);
+        s.tick(none); assert(s.dialogue().waiting_for_choice && s.dialogue().side_window_block == 3);
         s.tick(a);                              // Recharge -> block 1 -> 0xB5 -> block 3 -> 0xB2 pending
         for (int i = 0; i < 40 && s.bottom_screen_model().hp < 80; ++i) s.tick(none);
         assert(s.bottom_screen_model().hp == 80);

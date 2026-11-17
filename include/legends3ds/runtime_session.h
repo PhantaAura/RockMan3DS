@@ -184,6 +184,7 @@ struct RuntimeDialogueState {
     std::vector<uint8_t> choice_targets;                 // per 0x96 option; 0xFF continues
     std::vector<uint16_t> option_glyph_at;               // visible_glyphs index of each option
     uint8_t pending_step_op = 0;                         // 0xB2 / 0xB3 / 0xB4: recharge step still running
+    int16_t side_window_block = -1;                      // 0x99 with slot != 0: block opened in that slot
 };
 
 struct RuntimeCheckpoint {

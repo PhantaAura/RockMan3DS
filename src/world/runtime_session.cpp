@@ -1367,6 +1367,12 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
                         if(ev.args[0]!=0||ev.args[1]>=(*message_banks_)[dialogue_.ref.bank].blocks.size()){stop_dialogue();return;}
                         dialogue_.ref.block=ev.args[1];dialogue_cursor_->start_block(ev.args[1]);break;
                     }
+                    if(ev.opcode==0x99&&ev.args.size()>=2&&ev.args[0]!=0){
+                        // 0x80055344 opens block arg2 in window slot arg1 (Data's menu: the "What do you
+                        // want to do?" header in slot 1, closed again by block 0xE3). The port has one
+                        // dialogue window: the side window is recorded, not drawn (CANDIDATE).
+                        dialogue_.side_window_block=ev.args[1];break;
+                    }
                     if(ev.opcode==0x99&&ev.args.size()>=2){ // CALL bank 0, block
                         if(ev.args[0]!=0||ev.args[1]>=(*message_banks_)[dialogue_.ref.bank].blocks.size()){stop_dialogue();return;}
                         dialogue_.call_stack.push_back({dialogue_.ref.block,uint16_t(dialogue_cursor_->token_index())});
@@ -2111,6 +2117,7 @@ void RuntimeSession::update_st03_objects(){
         if(t.talk_target_taken||t.clear_player_target)player_check_npc_.reset();
         if(t.flag_set)set_story_flag(*t.flag_set,true);
         if(t.reopen_menu){   // Data state 3: 0x80053A30(0) then 0x80053A08(0, 0xDC)
+            st03_talk_active_=true;
             if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.reopen_menu});}
                 catch(const std::exception&){}
         }
@@ -2683,6 +2690,9 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     if(gameplay_owned){
         RuntimeInputFrame selected=in;
         if(in.source_event_player_position)selected.held_psx_mask=selected.pressed_psx_mask=0;
+        // ST03 NPC talk: the original puts the player in action 0x10 (talk pose), which takes no
+        // pad input; the pose itself is not ported, the pad is held off instead (CANDIDATE).
+        if(stage_==3&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
         update_input_compat(selected);
         // 0x8003C07C: +0xBD 0x40 zeroes the pad, 0x20 takes event 0's 0x800C0F96.
         (void)source_player_input_select_8003c07c(player_,source_door_event0_.forced_pad);

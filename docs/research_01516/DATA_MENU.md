@@ -73,3 +73,20 @@ The first oracle save is in a scratch copy of the card (not committed).
 
 Not ported / open: camera (event 0xFF), player talk pose, Data's own 3DS
 save-slot UI, "Checking data", memory card 2, load/continue.
+
+## Port status (2026-11-17)
+- Behaviour 7 in `source_st03_objects.cpp` (`behaviour7_80109cf8`); message ops in
+  `RuntimeSession::update_dialogue`: 0xAC (phase-6 write = Save), 0xB2 (life +2 per update),
+  0xB3/0xB4 (done at once: no special weapons/shield yet, CANDIDATE), 0xB5 (both read
+  "done" -> block arg4, life only, CANDIDATE), 0xBF jump, 0x99 with slot != 0 recorded as
+  `side_window_block` (header window not drawn, CANDIDATE). Parser: 0xB5 has 4 args.
+- Save writes `sdmc:/3ds/Legends3DS/save_01516.l3sv` (native L3SV, checkpoint id
+  0x80000000 | stage << 8 | area) through `set_save_writer`; no card/slot/confirm screen
+  (CANDIDATE). During an ST03 talk the pad is held off (stands in for player action 0x10).
+- Host: `test_source_data_menu`, `test_source_st03_objects`. Azahar run 41 (Old 3DS mode,
+  `diagnostic_stage_01516.txt` = `stage 3 area 1 -4566 -1 1402 1255`, route
+  `autoplay/st03_data_save.txt`): talk block 9 -> menu 0xDC waits for the choice -> Right ->
+  Save (block 0xDE) -> file written -> Data reopens 0xDC (twice); player stays at
+  (-5010,1299); the written file loads (stage 3 area 1, HP 80/80, flag 3 set).
+- Flags: the talk sets 0x608 through block 9's own 0x9A (script, not forced). The oracle
+  comparison is still open (compare_recomp_3ds.py not run: the shared oracle was busy).

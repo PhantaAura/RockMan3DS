@@ -7798,6 +7798,15 @@ int main() {
                     hardware_test_trace("# st03_npc_talk,frame=%lu,active=%u,target=%d,dialogue=%u,block=%u",
                         (unsigned long)session.frame_counter(),unsigned(talk),target?int(*target):-1,unsigned(session.dialogue().active),unsigned(session.dialogue().ref.block));
                 talk_was=talk;target_was=target;
+                {   // Data's menu (diagnostic): dialogue block / choice / advance changes
+                    static uint32_t dlg_key_was=0xFFFFFFFFu;
+                    const auto& dg=session.dialogue();
+                    const uint32_t key=(dg.active?1u<<31:0u)|(uint32_t(dg.ref.block)<<16)|(dg.waiting_for_choice?1u<<15:0u)|(uint32_t(dg.choice)<<8)|(dg.waiting_for_advance?1u:0u);
+                    if(key!=dlg_key_was){dlg_key_was=key;
+                        hardware_test_trace("# st03_dialogue,frame=%lu,active=%u,block=%u,choice_wait=%u,choice=%u,advance_wait=%u,save_screen=%u",
+                            (unsigned long)session.frame_counter(),unsigned(dg.active),unsigned(dg.ref.block),unsigned(dg.waiting_for_choice),
+                            unsigned(dg.choice),unsigned(dg.waiting_for_advance),unsigned(session.save_screen_active()));}
+                }
                 // Per-slot behaviour (scene 2 against the oracle): variant, +9, +0x0A, position.
                 static std::array<uint32_t,6> obj_was{};
                 const auto& objs=session.st03_objects();
