@@ -5049,6 +5049,23 @@ int main() {
             messages.push_back(l3::load_l3message(read_binary(data_path("messages/st00_01.l3msg")),true));
             messages.push_back(l3::load_l3message(read_binary(data_path("messages/st00_02.l3msg")),true));
         }
+        // Other stages: one bank per area index (stages/stNN/messages/area_NN.l3msg,
+        // the area container's .msg), an empty bank where an area has none.
+        if (g_stage!=0) {
+            size_t loaded=0;
+            for(size_t i=0;i<boot_map.areas.size();++i){
+                char rel[40];std::snprintf(rel,sizeof(rel),"messages/area_%02u.l3msg",unsigned(i));
+                l3::MmlMessageFile bank;
+                if(FILE* f=std::fopen(stage_path(rel).c_str(),"rb")){
+                    std::fclose(f);
+                    try{bank=l3::load_l3message(read_binary(stage_path(rel)),true);++loaded;}
+                    catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+                }
+                messages.push_back(std::move(bank));
+            }
+            hardware_test_trace("# stage_message_banks,stage=%u,areas=%lu,loaded=%lu",unsigned(g_stage),
+                (unsigned long)boot_map.areas.size(),(unsigned long)loaded);
+        }
         if (areas.empty() || areas.size()!=boot_map.areas.size())
             throw std::runtime_error("area binding count differs from loaded map");
         boot_log(MML_BOOT_DATA, g_sidecars_bound ? "map/render/ref/flow/messages/ebd bound" : "map/render bound; gameplay records unbound");

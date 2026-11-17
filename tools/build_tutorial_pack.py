@@ -663,6 +663,16 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
         r=matches[0]; ep=work/f'ebd_{area_index:02d}.bin'
         ep.write_bytes(cp.read_bytes()[r.payload_start:r.payload_start+r.size])
         run(tools,'l3cook_ebd',ep,hex(r.load),sout/'ebd'/f'area_{area_index:02d}.l3ebd')
+        # The area container's message file (..\mess\stSS_NN.msg; ST03 area 1
+        # holds st03_00.msg), cooked as messages/area_NN.l3msg for the runtime's
+        # per-area bank list.
+        msgs=[m for m in iter_resources(cp) if m.internal.lower().startswith('..\\mess\\') and m.internal.lower().endswith('.msg')]
+        if len(msgs)>1: raise RuntimeError(f'{cname}: more than one message file')
+        if msgs:
+            m=msgs[0]; mp=work/f'msg_{area_index:02d}.msg'
+            mp.write_bytes(cp.read_bytes()[m.payload_start:m.payload_start+m.size])
+            (sout/'messages').mkdir(exist_ok=True)
+            run(tools,'l3cook_msg',mp,sout/'messages'/f'area_{area_index:02d}.l3msg')
     if with_material_cache:
         mout=sout/'materials'; mout.mkdir()
         # Same VRAM order as ST00: boot/player containers, the stage container,
