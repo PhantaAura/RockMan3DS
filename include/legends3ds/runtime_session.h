@@ -825,6 +825,7 @@ private:
     St03Event8 st03_event8_{};
     St03Event8Step st03_event8_step_{};
     bool st03_area1_setup_done_=false;
+    uint8_t st03_area1_setup_state_=0;   // 0x80100990's byte +4
     std::optional<uint8_t> st03_area1_object_set_;
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;
     uint64_t source_post_win_generation_=0;
