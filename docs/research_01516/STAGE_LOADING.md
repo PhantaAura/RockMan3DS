@@ -378,3 +378,48 @@ flag 4 and a new object set; the player returns to state 1/0. The port's
 scene 1 follows the same steps (host test). The police car's own handler
 (its drive) belongs to the ST03 scene objects, not ported yet; the port's
 floor check for state 2 uses its floor query (CANDIDATE mapping).
+
+## ST03 scene objects (research, 2026-11-17)
+
+**Object sets.** 0x80103AB0(n) reads {count, records} at 0x80116578 + 8n,
+clears the mask 0x8011536C, and for each 20-byte record calls 0x8001EAE8,
+stores the slot's work pointer (0x800C4C6C[slot]) in 0x8011CB30[slot],
+clears +6 bit 0x20 and sets mask bit 0x80000000 >> slot. 0x80103BA0
+releases every masked slot (by family: 0x8002FE74 class lookup ...).
+Record: [0] slot, [1] class, [2] sub (+4), [3] family (0x20 / 0x40 /
+0x60 / 0xE0), [4] (+3), [8..11] (+0x0C..+0x0F), [12..17] position,
+[18..19] heading.
+- Set 0 (crash site, 0x801154B0): Roll 0x05 (-5040, -1, 1500), Barrell
+  0x25 (-4896, -1, 1538, heading 0x0C00), Data 0x11 (-5196, -1, 1269),
+  slot 3 class 0x0E family 0x60 (479, -1, 7990, heading 0x0600) - the
+  police car scene 1 drives.
+- Set 1 (police arrived, 0x80115500): Roll, Barrell (sub 1, +3 = 1),
+  Data, Inspector 0x26, officer 0x24, police car 0x0E at (-2346, -1, 2510).
+- Sets 2..4: Roll + Data / Roll alone (+0x0C 0x43 / 0x45); set 5 empty;
+  sets 6 and 7 are other areas' casts.
+
+**Class dispatch.** The stage init 0x801004BC sets hook 0x1F800058 =
+0x80114350 (family 0x20) and 0x1F80005C = 0x801144E4 (family 0x40).
+Family-0x20 class table entries point at per-class tables indexed by +3;
+variant 0 of Roll, Barrell, Data, the Inspector and the officer is the
+same 0x80107B84: ST03's generic NPC. Barrell variant 1 is 0x8010D0F4.
+
+**Generic NPC 0x80107B84** dispatches on +8 (0x80116E28):
+- 0 (0x80107BC0, init): drawn bit, model 0x8002F9C4, scale +0x158/+0x15C
+  by class (0x26: 471; 0x24/0x30/0x42/0x53/0x5C/0x44: 538; 0x5E: 448/512,
+  384; else 512), +0x15E = 0x4210; block +0x348: +0x348 = 2, +0x350 = 0,
+  +0x352 = heading, +0x354 = position, +0x368 = 10000 if +0x0D & 0x10
+  else 5000; +0x10 = 0x80116E1C; +8 = 1, +9 = +0x0D & 7; animation
+  request 0; then state 1 at once.
+- 1 (0x80107D80, tick): when 0x8010A4EC (the player within a square of
+  half-size +0x368 around the NPC) passes: previous pose; talk handler
+  0x8010A344 when +0x348 & 2; behaviour 0x80116E34[+9]; floor 0x80048E6C
+  unless +0x0D & 0x20; animation request on change else 0x80032488;
+  shadow 0x8002C8CC (params 0x801168CC + class * 12); 0x80051B68(work,
+  +0x348 & 2 ? 1 : 3, -1, 0).
+- 2 (0x80107F3C): 0x80031824 (release).
+- Behaviours (+9): 0x80107F5C, 0x80108100, 0x801087EC, 0x80108E28,
+  0x8010940C, 0x801097F4, 0x80109AB4, 0x80109CF8. Roll and Barrell start
+  with 1 (+0x0D 0x21 / 0x01), Data with 0.
+Not read yet: the behaviours, 0x8010A344 / 0x80051B68 (talk), family 0x60
+(the police car).
