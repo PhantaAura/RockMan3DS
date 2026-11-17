@@ -112,6 +112,9 @@ struct SourcePostWinProfile {
     SourceSceneTimeline timeline;
     std::optional<SourceSceneCameraProgram> camera;     // event 2's program is not interpretable yet (op 0x80)
     std::vector<std::array<uint8_t,20>> spawns;
+    // Event 4 only, optional: 40/06's prop roll tables 0x801079E4..0x80107AAA
+    // (cook_cutscene.py --extra 801079E4:198).
+    std::vector<uint8_t> st02_prop_roll;
 };
 // Event 3: timeline 0x8011BE44, camera 0x8011BB3C, spawns 0x8011BB14/0x8011BB28.
 // Event 2: timeline 0x8011BA4C, camera 0x8011B4B4 (optional), 14 spawns from

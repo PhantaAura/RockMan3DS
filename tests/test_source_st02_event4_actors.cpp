@@ -3,6 +3,8 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <map>
+#include <vector>
 
 using namespace l3;
 
@@ -28,6 +30,25 @@ static ReferenceTables synthetic_refs() {
         r.scalar_quarter[i] = int16_t(std::lround(std::sin(double(i) * M_PI / 2048.0) * 4096));
     r.scalar_quarter_known = true;
     return r;
+}
+
+// Each advance moves one record; the key sticks at the last record.
+struct FakeSequence : St02ActorSequence {
+    std::map<uint8_t, std::vector<uint8_t>> keys;    // request -> record keys
+    std::array<int,3> request{{-1, -1, -1}};
+    std::array<size_t,3> at{};
+    std::array<int,3> restarts{};
+    void restart(uint8_t s, uint8_t r) override { request[s] = r; at[s] = 0; ++restarts[s]; }
+    void advance(uint8_t s) override { ++at[s]; }
+    std::optional<uint8_t> key(uint8_t s) const override {
+        if (request[s] < 0) return std::nullopt;
+        const auto it = keys.find(uint8_t(request[s]));
+        if (it == keys.end() || it->second.empty()) return uint8_t(0);
+        return it->second[std::min(at[s], it->second.size() - 1)];
+    }
+};
+static std::array<uint8_t,20> record40(uint8_t slot, uint8_t subtype) {
+    auto r = record(slot, subtype, 0, 0, 0, 0); r[3] = 0x40; return r;
 }
 
 int main() {
@@ -167,6 +188,131 @@ int main() {
         w.state_08 = 2;
         step_st02_event4_actor(w, nullptr, 0);   // 0x80102970 -> 0x80031824
         CHECK(w.released && !w.live);
+    }
+
+    // ---- 40/05 (slot 0) ----
+    {
+        FakeSequence seq;
+        seq.keys[16] = {1, 27, 27, 2, 27, 27, 3};
+        seq.keys[17] = {5, 6, 7, 8, 17};
+        St02ActorContext c; c.sequence = &seq;
+        auto w = spawn_st02_event4_actor(record40(0, 0x05));
+        auto t = step_st02_event4_actor(w, c);             // 0x80102D54
+        CHECK(t.model_init && t.pose_request && *t.pose_request == 16 && t.sequence_steps == 0 && t.face_tick);
+        CHECK(w.rot_54[1] == 0x800 && w.state_08 == 1 && w.pose_ac == 16);
+        t = step_st02_event4_actor(w, c);                  // state 0 sub 0: pose 16 again
+        CHECK(*t.pose_request == 16 && w.sub_0a == 1 && t.sequence_steps == 1);
+        // Sub 1 rises 0x23333 a frame and counts frames on key 27 (keys 27,27,2,27,27 -> 4th hit).
+        int frames = 0;
+        while (w.sub_0a == 1 && frames < 20) { step_st02_event4_actor(w, c); ++frames; }
+        CHECK(frames == 5 && w.byte_0b == 4 && w.pose_ac == 17);
+        CHECK(w.fixed_1c[1] == 5 * 0x00023333);
+        while (w.sub_0a == 2 && frames < 40) { step_st02_event4_actor(w, c); ++frames; }   // key 7
+        CHECK(w.sub_0a == 3);
+        const auto y = w.fixed_1c[1];
+        while (w.sub_0a == 3 && frames < 60) { step_st02_event4_actor(w, c); ++frames; }   // key 17, +0x30000
+        CHECK(w.sub_0a == 4 && w.fixed_1c[1] - y == 2 * 0x00030000);
+        // +0x0D freezes the step (event 0x80100970).
+        w.byte_0d = 1; t = step_st02_event4_actor(w, c);
+        CHECK(t.sequence_steps == 0);
+        w.byte_0d = 0;
+        // States 1..8 request poses 18..25 once.
+        SourceSceneSlotCommands s; set_state(s, 5); apply_st02_event4_slot_writes(w, s);
+        t = step_st02_event4_actor(w, c); CHECK(*t.pose_request == 22);
+        t = step_st02_event4_actor(w, c); CHECK(!t.pose_request);
+        // State 9: pose 26, then rise in z after key 16 until key 24.
+        seq.keys[26] = {0, 16, 24};
+        set_state(s, 9); apply_st02_event4_slot_writes(w, s);
+        step_st02_event4_actor(w, c); CHECK(w.pose_ac == 26 && w.sub_0a == 1);   // stepped onto key 16
+        step_st02_event4_actor(w, c); CHECK(w.sub_0a == 2);                      // key 16 seen; stepped onto 24
+        const auto z = w.fixed_1c[2];
+        step_st02_event4_actor(w, c); CHECK(w.sub_0a == 3 && w.fixed_1c[2] - z == 0x00268000);
+        // Without sequence data the key tests wait.
+        auto n = spawn_st02_event4_actor(record40(0, 0x05));
+        St02ActorContext none;
+        step_st02_event4_actor(n, none); step_st02_event4_actor(n, none);
+        t = step_st02_event4_actor(n, none);
+        CHECK(t.status == St02ActorStatus::SequenceUnavailable && n.sub_0a == 1);
+        // Spawn record [4] != 0: the handler does nothing.
+        auto r = record40(0, 0x05); r[4] = 1;
+        auto off = spawn_st02_event4_actor(r);
+        t = step_st02_event4_actor(off, c);
+        CHECK(!t.model_init && !t.face_tick && off.state_08 == 0);
+    }
+
+    // ---- 40/06 (slot 1) and the slot-4 prop ----
+    {
+        FakeSequence seq;
+        seq.keys[2] = {9, 9, 34};
+        St02ActorContext c; c.sequence = &seq;
+        std::vector<uint8_t> roll(0xC6);
+        for (size_t i = 0; i < roll.size() / 2; ++i) { roll[2 * i] = uint8_t(i + 100); roll[2 * i + 1] = 0; }   // synthetic
+        c.roll_801079e4 = &roll;
+        auto prop = spawn_st02_event4_actor(record(4, 0x27, 1, 0, 0, 0));
+        c.prop = &prop;
+        auto w = spawn_st02_event4_actor(record40(1, 0x06));
+        auto t = step_st02_event4_actor(w, c);             // 0x80103704 then state 0: pose 1
+        CHECK(t.model_init && *t.pose_request == 1 && w.byte_143 == 0xFF && w.byte_147 == 0xFF && t.sequence_steps == 1);
+        CHECK(t.prop_written && prop.byte_0c == 1);
+        // Request 1 -> -0x801079E4[key]; the key is read after this frame's step.
+        CHECK(prop.rot_54[2] == uint16_t(-(100 + 0)));
+        // State 3: wait for key 0, pose 2, then key 34 -> pose 4.
+        SourceSceneSlotCommands s; set_state(s, 3); apply_st02_event4_slot_writes(w, s);
+        t = step_st02_event4_actor(w, c); CHECK(*t.pose_request == 2 && w.sub_0a == 1);
+        t = step_st02_event4_actor(w, c); CHECK(!t.pose_request);
+        t = step_st02_event4_actor(w, c); CHECK(*t.pose_request == 4 && w.sub_0a == 2);
+        // Request 4 -> -0x80107A26[key] (table offset 0x42).
+        CHECK(prop.rot_54[2] == uint16_t(-(100 + 0x21)));
+        // +0x0C freezes the step (event 0x80100D78).
+        w.byte_0c = 1; t = step_st02_event4_actor(w, c); CHECK(t.sequence_steps == 0); w.byte_0c = 0;
+        // Request 7: -0x80107A6C[key] below 31, then -284 a frame and variant 0.
+        seq.keys[7] = {3, 3, 31};
+        set_state(s, 2); apply_st02_event4_slot_writes(w, s);
+        step_st02_event4_actor(w, c);
+        CHECK(w.pose_ac == 7 && prop.rot_54[2] == uint16_t(-(100 + 0x44 + 3)) && prop.byte_0c == 1);
+        const uint16_t before = prop.rot_54[2];
+        step_st02_event4_actor(w, c);
+        CHECK(prop.rot_54[2] == uint16_t(before - 284) && prop.byte_0c == 0);
+        // Request 9: -318, variant 0 from key 18.
+        seq.keys[9] = {17, 18};
+        set_state(s, 9); apply_st02_event4_slot_writes(w, s);
+        step_st02_event4_actor(w, c);                      // restart 9 (key 17), stepped to 18
+        CHECK(prop.rot_54[2] == uint16_t(-318) && prop.byte_0c == 0);
+        // Requests 5 and 6 are constants.
+        set_state(s, 5); apply_st02_event4_slot_writes(w, s); step_st02_event4_actor(w, c);
+        CHECK(prop.rot_54[2] == 318 && prop.byte_0c == 1);
+        set_state(s, 6); apply_st02_event4_slot_writes(w, s); step_st02_event4_actor(w, c);
+        CHECK(prop.rot_54[2] == uint16_t(-63));
+        // The prop then re-resolves its model when +0x0C changed (0x80102914).
+        prop.byte_0c = 0; prop.byte_0d = 1; prop.state_08 = 1;
+        t = step_st02_event4_actor(prop, nullptr, 0);
+        CHECK(t.model_init && *t.model_variant == 0);
+        // No cooked tables: request 1 reports and leaves the roll alone.
+        St02ActorContext bare = c; bare.roll_801079e4 = nullptr;
+        set_state(s, 0); apply_st02_event4_slot_writes(w, s);
+        prop.rot_54[2] = 7;
+        t = step_st02_event4_actor(w, bare);
+        CHECK(t.status == St02ActorStatus::RollTableUnavailable && prop.rot_54[2] == 7);
+    }
+
+    // ---- 40/07 (slot 2): pose 1 for 30 frames, pose 2 until key 71 ----
+    {
+        FakeSequence seq;
+        seq.keys[2] = {0, 0, 71};
+        St02ActorContext c; c.sequence = &seq;
+        auto w = spawn_st02_event4_actor(record40(2, 0x07));
+        auto t = step_st02_event4_actor(w, c);             // 0x80103F08 only
+        CHECK(t.model_init && !t.pose_request && w.state_08 == 1);
+        t = step_st02_event4_actor(w, c); CHECK(*t.pose_request == 1 && t.sequence_steps == 0);
+        int frames = 0;
+        while (w.state_09 == 0 && frames < 40) { t = step_st02_event4_actor(w, c); ++frames; }
+        CHECK(frames == 30 && w.state_09 == 1 && w.sub_0a == 0 && t.sequence_steps == 1);
+        t = step_st02_event4_actor(w, c); CHECK(*t.pose_request == 2);
+        step_st02_event4_actor(w, c); CHECK(w.state_09 == 1);
+        step_st02_event4_actor(w, c); CHECK(w.state_09 == 0 && w.sub_0a == 0);   // stepped onto key 71
+        SourceSceneSlotCommands s; set_state(s, 2); apply_st02_event4_slot_writes(w, s);
+        t = step_st02_event4_actor(w, c); CHECK(*t.pose_request == 3 && t.sequence_steps == 0);
+        t = step_st02_event4_actor(w, c); CHECK(t.sequence_steps == 1);
     }
 
     if (failures) { std::printf("%d failure(s)\n", failures); return 1; }

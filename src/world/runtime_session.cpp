@@ -1824,17 +1824,22 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
 }
 void RuntimeSession::update_source_st02_event4_actors(const SourcePostWinProfile& profile){
     // The object update (0x8001E070) for event 4's spawned slots. CANDIDATE
-    // order: after the event handler in the same frame; 1F800002 is taken
-    // from the frame counter (CANDIDATE phase). 40/05..07 are not ported yet.
+    // order: after the event handler in the same frame, slots 0..4 in turn;
+    // 1F800002 is taken from the frame counter (CANDIDATE phase). No class-40
+    // sequence data is bound yet, so 40/xx key tests report
+    // SequenceUnavailable and wait.
     auto& ev=source_post_win_;
-    const auto* refs=reference_tables_?&*reference_tables_:nullptr;
+    St02ActorContext ctx;
+    ctx.refs=reference_tables_?&*reference_tables_:nullptr;ctx.frame_1f800002=uint16_t(frame_counter_);
+    ctx.roll_801079e4=profile.st02_prop_roll.empty()?nullptr:&profile.st02_prop_roll;
     for(size_t i=0;i<source_st02_actors_.size();++i){
         auto& w=source_st02_actors_[i];auto& tick=source_st02_actor_ticks_[i];tick={};
         if(!ev.slots[i].spawned){w={};continue;}
         if(!w.live&&!w.released)for(const auto& r:profile.spawns)if(r[0]==i){w=spawn_st02_event4_actor(r);break;}
-        if(!w.live||(w.subtype!=0x0A&&w.subtype!=0x27))continue;
+        if(!w.live)continue;
         apply_st02_event4_slot_writes(w,ev.slots[i]);
-        tick=step_st02_event4_actor(w,refs,uint16_t(frame_counter_));
+        ctx.prop=i==1?&source_st02_actors_[4]:nullptr;
+        tick=step_st02_event4_actor(w,ctx);
     }
 }
 std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_win_transition() const noexcept {

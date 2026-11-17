@@ -1,7 +1,9 @@
 #pragma once
-// ST02 event 4's family-0x20 scene actors (docs/research_01516/STAGE_LOADING.md,
-// "ST02 event 4 actors"): slot 3 = 20/0A (the Flutter seen from outside,
-// 0x80102888) and slot 4 = 20/27 (0x80102990), both variant 4. The event's
+// ST02 event 4's scene actors (docs/research_01516/STAGE_LOADING.md,
+// "ST02 event 4 actors"), all variant 4: slot 0 = 40/05 (0x80103360),
+// slot 1 = 40/06 (0x80103D18), slot 2 = 40/07 (0x80104154), slot 3 = 20/0A
+// (the Flutter seen from outside, 0x80102888), slot 4 = 20/27 (0x80102990,
+// the prop 40/06 holds: 0x80103D8C writes its +0x0C and +0x58 every frame). The event's
 // record callbacks write their +0 / +9 / position fields (source_st00_post_win.h
 // SourceSceneSlotCommands); the update functions below are hand-ported and run
 // once per object update. Rendering-only work (the 0x8002F9C4 model lookup,
@@ -13,6 +15,7 @@
 #include <array>
 #include <cstdint>
 #include <optional>
+#include <vector>
 
 namespace l3 {
 
@@ -21,7 +24,10 @@ struct St02EventActorWork {
     uint8_t slot = 0, subtype = 0;               // event slot, work byte [2]
     uint8_t flags_00 = 0;                        // bit 1 = drawn
     uint8_t state_08 = 0, state_09 = 0, sub_0a = 0;
-    uint8_t byte_0c = 0, byte_0d = 0;            // spawn record [8..9]
+    uint8_t byte_03 = 0;                         // spawn record [4]; 40/05 and 40/07 run only when 0
+    uint8_t byte_0b = 0, byte_0c = 0, byte_0d = 0;   // +0x0C/+0x0D: spawn record [8..9]
+    uint8_t pose_ac = 0;                         // +0xAC: last 0x800322A8 request
+    uint8_t byte_143 = 0, byte_147 = 0;          // 40/06 init stores 0xFF (face channel bytes, CANDIDATE)
     std::array<int16_t,3> raw_14{};              // 0x80030150 shorts
     std::array<int32_t,3> fixed_1c{};            // 16.16 position
     std::array<int32_t,3> rot_44{};              // 16.16 rotation accumulators
@@ -38,14 +44,32 @@ struct St02ActorEffect {
     int32_t a4 = 0;
 };
 
-enum class St02ActorStatus : uint8_t { Ok, NoReferenceTables, UnknownState };
+enum class St02ActorStatus : uint8_t {
+    Ok, NoReferenceTables, UnknownState,
+    SequenceUnavailable,   // a key test needed *(+0x98) and no sequence data is bound
+    RollTableUnavailable,  // 0x80103D8C needed the cooked 0x801079E4 tables (or read past them)
+};
+
+// The class-40 pose sequence a 40/xx handler drives: 0x800322A8(work, request,
+// 0) restarts at the request's first 8-byte record, 0x80032488 steps it, and
+// the handlers test byte 0 of the current record (*(+0x98)). A port without
+// decoded sequence data returns nullopt from key().
+struct St02ActorSequence {
+    virtual ~St02ActorSequence() = default;
+    virtual void restart(uint8_t slot, uint8_t request) = 0;
+    virtual void advance(uint8_t slot) = 0;
+    virtual std::optional<uint8_t> key(uint8_t slot) const = 0;
+};
 
 struct St02EventActorTick {
     St02ActorStatus status = St02ActorStatus::Ok;
     bool model_init = false;                     // 0x8002F9C4
     std::optional<uint8_t> model_variant;        // its variant byte (nullopt = null pointer)
-    bool pose_restart = false;                   // 0x800322A8(work, 0, 0)
-    uint8_t sequence_steps = 0;                  // 0x80032538 calls
+    bool pose_restart = false;                   // 0x800322A8
+    std::optional<uint8_t> pose_request;         // its request (40/xx; 20/xx restart request 0)
+    uint8_t sequence_steps = 0;                  // 0x80032538 (20/xx) or 0x80032488 (40/xx) calls
+    bool face_tick = false;                      // 40/05 0x80102C44 / 40/06 0x801035F4 ran (not ported)
+    bool prop_written = false;                   // 40/06 0x80103D8C wrote slot 4
     uint8_t draw_submits = 0;                    // 0x800334C4 calls
     std::array<St02ActorEffect,3> effects{};
     uint8_t effect_count = 0;
@@ -61,11 +85,20 @@ St02EventActorWork spawn_st02_event4_actor(const std::array<uint8_t,20>& record)
 // progress is not overwritten by stale values.
 void apply_st02_event4_slot_writes(St02EventActorWork& w, SourceSceneSlotCommands& slot) noexcept;
 
-// One object update: 20/0A 0x80102888 or 20/27 0x80102990. `frame_1f800002`
-// is the frame counter halfword the smoke cadence reads. `refs` may be null;
-// states that need it (20/0A states 3 and 6) then report NoReferenceTables
-// and leave the position unchanged.
+struct St02ActorContext {
+    const ReferenceTables* refs = nullptr;       // 20/0A states 3 and 6
+    uint16_t frame_1f800002 = 0;                 // smoke cadence
+    St02ActorSequence* sequence = nullptr;       // 40/xx poses and key tests
+    St02EventActorWork* prop = nullptr;          // event slot 4 (*(0x800C4C7C)), for 40/06
+    const std::vector<uint8_t>* roll_801079e4 = nullptr;   // cooked 0x801079E4..0x80107AAA
+};
+
+// One object update of the actor's handler. States that need missing inputs
+// report a status and skip only that work, as listed in St02ActorStatus.
+St02EventActorTick step_st02_event4_actor(St02EventActorWork& w, const St02ActorContext& ctx) noexcept;
 St02EventActorTick step_st02_event4_actor(St02EventActorWork& w, const ReferenceTables* refs,
                                           uint16_t frame_1f800002) noexcept;
+constexpr uint32_t kSt02PropRollTable = 0x801079E4u;
+constexpr size_t kSt02PropRollBytes = 0xC6;
 
 } // namespace l3
