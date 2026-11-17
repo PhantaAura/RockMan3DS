@@ -2,6 +2,7 @@
 #include "legends3ds/actor_animation_bank.h"
 #include "legends3ds/class20_03_behavior.h"
 #include "legends3ds/reference_tables.h"
+#include "legends3ds/source_angle.h"
 
 namespace l3 {
 namespace {
@@ -280,6 +281,123 @@ void behaviour1_80108100(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
     }
 }
 
+// 0x80031BEC(work + 0x14, target, heading, limit): the clamped turn toward a point.
+int16_t turn_toward(const St03Npc& n, int16_t tx, int16_t tz, int16_t limit, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    const auto h = source_heading_80031198(n.w.raw_14[0], n.w.raw_14[2], tx, tz, in.angle_steps);
+    if (!h) { out.refs_missing = true; return 0; }
+    return class20_03_turn_step(uint16_t(*h), n.w.rot_54[1], limit);
+}
+bool window_open(const St03NpcInputs& in) noexcept { return in.window_open; }   // 0x80098A58 & 0x00200000
+
+// Barrell variant 1 behaviours (0x80117110 by +9, sub-state +0x0A).
+void barrell1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    switch (w.state_09) {
+    case 0:   // 0x8010D3E4: stand
+        if (w.sub_0a == 0) { w.sub_0a = 1; w.pose_ac = 0; }
+        return;
+    case 1:   // 0x8010D5EC: walk to the +0x0C object, flag 0x606 on arrival
+        if (w.sub_0a == 0) {
+            if (!in.id_target) { out.id_target_missing = true; return; }
+            w.sub_0a = 1; w.pose_ac = 1; n.speed_44 = 48; n.target_heading_64 = 32;
+            n.home_354 = *in.id_target;
+        } else if (w.sub_0a != 1) return;
+        add_heading(n, turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out));
+        walk_forward(n, in, out);
+        {
+            const int32_t dx = int32_t(w.raw_14[0]) - n.home_354[0], dz = int32_t(w.raw_14[2]) - n.home_354[2];
+            if (dx * dx + dz * dz < 2048) {
+                ++w.sub_0a; w.pose_ac = 0; n.speed_44 = 0; n.target_heading_64 = 0; out.flag_set = 0x606;
+            }
+        }
+        return;
+    case 2:   // 0x8010D404: face the +0x0C object
+        if (w.sub_0a > 1) return;
+        if (w.sub_0a == 0) { ++w.sub_0a; w.pose_ac = 0; n.target_heading_64 = 32; }
+        if (!in.id_target) { out.id_target_missing = true; return; }
+        n.home_354 = *in.id_target;
+        add_heading(n, turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out));
+        return;
+    case 3:   // 0x8010D730: gesture while a window is open
+        if (w.sub_0a == 0) { w.sub_0a = 1; w.pose_ac = 0; }
+        if (w.sub_0a == 1) { if (window_open(in)) { w.pose_ac = 8; w.sub_0a = 2; } }
+        else if (w.sub_0a == 2 && in.animation_finished) { w.sub_0a = 1; w.pose_ac = 0; }
+        return;
+    case 4:   // 0x8010D4C0: face the player, then gesture while a window is open
+        switch (w.sub_0a) {
+        case 0: w.sub_0a = 1; w.pose_ac = 0; n.target_heading_64 = 32; [[fallthrough]];
+        case 1: {
+            n.home_354 = {in.player_x, n.home_354[1], in.player_z};
+            const int16_t d = turn_toward(n, in.player_x, in.player_z, int16_t(n.target_heading_64), in, out);
+            add_heading(n, d);
+            if (d != 0) return;
+            w.pose_ac = 0; ++w.sub_0a;
+            [[fallthrough]];
+        }
+        case 2: if (window_open(in)) { w.pose_ac = 8; ++w.sub_0a; } return;
+        case 3: if (in.animation_finished) { w.sub_0a = 2; w.pose_ac = 0; } return;
+        default: return;
+        }
+    case 5:   // 0x8010D7C4: wait for the player's check; flag 0x604; face the player
+        switch (w.sub_0a) {
+        case 0: {
+            if (!in.player_targets_me) return;
+            out.flag_set = 0x604; out.clear_player_target = true;
+            w.byte_0b = 16; w.pose_ac = 0; ++w.sub_0a;
+            const int16_t d = turn_toward(n, in.player_x, in.player_z, 2048, in, out);
+            n.target_heading_64 = uint16_t((d < 0 ? -int32_t(d) : int32_t(d)) >> 3);
+            n.speed_44 = 0;
+            return;
+        }
+        case 1:
+            add_heading(n, turn_toward(n, in.player_x, in.player_z, int16_t(n.target_heading_64), in, out));
+            if (window_open(in)) { w.pose_ac = 8; ++w.sub_0a; }
+            return;
+        case 2:
+            add_heading(n, turn_toward(n, in.player_x, in.player_z, int16_t(n.target_heading_64), in, out));
+            if (in.animation_finished) { --w.sub_0a; w.pose_ac = 0; }
+            return;
+        default: return;
+        }
+    default: out.behaviour_unported = true; return;
+    }
+}
+
+// 0x8010D130 (state 0): init; then 0x8010D268 (state 1) the same frame.
+void barrell1_init(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    w.flags_00 = uint8_t(w.flags_00 | 2u);
+    w.word_158 = 0x02000200u; w.word_15c = 512; w.colour_15e = 0x4210;
+    n.flags_348 = 0;
+    // 0x8002FFC4: the point 256 ahead of the spawn position.
+    n.home_354 = w.raw_14;
+    if (in.refs) {
+        const auto d = reference_player_motion_delta(*in.refs, w.rot_54[1], 256, 0, 0);
+        const std::array<int32_t,3> delta{{d.dx_fixed, d.dy_fixed, d.dz_fixed}};
+        for (size_t a = 0; a < 3; ++a)
+            n.home_354[a] = reference_fixed_to_short_80030150(int32_t(uint32_t(w.fixed_1c[a]) + uint32_t(delta[a])));
+    } else out.refs_missing = true;
+    w.rot_54[0] = w.rot_54[2] = 0; w.rot_44[0] = w.rot_44[1] = 0; n.speed_44 = 0;
+    w.state_08 = 1; w.state_09 = w.byte_03 ? 5 : 0; w.sub_0a = 0; w.byte_0b = 0;
+    w.pose_ac = 0;   // 0x800322A8(work, 0, 0)
+}
+
+St03NpcTick step_barrell1(St03Npc& n, const St03NpcInputs& in) noexcept {
+    St03NpcTick out;
+    auto& w = n.w;
+    if (w.state_08 == 0) { barrell1_init(n, in, out); out.anim_request = 0; }
+    if (w.state_08 != 1) return out;
+    out.in_range = true;
+    n.pose_ad = w.pose_ac;
+    w.colour_15e = 0x4210;
+    out.rand_used = true;   // +0x34A = 0x8007FE50() every tick
+    barrell1_behaviour(n, in, out);
+    if (n.flags_348 & 1u) { w.sub_0a = 0; w.byte_0b = 0; n.flags_348 = uint16_t(n.flags_348 & ~1u); }
+    out.checkable = true;   // 0x80051B68(work, 3, -1, 0) (CANDIDATE: kind 3 is a check candidate)
+    if (n.pose_ad != w.pose_ac) out.anim_request = w.pose_ac; else if (!out.anim_request) out.anim_advance = true;
+    return out;
+}
+
 } // namespace
 
 std::vector<St03ObjectRecord> st03_object_set(const SourceScenePackage& package, uint8_t n) {
@@ -318,6 +436,8 @@ St03Npc spawn_st03_object(const St03ObjectRecord& r) {
     w.rot_54[1] = r.heading;
     w.state_08 = 0;
     n.generic = r.family == 0x20 && st03_generic_npc_class(r.object_class, r.byte_04);
+    n.barrell1 = r.family == 0x20 && r.object_class == 0x25 && r.subtype == 1;
+    if (n.barrell1) n.check_box = kSt03Barrell1CheckBox;
     (void)r.subtype;
     return n;
 }
@@ -336,6 +456,7 @@ uint8_t st03_npc_fidget_request(uint8_t c, uint16_t rand) noexcept {
 St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
     St03NpcTick out;
     auto& w = n.w;
+    if (w.live && n.barrell1) return step_barrell1(n, in);
     if (!w.live || !n.generic) return out;
     bool fresh = false;
     if (w.state_08 == 0) { init_80107bc0(n); fresh = true; out.anim_request = 0; }

@@ -153,6 +153,45 @@ int main() {
         auto d2 = spawn_st03_object(set[0]); step_st03_npc(d2, k);
         k.player_targets_me = true; r = step_st03_npc(d2, k); CHECK(d2.w.state_09 == 7 && r.talk_unported);
     }
+    // Barrell variant 1 (set 1 record: class 0x25, [2] = 1, [4] = 1).
+    {
+        ReferenceTables refs; refs.trig.fill({0, 4096});
+        St03ObjectRecord br; br.slot = 1; br.object_class = 0x25; br.subtype = 1; br.family = 0x20; br.byte_04 = 1;
+        br.word_08 = {0x2D, 0, 0, 0}; br.position = {-2816, -1, 1280}; br.heading = 2048;
+        auto b = spawn_st03_object(br);
+        CHECK(b.barrell1 && !b.generic && b.check_box[5] == 32);
+        St03NpcInputs k; k.refs = &refs; k.player_x = -2816 + 400; k.player_z = 1280;   // on the x axis (no angle table needed)
+        auto r = step_st03_npc(b, k);
+        const auto ahead = reference_player_motion_delta(refs, 2048, 256, 0, 0);
+        CHECK(b.w.state_08 == 1 && b.w.state_09 == 5 && b.w.sub_0a == 0 && r.anim_request && *r.anim_request == 0 && r.checkable);
+        CHECK(b.home_354[0] == reference_fixed_to_short_80030150(int32_t(uint32_t(-2816) << 16) + ahead.dx_fixed));
+        r = step_st03_npc(b, k); CHECK(b.w.sub_0a == 0 && !r.flag_set && r.anim_advance);
+        k.player_targets_me = true;
+        r = step_st03_npc(b, k);
+        CHECK(r.flag_set && *r.flag_set == 0x604 && r.clear_player_target && b.w.sub_0a == 1 && b.w.byte_0b == 16);
+        k.player_targets_me = false;
+        // Facing the player (heading 0xC00 from 2048) with step |d| >> 3.
+        const uint16_t h0 = b.w.rot_54[1];
+        r = step_st03_npc(b, k); CHECK(b.w.rot_54[1] != h0 && b.w.sub_0a == 1);
+        k.window_open = true; r = step_st03_npc(b, k); CHECK(b.w.sub_0a == 2 && b.w.pose_ac == 8 && r.anim_request && *r.anim_request == 8);
+        k.animation_finished = true; r = step_st03_npc(b, k); CHECK(b.w.sub_0a == 1 && b.w.pose_ac == 0);
+        k.window_open = false; k.animation_finished = false;
+        // Behaviour 3: gesture while a window is open.
+        b.w.state_09 = 3; b.w.sub_0a = 0;
+        r = step_st03_npc(b, k); CHECK(b.w.sub_0a == 1 && b.w.pose_ac == 0);
+        k.window_open = true; r = step_st03_npc(b, k); CHECK(b.w.sub_0a == 2 && b.w.pose_ac == 8);
+        k.window_open = false;
+        // Behaviour 1: walk to the +0x0C object's position; 0x606 on arrival.
+        b.w.state_09 = 1; b.w.sub_0a = 0; b.w.rot_54[1] = 0;
+        r = step_st03_npc(b, k); CHECK(r.id_target_missing && b.w.sub_0a == 0);
+        k.id_target = std::array<int16_t,3>{b.w.raw_14[0], -1, int16_t(b.w.raw_14[2] - 100)};   // the test trig walks -z
+        int n = 0;
+        while (b.w.sub_0a < 2 && n < 200) { r = step_st03_npc(b, k); ++n; if (r.flag_set) break; }
+        CHECK(r.flag_set && *r.flag_set == 0x606 && b.w.sub_0a == 2 && b.speed_44 == 0 && b.w.pose_ac == 0 && n > 1);
+        // Behaviour 2 needs the target too.
+        b.w.state_09 = 2; b.w.sub_0a = 0; k.id_target.reset();
+        r = step_st03_npc(b, k); CHECK(r.id_target_missing && b.w.sub_0a == 1);
+    }
     // Requests.
     CHECK(st03_npc_idle_request(0x11) == 1 && st03_npc_idle_request(0x05) == 0);
     CHECK(st03_npc_fidget_request(0x05, 0) == 8 && st03_npc_fidget_request(0x11, 0) == 1 && st03_npc_fidget_request(42, 0) == 9 &&

@@ -1214,7 +1214,7 @@ void RuntimeSession::update_action_check_800411dc(){
     const size_t e008_count=owner.size();
     for(size_t i=0;i<st03_objects_.size();++i){
         if(!st03_objects_[i].w.live||!st03_object_ticks_[i].checkable)continue;
-        const auto& b=kSt03NpcCheckBox;
+        const auto& b=st03_objects_[i].check_box;
         candidates.push_back({st03_objects_[i].w.raw_14,SourceE008Box{b[0],b[1],b[2],b[3],b[4],b[5]}});owner.push_back(i);
     }
     const uint16_t heading=uint16_t(player_.bytes[0x56]|(uint16_t(player_.bytes[0x57])<<8))&0xFFFu;
@@ -2021,7 +2021,7 @@ void RuntimeSession::update_st03_objects(){
     if(st03_talk_active_&&!dialogue_.active)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
-        if(!o.w.live||!o.generic)continue;
+        if(!o.w.live||!(o.generic||o.barrell1))continue;
         St03NpcInputs in;
         in.player_x=rds16w(player_,0x14);in.player_z=rds16w(player_,0x18);
         in.idle_timers=st03_event8_profile_&&st03_event8_profile_->idle_timers_loaded?&st03_event8_profile_->idle_timers:nullptr;
@@ -2035,9 +2035,17 @@ void RuntimeSession::update_st03_objects(){
         in.player_targets_me=player_check_npc_&&*player_check_npc_==i;
         in.heading_to_player=source_heading_80031198(o.w.raw_14[0],o.w.raw_14[2],rds16w(player_,0x14),rds16w(player_,0x18),actor_angle_steps_);
         in.window_open=dialogue_.active;   // 0x80098A58 & 0x00200000 (CANDIDATE: any open window)
+        in.angle_steps=actor_angle_steps_;
+        in.player_y=rds16w(player_,0x16);
+        // 0x80036294(+0x0C): id 0 is the player; 0x20|k a family-0x20 work
+        // (CANDIDATE: k is the ST03 object slot).
+        if(o.w.byte_0c==0)in.id_target=std::array<int16_t,3>{rds16w(player_,0x14),rds16w(player_,0x16),rds16w(player_,0x18)};
+        else if((o.w.byte_0c&0xE0u)==0x20u&&(o.w.byte_0c&31u)<st03_objects_.size()&&st03_objects_[o.w.byte_0c&31u].w.live)
+            in.id_target=st03_objects_[o.w.byte_0c&31u].w.raw_14;
         in.talk_active=st03_talk_active_;
         t=step_st03_npc(o,in);
-        if(t.talk_target_taken)player_check_npc_.reset();
+        if(t.talk_target_taken||t.clear_player_target)player_check_npc_.reset();
+        if(t.flag_set)set_story_flag(*t.flag_set,true);
         if(t.talk_start){
             // 0x80063BC8 + the talk runner: message +0x0C in slot 0 of the
             // area's bank; player action 16 (talk pose) is not ported.
