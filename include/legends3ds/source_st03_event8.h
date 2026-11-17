@@ -7,6 +7,7 @@
 // writes to the player, the two ST03 scene objects (0x8011CB30 / 0x8011CB34),
 // the message window and the story flags for the runtime to apply.
 // Original addresses are identity tokens.
+#include "legends3ds/source_door_locks.h"
 #include "legends3ds/source_scene_runtime.h"
 #include "legends3ds/source_st03_objects.h"
 #include <array>
@@ -31,6 +32,9 @@ struct St03Event8Profile {
     bool walk_loaded = false;
     std::array<uint8_t,112> walk_speeds{};         // 0x80116DAC
     std::array<uint8_t,112> walk_tables{};         // 0x80116ED4
+    bool doors_loaded = false;
+    std::array<uint8_t,8> doors{};                 // 0x801152E4: ST03's door list
+    std::array<std::array<uint8_t,8>,15> door_states{};   // 0x801152EC: rows by 0x800C1B62 (12..14: flag overrides)
     bool car_paths_loaded = false;
     std::array<uint8_t,88> car_paths{};            // 0x80117274
 };
@@ -114,6 +118,36 @@ struct St03Event8Step {
     std::array<uint16_t,2> flag_clears{};         // 0x8001DCD0, in order
     uint8_t flag_clear_count = 0;
 };
+
+constexpr uint32_t kSt03Doors = 0x801152E4u;   // + 15 state rows of 8 bytes
+
+// ST03's stage init 0x801007B4: the door locks from row 0x800C1B62 and, when
+// that byte is 0, again from row 14 / 13 / 12 when flag 2 / 14 / 0 is set.
+template <class FlagFn, class SetFn>
+void st03_stage_init_door_locks_801007b4(const St03Event8Profile& p, uint8_t byte_800c1b62, FlagFn flag, SetFn set_flag) {
+    if (!p.doors_loaded || byte_800c1b62 >= p.door_states.size()) return;
+    source_door_locks_8001e4c4(p.doors, p.door_states[byte_800c1b62], set_flag);
+    if (byte_800c1b62 != 0) return;
+    if (flag(2)) source_door_locks_8001e4c4(p.doors, p.door_states[14], set_flag);
+    else if (flag(14)) source_door_locks_8001e4c4(p.doors, p.door_states[13], set_flag);
+    else if (flag(0)) source_door_locks_8001e4c4(p.doors, p.door_states[12], set_flag);
+}
+
+// ST03's area-enter call 0x8010089C, once per area load (the area loader
+// 0x8001F554 clears 0x1FF): while 0x1FF is clear, 0x80115124[area] runs.
+// Areas 0..2: with block +4 == 0 and flag 0x235, locks 0x7E2/3/4/8; areas
+// 0..6 then set 0x1FF (area 0 with block +4 == 0xFF does not). Areas 7 and 8
+// (0x238 / 0x239 paths, 0x80101B70 / 0x8001EB98) are reported, not run;
+// they set 0x1FF too. Returns false when the area function is unported.
+template <class FlagFn, class SetFn>
+bool st03_area_enter_8010089c(uint8_t area, uint8_t block_04, FlagFn flag, SetFn set_flag) {
+    if (flag(0x1FF)) return true;
+    if (area == 0 && block_04 == 0xFFu) return true;
+    if (area <= 2 && block_04 == 0 && flag(0x235))
+        for (uint16_t f : {uint16_t(0x7E2), uint16_t(0x7E3), uint16_t(0x7E4), uint16_t(0x7E8)}) set_flag(f, true);
+    set_flag(0x1FF, true);
+    return area <= 6;
+}
 
 // 0x8001DDE4(8) with event +4 = scene.
 St03Event8 start_st03_event8(uint8_t scene) noexcept;
