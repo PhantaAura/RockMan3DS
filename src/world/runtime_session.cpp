@@ -209,7 +209,7 @@ bool RuntimeSession::transition_to_location(size_t id,RuntimeVec3i p,uint16_t ya
     // from this native diagnostic transition succeeding.
     source_event_profile_.reset();source_event_stage_.reset();
     source_event_transition_.reset();source_event_busy_.reset();source_event_result_={};
-    source_door_request_.reset();source_door_result_={};
+    source_door_request_.reset();source_exit_request_.reset();source_door_result_={};
     source_fade_profile_.reset();source_fade_context_={};source_fade_intents_={};
     source_fade_callback_={};source_fade_endpoint_hold_.reset();
     source_effect_dispatch_lease_.invalidate();source_effect_dispatch_profile_.reset();source_prop_lift_profile_.reset();invalidate_source_prop_foreign_globals(source_prop_foreign_globals_);source_event_phase5_profile_.reset();source_event_phase5_context_={};source_event_phase5_resources_={};source_event_phase6_context_={};source_handoff_display_.reset();source_scene_actor40_initializer_globals_={};source_event_phase6_profile_.reset();
@@ -1699,12 +1699,18 @@ void RuntimeSession::update_source_door_event(){
     // clear. While a request waits, the source player is owned by event 0.
     // Event 0 keeps +0xBD nonzero while it owns the player, so 0x80050C2C
     // returns before its switch; the explicit check keeps a stale request out.
-    if(source_door_request_||source_door_event0_.active||story_flag(0x200))return;
+    if(source_door_request_||source_exit_request_||source_door_event0_.active||story_flag(0x200))return;
     const auto query=runtime_player_event_primitive_800514fc(*map_,map_area_index_,player_,
         reference_tables_?&*reference_tables_:nullptr);
     source_door_result_=evaluate_source_door_event_80050c2c(query,player_,area_.flow.aux,
         story_flags_.data(),story_flags_.size());
     if(source_door_result_.flag_set)set_story_flag(*source_door_result_.flag_set,true);
+    if(source_door_result_.status==SourceDoorStatus::ExitRequested&&source_door_result_.request){
+        // Type 1 (walk-through exit): 356C = 0xFF, no event 0; the main loop
+        // loads the area at once.
+        source_exit_request_=source_door_result_.request;++source_door_generation_;
+        return;
+    }
     if(source_door_result_.request){
         source_door_request_=source_door_result_.request;++source_door_generation_;
         // 0x7B0 is polled by ST00 0x80100598; 0x8001DDE4 starts event 0 with
@@ -1714,6 +1720,12 @@ void RuntimeSession::update_source_door_event(){
     }
 }
 std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_door_transition() const noexcept {
+    // A walk-through exit (356C = 0xFF) is offered at once, same stage only.
+    if(source_exit_request_){
+        auto t=source_door_transition_intent(*source_exit_request_,source_door_generation_);
+        if(t.source_stage!=stage_)return std::nullopt;
+        return t;
+    }
     // Offered while event 0 substate 6 waits for the loader (356C == 1).
     const auto& e=source_door_event0_;
     if(!source_door_request_||!e.active||e.phase!=1||e.substate!=6||e.status_356c!=1)return std::nullopt;
@@ -1724,6 +1736,7 @@ bool RuntimeSession::can_commit_source_door_transition() const noexcept {
     if(!intent||!reference_tables_||!intent->known[15]||intent->destination_area==map_area_index_||
        !registered_area(intent->destination_area))return false;
     auto player=player_;SourceEventPlayerKnown known{};known.fill(1);
+    if(source_exit_request_)return apply_source_handoff_spawn_80015ee8(*intent,intent->source_generation,player,known,true);
     return apply_source_handoff_spawn_80015ee8(*intent,intent->source_generation,player,known,true)&&
            apply_source_door_arrival_80048898(*intent,*reference_tables_,player);
 }
@@ -1734,6 +1747,17 @@ bool RuntimeSession::commit_source_door_transition() {
     if(!source_event_consumers_bound_)known.fill(1);
     // Loader spawn: 800158A8 passes argument6=1 for a new area.
     if(!apply_source_handoff_spawn_80015ee8(intent,intent.source_generation,prepared,known,true))return false;
+    if(source_exit_request_){
+        // Walk-through exit: the spawn is the arrival; the player keeps its state.
+        const RuntimeVec3i at{rds16w(prepared,0x14),rds16w(prepared,0x16),rds16w(prepared,0x18)};
+        if(!transition_to_area(intent.destination_area,at,rd16w(prepared,0x56)))return false;
+        player_=prepared;
+        if(source_event_consumers_bound_)source_event_player_known_=known;
+        sync_primary_position_from_fixed();player_contact_={};
+        source_exit_request_.reset();
+        update_gameplay_camera_target();camera_.current=camera_.target;
+        return true;
+    }
     // Event 0 substate 8 targets; the state-3 copy runs here too so the
     // spawn and previous pose are the arrival (it repeats every frame).
     if(!apply_source_door_arrival_80048898(intent,*reference_tables_,prepared))return false;

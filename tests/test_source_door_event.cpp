@@ -188,6 +188,19 @@ void case3_80050c2c(){
     auto owner=w;owner.bytes[1]=0x10;assert(evaluate(owner,aux).status==SourceDoorStatus::GateClosed);
     auto idle=w;put(idle,0x11E,0);assert(evaluate(idle,aux).status==SourceDoorStatus::GateClosed);
     assert(evaluate(w,aux,nullptr,0x201).status==SourceDoorStatus::UnsupportedType);
+    // Case 1 (0x80050CB8 -> 0x80051360): walk-through exit. The sample equals
+    // hw4..6 (all 0 here); the spawn keeps the player's offset from it.
+    St00AuxList exits;exits.records.push_back(record({0,0,0,515,0,0,0,0,1792,-1,15104,0}));
+    auto walker=player_at(10,-1,20,0x123);
+    r=evaluate(walker,exits,nullptr,0x101);
+    assert(r.status==SourceDoorStatus::ExitRequested&&r.request&&!r.flag_set&&r.aux_record_index==0u);
+    assert(lane(r.request->raw,8)==1802&&lane(r.request->raw,10)==-1&&lane(r.request->raw,12)==15124&&lane(r.request->raw,18)==0x123);
+    assert(r.request->raw[20]==0xFF&&r.request->raw[21]==0&&r.request->raw[22]==3&&r.request->raw[23]==2&&!r.request->known[14]);
+    const auto te=source_door_transition_intent(*r.request,3);
+    assert(te.destination_area==2&&te.source_stage==3&&te.spawn[0]==1802&&te.spawn[2]==15124);
+    St00AuxList elsewhere;elsewhere.records.push_back(record({0,0,0,515,64,0,0,0,1792,-1,15104,0}));
+    assert(evaluate(walker,elsewhere,nullptr,0x101).status==SourceDoorStatus::NoAuxMatch);
+    auto busy1=walker;busy1.bytes[0xBD]=1;assert(evaluate(busy1,exits,nullptr,0x101).status==SourceDoorStatus::PlayerBusy);
     RuntimeEventPrimitiveQuery miss;miss.status=RuntimeEventQueryStatus::Miss;
     assert(evaluate_source_door_event_80050c2c(miss,w,aux,nullptr,0).status==SourceDoorStatus::NoEvent);
 }

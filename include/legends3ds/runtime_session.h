@@ -818,6 +818,7 @@ private:
     bool source_event_consumers_bound_=false;
     SourceDoorResult source_door_result_{};
     std::optional<SourceDoorRequest> source_door_request_;
+    std::optional<SourceDoorRequest> source_exit_request_;   // door event type 1 (walk-through exit), 356C = 0xFF
     uint64_t source_door_generation_=0;
     SourceDoorEvent0 source_door_event0_{};
     std::array<std::optional<SourcePostWinProfile>,3> source_post_win_profiles_{};   // ST00 event 3, event 2, ST02 event 4
