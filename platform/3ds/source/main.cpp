@@ -5264,6 +5264,16 @@ int main() {
             } catch(const std::exception&) {}
             hardware_test_trace("# source_post_win_profile,stage=2,event=4,bound=%u",unsigned(bound));
         }
+        // ST03 event 8 (stages/st03/event8.l3cs), scene 0 only.
+        if(g_stage==3) {
+            bool bound=false;
+            try {
+                l3::SourceScenePackage package;l3::St03Event8Profile profile;
+                bound=l3::load_source_scene_package(read_binary(stage_path("event8.l3cs"),l3::kSourceScenePackageMaxBytes),package)&&
+                      l3::bind_st03_event8_profile(package,profile)&&session.bind_st03_event8_profile(std::move(profile));
+            } catch(const std::exception&) {}
+            hardware_test_trace("# st03_event8_profile,bound=%u",unsigned(bound));
+        }
         if(g_stage==0&&actor_metadata.event_phase5) {
             session.bind_source_event_phase5_profile(*actor_metadata.event_phase5);
             const auto admitted=session.bind_source_event_phase5_resources();
@@ -7694,6 +7704,18 @@ int main() {
                     (unsigned long)session.frame_counter(),unsigned(g_source_scene_actor40_only),unsigned(draw_legacy_player));
             const u64 actors_start=svcGetSystemTick();g_frame_split.player+=actors_start-player_start;
             if (use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) draw_imported_actors_uv(actors);
+            if(session.stage()==3){
+                static uint8_t last_state=0xFF;static bool last_active=false;
+                const auto& e8=session.st03_event8();const auto& s8=session.st03_event8_step();
+                if(e8.state!=last_state||e8.active!=last_active||s8.message_count||s8.flag_set){
+                    hardware_test_trace("# st03_event8,frame=%lu,active=%u,scene=%u,state=%u,record=%lu,message=%u,flag=%d,skipped=%u,ended=%u,set=%d,pos=%d/%d/%d",
+                        (unsigned long)session.frame_counter(),unsigned(e8.active),unsigned(e8.scene),unsigned(e8.state),(unsigned long)e8.record,
+                        unsigned(s8.message_count?s8.messages[0]:0),s8.flag_set?int(*s8.flag_set):-1,unsigned(s8.skipped),unsigned(s8.ended),
+                        session.st03_area1_object_set()?int(*session.st03_area1_object_set()):-1,
+                        int(session.player_position().x),int(session.player_position().y),int(session.player_position().z));
+                    last_state=e8.state;last_active=e8.active;
+                }
+            }
             if(use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All&&session.stage()==2){
                 uint8_t slots=0;const size_t drawn=draw_st02_event4_actors_uv(session,slots);
                 if(session.frame_counter()%60u==0u&&session.source_post_win_event().event==4)

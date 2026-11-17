@@ -45,6 +45,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_attract_event10.cpp
     src/flow/source_st00_post_win.cpp
     src/world/source_st02_event4_actors.cpp
+    src/flow/source_st03_event8.cpp
     src/flow/source_stage_load.cpp
     src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp
@@ -1296,3 +1297,8 @@ add_executable(test_source_st02_event4_actors tests/test_source_st02_event4_acto
 target_link_libraries(test_source_st02_event4_actors PRIVATE legends3ds_core)
 target_compile_options(test_source_st02_event4_actors PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_st02_event4_actors COMMAND test_source_st02_event4_actors)
+
+add_executable(test_source_st03_event8 tests/test_source_st03_event8.cpp)
+target_link_libraries(test_source_st03_event8 PRIVATE legends3ds_core)
+target_compile_options(test_source_st03_event8 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_st03_event8 COMMAND test_source_st03_event8)

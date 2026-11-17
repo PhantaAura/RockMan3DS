@@ -80,7 +80,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={};
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_object_set_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1740,6 +1740,57 @@ bool RuntimeSession::commit_source_door_transition() {
     update_gameplay_camera_target();camera_.current=camera_.target;
     return true;
 }
+bool RuntimeSession::bind_st03_event8_profile(St03Event8Profile profile) noexcept {
+    if(!profile.loaded)return false;
+    st03_event8_profile_=std::move(profile);
+    return true;
+}
+void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
+    st03_event8_step_={};
+    // 0x80100990 runs on every load of area 1.
+    if(stage_!=3||map_area_index_!=1){st03_area1_setup_done_=false;return;}
+    // ST03 area 1 set-up 0x80100990 (first pass on arrival). Object sets
+    // (0x80103AB0) are not ported; the chosen set is kept for traces.
+    if(!st03_area1_setup_done_){
+        st03_area1_setup_done_=true;
+        const auto setup=st03_area1_setup_80100990([&](uint16_t f){return story_flag(f);});
+        st03_area1_object_set_=setup.object_set;
+        if(setup.start_event8&&st03_event8_profile_)st03_event8_=start_st03_event8(0);
+    }
+    auto& ev=st03_event8_;
+    if(!ev.active||!st03_event8_profile_)return;
+    St03Event8Inputs input;
+    if(ev.scene==0&&ev.state==1){   // 0x80042238 runs only in the state that calls it
+        const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
+        input.player_ready=ready&&*ready;
+    }
+    // CANDIDATE: the main-loop subphase 0x800C1B11 reads 2 once the arrival
+    // fade is over; the port has no loader subphases after a stage load.
+    input.subphase_2=!source_fade_callback_.running&&!source_fade_intents_.count;
+    // Area 1's messages (st03_00.msg) are not cooked, so no window opens and
+    // the message waits pass at once (CANDIDATE timing until they are).
+    input.message_open=false;
+    input.start_pressed=(in.pressed_psx_mask&0x0008u)!=0;
+    auto step=step_st03_event8(ev,*st03_event8_profile_,input);
+    if(step.player){
+        // Player state 3/1 walks to this target (0x80048754 / 0x80048898);
+        // the port places the player there instead (CANDIDATE).
+        const auto& p=*step.player;
+        for(size_t a=0;a<3;++a){
+            const int32_t f=int32_t(uint32_t(uint16_t(p.position[a]))<<16);
+            wr32w(player_,0x1C+a*4,f);wr32w(player_,0x34+a*4,f);
+            wr16w(player_,0x2C+a*2,uint16_t(p.position[a]));
+            wr32w(player_,0x428+a*4,f);wr16w(player_,0x438+a*2,uint16_t(p.position[a]));
+        }
+        if(p.heading){wr16w(player_,0x442,*p.heading);wr16w(player_,0x56,*p.heading);}
+        if(p.walk){player_.bytes[0x448]=48;player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x10u);}
+        sync_primary_position_from_fixed();
+    }
+    if(step.flag_set)set_story_flag(*step.flag_set,true);
+    if(step.player_release)source_player_event_release_80042314(player_);
+    if(step.spawn_set)st03_area1_object_set_=*step.spawn_set;
+    st03_event8_step_=step;
+}
 bool RuntimeSession::bind_source_post_win_profile(SourcePostWinProfile profile) noexcept {
     if(!profile.loaded||(profile.event!=3&&profile.event!=2&&profile.event!=4))return false;
     const size_t i=profile.event==3?0:profile.event==2?1:2;
@@ -2547,6 +2598,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     }
     source_event_result_=step_source_event_pipeline(source_event_work_,source_event_profile_.get(),source_event_input);
     update_source_post_win_event(in);
+    update_st03_event8(in);
     // Oracle (US disc, New Game): 0x1F800074 reads 0 from phase 4 through the
     // constructor tick, where the class-40 initializer 0x8010C930 already runs
     // (same tick, after the event); the camera program writes it next tick.
