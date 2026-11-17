@@ -149,6 +149,36 @@ bool st03_area_enter_8010089c(uint8_t area, uint8_t block_04, FlagFn flag, SetFn
     return area <= 6;
 }
 
+// ST03 area 2's per-frame set-up 0x80100BF8 (byte +4), first pass (state
+// 0). By the first set flag of 6 / 23 / (1 and 2) / 26 / 12 / 14 / 13 / 4:
+// set 16 (state 255); set 12 (state 2); event 8 scene 3 (state 2); set 10
+// (255); set 9 (255; with 34 and not 69 it also re-spawns slot 0 from
+// 0x80116754, reported); set 8 (255); set 7 + flag 0x60A (255); set 6 +
+// 0x60A (255); none: set 6 + 0x60A (255). States 2..5 (scene 4 on 0x604,
+// message 103 + set 10 on flag 26, events 0x60 / 0x61) are reported, not run.
+struct St03Area2SetupStep {
+    std::optional<uint8_t> object_set;
+    std::optional<uint8_t> event8_scene;
+    std::optional<uint16_t> flag_set;
+    bool respawn_slot0_unported = false;
+    bool state_unported = false;
+};
+template <class FlagFn>
+St03Area2SetupStep st03_area2_setup_step(uint8_t& state_04, FlagFn flag) {
+    St03Area2SetupStep out;
+    if (state_04 == 255) return out;
+    if (state_04 != 0) { out.state_unported = true; return out; }
+    if (flag(6)) { out.object_set = 16; state_04 = 255; }
+    else if (flag(23)) { out.object_set = 12; state_04 = 2; }
+    else if (flag(1) && flag(2)) { state_04 = 2; out.event8_scene = 3; }
+    else if (flag(26)) { out.object_set = 10; state_04 = 255; }
+    else if (flag(12)) { out.object_set = 9; state_04 = 255; out.respawn_slot0_unported = flag(34) && !flag(69); }
+    else if (flag(14)) { out.object_set = 8; state_04 = 255; }
+    else if (flag(13)) { out.object_set = 7; out.flag_set = 0x60A; state_04 = 255; }
+    else { out.object_set = 6; out.flag_set = 0x60A; state_04 = 255; }   // flag 4 or none
+    return out;
+}
+
 // 0x8001DDE4(8) with event +4 = scene.
 St03Event8 start_st03_event8(uint8_t scene) noexcept;
 // One tick of 0x80101D18.

@@ -1784,20 +1784,28 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(stage_==3&&!loaded_now&&!story_flag(0x1FF))
         st03_area_enter_ported_=st03_area_enter_8010089c(uint8_t(map_area_index_),0,   // block +4 = 0 (CANDIDATE)
             [&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
-    // 0x80100990 runs on every load of area 1, after the area-enter call.
-    if(stage_!=3||map_area_index_!=1||!story_flag(0x1FF)){st03_area1_setup_done_=false;st03_area1_setup_state_=0;release_st03_objects();return;}
-    // ST03 area 1 set-up 0x80100990 every frame (its byte +4 restarts at 0
-    // on each area-1 entry: CANDIDATE). Object sets (0x80103AB0) are not
-    // ported; the chosen set is kept for traces.
-    st03_area1_setup_done_=true;
-    {
+    // An area load frees the outgoing area's ST03 objects (0x80103BA0 path).
+    if(loaded_now)release_st03_objects();
+    const bool entered=stage_==3&&story_flag(0x1FF);
+    if(entered&&map_area_index_==2){
+        // Area 2's set-up 0x80100BF8 (first pass).
+        const auto a2=st03_area2_setup_step(st03_area2_setup_state_,[&](uint16_t f){return story_flag(f);});
+        if(a2.object_set){st03_area1_object_set_=*a2.object_set;spawn_st03_object_set(*a2.object_set);}
+        if(a2.flag_set)set_story_flag(*a2.flag_set,true);
+        if(a2.event8_scene&&st03_event8_profile_)st03_event8_=start_st03_event8(*a2.event8_scene);
+    }else st03_area2_setup_state_=0;
+    if(entered&&map_area_index_==1){
+        // ST03 area 1 set-up 0x80100990 every frame (its byte +4 restarts at
+        // 0 on each area-1 entry: CANDIDATE).
+        st03_area1_setup_done_=true;
         const auto setup=st03_area1_setup_step(st03_area1_setup_state_,[&](uint16_t f){return story_flag(f);},
             rds16w(player_,0x14),rds16w(player_,0x18));
         if(setup.object_set){st03_area1_object_set_=*setup.object_set;spawn_st03_object_set(*setup.object_set);}
         if(setup.flag_set)set_story_flag(*setup.flag_set,true);
         if(setup.flag_clear)set_story_flag(*setup.flag_clear,false);
         if(setup.event8_scene&&st03_event8_profile_)st03_event8_=start_st03_event8(*setup.event8_scene);
-    }
+    }else{st03_area1_setup_done_=false;st03_area1_setup_state_=0;}
+    if(stage_!=3)return;
     auto& ev=st03_event8_;
     if(!ev.active||!st03_event8_profile_)return;
     St03Event8Inputs input;

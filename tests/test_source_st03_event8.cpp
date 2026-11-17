@@ -209,6 +209,21 @@ int main() {
         a = {}; CHECK(st03_area_enter_8010089c(0, 0xFF, ag, as) && !a[0x1FF]);
         CHECK(!st03_area_enter_8010089c(7, 0, ag, as) && a[0x1FF]);   // reported, still sets 0x1FF
     }
+    // Area 2 set-up 0x80100BF8, first pass.
+    {
+        const auto run = [](std::initializer_list<uint16_t> on, uint8_t& st) {
+            return st03_area2_setup_step(st, [&](uint16_t f) { for (auto x : on) if (x == f) return true; return false; });
+        };
+        uint8_t st = 0; auto o = run({4, 3}, st);
+        CHECK(st == 255 && *o.object_set == 6 && *o.flag_set == 0x60A);
+        o = run({4}, st); CHECK(!o.object_set);                     // 255: done
+        st = 0; o = run({13, 4}, st); CHECK(*o.object_set == 7 && *o.flag_set == 0x60A);
+        st = 0; o = run({1, 2, 4}, st); CHECK(st == 2 && *o.event8_scene == 3 && !o.object_set);
+        o = run({1, 2}, st); CHECK(o.state_unported);
+        st = 0; o = run({23, 1, 2}, st); CHECK(st == 2 && *o.object_set == 12);
+        st = 0; o = run({6, 23}, st); CHECK(*o.object_set == 16 && st == 255);
+        st = 0; o = run({12, 34}, st); CHECK(*o.object_set == 9 && o.respawn_slot0_unported);
+    }
     // 0x80100990 state machine: trigger box (cells x -5..-4, z 11..12).
     {
         uint8_t st = 0;
