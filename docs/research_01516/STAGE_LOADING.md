@@ -437,3 +437,19 @@ police car not handled). No game over. Still unported: behaviours 1..7
 (Roll and Barrell use 1, a wander loop: random choice table 0x80116ED4 by
 +0x0D & 0x30, move 0x8002FEA4 at speed 0x8010A49C, stop near the player),
 talk, shadows, family 0x60.
+
+### Shared NPC talk (Azahar run32, pass-20261117-085444)
+
+The generic NPC's talk path is ported as a shared system, not a scene special
+case. The action check 0x800411DC gets every checkable ST03 object as a
+candidate (box 0x80116E1C). When it picks one, the talk hook 0x8010A344
+switches the NPC to behaviour 4 (0x8010940C: turn to the player, talk, turn
+back), and the talk starter 0x80063BC8 opens the NPC's message (+0x0C).
+SOURCE_BACKED_PARTIAL: the player talk pose 16 and the talk behaviours of
+Data (7) and classes 52/73 are still reported, not run.
+
+Run32 used route `stage2_police_talk.txt` (DIAGNOSTIC). Results:
+- A talk with a set-0 NPC (block 4) at frame 5426–5769.
+- Flag 4 (scene 1) at frame 14110.
+- The Inspector's talk (block 42 = his +0x0C 0x2A) opened at frame 16644 and closed at 16817.
+- Set 1 had 6 live objects and 4 drawn. There was no game over.

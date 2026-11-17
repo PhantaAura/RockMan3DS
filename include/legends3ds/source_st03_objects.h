@@ -41,6 +41,11 @@ struct St03Npc {
     uint8_t pose_ad = 0;                       // +0xAD previous request
     uint8_t byte_0e = 0, byte_0f = 0;          // +0x0E / +0x0F (record [10..11])
     bool generic = false;                      // handled by 0x80107B84 (family 0x20, +3 == 0)
+    // Talk block +0x348..: +0x34A saved request, +0x34B talk sub-state,
+    // +0x34C saved heading, +0x34E turn step.
+    uint8_t saved_34a = 0, talk_34b = 0;
+    uint16_t saved_heading_34c = 0;
+    int16_t turn_step_34e = 0;
 };
 
 // 0x8001EAE8 + 0x8001E968 for one record, then 0x80107BC0 (state 0) when
@@ -54,6 +59,11 @@ struct St03NpcInputs {
     std::optional<uint16_t> rand;              // 0x8007FE50 when a behaviour calls it
     bool animation_finished = false;           // +0xA7 < 0
     const std::array<uint8_t,64>* idle_timers = nullptr;   // 0x80116E68
+    // Talk (shared NPC talk path):
+    bool player_targets_me = false;            // player +0x184 (0x800B5334) == this work
+    std::optional<uint16_t> heading_to_player; // 0x80031198(npc +0x14, player +0x14) (result bits)
+    bool window_open = false;                  // 0x80098A58 & 0x00200000
+    bool talk_active = false;                  // 0x800987B0 (the talk runner's block +0)
 };
 struct St03NpcTick {
     bool in_range = false;                     // 0x8010A4EC
@@ -61,10 +71,15 @@ struct St03NpcTick {
     bool anim_advance = false;                 // 0x80032488 (after any request this tick)
     bool rand_used = false;
     bool rand_missing = false;
-    bool talk_unported = false;                // 0x8010A344 / 0x80051B68 not run
-    bool behaviour_unported = false;           // +9 other than 0
+    bool talk_unported = false;                // a talk behaviour other than 4 (Data 7, classes 52 / 73)
+    bool behaviour_unported = false;           // +9 not ported (1..3, 5..7)
+    bool talk_target_taken = false;            // 0x8010A344 switched to the talk behaviour
+    std::optional<uint8_t> talk_start;         // 0x80063BC8(npc, 0, 0, +0x0C): message id
+    bool checkable = false;                    // 0x80051B68(work, 1, -1, 0): a talk candidate this frame
 };
 St03NpcTick step_st03_npc(St03Npc& npc, const St03NpcInputs& in) noexcept;
+// The NPC's check box at +0x10 (0x80116E1C): x0, x1, z0, z1, y0, y1.
+constexpr std::array<int16_t,6> kSt03NpcCheckBox{{-32, 32, -32, 32, -32, 150}};
 
 // 0x8010A44C(class): idle request; 0x8010A3AC(class): fidget request
 // (class 0x53 picks 8 or 9 from rand).

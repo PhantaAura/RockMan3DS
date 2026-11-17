@@ -39,7 +39,7 @@ int main() {
     CHECK(data.w.state_08 == 1 && data.w.state_09 == 0 && data.radius_368 == 5000 && data.w.word_158 == 0x02000200u &&
           data.w.word_15c == 512 && (data.w.flags_00 & 2));
     CHECK(t.in_range && t.rand_used && t.anim_request && *t.anim_request == 1 && data.w.pose_ac == 1);
-    CHECK(data.timer_350 == int16_t(timers[16 + 3]) && data.w.sub_0a == 1 && data.w.raw_14[1] == -2 && t.talk_unported);
+    CHECK(data.timer_350 == int16_t(timers[16 + 3]) && data.w.sub_0a == 1 && data.w.raw_14[1] == -2 && t.checkable);
     // Count down to the fidget (Data: request 1, unchanged -> advance).
     in.rand.reset();
     int n = 0;
@@ -61,6 +61,30 @@ int main() {
     auto big = roll_rec; big.word_08[1] = 0x10; big.object_class = 0x26;
     auto insp = spawn_st03_object(big); step_st03_npc(insp, in);
     CHECK(insp.radius_368 == 10000 && insp.w.word_15c == 471);
+    // Talk (0x8010A344 + behaviour 4) on the officer (class 0x24, behaviour 0).
+    {
+        auto rec = set[0]; rec.object_class = 0x24; rec.word_08 = {28, 0, 0, 0}; rec.heading = 0;
+        auto o = spawn_st03_object(rec);
+        St03NpcInputs k; k.idle_timers = &timers; k.player_x = -5000; k.player_z = 1300; k.rand = 5;
+        auto r = step_st03_npc(o, k); CHECK(r.checkable && o.w.state_09 == 0);
+        k.player_targets_me = true; k.heading_to_player = 1024;                  // player to one side
+        r = step_st03_npc(o, k);
+        CHECK(r.talk_target_taken && o.w.state_09 == 4 && r.talk_start && *r.talk_start == 28 && !r.checkable);
+        CHECK(o.talk_34b == 1 && o.saved_heading_34c == 0 && o.turn_step_34e > 0 && o.w.pose_ac == 0);
+        k.player_targets_me = false; k.talk_active = true;
+        const uint16_t h0 = o.w.rot_54[1];
+        r = step_st03_npc(o, k); CHECK(o.talk_34b == 1 && o.w.rot_54[1] != h0);   // turning
+        k.window_open = true;
+        r = step_st03_npc(o, k); CHECK(o.talk_34b == 2 && o.w.pose_ac == 8);      // talk (fidget) request
+        k.talk_active = false;
+        r = step_st03_npc(o, k); CHECK(o.talk_34b == 3 && o.w.pose_ac == 0);
+        int n = 0;
+        while (o.w.state_09 == 4 && n < 64) { r = step_st03_npc(o, k); ++n; }
+        CHECK(o.w.state_09 == 0 && o.w.rot_54[1] == 0 && (o.flags_348 & 2u) && !(o.flags_348 & 4u));
+        // Data's talk is behaviour 7 (reported).
+        auto d2 = spawn_st03_object(set[0]); step_st03_npc(d2, k);
+        k.player_targets_me = true; r = step_st03_npc(d2, k); CHECK(d2.w.state_09 == 7 && r.talk_unported);
+    }
     // Requests.
     CHECK(st03_npc_idle_request(0x11) == 1 && st03_npc_idle_request(0x05) == 0);
     CHECK(st03_npc_fidget_request(0x05, 0) == 8 && st03_npc_fidget_request(0x11, 0) == 1 && st03_npc_fidget_request(42, 0) == 9 &&

@@ -1,5 +1,6 @@
 #include "legends3ds/source_st03_objects.h"
 #include "legends3ds/actor_animation_bank.h"
+#include "legends3ds/class20_03_behavior.h"
 
 namespace l3 {
 namespace {
@@ -77,6 +78,60 @@ void behaviour0_80107f5c(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
     }
 }
 
+// 0x80031BEC's clamp part (as class20_03_turn_step) toward the player.
+int16_t turn_to_player(const St03Npc& n, const St03NpcInputs& in, int16_t limit) noexcept {
+    if (!in.heading_to_player) return 0;
+    return class20_03_turn_step(uint16_t(*in.heading_to_player), n.w.rot_54[1], limit);
+}
+void add_heading(St03Npc& n, int16_t d) noexcept { n.w.rot_54[1] = uint16_t((n.w.rot_54[1] + uint16_t(d)) & 0xFFFu); }
+
+// 0x801096AC: whether the saved request lets the NPC return at once.
+bool may_return_801096ac(const St03Npc& n) noexcept {
+    const uint8_t a = n.w.sub_0a;
+    if (n.saved_34a == 1) return a >= 4 && (a < 6 || a == 8);
+    if (n.saved_34a == 3) return a >= 4 && a < 6;
+    return false;
+}
+
+void end_talk(St03Npc& n) noexcept {
+    n.talk_34b = 3; n.flags_348 = uint16_t(n.flags_348 & ~4u);
+    n.w.pose_ac = st03_npc_idle_request(n.object_class);
+}
+
+// Behaviour 4 (0x8010940C, sub-state +0x34B via 0x8011700C): the talk.
+void behaviour4_8010940c(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    switch (n.talk_34b) {
+    case 0: {   // 0x80109448
+        ++n.talk_34b; n.saved_heading_34c = w.rot_54[1]; n.saved_34a = w.pose_ac;
+        w.pose_ac = st03_npc_idle_request(n.object_class);
+        const int16_t d = turn_to_player(n, in, 2048);
+        n.turn_step_34e = int16_t(d < 0 ? (uint16_t(-d) >> 3) : (d >> 3));
+        out.talk_start = w.byte_0c;   // 0x80063BC8(npc + 0x14, 0, 0, +0x0C)
+        return;
+    }
+    case 1:     // 0x80109534
+        if (!(w.byte_0d & 0x40u)) add_heading(n, turn_to_player(n, in, n.turn_step_34e));
+        if (in.window_open) { w.pose_ac = st03_npc_fidget_request(n.object_class, in.rand.value_or(0)); ++n.talk_34b; }
+        if (!in.talk_active) end_talk(n);
+        return;
+    case 2:     // 0x80109608
+        add_heading(n, turn_to_player(n, in, n.turn_step_34e));
+        if (in.animation_finished) { w.pose_ac = st03_npc_idle_request(n.object_class); --n.talk_34b; }
+        if (!in.talk_active) end_talk(n);
+        return;
+    case 3: {   // 0x80109730: back to the saved heading (0x80031D5C as the same clamp step)
+        const int16_t d = class20_03_turn_step(n.saved_heading_34c, w.rot_54[1], n.turn_step_34e);
+        if (d == 0 || (w.byte_0d & 0x80u) || may_return_801096ac(n)) {
+            w.pose_ac = n.saved_34a; n.flags_348 = uint16_t(n.flags_348 | 2u);
+            w.state_09 = uint8_t(w.byte_0d & 7u);
+        } else add_heading(n, d);
+        return;
+    }
+    default: return;
+    }
+}
+
 } // namespace
 
 std::vector<St03ObjectRecord> st03_object_set(const SourceScenePackage& package, uint8_t n) {
@@ -141,9 +196,18 @@ St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
     out.in_range = true;
     n.pose_ad = w.pose_ac;   // +0xAD = +0xAC
     w.colour_15e = 0x4210;
-    if (n.flags_348 & 2u) out.talk_unported = true;   // 0x8010A344
-    if (w.state_09 == 0) behaviour0_80107f5c(n, in, out); else out.behaviour_unported = true;
+    if ((n.flags_348 & 2u) && in.player_targets_me) {   // 0x8010A344
+        const uint8_t c = n.object_class;
+        w.state_09 = c == 52 ? 6 : c == 17 ? 7 : c == 73 ? 8 : 4;
+        n.talk_34b = 0; n.flags_348 = uint16_t((n.flags_348 | 4u) & ~2u);
+        out.talk_target_taken = true;
+    }
+    if (w.state_09 == 0) behaviour0_80107f5c(n, in, out);
+    else if (w.state_09 == 4) behaviour4_8010940c(n, in, out);
+    else if (w.state_09 >= 6) out.talk_unported = true;
+    else out.behaviour_unported = true;
     if (!(w.byte_0d & 0x20u) && in.floor_y) { w.raw_14[1] = *in.floor_y; w.fixed_1c[1] = int32_t(uint32_t(uint16_t(*in.floor_y)) << 16); }
+    out.checkable = (n.flags_348 & 2u) != 0;   // 0x80051B68(work, +0x348 & 2 ? 1 : 3, -1, 0)
     // +0xAD (saved before the behaviour) against +0xAC.
     if (n.pose_ad != w.pose_ac) out.anim_request = w.pose_ac; else out.anim_advance = true;
     (void)fresh;
