@@ -80,7 +80,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={};
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1819,7 +1819,23 @@ void RuntimeSession::update_source_post_win_event(const RuntimeInputFrame& in){
         // the port keeps it (ST02's areas own no objects; CANDIDATE).
         source_post_win_handoff_=source_st02_event_area_cut(*step.area_cut);++source_post_win_generation_;
     }
+    if(ev.event==4)update_source_st02_event4_actors(profile);
     source_post_win_step_=step;
+}
+void RuntimeSession::update_source_st02_event4_actors(const SourcePostWinProfile& profile){
+    // The object update (0x8001E070) for event 4's spawned slots. CANDIDATE
+    // order: after the event handler in the same frame; 1F800002 is taken
+    // from the frame counter (CANDIDATE phase). 40/05..07 are not ported yet.
+    auto& ev=source_post_win_;
+    const auto* refs=reference_tables_?&*reference_tables_:nullptr;
+    for(size_t i=0;i<source_st02_actors_.size();++i){
+        auto& w=source_st02_actors_[i];auto& tick=source_st02_actor_ticks_[i];tick={};
+        if(!ev.slots[i].spawned){w={};continue;}
+        if(!w.live&&!w.released)for(const auto& r:profile.spawns)if(r[0]==i){w=spawn_st02_event4_actor(r);break;}
+        if(!w.live||(w.subtype!=0x0A&&w.subtype!=0x27))continue;
+        apply_st02_event4_slot_writes(w,ev.slots[i]);
+        tick=step_st02_event4_actor(w,refs,uint16_t(frame_counter_));
+    }
 }
 std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_win_transition() const noexcept {
     const auto& h=source_post_win_handoff_;

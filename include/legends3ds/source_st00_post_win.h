@@ -29,6 +29,7 @@ struct SourceSceneSlotCommands {
     std::optional<uint16_t> heading_56, colour_15e;
     std::optional<int32_t> fixed_1c, fixed_20, fixed_24;  // 16.16 position writes
     uint32_t writes = 0;                                 // count of callback writes (diagnostic)
+    bool state_written = false;                          // +9/+0A written since the owner last applied them
 };
 
 // The 0x800C3558.. transition lanes a hand-off writes (offsets from 0x800C3560)

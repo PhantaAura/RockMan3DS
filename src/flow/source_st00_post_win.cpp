@@ -30,7 +30,7 @@ std::array<int16_t,3> slot_pos(const SourcePostWinEvent& ev, const SourcePostWin
     return slot < ev.slots.size() ? ev.slots[slot].spawn : std::array<int16_t,3>{};
 }
 void state(SourcePostWinEvent& ev, size_t slot, uint8_t s9) noexcept {
-    auto& s = ev.slots[slot]; s.state_09 = s9; s.sub_0a = 0; s.writes += 2;
+    auto& s = ev.slots[slot]; s.state_09 = s9; s.sub_0a = 0; s.writes += 2; s.state_written = true;
 }
 SourcePostWinHandoff handoff(uint8_t stage, uint8_t area, uint16_t flag, uint8_t b3570 = 0xFF) noexcept {
     SourcePostWinHandoff h;

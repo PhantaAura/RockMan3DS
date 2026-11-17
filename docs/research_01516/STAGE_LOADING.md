@@ -137,3 +137,35 @@ Event 4's five spawns all use variant 4: 40/05 -> 0x80103360,
 by the subtype and indexed by the variant; ST00 row 5 is
 [0, 0x8010D824, 0x8010E500, 0x8010EC54], so event 3's 40/05 with record
 [2] = 3 runs 0x8010EC54, and the opening's variant 1 runs 0x8010D824.
+
+## ST02 event 4 actors: 20/0A and 20/27 (SOURCE_BACKED_PARTIAL)
+
+Spawn records 0x80107328: slot 0 = 40/05, 1 = 40/06, 2 = 40/07, 3 = 20/0A
+(record [4] = 1), 4 = 20/27 (record [8] = 1, so work +0x0C = 1). 0x8001EAE8
+copies record [4] -> work +3, [2] -> +4, [8..11] -> +0x0C..+0x0F.
+
+20/0A (0x80102888, the Flutter seen from outside, slot 3): +8 == 0 runs
+0x80101FD8 (0x8002F9C4 null variant, +0x158 = 0x02000200, +0x15C =
+0x21080200, +0x78 = 0, pose 0). Then 0x80102830 dispatches +9 through
+0x80107504 and steps the sequence (0x80032538) and draws (0x800334C4).
+
+| +9 | Handler / substates (+0x0A) | Effect |
+|---|---|---|
+| 0 | 0x80102040 | position shorts; an extra sequence step (two per update) |
+| 1 | 0x801021D8 / 0x80102080, 0x801020B0, 0x801021D0 | 180 frames of soft-float adds (`__floatsidf`/`__adddf3`/`__fixdfsi`) to +0x1C, +0x44, +0x48, +0x4C; rotation shorts from the accumulators' high halves. Truncation drift leaves rot z at -43 (high half 0xFFFF). |
+| 2 | 0x80102278 / 0x80102244, 0x80102258 | +0x24 += 0xFFF36886 every update |
+| 3 | 0x80102338 / 0x801022CC, 0x801022F0 | 75 frames heading += 5; 0x8002FEA4(work, 256, 0, 0) every update |
+| 4 | 0x80102458 / 0x80102394, 0x801023C0, 0x801023F4 | 45-frame yaw/roll ease; 0x80105724 smoke pair when (1F800002 & 3) == 3 |
+| 5 | 0x801026E8 / 0x80102514, 0x80102538, 0x8010262C | climb (+0x24 += 0xA00000, +0x20 += 0xA0000); exhaust triples from count 70 (odd counts), 0x80105C28 at 90, then 50 frames |
+| 6 | 0x801027A8 | +0x20 = rsin((int8)+0x0C * 64) * 800 bob |
+
+20/27 (0x80102990, slot 4): +8 through 0x80107520: 0 = 0x801028C8
+(rotation 0, +0x15C = 0x42100200), 1 = 0x80102914 (when (int8)+0x0C !=
++0x0D: 0x8002F9C4 with variant +0x0C, pose 0; then +0x0D = +0x0C), 2 =
+0x80102970 (0x80031824 release).
+
+Port: `source_st02_event4_actors.{h,cpp}`, run by
+`RuntimeSession::update_source_st02_event4_actors` after the event step
+(CANDIDATE order); 1F800002 is the frame counter (CANDIDATE phase). Effects
+and model/pose requests are reported per update, not drawn yet. 40/05..07
+are the next slice.
