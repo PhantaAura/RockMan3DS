@@ -19,6 +19,9 @@ struct St03Event8Profile {
     bool loaded = false;
     SourceSceneTimeline intro, crash;              // 0x80115FB4, 0x8011600C
     SourceSceneCameraProgram intro_camera, crash_camera;   // 0x80115FC4, 0x80116034
+    bool inspector_loaded = false;                 // scene 2
+    SourceSceneTimeline inspector;                 // 0x801161D0 (event +0xA4)
+    SourceSceneCameraProgram inspector_camera;     // 0x801161F8 (0x800BC7F0)
     bool police_loaded = false;                    // scene 1
     SourceSceneTimeline police;                    // 0x8011614C
     SourceSceneCameraProgram police_camera;        // 0x80116164
@@ -73,6 +76,12 @@ struct St03Event8Inputs {
     // delta from the player toward (-2240, 7000) at step 32.
     bool player_on_floor = false;
     int16_t turn_delta = 0;
+    // Scene 2: 0x8003A13C() (the focus camera still moving; CANDIDATE in the runtime),
+    // the flags it polls, and the two positions state 0 reads.
+    bool camera_busy = false;
+    bool flag_606 = false;
+    std::array<int16_t,3> barrell{};              // *(0x8011CB34) +0x14
+    uint16_t heading_barrell_to_player = 0;       // 0x80031198(Barrell, player)
 };
 
 struct St03Event8Step {
@@ -94,7 +103,16 @@ struct St03Event8Step {
     bool ended = false;                           // event +0 = 0 (scene 0 also 0x8009395C = 1)
     bool release_set = false;                     // 0x80103BA0
     std::optional<uint8_t> spawn_set;             // 0x80103AB0(n)
-    bool unsupported_scene = false;               // scenes 2..4 are not ported
+    bool unsupported_scene = false;               // scenes 3..4 are not ported
+    // Scene 2:
+    struct CameraFocus { std::array<int16_t,3> point{}; int16_t distance = 0; uint16_t yaw = 0; };
+    std::optional<CameraFocus> camera_focus;      // 0x80039FFC(point, distance, yaw, *(0x8009396C) + 97)
+    bool camera_restore_80039e50 = false;
+    bool player_hide = false, player_show = false;   // player +0 &= ~2 / |= 2 (with +0xBD bit 0x40)
+    std::optional<uint16_t> player_heading_56;    // player +0x56
+    std::optional<uint16_t> player_heading_442;   // player +0x442
+    std::array<uint16_t,2> flag_clears{};         // 0x8001DCD0, in order
+    uint8_t flag_clear_count = 0;
 };
 
 // 0x8001DDE4(8) with event +4 = scene.

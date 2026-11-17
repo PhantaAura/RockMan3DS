@@ -7777,6 +7777,18 @@ int main() {
                     hardware_test_trace("# st03_npc_talk,frame=%lu,active=%u,target=%d,dialogue=%u,block=%u",
                         (unsigned long)session.frame_counter(),unsigned(talk),target?int(*target):-1,unsigned(session.dialogue().active),unsigned(session.dialogue().ref.block));
                 talk_was=talk;target_was=target;
+                // Per-slot behaviour (scene 2 against the oracle): variant, +9, +0x0A, position.
+                static std::array<uint32_t,6> obj_was{};
+                const auto& objs=session.st03_objects();
+                for(size_t i=0;i<6&&i<objs.size();++i){
+                    const auto& o=objs[i];
+                    const uint32_t key=o.w.live?(1u<<31)|(uint32_t(o.variant)<<24)|(uint32_t(o.w.state_09)<<16)|(o.generic?0u:uint32_t(o.w.sub_0a)<<8)|uint32_t(o.w.state_08):0u;
+                    if(key!=obj_was[i])
+                        hardware_test_trace("# st03_slot,frame=%lu,slot=%u,live=%u,class=%02x,variant=%u,s8=%u,s9=%u,sub=%u,pos=%d/%d/%d,heading=%u",
+                            (unsigned long)session.frame_counter(),unsigned(i),unsigned(o.w.live),unsigned(o.object_class),unsigned(o.variant),
+                            unsigned(o.w.state_08),unsigned(o.w.state_09),unsigned(o.w.sub_0a),int(o.w.raw_14[0]),int(o.w.raw_14[1]),int(o.w.raw_14[2]),unsigned(o.w.rot_54[1]));
+                    obj_was[i]=key;
+                }
             }
             if(use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All&&session.stage()==3){
                 uint16_t slots=0;const size_t drawn=draw_st03_objects_uv(session,slots);

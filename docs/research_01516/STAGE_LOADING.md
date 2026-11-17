@@ -453,3 +453,32 @@ Run32 used route `stage2_police_talk.txt` (DIAGNOSTIC). Results:
 - Flag 4 (scene 1) at frame 14110.
 - The Inspector's talk (block 42 = his +0x0C 0x2A) opened at frame 16644 and closed at 16817.
 - Set 1 had 6 live objects and 4 drawn. There was no game over.
+
+## ST03 event 8 scene 2 (the Inspector talk) and its objects
+
+**Oracle (m3_04, Barrell checked by an oracle-only position write, frames 1081..4859).**
+- Checking Barrell (set 1, variant 1, behaviour 5) sets 0x604, and the set-up state 2 starts scene 2.
+- State 2 respawns set 1 and writes +4 = 1, +8 = 0 to the Inspector, the officer and Barrell. Byte 4 is the variant, so the Inspector and the officer re-init as their variant-1 objects (0x8010D968, 0x8010C66C).
+- The Inspector walks to (-2972, -1, 1366), ends facing 551 and sets 0x606. Messages 47, 49 and 51 follow.
+- Barrell and the officer walk to the car. The car drives off on path B to (449, -1, 8040).
+- Flag 0 is set at the end.
+
+**Port.**
+- Generic behaviour 1 (walk) is ported.
+- The shared variant-1 scene NPC covers Barrell, the Inspector and the officer.
+- The police car's logic is ported (0x801104C0: idle restart, path A/B waypoint drive). Its mesh is not drawn because there is no family-0x60 decoder yet. Its dust is not ported.
+- Scene 2 states 0..12 and the Start skip are ported.
+- CANDIDATE:
+  - an object's id (+1) is family | slot;
+  - 0x80051B68 kind 3 with a box counts as a check candidate;
+  - the focus camera 0x80039FFC is reported and never busy;
+  - the player hide (+0 bit 1) is not read by the port's draw;
+  - the sounds 266 / 268 / 269 are not played.
+
+**3DS result (run34, a7cd490, pass-20261117-131001, route stage2_barrell_scene2.txt, DIAGNOSTIC):**
+- Scene 1: the car drives path A, (479, 7990) to (-2194, 3527) in 137 frames; flag 4 at frame 15152.
+- Barrell checked at frame 18467: 0x604 is set, then cleared, and scene 2 starts.
+- State 2: variant 1 for slots 1, 3 and 4.
+- The Inspector's walk ends at (-2972, -1, 1366) facing 551 (equal to the oracle), with 0x606 at 18962.
+- States 5..10 run through messages 47 / 49 / 51, the countdown and the car drive. The player is placed at (-2601, -1, 1108).
+- Flag 0 at frame 19879, then the event ends. No game over.
