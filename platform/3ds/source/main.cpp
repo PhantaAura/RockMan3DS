@@ -7795,13 +7795,14 @@ int main() {
                 static int door_was=-1;static uint32_t sample_was=0;
                 const auto& dr=session.source_door_result();
                 const uint32_t sk=dr.sample?(uint32_t(dr.sample->type)<<24)^uint32_t(uint16_t(dr.sample->x))^(uint32_t(uint16_t(dr.sample->z))<<8):0u;
-                if(int(dr.status)!=door_was||sk!=sample_was){
+                const int dk=int(dr.status)*16+int(dr.query_status);
+                if(dk!=door_was||sk!=sample_was){
                     const auto pp=session.player_position();
                     hardware_test_trace("# door_event,frame=%lu,status=%s,query=%u,type=%d,sample=%d/%d/%d,record=%d,player=%d/%d/%d,heading=%u",
                         (unsigned long)session.frame_counter(),l3::source_door_status_name(dr.status),unsigned(dr.query_status),
                         dr.sample?int(dr.sample->type):-1,dr.sample?int(dr.sample->x):0,dr.sample?int(dr.sample->y):0,dr.sample?int(dr.sample->z):0,
                         dr.aux_record_index?int(*dr.aux_record_index):-1,int(pp.x),int(pp.y),int(pp.z),unsigned(session.player_yaw()));
-                    door_was=int(dr.status);sample_was=sk;
+                    door_was=dk;sample_was=sk;
                 }
             }
             if(session.stage()==3){

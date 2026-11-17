@@ -27,6 +27,7 @@ const char* source_door_status_name(SourceDoorStatus s) noexcept {
         case SourceDoorStatus::UnsupportedType:return "UNSUPPORTED_TYPE";
         case SourceDoorStatus::ExitRequested:return "EXIT_REQUESTED";
         case SourceDoorStatus::LoadRequested:return "LOAD_REQUESTED";
+        case SourceDoorStatus::EventInstead:return "EVENT_INSTEAD";
         case SourceDoorStatus::GateClosed:return "GATE_CLOSED";
         case SourceDoorStatus::NoAuxMatch:return "NO_AUX_MATCH";
         case SourceDoorStatus::Locked:return "LOCKED";
@@ -71,15 +72,23 @@ SourceDoorResult evaluate_source_door_event_80050c2c(const RuntimeEventPrimitive
         }
         return out;
     }
-    if(s.type==8){   // 0x80050F68
+    const bool load_type=s.type==8||s.type==2||s.type==4||s.type==5||s.type==6;
+    if(load_type){   // 0x80050F68 (8) and 0x80050D38 (2, 4, 5, 6)
         if(!player_owner||!source_door_gate_80051970(p)){out.status=SourceDoorStatus::GateClosed;return out;}
         out.status=SourceDoorStatus::NoAuxMatch;
         for(size_t i=0;i<aux.records.size();++i){
             const auto& r=aux.records[i];const auto& h=r.halfwords;
             if(h[0]==-1)break;
             if(h[4]!=s.x||h[5]!=s.y||h[6]!=s.z)continue;
+            if(s.type!=8&&((uint32_t(int32_t(int16_t(s.heading))-int32_t(h[7])+512)&0xFFFu)>1024u))continue;
             out.aux_record_index=i;
             if(locked_800519e4(r,flags,bytes,out)){out.status=SourceDoorStatus::Locked;return out;}
+            if(s.type!=8){   // 0x80051A78
+                const auto flag=[&](uint16_t f){return (f>>3)<bytes&&(flags[f>>3]&(1u<<(f&7u)))!=0;};
+                if(h[1]==1&&flag(44)){out.event_started=27;out.status=SourceDoorStatus::EventInstead;return out;}   // 0x800C1B62 == 0 (CANDIDATE)
+                if(h[1]==2&&!flag(40)){out.flag_set=40;out.event_started=24;out.status=SourceDoorStatus::EventInstead;return out;}
+                if(h[1]==3&&!flag(41)){out.flag_set=41;out.event_started=39;out.status=SourceDoorStatus::EventInstead;return out;}
+            }
             SourceDoorRequest q8;q8.aux_record_index=i;q8.sound_id=0;q8.sound_argument=0;q8.music_check_8001f6c4=true;
             const auto put16=[&](size_t at,uint16_t value){q8.raw[at]=uint8_t(value);q8.raw[at+1]=uint8_t(value>>8);q8.known[at]=q8.known[at+1]=1;};
             const auto put8=[&](size_t at,uint8_t value){q8.raw[at]=value;q8.known[at]=1;};
