@@ -147,6 +147,7 @@ add_library(legends3ds_core STATIC
     src/flow/st00_event.cpp
     src/flow/source_door_event.cpp
     src/flow/save_state.cpp
+    src/flow/source_save_block.cpp
     src/input/classic_input.c
     src/player/classic_motion.c
     src/player/player_runtime.c
@@ -1304,6 +1305,10 @@ target_link_libraries(test_source_st03_event8 PRIVATE legends3ds_core)
 target_compile_options(test_source_st03_event8 PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
 add_test(NAME source_st03_event8 COMMAND test_source_st03_event8)
 
+add_executable(test_source_save_block tests/test_source_save_block.cpp)
+target_link_libraries(test_source_save_block PRIVATE legends3ds_core mml3ds_push2)
+target_compile_options(test_source_save_block PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)
+add_test(NAME source_save_block COMMAND test_source_save_block)
 add_executable(test_source_data_menu tests/test_source_data_menu.cpp)
 target_link_libraries(test_source_data_menu PRIVATE legends3ds_core)
 target_compile_options(test_source_data_menu PRIVATE -Wall -Wextra -Wpedantic -Werror -UNDEBUG)

@@ -88,5 +88,21 @@ save-slot UI, "Checking data", memory card 2, load/continue.
   `autoplay/st03_data_save.txt`): talk block 9 -> menu 0xDC waits for the choice -> Right ->
   Save (block 0xDE) -> file written -> Data reopens 0xDC (twice); player stays at
   (-5010,1299); the written file loads (stage 3 area 1, HP 80/80, flag 3 set).
-- Flags: the talk sets 0x608 through block 9's own 0x9A (script, not forced). The oracle
-  comparison is still open (compare_recomp_3ds.py not run: the shared oracle was busy).
+- Flags (oracle, `m3_01`, own instance, 2026-11-17; flag words 0x800BE378 (0x000..0x7FF) and
+  0x800BE438 (0x600..0x9FF) diffed directly, the same regions compare_recomp_3ds.py arms):
+  0x608 is clear before and set by the talk, as on the 3DS (block 9's own 0x9A).
+  Recharge (HP 40 -> 80) and the whole Save (card 1, slot 1, "Save complete") change no flags.
+  VERIFIED_1TO1 for these flags. After "Save complete" four more Cross presses left main phase at
+  0x0600 within ~6 s (the return to phase 3 was not observed).
+
+## Save block (slice 2a, 2026-11-17)
+`build_source_save_block_80065064` (src/flow/source_save_block.cpp) builds the 8 KiB block
+byte for byte as 0x80065064 + 0x80064CB8 + 0x800679B8/0x80067D10 + 0x80065384 lay it out; the
+EXE header ranges (icon, CLUT, title, digit tables) come from frontend/option.l3ex.
+`RuntimeSession::source_save_block_inputs` fills play time (frame counter, CANDIDATE), money,
+stage/area, Turn, the player work with life/max life (+0x6E/+0xB0, 0x8005DA78) and the flags;
+main.cpp adds the other OPTION bytes. Not modelled (written as 0, UNKNOWN): the rest of
+0x800C1B10.., 0x800BD3B8 (0x8003B140's per-stage table), 0x800BC9B8; seeds use a local LCG.
+Azahar run 42: `save_01516_slot1.blk` passes mml_retail_save_verify, its icon/CLUT bytes equal an
+oracle-written card's, the title reads "MEGAMAN LEGENDS[1]00:01:42" in the same format.
+Still open: the card/slot/confirm screen (phase 6, 0x800665FC).

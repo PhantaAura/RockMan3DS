@@ -5183,7 +5183,7 @@ int main() {
         // Data's Save (ST03 message op 0xAC, main phase 6): the 3DS save file stands in for the
         // memory card (CANDIDATE: no card/slot screen, one slot; the native .l3sv format has no stage
         // field, so the checkpoint id carries stage << 8 | area behind a marker bit).
-        session.set_save_writer([](const l3::RuntimeSaveState& st)->bool{
+        session.set_save_writer([&session](const l3::RuntimeSaveState& st)->bool{
             std::vector<uint8_t> bytes;
             try{bytes=l3::cook_l3save(st);}catch(...){return false;}
             const char* tmp="sdmc:/3ds/Legends3DS/save_01516.l3sv.tmp";const char* dst="sdmc:/3ds/Legends3DS/save_01516.l3sv";
@@ -5193,6 +5193,19 @@ int main() {
             std::remove(dst);   // rename onto an existing file fails on the SD devoptab
             if(std::rename(tmp,dst)!=0){std::remove(tmp);return false;}
             hardware_test_trace("# data_save,written=1,bytes=%lu,area=%u,hp=%u",(unsigned long)bytes.size(),unsigned(st.area_id),unsigned(st.hp));
+            // The memory-card block itself (0x80065064 + 0x80065384), slot 1, beside the native file.
+            static std::optional<l3::ExeExcerpt> save_exe;
+            try{if(!save_exe)save_exe=l3::load_exe_excerpt(read_binary(data_path("frontend/option.l3ex")));}catch(...){}
+            std::array<uint8_t,l3::kSourceSaveBlockBytes> block{};
+            auto in=session.source_save_block_inputs(0);
+            in.globals_800c1b10[0x55]=g_option_settings.free_look_800c1b65;in.globals_800c1b10[0x56]=g_option_settings.lock_on_800c1b66;
+            in.globals_800c1b10[0x58]=g_option_settings.sound_800c1b68;in.globals_800c1b10[0x59]=g_option_settings.map_800c1b69;
+            if(save_exe&&l3::build_source_save_block_80065064(*save_exe,in,block)){
+                if(FILE* bf=std::fopen("sdmc:/3ds/Legends3DS/save_01516_slot1.blk","wb")){
+                    const bool bok=std::fwrite(block.data(),1,block.size(),bf)==block.size();std::fclose(bf);
+                    hardware_test_trace("# data_save_block,written=%u,stage=%u,title_time=%u",unsigned(bok),unsigned(block[0x100]),unsigned(session.frame_counter()/30u));
+                }
+            } else hardware_test_trace("# data_save_block,written=0,reason=excerpt");
             return true;
         });
         // This native entry is a fresh diagnostic session, not a restored retail

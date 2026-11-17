@@ -1044,6 +1044,18 @@ void RuntimeSession::update_projectiles(){
     projectiles_.erase(std::remove_if(projectiles_.begin(),projectiles_.end(),[](const auto&p){return !p.active;}),projectiles_.end());
 }
 
+SourceSaveBlockInputs RuntimeSession::source_save_block_inputs(uint8_t slot) const {
+    SourceSaveBlockInputs in; in.slot=slot; in.player=player_;
+    wr16w(in.player,0x6E,hp_);wr16w(in.player,0xB0,hp_max_);   // 0x800B521E / 0x800B5260 (0x8005DA78)
+    auto w32=[&](size_t o,uint32_t v){for(int i=0;i<4;++i)in.globals_800c1b10[o+size_t(i)]=uint8_t(v>>(8*i));};
+    w32(0x0C,frame_counter_); w32(0x1C,uint32_t(source_money_800c1b2c_));
+    in.globals_800c1b10[0x50]=uint8_t(stage_);in.globals_800c1b10[0x51]=uint8_t(map_area_index_);
+    in.globals_800c1b10[0x54]=turn_setting_800c1b64_;
+    std::copy(story_flags_.begin(),story_flags_.begin()+std::min<size_t>(story_flags_.size(),in.flags_800be378.size()),in.flags_800be378.begin());
+    uint32_t r=frame_counter_*1103515245u+12345u;
+    for(auto& sd:in.seeds){const uint32_t hi=(r>>16)&0x7fffu;r=r*1103515245u+12345u;sd=(hi<<16)|((r>>16)&0x7fffu);r=r*1103515245u+12345u;}
+    return in;
+}
 void RuntimeSession::start_dialogue(MessageRef ref){
     if(!message_banks_ || ref.bank>=message_banks_->size()||ref.block>=(*message_banks_)[ref.bank].blocks.size())throw std::out_of_range("dialogue reference out of range");
     dialogue_={};dialogue_.active=true;dialogue_.ref=ref;dialogue_cursor_.emplace((*message_banks_)[ref.bank]);dialogue_cursor_->start_block(ref.block);history_.push(ref);
