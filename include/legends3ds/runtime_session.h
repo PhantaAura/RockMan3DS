@@ -33,6 +33,7 @@
 #include "legends3ds/source_st02_event4_actors.h"
 #include "legends3ds/source_st03_event8.h"
 #include "legends3ds/source_door_locks.h"
+#include "legends3ds/source_st0c.h"
 #include "legends3ds/source_stage_load.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
@@ -348,6 +349,8 @@ public:
     // ST03 event 8 (scene 0 only); see source_st03_event8.h.
     bool bind_st03_event8_profile(St03Event8Profile profile) noexcept;
     // The stage init door locks 0x8001E4C4 (stages other than ST03, which runs its own 0x801007B4).
+    // Field objects outside ST03 (the ST0C guard): the generic NPC tables and spawn set 0.
+    void bind_field_objects_profile(St03Event8Profile profile) noexcept { st03_event8_profile_=std::move(profile); }
     void bind_stage_door_locks(StageDoorLocks locks) noexcept { stage_door_locks_=std::move(locks); stage_door_locks_applied_=false; }
     const St03Event8& st03_event8() const noexcept { return st03_event8_; }
     const St03Event8Step& st03_event8_step() const noexcept { return st03_event8_step_; }
@@ -851,6 +854,7 @@ private:
     uint8_t st03_area2_setup_state_=0;   // 0x80100BF8's byte +4
     std::optional<StageDoorLocks> stage_door_locks_;
     bool stage_door_locks_applied_=false;
+    uint8_t st0c_area0_state_=0;          // 0x80100ED4 byte +4
     int st03_area_key_=-1;                 // the ST03 area of the last frame (-1: not in ST03)
     bool st03_area_enter_ported_=true;     // the last 0x8010089C area function was ported
     std::optional<uint8_t> st03_area1_object_set_;

@@ -5313,6 +5313,14 @@ int main() {
             catch(const std::exception&){}
             hardware_test_trace("# stage_door_locks,stage=%u,bound=%u",unsigned(g_stage),unsigned(bound));
         }
+        // ST0C field objects (stages/st0c/stage.l3sd): the ruin guard.
+        if(g_stage==0x0C) {
+            bool bound=false;
+            try{if(const auto blocks=l3::load_stage_data(read_binary(stage_path("stage.l3sd"),65536))){
+                l3::St03Event8Profile profile;if(l3::bind_st0c_profile(*blocks,profile)){session.bind_field_objects_profile(std::move(profile));bound=true;}}}
+            catch(const std::exception&){}
+            hardware_test_trace("# st0c_profile,bound=%u",unsigned(bound));
+        }
         // ST03 event 8 (stages/st03/event8.l3cs), scene 0 only.
         if(g_stage==3) {
             bool bound=false;
@@ -7820,7 +7828,7 @@ int main() {
                     door_was=dk;sample_was=sk;
                 }
             }
-            if(session.stage()==3){
+            if(session.stage()==3||session.stage()==0x0C){
                 static bool talk_was=false;static std::optional<size_t> target_was;
                 const bool talk=session.st03_talk_active();const auto target=session.player_check_npc();
                 if(talk!=talk_was||target!=target_was)
@@ -7849,7 +7857,7 @@ int main() {
                     obj_was[i]=key;
                 }
             }
-            if(use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All&&session.stage()==3){
+            if(use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All&&(session.stage()==3||session.stage()==0x0C)){
                 uint16_t slots=0;const size_t drawn=draw_st03_objects_uv(session,slots);
                 if(session.frame_counter()%60u==0u){
                     uint16_t live=0,generic=0,unported=0;

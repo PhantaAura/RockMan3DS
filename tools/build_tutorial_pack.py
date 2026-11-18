@@ -84,7 +84,9 @@ EXTRA_STAGES={
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
     0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
           # Stage init 0x80100DE8: 0x8001E4C4(0x8010CB98, 0x8010CBA0 + 8 * 0x800C1B62); 6 rows.
-          'door_locks':(0x8010CB98,6)},
+          'door_locks':(0x8010CB98,6),
+          # The ruin guard's record and ST0C's generic NPC tables (stage.l3sd).
+          'stage_data':['8010CB70:20','8010D398:112','8010D454:64','8010D4C0:112']},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 
@@ -660,6 +662,13 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
         list_addr,rows=spec['door_locks']; ov=(work/'overlay').read_bytes(); o=list_addr-0x80100000
         if o<0 or o+8+rows*8>len(ov): raise RuntimeError(f'{code} door locks outside the overlay')
         (sout/'doors.l3door').write_bytes(b'L3DL'+bytes([1,0,rows,0])+ov[o:o+8+rows*8])
+    if 'stage_data' in spec:
+        ov=(work/'overlay').read_bytes(); blocks=b''
+        for item in spec['stage_data']:
+            a,n=item.split(':'); a=int(a,16); n=int(n); o=a-0x80100000
+            if o<0 or o+n>len(ov): raise RuntimeError(f'{code} stage data {item} outside the overlay')
+            blocks+=a.to_bytes(4,'little')+n.to_bytes(4,'little')+ov[o:o+n]
+        (sout/'stage.l3sd').write_bytes(b'L3SD'+(1).to_bytes(2,'little')+len(spec['stage_data']).to_bytes(2,'little')+blocks)
     # Stage events (tools/cook_cutscene.py): eventN.l3cs, bound by the runtime.
     for event in spec.get('events',()):
         subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),

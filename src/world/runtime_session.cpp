@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1837,12 +1837,13 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     // on a stage load, the area loader's 0x1FF clear (0x8001F554) on every
     // load, then the area-enter call 0x8010089C until it sets 0x1FF; the
     // per-area update (area 1: 0x80100990) runs only once 0x1FF is set.
-    const int area_key=stage_==3?int(map_area_index_):-1;
+    const bool field_stage=stage_==3||stage_==0x0C;
+    const int area_key=field_stage?int(map_area_index_):-1;
     const bool loaded_now=area_key!=st03_area_key_;
     if(loaded_now){
         const auto flag=[&](uint16_t f){return story_flag(f);};
         const auto set=[&](uint16_t f,bool v){set_story_flag(f,v);};
-        if(area_key>=0&&st03_area_key_<0&&st03_event8_profile_)
+        if(stage_==3&&area_key>=0&&st03_area_key_<0&&st03_event8_profile_)
             st03_stage_init_door_locks_801007b4(*st03_event8_profile_,0,flag,set);   // 0x800C1B62 = 0 (CANDIDATE)
         if(area_key>=0)set_story_flag(0x1FF,false);
         st03_area_key_=area_key;
@@ -1852,6 +1853,11 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(stage_==3&&!loaded_now&&!story_flag(0x1FF))
         st03_area_enter_ported_=st03_area_enter_8010089c(uint8_t(map_area_index_),0,   // block +4 = 0 (CANDIDATE)
             [&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
+    if(stage_==0x0C&&!loaded_now&&!story_flag(0x1FF))
+        (void)st0c_area0_enter_801012d4(0,[&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});   // block +4 = 0 (CANDIDATE)
+    if(stage_==0x0C&&story_flag(0x1FF)&&map_area_index_==0){
+        if(st0c_area0_update_80100ed4(st0c_area0_state_))spawn_st03_object_set(0);   // the ruin guard (0x8010CB70)
+    }else if(stage_!=0x0C||loaded_now)st0c_area0_state_=0;
     // An area load frees the outgoing area's ST03 objects (0x80103BA0 path).
     if(loaded_now)release_st03_objects();
     const bool entered=stage_==3&&story_flag(0x1FF);
@@ -2136,7 +2142,7 @@ void RuntimeSession::update_st03_objects(){
     // The object update for the ST03 scene objects: slot order (CANDIDATE),
     // after the event in the same frame. 0x80048E6C is not run for them
     // (they keep the record's y; CANDIDATE); rand is a local 0x8007FE50.
-    if(stage_!=3)return;
+    if(stage_!=3&&stage_!=0x0C)return;
     // The talk runner's block +0 clears once the talk's window closed.
     if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
@@ -2765,7 +2771,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         if(in.source_event_player_position)selected.held_psx_mask=selected.pressed_psx_mask=0;
         // ST03 NPC talk: the original puts the player in action 0x10 (talk pose), which takes no
         // pad input; the pose itself is not ported, the pad is held off instead (CANDIDATE).
-        if(stage_==3&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
+        if((stage_==3||stage_==0x0C)&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
         update_input_compat(selected);
         // 0x8003C07C: +0xBD 0x40 zeroes the pad, 0x20 takes event 0's 0x800C0F96.
         (void)source_player_input_select_8003c07c(player_,source_door_event0_.forced_pad);

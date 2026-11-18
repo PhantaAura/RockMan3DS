@@ -48,6 +48,7 @@ add_library(legends3ds_core STATIC
     src/world/source_st03_objects.cpp
     src/flow/source_st03_event8.cpp
   src/flow/source_door_locks.cpp
+  src/flow/source_st0c.cpp
     src/flow/source_stage_load.cpp
     src/world/source_scene_face.cpp
     src/flow/source_event_random_effect.cpp

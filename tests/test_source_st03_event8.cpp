@@ -1,5 +1,6 @@
 // ST03 event 8 scene 0 (0x80101D54) on synthetic timelines.
 #include "legends3ds/source_st03_event8.h"
+#include "legends3ds/source_st0c.h"
 #include <cstdio>
 
 using namespace l3;
@@ -219,6 +220,30 @@ int main() {
         CHECK(!fl[0x7E1] && fl[0x7E2]);
         b.pop_back(); CHECK(!load_stage_door_locks(b));
         b.push_back(0); b[4] = 2; CHECK(!load_stage_door_locks(b));
+    }
+    // ST0C stage data (stage.l3sd) -> the guard and the generic NPC tables.
+    {
+        const auto block = [](uint32_t t, std::vector<uint8_t> d) {
+            std::vector<uint8_t> o{uint8_t(t), uint8_t(t >> 8), uint8_t(t >> 16), uint8_t(t >> 24),
+                                   uint8_t(d.size()), uint8_t(d.size() >> 8), 0, 0};
+            o.insert(o.end(), d.begin(), d.end()); return o;
+        };
+        std::vector<uint8_t> rec{0, 0x24, 0, 0x20, 0, 0, 0, 0, 0x0B, 0, 0, 0, 0x00, 0x0C, 0xFF, 0xFF, 0x98, 0x13, 0, 0};
+        std::vector<uint8_t> f{'L','3','S','D',1,0,4,0};
+        for (auto& b : {block(kSt0CGuardRecord, rec), block(kSt0CWalkSpeeds, std::vector<uint8_t>(112, 3)),
+                        block(kSt0CIdleTimers, std::vector<uint8_t>(64, 7)), block(kSt0CWalkTables, std::vector<uint8_t>(112, 1))})
+            f.insert(f.end(), b.begin(), b.end());
+        const auto blocks = load_stage_data(f);
+        St03Event8Profile p0;
+        CHECK(blocks && blocks->size() == 4 && bind_st0c_profile(*blocks, p0));
+        CHECK(p0.object_sets[0].size() == 1 && p0.object_sets[0][0].object_class == 0x24 && p0.object_sets[0][0].word_08[0] == 11 &&
+              p0.object_sets[0][0].position[0] == 3072 && p0.object_sets[0][0].position[2] == 5016 && p0.idle_timers[5] == 7 && p0.walk_loaded);
+        auto bad = f; bad.pop_back(); CHECK(!load_stage_data(bad));
+        std::array<bool, 0x800> fl{};
+        CHECK(!st0c_area0_enter_801012d4(0, [&](uint16_t x) { return fl[x]; }, [&](uint16_t x, bool v) { fl[x] = v; }) && fl[0x1FF]);
+        fl[0x21B] = true; fl[0x1FF] = false;
+        CHECK(st0c_area0_enter_801012d4(0, [&](uint16_t x) { return fl[x]; }, [&](uint16_t x, bool v) { fl[x] = v; }) && fl[0x1FF]);
+        uint8_t st = 0; CHECK(st0c_area0_update_80100ed4(st) && st == 255 && !st0c_area0_update_80100ed4(st));
     }
     // Area 2 set-up 0x80100BF8, first pass.
     {
