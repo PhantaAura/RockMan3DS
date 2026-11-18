@@ -127,3 +127,16 @@ pressed/held (0x800C0C2A / 0x800C0C26), +0xC timer. The windows are message scri
 Port plan: run these scripts on the existing MessageWindows engine (mml_message_window.cpp,
 already used by OPTION and the Start sub-screen) with the 3DS save file as card 1 and card 2
 absent; draw on the bottom screen like the sub-screen (CANDIDATE placement).
+
+## Save screen port (slice 2b, 2026-11-17)
+`SourceSaveScreen` (src/flow/source_save_screen.cpp) runs subs 0 (which card), 1 (checking +
+list strings), 2 (no card: card 2), 5 (list, confirm, write, complete) of 0x800665FC on the
+ported MessageWindows with the EXE scripts (cook range 0x8008B05C.. added, plus stage names,
+list pointers and the "No data!" strings); decor 3/7 (0x8005AB78, frame 0x8005BC90) added to the
+window engine. The 3DS files save_01516_slot1..5.blk are memory card 1 (a block whose check
+words fail reads as broken); card 2 always reads as absent. Drawn on the bottom screen like
+the Start sub-screen (CANDIDATE placement), 30 updates per second. Not ported: the format
+flow (subs 3/4), load mode (sub 6, steps 10..), the 0x80064B60 card poll (card 1 stays in).
+Azahar run 46: Data -> Save -> card 1 -> list -> slot 1 -> Yes -> write (result 0) -> "Save
+complete" -> back to the card choice; the slot-1 block passes the retail checks and the
+native .l3sv loads (stage 3 area 1, HP 80/80).

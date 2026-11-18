@@ -38,7 +38,9 @@ int main() {
     assert(std::memcmp(b.data() + 0x22C, pl.bytes + 0x4F4, 256) == 0 && std::memcmp(b.data() + 0x1C80, pl.bytes + 0x474, 128) == 0);
     assert(b[0x380 + 0xC1] == 0x80);
     assert(mml_retail_save_verify(b.data(), kSourceSaveTransferBytes) == MML_RETAIL_SAVE_OK);
-    b[0x380] ^= 1; assert(mml_retail_save_verify(b.data(), kSourceSaveTransferBytes) != MML_RETAIL_SAVE_OK);
+    assert(source_save_block_valid(b.data(), b.size()));
+    b[0x380] ^= 1; assert(!source_save_block_valid(b.data(), b.size()));
+    assert(mml_retail_save_verify(b.data(), kSourceSaveTransferBytes) != MML_RETAIL_SAVE_OK);
     ExeExcerpt none; assert(!build_source_save_block_80065064(none, in, b));
     (void)pl;
     std::cout << "source_save_block: ok\n";

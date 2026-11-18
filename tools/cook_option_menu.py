@@ -26,6 +26,7 @@ RANGES = [
     (0x80089B2C, 0x80089EEC),   # weapon level tables (8 x 8 bytes per weapon) + pointers 0x80089EAC (item 65)
     (0x8008AE7C, 0x8008AF00),   # glyph widths (u8 per glyph byte 0x00..0x83)
     (0x8008AF18, 0x8008AF24),   # decor -> frame parameter
+    (0x8008B05C, 0x8008B67C),   # save/load screen messages (pointers 0x8008CAEC..0x8008CB50) and list strings
     (0x8008B67C, 0x8008C8E4),   # messages 0x25..0x32 (title, OPTION, help, sub-screen menu), part,
                                 # item and weapon names, sub-screen menu help (0xDD..0xE2)
     (0x8008CACC, 0x8008CACC + 4 * 0xE4),   # message pointer table (also the name tables)
@@ -37,6 +38,9 @@ RANGES = [
     (0x8008FE64, 0x8008FE64 + 8 * 0x34),   # buster part stats (attack, energy, range, rapid)
     (0x80097F30, 0x80097F90),   # CLUTs, window colours, edge greys
     (0x8008D028, 0x8008D034),   # save block: digit -> message glyph (0x800679B8)
+    (0x8008CE94, 0x8008D028),   # save screen: stage names, 13 bytes each (0x80066A40)
+    (0x8008D168, 0x8008D1A0),   # save screen: list string pointers (names 0x8008D168, times 0x8008D184)
+    (0x80097FAC, 0x80098004),   # save screen: "No data!", broken-data and empty-time strings
     (0x8008F9BC, 0x8008FAA4),   # save block: icon, CLUT, title (0x80064CB8 / 0x80067D10)
     (0x80098124, 0x8009813A),   # save block: Shift-JIS digits (0x80067D10)
 ]

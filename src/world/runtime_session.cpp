@@ -1358,9 +1358,15 @@ void RuntimeSession::update_dialogue(const RuntimeInputFrame& in){
                     }
                     if(ev.opcode==0xAC&&ev.args.size()>=2){ // 0x80055C80: byte table[arg1] = arg2; 8..11 are 0x800C1B10..13
                         if(ev.args[0]==8&&ev.args[1]==6){   // main phase 6: Data's Save screen
-                            RuntimeSaveState st=make_save_state(0x80000000u|(uint32_t(stage_)<<8)|uint32_t(map_area_index_&0xFFu));
-                            save_result_=(save_writer_&&save_writer_(st))?1:(save_writer_?-1:0);
-                            save_screen_frames_=3;stop_dialogue();return;
+                            // With a screen host (the 3DS save screen) the phase lasts until
+                            // finish_save_screen(); without one the writer runs at once.
+                            if(save_screen_host_){save_screen_open_=true;save_screen_frames_=1;}
+                            else{
+                                RuntimeSaveState st=make_save_state(0x80000000u|(uint32_t(stage_)<<8)|uint32_t(map_area_index_&0xFFu));
+                                save_result_=(save_writer_&&save_writer_(st))?1:(save_writer_?-1:0);
+                                save_screen_frames_=3;
+                            }
+                            stop_dialogue();return;
                         }
                         break;
                     }
@@ -2936,7 +2942,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
             source_event_busy_=static_cast<int16_t>(bits<=32767?int32_t(bits):int32_t(bits)-65536);
         }
     }
-    if(save_screen_frames_)--save_screen_frames_;   // main phase 6 stand-in (Data's Save)
+    if(save_screen_frames_&&!save_screen_open_)--save_screen_frames_;   // main phase 6 (Data's Save)
     update_projectiles();update_dialogue(in);update_camera();
 }
 
@@ -2952,6 +2958,7 @@ void RuntimeSession::set_story_flag(uint16_t bit,bool value){
         auto& source=source_event_flags_.values[bit>>3u];if(value)source=uint8_t(source|mask);else source=uint8_t(source&uint8_t(~mask));}
 }
 bool RuntimeSession::story_flag(uint16_t bit)const{return bit<kL3StoryFlagBytes*8u && (story_flags_[bit>>3u]&(1u<<(bit&7u)))!=0;}
+RuntimeSaveState RuntimeSession::native_save_state() const{return make_save_state(0x80000000u|(uint32_t(stage_)<<8)|uint32_t(map_area_index_&0xFFu));}
 RuntimeSaveState RuntimeSession::make_save_state(uint32_t checkpoint)const{
     RuntimeSaveState s;s.checkpoint_id=checkpoint;s.area_id=static_cast<uint16_t>(area_index_);s.player_yaw=player_yaw();s.player_x=player_position_.x;s.player_y=player_position_.y;s.player_z=player_position_.z;s.hp=hp_;s.hp_max=hp_max_;s.play_frames=frame_counter_;s.qol=settings_;s.story_flags=story_flags_;return s;
 }
