@@ -2169,7 +2169,11 @@ void RuntimeSession::spawn_st03_object_set(uint8_t n){
 void RuntimeSession::update_st03_objects(){
     // The object update for the ST03 scene objects: slot order (CANDIDATE),
     // after the event in the same frame. 0x80048E6C is not run for them
-    // (they keep the record's y; CANDIDATE); rand is a local 0x8007FE50.
+    // (they keep the record's y; CANDIDATE). Rand: 0x8007FE50 is the BIOS A0 stub (t2 = 0xA0,
+    // t1 = 0x2F, rand): seed = seed * 0x41C64E6D + 0x3039, result (seed >> 16) & 0x7FFF, the
+    // step below (VERIFIED from the stub; the BIOS body is the standard A(2Fh)). The seed is
+    // the BIOS's global one shared by every rand() caller; the port keeps a local seed from 0,
+    // so the sequence position stays CANDIDATE.
     if(stage_!=3)return;
     // The talk runner's block +0 clears once the talk's window closed.
     if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
