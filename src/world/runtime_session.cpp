@@ -1761,7 +1761,8 @@ void RuntimeSession::update_source_door_event(){
     source_door_result_=evaluate_source_door_event_80050c2c(query,player_,area_.flow.aux,
         story_flags_.data(),story_flags_.size());
     if(source_door_result_.flag_set)set_story_flag(*source_door_result_.flag_set,true);
-    if(source_door_result_.status==SourceDoorStatus::ExitRequested&&source_door_result_.request){
+    if((source_door_result_.status==SourceDoorStatus::ExitRequested||source_door_result_.status==SourceDoorStatus::LoadRequested)&&
+       source_door_result_.request){
         // Type 1 (walk-through exit): 356C = 0xFF, no event 0; the main loop
         // loads the area at once.
         source_exit_request_=source_door_result_.request;++source_door_generation_;
@@ -2247,6 +2248,15 @@ std::optional<SourceEventHandoffTransitionIntent> RuntimeSession::source_post_wi
     return t;
 }
 std::optional<SourceStageRequest> RuntimeSession::source_stage_request() const noexcept {
+    // A door / exit request (types 1 and 8) to another stage.
+    if(source_exit_request_){
+        const auto& q=*source_exit_request_;
+        if(q.raw[22]!=stage_){
+            std::array<uint8_t,18> lanes{};
+            for(size_t i=0;i<lanes.size();++i)lanes[i]=q.raw[8+i];
+            return source_stage_request_from_lanes(lanes,0x80050C2Cu,source_door_generation_);
+        }
+    }
     const auto& h=source_post_win_handoff_;
     if(!h||h->stage==stage_)return std::nullopt;
     return source_stage_request_from_lanes(h->raw,source_post_win_.event==4?0x80101CC0u:
@@ -2255,6 +2265,7 @@ std::optional<SourceStageRequest> RuntimeSession::source_stage_request() const n
 SourceStageCarry RuntimeSession::make_stage_carry() const {
     SourceStageCarry c;
     c.story_flags=story_flags_;c.hp=hp_;c.hp_max=hp_max_;c.frames=frame_counter_;c.stats_selector=source_stats_selector_;
+    c.player_00=player_.bytes[0];c.player_06=player_.bytes[6];
     return c;
 }
 bool RuntimeSession::apply_stage_load(const SourceStageCarry& carry,const SourceStageArrival& arrival) {
@@ -2262,6 +2273,12 @@ bool RuntimeSession::apply_stage_load(const SourceStageCarry& carry,const Source
     const RuntimeVec3i spawn{arrival.position[0],arrival.position[1],arrival.position[2]};
     if(arrival.area!=map_area_index_&&!transition_to_area(arrival.area,spawn,arrival.heading))return false;
     reset_player(spawn,arrival.heading,carry.hp,carry.hp_max);
+    // The player work persists across a stage load (no 0x8003BE6C re-init):
+    // ST02 event 4's hand-off sets +0 |= 1 before the release, and the oracle
+    // shows +0 = 1 at ST03 control. Without bit 0 the event release 0x80042314
+    // never returns the player to state 1 (ST03 event 8 left it in state 3:
+    // no floor step-down, door 3's query missed at y -129).
+    player_.bytes[0]=carry.player_00;player_.bytes[6]=carry.player_06;
     for(uint16_t bit=0;bit<kL3StoryFlagBytes*8u;++bit)
         if(carry.story_flags[bit>>3u]&(1u<<(bit&7u)))set_story_flag(bit,true);
     frame_counter_=carry.frames;source_stats_selector_=carry.stats_selector;

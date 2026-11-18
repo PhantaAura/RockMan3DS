@@ -323,11 +323,20 @@ the user heard it on the merged build), native PASS, Azahar trace (pop-out
 and hand-off). The byte-0x0B fix was not run in Azahar (screen locked).
 
 ## Next
-- Stage loading: ST03 into EXTRA_STAGES (area setup tables from its
-  overlay, area variants), then ST03 area 1 + event 8 (first control at
-  (-4584,-1,1431), savestate m3_01). Then event 4's callbacks/scene actors
-  and the ST02 sky. A normal-boot run to ST02 when the boss route is
-  reliable.
+- Stage loading (branch claude/stage-loading-9d47ea), status 2026-11-17:
+  - DONE, verified in Azahar:
+    - ST03 event 8 scenes 0..2 (crash site, police car, Inspector talk);
+    - scene objects: generic NPC behaviours 0/1/4, the variant-1 scene NPCs and the police car logic;
+    - shared NPC talk;
+    - door locks and the 0x1FF gate (compare_recomp_3ds: all oracle flags, order matches);
+    - areas 0/2 on ST03_00;
+    - walk-through exits (door event type 1): area 1 -> 2, run39.
+    See docs/research_01516/STAGE_LOADING.md.
+  - NEXT, in story order:
+    - exits to another stage (stage-change request from type-1/3 doors);
+    - S2 (ST03 a0 -> stage 0x0C), S4 (stage 4), ... S8;
+    - then event 8 scenes 3/4 (S9: the area-2 set-up states, the support car objects).
+  - Visual gaps batch before the 1.0 compare: listed in STAGE_LOADING.md.
 0. Finish M1 (the Area 3 boss), status 2026-11-15:
    - DONE (Azahar runs 13/14): opening -> tutorial -> 0x622 from normal boot;
      boss AI/damage by Buster; player damage, gauge gating, death; game over

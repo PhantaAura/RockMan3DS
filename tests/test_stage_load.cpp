@@ -108,6 +108,12 @@ int main() {
     require(st2.map_area_index() == 0 && p.x == 0 && p.y == 0 && p.z == 0 && st2.player_yaw() == 0, "arrival at the lanes");
     require(st2.story_flag(0x383) && st2.story_flag(0x600) && !st2.story_flag(0x606), "story flags survive");
     require(st2.hp() == 60 && st2.hp_max() == 80 && st2.source_stats_selector() == 1, "life and selector survive");
+    require(carry.player_00 == 0 && st2.compat_player().bytes[0] == 0, "player +0 carried (0 from a fresh ST00 reset)");
+    SourceStageCarry with_bit = carry; with_bit.player_00 = 1; with_bit.player_06 = 3;
+    auto st3 = make_session(4); st3.set_stage(2);
+    for (size_t i = 1; i < 4; ++i) { TutorialRuntimeArea a; a.area_index = i; st3.register_area(i, a); }
+    require(st3.apply_stage_load(with_bit, arrival) && st3.compat_player().bytes[0] == 1 && st3.compat_player().bytes[6] == 3,
+            "player +0 / +6 survive the load (event 4 set +0 |= 1 before the hand-off)");
     SourceStageArrival a1 = arrival; a1.area = 1; a1.position = {100, -5, 200};
     auto st2b = make_session(4); st2b.set_stage(2);
     TutorialRuntimeArea r1; r1.area_index = 1; st2b.register_area(1, r1);

@@ -80,6 +80,9 @@ EXTRA_STAGES={
     3:{'container':'ST03.BIN','areas':('ST03_00.BIN','ST03_00.BIN','ST03_00.BIN',None,None,None,None,None,None),
        'ebd':{0:r'..\EMBIN\ST03_00A.EBD',1:r'..\EMBIN\ST03_00A.EBD',2:r'..\EMBIN\ST03_00A.EBD'},'events':(8,),
        'event_extra':{8:['80116578:64','801154B0:280','801158E8:340','80116E68:64','80116DAC:112','80116ED4:112','80117274:88','801152E4:128']}},
+    # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
+    # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
+    0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':()},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 
