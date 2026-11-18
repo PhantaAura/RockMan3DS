@@ -72,6 +72,11 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_={}; player_position_=p; hp_max_=hpmax?hpmax:1; hp_=std::min(hp,hp_max_);
     source_gameplay_camera_={};
     wr16w(player_,0x56,yaw&0x0FFFu);
+    // 0x8003BE80 (player init): +0 = +6 = 3 on its normal path (caller bit
+    // 0x80 clear; CANDIDATE that it is always clear here). Without bit 0 of
+    // +0 the event release 0x80042314 never sets +9 = 3, and the player kept
+    // state 3 after ST03 event 8 (no floor step-down, door query misses).
+    player_.bytes[0]=3; player_.bytes[6]=3;
     // 0x8003BF2C: control profile 0x800C1B64 (OPTION Turn; table 0x8008A04C).
     l3_pl00_install_control_profile_800425fc(&player_,turn_setting_800c1b64_);
     player_.bytes[0x08]=1; player_.bytes[0x09]=0; player_.bytes[0x0A]=0;
