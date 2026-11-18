@@ -2182,9 +2182,11 @@ void RuntimeSession::update_st03_objects(){
         };
         in.id_target=resolve(o.w.byte_0c);in.id_target2=resolve(o.w.byte_0d);
         in.talk_active=st03_talk_active_;in.save_phase=save_screen_frames_!=0;
+        in.anim_a6=int8_t(st03_object_cursor_[i].opaque_a6);
         t=step_st03_npc(o,in);
         if(t.talk_target_taken||t.clear_player_target)player_check_npc_.reset();
         if(t.flag_set)set_story_flag(*t.flag_set,true);
+        if(t.sound)(void)enqueue_source_audio_8001a008(source_audio_queue_,*t.sound,0,0);
         if(t.reopen_menu){   // Data state 3: 0x80053A30(0) then 0x80053A08(0, 0xDC)
             st03_talk_active_=true;
             if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.reopen_menu});}

@@ -354,24 +354,25 @@ void v1_gesture_at(St03Npc& n, const St03NpcInputs& in, uint8_t at) noexcept {
 }
 // The walk toward +0x354 (turn by +0x64, 0x8002FEA4 at +0x44), flag 0x606
 // within distance^2 2048. Returns true on arrival.
-bool v1_walk_to_home(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+bool v1_walk_to_home(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out, uint16_t sound = 0) noexcept {
     auto& w = n.w;
     add_heading(n, turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out));
     walk_forward(n, in, out);
+    if (sound && in.anim_a6 == 1) out.sound = sound;   // after 0x8002FEA4: 0x8001A008(id, 0, 0) on +0xA6 == 1
     const int32_t dx = int32_t(w.raw_14[0]) - n.home_354[0], dz = int32_t(w.raw_14[2]) - n.home_354[2];
     if (dx * dx + dz * dz >= 2048) return false;
     ++w.sub_0a; w.pose_ac = 0; n.speed_44 = 0; n.target_heading_64 = 0; out.flag_set = 0x606;
     return true;
 }
 // Barrell / officer behaviour 1: walk to the +0x0C object (0x8010D5EC / 0x8010C974).
-void v1_walk_to_id(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out, int16_t speed) noexcept {
+void v1_walk_to_id(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out, int16_t speed, uint16_t sound) noexcept {
     auto& w = n.w;
     if (w.sub_0a == 0) {
         if (!in.id_target) { out.id_target_missing = true; return; }
         w.sub_0a = 1; w.pose_ac = 1; n.speed_44 = speed; n.target_heading_64 = 32;
         n.home_354 = *in.id_target;
     } else if (w.sub_0a != 1) return;
-    v1_walk_to_home(n, in, out);
+    v1_walk_to_home(n, in, out, sound);
 }
 
 // Barrell variant 1 behaviours (0x80117110).
@@ -379,7 +380,7 @@ void barrell1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) n
     auto& w = n.w;
     switch (w.state_09) {
     case 0: v1_stand(n); return;
-    case 1: v1_walk_to_id(n, in, out, 48); return;   // sound 269 on +0xA6 == 1 (not ported)
+    case 1: v1_walk_to_id(n, in, out, 48, 269); return;   // 0x8010D5EC, sound at 0x8010D6AC
     case 2:   // 0x8010D404: face the +0x0C object
         if (w.sub_0a > 1) return;
         if (w.sub_0a == 0) { ++w.sub_0a; w.pose_ac = 0; n.target_heading_64 = 32; }
@@ -428,12 +429,12 @@ void inspector1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out)
     auto& w = n.w;
     switch (w.state_09) {
     case 0: v1_stand(n); return;
-    case 1:   // 0x8010DC74: walk to (-3003, -1, 1339), then gesture (sound 268 not ported)
+    case 1:   // 0x8010DC74: walk to (-3003, -1, 1339), then gesture (sound 268 at 0x8010DD4C)
         if (w.sub_0a == 0) {
             w.sub_0a = 1; w.pose_ac = 1; n.speed_44 = 60; n.target_heading_64 = 32;
             n.home_354 = {-3003, -1, 1339};
         }
-        if (w.sub_0a == 1) { v1_walk_to_home(n, in, out); return; }
+        if (w.sub_0a == 1) { v1_walk_to_home(n, in, out, 268); return; }
         v1_gesture_at(n, in, 2);
         return;
     case 2:   // 0x8010DE18: face the +0x0C object (0x606), then walk to the +0x0D object (0x606)
@@ -446,6 +447,7 @@ void inspector1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out)
         case 1: {
             const int16_t d = turn_toward(n, n.home_354[0], n.home_354[2], int16_t(n.target_heading_64), in, out);
             add_heading(n, d);
+            if (in.anim_a6 == 1) out.sound = 268;   // 0x8010DEE0
             if (d == 0) { out.flag_set = 0x606; ++w.sub_0a; }
             return;
         }
@@ -453,7 +455,7 @@ void inspector1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out)
             if (!in.id_target2) { out.id_target_missing = true; return; }
             ++w.sub_0a; n.home_354 = *in.id_target2;
             [[fallthrough]];
-        case 3: v1_walk_to_home(n, in, out); return;
+        case 3: v1_walk_to_home(n, in, out, 268); return;   // 0x8010DF90
         default: return;
         }
     case 3: v1_gesture(n, in); return;
@@ -465,7 +467,7 @@ void inspector1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out)
 void officer1_behaviour(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
     switch (n.w.state_09) {
     case 0: v1_stand(n); return;
-    case 1: v1_walk_to_id(n, in, out, 44); return;   // sound 266 not ported
+    case 1: v1_walk_to_id(n, in, out, 44, 266); return;   // 0x8010C974, sound at 0x8010CA34
     case 2: v1_gesture(n, in); return;
     default: out.behaviour_unported = true; return;
     }

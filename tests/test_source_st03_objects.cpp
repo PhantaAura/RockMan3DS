@@ -222,6 +222,9 @@ int main() {
         in0.w.state_09 = 1; in0.w.sub_0a = 0;
         in0.w.raw_14 = {-3003, -1, 1400}; in0.w.fixed_1c = {int32_t(uint32_t(uint16_t(-3003)) << 16), int32_t(0xFFFF0000u), int32_t(1400u << 16)};
         int n = 0; r = {};
+        r = step_st03_npc(in0, k); ++n; CHECK(!r.sound);                       // +0xA6 != 1: no step sound
+        k.anim_a6 = 1; r = step_st03_npc(in0, k); ++n; CHECK(r.sound && *r.sound == 268);   // 0x8010DD4C
+        k.anim_a6 = 0;
         while (!r.flag_set && n < 100) { r = step_st03_npc(in0, k); ++n; }
         CHECK(r.flag_set && *r.flag_set == 0x606 && in0.w.sub_0a == 2 && in0.speed_44 == 0);
         // Behaviour 2: needs +0x0C, then walks to +0x0D.

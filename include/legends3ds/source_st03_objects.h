@@ -7,7 +7,7 @@
 // (idle and fidget), behaviour 1 (walk) and the talk (0x8010A344, behaviour
 // 4); the police car (0x801104C0: idle and the waypoint drive; its mesh and
 // dust are not drawn); the variant-1 scene NPCs (Barrell 0x8010D0F4, the Inspector 0x8010D968,
-// the officer 0x8010C66C: init, tick, all their behaviours; sounds reported).
+// the officer 0x8010C66C: init, tick, all their behaviours and walk sounds).
 // Generic behaviours 2, 3, 5..7, shadows and the family-0x60 police car
 // are reported, not run.
 // Original addresses are identity tokens.
@@ -108,7 +108,8 @@ struct St03NpcInputs {
     std::optional<uint16_t> heading_to_player; // 0x80031198(npc +0x14, player +0x14) (result bits)
     bool window_open = false;                  // 0x80098A58 & 0x00200000
     bool talk_active = false;                  // 0x800987B0 (the talk runner's block +0)
-    bool save_phase = false;                   // main phase 0x800C1B10 == 6 (Data's Save, see DATA_MENU.md)
+    bool save_phase = false;
+    int8_t anim_a6 = 0;                        // +0xA6 (animation cursor key byte): the walk sounds play on 1                   // main phase 0x800C1B10 == 6 (Data's Save, see DATA_MENU.md)
 };
 struct St03NpcTick {
     bool in_range = false;                     // 0x8010A4EC
@@ -129,7 +130,8 @@ struct St03NpcTick {
     bool talk_target_taken = false;            // 0x8010A344 switched to the talk behaviour
     std::optional<uint8_t> talk_start;         // 0x80063BC8(npc, 0, 0, +0x0C): message id
     bool checkable = false;                    // 0x80051B68(work, 1, -1, 0): a talk candidate this frame
-    std::optional<uint8_t> reopen_menu;        // Data state 3: 0x80053A08(0, 0xDC) after the save screen
+    std::optional<uint8_t> reopen_menu;
+    std::optional<uint16_t> sound;             // 0x8001A008(id, 0, 0): 266 officer, 268 Inspector, 269 Barrell walks        // Data state 3: 0x80053A08(0, 0xDC) after the save screen
 };
 St03NpcTick step_st03_npc(St03Npc& npc, const St03NpcInputs& in) noexcept;
 
