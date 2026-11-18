@@ -1828,14 +1828,18 @@ bool RuntimeSession::bind_st03_event8_profile(St03Event8Profile profile) noexcep
 }
 void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     st03_event8_step_={};
-    // Other stages' init door locks (0x8001E4C4 on row 0x800C1B62 = 0, CANDIDATE), once per stage load.
-    if(stage_!=3&&stage_door_locks_&&!stage_door_locks_applied_&&!stage_door_locks_->rows.empty()){
+    // Other stages' door locks: the area-setup routine ends with them (ST04
+    // 0x8010042C -> 0x8010044C, ST0C 0x80100DCC -> 0x80100DE8), so they run on
+    // every area load (row 0x800C1B62 = 0, CANDIDATE).
+    if(stage_!=3&&stage_door_locks_&&!stage_door_locks_->rows.empty()&&
+       (!stage_door_locks_applied_||int(map_area_index_)!=stage_door_locks_area_)){
         apply_stage_door_locks(*stage_door_locks_,0,[&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
-        stage_door_locks_applied_=true;
+        stage_door_locks_applied_=true;stage_door_locks_area_=int(map_area_index_);
     }
-    // Stage / area loads into ST03: the stage init's door locks (0x801007B4)
-    // on a stage load, the area loader's 0x1FF clear (0x8001F554) on every
-    // load, then the area-enter call 0x8010089C until it sets 0x1FF; the
+    // Stage / area loads into ST03: the door locks (0x801007B4, called at the
+    // end of the area-setup routine 0x80100524, so on every area load: after
+    // flag 0 the north gate 0x7E1 opens on the next one), the area loader's
+    // 0x1FF clear (0x8001F554) on every load, then the area-enter call 0x8010089C until it sets 0x1FF; the
     // per-area update (area 1: 0x80100990) runs only once 0x1FF is set.
     const bool field_stage=stage_==3||stage_==4||stage_==0x0C;
     const int area_key=field_stage?int(map_area_index_):-1;
@@ -1843,7 +1847,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(loaded_now){
         const auto flag=[&](uint16_t f){return story_flag(f);};
         const auto set=[&](uint16_t f,bool v){set_story_flag(f,v);};
-        if(stage_==3&&area_key>=0&&st03_area_key_<0&&st03_event8_profile_)
+        if(stage_==3&&area_key>=0&&st03_event8_profile_)
             st03_stage_init_door_locks_801007b4(*st03_event8_profile_,0,flag,set);   // 0x800C1B62 = 0 (CANDIDATE)
         if(area_key>=0)set_story_flag(0x1FF,false);
         st03_area_key_=area_key;

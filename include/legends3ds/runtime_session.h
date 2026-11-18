@@ -855,6 +855,7 @@ private:
     uint8_t st03_area2_setup_state_=0;   // 0x80100BF8's byte +4
     std::optional<StageDoorLocks> stage_door_locks_;
     bool stage_door_locks_applied_=false;
+    int stage_door_locks_area_=-1;
     uint8_t st04_area0_state_=0;          // 0x80100594 byte +4
     uint8_t st0c_area0_state_=0;          // 0x80100ED4 byte +4
     int st03_area_key_=-1;                 // the ST03 area of the last frame (-1: not in ST03)
