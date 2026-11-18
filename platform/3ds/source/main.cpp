@@ -7791,6 +7791,14 @@ int main() {
                     hardware_test_trace("# st02_event4_actors,frame=%lu,drawn=%lu,slots=%02x,area=%u",
                         (unsigned long)session.frame_counter(),(unsigned long)drawn,unsigned(slots),unsigned(session.map_area_index()));
             }
+            if(session.stage()==3&&session.frame_counter()%120u==0u){
+                const auto& dr=session.source_door_result();const auto& pc=session.player_contact();
+                const auto& pw=session.compat_player().bytes;
+                hardware_test_trace("# player_probe,frame=%lu,area=%u,pos=%d/%d/%d,raw_y=%d,floor=%d,contact=%u,door_query=%u,state=%u/%u",
+                    (unsigned long)session.frame_counter(),unsigned(session.map_area_index()),int(session.player_position().x),
+                    int(session.player_position().y),int(session.player_position().z),int(int16_t(uint16_t(pw[0x16]|(pw[0x17]<<8)))),
+                    pc.floor_y?int(*pc.floor_y):9999,unsigned(pc.status),unsigned(dr.query_status),unsigned(pw[8]),unsigned(pw[9]));
+            }
             {   // Door event 0x80050C2C result on change (types 1 / 3 / 8).
                 static int door_was=-1;static uint32_t sample_was=0;
                 const auto& dr=session.source_door_result();
