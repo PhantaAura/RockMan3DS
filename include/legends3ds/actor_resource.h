@@ -57,6 +57,11 @@ ActorMeshResource decode_ebd_actor_mesh(const EbdDirectory& ebd, size_t row,
                                       ActorMeshTier tier = ActorMeshTier::NEAR,
                                       size_t decoded_memory_cap = 256 * 1024);
 
+// Family 0x60 (static objects such as the ST03 police car 60/0E): descriptor only.
+ActorMeshResource decode_ebd_class60_mesh(const EbdDirectory& ebd, size_t row,
+                                        ActorMeshTier tier = ActorMeshTier::NEAR,
+                                        size_t decoded_memory_cap = 256 * 1024);
+
 struct ActorPoseResource {
     uint8_t request = 0;
     uint8_t record_index = 0;

@@ -41,6 +41,17 @@ std::vector<uint32_t> collect_admitted_actor_material_words(const EbdDirectory& 
         if(words.size()>kActorMaterialEntryLimit)
             throw std::runtime_error("actor material area count policy exceeded");
     }
+    // Family-0x60 static objects (the ST03 police car 60/0E and its siblings): one-part
+    // meshes through the same pages (decode_ebd_class60_mesh).
+    if(!ebd.source_payload.empty())for(size_t i=0;i<ebd.entries.size();++i){
+        if(ebd.entries[i].object_class!=0x60)continue;
+        try{
+            const auto mesh=decode_ebd_class60_mesh(ebd,i,ActorMeshTier::NEAR,512*1024);
+            const auto row_words=collect_actor_material_words(mesh);
+            auto grown=words;grown.insert(row_words.begin(),row_words.end());
+            if(grown.size()<=kActorMaterialEntryLimit)words=std::move(grown);   // over the cap: untextured
+        }catch(const std::runtime_error&){}   // rows the one-part decoder rejects stay untextured
+    }
     // The Area 3 boss (class 40/02, spawned by event 3 rather than placed)
     // draws through the same pages; its runtime mesh is the NEAR scene
     // decode of the first 40/02 row.

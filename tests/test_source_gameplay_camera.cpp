@@ -141,5 +141,22 @@ int main(){
     assert(l3::runtime_point_floor_8004920c(map,0,0,-100,9000)==-1);
     auto sunk=room(false);sunk.cells[0]=int16_t(uint16_t(0x8400));
     assert(l3::runtime_point_floor_8004920c(sunk,0,-1024,-100,-1024)==-0x201);
+    {   // 0x80039FFC focus blend: 16 mixing updates (t 60..0), then the settle; 0x80039E50 back.
+        l3::SourceGameplayCamera fc;
+        l3::source_gameplay_camera_init_80038648(fc,refs,0,0);
+        L3PlayerCompatWork pw{};
+        assert(!l3::source_camera_busy_8003a13c(fc));
+        l3::source_camera_focus_80039ffc(fc,{1000,-80,2000},300,0x0F00,0x30+0x61);
+        assert(l3::source_camera_busy_8003a13c(fc)&&fc.blend_mode_800a3959==1);
+        assert(fc.start_yaw_800a3980==0x1000&&fc.end_yaw_800a3998==0x0F00);   // the short way round
+        int n=0;
+        while(l3::source_camera_busy_8003a13c(fc)&&n<40){assert(l3::source_gameplay_camera_blend_80038894(fc,refs,pw,true));++n;}
+        assert(n==17&&fc.distance_800a3964==300&&fc.target_800a39a0[0]==1000&&fc.target_800a39a0[2]==2000&&fc.pitch_800a396c==0x91&&fc.yaw_800a3968==0x0F00);
+        assert(!l3::source_gameplay_camera_blend_80038894(fc,refs,pw,true));
+        l3::source_camera_return_80039e50(fc,pw);
+        assert(fc.blend_mode_800a3959==2&&fc.end_distance_800a3994==0x200&&fc.end_pitch_800a399c==0x30&&fc.end_yaw_800a3998==0x800);
+        n=0; while(l3::source_camera_busy_8003a13c(fc)&&n<40){l3::source_gameplay_camera_blend_80038894(fc,refs,pw,true);++n;}
+        assert(n==17&&fc.blend_mode_800a3959==0&&fc.distance_800a3964==0x200&&fc.target_800a39a0[1]==-0x96);
+    }
     std::cout<<"PASS: source gameplay camera init/follow/yaw rate/lag clamp/distance, 0x800A395F shake, 0x80049C54 eye test, 0x8004920C floor\n";
 }

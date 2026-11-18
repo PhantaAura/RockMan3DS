@@ -161,4 +161,65 @@ void source_gameplay_camera_update_80038894(SourceGameplayCamera& c,
     c.shake_800a395f=c.shake_800a395f<10?0:uint8_t(c.shake_800a395f-10);
 }
 
+namespace {
+// The yaw pair fix-up 0x80039ffc / 0x80039e50 share: the shorter way round.
+void wrap_pair(int32_t& start, int32_t& end) noexcept {
+    if (end < start) { if (end - (start - 0x1000) < start - end) end += 0x1000; }
+    else if (start - (end - 0x1000) < end - start) start += 0x1000;
+}
+}
+void source_camera_focus_80039ffc(SourceGameplayCamera& c, const std::array<int32_t,3>& point,
+    int32_t distance, uint32_t yaw, int32_t pitch) noexcept {
+    c.start_distance_800a397c = c.distance_800a3964;
+    c.blend_mode_800a3959 = 1; c.blend_counter_800a3962 = 0x40;
+    c.start_point_800a39c0 = c.target_800a39a0;
+    c.distance_goal_80097d2c = 0x200;                     // gp+0x4C8
+    c.end_yaw_800a3998 = int32_t(yaw & 0xFFFu);
+    c.start_yaw_800a3980 = c.yaw_800a3968 & 0xFFF;
+    c.start_pitch_800a3984 = c.pitch_800a396c;
+    c.end_point_800a39e0 = point;
+    c.end_distance_800a3994 = distance; c.end_pitch_800a399c = pitch;
+    c.blend_step_800a3961 = -4;
+    wrap_pair(c.start_yaw_800a3980, c.end_yaw_800a3998);
+}
+void source_camera_return_80039e50(SourceGameplayCamera& c, const L3PlayerCompatWork& p) noexcept {
+    c.blend_mode_800a3959 = 2; c.blend_counter_800a3962 = 0x40;
+    c.start_point_800a39c0 = c.target_800a39a0;
+    c.distance_goal_80097d2c = 0x200; c.end_distance_800a3994 = 0x200;
+    c.height_800a39b4 = 0x96; c.end_pitch_800a399c = 0x30; c.blend_step_800a3961 = -4;
+    c.start_distance_800a397c = c.distance_800a3964;
+    c.start_yaw_800a3980 = c.yaw_800a3968 & 0xFFF;
+    c.start_pitch_800a3984 = c.pitch_800a396c;
+    c.end_point_800a39e0 = {rd16(p, 0x14), rd16(p, 0x16) - 0x96, rd16(p, 0x18)};
+    c.end_yaw_800a3998 = (rd16(p, 0x56) + 0x800) & 0xFFF;
+    wrap_pair(c.start_yaw_800a3980, c.end_yaw_800a3998);
+}
+bool source_gameplay_camera_blend_80038894(SourceGameplayCamera& c, const ReferenceTables& refs,
+    const L3PlayerCompatWork& p, bool event_active) noexcept {
+    if (!c.initialized || c.blend_counter_800a3962 < 0) return false;
+    if (!event_active && (rd16(p, 0x14) != rd16(p, 0x2C) || rd16(p, 0x16) != rd16(p, 0x2E) || rd16(p, 0x18) != rd16(p, 0x30)))
+        c.end_point_800a39e0 = {rd16(p, 0x14), rd16(p, 0x16) - c.height_800a39b4, rd16(p, 0x18)};
+    if (c.blend_counter_800a3962 == 0) {                   // 0x80038B30: settle on the end
+        c.blend_counter_800a3962 = -1;
+        c.distance_800a3964 = c.end_distance_800a3994; c.pitch_800a396c = c.end_pitch_800a399c;
+        c.target_800a39a0 = c.end_point_800a39e0; c.yaw_800a3968 = c.end_yaw_800a3998;
+        if (c.blend_mode_800a3959 == 2) c.blend_mode_800a3959 = 0;
+    } else {
+        int t = c.blend_counter_800a3962 + c.blend_step_800a3961;
+        if (int8_t(t) < 0) t = 0;
+        c.blend_counter_800a3962 = int8_t(t);
+        const int32_t u = 0x40 - t;
+        auto mix = [&](int32_t a, int32_t b) { return int32_t((int64_t(a) * t + int64_t(b) * u) >> 6); };
+        c.distance_800a3964 = mix(c.start_distance_800a397c, c.end_distance_800a3994);
+        c.pitch_800a396c = mix(c.start_pitch_800a3984, c.end_pitch_800a399c);
+        c.yaw_800a3968 = mix(c.start_yaw_800a3980, c.end_yaw_800a3998);   // (0x800A3960 == 3 path not ported)
+        for (int i = 0; i < 3; ++i) c.target_800a39a0[size_t(i)] = mix(c.start_point_800a39c0[size_t(i)], c.end_point_800a39e0[size_t(i)]);
+    }
+    // 0x80038FE4 tail: shake lift, produce, shake decay.
+    c.target_800a39a0[1] -= c.shake_800a395f;
+    produce_80037fb4(c, refs);
+    c.shake_800a395f = c.shake_800a395f < 10 ? 0 : uint8_t(c.shake_800a395f - 10);
+    return true;
+}
+
 } // namespace l3

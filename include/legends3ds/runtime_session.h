@@ -865,6 +865,8 @@ private:
     std::array<St03NpcTick,kSt03ObjectSlots> st03_object_ticks_{};
     std::array<St02ActorModel,kSt03ObjectSlots> st03_object_models_{};
     std::array<uint8_t,kSt03ObjectSlots> st03_model_class_{};
+    // Family-0x60 slots (the police car 60/0E): a static mesh and its rest pose.
+    std::array<std::optional<ActorPoseResource>,kSt03ObjectSlots> st03_static_pose_{};
     std::array<const ActorAnimationRequestCache*,kSt03ObjectSlots> st03_object_current_{};
     std::array<ActorSequenceCursor,kSt03ObjectSlots> st03_object_cursor_{};
     uint32_t st03_npc_seed_=0;

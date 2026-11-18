@@ -109,7 +109,8 @@ struct St03NpcInputs {
     bool window_open = false;                  // 0x80098A58 & 0x00200000
     bool talk_active = false;                  // 0x800987B0 (the talk runner's block +0)
     bool save_phase = false;
-    int8_t anim_a6 = 0;                        // +0xA6 (animation cursor key byte): the walk sounds play on 1                   // main phase 0x800C1B10 == 6 (Data's Save, see DATA_MENU.md)
+    int8_t anim_a6 = 0;
+    uint16_t frame_1f800002 = 0;               // scratch frame word (the car's dust runs when & 3 == 0)                        // +0xA6 (animation cursor key byte): the walk sounds play on 1                   // main phase 0x800C1B10 == 6 (Data's Save, see DATA_MENU.md)
 };
 struct St03NpcTick {
     bool in_range = false;                     // 0x8010A4EC
@@ -121,7 +122,11 @@ struct St03NpcTick {
     bool table_missing = false;                // walk_speeds / walk_tables absent
     bool refs_missing = false;                 // refs absent (no walk, no ahead check)
     bool moved = false;                        // 0x8002FEA4 ran
-    bool car_dust = false;                     // the car's 0x80031618 dust (not ported)
+    bool car_dust = false;                     // the car's drive reached the dust step (0x80110AA0)
+    // 0x80110ACC: up to four 0x80031618 effects {+0 = 1, +2 = 0x83, +3 = 1, +0x1C = point}: the car's
+    // position plus row (i) of 0x801172CC turned by +0x56 (0x8002FFC4 -> 0x80030058, 0x80030150).
+    std::array<std::array<int16_t,3>,4> dust_points{};
+    uint8_t dust_count = 0;
     bool id_target_missing = false;            // behaviour 1/2 needed 0x80036294(+0x0C)
     bool clear_player_target = false;          // *(0x800B5334) = 0
     std::optional<uint16_t> flag_set;          // 0x8001DA8C(flag)

@@ -48,6 +48,16 @@ struct SourceGameplayCamera {
     // 0x800A39B4: target height above the player. The init paths write 0x96;
     // a scripted mode (0xD2) is not ported.
     int32_t height_800a39b4 = 0x96;
+    // Blend (0x80039FFC focus / 0x80039E50 return, played by 0x80038894 mode 0 at 0x800389C8):
+    // counter 0x800A3962 (-1 idle; 0x8003A13C is busy while it is >= 0), step 0x800A3961,
+    // mode 0x800A3959 (1 focus, 2 return), start 0x800A397C/80/84 + point 0x800A39C0,
+    // end 0x800A3994/98/9C + point 0x800A39E0.
+    int8_t blend_counter_800a3962 = -1;
+    int8_t blend_step_800a3961 = -4;
+    uint8_t blend_mode_800a3959 = 0;
+    int32_t start_distance_800a397c = 0, start_yaw_800a3980 = 0, start_pitch_800a3984 = 0;
+    int32_t end_distance_800a3994 = 0, end_yaw_800a3998 = 0, end_pitch_800a399c = 0;
+    std::array<int32_t,3> start_point_800a39c0{}, end_point_800a39e0{};
 };
 
 struct SourceGameplayCameraFrame {
@@ -74,6 +84,19 @@ void source_gameplay_camera_init_80038648(SourceGameplayCamera& camera,
 void source_gameplay_camera_update_80038894(SourceGameplayCamera& camera,
     const ReferenceTables& refs, const L3PlayerCompatWork& player,
     const RuntimeMap& map, size_t area_index) noexcept;
+
+// 0x80039FFC: blend from the current view to (point, distance, yaw, pitch) in 16 updates.
+void source_camera_focus_80039ffc(SourceGameplayCamera& camera, const std::array<int32_t,3>& point,
+    int32_t distance, uint32_t yaw, int32_t pitch) noexcept;
+// 0x80039E50: blend back to the follow view behind the player (distance 0x200, pitch 0x30,
+// height 0x96, yaw = player +0x56 + 0x800). The caller clears player +0x44D (0x800B55FD).
+void source_camera_return_80039e50(SourceGameplayCamera& camera, const L3PlayerCompatWork& player) noexcept;
+// 0x8003A13C: 1 while a blend runs.
+inline bool source_camera_busy_8003a13c(const SourceGameplayCamera& c) noexcept { return c.blend_counter_800a3962 >= 0; }
+// 0x80038894 with a blend running (0x800389C8..0x80038B9C): event_active is 0x800C4C48 != 0
+// (the end point follows the player only without an event). Returns false when no blend runs.
+bool source_gameplay_camera_blend_80038894(SourceGameplayCamera& camera, const ReferenceTables& refs,
+    const L3PlayerCompatWork& player, bool event_active) noexcept;
 
 // 0x80037FB4 eye: target - (d*sin(yaw)*cos(pitch), d*sin(pitch),
 // d*cos(yaw)*cos(pitch)) with original Q12 truncation and signed16 narrowing.

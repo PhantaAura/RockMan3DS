@@ -565,7 +565,18 @@ void car_drive_801107fc(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) n
     const int32_t dx = int16_t(ex - w.raw_14[0]), dz = int16_t(ez - w.raw_14[2]);
     if (dx * dx + dz * dz > 16384) { if (n.speed_44 < 800) n.speed_44 = int16_t(n.speed_44 + n.accel_4c); }
     else if (n.speed_44 >= 353) n.speed_44 = int16_t(n.speed_44 - n.accel_4c);
-    out.car_dust = true;   // 0x80031618 x 4 every 4th frame (not ported)
+    out.car_dust = true;
+    // 0x80110AA0: every fourth frame, four dust effects at the wheels (offsets 0x801172CC).
+    static constexpr int16_t kDust[4][3] = {{1280, -128, 1216}, {1280, -128, -1216}, {-2560, -128, 1216}, {-2560, -128, -1216}};
+    if ((in.frame_1f800002 & 3u) == 0 && in.refs) {
+        for (size_t i = 0; i < 4; ++i) {
+            const auto m = reference_player_motion_delta(*in.refs, w.rot_54[1], kDust[i][0], kDust[i][1], kDust[i][2]);
+            const std::array<int32_t,3> delta{{m.dx_fixed, m.dy_fixed, m.dz_fixed}};
+            for (size_t a = 0; a < 3; ++a)
+                out.dust_points[i][a] = reference_fixed_to_short_80030150(int32_t(uint32_t(w.fixed_1c[a]) + uint32_t(delta[a])));
+        }
+        out.dust_count = 4;
+    }
 }
 St03NpcTick step_car(St03Npc& n, const St03NpcInputs& in) noexcept {
     St03NpcTick out;

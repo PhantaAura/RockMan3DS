@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_static_pose_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1484,7 +1484,8 @@ void RuntimeSession::update_camera(){
             source_gameplay_camera_init_80038648(source_gameplay_camera_,*reference_tables_,
                 rds16w(player_,0x14),rds16w(player_,0x18));
             player_.bytes[0x44D]=0;
-        } else {
+        } else if(!source_gameplay_camera_blend_80038894(source_gameplay_camera_,*reference_tables_,player_,
+                      st03_event8_.active)){   // 0x800C4C48 != 0 while an event runs (CANDIDATE: event 8 only)
             source_gameplay_camera_update_80038894(source_gameplay_camera_,*reference_tables_,
                 player_,active_map(),map_area_index_);
         }
@@ -1908,9 +1909,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         input.turn_delta=target?class20_03_turn_step(uint16_t(*target),rd16w(player_,0x56),32):0;
     }
     if(ev.scene==2){
-        // CANDIDATE: the port has no focus camera (0x80039FFC), so
-        // 0x8003A13C reads "settled" at once.
-        input.camera_busy=false;
+        input.camera_busy=source_camera_busy_8003a13c(source_gameplay_camera_);   // 0x8003A13C
         input.flag_606=story_flag(0x606);
         if(st03_objects_.size()>1&&st03_objects_[1].w.live){
             input.barrell=st03_objects_[1].w.raw_14;
@@ -1951,6 +1950,13 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(step.player_heading_56)wr16w(player_,0x56,*step.player_heading_56);
     // Player +0 bit 1 (drawn) with +0xBD bit 0x40 (CANDIDATE: the port's
     // player draw does not read +0 yet).
+    if(step.camera_focus){   // 0x80039FFC(point, distance, yaw, 0x800A396C + 0x61)
+        const auto& f=*step.camera_focus;
+        source_camera_focus_80039ffc(source_gameplay_camera_,{f.point[0],f.point[1],f.point[2]},f.distance,f.yaw,
+            source_gameplay_camera_.pitch_800a396c+0x61);
+        player_.bytes[0x44D]=0;   // 0x800B55FD
+    }
+    if(step.camera_restore_80039e50){source_camera_return_80039e50(source_gameplay_camera_,player_);player_.bytes[0x44D]=0;}
     if(step.player_hide){player_.bytes[0]=uint8_t(player_.bytes[0]&~2u);player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]|0x40u);}
     if(step.player_show){player_.bytes[0]=uint8_t(player_.bytes[0]|2u);player_.bytes[0xBD]=uint8_t(player_.bytes[0xBD]&~0x40u);}
     for(uint8_t f=0;f<step.flag_clear_count;++f)set_story_flag(step.flag_clears[f],false);
@@ -2136,6 +2142,22 @@ void RuntimeSession::spawn_st03_object_set(uint8_t n){
         const bool same=m.mesh&&m.bank&&st03_model_class_[r.slot]==r.object_class;
         st03_objects_[r.slot]=spawn_st03_object(r);
         st03_object_current_[r.slot]=nullptr;
+        if(r.family==0x60){   // 0x8002F9C4 on the family-0x60 row: one-part static mesh (no banks)
+            st03_static_pose_[r.slot].reset();
+            budget+=m.decoded_bytes;m={};st03_model_class_[r.slot]=0xFF;
+            try{
+                const auto rows=find_ebd_entries(area_.ebd,0x60,r.object_class);
+                if(!rows.empty()&&!area_.ebd.source_payload.empty()){
+                    auto mesh=decode_ebd_class60_mesh(area_.ebd,rows[0],ActorMeshTier::NEAR,budget);
+                    ActorPoseResource rest;rest.base_translation.assign(mesh.bindings.size(),{{0,0,0}});
+                    m.decoded_bytes=mesh.footprint.decoded_bytes;budget-=std::min(budget,m.decoded_bytes);
+                    m.mesh=std::make_shared<const ActorMeshResource>(std::move(mesh));
+                    st03_static_pose_[r.slot]=std::move(rest);st03_model_class_[r.slot]=r.object_class;
+                }
+            }catch(const std::exception&){m={};}
+            continue;
+        }
+        st03_static_pose_[r.slot].reset();
         if(r.family!=0x20){budget+=m.decoded_bytes;m={};st03_model_class_[r.slot]=0xFF;continue;}
         if(!same){
             st03_model_class_[r.slot]=r.object_class;
@@ -2183,6 +2205,7 @@ void RuntimeSession::update_st03_objects(){
         in.id_target=resolve(o.w.byte_0c);in.id_target2=resolve(o.w.byte_0d);
         in.talk_active=st03_talk_active_;in.save_phase=save_screen_frames_!=0;
         in.anim_a6=int8_t(st03_object_cursor_[i].opaque_a6);
+        in.frame_1f800002=uint16_t(frame_counter_);   // CANDIDATE phase, as for event 4
         t=step_st03_npc(o,in);
         if(t.talk_target_taken||t.clear_player_target)player_check_npc_.reset();
         if(t.flag_set)set_story_flag(*t.flag_set,true);
@@ -2217,7 +2240,13 @@ size_t RuntimeSession::source_st03_object_draws(std::array<St02ActorDraw,kSt03Ob
     size_t n=0;
     for(size_t i=0;i<st03_objects_.size();++i){
         const auto& o=st03_objects_[i];const auto& m=st03_object_models_[i];
-        if(!o.w.live||!(o.w.flags_00&2u)||!m.mesh||!m.bank||!st03_object_current_[i])continue;
+        if(!o.w.live||!(o.w.flags_00&2u)||!m.mesh)continue;
+        if(st03_static_pose_[i]){
+            auto mx=build_st02_event4_actor_matrices(*m.mesh,*st03_static_pose_[i],o.w);
+            if(mx.part_count)out[n++]={uint8_t(i),m.mesh.get(),mx};
+            continue;
+        }
+        if(!m.bank||!st03_object_current_[i])continue;
         const auto* pose=select_st02_event4_actor_pose(*m.bank,o.w.pose_ac,st03_object_cursor_[i]);
         if(!pose)continue;
         auto mx=build_st02_event4_actor_matrices(*m.mesh,*pose,o.w);

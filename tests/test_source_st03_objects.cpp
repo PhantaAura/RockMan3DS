@@ -266,6 +266,11 @@ int main() {
         c.byte_0f |= 0x40; c.w.state_09 = 1; c.w.sub_0a = 0;
         r = step_st03_npc(c, k);
         CHECK(r.moved && c.car_last == 4 && c.car_index_c4 == 1 && c.speed_44 == 22);
+        CHECK(r.car_dust && r.dust_count == 4);                               // frame word 0: dust at the wheels
+        k.frame_1f800002 = 1; r = step_st03_npc(c, k); CHECK(r.car_dust && r.dust_count == 0);
+        k.frame_1f800002 = 4; r = step_st03_npc(c, k);
+        CHECK(r.dust_count == 4 && (r.dust_points[0][0] != r.dust_points[2][0] || r.dust_points[0][2] != r.dust_points[2][2]));   // front vs rear
+        k.frame_1f800002 = 0;
         n = 0; while (c.car_index_c4 == 1 && n < 400) { step_st03_npc(c, k); ++n; }
         CHECK(c.car_index_c4 == 2 && c.w.raw_14[2] < -136 && c.w.raw_14[2] > -264);
     }
