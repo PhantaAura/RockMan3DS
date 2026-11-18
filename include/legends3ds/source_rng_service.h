@@ -51,7 +51,7 @@ enum class SourceRngStatus : uint8_t {
     Ready, Disabled, NeedsObservedProfile, InvalidProfile, InvalidContext,
     DuplicateCallback, UpdateFull, OrdinalExhausted, StaleTransaction
 };
-enum class SourceRngUpdatePhase : uint8_t { Class03Callbacks = 1, Effect2Callback = 2, SceneEventCallback = 3, PropLiftCallback = 4, Effect34Callback = 5, RewardPickupCallback = 6, E0ObjectCallback = 7 };
+enum class SourceRngUpdatePhase : uint8_t { Class03Callbacks = 1, Effect2Callback = 2, SceneEventCallback = 3, PropLiftCallback = 4, Effect34Callback = 5, RewardPickupCallback = 6, E0ObjectCallback = 7, St03ObjectCallback = 8 };
 struct SourceRngUpdateContext {
     uint64_t native_frame = 0, native_update_ordinal = 0;
     SourceRngUpdatePhase phase = SourceRngUpdatePhase::Class03Callbacks;
@@ -96,6 +96,15 @@ constexpr std::array<uint32_t,10> kSourceE0BlockRngCallerRas{{0x801133e4u,0x8011
 struct SourceRngE0Context {
     uint32_t caller_ra = 0, work = 0;
     uint8_t slot = 255;
+};
+// ST03 scene objects (0x80103AB0 sets): the generic NPC (idle 0x80107FCC, walk 0x801081C8 /
+// 0x8010829C, fidget 0x8010A42C), the variant-1 ticks (officer 0x8010C868, Barrell 0x8010D2E8,
+// Inspector 0x8010DB68) and the police car init 0x80110534; return addresses = jal + 8.
+constexpr std::array<uint32_t,8> kSourceSt03ObjectRngCallerRas{{0x80107fd4u,0x801081d0u,0x801082a4u,0x8010a434u,
+    0x8010c870u,0x8010d2f0u,0x8010db70u,0x8011053cu}};
+struct SourceRngSt03Context {
+    uint32_t caller_ra = 0;
+    uint8_t slot = 255;   // ST03 object slot 0..9
 };
 struct SourceRngRewardContext {
     uint32_t caller_ra=0,work=0;
@@ -169,6 +178,7 @@ SourceRngStagedSample stage_source_rng_prop_lift(SourceRngUpdateTransaction&, co
 SourceRngStagedSample stage_source_rng_effect34(SourceRngUpdateTransaction&, const SourceRngEffect34Context&) noexcept;
 SourceRngStagedSample stage_source_rng_reward(SourceRngUpdateTransaction&, const SourceRngRewardContext&) noexcept;
 SourceRngStagedSample stage_source_rng_e0(SourceRngUpdateTransaction&, const SourceRngE0Context&) noexcept;
+SourceRngStagedSample stage_source_rng_st03(SourceRngUpdateTransaction&, const SourceRngSt03Context&) noexcept;
 SourceRngStatus commit_source_rng_update(SourceRngService&, SourceRngUpdateTransaction&) noexcept;
 void rollback_source_rng_update(SourceRngUpdateTransaction&) noexcept;
 } // namespace l3

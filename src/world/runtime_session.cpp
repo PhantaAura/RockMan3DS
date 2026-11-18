@@ -2166,14 +2166,16 @@ void RuntimeSession::spawn_st03_object_set(uint8_t n){
         }
     }
 }
-void RuntimeSession::update_st03_objects(){
+void RuntimeSession::update_st03_objects(SourceRngService* rng){
     // The object update for the ST03 scene objects: slot order (CANDIDATE),
     // after the event in the same frame. 0x80048E6C is not run for them
     // (they keep the record's y; CANDIDATE). Rand: 0x8007FE50 is the BIOS A0 stub (t2 = 0xA0,
     // t1 = 0x2F, rand): seed = seed * 0x41C64E6D + 0x3039, result (seed >> 16) & 0x7FFF, the
     // step below (VERIFIED from the stub; the BIOS body is the standard A(2Fh)). The seed is
-    // the BIOS's global one shared by every rand() caller; the port keeps a local seed from 0,
-    // so the sequence position stays CANDIDATE.
+    // the BIOS's global one shared by every rand() caller: with the shared SourceRngService
+    // admitted (its seed comes from the oracle-observed profile) the draws use it at their real
+    // call sites; without it a local seed from 0 stands in (CANDIDATE). The EXE has no srand
+    // stub (no A0:30 call), so nothing reseeds after boot.
     if(stage_!=3)return;
     // The talk runner's block +0 clears once the talk's window closed.
     if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
@@ -2183,7 +2185,10 @@ void RuntimeSession::update_st03_objects(){
         St03NpcInputs in;
         in.player_x=rds16w(player_,0x14);in.player_z=rds16w(player_,0x18);
         in.idle_timers=st03_event8_profile_&&st03_event8_profile_->idle_timers_loaded?&st03_event8_profile_->idle_timers:nullptr;
-        const uint32_t next=st03_npc_seed_*1103515245u+12345u;
+        // With the shared service (the BIOS's one global seed) the draws come from its seed and are
+        // staged and committed after the step at the sites the step reports; without it a local seed.
+        const bool shared=rng&&rng->admitted();
+        const uint32_t next=(shared?rng->seed32():st03_npc_seed_)*1103515245u+12345u;
         in.rand=uint16_t((next>>16)&0x7fffu);
         const uint32_t next2=next*1103515245u+12345u;
         in.rand2=uint16_t((next2>>16)&0x7fffu);
@@ -2226,7 +2231,17 @@ void RuntimeSession::update_st03_objects(){
             if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.talk_start});}
                 catch(const std::exception&){}
         }
-        if(t.rand2_used)st03_npc_seed_=next2;else if(t.rand_used)st03_npc_seed_=next;
+        if(shared){
+            if(t.rand_used){
+                SourceRngUpdateTransaction rt;
+                if(begin_source_rng_update(*rng,rt,{frame_counter_,frame_counter_,SourceRngUpdatePhase::St03ObjectCallback})==SourceRngStatus::Ready){
+                    bool ok=stage_source_rng_st03(rt,{t.rand_ra,uint8_t(i)}).status==SourceRngStatus::Ready;
+                    if(ok&&t.rand2_used)ok=stage_source_rng_st03(rt,{t.rand2_ra,uint8_t(i)}).status==SourceRngStatus::Ready;
+                    if(ok)(void)commit_source_rng_update(*rng,rt);else{rollback_source_rng_update(rt);++st03_rng_rejected_;}
+                }
+            }
+        }
+        else if(t.rand2_used)st03_npc_seed_=next2;else if(t.rand_used)st03_npc_seed_=next;
         const auto& bank=st03_object_models_[i].bank;
         if(t.anim_request){
             st03_object_current_[i]=bank?find_actor_animation_request(*bank,*t.anim_request):nullptr;
@@ -2943,7 +2958,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
     source_event_result_=step_source_event_pipeline(source_event_work_,source_event_profile_.get(),source_event_input);
     update_source_post_win_event(in);
     update_st03_event8(in);
-    update_st03_objects();
+    update_st03_objects(candidate_rng);
     // Oracle (US disc, New Game): 0x1F800074 reads 0 from phase 4 through the
     // constructor tick, where the class-40 initializer 0x8010C930 already runs
     // (same tick, after the event); the camera program writes it next tick.

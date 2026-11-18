@@ -719,7 +719,7 @@ private:
     void update_source_post_win_event(const RuntimeInputFrame&);
     void update_source_st02_event4_actors(const SourcePostWinProfile&);
     void update_st03_event8(const RuntimeInputFrame&);
-    void update_st03_objects();
+    void update_st03_objects(SourceRngService* rng);
     void spawn_st03_object_set(uint8_t n);
     void release_st03_objects() noexcept;
     void update_source_door_objects();
@@ -871,6 +871,7 @@ private:
     std::array<ActorSequenceCursor,kSt03ObjectSlots> st03_object_cursor_{};
     uint32_t st03_npc_seed_=0;
     bool st03_talk_active_=false;              // 0x800987B0 for an NPC talk
+    uint32_t st03_rng_rejected_=0;             // shared-RNG draws the service refused (seed not advanced)
     std::function<bool(const RuntimeSaveState&)> save_writer_;
     uint8_t save_screen_frames_=0;             // main phase 6 stand-in
     bool save_screen_host_=false,save_screen_open_=false;

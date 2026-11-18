@@ -56,7 +56,7 @@ void behaviour0_80107f5c(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
     case 0: {
         if (!in.rand || !in.idle_timers) { out.rand_missing = true; return; }
         w.pose_ac = st03_npc_idle_request(n.object_class);
-        out.rand_used = true;
+        out.rand_used = true; out.rand_ra = 0x80107FD4u;
         const size_t i = size_t(n.byte_0e & 3u) * 16u + (*in.rand & 15u);
         n.timer_350 = int16_t((*in.idle_timers)[i]);
         ++w.sub_0a;
@@ -67,7 +67,7 @@ void behaviour0_80107f5c(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
         if (n.object_class == 73) n.timer_350 = 120;
         if (n.object_class == 0x53) {
             if (!in.rand) { out.rand_missing = true; ++n.timer_350; return; }
-            out.rand_used = true;
+            out.rand_used = true; out.rand_ra = 0x8010A434u;
         }
         w.pose_ac = st03_npc_fidget_request(n.object_class, in.rand.value_or(0));
         ++w.sub_0a;
@@ -118,7 +118,10 @@ void behaviour4_8010940c(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
     }
     case 1:     // 0x80109534
         if (!(w.byte_0d & 0x40u)) add_heading(n, turn_to_player(n, in, n.turn_step_34e));
-        if (in.window_open) { w.pose_ac = st03_npc_fidget_request(n.object_class, in.rand.value_or(0)); ++n.talk_34b; }
+        if (in.window_open) {
+            if (n.object_class == 0x53) { out.rand_used = true; out.rand_ra = 0x8010A434u; }   // only 0x53 draws (0x8010A3AC)
+            w.pose_ac = st03_npc_fidget_request(n.object_class, in.rand.value_or(0)); ++n.talk_34b;
+        }
         if (!in.talk_active) end_talk(n);
         return;
     case 2:     // 0x80109608
@@ -247,7 +250,7 @@ void behaviour1_80108100(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
         return;
     case 1: {   // 0x80108194: pick walk / idle / turn back, then a timer
         if (!in.rand || !in.rand2 || !in.walk_tables) { out.rand_missing = !in.rand || !in.rand2; out.table_missing |= !in.walk_tables; return; }
-        out.rand_used = out.rand2_used = true;
+        out.rand_used = out.rand2_used = true; out.rand_ra = 0x801081D0u; out.rand2_ra = 0x801082A4u;
         const auto& t = *in.walk_tables;   // 0x80116ED4: choices [0..63], timers [64..111]
         uint8_t choice = t[(w.byte_0d & 0x30u) + (*in.rand & 15u)];
         size_t timers = 64;   // 0x80116F14
@@ -284,7 +287,7 @@ void behaviour1_80108100(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
     }
     case 6:   // 0x801084FC
         if (--n.timer_350 == 0) {
-            if (n.object_class == 0x53) { if (!in.rand) { out.rand_missing = true; ++n.timer_350; return; } out.rand_used = true; }
+            if (n.object_class == 0x53) { if (!in.rand) { out.rand_missing = true; ++n.timer_350; return; } out.rand_used = true; out.rand_ra = 0x8010A434u; }
             w.pose_ac = st03_npc_fidget_request(n.object_class, in.rand.value_or(0));
             n.timer_350 = 70; ++w.sub_0a;
         }
@@ -503,6 +506,7 @@ St03NpcTick step_scene_v1(St03Npc& n, const St03NpcInputs& in) noexcept {
     n.pose_ad = w.pose_ac;
     w.colour_15e = 0x4210;
     out.rand_used = true;   // +0x34A = 0x8007FE50() every tick
+    out.rand_ra = n.object_class == 0x25 ? 0x8010D2F0u : n.object_class == 0x26 ? 0x8010DB70u : 0x8010C870u;
     if (n.object_class == 0x25) barrell1_behaviour(n, in, out);
     else if (n.object_class == 0x26) inspector1_behaviour(n, in, out);
     else officer1_behaviour(n, in, out);
@@ -581,7 +585,7 @@ void car_drive_801107fc(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) n
 St03NpcTick step_car(St03Npc& n, const St03NpcInputs& in) noexcept {
     St03NpcTick out;
     auto& w = n.w;
-    out.rand_used = true;   // +0xBE = 0x8007FE50()
+    out.rand_used = true; out.rand_ra = 0x8011053Cu;   // +0xBE = 0x8007FE50()
     if (w.state_08 == 0) { car_init_801105b8(n); return out; }
     if (w.state_08 != 1) return out;
     out.in_range = true;

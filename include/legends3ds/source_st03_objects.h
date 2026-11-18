@@ -118,6 +118,7 @@ struct St03NpcTick {
     bool anim_advance = false;                 // 0x80032488 (after any request this tick)
     bool rand_used = false;
     bool rand2_used = false;
+    uint32_t rand_ra = 0, rand2_ra = 0;        // the 0x8007FE50 call sites (jal + 8) of the two draws
     bool rand_missing = false;
     bool table_missing = false;                // walk_speeds / walk_tables absent
     bool refs_missing = false;                 // refs absent (no walk, no ahead check)
