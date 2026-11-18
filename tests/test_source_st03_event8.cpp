@@ -209,6 +209,17 @@ int main() {
         a = {}; CHECK(st03_area_enter_8010089c(0, 0xFF, ag, as) && !a[0x1FF]);
         CHECK(!st03_area_enter_8010089c(7, 0, ag, as) && a[0x1FF]);   // reported, still sets 0x1FF
     }
+    // Cooked stage door locks (doors.l3door): ST0C's list [1, 2], row 0 [0, 1].
+    {
+        std::vector<uint8_t> b{'L','3','D','L',1,0,2,0, 1,2,0,0,0,0,0,0, 0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0};
+        const auto d = load_stage_door_locks(b);
+        CHECK(d && d->doors[0] == 1 && d->doors[1] == 2 && d->rows.size() == 2 && d->rows[0][1] == 1);
+        std::array<bool, 0x800> fl{}; fl[0x7E1] = true;
+        source_door_locks_8001e4c4(d->doors, d->rows[0], [&](uint16_t f, bool v) { fl[f] = v; });
+        CHECK(!fl[0x7E1] && fl[0x7E2]);
+        b.pop_back(); CHECK(!load_stage_door_locks(b));
+        b.push_back(0); b[4] = 2; CHECK(!load_stage_door_locks(b));
+    }
     // Area 2 set-up 0x80100BF8, first pass.
     {
         const auto run = [](std::initializer_list<uint16_t> on, uint8_t& st) {

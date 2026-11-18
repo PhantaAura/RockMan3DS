@@ -82,7 +82,9 @@ EXTRA_STAGES={
        'event_extra':{8:['80116578:64','801154B0:280','801158E8:340','80116E68:64','80116DAC:112','80116ED4:112','80117274:88','801152E4:128']}},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
-    0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':()},
+    0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
+          # Stage init 0x80100DE8: 0x8001E4C4(0x8010CB98, 0x8010CBA0 + 8 * 0x800C1B62); 6 rows.
+          'door_locks':(0x8010CB98,6)},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 
@@ -653,6 +655,11 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
     run(tools,'l3cook_render',*quartet,sout/'render.l3render')
     run(tools,'l3cook_map_init',*quartet,sout/'map.l3map',sout/'render.l3render',sout/'init.l3init','--stage0-startup')
     run(tools,'l3cook_st00_flow',work/'overlay',sout/'flow.l3flow','--stage',str(number))
+    # Stage init door locks (0x8001E4C4's list and rows, copied from the overlay).
+    if 'door_locks' in spec:
+        list_addr,rows=spec['door_locks']; ov=(work/'overlay').read_bytes(); o=list_addr-0x80100000
+        if o<0 or o+8+rows*8>len(ov): raise RuntimeError(f'{code} door locks outside the overlay')
+        (sout/'doors.l3door').write_bytes(b'L3DL'+bytes([1,0,rows,0])+ov[o:o+8+rows*8])
     # Stage events (tools/cook_cutscene.py): eventN.l3cs, bound by the runtime.
     for event in spec.get('events',()):
         subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),

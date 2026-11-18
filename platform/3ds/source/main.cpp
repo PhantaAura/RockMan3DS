@@ -5306,6 +5306,13 @@ int main() {
             } catch(const std::exception&) {}
             hardware_test_trace("# source_post_win_profile,stage=2,event=4,bound=%u",unsigned(bound));
         }
+        // Stage init door locks (stages/stNN/doors.l3door), stages other than 0 and 3.
+        if(g_stage!=0&&g_stage!=3) {
+            bool bound=false;
+            try{if(const auto locks=l3::load_stage_door_locks(read_binary(stage_path("doors.l3door"),4096))){session.bind_stage_door_locks(*locks);bound=true;}}
+            catch(const std::exception&){}
+            hardware_test_trace("# stage_door_locks,stage=%u,bound=%u",unsigned(g_stage),unsigned(bound));
+        }
         // ST03 event 8 (stages/st03/event8.l3cs), scene 0 only.
         if(g_stage==3) {
             bool bound=false;

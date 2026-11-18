@@ -8,6 +8,8 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <optional>
+#include <vector>
 
 namespace l3 {
 
@@ -26,5 +28,15 @@ void source_door_locks_8001e4c4(const std::array<uint8_t,8>& doors, const std::a
         if (s != 0xFFu) source_door_lock_8001e460(doors[i], (s & 1u) != 0, ((s >> 1) & 1u) != 0, set_flag);
     }
 }
+
+// A stage's cooked door-lock data (stages/stNN/doors.l3door): the door list
+// and the state rows its stage init passes to 0x8001E4C4, copied from the
+// overlay. Layout: "L3DL", u16 version 1, u8 row count, u8 0, list[8],
+// rows[count][8].
+struct StageDoorLocks {
+    std::array<uint8_t,8> doors{};
+    std::vector<std::array<uint8_t,8>> rows;
+};
+std::optional<StageDoorLocks> load_stage_door_locks(const std::vector<uint8_t>& bytes) noexcept;
 
 } // namespace l3
