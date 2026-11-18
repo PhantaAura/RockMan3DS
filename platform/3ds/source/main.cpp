@@ -45,6 +45,7 @@
 #include "legends3ds/source_player_pose.h"
 #include "legends3ds/source_buster_profile.h"
 #include "legends3ds/runtime_session.h"
+#include "legends3ds/source_save_screen.h"
 #include "legends3ds/source_stage_load.h"
 #include "legends3ds/source_game_over.h"
 #include "legends3ds/runtime_animation.h"
@@ -5447,6 +5448,10 @@ int main() {
             char line[160];std::snprintf(line,sizeof(line),"SUBSCREEN=0 %s",error.what());boot_log(MML_BOOT_DATA,line);
         }
         bool subscreen_open=false;uint16_t subscreen_pending=0;uint64_t subscreen_hash=0;
+        // Data's Save: the phase-6 memory-card screen (0x800665FC) on the bottom screen, with the
+        // 3DS files save_01516_slotN.blk as memory card 1 (CANDIDATE placement and card model).
+        std::unique_ptr<l3::SourceSaveScreen> save_screen;l3::GameplayClock save_clock;uint16_t save_pending=0;
+        if(subscreen)session.set_save_screen_host(true);
         l3::GameplayClock subscreen_clock;
         {
             char path[256];std::snprintf(path,sizeof(path),"%saudio/sfx_st00.l3sb",kDataRoot);
@@ -5830,6 +5835,81 @@ int main() {
                     }
                 }
                 down=0;held=0;   // the paused game sees no input
+            }
+            if(session.save_screen_open()&&subscreen){
+                const auto pad_bits=[](u32 k){
+                    uint16_t m=0;
+                    if(k&(KEY_A|KEY_B))m|=0x4000u;   // Cross (confirm)
+                    if(k&KEY_X)m|=0x1000u;           // Triangle (back)
+                    if(k&(KEY_DUP|KEY_CPAD_UP))m|=0x0010u;
+                    if(k&(KEY_DDOWN|KEY_CPAD_DOWN))m|=0x0040u;
+                    if(k&(KEY_DLEFT|KEY_CPAD_LEFT))m|=0x0080u;
+                    if(k&(KEY_DRIGHT|KEY_CPAD_RIGHT))m|=0x0020u;
+                    return m;
+                };
+                if(!save_screen){
+                    try{save_screen=std::make_unique<l3::SourceSaveScreen>(l3::load_exe_excerpt(read_binary(data_path("frontend/option.l3ex"))));}
+                    catch(...){save_screen.reset();}
+                    if(save_screen){
+                        // 0x8006689C reads each file's first 0x180 bytes; a block that fails the checks is broken.
+                        std::array<l3::SaveSlotRecord,5> slots{};
+                        for(int i=0;i<5;++i){
+                            char path[64];std::snprintf(path,sizeof path,"sdmc:/3ds/Legends3DS/save_01516_slot%d.blk",i+1);
+                            std::vector<uint8_t> blk;try{blk=read_binary(path);}catch(...){}
+                            if(blk.empty())continue;
+                            if(blk.size()<0x1F00||!l3::source_save_block_valid(blk.data(),blk.size())){slots[size_t(i)].status=3;continue;}
+                            slots[size_t(i)].status=1;slots[size_t(i)].stage=blk[0x100];
+                            std::copy(blk.begin()+0x101,blk.begin()+0x109,slots[size_t(i)].time_glyphs.begin());
+                        }
+                        save_screen->begin(slots);save_clock.reset();save_pending=0;
+                        hardware_test_trace("# save_screen,frame=%lu,open=1",(unsigned long)session.frame_counter());
+                    } else session.finish_save_screen();
+                }
+                if(save_screen){
+                    save_pending|=pad_bits(down);
+                    save_clock.advance((svcGetSystemTick()-previous_update_clock)/CPU_TICKS_PER_USEC,false);
+                    while(save_screen&&save_clock.consume()){
+                        auto t=save_screen->tick(pad_bits(held),save_pending);save_pending=0;
+                        {static int ss_was=-1;const int ss=save_screen->sub()*256+save_screen->step();
+                         if(ss!=ss_was){ss_was=ss;hardware_test_trace("# save_screen,frame=%lu,sub=%u,step=%u,flags=%08lx,unported=%u",
+                            (unsigned long)session.frame_counter(),unsigned(save_screen->sub()),unsigned(save_screen->step()),
+                            (unsigned long)save_screen->windows().flags_80098a58,unsigned(t.frame.unported_opcodes));}}
+                        for(const auto& snd:t.frame.sounds)(void)l3::enqueue_source_audio_8001a008(session.source_audio_queue(),snd[0],snd[1],0);
+                        if(sfx.ready()){(void)sfx.consume(session.source_audio_queue(),l3::SourceSoundListener{});sfx.tick(44100u/30u);}
+                        else l3::finish_source_audio_queue_batch_8001a1d0(session.source_audio_queue());
+                        if(t.write_slot){
+                            // 0x80065064 + 0x80065384 + 0x80064D74(card 1, slot): the block, then the native file.
+                            std::array<uint8_t,l3::kSourceSaveBlockBytes> block{};
+                            auto in=session.source_save_block_inputs(*t.write_slot);
+                            in.globals_800c1b10[0x55]=g_option_settings.free_look_800c1b65;in.globals_800c1b10[0x56]=g_option_settings.lock_on_800c1b66;
+                            in.globals_800c1b10[0x58]=g_option_settings.sound_800c1b68;in.globals_800c1b10[0x59]=g_option_settings.map_800c1b69;
+                            int result=-1;
+                            if(l3::build_source_save_block_80065064(save_screen->windows().excerpt(),in,block)){
+                                char path[64];std::snprintf(path,sizeof path,"sdmc:/3ds/Legends3DS/save_01516_slot%u.blk",unsigned(*t.write_slot)+1u);
+                                if(FILE* bf=std::fopen(path,"wb")){
+                                    const bool bok=std::fwrite(block.data(),1,l3::kSourceSaveTransferBytes,bf)==l3::kSourceSaveTransferBytes;
+                                    if(std::fclose(bf)==0&&bok)result=0;
+                                }
+                            }
+                            if(result==0){
+                                try{const auto bytes=l3::cook_l3save(session.native_save_state());
+                                    if(FILE* nf=std::fopen("sdmc:/3ds/Legends3DS/save_01516.l3sv","wb")){std::fwrite(bytes.data(),1,bytes.size(),nf);std::fclose(nf);}}catch(...){}
+                            }
+                            std::array<uint8_t,8> glyphs{};std::copy(block.begin()+0x101,block.begin()+0x109,glyphs.begin());
+                            save_screen->write_result(result,block[0x100],glyphs);
+                            hardware_test_trace("# save_screen,frame=%lu,write_slot=%u,result=%d,stage=%u",(unsigned long)session.frame_counter(),unsigned(*t.write_slot)+1u,result,unsigned(block[0x100]));
+                        }
+                        auto& target=(++subscreen_hash&1)?subscreen_rgb2:subscreen_rgb;
+                        std::fill(target.begin(),target.end(),0);
+                        (void)l3::rasterize_message_windows(t.frame.packets,subscreen_pages,target.data());
+                        mockup_hud_set_fullscreen(target.data(),subscreen_hash);
+                        if(t.done){
+                            save_screen.reset();session.finish_save_screen();mockup_hud_set_fullscreen(nullptr,0);mockup_hud_invalidate();
+                            hardware_test_trace("# save_screen,frame=%lu,open=0",(unsigned long)session.frame_counter());
+                        }
+                    }
+                }
+                down=0;held=0;   // phase 6: the game sees no input
             }
             if(g_render_submissions==1)boot_log(MML_BOOT_FIRST_FRAME,"waiting for first 3D GPU submission");
             const u64 gpu_wait_us=acquire_gpu_frame("gameplay frame");

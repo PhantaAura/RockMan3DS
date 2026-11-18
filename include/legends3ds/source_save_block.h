@@ -34,4 +34,7 @@ struct SourceSaveBlockInputs {
 bool build_source_save_block_80065064(const ExeExcerpt& exe, const SourceSaveBlockInputs& in,
                                       std::array<uint8_t,kSourceSaveBlockBytes>& out);
 
+// The 0x80065384 check words over the first 0x1F00 bytes hold (a block 0x8006689C accepts).
+bool source_save_block_valid(const uint8_t* block, size_t size);
+
 } // namespace l3

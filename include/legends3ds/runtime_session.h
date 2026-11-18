@@ -545,6 +545,12 @@ public:
     // writer stores the 3DS save file; the port has no memory-card screen (CANDIDATE).
     void set_save_writer(std::function<bool(const RuntimeSaveState&)> writer) { save_writer_ = std::move(writer); }
     bool save_screen_active() const noexcept { return save_screen_frames_ != 0; }
+    // The host draws the phase-6 screen: op 0xAC(8, 6) then opens it until finish_save_screen()
+    // (0x800164B4: sub 1 -> main phase 3, sub 2).
+    void set_save_screen_host(bool on) noexcept { save_screen_host_ = on; }
+    bool save_screen_open() const noexcept { return save_screen_open_; }
+    void finish_save_screen() noexcept { save_screen_open_ = false; save_screen_frames_ = 1; }
+    RuntimeSaveState native_save_state() const;   // the .l3sv state (checkpoint id = marker | stage << 8 | area)
     int save_result() const noexcept { return save_result_; }   // 0 none, 1 written, -1 failed
     // The 0x80065064 inputs from the port's state: play time (+0x0C, the session frame counter,
     // CANDIDATE), money (+0x1C), stage/area (+0x50/+0x51), Turn (+0x54), player work with life /
@@ -865,6 +871,7 @@ private:
     bool st03_talk_active_=false;              // 0x800987B0 for an NPC talk
     std::function<bool(const RuntimeSaveState&)> save_writer_;
     uint8_t save_screen_frames_=0;             // main phase 6 stand-in
+    bool save_screen_host_=false,save_screen_open_=false;
     int save_result_=0;
     std::optional<size_t> player_check_npc_;   // player +0x184 when it names an ST03 scene object   // CANDIDATE: 0x8007FE50's seed and caller order are not modelled
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;

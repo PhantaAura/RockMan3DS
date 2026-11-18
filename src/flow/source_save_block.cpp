@@ -44,6 +44,16 @@ void generate_checks(uint8_t* b, const std::array<uint32_t,6>& seeds) {
 }
 } // namespace
 
+bool source_save_block_valid(const uint8_t* block, size_t size) {
+    if (!block || size < kSourceSaveTransferBytes) return false;
+    std::array<uint8_t,kSourceSaveBlockBytes> copy{};
+    std::memcpy(copy.data(), block, kSourceSaveTransferBytes);
+    std::array<uint32_t,6> seeds{};
+    for (unsigned i = 0; i < 6; ++i) seeds[i] = rd32(block + kChecks[i].seed_off);
+    generate_checks(copy.data(), seeds);
+    return std::memcmp(copy.data(), block, kSourceSaveTransferBytes) == 0;
+}
+
 bool build_source_save_block_80065064(const ExeExcerpt& exe, const SourceSaveBlockInputs& in,
                                       std::array<uint8_t,kSourceSaveBlockBytes>& out) {
     out.fill(0);

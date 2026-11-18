@@ -75,6 +75,20 @@ int main() {
         s.tick(none); s.tick(down); s.tick(a);
         assert(s.save_result() == -1);
     }
+    {   // With a screen host the phase lasts until finish_save_screen(); the writer is not called.
+        auto s = make(80);
+        int writes = 0;
+        s.set_save_writer([&](const RuntimeSaveState&) { ++writes; return true; });
+        s.set_save_screen_host(true);
+        s.start_source_tutorial_dialogue({0, 0});
+        s.tick(none); s.tick(down); s.tick(a);
+        assert(s.save_screen_open() && s.save_screen_active() && writes == 0);
+        for (int i = 0; i < 10; ++i) s.tick(none);
+        assert(s.save_screen_open() && s.save_screen_active());
+        s.finish_save_screen(); assert(!s.save_screen_open() && s.save_screen_active());
+        s.tick(none); assert(!s.save_screen_active());
+        assert(s.native_save_state().hp == 80);
+    }
     std::cout << "source_data_menu: ok\n";
     return 0;
 }

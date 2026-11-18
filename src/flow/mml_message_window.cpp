@@ -528,7 +528,8 @@ bool MessageWindows::decor_exec(MessageSlot& s) {
         const int16_t w = int16_t(m + s.width * 12), h = int16_t(m + s.height * 12);
         s.box = {{int16_t(-m), int16_t(-m), w, int16_t(-m), int16_t(-m), h, w, h}};
     };
-    if (s.decor == 2 || s.decor == 4) {                                      // 0x8005B85C
+    // Decor 3 / 7 (0x8005AB78) do the same as 2 / 4 (0x8005B85C): margin, settled box.
+    if (s.decor == 2 || s.decor == 4 || s.decor == 3 || s.decor == 7) {      // 0x8005B85C / 0x8005AB78
         if (s.decor_state == 0) {
             s.decor_state = 2; s.flags |= 0x06000000u; s.margin = mem(s.read + 2); s.read += 3;
             flags_80098a58 |= 0x00200000u; settle(int16_t(s.margin));
@@ -566,7 +567,9 @@ bool MessageWindows::decor_exec(MessageSlot& s) {
 
 // Decor 2 frame 0x8005ACA8 with its primitives from 0x8005BCE4.
 void MessageWindows::draw_frame(MessageSlot& s, MessageWindowFrame& out) {
-    const uint8_t param = mem(kMsgDecorParam8008af18 + s.decor);
+    // Decor 7 (0x8005BC90) draws as decor 0 in save mode (0x80098912 == 1), else as decor 4.
+    const uint8_t d = s.decor == 7 ? (save_mode_80098912 == 1 ? 0 : 4) : s.decor;
+    const uint8_t param = mem(kMsgDecorParam8008af18 + d);
     const uint32_t bg = kMsgFrameColors80097f6c + 6u * param;
     const auto& b = s.box;
     const int X = s.x, Y = s.y;

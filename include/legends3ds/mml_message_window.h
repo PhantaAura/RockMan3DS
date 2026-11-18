@@ -114,6 +114,8 @@ public:
     uint32_t flags_80098a58 = 0;
     // 0x800C1B10 main phase: 4 lets Start cancel a choice (front end: 3).
     int8_t phase_800c1b10 = 3;
+    // 0x80098912: the save/load screen's mode (1 save, 0 load); decor 7 reads it.
+    uint16_t save_mode_80098912 = 0;
     // Item list state (0xDF/0xDD/0xDC/0xE0): owned normal items, a 64-bit
     // field at 0x800BE420 (bit 0x80 >> (id & 7) of byte id >> 3).
     std::array<uint8_t, 8> owned_items_800be420{};
@@ -133,6 +135,9 @@ public:
     void set_settings(const OptionSettings& s);
     const MessageSlot& slot(int i) const { return slots_[size_t(i)]; }
     uint8_t byte(uint32_t addr) const;
+    // Write one mapped byte (the save screen patches its list strings, 0x80066A40..).
+    void poke(uint32_t addr, uint8_t v) { mem(addr) = v; }
+    const ExeExcerpt& excerpt() const { return exe_; }
 
 private:
     uint8_t& mem(uint32_t addr);

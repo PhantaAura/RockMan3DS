@@ -148,6 +148,7 @@ add_library(legends3ds_core STATIC
     src/flow/source_door_event.cpp
     src/flow/save_state.cpp
     src/flow/source_save_block.cpp
+    src/flow/source_save_screen.cpp
     src/input/classic_input.c
     src/player/classic_motion.c
     src/player/player_runtime.c
