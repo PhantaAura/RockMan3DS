@@ -515,3 +515,29 @@ CANDIDATE: 0x800C1B62 and block 0x800989F8 +4 read 0.
   - set 6's other classes (0x00, 0x13, the family-0x60 cars 0x0C / 0x15, 0xE0 0x38);
   - exits to another stage (the stage-change request);
   - area 2's states 2..5.
+
+## Doors to another stage; S2 reaches stage 0x0C (run46, 5d77ac0, pass-20261118-075327)
+
+**Door event types (0x80050C2C):**
+- **1, walk-through field exits:** see above.
+- **8 (0x80050F68):** gate 0x80051970, sample == hw4..6, lock 0x800519E4. Then 356C = 2, 3560..3567 = hw8..hw11, 356A = hw11, 356E/356F = record bytes 6/7, 3570 = 2, 3571 = 21, plus 0x8001F6C4.
+- **2/4/5/6 (0x80050D38):** type 8 plus a facing window ((heading - hw7 + 0x200) & 0xFFF <= 0x400). After the lock, 0x80051A78 (hw1 1/2/3 may start event 27/24/39 instead; reported).
+- ST03 area 0's door 3 is type 2. The host probe and the oracle agree: hit from z -21420 to -21520 at y -1.
+- A request naming another stage goes through `source_stage_request()`, and main reloads into that stage at the request's spawn and heading.
+
+**Stage 0x0C:**
+- flow tables from 0x80100C1C (one area);
+- ST0C.BIN carries the overlay, the quartet, ST0C_00A.EBD and ST0C_00.MSG.
+
+**Player carry:**
+- The original keeps the player work across a stage load.
+- ST02 event 4's hand-off sets +0 |= 1 before the release, and the oracle shows +0 = 1 at ST03 control.
+- The port re-created the player and lost bit 0, so ST03 event 8's release never returned it to state 1. Normal control's floor step-down never ran, and the player stayed at y -129 on area 0's ledge.
+- `SourceStageCarry` keeps +0 / +6.
+
+**Run46** (route stage2_to_stage0c.txt: crash site -> area 1 exit -> area 0 around the z -12255 wall -> door 3; every leg walked, waypoints checked on the oracle by heading-steered walking):
+- the player is in state 1/0 after event 8;
+- the area 1 -> 0 exit fires at frame 15489;
+- door 3: LOAD_REQUESTED at frame 16320;
+- stage 0x0C loads at (-6912, -1, 8576), equal to the oracle's spawn;
+- no game over.
