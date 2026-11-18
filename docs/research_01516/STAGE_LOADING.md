@@ -483,7 +483,7 @@ Run32 used route `stage2_police_talk.txt` (DIAGNOSTIC). Results:
 - States 5..10 run through messages 47 / 49 / 51, the countdown and the car drive. The player is placed at (-2601, -1, 1108).
 - Flag 0 at frame 19879, then the event ends. No game over.
 
-## Visual gaps (one batch before the 1.0 compare)
+## Visual gaps (one batch before the 1.0 compare; taken by the tutorial-boss session, 2026-11-17)
 
 Logic runs and matches the oracle; only the look is missing:
 - The police car's mesh (no family-0x60 mesh decoder) and its dust (0x80031618 x4 every 4th frame, particle class 131, offsets 0x801172CC).
