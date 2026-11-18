@@ -86,7 +86,11 @@ EXTRA_STAGES={
        'ebd':{0:r'..\EMBIN\ST04_00A.EBD',1:r'..\EMBIN\ST04_01.EBD',2:r'..\EMBIN\ST04_02.EBD',3:r'..\EMBIN\ST04_03.EBD',
               4:r'..\EMBIN\ST04_04.EBD',5:r'..\EMBIN\ST04_05.EBD'},'events':(),
        # Stage init 0x8010044C: 0x8001E4C4(0x8010AF44, 0x8010AF4C + 8 * 0x800C1B62); flag 2 -> row 13, flag 70 -> row 12.
-       'door_locks':(0x8010AF44,14,((2,13),(70,12)))},
+       'door_locks':(0x8010AF44,14,((2,13),(70,12))),
+       # 0x80101E68's set table (35 sets) and its records, ST04's generic NPC tables.
+       'stage_data':['8010C010:280','8010AFC8:4168','8010C6C0:112','8010C77C:64','8010C7E8:112'],
+       # Classes whose variant 0 (1F800058 table 0x8010A570) is the generic NPC 0x8010215C.
+       'generic_npc':(0x8010A570,0x8010215C)},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
     0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
@@ -677,7 +681,16 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
             a,n=item.split(':'); a=int(a,16); n=int(n); o=a-0x80100000
             if o<0 or o+n>len(ov): raise RuntimeError(f'{code} stage data {item} outside the overlay')
             blocks+=a.to_bytes(4,'little')+n.to_bytes(4,'little')+ov[o:o+n]
-        (sout/'stage.l3sd').write_bytes(b'L3SD'+(1).to_bytes(2,'little')+len(spec['stage_data']).to_bytes(2,'little')+blocks)
+        count=len(spec['stage_data'])
+        if 'generic_npc' in spec:
+            # A derived block: byte c = 1 when the class row of c starts with the generic NPC.
+            table,fn=spec['generic_npc']; mask=bytearray(96)
+            word=lambda a:int.from_bytes(ov[a-0x80100000:a-0x80100000+4],'little')
+            for c in range(96):
+                row=word(table+4*c)
+                if 0x80100000<=row<0x80100000+len(ov)-4 and word(row)==fn: mask[c]=1
+            blocks+=table.to_bytes(4,'little')+(96).to_bytes(4,'little')+bytes(mask); count+=1
+        (sout/'stage.l3sd').write_bytes(b'L3SD'+(1).to_bytes(2,'little')+count.to_bytes(2,'little')+blocks)
     # Stage events (tools/cook_cutscene.py): eventN.l3cs, bound by the runtime.
     for event in spec.get('events',()):
         subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),

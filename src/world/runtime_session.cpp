@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st04_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1837,7 +1837,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     // on a stage load, the area loader's 0x1FF clear (0x8001F554) on every
     // load, then the area-enter call 0x8010089C until it sets 0x1FF; the
     // per-area update (area 1: 0x80100990) runs only once 0x1FF is set.
-    const bool field_stage=stage_==3||stage_==0x0C;
+    const bool field_stage=stage_==3||stage_==4||stage_==0x0C;
     const int area_key=field_stage?int(map_area_index_):-1;
     const bool loaded_now=area_key!=st03_area_key_;
     if(loaded_now){
@@ -1853,6 +1853,14 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(stage_==3&&!loaded_now&&!story_flag(0x1FF))
         st03_area_enter_ported_=st03_area_enter_8010089c(uint8_t(map_area_index_),0,   // block +4 = 0 (CANDIDATE)
             [&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
+    if(stage_==4&&!loaded_now&&!story_flag(0x1FF))   // 0x80101AC4 (area 0) / 0x80101B24 (shops)
+        st04_area_enter(uint8_t(map_area_index_),[&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
+    if(stage_==4&&story_flag(0x1FF)&&map_area_index_==0){
+        const auto a0=st04_area0_setup_step(st04_area0_state_,[&](uint16_t f){return story_flag(f);});
+        for(uint8_t i=0;i<a0.flag_set_count;++i)set_story_flag(a0.flags_set[i],true);
+        if(a0.flag_clear)set_story_flag(*a0.flag_clear,false);
+        if(a0.object_set){st03_area1_object_set_=*a0.object_set;spawn_st03_object_set(*a0.object_set);}
+    }else if(stage_!=4||loaded_now)st04_area0_state_=0;
     if(stage_==0x0C&&!loaded_now&&!story_flag(0x1FF))
         (void)st0c_area0_enter_801012d4(0,[&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});   // block +4 = 0 (CANDIDATE)
     if(stage_==0x0C&&story_flag(0x1FF)&&map_area_index_==0){
@@ -1966,7 +1974,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     for(size_t i=0;i<step.objects.size()&&i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];const auto& wr=step.objects[i];
         if(!o.w.live)continue;
-        if(wr.variant_04)st03_object_set_variant(o,*wr.variant_04);   // +4: the class row's column
+        if(wr.variant_04)st03_object_set_variant(o,*wr.variant_04,st03_event8_profile_&&st03_event8_profile_->generic_classes?&*st03_event8_profile_->generic_classes:nullptr);   // +4: the class row's column
         if(wr.state_08)o.w.state_08=*wr.state_08;
         if(wr.state_09){o.w.state_09=*wr.state_09;o.w.sub_0a=0;}
         if(wr.clear_0a_0b){o.w.sub_0a=0;o.w.byte_0b=0;}
@@ -2128,7 +2136,7 @@ void RuntimeSession::spawn_st03_object_set(uint8_t n){
         if(r.slot>=kSt03ObjectSlots)continue;
         auto& m=st03_object_models_[r.slot];
         const bool same=m.mesh&&m.bank&&st03_model_class_[r.slot]==r.object_class;
-        st03_objects_[r.slot]=spawn_st03_object(r);
+        st03_objects_[r.slot]=spawn_st03_object(r,st03_event8_profile_->generic_classes?&*st03_event8_profile_->generic_classes:nullptr);
         st03_object_current_[r.slot]=nullptr;
         if(r.family!=0x20){budget+=m.decoded_bytes;m={};st03_model_class_[r.slot]=0xFF;continue;}
         if(!same){
@@ -2142,7 +2150,7 @@ void RuntimeSession::update_st03_objects(){
     // The object update for the ST03 scene objects: slot order (CANDIDATE),
     // after the event in the same frame. 0x80048E6C is not run for them
     // (they keep the record's y; CANDIDATE); rand is a local 0x8007FE50.
-    if(stage_!=3&&stage_!=0x0C)return;
+    if(stage_!=3&&stage_!=4&&stage_!=0x0C)return;
     // The talk runner's block +0 clears once the talk's window closed.
     if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
@@ -2771,7 +2779,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         if(in.source_event_player_position)selected.held_psx_mask=selected.pressed_psx_mask=0;
         // ST03 NPC talk: the original puts the player in action 0x10 (talk pose), which takes no
         // pad input; the pose itself is not ported, the pad is held off instead (CANDIDATE).
-        if((stage_==3||stage_==0x0C)&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
+        if((stage_==3||stage_==4||stage_==0x0C)&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
         update_input_compat(selected);
         // 0x8003C07C: +0xBD 0x40 zeroes the pad, 0x20 takes event 0's 0x800C0F96.
         (void)source_player_input_select_8003c07c(player_,source_door_event0_.forced_pad);

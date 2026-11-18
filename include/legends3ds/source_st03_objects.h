@@ -80,10 +80,13 @@ struct St03Npc {
 
 // 0x8001EAE8 + 0x8001E968 for one record, then 0x80107BC0 (state 0) when
 // the class is one of the generic NPCs.
-St03Npc spawn_st03_object(const St03ObjectRecord& r);
+// `generic_classes`: the stage's classes whose variant 0 is the generic NPC
+// (from its own class table); null keeps ST03's list (05, 25, 11, 26, 24).
+using St03GenericClasses = std::array<bool,128>;
+St03Npc spawn_st03_object(const St03ObjectRecord& r, const St03GenericClasses* generic_classes = nullptr);
 bool st03_generic_npc_class(uint8_t object_class, uint8_t variant) noexcept;
 // A +4 write (and the spawn): picks the object for the class row's column.
-void st03_object_set_variant(St03Npc& n, uint8_t variant) noexcept;
+void st03_object_set_variant(St03Npc& n, uint8_t variant, const St03GenericClasses* generic_classes = nullptr) noexcept;
 
 struct St03NpcInputs {
     int16_t player_x = 0, player_z = 0;        // 0x800B51C4 / 0x800B51C8

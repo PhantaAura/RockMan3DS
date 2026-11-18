@@ -1,6 +1,7 @@
 // ST03 event 8 scene 0 (0x80101D54) on synthetic timelines.
 #include "legends3ds/source_st03_event8.h"
 #include "legends3ds/source_st0c.h"
+#include "legends3ds/source_st04.h"
 #include <cstdio>
 
 using namespace l3;
@@ -253,6 +254,38 @@ int main() {
         fl[0x21B] = true; fl[0x1FF] = false;
         CHECK(st0c_area0_enter_801012d4(0, [&](uint16_t x) { return fl[x]; }, [&](uint16_t x, bool v) { fl[x] = v; }) && fl[0x1FF]);
         uint8_t st = 0; CHECK(st0c_area0_update_80100ed4(st) && st == 255 && !st0c_area0_update_80100ed4(st));
+    }
+    // ST04 (Apple Market): area enter, area 0 first pass, field profile.
+    {
+        std::array<bool, 0x800> fl{};
+        const auto get = [&](uint16_t f) { return fl[f]; };
+        const auto set = [&](uint16_t f, bool v) { fl[f] = v; };
+        st04_area_enter(0, get, set); CHECK(fl[0x1FF] && !fl[0x7E2]);
+        fl = {}; fl[0x235] = true; st04_area_enter(0, get, set); CHECK(fl[0x7E2] && fl[0x7E7] && !fl[0x7E8] && fl[0x1FF]);
+        fl = {}; st04_area_enter(3, get, set); CHECK(fl[0x1FF]);
+        uint8_t st = 0; fl = {}; fl[0x16] = true;
+        auto o = st04_area0_setup_step(st, get);
+        CHECK(st == 255 && *o.object_set == 0 && o.flag_set_count == 1 && o.flags_set[0] == 0x0D && *o.flag_clear == 0x16);
+        st = 0; fl[12] = true; o = st04_area0_setup_step(st, get);
+        CHECK(*o.object_set == 1 && o.flag_set_count == 6 && o.flags_set[5] == 0x60D);
+        st = 0; fl[70] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 2 && st == 10 && o.extra_spawns_unported);
+        o = st04_area0_setup_step(st, get); CHECK(o.state_unported);
+        st = 0; fl[1] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 33);
+        st = 0; fl[9] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 4 && o.call_8010207c_unported);
+        // Field profile from stage.l3sd blocks: set 0 with one townsperson, class 0x13 generic.
+        const auto put32 = [](std::vector<uint8_t>& v, uint32_t x) { for (int i = 0; i < 4; ++i) v.push_back(uint8_t(x >> (8 * i))); };
+        std::vector<StageDataBlock> blocks;
+        StageDataBlock table{0x8010C010u, {}}; put32(table.bytes, 1); put32(table.bytes, 0x8010AFC8u);
+        StageDataBlock recs{0x8010AFC8u, {2, 0x13, 0, 0x20, 0, 0, 0, 0, 3, 2, 0x1E, 0x14, 0x0E, 0xF2, 0xFF, 0xFF, 0x52, 0x1C, 0, 8}};
+        StageDataBlock mask{0x8010A570u, std::vector<uint8_t>(96, 0)}; mask.bytes[0x13] = 1;
+        blocks = {table, recs, {0x8010C6C0u, std::vector<uint8_t>(112, 5)}, {0x8010C77Cu, std::vector<uint8_t>(64, 9)},
+                  {0x8010C7E8u, std::vector<uint8_t>(112, 1)}, mask};
+        St03Event8Profile pr;
+        CHECK(bind_field_profile(blocks, kSt04FieldProfile, pr) && pr.object_sets[0].size() == 1 && pr.object_sets[0][0].object_class == 0x13 &&
+              pr.object_sets[0][0].position[0] == -3570 && pr.generic_classes && (*pr.generic_classes)[0x13] && !(*pr.generic_classes)[0x05]);
+        const auto npc = spawn_st03_object(pr.object_sets[0][0], &*pr.generic_classes);
+        CHECK(npc.generic);
+        CHECK(!spawn_st03_object(pr.object_sets[0][0]).generic);   // ST03's list has no class 0x13
     }
     // Area 2 set-up 0x80100BF8, first pass.
     {

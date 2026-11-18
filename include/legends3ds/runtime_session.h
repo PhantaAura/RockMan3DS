@@ -34,6 +34,7 @@
 #include "legends3ds/source_st03_event8.h"
 #include "legends3ds/source_door_locks.h"
 #include "legends3ds/source_st0c.h"
+#include "legends3ds/source_st04.h"
 #include "legends3ds/source_stage_load.h"
 #include "legends3ds/source_tutorial_triggers.h"
 #include "legends3ds/source_gate_e007.h"
@@ -854,6 +855,7 @@ private:
     uint8_t st03_area2_setup_state_=0;   // 0x80100BF8's byte +4
     std::optional<StageDoorLocks> stage_door_locks_;
     bool stage_door_locks_applied_=false;
+    uint8_t st04_area0_state_=0;          // 0x80100594 byte +4
     uint8_t st0c_area0_state_=0;          // 0x80100ED4 byte +4
     int st03_area_key_=-1;                 // the ST03 area of the last frame (-1: not in ST03)
     bool st03_area_enter_ported_=true;     // the last 0x8010089C area function was ported
