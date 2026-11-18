@@ -219,7 +219,16 @@ int main() {
         source_door_locks_8001e4c4(d->doors, d->rows[0], [&](uint16_t f, bool v) { fl[f] = v; });
         CHECK(!fl[0x7E1] && fl[0x7E2]);
         b.pop_back(); CHECK(!load_stage_door_locks(b));
-        b.push_back(0); b[4] = 2; CHECK(!load_stage_door_locks(b));
+        b.push_back(0); b[4] = 3; CHECK(!load_stage_door_locks(b));
+        // v2 with overrides (ST04: flag 2 -> row 13, flag 70 -> row 12; here 70 -> row 1).
+        std::vector<uint8_t> v2{'L','3','D','L',2,0,2,2, 1,2,0,0,0,0,0,0, 0,1,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 2,0,1,0, 70,0,1,0};
+        const auto e = load_stage_door_locks(v2);
+        CHECK(e && e->overrides.size() == 2 && e->overrides[1].first == 70 && e->overrides[1].second == 1);
+        std::array<bool, 0x800> g{};
+        apply_stage_door_locks(*e, 0, [&](uint16_t f) { return f == 70; }, [&](uint16_t f, bool v) { g[f] = v; });
+        CHECK(!g[0x7E2] && !g[0x7E1]);   // row 0 locked door 2, then row 1 unlocked it
+        g = {}; apply_stage_door_locks(*e, 0, [](uint16_t) { return false; }, [&](uint16_t f, bool v) { g[f] = v; });
+        CHECK(g[0x7E2]);
     }
     // ST0C stage data (stage.l3sd) -> the guard and the generic NPC tables.
     {

@@ -1830,7 +1830,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     st03_event8_step_={};
     // Other stages' init door locks (0x8001E4C4 on row 0x800C1B62 = 0, CANDIDATE), once per stage load.
     if(stage_!=3&&stage_door_locks_&&!stage_door_locks_applied_&&!stage_door_locks_->rows.empty()){
-        source_door_locks_8001e4c4(stage_door_locks_->doors,stage_door_locks_->rows[0],[&](uint16_t f,bool v){set_story_flag(f,v);});
+        apply_stage_door_locks(*stage_door_locks_,0,[&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});
         stage_door_locks_applied_=true;
     }
     // Stage / area loads into ST03: the stage init's door locks (0x801007B4)

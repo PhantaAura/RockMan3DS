@@ -80,6 +80,13 @@ EXTRA_STAGES={
     3:{'container':'ST03.BIN','areas':('ST03_00.BIN','ST03_00.BIN','ST03_00.BIN',None,None,None,None,None,None),
        'ebd':{0:r'..\EMBIN\ST03_00A.EBD',1:r'..\EMBIN\ST03_00A.EBD',2:r'..\EMBIN\ST03_00A.EBD'},'events':(8,),
        'event_extra':{8:['80116578:64','801154B0:280','801158E8:340','80116E68:64','80116DAC:112','80116ED4:112','80117274:88','801152E4:128']}},
+    # Stage 4 (Apple Market, S4): area 0 the town (ST04_00.BIN; B..F are story
+    # variants, CANDIDATE: 00 until checked on the oracle), areas 1..5 the shops.
+    4:{'container':'ST04.BIN','areas':('ST04_00.BIN','ST04_01.BIN','ST04_02.BIN','ST04_03.BIN','ST04_04.BIN','ST04_05.BIN'),
+       'ebd':{0:r'..\EMBIN\ST04_00A.EBD',1:r'..\EMBIN\ST04_01.EBD',2:r'..\EMBIN\ST04_02.EBD',3:r'..\EMBIN\ST04_03.EBD',
+              4:r'..\EMBIN\ST04_04.EBD',5:r'..\EMBIN\ST04_05.EBD'},'events':(),
+       # Stage init 0x8010044C: 0x8001E4C4(0x8010AF44, 0x8010AF4C + 8 * 0x800C1B62); flag 2 -> row 13, flag 70 -> row 12.
+       'door_locks':(0x8010AF44,14,((2,13),(70,12)))},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
     0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
@@ -659,9 +666,11 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
     run(tools,'l3cook_st00_flow',work/'overlay',sout/'flow.l3flow','--stage',str(number))
     # Stage init door locks (0x8001E4C4's list and rows, copied from the overlay).
     if 'door_locks' in spec:
-        list_addr,rows=spec['door_locks']; ov=(work/'overlay').read_bytes(); o=list_addr-0x80100000
+        list_addr,rows,*rest=spec['door_locks']; overrides=rest[0] if rest else ()
+        ov=(work/'overlay').read_bytes(); o=list_addr-0x80100000
         if o<0 or o+8+rows*8>len(ov): raise RuntimeError(f'{code} door locks outside the overlay')
-        (sout/'doors.l3door').write_bytes(b'L3DL'+bytes([1,0,rows,0])+ov[o:o+8+rows*8])
+        tail=b''.join(f.to_bytes(2,'little')+bytes([r,0]) for f,r in overrides)
+        (sout/'doors.l3door').write_bytes(b'L3DL'+bytes([2,0,rows,len(overrides)])+ov[o:o+8+rows*8]+tail)
     if 'stage_data' in spec:
         ov=(work/'overlay').read_bytes(); blocks=b''
         for item in spec['stage_data']:
