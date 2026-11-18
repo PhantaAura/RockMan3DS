@@ -72,11 +72,6 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_={}; player_position_=p; hp_max_=hpmax?hpmax:1; hp_=std::min(hp,hp_max_);
     source_gameplay_camera_={};
     wr16w(player_,0x56,yaw&0x0FFFu);
-    // 0x8003BE80 (player init): +0 = +6 = 3 on its normal path (caller bit
-    // 0x80 clear; CANDIDATE that it is always clear here). Without bit 0 of
-    // +0 the event release 0x80042314 never sets +9 = 3, and the player kept
-    // state 3 after ST03 event 8 (no floor step-down, door query misses).
-    player_.bytes[0]=3; player_.bytes[6]=3;
     // 0x8003BF2C: control profile 0x800C1B64 (OPTION Turn; table 0x8008A04C).
     l3_pl00_install_control_profile_800425fc(&player_,turn_setting_800c1b64_);
     player_.bytes[0x08]=1; player_.bytes[0x09]=0; player_.bytes[0x0A]=0;
@@ -2252,6 +2247,7 @@ std::optional<SourceStageRequest> RuntimeSession::source_stage_request() const n
 SourceStageCarry RuntimeSession::make_stage_carry() const {
     SourceStageCarry c;
     c.story_flags=story_flags_;c.hp=hp_;c.hp_max=hp_max_;c.frames=frame_counter_;c.stats_selector=source_stats_selector_;
+    c.player_00=player_.bytes[0];c.player_06=player_.bytes[6];
     return c;
 }
 bool RuntimeSession::apply_stage_load(const SourceStageCarry& carry,const SourceStageArrival& arrival) {
@@ -2259,6 +2255,12 @@ bool RuntimeSession::apply_stage_load(const SourceStageCarry& carry,const Source
     const RuntimeVec3i spawn{arrival.position[0],arrival.position[1],arrival.position[2]};
     if(arrival.area!=map_area_index_&&!transition_to_area(arrival.area,spawn,arrival.heading))return false;
     reset_player(spawn,arrival.heading,carry.hp,carry.hp_max);
+    // The player work persists across a stage load (no 0x8003BE6C re-init):
+    // ST02 event 4's hand-off sets +0 |= 1 before the release, and the oracle
+    // shows +0 = 1 at ST03 control. Without bit 0 the event release 0x80042314
+    // never returns the player to state 1 (ST03 event 8 left it in state 3:
+    // no floor step-down, door 3's query missed at y -129).
+    player_.bytes[0]=carry.player_00;player_.bytes[6]=carry.player_06;
     for(uint16_t bit=0;bit<kL3StoryFlagBytes*8u;++bit)
         if(carry.story_flags[bit>>3u]&(1u<<(bit&7u)))set_story_flag(bit,true);
     frame_counter_=carry.frames;source_stats_selector_=carry.stats_selector;
