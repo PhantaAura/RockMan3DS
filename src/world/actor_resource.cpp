@@ -210,6 +210,12 @@ ActorMeshResource decode_ebd_actor_mesh(const EbdDirectory& ebd, size_t row,
                                       ActorMeshTier tier, size_t cap) {
     return decode_ebd_actor_mesh_family(ebd,row,tier,cap,0x20,kActorClass20PartLimit);
 }
+ActorMeshResource decode_ebd_class60_mesh(const EbdDirectory& ebd, size_t row,
+                                      ActorMeshTier tier, size_t cap) {
+    // Family 0x60 rows hold only the descriptor (resources 1/2 null): the same +0x10 part
+    // lanes and +0x70 tier pointers as class 0x20, a single part for the ST03 cars.
+    return decode_ebd_actor_mesh_family(ebd,row,tier,cap,0x60,kActorDrawDescriptorSlots);
+}
 ActorPoseResource decode_ebd_actor_pose(const EbdDirectory& ebd, size_t row,
                                       const ActorMeshResource& mesh,
                                       uint8_t request, uint8_t record_index) {

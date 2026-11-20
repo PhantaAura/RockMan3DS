@@ -222,6 +222,9 @@ int main() {
         in0.w.state_09 = 1; in0.w.sub_0a = 0;
         in0.w.raw_14 = {-3003, -1, 1400}; in0.w.fixed_1c = {int32_t(uint32_t(uint16_t(-3003)) << 16), int32_t(0xFFFF0000u), int32_t(1400u << 16)};
         int n = 0; r = {};
+        r = step_st03_npc(in0, k); ++n; CHECK(!r.sound);                       // +0xA6 != 1: no step sound
+        k.anim_a6 = 1; r = step_st03_npc(in0, k); ++n; CHECK(r.sound && *r.sound == 268);   // 0x8010DD4C
+        k.anim_a6 = 0;
         while (!r.flag_set && n < 100) { r = step_st03_npc(in0, k); ++n; }
         CHECK(r.flag_set && *r.flag_set == 0x606 && in0.w.sub_0a == 2 && in0.speed_44 == 0);
         // Behaviour 2: needs +0x0C, then walks to +0x0D.
@@ -263,6 +266,11 @@ int main() {
         c.byte_0f |= 0x40; c.w.state_09 = 1; c.w.sub_0a = 0;
         r = step_st03_npc(c, k);
         CHECK(r.moved && c.car_last == 4 && c.car_index_c4 == 1 && c.speed_44 == 22);
+        CHECK(r.car_dust && r.dust_count == 4);                               // frame word 0: dust at the wheels
+        k.frame_1f800002 = 1; r = step_st03_npc(c, k); CHECK(r.car_dust && r.dust_count == 0);
+        k.frame_1f800002 = 4; r = step_st03_npc(c, k);
+        CHECK(r.dust_count == 4 && (r.dust_points[0][0] != r.dust_points[2][0] || r.dust_points[0][2] != r.dust_points[2][2]));   // front vs rear
+        k.frame_1f800002 = 0;
         n = 0; while (c.car_index_c4 == 1 && n < 400) { step_st03_npc(c, k); ++n; }
         CHECK(c.car_index_c4 == 2 && c.w.raw_14[2] < -136 && c.w.raw_14[2] > -264);
     }

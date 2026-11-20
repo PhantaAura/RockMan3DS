@@ -357,7 +357,23 @@ void measured_profile(const char* path) {
     std::cout<<"private measured origin/profile decode PASS; no measured actor replay asserted\n";
 }
 } // namespace
+void st03_transactions() {
+    using namespace l3;
+    SourceRngService rng;assert(install_source_rng_service(rng,fixture(0x1234u),SourceRngMode::CandidateOpenBios)==Status::Ready);
+    SourceRngUpdateTransaction tx;
+    assert(begin_source_rng_update(rng,tx,{1,1,SourceRngUpdatePhase::St03ObjectCallback})==Status::Ready);
+    assert(stage_source_rng_st03(tx,{0x80107fd8u,2}).status==Status::InvalidContext);   // not a call site
+    assert(stage_source_rng_st03(tx,{0x80107fd4u,10}).status==Status::InvalidContext);  // slot out of range
+    const uint32_t s0=rng.seed32();const auto a=stage_source_rng_st03(tx,{0x80107fd4u,2});
+    const uint32_t s1=s0*1103515245u+12345u;
+    assert(a.status==Status::Ready&&a.sample32a==uint16_t((s1>>16)&0x7fffu));
+    assert(commit_source_rng_update(rng,tx)==Status::Ready&&rng.seed32()==s1);
+    assert(begin_source_rng_update(rng,tx,{1,1,SourceRngUpdatePhase::E0ObjectCallback})==Status::Ready);
+    assert(stage_source_rng_st03(tx,{0x80107fd4u,2}).status==Status::InvalidContext);   // wrong phase
+    rollback_source_rng_update(tx);assert(rng.seed32()==s1);
+    std::cout<<"st03 object draws on the shared seed PASS\n";
+}
 int main(int argc,char** argv) {
-    profile_guards();transactions();zero_heap();effect2_transactions();scene_event_transactions();prop_lift_transactions();effect34_transactions();if(argc>1)scalar_checkpoints(argv[1]);if(argc>2)measured_profile(argv[2]);
+    profile_guards();transactions();st03_transactions();zero_heap();effect2_transactions();scene_event_transactions();prop_lift_transactions();effect34_transactions();if(argc>1)scalar_checkpoints(argv[1]);if(argc>2)measured_profile(argv[2]);
     std::cout<<"source_rng_service CANDIDATE guards/commit/rollback PASS; consumer chronology and retail parity unproved\n";
 }

@@ -7,7 +7,7 @@
 // (idle and fidget), behaviour 1 (walk) and the talk (0x8010A344, behaviour
 // 4); the police car (0x801104C0: idle and the waypoint drive; its mesh and
 // dust are not drawn); the variant-1 scene NPCs (Barrell 0x8010D0F4, the Inspector 0x8010D968,
-// the officer 0x8010C66C: init, tick, all their behaviours; sounds reported).
+// the officer 0x8010C66C: init, tick, all their behaviours and walk sounds).
 // Generic behaviours 2, 3, 5..7, shadows and the family-0x60 police car
 // are reported, not run.
 // Original addresses are identity tokens.
@@ -111,7 +111,9 @@ struct St03NpcInputs {
     std::optional<uint16_t> heading_to_player; // 0x80031198(npc +0x14, player +0x14) (result bits)
     bool window_open = false;                  // 0x80098A58 & 0x00200000
     bool talk_active = false;                  // 0x800987B0 (the talk runner's block +0)
-    bool save_phase = false;                   // main phase 0x800C1B10 == 6 (Data's Save, see DATA_MENU.md)
+    bool save_phase = false;
+    int8_t anim_a6 = 0;
+    uint16_t frame_1f800002 = 0;               // scratch frame word (the car's dust runs when & 3 == 0)                        // +0xA6 (animation cursor key byte): the walk sounds play on 1                   // main phase 0x800C1B10 == 6 (Data's Save, see DATA_MENU.md)
 };
 struct St03NpcTick {
     bool in_range = false;                     // 0x8010A4EC
@@ -119,11 +121,16 @@ struct St03NpcTick {
     bool anim_advance = false;                 // 0x80032488 (after any request this tick)
     bool rand_used = false;
     bool rand2_used = false;
+    uint32_t rand_ra = 0, rand2_ra = 0;        // the 0x8007FE50 call sites (jal + 8) of the two draws
     bool rand_missing = false;
     bool table_missing = false;                // walk_speeds / walk_tables absent
     bool refs_missing = false;                 // refs absent (no walk, no ahead check)
     bool moved = false;                        // 0x8002FEA4 ran
-    bool car_dust = false;                     // the car's 0x80031618 dust (not ported)
+    bool car_dust = false;                     // the car's drive reached the dust step (0x80110AA0)
+    // 0x80110ACC: up to four 0x80031618 effects {+0 = 1, +2 = 0x83, +3 = 1, +0x1C = point}: the car's
+    // position plus row (i) of 0x801172CC turned by +0x56 (0x8002FFC4 -> 0x80030058, 0x80030150).
+    std::array<std::array<int16_t,3>,4> dust_points{};
+    uint8_t dust_count = 0;
     bool id_target_missing = false;            // behaviour 1/2 needed 0x80036294(+0x0C)
     bool clear_player_target = false;          // *(0x800B5334) = 0
     std::optional<uint16_t> flag_set;          // 0x8001DA8C(flag)
@@ -132,7 +139,8 @@ struct St03NpcTick {
     bool talk_target_taken = false;            // 0x8010A344 switched to the talk behaviour
     std::optional<uint8_t> talk_start;         // 0x80063BC8(npc, 0, 0, +0x0C): message id
     bool checkable = false;                    // 0x80051B68(work, 1, -1, 0): a talk candidate this frame
-    std::optional<uint8_t> reopen_menu;        // Data state 3: 0x80053A08(0, 0xDC) after the save screen
+    std::optional<uint8_t> reopen_menu;
+    std::optional<uint16_t> sound;             // 0x8001A008(id, 0, 0): 266 officer, 268 Inspector, 269 Barrell walks        // Data state 3: 0x80053A08(0, 0xDC) after the save screen
 };
 St03NpcTick step_st03_npc(St03Npc& npc, const St03NpcInputs& in) noexcept;
 

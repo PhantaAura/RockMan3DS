@@ -6513,6 +6513,18 @@ int main() {
                     g_player_proxy_target.packet_00=0;
                 }
                 if(!g_game_over_freeze)session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                if(!g_game_over_freeze&&session.stage()==3){
+                    // The police car's dust (0x80110ACC): effect 1/0x83/1 with the point at +0x1C; the
+                    // loop stops at the first full pool, like the original's null check.
+                    uint32_t dust=0;
+                    for(const auto& t:session.st03_object_ticks())
+                        for(uint8_t i=0;i<t.dust_count;++i){
+                            const std::array<int16_t,4> lanes{{t.dust_points[i][0],t.dust_points[i][1],t.dust_points[i][2],0}};
+                            if(!g_children.spawn_effect_80031618(1,0x83,1,0x1C,lanes,3))break;
+                            ++dust;
+                        }
+                    if(dust&&session.frame_counter()%120u==0u)hardware_test_trace("# st03_car_dust,frame=%lu,effects=%lu",(unsigned long)session.frame_counter(),(unsigned long)dust);
+                }
                 if(session.consume_game_over_request()&&!g_game_over.active){
                     g_game_over={};g_game_over.active=true;
                     hardware_test_trace("# game_over,frame=%lu,sub=0,trigger=player_state2",(unsigned long)session.frame_counter());
@@ -7875,7 +7887,11 @@ int main() {
             // control). Which of the two bits gates the draw: CANDIDATE.
             const bool opening_hides_player=g_new_game_opening&&session.source_event_work()&&
                 session.source_event_work()->active00()&&(session.compat_player().bytes[0]&3u)==0;
-            const bool draw_legacy_player=!isolate_scene_actor&&!opening_hides_player&&
+            // ST03 event 8 scene 2 states 0..3 hide the player (+0 &= ~2, +0xBD |= 0x40) and show
+            // it again (+0 |= 2). +0 bit 1 is the draw-list bit of every work (STAGE_LOADING.md);
+            // the port keys on the pair so plain gameplay, which does not keep bit 1, is unaffected.
+            const bool scene_hides_player=(session.compat_player().bytes[0xBD]&0x40u)&&!(session.compat_player().bytes[0]&2u);
+            const bool draw_legacy_player=!isolate_scene_actor&&!opening_hides_player&&!scene_hides_player&&
                 g_hardware_scene_draw!=HardwareSceneDraw::TerrainOnly;
             const u64 player_start=svcGetSystemTick();
             if(draw_legacy_player) {
