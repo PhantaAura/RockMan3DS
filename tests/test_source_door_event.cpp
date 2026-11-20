@@ -187,7 +187,7 @@ void case3_80050c2c(){
     auto busy=w;busy.bytes[0xBD]=1;assert(evaluate(busy,aux).status==SourceDoorStatus::PlayerBusy);
     auto owner=w;owner.bytes[1]=0x10;assert(evaluate(owner,aux).status==SourceDoorStatus::GateClosed);
     auto idle=w;put(idle,0x11E,0);assert(evaluate(idle,aux).status==SourceDoorStatus::GateClosed);
-    assert(evaluate(w,aux,nullptr,0x201).status==SourceDoorStatus::UnsupportedType);
+    assert(evaluate(w,aux,nullptr,0x701).status==SourceDoorStatus::UnsupportedType);
     // Case 1 (0x80050CB8 -> 0x80051360): walk-through exit. The sample equals
     // hw4..6 (all 0 here); the spawn keeps the player's offset from it.
     St00AuxList exits;exits.records.push_back(record({0,0,0,515,0,0,0,0,1792,-1,15104,0}));
@@ -201,6 +201,30 @@ void case3_80050c2c(){
     St00AuxList elsewhere;elsewhere.records.push_back(record({0,0,0,515,64,0,0,0,1792,-1,15104,0}));
     assert(evaluate(walker,elsewhere,nullptr,0x101).status==SourceDoorStatus::NoAuxMatch);
     auto busy1=walker;busy1.bytes[0xBD]=1;assert(evaluate(busy1,exits,nullptr,0x101).status==SourceDoorStatus::PlayerBusy);
+    // Case 8 (0x80050F68): ST03 area 0's door 3 to stage 0x0C (h3 = 0x000C):
+    // the gate, the sample match and the lock; 3560.. = hw8..hw11 exactly.
+    St00AuxList doors8;doors8.records.push_back(record({3,0,0,12,0,0,0,0,-6912,-1,8576,0}));
+    r=evaluate(w,doors8,nullptr,0x801);
+    assert(r.status==SourceDoorStatus::LoadRequested&&r.request&&!r.flag_set);
+    assert(lane(r.request->raw,8)==-6912&&lane(r.request->raw,10)==-1&&lane(r.request->raw,12)==8576&&lane(r.request->raw,14)==0);
+    assert(r.request->raw[20]==2&&r.request->raw[22]==12&&r.request->raw[23]==0&&r.request->raw[24]==2&&r.request->raw[25]==21);
+    const auto t8=source_door_transition_intent(*r.request,4);
+    assert(t8.source_stage==12&&t8.destination_area==0&&t8.spawn[0]==-6912&&t8.spawn[2]==8576);
+    uint8_t lock3[kL3StoryFlagBytes]{};lock3[0x7E3>>3]|=uint8_t(1u<<(0x7E3&7));
+    assert(evaluate(w,doors8,lock3,0x801).status==SourceDoorStatus::Locked);
+    assert(evaluate(idle,doors8,nullptr,0x801).status==SourceDoorStatus::GateClosed);
+    // Case 2 (0x80050D38): the same door as ST03 area 0's door 3 really is (type 2):
+    // a facing window around hw7 = 0, then the same lanes.
+    const auto held=[&](uint16_t hd){auto x=player_at(0,-1,-33,hd);put(x,0x11E,0x2000);return x;};
+    r=evaluate(held(0),doors8,nullptr,0x201);
+    assert(r.status==SourceDoorStatus::LoadRequested&&lane(r.request->raw,8)==-6912&&r.request->raw[22]==12);
+    assert(evaluate(held(0x300),doors8,nullptr,0x201).status==SourceDoorStatus::NoAuxMatch);   // outside +-0x200
+    auto ok200=player_at(0,-1,-33,0x200);put(ok200,0x11E,0x2000);
+    assert(evaluate(ok200,doors8,nullptr,0x201).status==SourceDoorStatus::LoadRequested);
+    // 0x80051A78: hw1 2 without flag 40 starts event 24 (sets 40) instead.
+    St00AuxList ev2;ev2.records.push_back(record({3,2,0,12,0,0,0,0,-6912,-1,8576,0}));
+    r=evaluate(held(0),ev2,nullptr,0x201);
+    assert(r.status==SourceDoorStatus::EventInstead&&r.event_started==24&&r.flag_set==40&&!r.request);
     RuntimeEventPrimitiveQuery miss;miss.status=RuntimeEventQueryStatus::Miss;
     assert(evaluate_source_door_event_80050c2c(miss,w,aux,nullptr,0).status==SourceDoorStatus::NoEvent);
 }

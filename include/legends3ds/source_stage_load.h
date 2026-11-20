@@ -43,6 +43,7 @@ struct SourceStageCarry {
     uint16_t hp = 0, hp_max = 0;
     uint32_t frames = 0;
     std::optional<uint8_t> stats_selector;
+    uint8_t player_00 = 0, player_06 = 0;   // player +0 / +6, kept across the load
 };
 
 // Where the player starts in the new stage (0x80015EE8 with the lanes).

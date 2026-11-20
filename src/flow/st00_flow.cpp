@@ -80,6 +80,12 @@ constexpr StageFlowAddresses kSt02Flow{2, 4, 0x80106940u, 0x80106968u, 0x8010697
 // carry the same overlay.
 constexpr StageFlowAddresses kSt03Flow{3, 9, 0x80114918u, 0x80114B7Cu, 0x80114BA0u,
     0x80114F08u, 0x80114D08u, 0x801146C4u};
+// Stage 0x0C (the forest path) 0x80100C1C (base 0x80110000): resource
+// 0x8010C3A4, objects 0x8010C468, aux 0x8010C4D8, blob 0x8010C4E8, selector
+// 0x8010C788, seed 0x8010C588. One area (ST0C.BIN carries its own EBD and
+// message file; CANDIDATE row count).
+constexpr StageFlowAddresses kSt0CFlow{0x0C, 1, 0x8010C468u, 0x8010C4D8u, 0x8010C4E8u,
+    0x8010C788u, 0x8010C588u, 0x8010C3A4u};
 }
 
 const StageFlowAddresses* stage_flow_addresses_us(uint8_t stage) noexcept {
@@ -87,6 +93,7 @@ const StageFlowAddresses* stage_flow_addresses_us(uint8_t stage) noexcept {
     case 0: return &kSt00Flow;
     case 2: return &kSt02Flow;
     case 3: return &kSt03Flow;
+    case 0x0C: return &kSt0CFlow;
     default: return nullptr;
     }
 }
