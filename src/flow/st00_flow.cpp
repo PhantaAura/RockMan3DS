@@ -80,6 +80,11 @@ constexpr StageFlowAddresses kSt02Flow{2, 4, 0x80106940u, 0x80106968u, 0x8010697
 // carry the same overlay.
 constexpr StageFlowAddresses kSt03Flow{3, 9, 0x80114918u, 0x80114B7Cu, 0x80114BA0u,
     0x80114F08u, 0x80114D08u, 0x801146C4u};
+// Stage 4 (Apple Market) 0x80100270 (base 0x80110000): resource 0x8010A8C8,
+// objects 0x8010AA84, aux 0x8010AC4C (six pointers), blob 0x8010AC64, seed
+// 0x8010AD54, selector 0x8010AD9C. Six areas: the town and five shops.
+constexpr StageFlowAddresses kSt04Flow{4, 6, 0x8010AA84u, 0x8010AC4Cu, 0x8010AC64u,
+    0x8010AD9Cu, 0x8010AD54u, 0x8010A8C8u};
 // Stage 0x0C (the forest path) 0x80100C1C (base 0x80110000): resource
 // 0x8010C3A4, objects 0x8010C468, aux 0x8010C4D8, blob 0x8010C4E8, selector
 // 0x8010C788, seed 0x8010C588. One area (ST0C.BIN carries its own EBD and
@@ -93,6 +98,7 @@ const StageFlowAddresses* stage_flow_addresses_us(uint8_t stage) noexcept {
     case 0: return &kSt00Flow;
     case 2: return &kSt02Flow;
     case 3: return &kSt03Flow;
+    case 4: return &kSt04Flow;
     case 0x0C: return &kSt0CFlow;
     default: return nullptr;
     }

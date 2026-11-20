@@ -1,5 +1,7 @@
 // ST03 event 8 scene 0 (0x80101D54) on synthetic timelines.
 #include "legends3ds/source_st03_event8.h"
+#include "legends3ds/source_st0c.h"
+#include "legends3ds/source_st04.h"
 #include <cstdio>
 
 using namespace l3;
@@ -208,6 +210,82 @@ int main() {
         CHECK(st03_area_enter_8010089c(2, 0, ag, as) && a[0x1FF] && a[0x7E2] && a[0x7E3] && a[0x7E4] && a[0x7E8]);
         a = {}; CHECK(st03_area_enter_8010089c(0, 0xFF, ag, as) && !a[0x1FF]);
         CHECK(!st03_area_enter_8010089c(7, 0, ag, as) && a[0x1FF]);   // reported, still sets 0x1FF
+    }
+    // Cooked stage door locks (doors.l3door): ST0C's list [1, 2], row 0 [0, 1].
+    {
+        std::vector<uint8_t> b{'L','3','D','L',1,0,2,0, 1,2,0,0,0,0,0,0, 0,1,0,0,0,0,0,0, 1,0,0,0,0,0,0,0};
+        const auto d = load_stage_door_locks(b);
+        CHECK(d && d->doors[0] == 1 && d->doors[1] == 2 && d->rows.size() == 2 && d->rows[0][1] == 1);
+        std::array<bool, 0x800> fl{}; fl[0x7E1] = true;
+        source_door_locks_8001e4c4(d->doors, d->rows[0], [&](uint16_t f, bool v) { fl[f] = v; });
+        CHECK(!fl[0x7E1] && fl[0x7E2]);
+        b.pop_back(); CHECK(!load_stage_door_locks(b));
+        b.push_back(0); b[4] = 3; CHECK(!load_stage_door_locks(b));
+        // v2 with overrides (ST04: flag 2 -> row 13, flag 70 -> row 12; here 70 -> row 1).
+        std::vector<uint8_t> v2{'L','3','D','L',2,0,2,2, 1,2,0,0,0,0,0,0, 0,1,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 2,0,1,0, 70,0,1,0};
+        const auto e = load_stage_door_locks(v2);
+        CHECK(e && e->overrides.size() == 2 && e->overrides[1].first == 70 && e->overrides[1].second == 1);
+        std::array<bool, 0x800> g{};
+        apply_stage_door_locks(*e, 0, [&](uint16_t f) { return f == 70; }, [&](uint16_t f, bool v) { g[f] = v; });
+        CHECK(!g[0x7E2] && !g[0x7E1]);   // row 0 locked door 2, then row 1 unlocked it
+        g = {}; apply_stage_door_locks(*e, 0, [](uint16_t) { return false; }, [&](uint16_t f, bool v) { g[f] = v; });
+        CHECK(g[0x7E2]);
+    }
+    // ST0C stage data (stage.l3sd) -> the guard and the generic NPC tables.
+    {
+        const auto block = [](uint32_t t, std::vector<uint8_t> d) {
+            std::vector<uint8_t> o{uint8_t(t), uint8_t(t >> 8), uint8_t(t >> 16), uint8_t(t >> 24),
+                                   uint8_t(d.size()), uint8_t(d.size() >> 8), 0, 0};
+            o.insert(o.end(), d.begin(), d.end()); return o;
+        };
+        std::vector<uint8_t> rec{0, 0x24, 0, 0x20, 0, 0, 0, 0, 0x0B, 0, 0, 0, 0x00, 0x0C, 0xFF, 0xFF, 0x98, 0x13, 0, 0};
+        std::vector<uint8_t> f{'L','3','S','D',1,0,4,0};
+        for (auto& b : {block(kSt0CGuardRecord, rec), block(kSt0CWalkSpeeds, std::vector<uint8_t>(112, 3)),
+                        block(kSt0CIdleTimers, std::vector<uint8_t>(64, 7)), block(kSt0CWalkTables, std::vector<uint8_t>(112, 1))})
+            f.insert(f.end(), b.begin(), b.end());
+        const auto blocks = load_stage_data(f);
+        St03Event8Profile p0;
+        CHECK(blocks && blocks->size() == 4 && bind_st0c_profile(*blocks, p0));
+        CHECK(p0.object_sets[0].size() == 1 && p0.object_sets[0][0].object_class == 0x24 && p0.object_sets[0][0].word_08[0] == 11 &&
+              p0.object_sets[0][0].position[0] == 3072 && p0.object_sets[0][0].position[2] == 5016 && p0.idle_timers[5] == 7 && p0.walk_loaded);
+        auto bad = f; bad.pop_back(); CHECK(!load_stage_data(bad));
+        std::array<bool, 0x800> fl{};
+        CHECK(!st0c_area0_enter_801012d4(0, [&](uint16_t x) { return fl[x]; }, [&](uint16_t x, bool v) { fl[x] = v; }) && fl[0x1FF]);
+        fl[0x21B] = true; fl[0x1FF] = false;
+        CHECK(st0c_area0_enter_801012d4(0, [&](uint16_t x) { return fl[x]; }, [&](uint16_t x, bool v) { fl[x] = v; }) && fl[0x1FF]);
+        uint8_t st = 0; CHECK(st0c_area0_update_80100ed4(st) && st == 255 && !st0c_area0_update_80100ed4(st));
+    }
+    // ST04 (Apple Market): area enter, area 0 first pass, field profile.
+    {
+        std::array<bool, 0x800> fl{};
+        const auto get = [&](uint16_t f) { return fl[f]; };
+        const auto set = [&](uint16_t f, bool v) { fl[f] = v; };
+        st04_area_enter(0, get, set); CHECK(fl[0x1FF] && !fl[0x7E2]);
+        fl = {}; fl[0x235] = true; st04_area_enter(0, get, set); CHECK(fl[0x7E2] && fl[0x7E7] && !fl[0x7E8] && fl[0x1FF]);
+        fl = {}; st04_area_enter(3, get, set); CHECK(fl[0x1FF]);
+        uint8_t st = 0; fl = {}; fl[0x16] = true;
+        auto o = st04_area0_setup_step(st, get);
+        CHECK(st == 255 && *o.object_set == 0 && o.flag_set_count == 1 && o.flags_set[0] == 0x0D && *o.flag_clear == 0x16);
+        st = 0; fl[12] = true; o = st04_area0_setup_step(st, get);
+        CHECK(*o.object_set == 1 && o.flag_set_count == 6 && o.flags_set[5] == 0x60D);
+        st = 0; fl[70] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 2 && st == 10 && o.extra_spawns_unported);
+        o = st04_area0_setup_step(st, get); CHECK(o.state_unported);
+        st = 0; fl[1] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 33);
+        st = 0; fl[9] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 4 && o.call_8010207c_unported);
+        // Field profile from stage.l3sd blocks: set 0 with one townsperson, class 0x13 generic.
+        const auto put32 = [](std::vector<uint8_t>& v, uint32_t x) { for (int i = 0; i < 4; ++i) v.push_back(uint8_t(x >> (8 * i))); };
+        std::vector<StageDataBlock> blocks;
+        StageDataBlock table{0x8010C010u, {}}; put32(table.bytes, 1); put32(table.bytes, 0x8010AFC8u);
+        StageDataBlock recs{0x8010AFC8u, {2, 0x13, 0, 0x20, 0, 0, 0, 0, 3, 2, 0x1E, 0x14, 0x0E, 0xF2, 0xFF, 0xFF, 0x52, 0x1C, 0, 8}};
+        StageDataBlock mask{0x8010A570u, std::vector<uint8_t>(96, 0)}; mask.bytes[0x13] = 1;
+        blocks = {table, recs, {0x8010C6C0u, std::vector<uint8_t>(112, 5)}, {0x8010C77Cu, std::vector<uint8_t>(64, 9)},
+                  {0x8010C7E8u, std::vector<uint8_t>(112, 1)}, mask};
+        St03Event8Profile pr;
+        CHECK(bind_field_profile(blocks, kSt04FieldProfile, pr) && pr.object_sets[0].size() == 1 && pr.object_sets[0][0].object_class == 0x13 &&
+              pr.object_sets[0][0].position[0] == -3570 && pr.generic_classes && (*pr.generic_classes)[0x13] && !(*pr.generic_classes)[0x05]);
+        const auto npc = spawn_st03_object(pr.object_sets[0][0], &*pr.generic_classes);
+        CHECK(npc.generic);
+        CHECK(!spawn_st03_object(pr.object_sets[0][0]).generic);   // ST03's list has no class 0x13
     }
     // Area 2 set-up 0x80100BF8, first pass.
     {
