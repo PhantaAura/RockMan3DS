@@ -609,15 +609,17 @@ bool st03_generic_npc_class(uint8_t c, uint8_t variant) noexcept {
     return variant == 0 && (c == 0x05 || c == 0x25 || c == 0x11 || c == 0x26 || c == 0x24);
 }
 
-void st03_object_set_variant(St03Npc& n, uint8_t variant) noexcept {
+void st03_object_set_variant(St03Npc& n, uint8_t variant, const St03GenericClasses* generic_classes) noexcept {
     n.variant = variant;
-    n.generic = n.family == 0x20 && st03_generic_npc_class(n.object_class, variant);
+    n.generic = n.family == 0x20 && (generic_classes
+        ? (variant == 0 && n.object_class < generic_classes->size() && (*generic_classes)[n.object_class])
+        : st03_generic_npc_class(n.object_class, variant));
     n.scene_v1 = n.family == 0x20 && variant == 1 && (n.object_class == 0x25 || n.object_class == 0x26 || n.object_class == 0x24);
     n.check_box = n.scene_v1 && n.object_class == 0x25 ? kSt03Barrell1CheckBox : kSt03NpcCheckBox;
     n.car = n.family == 0x60 && n.object_class == 0x0E;
 }
 
-St03Npc spawn_st03_object(const St03ObjectRecord& r) {
+St03Npc spawn_st03_object(const St03ObjectRecord& r, const St03GenericClasses* generic_classes) {
     St03Npc n;
     auto& w = n.w;
     w.live = true; w.slot = r.slot; w.subtype = r.object_class;
@@ -627,7 +629,7 @@ St03Npc spawn_st03_object(const St03ObjectRecord& r) {
     for (size_t a = 0; a < 3; ++a) { w.raw_14[a] = r.position[a]; w.fixed_1c[a] = int32_t(uint32_t(uint16_t(r.position[a])) << 16); }
     w.rot_54[1] = r.heading;
     w.state_08 = 0;
-    st03_object_set_variant(n, r.subtype);   // work +4 = record [2]
+    st03_object_set_variant(n, r.subtype, generic_classes);   // work +4 = record [2]
     return n;
 }
 

@@ -80,9 +80,24 @@ EXTRA_STAGES={
     3:{'container':'ST03.BIN','areas':('ST03_00.BIN','ST03_00.BIN','ST03_00.BIN',None,None,None,None,None,None),
        'ebd':{0:r'..\EMBIN\ST03_00A.EBD',1:r'..\EMBIN\ST03_00A.EBD',2:r'..\EMBIN\ST03_00A.EBD'},'events':(8,),
        'event_extra':{8:['80116578:64','801154B0:280','801158E8:340','80116E68:64','80116DAC:112','80116ED4:112','80117274:88','801152E4:128']}},
+    # Stage 4 (Apple Market, S4): area 0 the town (ST04_00.BIN; B..F are story
+    # variants, CANDIDATE: 00 until checked on the oracle), areas 1..5 the shops.
+    4:{'container':'ST04.BIN','areas':('ST04_00.BIN','ST04_01.BIN','ST04_02.BIN','ST04_03.BIN','ST04_04.BIN','ST04_05.BIN'),
+       'ebd':{0:r'..\EMBIN\ST04_00A.EBD',1:r'..\EMBIN\ST04_01.EBD',2:r'..\EMBIN\ST04_02.EBD',3:r'..\EMBIN\ST04_03.EBD',
+              4:r'..\EMBIN\ST04_04.EBD',5:r'..\EMBIN\ST04_05.EBD'},'events':(),
+       # Stage init 0x8010044C: 0x8001E4C4(0x8010AF44, 0x8010AF4C + 8 * 0x800C1B62); flag 2 -> row 13, flag 70 -> row 12.
+       'door_locks':(0x8010AF44,14,((2,13),(70,12))),
+       # 0x80101E68's set table (35 sets) and its records, ST04's generic NPC tables.
+       'stage_data':['8010C010:280','8010AFC8:4168','8010C6C0:112','8010C77C:64','8010C7E8:112'],
+       # Classes whose variant 0 (1F800058 table 0x8010A570) is the generic NPC 0x8010215C.
+       'generic_npc':(0x8010A570,0x8010215C)},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
-    0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':()},
+    0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
+          # Stage init 0x80100DE8: 0x8001E4C4(0x8010CB98, 0x8010CBA0 + 8 * 0x800C1B62); 6 rows.
+          'door_locks':(0x8010CB98,6),
+          # The ruin guard's record and ST0C's generic NPC tables (stage.l3sd).
+          'stage_data':['8010CB70:20','8010D398:112','8010D454:64','8010D4C0:112']},
 }
 STAGE_QUARTET_LOADS={'_MAP.IDX':0x8015C000,'_MAP.MDT':0x80164000,'.STG':0x80194000,'.HED':0x8013A000}
 
@@ -653,6 +668,29 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
     run(tools,'l3cook_render',*quartet,sout/'render.l3render')
     run(tools,'l3cook_map_init',*quartet,sout/'map.l3map',sout/'render.l3render',sout/'init.l3init','--stage0-startup')
     run(tools,'l3cook_st00_flow',work/'overlay',sout/'flow.l3flow','--stage',str(number))
+    # Stage init door locks (0x8001E4C4's list and rows, copied from the overlay).
+    if 'door_locks' in spec:
+        list_addr,rows,*rest=spec['door_locks']; overrides=rest[0] if rest else ()
+        ov=(work/'overlay').read_bytes(); o=list_addr-0x80100000
+        if o<0 or o+8+rows*8>len(ov): raise RuntimeError(f'{code} door locks outside the overlay')
+        tail=b''.join(f.to_bytes(2,'little')+bytes([r,0]) for f,r in overrides)
+        (sout/'doors.l3door').write_bytes(b'L3DL'+bytes([2,0,rows,len(overrides)])+ov[o:o+8+rows*8]+tail)
+    if 'stage_data' in spec:
+        ov=(work/'overlay').read_bytes(); blocks=b''
+        for item in spec['stage_data']:
+            a,n=item.split(':'); a=int(a,16); n=int(n); o=a-0x80100000
+            if o<0 or o+n>len(ov): raise RuntimeError(f'{code} stage data {item} outside the overlay')
+            blocks+=a.to_bytes(4,'little')+n.to_bytes(4,'little')+ov[o:o+n]
+        count=len(spec['stage_data'])
+        if 'generic_npc' in spec:
+            # A derived block: byte c = 1 when the class row of c starts with the generic NPC.
+            table,fn=spec['generic_npc']; mask=bytearray(96)
+            word=lambda a:int.from_bytes(ov[a-0x80100000:a-0x80100000+4],'little')
+            for c in range(96):
+                row=word(table+4*c)
+                if 0x80100000<=row<0x80100000+len(ov)-4 and word(row)==fn: mask[c]=1
+            blocks+=table.to_bytes(4,'little')+(96).to_bytes(4,'little')+bytes(mask); count+=1
+        (sout/'stage.l3sd').write_bytes(b'L3SD'+(1).to_bytes(2,'little')+count.to_bytes(2,'little')+blocks)
     # Stage events (tools/cook_cutscene.py): eventN.l3cs, bound by the runtime.
     for event in spec.get('events',()):
         subprocess.run([sys.executable,str(Path(__file__).resolve().parent/'cook_cutscene.py'),

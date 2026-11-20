@@ -26,7 +26,8 @@ struct St03Event8Profile {
     bool police_loaded = false;                    // scene 1
     SourceSceneTimeline police;                    // 0x8011614C
     SourceSceneCameraProgram police_camera;        // 0x80116164
-    std::array<std::vector<St03ObjectRecord>,8> object_sets;   // 0x80116578 (cooked extras)
+    std::array<std::vector<St03ObjectRecord>,40> object_sets;   // 0x80116578 (cooked extras; ST04 uses up to 34)
+    std::optional<St03GenericClasses> generic_classes;           // other stages: classes whose variant 0 is the generic NPC
     bool idle_timers_loaded = false;
     std::array<uint8_t,64> idle_timers{};          // 0x80116E68
     bool walk_loaded = false;
