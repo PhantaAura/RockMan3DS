@@ -186,6 +186,13 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
     case 0xAF: ++s.lines; s.read += 2; return true;                          // 0x80056128
     case 0xDB: s.read += 5; return true;                                     // 0x800543F8
     case 0xED: s.read += 1; return true;                                     // 0x800543B0
+    case 0x90: {                                                             // 0x8005497C: call block arg (push read + 2)
+        if (s.exec_depth >= s.exec_stack.size()) { unported = true; return false; }
+        s.exec_stack[s.exec_depth++] = r + 2;
+        const uint8_t id = mem(r + 1);
+        s.read = s.index_base ? s.index_base + u16(s.index_base + 2u * id) : exe_.u32(kMsgTable8008cacc + 4u * id);
+        return true;
+    }
     case 0x91:                                                               // 0x80054A84: return
         if (!s.exec_depth) { unported = true; return false; }
         s.read = s.exec_stack[--s.exec_depth]; return true;
@@ -394,6 +401,13 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xB0: s.brightness = mem(d + 1); s.draw += 2; return;               // 0x80056180
     case 0xDB: s.pen_x = int16_t(u16(d + 1)); s.pen_y = int16_t(u16(d + 3)); s.draw += 5; return;   // 0x80058D64
     case 0xED: s.pen_x = int16_t(s.pen_x + 12); s.draw += 1; return;        // 0x8005A858
+    case 0x90: {                                                             // 0x80054A04: the same on the draw pass
+        if (s.draw_depth >= s.draw_stack.size()) { s.draw += 2; return; }
+        s.draw_stack[s.draw_depth++] = d + 2;
+        const uint8_t id = mem(d + 1);
+        s.draw = s.index_base ? s.index_base + u16(s.index_base + 2u * id) : exe_.u32(kMsgTable8008cacc + 4u * id);
+        return;
+    }
     case 0x91: if (s.draw_depth) s.draw = s.draw_stack[--s.draw_depth]; else s.draw += 1; return;   // 0x80054AB4
     case 0xAC: s.draw += 3; return;
     case 0xBA:                                                               // 0x80057144: the number into the 7 bytes after

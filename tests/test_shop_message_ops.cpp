@@ -53,6 +53,22 @@ int main() {
     assert(w.slot(0).number_40 == 1234);
     assert(w.slot(1).flags & 0x80000000u);              // 0xB9 opened block 1 in slot 1
     assert(!(w.slot(2).flags & 0x80000000u));           // setting 20 is 0: 0xBB left slot 2 shut
+    {   // 0x90 calls a block on both passes; 0x91 returns.
+        MessageWindows v(authored());
+        std::vector<uint8_t> bk(0x80, 0);
+        const std::vector<uint8_t> c0 = {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x10, 0x00, 0x10, 0x00, 0x08, 0x01, 0x93, 0x02, 0x04,
+            0x90, 0x01, 0x8A, 0x01, 0x00, 0x95, 0x00, 0x00};
+        const std::vector<uint8_t> c1 = {0xBA, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x91, 0x00, 0x00};
+        put16(bk, 0, 4); put16(bk, 2, uint16_t(4 + c0.size()));
+        std::memcpy(bk.data() + 4, c0.data(), c0.size()); std::memcpy(bk.data() + 4 + c0.size(), c1.data(), c1.size());
+        v.map_range(0x80157000u, bk); v.zenny_800c1b2c = 50;
+        assert(v.open_8005382c(0, 0x80157000u, 0));
+        for (int i = 0; i < 4; ++i) (void)v.tick_80053b40(0, 0);
+        const uint32_t at2 = 0x80157004u + uint32_t(c0.size()) + 1u;
+        const uint8_t want2[7] = {0xED, 0xED, 0xED, 0xED, 6, 1, 1};   // 50 -> "    50" + fixed 0
+        for (uint32_t k = 0; k < 7; ++k) assert(v.byte(at2 + k) == want2[k]);
+        assert(v.slot(0).exec_depth == 0 && (v.slot(0).flags & 0x80000000u));
+    }
     std::cout << "shop_message_ops: ok\n";
     return 0;
 }
