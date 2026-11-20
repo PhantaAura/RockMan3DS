@@ -190,6 +190,27 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         if (!s.exec_depth) { unported = true; return false; }
         s.read = s.exec_stack[--s.exec_depth]; return true;
     case 0xAC: setting(mem(r + 1)) = mem(r + 2); s.read += 3; return true;   // 0x80055C80
+    case 0xB9: {                                                             // 0x800570B0: open on the last choice
+        const uint8_t want = mem(r + 1); const int8_t n = int8_t(mem(r + 2)); const uint8_t id = mem(r + 3);
+        s.read += 4;
+        if (uint8_t(flags_80098a58) == want) {
+            if (s.index_base) open_8005382c(n, s.index_base, id);
+            else open_8005382c(n, exe_.u32(kMsgTable8008cacc + 4u * id), 255);
+        }
+        return true;
+    }
+    case 0xBB: {                                                             // 0x80057184: open on a setting byte
+        const uint8_t idx = mem(r + 1), want = mem(r + 2); const int8_t n = int8_t(mem(r + 3)); const uint8_t id = mem(r + 4);
+        s.read += 5;
+        if (setting(idx) == want) {
+            if (s.index_base) open_8005382c(n, s.index_base, id);
+            else open_8005382c(n, exe_.u32(kMsgTable8008cacc + 4u * id), 255);
+        }
+        return true;
+    }
+    case 0xBA: s.number_40 = zenny_800c1b2c; s.read += 1; return true;      // 0x80057124: +0x40 = zenny
+    case 0xB6: s.read += 3; return true;                                     // 0x800543E0 (drawn by 0x800563A8)
+    case 0xC0: case 0xC5: s.read += 1; return true;                          // 0x800543B0 (drawn by 0x80057574 / 0x800579D8)
     case 0xDE: s.read += 3; return true;                                     // 0x800543E0
     case 0x98: s.flags &= ~0x08000000u; s.read += 1; return true;           // 0x8005531C
     case 0x8B: case 0x84: {                                                  // 0x80054700 pause / 0x80054450 close
@@ -375,6 +396,15 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xED: s.pen_x = int16_t(s.pen_x + 12); s.draw += 1; return;        // 0x8005A858
     case 0x91: if (s.draw_depth) s.draw = s.draw_stack[--s.draw_depth]; else s.draw += 1; return;   // 0x80054AB4
     case 0xAC: s.draw += 3; return;
+    case 0xBA:                                                               // 0x80057144: the number into the 7 bytes after
+        s.number_40 = zenny_800c1b2c;
+        print_number_8005bf10(0, s.number_40, s.draw + 1u);
+        s.draw += 1; return;
+    case 0xB9: case 0xC3: s.draw += 4; return;                               // 0x80054338
+    case 0xBB: s.draw += 5; return;                                          // 0x8005434C
+    case 0xBC: case 0xC4: s.draw += 2; return;                               // 0x80054310
+    case 0xBD: s.draw += 1; return;                                          // 0x800542FC
+    case 0xC2: s.draw += 3; return;                                          // 0x80054324
     case 0xDC: case 0xD9: case 0x98: case 0xA9: s.draw += 1; return;
     case 0x8B: case 0x84: case 0xBF: s.draw += 3; return;
     case 0xA7: s.draw += 9; return;                                          // 0x80054388
@@ -563,6 +593,21 @@ bool MessageWindows::decor_exec(MessageSlot& s) {
         return true;
     default: return true;
     }
+}
+
+// 0x8005BF10(pad, value, dst): six digits by the divisors 0x8008AF24 (leading ones as pad glyph
+// 0x8008AF3C[pad] until the first non-zero), each as message glyph 0x8008D028[digit], then a
+// fixed '0' glyph at dst + 6 (the amounts are shown times ten).
+void MessageWindows::print_number_8005bf10(uint8_t pad, uint32_t value, uint32_t dst) {
+    bool lead = false;
+    for (uint32_t k = 0; k < 6; ++k) {
+        const uint32_t div = exe_.u32(kMsgNumberDivisors8008af24 + 4u * k);
+        const uint32_t digit = div ? value / div : 0;
+        if (lead || digit) { mem(dst + k) = mem(kMsgDigitGlyphs8008d028 + digit); lead = true; }
+        else mem(dst + k) = mem(kMsgNumberPads8008af3c + pad);
+        if (div) value %= div;
+    }
+    mem(dst + 6) = mem(kMsgDigitGlyphs8008d028);
 }
 
 // Decor 2 frame 0x8005ACA8 with its primitives from 0x8005BCE4.

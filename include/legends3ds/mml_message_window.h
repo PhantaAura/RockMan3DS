@@ -46,6 +46,9 @@ constexpr uint32_t kMsgClutTable80097f30 = 0x80097F30;     // u16[16]
 constexpr uint32_t kMsgTable8008cacc = 0x8008CACC;         // message pointers
 constexpr uint32_t kMsgOptionTable8008d0d4 = 0x8008D0D4;   // setting pointers
 constexpr uint32_t kMsgDecorParam8008af18 = 0x8008AF18;    // u8[9]
+constexpr uint32_t kMsgNumberDivisors8008af24 = 0x8008AF24; // u32[6]
+constexpr uint32_t kMsgNumberPads8008af3c = 0x8008AF3C;     // pad glyph by kind
+constexpr uint32_t kMsgDigitGlyphs8008d028 = 0x8008D028;    // digit -> glyph
 constexpr uint32_t kMsgFrameColors80097f6c = 0x80097F6C;   // u8[6 x n] bg colours
 constexpr uint32_t kMsgBorderColors80097f78 = 0x80097F78;  // u8[16] edge vertex greys
 constexpr uint32_t kOptionMessage8008b69c = 0x8008B69C;
@@ -84,6 +87,7 @@ struct MessageSlot {
     uint16_t held = 0, pressed = 0;  // +184, +186
     uint16_t repeat = 0;        // +188
     uint16_t index = 255;       // +194
+    uint32_t number_40 = 0;     // +0x40 (0xBA: the zenny amount)
     std::array<uint32_t, 8> exec_stack{}; uint16_t exec_depth = 0;   // +76 / +192 (0xE0 / 0x91)
     std::array<uint32_t, 8> draw_stack{}; uint16_t draw_depth = 0;   // +24 / +190
 };
@@ -116,6 +120,9 @@ public:
     int8_t phase_800c1b10 = 3;
     // 0x80098912: the save/load screen's mode (1 save, 0 load); decor 7 reads it.
     uint16_t save_mode_80098912 = 0;
+    uint32_t zenny_800c1b2c = 0;   // 0xBA
+    // Map more original bytes (a stage message bank at its load address) next to the excerpt.
+    void map_range(uint32_t addr, std::vector<uint8_t> bytes) { exe_.ranges.push_back({addr, std::move(bytes)}); }
     // Item list state (0xDF/0xDD/0xDC/0xE0): owned normal items, a 64-bit
     // field at 0x800BE420 (bit 0x80 >> (id & 7) of byte id >> 3).
     std::array<uint8_t, 8> owned_items_800be420{};
@@ -137,6 +144,7 @@ public:
     uint8_t byte(uint32_t addr) const;
     // Write one mapped byte (the save screen patches its list strings, 0x80066A40..).
     void poke(uint32_t addr, uint8_t v) { mem(addr) = v; }
+    void print_number_8005bf10(uint8_t pad, uint32_t value, uint32_t dst);
     const ExeExcerpt& excerpt() const { return exe_; }
 
 private:

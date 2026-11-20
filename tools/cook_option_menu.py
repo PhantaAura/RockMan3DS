@@ -26,6 +26,7 @@ RANGES = [
     (0x80089B2C, 0x80089EEC),   # weapon level tables (8 x 8 bytes per weapon) + pointers 0x80089EAC (item 65)
     (0x8008AE7C, 0x8008AF00),   # glyph widths (u8 per glyph byte 0x00..0x83)
     (0x8008AF18, 0x8008AF24),   # decor -> frame parameter
+    (0x8008AF24, 0x8008AF48),   # number printer 0x8005BF10: six divisors, pad glyphs
     (0x8008B05C, 0x8008B67C),   # save/load screen messages (pointers 0x8008CAEC..0x8008CB50) and list strings
     (0x8008B67C, 0x8008C8E4),   # messages 0x25..0x32 (title, OPTION, help, sub-screen menu), part,
                                 # item and weapon names, sub-screen menu help (0xDD..0xE2)
