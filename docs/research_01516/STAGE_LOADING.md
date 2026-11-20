@@ -541,3 +541,14 @@ CANDIDATE: 0x800C1B62 and block 0x800989F8 +4 read 0.
 - door 3: LOAD_REQUESTED at frame 16320;
 - stage 0x0C loads at (-6912, -1, 8576), equal to the oracle's spawn;
 - no game over.
+
+## Visual gaps batch: done (tutorial-boss session, run48, pass-20261120-160319, route stage2_barrell_scene2.txt, DIAGNOSTIC)
+- Family-0x60 mesh: `decode_ebd_class60_mesh` (same descriptor lanes as class 0x20, one part), drawn
+  with a rest pose; materials join the actor cook. Scene 2 draws all 6 live slots (0x3F, the car in slot 5).
+- Car dust: four 1/0x83/1 effects at the wheels every 4th frame (0x80110ACC, offsets 0x801172CC);
+  `# st03_car_dust,effects=4` during the drive.
+- Focus camera: 0x80039FFC / 0x80039E50 blends in 0x80038894 (16 mixing updates and a settle);
+  scene 2 state 1 waited 18 frames for it (18181 -> 18199).
+- Player hide: +0 bit 1 with +0xBD bit 0x40 gates the player draw.
+- NPC walk sounds 266 / 268 / 269 on +0xA6 == 1 (queued, not traced).
+- Scene 2 ran states 1..11 to the end (frame 20049), no game over. Not checked by eye.
