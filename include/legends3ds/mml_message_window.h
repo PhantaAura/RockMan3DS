@@ -128,6 +128,13 @@ public:
     uint32_t zenny_800c1b2c = 0;   // 0xBA, 0xBC / 0xBD (0x8004327C, 0x80043294)
     uint8_t shop_item_gp10cc = 0;  // 0x80098930: the list row's item (0xBC)
     uint8_t shop_short_gp1308 = 0; // 0x80098B6C: 1 = not enough money for it (0xBC)
+    uint8_t shop_kind_gp0fec = 0;  // 0x80098850 (setting 14): 0 parts, 1 items (0xB8)
+    uint8_t shop_scroll0_gp1090 = 0;   // 0x800988F4: the list's starting scroll (0xB8)
+    int16_t life_max_800b5260 = 0;     // 0xB8: the life-up price follows the max life
+    uint8_t canteen_800c1b8d = 0;      // 0xB8: the canteen row and its price
+    // 0xB8 (0x80056D10): build the shop list into 0x800BE2F8 from the flag rows of table
+    // 0x80097F64/68 and pick the window block by the row count.
+    std::array<uint8_t,256> flags_800be378{};   // the story flag bytes the list reads (caller mirror)
     std::function<void(uint16_t, bool)> set_story_flag;   // 0x8001DA8C / 0x8001DCD0 (unset: dropped)
     // Map more original bytes (a stage message bank at its load address) next to the excerpt.
     void map_range(uint32_t addr, std::vector<uint8_t> bytes) { exe_.ranges.push_back({addr, std::move(bytes)}); }

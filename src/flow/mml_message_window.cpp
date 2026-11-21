@@ -66,6 +66,8 @@ uint8_t& MessageWindows::mem(uint32_t addr) {
     if (addr == 0x800989D4u) return list_max_scroll_gp4464;          // gp+4464 (settings entry 26)
     if (addr == 0x8009899Cu) return list_scroll_gp4408;              // gp+4408 (settings entry 15)
     if (addr == 0x80098930u) return shop_item_gp10cc;                // gp+0x10CC
+    if (addr == 0x80098850u) return shop_kind_gp0fec;                // gp+0xFEC
+    if (addr == 0x800988F4u) return shop_scroll0_gp1090;             // gp+0x1090
     if (addr == 0x80098B6Cu) return shop_short_gp1308;               // gp+0x1308
     if (addr >= 0x800BB6B8u && addr < 0x800BB6B8u + 5u * 196u) {   // slot +121..+123: remembered cursors
         const uint32_t o = (addr - 0x800BB6B8u) % 196u, n = (addr - 0x800BB6B8u) / 196u;
@@ -224,6 +226,45 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         const uint32_t price = u16(kShopPrices8008fd3c + 2u * shop_item_gp10cc);
         shop_short_gp1308 = (!sell && zenny_800c1b2c < price) ? 1 : 0;   // 0x8004327C(-price)
         s.read += 2; return true;
+    }
+    case 0xB8: {                                                             // 0x80056D10: build the shop list
+        const uint8_t kind = shop_kind_gp0fec;
+        const uint32_t start = u16(0x80097F64u + 2u * kind), n = mem(0x80097F68u + kind);
+        list_count_gp4420 = 0; list_scroll_gp4408 = shop_scroll0_gp1090;
+        // Prices that follow the player: life-up (0x23) by the max life, canteen (0x25) by its count.
+        auto put_price = [&](uint8_t item, uint16_t v) { mem(kShopPrices8008fd3c + 2u * item) = uint8_t(v); mem(kShopPrices8008fd3c + 2u * item + 1) = uint8_t(v >> 8); };
+        if (life_max_800b5260 < 0xA0) {
+            int32_t d = 0xA0 - life_max_800b5260; d = d >= 0 ? (d + 15) >> 4 : d >> 4;
+            put_price(0x23, u16(kShopPrices8008fd3c + 2u * uint32_t(0x85 - d)));
+        } else put_price(0x23, u16(0x8008FE44u));
+        put_price(0x25, canteen_800c1b8d < 0x12 ? u16(0x8008FE40u + 2u * canteen_800c1b8d) : u16(0x8008FE62u));
+        const bool sell = story_flag && story_flag(0x2EE);
+        auto fbyte = [&](int32_t bit) -> uint8_t { return (bit >= 0 && bit < 2048) ? flags_800be378[size_t(bit >> 3)] : 0; };
+        for (uint32_t i = 0; i < n; ++i) {
+            const uint8_t bit = uint8_t(0x80u >> (i & 7));
+            const uint8_t owned = fbyte(int32_t(start + i)), stock = fbyte(int32_t(start + i) - 0x80);
+            auto push = [&] { if (list_count_gp4420 < 128) list_800be2f8[list_count_gp4420++] = uint8_t(i); };
+            if (!sell) {
+                if (!((stock | uint8_t(~owned)) & bit)) { push(); continue; }
+                if (kind != 1) continue;
+                if (i == 3) { if (life_max_800b5260 != 0xA0) push(); }
+                else if (i == 5) { if (canteen_800c1b8d && canteen_800c1b8d < 0x63) push(); }
+            } else {
+                if (!(stock & owned & bit)) continue;
+                if (kind != 1) { push(); continue; }
+                if (i < 0x20 || (i >= 0x24 && i < 0x38) || (i >= 0x4C && i < 0x51)) push();
+            }
+        }
+        for (uint32_t i = list_count_gp4420; i < 128; ++i) list_800be2f8[i] = 255;
+        // Block: 0 rows -> arg 1, 1..4 rows -> arg (7 - rows), 5+ -> continue after the command.
+        uint8_t target = 255;
+        if (list_count_gp4420 == 0) target = mem(r + 2);
+        else if (list_count_gp4420 < 5) target = mem(r + 7 - list_count_gp4420);
+        if (target == 255) { s.read += 7; return true; }
+        s.index = target;
+        s.read = s.page = s.index_base ? s.index_base + u16(s.index_base + 2u * target) : exe_.u32(kMsgTable8008cacc + 4u * target);
+        s.color = 0; s.rows = 0;   // +0x3E, +0x72 (+0x3C also cleared: no port field)
+        return true;
     }
     case 0xBD: {                                                             // 0x800572C8: buy or sell the item
         const uint8_t item = shop_item_gp10cc;
@@ -440,6 +481,7 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xB9: case 0xC3: s.draw += 4; return;                               // 0x80054338
     case 0xBB: s.draw += 5; return;                                          // 0x8005434C
     case 0xBC: case 0xC4: s.draw += 2; return;                               // 0x80054310
+    case 0xB8: s.draw += 7; return;                                          // 0x80054374
     case 0xBD: s.draw += 1; return;                                          // 0x800542FC
     case 0xC2: s.draw += 3; return;                                          // 0x80054324
     case 0xDC: case 0xD9: case 0x98: case 0xA9: s.draw += 1; return;
