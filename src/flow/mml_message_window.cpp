@@ -65,6 +65,8 @@ uint8_t& MessageWindows::mem(uint32_t addr) {
     if (addr == 0x8009879Cu) return dummy_8009879c;
     if (addr == 0x800989D4u) return list_max_scroll_gp4464;          // gp+4464 (settings entry 26)
     if (addr == 0x8009899Cu) return list_scroll_gp4408;              // gp+4408 (settings entry 15)
+    if (addr == 0x80098930u) return shop_item_gp10cc;                // gp+0x10CC
+    if (addr == 0x80098B6Cu) return shop_short_gp1308;               // gp+0x1308
     if (addr >= 0x800BB6B8u && addr < 0x800BB6B8u + 5u * 196u) {   // slot +121..+123: remembered cursors
         const uint32_t o = (addr - 0x800BB6B8u) % 196u, n = (addr - 0x800BB6B8u) / 196u;
         if (o >= 121u && o <= 123u) return slots_[n].remembered[o - 121u];
@@ -216,6 +218,27 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         return true;
     }
     case 0xBA: s.number_40 = zenny_800c1b2c; s.read += 1; return true;      // 0x80057124: +0x40 = zenny
+    case 0xBC: {                                                             // 0x8005721C: the cursor row's item and its price
+        shop_item_gp10cc = uint8_t(list_800be2f8[size_t((list_scroll_gp4408 + uint32_t(int8_t(s.cursor))) & 0x7Fu)] + mem(r + 1));
+        const bool sell = story_flag && story_flag(0x2EE);
+        const uint32_t price = u16(kShopPrices8008fd3c + 2u * shop_item_gp10cc);
+        shop_short_gp1308 = (!sell && zenny_800c1b2c < price) ? 1 : 0;   // 0x8004327C(-price)
+        s.read += 2; return true;
+    }
+    case 0xBD: {                                                             // 0x800572C8: buy or sell the item
+        const uint8_t item = shop_item_gp10cc;
+        const uint32_t price = u16(kShopPrices8008fd3c + 2u * item);
+        if (story_flag && story_flag(0x2EE)) {                               // sell: a quarter back, drop 0x500 | item
+            zenny_800c1b2c = std::min<uint32_t>(zenny_800c1b2c + (price >> 2), 999999u);   // 0x80043294(+)
+            if (set_story_flag) set_story_flag(uint16_t(0x500u | item), false);
+            out.shop_sold = item;
+        } else {                                                             // buy: pay, own 0x500 | item
+            zenny_800c1b2c = zenny_800c1b2c >= price ? zenny_800c1b2c - price : 0u;   // 0x80043294(-)
+            if (set_story_flag) set_story_flag(uint16_t(0x500u | item), true);
+            out.shop_bought = item;
+        }
+        s.read += 1; return true;
+    }
     case 0xB6: s.read += 3; return true;                                     // 0x800543E0 (drawn by 0x800563A8)
     case 0xC0: case 0xC5: s.read += 1; return true;                          // 0x800543B0 (drawn by 0x80057574 / 0x800579D8)
     case 0xDE: s.read += 3; return true;                                     // 0x800543E0

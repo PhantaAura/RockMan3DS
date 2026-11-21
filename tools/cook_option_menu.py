@@ -36,6 +36,7 @@ RANGES = [
     (0x8008DE1C, 0x8008E060),   # special item icon records (layout 2, handler 1)
     (0x8008E09C, 0x8008ECDC),   # sprite lists of the other layouts (6 frame, 7/8/9.. headers, 22/23/26/27/28)
     (0x8008ECDC, 0x8008ECDC + 8 * 30),     # layout table {handler, tpage, list}
+    (0x8008FD3C, 0x8008FE64),   # shop prices: u16 per item id (0xBC / 0xBD)
     (0x8008FE64, 0x8008FE64 + 8 * 0x34),   # buster part stats (attack, energy, range, rapid)
     (0x80097F30, 0x80097F90),   # CLUTs, window colours, edge greys
     (0x8008D028, 0x8008D034),   # save block: digit -> message glyph (0x800679B8)
