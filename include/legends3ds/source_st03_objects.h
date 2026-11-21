@@ -140,6 +140,7 @@ struct St03NpcTick {
     std::optional<uint8_t> talk_start;         // 0x80063BC8(npc, 0, 0, +0x0C): message id
     bool checkable = false;                    // 0x80051B68(work, 1, -1, 0): a talk candidate this frame
     std::optional<uint8_t> reopen_menu;
+    bool talk_window = false;                  // behaviours 6 / 8: the talk the shop counters run (message windows)
     std::optional<uint16_t> sound;             // 0x8001A008(id, 0, 0): 266 officer, 268 Inspector, 269 Barrell walks        // Data state 3: 0x80053A08(0, 0xDC) after the save screen
 };
 St03NpcTick step_st03_npc(St03Npc& npc, const St03NpcInputs& in) noexcept;

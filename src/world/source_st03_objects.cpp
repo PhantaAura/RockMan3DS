@@ -198,6 +198,83 @@ void behaviour7_80109cf8(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) 
     }
 }
 
+// Behaviour 6 (0x80109AB4, table 0x80117028; class 52, the shop counters): from the front
+// (0x8010A4EC: 250 ahead, limit 200) the behaviour-4 talk on +0x0C (states 1..3 are behaviour
+// 4's 0x80109534 / 0x80109608 / 0x80109730); from elsewhere a turn pose (3 / 4) and message
+// +0x0C + 1, then states 4 (0x80109C44) and 5 (0x80109C94).
+void behaviour6_80109ab4(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    switch (n.talk_34b) {
+    case 0: {   // 0x80109AF0
+        n.saved_heading_34c = w.rot_54[1]; n.saved_34a = w.pose_ac;
+        bool front = false;
+        if (in.refs) {
+            const auto d = reference_player_motion_delta(*in.refs, w.rot_54[1], int16_t(0xFA << 4), 0, 0);
+            front = in_range_8010a4ec(n, in.player_x, in.player_z, int16_t(d.dx_fixed >> 16), int16_t(d.dz_fixed >> 16), 0xC8);
+        } else out.refs_missing = true;
+        if (front) {
+            w.pose_ac = st03_npc_idle_request(n.object_class);
+            const int16_t d = turn_to_player(n, in, 0x800);
+            n.turn_step_34e = int16_t(d < 0 ? (uint16_t(-d) >> 3) : (d >> 3));
+            ++n.talk_34b;
+            out.talk_start = w.byte_0c;
+        } else {
+            const int16_t d = turn_to_player(n, in, 0x20);
+            n.turn_step_34e = d;
+            w.pose_ac = d > 0 ? 3 : 4;
+            n.talk_34b = 4;
+            out.talk_start = uint8_t(w.byte_0c + 1);
+        }
+        out.talk_window = true;
+        return;
+    }
+    case 1: case 2: case 3: behaviour4_8010940c(n, in, out); return;   // shared states
+    case 4:     // 0x80109C44
+        if (in.talk_active) return;
+        n.flags_348 = uint16_t(n.flags_348 & ~4u);
+        w.pose_ac = n.turn_step_34e ? 5 : 6;
+        ++n.talk_34b;
+        return;
+    case 5:     // 0x80109C94
+        if (!in.animation_finished) return;
+        w.pose_ac = n.saved_34a; n.flags_348 = uint16_t(n.flags_348 | 2u);
+        w.state_09 = uint8_t(w.byte_0d & 7u);
+        return;
+    default: return;
+    }
+}
+
+// Behaviour 8 (0x8010A100, table 0x80117054; class 73): talk pose 8, message +0x0C, pose 9
+// when it ends, then back to the saved heading (0x80031D5C) and pose.
+void behaviour8_8010a100(St03Npc& n, const St03NpcInputs& in, St03NpcTick& out) noexcept {
+    auto& w = n.w;
+    switch (n.talk_34b) {
+    case 0: {   // 0x8010A13C
+        n.saved_34a = w.pose_ac; w.pose_ac = 8; ++n.talk_34b;
+        n.saved_heading_34c = w.rot_54[1];
+        const int16_t d = turn_to_player(n, in, 0x800);
+        n.turn_step_34e = int16_t(d < 0 ? (uint16_t(-d) >> 3) : (d >> 3));
+        out.talk_start = w.byte_0c; out.talk_window = true;
+        return;
+    }
+    case 1:     // 0x8010A224
+        add_heading(n, turn_to_player(n, in, n.turn_step_34e));
+        if (in.talk_active) return;
+        w.pose_ac = 9; n.flags_348 = uint16_t(n.flags_348 & ~4u); ++n.talk_34b;
+        return;
+    case 2: {   // 0x8010A2A4
+        const int16_t d = turn_80031d5c(n.saved_heading_34c, w.rot_54[1], n.turn_step_34e);
+        if (in.animation_finished && d == 0) {
+            w.pose_ac = n.saved_34a; n.flags_348 = uint16_t(n.flags_348 | 2u);
+            w.state_09 = uint8_t(w.byte_0d & 7u);
+        }
+        add_heading(n, d);
+        return;
+    }
+    default: return;
+    }
+}
+
 // 0x8010A45C(class): the walk request.
 uint8_t walk_request_8010a45c(uint8_t c) noexcept {
     if (c == 57) return 0;
@@ -684,7 +761,9 @@ St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
     else if (w.state_09 == 1) behaviour1_80108100(n, in, out);
     else if (w.state_09 == 4) behaviour4_8010940c(n, in, out);
     else if (w.state_09 == 7) behaviour7_80109cf8(n, in, out);
-    else if (w.state_09 >= 6) out.talk_unported = true;
+    else if (w.state_09 == 6) behaviour6_80109ab4(n, in, out);
+    else if (w.state_09 == 8) behaviour8_8010a100(n, in, out);
+    else if (w.state_09 > 8) out.talk_unported = true;
     else out.behaviour_unported = true;
     if (!(w.byte_0d & 0x20u) && in.floor_y) { w.raw_14[1] = *in.floor_y; w.fixed_1c[1] = int32_t(uint32_t(uint16_t(*in.floor_y)) << 16); }
     out.checkable = (n.flags_348 & 2u) != 0;   // 0x80051B68(work, +0x348 & 2 ? 1 : 3, -1, 0)

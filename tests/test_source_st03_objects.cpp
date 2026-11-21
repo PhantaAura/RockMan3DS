@@ -164,6 +164,17 @@ int main() {
         k.talk_active = false; r = step_st03_npc(d2, k); CHECK(d2.talk_34b == 4);   // talk over
         int m = 0; while (d2.w.state_09 == 7 && m < 64) { step_st03_npc(d2, k); ++m; }
         CHECK(d2.w.state_09 == (d2.w.byte_0d & 7u) && (d2.flags_348 & 2u));
+        // Class 73: behaviour 8 (talk pose 8, message +0x0C, pose 9, back home).
+        auto r73 = set[0]; r73.object_class = 73;
+        St03GenericClasses gen{}; gen[73] = true;
+        auto c73 = spawn_st03_object(r73, &gen); step_st03_npc(c73, k);
+        k.player_targets_me = true; k.talk_active = true; r = step_st03_npc(c73, k);
+        CHECK(c73.w.state_09 == 8 && r.talk_start && *r.talk_start == c73.w.byte_0c && r.talk_window && c73.w.pose_ac == 8);
+        k.player_targets_me = false; k.talk_active = false; r = step_st03_npc(c73, k);
+        CHECK(c73.talk_34b == 2 && c73.w.pose_ac == 9);
+        k.animation_finished = true; int m73 = 0; while (c73.w.state_09 == 8 && m73 < 64) { step_st03_npc(c73, k); ++m73; }
+        CHECK(c73.w.state_09 == (c73.w.byte_0d & 7u) && (c73.flags_348 & 2u));
+        k.animation_finished = false;
     }
     // Barrell variant 1 (set 1 record: class 0x25, [2] = 1, [4] = 1).
     {
