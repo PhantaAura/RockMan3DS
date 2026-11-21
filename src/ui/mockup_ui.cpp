@@ -3,37 +3,17 @@
 
 namespace l3 {
 namespace {
-// Tab strip across the top, map/content panel left, player status right,
-// footer hint below (port presentation after the user's reference image).
+// Title bar across the top, map panel left, player status right, footer
+// hint below (port presentation after the user's reference image).
 constexpr MockupUiLayout kLayout{
-    {{{4, 2, 75, 18}, {83, 2, 75, 18}, {162, 2, 75, 18}, {241, 2, 75, 18}}},
-    {4, 24, 224, 196}, {232, 24, 84, 196}, {10, 42, 212, 172},
-    {10, 46, 212, 32}, {10, 86, 212, 32}, {10, 126, 212, 24}
+    {4, 2, 312, 18},
+    {4, 24, 224, 196}, {232, 24, 84, 196}, {10, 42, 212, 172}
 };
 }
 const MockupUiLayout& mockup_ui_layout() { return kLayout; }
-const char* mockup_tab_label(MockupTab tab) {
-    switch (tab) {
-    case MockupTab::Map: return "MAP";
-    case MockupTab::Items: return "ITEMS";
-    case MockupTab::Weapons: return "WEAPONS";
-    case MockupTab::Options: return "OPTIONS";
-    }
-    return "MAP";
-}
 bool mockup_ui_rect_contains(const BottomUiRect& r, int x, int y) {
     return r.w > 0 && r.h > 0 && x >= r.x && y >= r.y &&
            x < int(r.x) + r.w && y < int(r.y) + r.h;
-}
-bool mockup_ui_touch(MockupUiState& state, int x, int y) {
-    for (size_t i = 0; i < kLayout.tabs.size(); ++i) {
-        if (mockup_ui_rect_contains(kLayout.tabs[i], x, y)) {
-            state.tab = static_cast<MockupTab>(i);
-            state.map_dragging = false;
-            return true;
-        }
-    }
-    return false;
 }
 MockupMapView make_mockup_map_view(const BottomMapModel& model) {
     MockupMapView out;
@@ -166,11 +146,6 @@ void mockup_map_update_follow(MockupUiState& state, const MockupMapView& map) {
 bool mockup_ui_command(MockupUiState& state, const MockupMapView& map, MockupUiCommand command) {
     if(command==MockupUiCommand::ToggleVisible) { state.companion_visible=!state.companion_visible;state.map_dragging=false;return true; }
     state.companion_visible=true; state.map_dragging=false;
-    if(command==MockupUiCommand::PreviousTab || command==MockupUiCommand::NextTab) {
-        const unsigned tab=static_cast<unsigned>(state.tab);
-        state.tab=static_cast<MockupTab>((tab+(command==MockupUiCommand::NextTab?1:3))%4);
-        return true;
-    }
     if(command==MockupUiCommand::ZoomMap) {
         const uint8_t zoom=valid_zoom(state);
         const bool result=mockup_map_set_zoom(state,map,zoom==1?2:zoom==2?4:1);
@@ -203,23 +178,7 @@ bool mockup_ui_touch_event(MockupUiState& state, const MockupMapView& map,
     if(phase==MockupTouchPhase::Begin) {
         if(!state.companion_visible) { state.companion_visible=true;return true; }
         state.map_dragging=false;
-        if(mockup_ui_touch(state,x,y)) return true;
-        if(!mockup_map_available(map)) return false;
-        if(state.tab==MockupTab::Options) {
-            if(mockup_ui_rect_contains(kLayout.map_zoom_button,x,y)) {
-                const uint8_t current=valid_zoom(state);
-                return mockup_map_set_zoom(state,map,current==1?2:current==2?4:1);
-            }
-            if(mockup_ui_rect_contains(kLayout.map_reset_button,x,y)) {
-                mockup_map_reset(state);
-                return true;
-            }
-            if(mockup_ui_rect_contains(kLayout.map_follow_button,x,y)) {
-                state.map_follow_player=!state.map_follow_player;
-                mockup_map_update_follow(state,map);return true;
-            }
-        }
-        if(state.tab!=MockupTab::Map || !mockup_ui_rect_contains(kLayout.map_view,x,y)) return false;
+        if(!mockup_map_available(map) || !mockup_ui_rect_contains(kLayout.map_view,x,y)) return false;
         clamp_pan(state,map);
         state.map_dragging=true;
         state.map_follow_player=false;
@@ -229,7 +188,7 @@ bool mockup_ui_touch_event(MockupUiState& state, const MockupMapView& map,
         return true;
     }
     if(phase!=MockupTouchPhase::Move || !state.map_dragging) return false;
-    if(state.tab!=MockupTab::Map || !mockup_map_available(map) ||
+    if(!mockup_map_available(map) ||
        state.drag_area_index!=map.area_index || state.drag_width!=map.width || state.drag_height!=map.height) {
         state.map_dragging=false;
         return false;

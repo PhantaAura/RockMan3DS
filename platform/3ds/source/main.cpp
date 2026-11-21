@@ -5954,8 +5954,6 @@ int main() {
                 const auto pp=session.player_position();
                 const auto ui_view=l3::make_mockup_map_view(session.active_map(),session.map_area_index(),pp.x,pp.z,session.player_yaw());
                 const auto command=[&](l3::MockupUiCommand c) {(void)l3::mockup_ui_command(ui_state,ui_view,c);select_ui_used=true;};
-                if(down&KEY_L) command(l3::MockupUiCommand::PreviousTab);
-                if(down&KEY_R) command(l3::MockupUiCommand::NextTab);
                 if(down&KEY_X) command(l3::MockupUiCommand::ZoomMap);
                 if(down&KEY_B) command(l3::MockupUiCommand::CenterPlayer);
                 if(down&KEY_A) command(l3::MockupUiCommand::ToggleVisible);

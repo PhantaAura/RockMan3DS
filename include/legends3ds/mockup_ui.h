@@ -9,16 +9,16 @@ namespace l3 {
 
 // A compact original HUD layout informed by the reference's three columns.
 // The reference's images, map art, portrait and unrecovered stats are not used.
-enum class MockupTab : uint8_t { Map, Items, Weapons, Options };
+// The map is the only page: items, weapons and options live in the original
+// Start sub-screen (Start opens it on this screen).
 enum class MockupTouchPhase : uint8_t { Begin, Move, End };
 enum class MockupUiCommand : uint8_t {
-    PreviousTab, NextTab, ZoomMap, CenterPlayer, PanLeft, PanRight,
+    ZoomMap, CenterPlayer, PanLeft, PanRight,
     PanUp, PanDown, ToggleVisible
 };
 struct MockupUiState {
     bool companion_visible = true;
     bool map_follow_player = false;
-    MockupTab tab = MockupTab::Map;
     uint8_t map_zoom = 1; // Only 1, 2 and 4 are supported.
     int16_t map_pan_x = 0;
     int16_t map_pan_y = 0;
@@ -31,20 +31,14 @@ struct MockupUiState {
 };
 
 struct MockupUiLayout {
-    std::array<BottomUiRect, 4> tabs;
+    BottomUiRect title;
     BottomUiRect content;
     BottomUiRect status;
     BottomUiRect map_view;
-    BottomUiRect map_zoom_button;
-    BottomUiRect map_reset_button;
-    BottomUiRect map_follow_button;
 };
 
 const MockupUiLayout& mockup_ui_layout();
-const char* mockup_tab_label(MockupTab tab);
-// Tabs deliberately remain selectable even when inventory is not connected.
 // Touch coordinates use the normal landscape 320x240 screen coordinate space.
-bool mockup_ui_touch(MockupUiState& state, int x, int y);
 bool mockup_ui_rect_contains(const BottomUiRect& rect, int x, int y);
 
 // Borrowed cell storage: rendering and player position lookup allocate nothing.
@@ -82,7 +76,7 @@ bool mockup_map_center_player(MockupUiState& state, const MockupMapView& map);
 void mockup_map_update_follow(MockupUiState& state, const MockupMapView& map);
 // Platform-neutral button equivalents. These only change companion-screen state.
 bool mockup_ui_command(MockupUiState& state, const MockupMapView& map, MockupUiCommand command);
-// Begin selects tabs, activates the two Options buttons, or starts a map drag.
+// Begin restores a hidden companion screen or starts a map drag.
 // Move pans only a drag that began inside the map; End releases that gesture.
 // No touch action mutates source map cells or top-screen camera/gameplay state.
 bool mockup_ui_touch_event(MockupUiState& state, const MockupMapView& map,
