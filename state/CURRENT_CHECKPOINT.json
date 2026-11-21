@@ -1,15 +1,15 @@
 {
  "version": "0.0.15.16",
- "title": "Stage loading v1 (branch claude/stage-loading-9d47ea): event 2 stage-2 request reloads the session for ST02; ST02 event 4 pending",
+ "title": "M3 S1-S4 verified in Azahar on main; S5 and the M1 release (death/continue, normal-start run) in progress",
  "created_utc": "2026-10-27T12:00:00+00:00",
  "project_path": "/Users/emeraldhunter/Desktop/3DSPORTS/RockMan3DS (Git repository)",
  "git_repository": true,
- "branch": "claude/tutorial-boss-4a9127",
+ "branch": "main",
  "commit": "see git log",
  "baseline_archive": "/Users/emeraldhunter/.codex/.chatgpt-projects/g-p-6a7e25b6218c8191abf8733e250834ca/deliverables/Legends3DS_0.0.14.50_Source_r1.zip",
  "baseline_sha256": "2f486bd1bfa7f2a3e362ecf7fb409569c2d14f6ec783323ad5a528b1f1d8c4b7",
- "native_build": "PASS (devkitARM Old 3DS, pass-20261114-143643-m2-01516)",
- "host_tests": "182/182 PASS",
+ "native_build": "PASS (devkitARM Old 3DS, merge 13418a0, 2026-11-21)",
+ "host_tests": "195/195 PASS",
  "toolchain": "devkitARM r68-1 / GCC16.1.0 / libctru2.7.0-1 / Citro3D1.7.1-2; ARMv6K/mpcore hardfloat",
  "compiled_source_hashes_match": true,
  "compiled_inputs": "current Git working tree via tools/m1_mac_build.sh",
@@ -21,7 +21,7 @@
  "source_release_excludes_retail_payloads": true,
  "sd_install_zip": null,
  "emulator": "Azahar 2126.0; Old model; CPU 100%; Vulkan",
- "current_emulator_validation": "SOURCE_BACKED_PARTIAL: Azahar run 14 (2026-11-14, normal boot, opening_tutorial_boss.txt) 0x622 @23024, boss fought by Buster to HP 208, player died (arrived with 24 HP), game over phase 9 held on jingle 0x41; stage-loading run 2 on the same route reached 0x606 @18508 and the stage-2 request @22298. Uninterrupted winning run with the Area 1 approach fix: PENDING (run 15 stalled, screen locked).",
+ "current_emulator_validation": "Azahar 2026-11-21: S1-S4 verified (run52 north gate -> stage 4; run54 junk-shop Yes sets 0xE); S2 guard route passes on the collision branch. M1 uninterrupted normal-start win: PENDING (death/continue bug open).",
  "emulator_evidence": "docs/validation_01516/RESULTS.md (Gate A table, Gate C baseline)",
  "hardware_tested": false,
  "physical_01443_validation": "SOURCE_BACKED_PARTIAL: user photos/report show textured room/player and a collision escape.",
@@ -161,5 +161,6 @@
  },
  "branches_not_merged": {
   "claude/option-menu-b69b4f": "OPTION menu (message windows 0x80053B40, KAIFONT, settings 0x800C1B64..69); host 178/178, native PASS, Azahar OPTION->Close->NEW GAME"
- }
+ },
+ "handoff": "RESUME_01516.md (one page); full log docs/archive/resume/RESUME_01516_log.md"
 }
