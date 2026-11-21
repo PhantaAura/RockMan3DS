@@ -557,7 +557,16 @@ public:
     void set_save_screen_host(bool on) noexcept { save_screen_host_ = on; }
     bool save_screen_open() const noexcept { return save_screen_open_; }
     void finish_save_screen() noexcept { save_screen_open_ = false; save_screen_frames_ = 1; }
-    RuntimeSaveState native_save_state() const;   // the .l3sv state (checkpoint id = marker | stage << 8 | area)
+    RuntimeSaveState native_save_state() const;
+    // Behaviours 6 / 8 (the shop counters): their talk runs on the host's message windows, as the
+    // original's talk runner does, instead of the dialogue box. take_window_talk() hands over the
+    // block once; the talk counts as active until finish_window_talk().
+    std::optional<MessageRef> take_window_talk() noexcept { auto r = window_talk_request_; window_talk_request_.reset(); return r; }
+    void finish_window_talk() noexcept { window_talk_open_ = false; }
+    std::vector<uint8_t> raw_message_bank(size_t bank) const;
+    // Shop results (0xBD): money 0x800C1B2C and, for item 0x23, max life +16 with life at max.
+    void set_money_800c1b2c(int32_t money) noexcept { source_money_800c1b2c_ = money; }
+    void raise_life_max(uint16_t add) noexcept;   // the .l3sv state (checkpoint id = marker | stage << 8 | area)
     int save_result() const noexcept { return save_result_; }   // 0 none, 1 written, -1 failed
     // The 0x80065064 inputs from the port's state: play time (+0x0C, the session frame counter,
     // CANDIDATE), money (+0x1C), stage/area (+0x50/+0x51), Turn (+0x54), player work with life /
@@ -887,6 +896,7 @@ private:
     std::function<bool(const RuntimeSaveState&)> save_writer_;
     uint8_t save_screen_frames_=0;             // main phase 6 stand-in
     bool save_screen_host_=false,save_screen_open_=false;
+    std::optional<MessageRef> window_talk_request_;bool window_talk_open_=false;
     int save_result_=0;
     std::optional<size_t> player_check_npc_;   // player +0x184 when it names an ST03 scene object   // CANDIDATE: 0x8007FE50's seed and caller order are not modelled
     std::optional<SourcePostWinHandoff> source_post_win_handoff_;

@@ -65,6 +65,9 @@ struct MmlMessageStats {
 // Parses the raw MSG payload after the MML DAT resource wrapper has been removed.
 // The first u16 is both the pointer-table byte size and the first block offset.
 // Block terminators are retained by the source offsets but are not emitted as tokens.
+// The original bank bytes back from the parsed tokens (pointer table, each block at its
+// source offset, the 00 00 terminators): what the message windows read.
+std::vector<uint8_t> mml_message_raw_bytes(const MmlMessageFile& msg);
 MmlMessageFile parse_mml_message_payload(const std::vector<uint8_t>& bytes);
 MmlMessageStats inspect_mml_message(const MmlMessageFile& msg);
 

@@ -5474,6 +5474,8 @@ int main() {
         // Data's Save: the phase-6 memory-card screen (0x800665FC) on the bottom screen, with the
         // 3DS files save_01516_slotN.blk as memory card 1 (CANDIDATE placement and card model).
         std::unique_ptr<l3::SourceSaveScreen> save_screen;l3::GameplayClock save_clock;uint16_t save_pending=0;
+        // Shop counters (generic NPC behaviours 6 / 8): their talk on the message windows, bottom screen.
+        std::unique_ptr<l3::MessageWindows> shop_windows;l3::GameplayClock shop_clock;uint16_t shop_pending=0;
         if(subscreen)session.set_save_screen_host(true);
         l3::GameplayClock subscreen_clock;
         {
@@ -5858,6 +5860,55 @@ int main() {
                     }
                 }
                 down=0;held=0;   // the paused game sees no input
+            }
+            if(auto req=session.take_window_talk()){
+                try{
+                    shop_windows=std::make_unique<l3::MessageWindows>(l3::load_exe_excerpt(read_binary(data_path("frontend/option.l3ex"))));
+                    shop_windows->map_range(0x80160000u,session.raw_message_bank(req->bank));   // load address CANDIDATE
+                    shop_windows->story_flag=[&session](uint16_t f){return session.story_flag(f);};
+                    shop_windows->set_story_flag=[&session](uint16_t f,bool on){session.set_story_flag(f,on);};
+                    shop_windows->phase_800c1b10=3;
+                    shop_windows->set_settings(g_option_settings);
+                    if(!shop_windows->open_8005382c(0,0x80160000u,uint8_t(req->block))){shop_windows.reset();session.finish_window_talk();}
+                    else{shop_clock.reset();shop_pending=0;
+                        hardware_test_trace("# shop_talk,frame=%lu,open=1,bank=%u,block=%u",(unsigned long)session.frame_counter(),unsigned(req->bank),unsigned(req->block));}
+                }catch(const std::exception&){shop_windows.reset();session.finish_window_talk();}
+            }
+            if(shop_windows&&!subscreen){shop_windows.reset();session.finish_window_talk();}   // no font pages: no window host
+            if(shop_windows&&subscreen){
+                const auto pad_bits=[](u32 k){
+                    uint16_t m=0;
+                    if(k&(KEY_A|KEY_B))m|=0x4000u; if(k&KEY_X)m|=0x1000u;
+                    if(k&(KEY_DUP|KEY_CPAD_UP))m|=0x0010u; if(k&(KEY_DDOWN|KEY_CPAD_DOWN))m|=0x0040u;
+                    if(k&(KEY_DLEFT|KEY_CPAD_LEFT))m|=0x0080u; if(k&(KEY_DRIGHT|KEY_CPAD_RIGHT))m|=0x0020u;
+                    return m;
+                };
+                shop_pending|=pad_bits(down);
+                shop_clock.advance((svcGetSystemTick()-previous_update_clock)/CPU_TICKS_PER_USEC,false);
+                while(shop_windows&&shop_clock.consume()){
+                    auto& w=*shop_windows;
+                    w.zenny_800c1b2c=uint32_t(std::max<int32_t>(0,session.source_money_800c1b2c()));
+                    w.life_max_800b5260=int16_t(session.hp_max());
+                    for(size_t b=0;b<w.flags_800be378.size();++b){uint8_t v=0;for(int k=0;k<8;++k)if(session.story_flag(uint16_t(b*8+size_t(k))))v|=uint8_t(0x80u>>k);w.flags_800be378[b]=v;}
+                    auto frame=w.tick_80053b40(pad_bits(held),shop_pending);shop_pending=0;
+                    session.set_money_800c1b2c(int32_t(w.zenny_800c1b2c));
+                    if(frame.shop_bought==0x23)session.raise_life_max(16);   // 0x800572C8: max life +16, life to max
+                    if(frame.shop_bought>=0||frame.shop_sold>=0)   // 0x24/0x25 canteen bytes and the 0x80061320 re-equip: no port state yet
+                        hardware_test_trace("# shop,frame=%lu,bought=%d,sold=%d,zenny=%lu",(unsigned long)session.frame_counter(),
+                            int(frame.shop_bought),int(frame.shop_sold),(unsigned long)w.zenny_800c1b2c);
+                    for(const auto& snd:frame.sounds)(void)l3::enqueue_source_audio_8001a008(session.source_audio_queue(),snd[0],snd[1],0);
+                    if(sfx.ready()){(void)sfx.consume(session.source_audio_queue(),l3::SourceSoundListener{});sfx.tick(44100u/30u);}
+                    else l3::finish_source_audio_queue_batch_8001a1d0(session.source_audio_queue());
+                    auto& target=(++subscreen_hash&1)?subscreen_rgb2:subscreen_rgb;
+                    std::fill(target.begin(),target.end(),0);
+                    (void)l3::rasterize_message_windows(frame.packets,subscreen_pages,target.data());
+                    mockup_hud_set_fullscreen(target.data(),subscreen_hash);
+                    if(!(w.flags_80098a58&0x80000000u)){   // every window closed: the talk runner ends
+                        shop_windows.reset();session.finish_window_talk();mockup_hud_set_fullscreen(nullptr,0);mockup_hud_invalidate();
+                        hardware_test_trace("# shop_talk,frame=%lu,open=0",(unsigned long)session.frame_counter());
+                    }
+                }
+                down=0;held=0;
             }
             if(session.save_screen_open()&&subscreen){
                 const auto pad_bits=[](u32 k){

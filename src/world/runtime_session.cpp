@@ -2202,7 +2202,7 @@ void RuntimeSession::update_st03_objects(SourceRngService* rng){
     // stub (no A0:30 call), so nothing reseeds after boot.
     if(stage_!=3&&stage_!=4&&stage_!=0x0C)return;
     // The talk runner's block +0 clears once the talk's window closed.
-    if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
+    if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_&&!window_talk_open_)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
         if(!o.w.live||!(o.generic||o.scene_v1||o.car))continue;
@@ -2252,7 +2252,10 @@ void RuntimeSession::update_st03_objects(SourceRngService* rng){
             // 0x80063BC8 + the talk runner: message +0x0C in slot 0 of the
             // area's bank; player action 16 (talk pose) is not ported.
             st03_talk_active_=true;
-            if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.talk_start});}
+            if(t.talk_window&&map_area_index_<message_banks_->size()){
+                window_talk_request_=MessageRef{uint16_t(map_area_index_),*t.talk_start};window_talk_open_=true;
+            }
+            else if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*t.talk_start});}
                 catch(const std::exception&){}
         }
         if(shared){
@@ -3048,6 +3051,11 @@ void RuntimeSession::set_story_flag(uint16_t bit,bool value){
         auto& source=source_event_flags_.values[bit>>3u];if(value)source=uint8_t(source|mask);else source=uint8_t(source&uint8_t(~mask));}
 }
 bool RuntimeSession::story_flag(uint16_t bit)const{return bit<kL3StoryFlagBytes*8u && (story_flags_[bit>>3u]&(1u<<(bit&7u)))!=0;}
+std::vector<uint8_t> RuntimeSession::raw_message_bank(size_t bank) const{
+    if(!message_banks_||bank>=message_banks_->size())return {};
+    return mml_message_raw_bytes((*message_banks_)[bank]);
+}
+void RuntimeSession::raise_life_max(uint16_t add) noexcept{hp_max_=uint16_t(hp_max_+add);hp_=hp_max_;wr16w(player_,0x6E,hp_);}
 RuntimeSaveState RuntimeSession::native_save_state() const{return make_save_state(0x80000000u|(uint32_t(stage_)<<8)|uint32_t(map_area_index_&0xFFu));}
 RuntimeSaveState RuntimeSession::make_save_state(uint32_t checkpoint)const{
     RuntimeSaveState s;s.checkpoint_id=checkpoint;s.area_id=static_cast<uint16_t>(area_index_);s.player_yaw=player_yaw();s.player_x=player_position_.x;s.player_y=player_position_.y;s.player_z=player_position_.z;s.hp=hp_;s.hp_max=hp_max_;s.play_frames=frame_counter_;s.qol=settings_;s.story_flags=story_flags_;return s;

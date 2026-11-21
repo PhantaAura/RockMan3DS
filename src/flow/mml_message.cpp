@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "legends3ds/mml_message.h"
 #include "legends3ds/endian_io.h"
 #include "legends3ds/l3map.h"
@@ -147,6 +148,23 @@ MmlMessageFile parse_mml_message_payload(const std::vector<uint8_t>& b) {
             ++i;
         }
         out.blocks.push_back(std::move(block));
+    }
+    return out;
+}
+
+std::vector<uint8_t> mml_message_raw_bytes(const MmlMessageFile& msg) {
+    size_t size = size_t(msg.blocks.size()) * 2u;
+    for (const auto& b : msg.blocks) size = std::max<size_t>(size, b.source_end);
+    std::vector<uint8_t> out(size, 0);
+    for (size_t i = 0; i < msg.blocks.size(); ++i) {
+        const auto& b = msg.blocks[i];
+        out[2 * i] = uint8_t(b.source_offset); out[2 * i + 1] = uint8_t(b.source_offset >> 8);
+        size_t at = b.source_offset;
+        for (const auto& t : b.tokens) {
+            if (at < out.size()) out[at] = t.opcode;
+            ++at;
+            for (uint8_t a : t.args) { if (at < out.size()) out[at] = a; ++at; }
+        }
     }
     return out;
 }

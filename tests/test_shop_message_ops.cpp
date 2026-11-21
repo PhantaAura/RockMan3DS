@@ -2,6 +2,7 @@
 // 0xBA (zenny through the number printer 0x8005BF10), 0xB9 (open on the last choice) and 0xBB
 // (open on a setting byte) from a stage-style bank mapped next to the excerpt.
 #include "legends3ds/mml_message_window.h"
+#include "legends3ds/mml_message.h"
 #include <cassert>
 #include <cstring>
 #include <iostream>
@@ -182,6 +183,11 @@ int main() {
         for (int i = 0; i < 3; ++i) (void)v.tick_80053b40(0, 0);
         const uint8_t want[7] = {0x00, 0x00, 0x00, 0x00, 4, 1, 1};   // 30 -> pad kind 1 (authored 0) x4, '3','0', fixed '0'
         for (uint32_t k = 0; k < 7; ++k) assert(v.byte(0x8015C002u + 15u + k) == want[k]);
+    }
+    {   // The raw bank comes back unchanged from the parsed tokens (what the windows host maps).
+        std::vector<uint8_t> raw = {0x04, 0x00, 0x0C, 0x00, 0xA1, 0x20, 0x86, 0x97, 0x80, 0x9F, 0x00, 0x00, 0xBA, 0x4F, 0x95, 0x00, 0x00};
+        const auto parsed = parse_mml_message_payload(raw);
+        assert(mml_message_raw_bytes(parsed) == raw);
     }
     std::cout << "shop_message_ops: ok\n";
     return 0;
