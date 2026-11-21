@@ -5878,9 +5878,12 @@ int main() {
             if(shop_windows&&subscreen){
                 const auto pad_bits=[](u32 k){
                     uint16_t m=0;
-                    if(k&(KEY_A|KEY_B))m|=0x4000u; if(k&KEY_X)m|=0x1000u;
-                    if(k&(KEY_DUP|KEY_CPAD_UP))m|=0x0010u; if(k&(KEY_DDOWN|KEY_CPAD_DOWN))m|=0x0040u;
-                    if(k&(KEY_DLEFT|KEY_CPAD_LEFT))m|=0x0080u; if(k&(KEY_DRIGHT|KEY_CPAD_RIGHT))m|=0x0020u;
+                    if(k&(KEY_A|KEY_B))m|=0x4000u;
+                    if(k&KEY_X)m|=0x1000u;
+                    if(k&(KEY_DUP|KEY_CPAD_UP))m|=0x0010u;
+                    if(k&(KEY_DDOWN|KEY_CPAD_DOWN))m|=0x0040u;
+                    if(k&(KEY_DLEFT|KEY_CPAD_LEFT))m|=0x0080u;
+                    if(k&(KEY_DRIGHT|KEY_CPAD_RIGHT))m|=0x0020u;
                     return m;
                 };
                 shop_pending|=pad_bits(down);
