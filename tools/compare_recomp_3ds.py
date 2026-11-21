@@ -78,30 +78,63 @@ def load_3ds(path):
     return out
 
 
-def compare(oracle_path, ds_path):
-    o = [x for x in load_oracle(oracle_path) if x[2] == 1]
-    d = [x for x in load_3ds(ds_path) if x[2] == 1]
-    o_order = [f for _, f, _ in o]
-    d_order = [f for _, f, _ in d]
-    missing = [f for f in o_order if f not in d_order]
-    extra = [f for f in d_order if f not in o_order]
-    common = [f for f in o_order if f in d_order]
-    d_common = [f for f in d_order if f in o_order]
-    print(f'oracle sets {len(o_order)} flags, 3DS sets {len(d_order)}')
-    print('missing on 3DS:', ' '.join(f'0x{f:03x}' for f in missing) or 'none')
-    print('extra on 3DS:  ', ' '.join(f'0x{f:03x}' for f in extra) or 'none')
-    print('order matches:', 'yes' if common == d_common else 'no')
-    if common != d_common:
+def _fmt(ev):
+    return f"{'set' if ev[1] else 'clr'} 0x{ev[0]:03x}"
+
+
+def compare(oracle_path, ds_path, allow_extra=False):
+    """Compare set AND clear events in order. Fails on missing, extra
+    (unless allow_extra) or out-of-order events. Flags only: matching here
+    says nothing about movement, combat, camera or animation parity."""
+    o = load_oracle(oracle_path)
+    d = load_3ds(ds_path)
+    o_ev = [(f, v) for _, f, v in o]
+    d_ev = [(f, v) for _, f, v in d]
+    o_left = list(o_ev)
+    d_left = list(d_ev)
+    for ev in d_ev:
+        if ev in o_left:
+            o_left.remove(ev)
+    for ev in o_ev:
+        if ev in d_left:
+            d_left.remove(ev)
+    missing, extra = o_left, d_left
+    o_rest = list(missing)
+    common = []
+    for ev in o_ev:
+        if ev in o_rest:
+            o_rest.remove(ev)
+        else:
+            common.append(ev)
+    d_rest = list(extra)
+    d_common = []
+    for ev in d_ev:
+        if ev in d_rest:
+            d_rest.remove(ev)
+        else:
+            d_common.append(ev)
+    sets = lambda evs: sum(1 for _, v in evs if v)
+    print(f'oracle: {sets(o_ev)} sets, {len(o_ev) - sets(o_ev)} clears; '
+          f'3DS: {sets(d_ev)} sets, {len(d_ev) - sets(d_ev)} clears')
+    print('missing on 3DS:', ', '.join(map(_fmt, missing)) or 'none')
+    print('extra on 3DS:  ', ', '.join(map(_fmt, extra)) or 'none',
+          '(allowed)' if extra and allow_extra else '')
+    order_ok = common == d_common
+    print('order matches:', 'yes' if order_ok else 'no')
+    if not order_ok:
         for i, (a, b) in enumerate(zip(common, d_common)):
             if a != b:
-                print(f'  first order difference at #{i}: oracle 0x{a:03x}, 3DS 0x{b:03x}')
+                print(f'  first order difference at #{i}: oracle {_fmt(a)}, 3DS {_fmt(b)}')
                 break
-    of = {f: fr for fr, f, _ in o}
-    df = {f: fr for fr, f, _ in d}
-    print('flag      oracle_frame  3ds_frame')
-    for f in common:
-        print(f'0x{f:03x}  {of[f]:>12}  {df[f]:>9}')
-    return 1 if missing or common != d_common else 0
+    print('event     oracle_frame  3ds_frame')
+    o_fr = [(f, v, fr) for fr, f, v in o]
+    d_fr = [(f, v, fr) for fr, f, v in d]
+    for ev in common:
+        a = next(x for x in o_fr if x[:2] == ev); o_fr.remove(a)
+        b = next(x for x in d_fr if x[:2] == ev); d_fr.remove(b)
+        print(f'{_fmt(ev)}  {a[2]:>12}  {b[2]:>9}')
+    print('note: flag events only; not evidence of movement/combat/camera/animation parity')
+    return 1 if missing or (extra and not allow_extra) or not order_ok else 0
 
 
 def main():
@@ -110,13 +143,14 @@ def main():
     sub.add_parser('arm')
     r = sub.add_parser('record'); r.add_argument('lo', type=int); r.add_argument('hi', type=int); r.add_argument('out')
     c = sub.add_parser('compare'); c.add_argument('oracle'); c.add_argument('trace')
+    c.add_argument('--allow-extra', action='store_true', help='do not fail on flag events the oracle run lacks')
     a = ap.parse_args()
     if a.cmd == 'arm':
         arm()
     elif a.cmd == 'record':
         record(a.lo, a.hi, a.out)
     else:
-        sys.exit(compare(a.oracle, a.trace))
+        sys.exit(compare(a.oracle, a.trace, a.allow_extra))
 
 
 if __name__ == '__main__':
