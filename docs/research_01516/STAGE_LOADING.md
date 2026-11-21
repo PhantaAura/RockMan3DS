@@ -541,3 +541,19 @@ CANDIDATE: 0x800C1B62 and block 0x800989F8 +4 read 0.
 - door 3: LOAD_REQUESTED at frame 16320;
 - stage 0x0C loads at (-6912, -1, 8576), equal to the oracle's spawn;
 - no game over.
+
+## S2 and S4 in Azahar (run48, run52; pass-20261118-142420, code f9888f6)
+
+- **S2 (stage 0x0C, run48):** stage-init door locks (0x7E1 cleared, 0x7E2 locked); 0x1FF; the ruin guard (class 0x24, generic NPC) spawns at (3072,-1,5016) and is drawn.
+- **The guard's talk** is not yet checked. The route stalls on a slope at (-7220,-974). The cause is an alternate contact list plus slope code 0x54; the tutorial-boss session is fixing it.
+- **S4 (run52, route stage2_s4_gate.txt):**
+  - scene 1 (flag 4), the Barrell check, then scene 2 (flag 0);
+  - entering ST03 area 2 clears 0x7E1 (the door locks reapply on every area load);
+  - the north gate (door type 4) gives LOAD_REQUESTED;
+  - stage 4 loads at (-3584,-1,8704), equal to the oracle;
+  - ST04 door locks (0x7E1 locked again: the stage-5 gate), then 0xD;
+  - object set 0 spawns all nine townspeople, all drawn. Three of them use generic behaviours 2/3 (not ported, reported).
+  - No game over.
+- **Routes:**
+  - the Barrell approach now stops near z 1186, since state-1 walking overshoots more than the earlier state-3 fallback did;
+  - the gate approach ends at z 24671, where the oracle's Circle works.
