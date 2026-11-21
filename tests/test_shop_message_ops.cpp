@@ -125,6 +125,31 @@ int main() {
         assert(v.list_count_gp4420 == 2 && v.list_800be2f8[0] == 0 && v.list_800be2f8[1] == 3 && v.list_800be2f8[2] == 255);
         assert(v.slot(0).index == 0x0D);   // two rows -> the byte at +5 (0x0D)
     }
+    {   // 0xB7 rows: the name index per row, the row's call target, Down at the last row scrolls.
+        MessageWindows v(authored());
+        v.story_flag = [](uint16_t) { return false; };
+        for (uint8_t i = 0; i < 7; ++i) v.list_800be2f8[i] = uint8_t(10 + i);
+        for (uint32_t i = 7; i < 128; ++i) v.list_800be2f8[i] = 255;
+        v.list_count_gp4420 = 7; v.list_scroll_gp4408 = 0; v.shop_kind_gp0fec = 1; v.row_block_gp0f94 = 1;
+        std::vector<uint8_t> bk(0x60, 0);
+        const std::vector<uint8_t> blk = {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x10, 0x00, 0x10, 0x00, 0x08, 0x02, 0x93, 0x02, 0x04,
+            0xB7, 0x00, 0x01, 0xED, 0x90, 0x00, 0x86, 0xB7, 0x00, 0x01, 0xED, 0x90, 0x00,
+            0x97, 0x40, 0xFF, 0xFF, 0x8A, 0x01, 0x00, 0x95, 0x00, 0x00};
+        const std::vector<uint8_t> row = {0x91, 0x00, 0x00};
+        put16(bk, 0, 4); put16(bk, 2, uint16_t(4 + blk.size()));
+        std::memcpy(bk.data() + 4, blk.data(), blk.size()); std::memcpy(bk.data() + 4 + blk.size(), row.data(), row.size());
+        v.map_range(0x8015A000u, bk);
+        assert(v.open_8005382c(0, 0x8015A000u, 0));
+        for (int i = 0; i < 8; ++i) (void)v.tick_80053b40(0, 0);
+        assert(v.byte(0x8015A004u + 14 + 5) == 1 && v.byte(0x8015A004u + 21 + 5) == 1);   // call targets patched
+        (void)v.tick_80053b40(0x40, 0x40);                                                 // Down: row 0 -> 1
+        for (int i = 0; i < 2; ++i) (void)v.tick_80053b40(0, 0);
+        assert(v.slot(0).cursor == 1 && v.list_scroll_gp4408 == 0);
+        (void)v.tick_80053b40(0x40, 0x40);                                                 // Down at the last row: scroll
+        assert(v.slot(0).cursor == 1 && v.list_scroll_gp4408 == 1);
+        (void)v.tick_80053b40(0, 0);
+        assert(v.name_index_gp4044 == uint8_t(10 + 1 + 1 + 0x20));                         // last drawn row: scroll 1 + row 1, items +0x20
+    }
     std::cout << "shop_message_ops: ok\n";
     return 0;
 }

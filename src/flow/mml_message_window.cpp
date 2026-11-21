@@ -67,6 +67,9 @@ uint8_t& MessageWindows::mem(uint32_t addr) {
     if (addr == 0x8009899Cu) return list_scroll_gp4408;              // gp+4408 (settings entry 15)
     if (addr == 0x80098930u) return shop_item_gp10cc;                // gp+0x10CC
     if (addr == 0x80098850u) return shop_kind_gp0fec;                // gp+0xFEC
+    if (addr == 0x800987F8u) return row_block_gp0f94;                // gp+0xF94
+    if (addr == 0x80098A64u) return cancel_slot_gp1200;              // gp+0x1200
+    if (addr == 0x80098A65u) return cancel_block_gp1201;             // gp+0x1201
     if (addr == 0x800988F4u) return shop_scroll0_gp1090;             // gp+0x1090
     if (addr == 0x80098B6Cu) return shop_short_gp1308;               // gp+0x1308
     if (addr >= 0x800BB6B8u && addr < 0x800BB6B8u + 5u * 196u) {   // slot +121..+123: remembered cursors
@@ -266,6 +269,13 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         s.color = 0; s.rows = 0;   // +0x3E, +0x72 (+0x3C also cleared: no port field)
         return true;
     }
+    case 0xB7: {                                                             // 0x80056778: a list row
+        mem(r + 5) = row_block_gp0f94;                                       // the row's 0x90 call target
+        name_index_gp4044 = uint8_t(list_800be2f8[size_t((list_scroll_gp4408 + uint32_t(int8_t(s.rows))) & 0x7Fu)] +
+                                    (shop_kind_gp0fec ? 0x20u : 0u));
+        s.repeat = 0; ++s.rows; s.flags |= 0x00402000u; s.read += 3;
+        return true;
+    }
     case 0xBD: {                                                             // 0x800572C8: buy or sell the item
         const uint8_t item = shop_item_gp10cc;
         const uint32_t price = u16(kShopPrices8008fd3c + 2u * item);
@@ -449,6 +459,56 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
             if (old != s.cursor) sound(out, 129, 1);
         }
         ++s.row_draw; s.brightness = uint8_t(s.brightness + 80); s.draw += 3;
+        return;
+    }
+    case 0xB7: {                                                             // 0x80056820: a list row (draw)
+        mem(d + 3) = 0xED;
+        s.brightness = 0;
+        bool cancel = false;
+        if (s.cursor == s.row_draw && !(s.flags & 0x00C00000u)) {
+            const int8_t old = s.cursor;
+            const uint8_t lr = mem(d + 1), ud = mem(d + 2);
+            const uint32_t pad = uint32_t(s.held) | (uint32_t(s.pressed) << 16);
+            const uint32_t count = list_count_gp4420;
+            const auto scroll_up = [&] { if (count >= 6 && s.cursor == old && list_scroll_gp4408) { sound(out, 129, 1); --list_scroll_gp4408; } };
+            const auto scroll_down = [&] { if (count >= 6 && s.cursor == old && list_scroll_gp4408 < count - 5) { sound(out, 129, 1); ++list_scroll_gp4408; } };
+            const auto repeat = [&](int8_t target, bool vertical_up, bool vertical_down) {
+                if (s.repeat < 13) { ++s.repeat; return; }
+                s.repeat = 12; s.cursor = target;
+                if (vertical_up) scroll_up(); else if (vertical_down) scroll_down();
+            };
+            if (!(s.pressed & 0x4000u)) {
+                if (s.pressed & 0x1000u) { cancel = true; sound(out, 131, 1); s.held = 0; s.pressed = 0; }
+                else if (s.pressed & 0x10u) { s.cursor = int8_t(ud >> 4); s.repeat = 0; scroll_up(); }
+                else if ((pad & 0x100010u) == 0x10u) repeat(int8_t(ud >> 4), true, false);
+                else if (s.pressed & 0x40u) { s.cursor = int8_t(ud & 15); s.repeat = 0; scroll_down(); }
+                else if ((pad & 0x400040u) == 0x40u) repeat(int8_t(ud & 15), false, true);
+                else if (s.pressed & 0x80u) { s.cursor = int8_t(lr >> 4); s.repeat = 0; }
+                else if ((pad & 0x800080u) == 0x80u) repeat(int8_t(lr >> 4), false, false);
+                else if (s.pressed & 0x20u) { s.cursor = int8_t(lr & 15); s.repeat = 0; }
+                else if ((pad & 0x200020u) == 0x20u) repeat(int8_t(lr & 15), false, false);
+            }
+            s.cursor_byte = d + 3;
+            s.flags |= 0x00800000u;
+            if (old != s.cursor) sound(out, 129, 1);
+            if (count >= 6) {   // 0x80063F28 / 0x80063FC0: the scroll arrows (slot choice CANDIDATE)
+                out.layout_calls.push_back({0, -1}); out.layout_calls.push_back({1, -1});
+                if (!cancel) {
+                    const bool up = list_scroll_gp4408 > 0, down = list_scroll_gp4408 < count - 5;
+                    if (up) out.layout_calls.push_back({0, 3});
+                    if (down) out.layout_calls.push_back({int8_t(up ? 1 : 0), 4});
+                }
+            }
+        }
+        if (s.cursor == s.row_draw) { s.brightness = uint8_t(s.brightness + 0x30); mem(d + 3) = 0x60; }
+        name_index_gp4044 = uint8_t(list_800be2f8[size_t((list_scroll_gp4408 + uint32_t(int8_t(s.row_draw))) & 0x7Fu)] +
+                                    (shop_kind_gp0fec ? 0x20u : 0u));
+        mem(d + 5) = row_block_gp0f94;
+        ++s.row_draw; s.brightness = uint8_t(s.brightness + 0x50); s.draw += 3;
+        if (cancel) {
+            if (s.index_base) open_8005382c(int8_t(cancel_slot_gp1200), s.index_base, cancel_block_gp1201);
+            else open_8005382c(int8_t(cancel_slot_gp1200), exe_.u32(kMsgTable8008cacc + 4u * cancel_block_gp1201), 255);
+        }
         return;
     }
     case 0xD6: {                                                             // 0x800564C8

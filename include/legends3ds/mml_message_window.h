@@ -130,6 +130,8 @@ public:
     uint8_t shop_short_gp1308 = 0; // 0x80098B6C: 1 = not enough money for it (0xBC)
     uint8_t shop_kind_gp0fec = 0;  // 0x80098850 (setting 14): 0 parts, 1 items (0xB8)
     uint8_t shop_scroll0_gp1090 = 0;   // 0x800988F4: the list's starting scroll (0xB8)
+    uint8_t row_block_gp0f94 = 0;      // 0x800987F8 (setting 13): the block each 0xB7 row calls
+    uint8_t cancel_slot_gp1200 = 0, cancel_block_gp1201 = 0;   // 0x80098A64/65: 0xB7's Triangle message
     int16_t life_max_800b5260 = 0;     // 0xB8: the life-up price follows the max life
     uint8_t canteen_800c1b8d = 0;      // 0xB8: the canteen row and its price
     // 0xB8 (0x80056D10): build the shop list into 0x800BE2F8 from the flag rows of table
