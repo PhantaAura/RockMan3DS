@@ -380,6 +380,56 @@ bool diagonal_response(uint16_t code,const Rect& r,L3RetailContactScratch& p,
     else {if(lhs>rhs&&(blocked&2))return zr(true);if(rhs>lhs&&(blocked&4))return xr(false);}
     return diagonal_project_8004ff14(r,p,dy,blocked,family-2,hist,out);
 }
+// 0x8004BDC8 case 0x54 (handler 0x8004DDF8): the sloped diagonal of family 5.
+// raw is the dispatcher's a0 rectangle (IDX + group X/Z, IDX + primitive Y,
+// not expanded: the family-2..5 classifier writes only the clipped copy at
+// 0x1F8000F0/F4/F8/FC, which is r here).
+//  - Guard: grounded and blocked & 6 and within 0x1F of the expanded top ->
+//    the post-switch slab test (0x8004E118).
+//  - room = min(px - r.x0, r.z1 - pz); surface = y0 + H*((x1 - px) + (pz - z0))
+//    / (x1 - x0) (raw, truncating, no lower bound); when the player is below
+//    the top, the copy's x0 grows and z1 shrinks by span*(y1 - py)/H.
+//  - Then LAB_8004E1B8 with mode 0x30 | 0x43, shared with codes 8..11.
+// Returns nullopt on a division trap (the original breaks).
+std::optional<bool> diagonal_slope_response_54(const Rect& raw,const Rect& r,L3RetailContactScratch& p,
+                                               int16_t& before_x,int16_t& before_y,int16_t& before_z,
+                                               int16_t dx,int16_t dy,int16_t dz,const RetailPlayerBounds& b,
+                                               uint8_t& blocked,History& hist,RuntimePlayerContact& out) {
+    const int32_t t7=int32_t(raw.y0)-b.y1, s0=int32_t(raw.y1)-b.y0;
+    const int32_t py=p.y;
+    const auto slab=[&]()->bool{
+        if(t7<py&&py<s0){hist.u={};blocked=0x20;p.y=short_wrap(t7);return true;}
+        return false;
+    };
+    if(p.contact_state==0&&(blocked&6u)!=0&&py-t7<0x20)return slab();
+    Rect f=r;
+    int32_t room=int32_t(p.x)-r.x0;
+    if(int32_t(r.z1)-p.z<room)room=int32_t(r.z1)-p.z;
+    const int32_t H=int32_t(raw.y1)-raw.y0;
+    const int32_t span_x=int32_t(raw.x1)-raw.x0, span_z=int32_t(raw.z1)-raw.z0;
+    const auto q=word_div(word_mul(H,(int32_t(raw.x1)-p.x)+(int32_t(p.z)-raw.z0)),span_x);
+    if(!q)return std::nullopt;
+    const int32_t surface=word_wrap(int64_t(raw.y0)+*q);
+    const int32_t below=int32_t(raw.y1)-py;
+    const auto ox=word_div(word_mul(span_x,below),H);
+    if(!ox)return std::nullopt;
+    if(*ox>0)f.x0=short_wrap(int32_t(r.x0)+*ox);
+    const auto oz=word_div(word_mul(span_z,below),H);
+    if(!oz)return std::nullopt;
+    if(*oz>0)f.z1=short_wrap(int32_t(r.z1)-*oz);
+    // LAB_8004E1B8
+    const int32_t top=surface-b.y1;
+    if(!(top<py))return false;
+    if(!(py<s0))return false;
+    if(p.contact_state==0&&py-top<0x20&&py-t7<room){
+        p.y=short_wrap(top);hist.u[1]=0;return true;
+    }
+    f.y0=short_wrap(top);f.y1=short_wrap(s0);
+    if(rectangle_response_8004f44c(f,p,before_x,before_y,before_z,dx,dy,dz,blocked,0x73u,hist,out))
+        clear_pending(hist);
+    if(dy>=0)p.contact_state=0;
+    return true;
+}
 bool allowed(const RuntimeContactPrimitive& p,const L3PlayerCompatWork& player) {
     // Geometry response 0x8004BA98..BAA8 uses only the 0x8000 filter bit.
     const uint16_t filter=l3_obj_group_bits_8002fe74(player.bytes[1])==0?0:0x8000;
@@ -414,12 +464,13 @@ void find_floor(const RuntimeMap& map,size_t area,const L3PlayerCompatWork& w,
                 if(!g.primitive_count)continue;
                 if(g.primitive_first>=map.contact_primitives.size())continue;
                 const auto& first=map.contact_primitives[g.primitive_first];
-                if(first.code>=256u || (first.code&0xF0u)>=0x20u)continue;
+                if(first.code>=256u || ((first.code&0xF0u)>=0x20u && first.code!=0x54u))continue;
                 for(uint32_t pi=0;pi<g.primitive_count;++pi){
                     const auto pix=uint64_t(g.primitive_first)+pi;
                     if(pix>=map.contact_primitives.size())continue;
                     const auto& p=map.contact_primitives[static_cast<size_t>(pix)];
                     if(!allowed(p,w))continue;
+                    if(first.code==0x54u&&p.code!=0x54u)continue;
                     const auto interval=runtime_contact_floor_interval_8004a060(
                         *idx,g,p,b,out.scratch.x,out.scratch.z);
                     if(!interval)continue;
@@ -449,6 +500,11 @@ std::optional<RuntimeContactFloorInterval> runtime_contact_floor_interval_8004a0
     const RuntimeContactPrimitive& primitive, RetailPlayerBounds bounds,
     int16_t query_x, int16_t query_z) {
     const auto code=primitive.code;
+    if(code==0x54u){
+        const auto clipped=diagonal_rect(idx,group,primitive,code,bounds,query_x,query_z);
+        if(!clipped)return {};
+        return y_range_8004a060(idx,group,primitive,bounds,query_x,query_z);
+    }
     if(code!=1u && code!=3u && code!=15u && (code<8u || code>11u))return {};
     if(!inside_xz(rect(idx,group,primitive,bounds),query_x,query_z))return {};
     return y_range_8004a060(idx,group,primitive,bounds,query_x,query_z);
@@ -461,6 +517,17 @@ std::optional<RuntimeContactFloorInterval> y_range_8004a060(
     int16_t query_x, int16_t query_z) {
     const unsigned code=primitive.code&0xffu;
     auto r=rect(idx,group,primitive,bounds);
+    if(code==0x54u){
+        // 0x8004AB60: y0 + H*((x1 - qx) + (qz - z0)) / (x1 - x0) on the
+        // unexpanded group X/Z (the family-2..5 classifier leaves a0 raw),
+        // then the common bounds subtraction (0x8004AC54). 0x1F8000FE = 6.
+        const int32_t x0=short_wrap(int32_t(idx.x)+group.x0),x1=short_wrap(int32_t(idx.x)+group.x1);
+        const int32_t z0=short_wrap(int32_t(idx.z)+group.z0);
+        const int32_t y0=short_wrap(int32_t(idx.y)+primitive.y0),y1=short_wrap(int32_t(idx.y)+primitive.y1);
+        const auto q=word_div(word_mul(y1-y0,(x1-query_x)+(int32_t(query_z)-z0)),x1-x0);
+        if(!q)return {};
+        return RuntimeContactFloorInterval{short_wrap(word_wrap(int64_t(y0)+*q)-bounds.y1),r.y1};
+    }
     if((code>=0x0cu&&code<=0x0eu)||(code>=0x10u&&code<=0x13u)||(code>=0x18u&&code<=0x1bu)||
        code==0x24u||code==0x34u||code==0x44u||code==0x54u||
        code==0x25u||code==0x35u||code==0x45u||code==0x55u)return {}; // unported 0x8004A060 case
@@ -624,6 +691,15 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                     const auto r=clipped?*clipped:rect(*idx,g,p,b);
                     if(!inside(r,out.scratch))continue;
                     if(first_code>=256u)continue; // exact dispatcher admission
+                    if(diagonal&&p.code==0x54u){
+                        const Rect raw{short_wrap(int32_t(idx->x)+g.x0),short_wrap(int32_t(idx->x)+g.x1),
+                                       short_wrap(int32_t(idx->z)+g.z0),short_wrap(int32_t(idx->z)+g.z1),
+                                       short_wrap(int32_t(idx->y)+p.y0),short_wrap(int32_t(idx->y)+p.y1)};
+                        const auto res=diagonal_slope_response_54(raw,r,out.scratch,before_x,before_y,before_z,dx,dy,dz,b,blocked,hist,out);
+                        if(!res){++out.unsupported_primitives;if(!out.unsupported_code)out.unsupported_code=uint16_t(p.code|0x100u);continue;}
+                        if(*res)repeat=true;
+                        continue;
+                    }
                     if(diagonal){
                         if(diagonal_response(p.code,r,out.scratch,before_x,before_y,before_z,dx,dy,dz,
                             int32_t(g.x1)-g.x0,int32_t(g.z1)-g.z0,b,blocked,hist,out))repeat=true;
