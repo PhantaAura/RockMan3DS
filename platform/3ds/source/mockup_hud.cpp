@@ -49,12 +49,8 @@ RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel
     key[21]=g_dialogue.active?g_dialogue.hash:0;
     key[0]=state.companion_visible;
     if(!state.companion_visible) return key;
-    key[1]=static_cast<unsigned>(state.tab);
-    const bool map_page=state.tab==l3::MockupTab::Map;
-    const bool options_page=state.tab==l3::MockupTab::Options;
-    if(map_page || options_page) key[2]=state.map_zoom;
-    if(options_page) key[3]=state.map_follow_player;
-    if(map_page) {
+    key[2]=state.map_zoom;
+    {
         key[4]=static_cast<uint16_t>(state.map_pan_x);
         key[5]=static_cast<uint16_t>(state.map_pan_y);
         key[6]=reinterpret_cast<uintptr_t>(map.packed_cells);
@@ -66,7 +62,7 @@ RasterKey raster_key(const l3::MockupUiState& state, const l3::BottomScreenModel
             key[13]=map.player_x; key[14]=map.player_z;
             key[15]=((map.player_yaw+256u)&0xFFFu)/512u;
         }
-    } else if(options_page) key[8]=l3::mockup_map_available(map);
+    }
     key[16]=status.hp; key[17]=status.hp_max;
     key[20]=static_cast<unsigned>(status.context);
     key[22]=static_cast<uint32_t>(status.money);
@@ -356,29 +352,8 @@ void draw_zenny(Raster& r, int32_t money) {
 }
 void draw_content(Raster& r, const l3::MockupUiState& state,
                   const l3::MockupMapView& map, const MMLRuntimeDiag* diag) {
-    const auto& p=l3::mockup_ui_layout().content;
-    if(state.tab==l3::MockupTab::Map) { draw_map(r,map,state); return; }
-    r.text(p.x+8,p.y+6,l3::mockup_tab_label(state.tab),kWhite);
-    if(state.tab==l3::MockupTab::Items || state.tab==l3::MockupTab::Weapons) {
-        r.center(p,84,state.tab==l3::MockupTab::Items?"INVENTORY":"LOADOUT");
-        r.center(p,101,"UNAVAILABLE",kMuted);
-        return;
-    }
     (void)diag; // Runtime telemetry remains in the technical log.
-    const auto& layout=l3::mockup_ui_layout();
-    const bool available=l3::mockup_map_available(map);
-    for(const auto& button:{layout.map_zoom_button,layout.map_reset_button,layout.map_follow_button}) {
-        r.fill(button.x,button.y,button.w,button.h,kBackground);
-        r.border(button,available?kAccent:kBorder);
-    }
-    char zoom[24]; std::snprintf(zoom,sizeof(zoom),"MAP ZOOM %uX",unsigned(state.map_zoom));
-    const auto& zb=layout.map_zoom_button; const auto& rb=layout.map_reset_button; const auto& fb=layout.map_follow_button;
-    r.center(zb,zb.y+7,zoom,available?kWhite:kMuted);
-    r.center(zb,zb.y+20,"TAP TO CYCLE",kMuted);
-    r.center(rb,rb.y+13,"RESET MAP",available?kWhite:kMuted);
-    r.center(fb,fb.y+9,state.map_follow_player?"FOLLOW PLAYER ON":"FOLLOW PLAYER OFF",available?kWhite:kMuted);
-    const char* controls[]={"HOLD SELECT","L/R TABS  X ZOOM","D-PAD PAN  B CENTER","A SHOW/HIDE MAP"};
-    for(int i=0;i<4;++i) r.text(p.x+8,fb.y+fb.h+12+i*14,controls[i]);
+    draw_map(r,map,state);
 }
 } // namespace
 
@@ -401,15 +376,11 @@ void mockup_hud_raster(unsigned char* buffer, const l3::MockupUiState& state,
         return;
     }
     const auto& layout=l3::mockup_ui_layout();
-    for(size_t i=0;i<layout.tabs.size();++i) {
-        const auto tab=static_cast<l3::MockupTab>(i);
-        const auto& panel=layout.tabs[i];
-        const bool selected=tab==state.tab;
-        r.fill(panel.x,panel.y,panel.w,panel.h,selected?kAccent:kHeader);
-        r.border(panel,selected?kAccent:kBorder);
-        if(selected) r.border({static_cast<int16_t>(panel.x+1),static_cast<int16_t>(panel.y+1),
-                               static_cast<int16_t>(panel.w-2),static_cast<int16_t>(panel.h-2)},kWhite);
-        r.center(panel,panel.y+6,l3::mockup_tab_label(tab),selected?kBackground:kWhite);
+    {   // Title bar (the map is the only page; Start opens the original sub-screen).
+        const auto& t=layout.title;
+        r.fill(t.x,t.y,t.w,t.h,kHeader); r.border(t,kBorder);
+        r.text(t.x+8,t.y+6,"MAP",kWhite);
+        r.text(t.x+t.w-8-6*11,t.y+6,"START: MENU",kWhite);
     }
     for(const auto& panel:{layout.content,layout.status}) draw_panel(r,panel,kPanel);
     // Content header strip (area name / page title).
@@ -417,7 +388,7 @@ void mockup_hud_raster(unsigned char* buffer, const l3::MockupUiState& state,
     r.fill(layout.content.x+1,layout.content.y+17,layout.content.w-2,1,kBorder);
     draw_content(r,state,map,diagnostics); draw_status(r,status);
     draw_panel(r,{4,222,312,17},kHeader);
-    r.text(12,227,"TAP A TAB TO OPEN MENU.",kWhite);
+    r.text(12,227,"HOLD SELECT: X ZOOM B CENTER",kWhite);
     draw_zenny(r,status.money);
     if(g_dialogue.active) {
         // Word-wrapped uppercase text, 50 columns, 9 rows; '\n' breaks lines.

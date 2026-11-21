@@ -33,15 +33,6 @@ void follow_and_commands(l3::MockupMapView map) {
     ++map.player_x;
     l3::mockup_map_update_follow(ui,map);
     assert(ui.map_pan_x==stopped_pan);
-    ui.tab=l3::MockupTab::Options;
-    assert(l3::mockup_ui_touch_event(ui,map,l3::MockupTouchPhase::Begin,layout.map_follow_button.x+1,layout.map_follow_button.y+1));
-    assert(ui.map_follow_player);
-    assert(l3::mockup_ui_touch_event(ui,map,l3::MockupTouchPhase::Begin,layout.map_follow_button.x+1,layout.map_follow_button.y+1));
-    assert(!ui.map_follow_player);
-    assert(l3::mockup_ui_command(ui,map,l3::MockupUiCommand::NextTab));
-    assert(ui.tab==l3::MockupTab::Map);
-    assert(l3::mockup_ui_command(ui,map,l3::MockupUiCommand::PreviousTab));
-    assert(ui.tab==l3::MockupTab::Options);
     assert(l3::mockup_ui_command(ui,map,l3::MockupUiCommand::ToggleVisible));
     assert(!ui.companion_visible && !ui.map_dragging);
     assert(l3::mockup_ui_touch_event(ui,map,l3::MockupTouchPhase::Begin,100,100));
@@ -54,7 +45,6 @@ void follow_and_commands(l3::MockupMapView map) {
     auto unavailable=map;unavailable.cell_count=0;
     assert(!l3::mockup_ui_command(ui,unavailable,l3::MockupUiCommand::ZoomMap));
     assert(!l3::mockup_map_center_player(ui,unavailable));
-    assert(l3::mockup_ui_command(ui,unavailable,l3::MockupUiCommand::NextTab));
 }
 }
 
@@ -121,10 +111,10 @@ int main() {
     assert(mockup_hud_raster_cached(p,ui,status,map));
     ++map.player_x;--status.hp;
     assert(!mockup_hud_raster_cached(p,ui,status,map));
-    ui.companion_visible=true;ui.tab=l3::MockupTab::Items;
+    ui.companion_visible=true;   // the map page redraws, and follows the player
     assert(mockup_hud_raster_cached(p,ui,status,map));
     ++map.player_x;
-    assert(!mockup_hud_raster_cached(p,ui,status,map));
+    assert(mockup_hud_raster_cached(p,ui,status,map));
     status.lock_on_active=true; // no longer shown
     assert(!mockup_hud_raster_cached(p,ui,status,map));
     status.target_visible=true;status.target_hp=3;status.target_hp_max=8;

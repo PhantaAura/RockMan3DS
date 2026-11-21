@@ -26,33 +26,11 @@ void assert_guards(const std::array<unsigned char,kFramebufferBytes+2*kGuard>& b
 }
 int main() {
     l3::MockupUiState state;
-    assert(state.tab==l3::MockupTab::Map);
     const auto& layout=l3::mockup_ui_layout();
-    for(size_t i=0;i<layout.tabs.size();++i) {
-        const auto& tab=layout.tabs[i];
-        assert(l3::bottom_ui_rect_in_bounds(tab));
-        assert(l3::mockup_ui_touch(state,tab.x,tab.y));
-        assert(state.tab==static_cast<l3::MockupTab>(i));
-        assert(l3::mockup_ui_touch(state,tab.x+tab.w-1,tab.y+tab.h-1));
-        assert(!l3::mockup_ui_touch(state,tab.x+tab.w,tab.y));
-        assert(!l3::mockup_ui_touch(state,tab.x,tab.y+tab.h));
-        assert(std::strlen(l3::mockup_tab_label(state.tab))*6u<=size_t(tab.w));
-    }
+    assert(l3::bottom_ui_rect_in_bounds(layout.title));
     assert(l3::bottom_ui_rect_in_bounds(layout.content));
     assert(l3::bottom_ui_rect_in_bounds(layout.status));
     assert(l3::bottom_ui_rect_in_bounds(layout.map_view));
-    const auto last_tab=state.tab;
-    for(const auto& point:std::array<std::array<int,2>,6>{{{{-1,16}},{{4,-1}},{{320,16}},{{4,240}},{{151,120}},{{270,150}}}}) {
-        assert(!l3::mockup_ui_touch(state,point[0],point[1]));
-        assert(state.tab==last_tab);
-    }
-    // Full hit coverage: every screen pixel selects a tab iff it is within one
-    // of the visible tab rectangles. Borders are touchable, gutters are not.
-    for(int y=0;y<240;++y) for(int x=0;x<320;++x) {
-        bool expected=false;
-        for(const auto& rect:layout.tabs) expected|=l3::mockup_ui_rect_contains(rect,x,y);
-        assert(l3::mockup_ui_touch(state,x,y)==expected);
-    }
 
     l3::RuntimeMap runtime;
     l3::RuntimeMapArea area;
@@ -116,7 +94,6 @@ int main() {
     assert(projected.y+projected.h>=layout.map_view.y+layout.map_view.h);
     assert(l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Move,-100000,-100000));
     assert(gesture.map_pan_x==-106 && gesture.map_pan_y==-55);
-    assert(gesture.tab==l3::MockupTab::Map); // A drag crossing tabs cannot select one.
     auto changed_area=map; changed_area.area_index=1;
     assert(!l3::mockup_ui_touch_event(gesture,changed_area,l3::MockupTouchPhase::Move,160,120));
     assert(!gesture.map_dragging);
@@ -140,37 +117,25 @@ int main() {
         }
     assert(!l3::mockup_map_source_at(map,gesture,layout.map_view.x-1,120,source_x,source_z));
     assert(!l3::mockup_map_source_at(map,gesture,layout.map_view.x+layout.map_view.w,120,source_x,source_z));
-    gesture.tab=l3::MockupTab::Options;
-    assert(l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Begin,
-                                    layout.map_zoom_button.x,layout.map_zoom_button.y));
-    assert(gesture.map_zoom==1 && gesture.map_pan_x==0 && gesture.map_pan_y==0);
-    assert(l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Begin,
-                                    layout.map_zoom_button.x+1,layout.map_zoom_button.y+1));
-    assert(gesture.map_zoom==2);
-    assert(!l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Begin,
-                                    layout.map_zoom_button.x+layout.map_zoom_button.w,layout.map_zoom_button.y));
-    assert(gesture.map_zoom==2);
-    assert(l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Begin,
-                                    layout.map_reset_button.x,layout.map_reset_button.y));
-    assert(gesture.map_zoom==1 && gesture.map_pan_x==0 && gesture.map_pan_y==0);
-    assert(!l3::mockup_ui_touch_event(gesture,incomplete,l3::MockupTouchPhase::Begin,
-                                    layout.map_zoom_button.x,layout.map_zoom_button.y));
+    // Touches outside the map (title, status, footer) do nothing.
+    gesture.map_dragging=false;
+    assert(!l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Begin,layout.title.x+1,layout.title.y+1));
+    assert(!l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Begin,270,150));
+    assert(!l3::mockup_ui_touch_event(gesture,incomplete,l3::MockupTouchPhase::Begin,150,120));
     assert(!l3::mockup_ui_touch_event(gesture,map,l3::MockupTouchPhase::Move,151,120));
 
     // The same raster is compiled on the host and 3DS. Validate byte order,
-    // portrait rotation, all four pages, absent data and maximum-sized stats.
+    // portrait rotation, the map page, absent data and maximum-sized stats.
     std::array<unsigned char,kFramebufferBytes+2*kGuard> framebuffer;
     framebuffer.fill(0xa5);
     auto* pixels=framebuffer.data()+kGuard;
     l3::BottomScreenModel status;
     status.hp=3; status.hp_max=4; status.buster_enabled=true;
-    state.tab=l3::MockupTab::Map;
     mockup_hud_raster(pixels,state,status,map);
     assert_guards(framebuffer);
     expect_pixel(pixels,0,0,4,10,40);
     expect_pixel(pixels,319,239,4,10,40);
-    expect_pixel(pixels,layout.tabs[0].x,layout.tabs[0].y,72,210,248);
-    expect_pixel(pixels,layout.tabs[1].x,layout.tabs[1].y,96,150,224);
+    expect_pixel(pixels,layout.title.x,layout.title.y,96,150,224);
     const int marker_x=rect.x+int((uint32_t(map.player_x)*2u+1u)*rect.w/(uint32_t(map.width)*2u));
     const int marker_y=rect.y+int((uint32_t(map.player_z)*2u+1u)*rect.h/(uint32_t(map.height)*2u));
     expect_pixel(pixels,marker_x,marker_y,255,221,86);
@@ -181,28 +146,24 @@ int main() {
     mockup_hud_raster(pixels,state,status,bad_marker);
     assert_guards(framebuffer);
     // A maximally zoomed/panned map and its marker cannot spill into the
-    // neighboring status panel, tabs, title or footer.
-    state.tab=l3::MockupTab::Map;
+    // neighboring status panel, title or footer.
     assert(l3::mockup_map_set_zoom(state,map,4));
     state.map_pan_x=32767; state.map_pan_y=-32768;
     mockup_hud_raster(pixels,state,status,map);
     assert_guards(framebuffer);
     expect_pixel(pixels,layout.content.x,layout.content.y,96,150,224);
     expect_pixel(pixels,layout.status.x,layout.status.y,96,150,224);
-    expect_pixel(pixels,layout.tabs[0].x,layout.tabs[0].y,72,210,248);
+    expect_pixel(pixels,layout.title.x,layout.title.y,96,150,224);
     l3::mockup_map_reset(state);
     MMLRuntimeDiag diag{};
     diag.frame_us=std::numeric_limits<uint32_t>::max();
     diag.draw_calls=std::numeric_limits<uint32_t>::max();
     diag.linear_bytes=std::numeric_limits<uint32_t>::max();
     status.hp=std::numeric_limits<uint16_t>::max(); status.hp_max=1;
-    for(size_t tab=0;tab<4;++tab) {
-        state.tab=static_cast<l3::MockupTab>(tab);
-        mockup_hud_raster(pixels,state,status,map,&diag);
-        assert_guards(framebuffer);
-        expect_pixel(pixels,layout.tabs[tab].x,layout.tabs[tab].y,72,210,248);
-    }
-    state.tab=l3::MockupTab::Map; status.hp_max=0;
+    mockup_hud_raster(pixels,state,status,map,&diag);
+    assert_guards(framebuffer);
+    expect_pixel(pixels,layout.title.x,layout.title.y,96,150,224);
+    status.hp_max=0;
     mockup_hud_raster(pixels,state,status,incomplete);
     assert_guards(framebuffer);
     mockup_hud_raster(nullptr,state,status,{});
