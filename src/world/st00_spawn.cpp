@@ -35,10 +35,18 @@ St00SpawnCatalog parse_st00_spawn_us(const std::vector<uint8_t>& overlay, uint32
     require(base == 0x80100000u, "ST00 spawn requires USA overlay base");
     const uint32_t table = rd_u32(overlay.data() + offset(0x8011C898u, base, overlay.size(), 4));
     require(table == 0x8011A46Cu, "ST00 spawn unsupported table profile");
-    const size_t table_offset = offset(table, base, overlay.size(), kSt00SpawnAreaCount * 4);
+    return parse_stage_spawn_us(overlay, 0x8011C898u, 0, kSt00SpawnAreaCount, base);
+}
+St00SpawnCatalog parse_stage_spawn_us(const std::vector<uint8_t>& overlay, uint32_t slots,
+                                      uint8_t stage, size_t area_count, uint32_t base) {
+    require(base == 0x80100000u, "stage spawn requires USA overlay base");
+    require(stage < 30 && area_count >= 1 && area_count <= kStageSpawnMaxAreas, "stage spawn profile");
+    const uint32_t table = rd_u32(overlay.data() + offset(slots + 4u * stage, base, overlay.size(), 4));
+    const size_t table_offset = offset(table, base, overlay.size(), area_count * 4);
     St00SpawnCatalog catalog;
+    catalog.areas.assign(area_count, {});
     uint32_t region_total = 0, record_total = 0;
-    for (size_t area = 0; area < kSt00SpawnAreaCount; ++area) {
+    for (size_t area = 0; area < area_count; ++area) {
         const uint32_t pointer = rd_u32(overlay.data() + table_offset + area * 4);
         if (!pointer) continue;
         size_t cursor = offset(pointer, base, overlay.size(), 12);
@@ -78,12 +86,13 @@ std::vector<uint8_t> cook_l3st00_spawn(const St00SpawnCatalog& catalog) {
         ++regions; records += r.records.size();
     }
     require(regions <= kSt00SpawnMaxRegions && records <= kSt00SpawnMaxRecords, "L3SP catalog limit");
-    const size_t off_areas = kHeader, off_regions = off_areas + kSt00SpawnAreaCount * kArea;
+    require(!catalog.areas.empty() && catalog.areas.size() <= kStageSpawnMaxAreas, "L3SP area count");
+    const size_t off_areas = kHeader, off_regions = off_areas + catalog.areas.size() * kArea;
     const size_t off_records = off_regions + regions * kRegion, size = off_records + records * kRecord;
     std::vector<uint8_t> bytes(size);
     std::memcpy(bytes.data(), "L3SP", 4);
     put16(bytes.data() + 4, 1); put16(bytes.data() + 6, kHeader);
-    const uint32_t fields[] = {kSt00SpawnAreaCount, static_cast<uint32_t>(regions),
+    const uint32_t fields[] = {static_cast<uint32_t>(catalog.areas.size()), static_cast<uint32_t>(regions),
         static_cast<uint32_t>(records), static_cast<uint32_t>(off_areas),
         static_cast<uint32_t>(off_regions), static_cast<uint32_t>(off_records), static_cast<uint32_t>(size)};
     for (size_t i = 0; i < 7; ++i) put32(bytes.data() + 8 + 4 * i, fields[i]);
@@ -115,7 +124,7 @@ L3St00SpawnHeader inspect_l3st00_spawn(const std::vector<uint8_t>& bytes, bool v
     L3St00SpawnHeader h{rd_u32(bytes.data()+8), rd_u32(bytes.data()+12), rd_u32(bytes.data()+16),
         rd_u32(bytes.data()+20), rd_u32(bytes.data()+24), rd_u32(bytes.data()+28),
         rd_u32(bytes.data()+32), rd_u32(bytes.data()+36)};
-    require(h.area_count == kSt00SpawnAreaCount && h.region_count <= kSt00SpawnMaxRegions &&
+    require(h.area_count >= 1 && h.area_count <= kStageSpawnMaxAreas && h.region_count <= kSt00SpawnMaxRegions &&
             h.record_count <= kSt00SpawnMaxRecords && h.off_areas == kHeader &&
             uint64_t(h.off_areas) + h.area_count * kArea == h.off_regions &&
             uint64_t(h.off_regions) + h.region_count * kRegion == h.off_records &&
@@ -148,6 +157,7 @@ L3St00SpawnHeader inspect_l3st00_spawn(const std::vector<uint8_t>& bytes, bool v
 St00SpawnCatalog load_l3st00_spawn(const std::vector<uint8_t>& bytes, bool verify_crc) {
     const auto h = inspect_l3st00_spawn(bytes, verify_crc);
     St00SpawnCatalog out;
+    out.areas.assign(h.area_count, {});
     for (size_t area = 0; area < out.areas.size(); ++area) {
         const auto* ap = bytes.data() + h.off_areas + area * kArea;
         const uint32_t first = rd_u32(ap), count = rd_u32(ap + 4);

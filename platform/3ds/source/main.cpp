@@ -5051,6 +5051,21 @@ int main() {
                 catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
             }
         }
+        // Field stages: the overlay's own E0/00 table (stages/stNN/spawn.l3spawn).
+        if(g_stage!=0 && !spawn_catalog){
+            const auto path=stage_path("spawn.l3spawn");
+            if(FILE* present=std::fopen(path.c_str(),"rb")){
+                std::fclose(present);
+                try {spawn_catalog=l3::load_l3st00_spawn(read_binary(path),true);}
+                catch(const std::exception& error){boot_log(MML_BOOT_DATA,error.what());}
+                if(spawn_catalog&&spawn_catalog->areas.size()<=areas.size()){
+                    for(size_t i=0;i<spawn_catalog->areas.size();++i)areas[i].conditional_spawns=std::move(spawn_catalog->areas[i]);
+                    hardware_test_trace("# stage_spawn_catalog,stage=%d,areas=%lu,source=E0/00,behavior=SOURCE_BACKED_PARTIAL",
+                        int(g_stage),(unsigned long)spawn_catalog->areas.size());
+                }
+                spawn_catalog.reset();
+            }
+        }
         if(spawn_catalog && areas.size()==l3::kSt00SpawnAreaCount){
             for(size_t i=0;i<areas.size();++i)areas[i].conditional_spawns=std::move(spawn_catalog->areas[i]);
             spawn_catalog.reset();

@@ -8,8 +8,9 @@
 
 namespace l3 {
 constexpr size_t kSt00SpawnAreaCount = 5;
+constexpr size_t kStageSpawnMaxAreas = 16;   // largest local area table cooked so far: ST09 9
 constexpr uint32_t kSt00SpawnMaxRegions = 64;
-constexpr uint32_t kSt00SpawnMaxRecords = 256;
+constexpr uint32_t kSt00SpawnMaxRecords = 512;   // ST09 has 257 (regions repeat shared lists)
 // Source E0/00 state2 tests this story flag and skips records whose flag is set.
 // The additional u32 belongs to the conditional 24-byte list, not a 20-byte
 // static stage-object list. Unknown object families retain their original fields.
@@ -25,7 +26,8 @@ struct St00SpawnRegion {
     std::vector<St00ConditionalSpawn> records;
 };
 struct St00SpawnArea { std::vector<St00SpawnRegion> regions; };
-struct St00SpawnCatalog { std::array<St00SpawnArea, kSt00SpawnAreaCount> areas{}; };
+// One entry per local area; ST00 has five, other stages their own count.
+struct St00SpawnCatalog { std::vector<St00SpawnArea> areas = std::vector<St00SpawnArea>(kSt00SpawnAreaCount); };
 struct L3St00SpawnHeader {
     uint32_t area_count = 0, region_count = 0, record_count = 0;
     uint32_t off_areas = 0, off_regions = 0, off_records = 0;
@@ -35,6 +37,14 @@ struct L3St00SpawnHeader {
 // converted to neutral fields; PS1 pointers and code are never retained.
 St00SpawnCatalog parse_st00_spawn_us(const std::vector<uint8_t>& overlay,
                                      uint32_t load_base = 0x80100000u);
+// The E0/00 module is linked into every stage overlay. Its state-0 code reads
+// slots[byte 0x800C1B60] (a 30-entry array, one per stage) and then that
+// table's [byte 0x800C1B61]. Only the overlay's own stage slot is meaningful.
+// Slot arrays: ST00 0x8011C898, ST09 0x8011E430 (code 0x801178B4 = ST00
+// 0x80111718 + 0x619C, instruction-for-instruction).
+St00SpawnCatalog parse_stage_spawn_us(const std::vector<uint8_t>& overlay,
+                                      uint32_t slot_array, uint8_t stage, size_t area_count,
+                                      uint32_t load_base = 0x80100000u);
 std::vector<uint8_t> cook_l3st00_spawn(const St00SpawnCatalog& catalog);
 // Validates canonical coverage, finite caps, record/predicate domains and CRC
 // before allocating any decoded region or object vector.

@@ -313,7 +313,7 @@ uint64_t spawn_preflight(const std::vector<uint8_t>& bytes, size_t map_areas,
     const auto h=inspect_l3st00_spawn(bytes,true);
     require(map_areas==h.area_count,"ST00 spawn catalog requires five local map areas");
     uint64_t resident=sizeof(St00SpawnCatalog);
-    std::array<uint64_t,kSt00SpawnAreaCount> area_bytes{};
+    std::vector<uint64_t> area_bytes(h.area_count,0);
     for(uint32_t area=0;area<h.area_count;++area) {
         const auto* row=bytes.data()+h.off_areas+size_t(area)*8;
         const uint32_t first=rd_u32(row),count=rd_u32(row+4);

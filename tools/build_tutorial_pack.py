@@ -97,7 +97,10 @@ EXTRA_STAGES={
     9:{'container':'ST09.BIN','areas':('ST09_00.BIN',None,None,None,None,None,None,None,None),
        'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':(),
        # Set 0 (0x80100B20(0)): the one record at 0x8011DD68, the trapped man.
-       'stage_data':['8011DD68:20']},
+       'stage_data':['8011DD68:20'],
+       # E0/00 conditional spawns (slot array 0x8011E430[9] -> 0x8011CC68, nine
+       # areas). Area 0: six class 20/03 and nine 20/19 Reaverbots, flags 0x611..0x621.
+       'spawn':(0x8011E430,9)},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
     0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
@@ -675,6 +678,9 @@ def _cook_extra_stage(dat:Path,tools:Path,td:Path,runtime:Path,out:Path,manifest
     run(tools,'l3cook_render',*quartet,sout/'render.l3render')
     run(tools,'l3cook_map_init',*quartet,sout/'map.l3map',sout/'render.l3render',sout/'init.l3init','--stage0-startup')
     run(tools,'l3cook_st00_flow',work/'overlay',sout/'flow.l3flow','--stage',str(number))
+    if 'spawn' in spec:
+        slots,areas=spec['spawn']
+        run(tools,'l3cook_st00_spawn',work/'overlay',sout/'spawn.l3spawn',hex(slots),str(number),str(areas))
     # Stage init door locks (0x8001E4C4's list and rows, copied from the overlay).
     if 'door_locks' in spec:
         list_addr,rows,*rest=spec['door_locks']; overrides=rest[0] if rest else ()

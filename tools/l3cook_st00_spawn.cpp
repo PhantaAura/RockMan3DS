@@ -19,9 +19,14 @@ static void write_all(const std::string& p, const std::vector<uint8_t>& b) {
 }
 int main(int argc, char** argv) {
     try {
-        if (argc != 3) { std::cerr << "usage: l3cook_st00_spawn R3_ST00.BIN out.l3spawn\n"; return 2; }
+        if (argc != 3 && argc != 6) {
+            std::cerr << "usage: l3cook_st00_spawn R3_STxx.BIN out.l3spawn [slot_array stage area_count]\n";
+            return 2;
+        }
         const auto raw = read_all(argv[1]);
-        const auto catalog = l3::parse_st00_spawn_us(raw);
+        const auto catalog = argc == 3 ? l3::parse_st00_spawn_us(raw)
+            : l3::parse_stage_spawn_us(raw, static_cast<uint32_t>(std::stoul(argv[3], nullptr, 0)),
+                  static_cast<uint8_t>(std::stoul(argv[4], nullptr, 0)), std::stoul(argv[5], nullptr, 0));
         const auto cooked = l3::cook_l3st00_spawn(catalog);
         write_all(argv[2], cooked);
         const auto h = l3::inspect_l3st00_spawn(cooked);
