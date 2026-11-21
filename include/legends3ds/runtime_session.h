@@ -870,6 +870,7 @@ private:
     bool stage_door_locks_applied_=false;
     int stage_door_locks_area_=-1;
     uint8_t st09_area0_state_=0;          // 0x80100670 byte +4
+    uint8_t st04_area1_state_=0;          // 0x80100890 byte +4
     uint8_t st04_area0_state_=0;          // 0x80100594 byte +4
     uint8_t st0c_area0_state_=0;          // 0x80100ED4 byte +4
     int st03_area_key_=-1;                 // the ST03 area of the last frame (-1: not in ST03)

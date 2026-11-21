@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st04_area0_state_=0; st09_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_static_pose_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st04_area0_state_=0; st04_area1_state_=0; st09_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_static_pose_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1884,6 +1884,10 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(a0.flag_clear)set_story_flag(*a0.flag_clear,false);
         if(a0.object_set){st03_area1_object_set_=*a0.object_set;spawn_st03_object_set(*a0.object_set);}
     }else if(stage_!=4||loaded_now)st04_area0_state_=0;
+    if(stage_==4&&story_flag(0x1FF)&&map_area_index_==1){
+        const auto a1=st04_area1_setup_step(st04_area1_state_,[&](uint16_t f){return story_flag(f);});
+        for(uint8_t i=0;i<a1.object_set_count;++i){st03_area1_object_set_=a1.object_sets[i];spawn_st03_object_set(a1.object_sets[i]);}
+    }else if(stage_!=4||loaded_now)st04_area1_state_=0;
     if(stage_==9){
         // 0x801005F4 at the end of the area setup: 0x16 on every area load.
         if(loaded_now){set_story_flag(0x16,true);st09_area0_state_=0;}

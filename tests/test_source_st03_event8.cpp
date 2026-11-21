@@ -273,6 +273,12 @@ int main() {
         o = st04_area0_setup_step(st, get); CHECK(o.state_unported);
         st = 0; fl[1] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 33);
         st = 0; fl[9] = true; o = st04_area0_setup_step(st, get); CHECK(*o.object_set == 4 && o.call_8010207c_unported);
+        // Area 1 (junk shop): set 5 (the owner's wife) at S4; 54 joins with flag 34.
+        fl = {}; st = 0; auto a1 = st04_area1_setup_step(st, get);
+        CHECK(a1.object_set_count == 1 && a1.object_sets[0] == 5 && st == 255 && st04_area1_setup_step(st, get).object_set_count == 0);
+        fl[12] = true; fl[34] = true; st = 0; a1 = st04_area1_setup_step(st, get);
+        CHECK(a1.object_set_count == 2 && a1.object_sets[0] == 6 && a1.object_sets[1] == 54);
+        fl[1] = true; st = 0; a1 = st04_area1_setup_step(st, get); CHECK(a1.object_sets[0] == 7 && a1.call_8010207c_unported);
         // Field profile from stage.l3sd blocks: set 0 with one townsperson, class 0x13 generic.
         const auto put32 = [](std::vector<uint8_t>& v, uint32_t x) { for (int i = 0; i < 4; ++i) v.push_back(uint8_t(x >> (8 * i))); };
         std::vector<StageDataBlock> blocks;

@@ -52,6 +52,28 @@ St04Area0Step st04_area0_setup_step(uint8_t& state_04, FlagFn flag) {
     return out;
 }
 
+// Area 1 (the junk shop) update 0x80100890, first pass: by flag 1 / 70 / 12
+// the object set 7 / 7 / 6, else 5 (the owner's wife, class 0x09, a generic
+// NPC: message 181 asks, its Yes choice opens 182, which sets flag 0xE); flag
+// 1 also calls 0x8010207C(1), (2) (reported); with flag 34 also set 54.
+struct St04Area1Step {
+    std::array<uint8_t,2> object_sets{};
+    uint8_t object_set_count = 0;
+    bool call_8010207c_unported = false;
+};
+template <class FlagFn>
+St04Area1Step st04_area1_setup_step(uint8_t& state_04, FlagFn flag) {
+    St04Area1Step out;
+    if (state_04 != 0) return out;
+    const auto add = [&](uint8_t n) { if (out.object_set_count < out.object_sets.size()) out.object_sets[out.object_set_count++] = n; };
+    if (flag(1)) { add(7); out.call_8010207c_unported = true; }
+    else if (flag(70)) add(7);
+    else add(flag(12) ? 6 : 5);
+    if (flag(34)) add(54);
+    state_04 = 255;
+    return out;
+}
+
 // The field-object profile of a stage from its cooked stage.l3sd: the object
 // set table (8 bytes per set) and its records, the generic NPC tables and the
 // class mask the pack derived from the stage's class table.
@@ -60,7 +82,7 @@ struct FieldProfileSpec {
     uint8_t set_count = 0;
     uint32_t walk_speeds = 0, idle_timers = 0, walk_tables = 0, class_mask = 0;
 };
-constexpr FieldProfileSpec kSt04FieldProfile{0x8010C010u, 35, 0x8010C6C0u, 0x8010C77Cu, 0x8010C7E8u, 0x8010A570u};
+constexpr FieldProfileSpec kSt04FieldProfile{0x8010C010u, 58, 0x8010C6C0u, 0x8010C77Cu, 0x8010C7E8u, 0x8010A570u};
 bool bind_field_profile(const std::vector<StageDataBlock>& blocks, const FieldProfileSpec& spec, St03Event8Profile& out);
 
 } // namespace l3

@@ -87,8 +87,8 @@ EXTRA_STAGES={
               4:r'..\EMBIN\ST04_04.EBD',5:r'..\EMBIN\ST04_05.EBD'},'events':(),
        # Stage init 0x8010044C: 0x8001E4C4(0x8010AF44, 0x8010AF4C + 8 * 0x800C1B62); flag 2 -> row 13, flag 70 -> row 12.
        'door_locks':(0x8010AF44,14,((2,13),(70,12))),
-       # 0x80101E68's set table (35 sets) and its records, ST04's generic NPC tables.
-       'stage_data':['8010C010:280','8010AFC8:4168','8010C6C0:112','8010C77C:64','8010C7E8:112'],
+       # 0x80101E68's set table (58 sets) and its records, ST04's generic NPC tables.
+       'stage_data':['8010C010:464','8010AFC8:4168','8010C6C0:112','8010C77C:64','8010C7E8:112'],
        # Classes whose variant 0 (1F800058 table 0x8010A570) is the generic NPC 0x8010215C.
        'generic_npc':(0x8010A570,0x8010215C)},
     # Stage 9 (the first ruin, S5): nine areas; the S5 scenes (oracle saves
