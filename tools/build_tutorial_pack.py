@@ -87,10 +87,17 @@ EXTRA_STAGES={
               4:r'..\EMBIN\ST04_04.EBD',5:r'..\EMBIN\ST04_05.EBD'},'events':(),
        # Stage init 0x8010044C: 0x8001E4C4(0x8010AF44, 0x8010AF4C + 8 * 0x800C1B62); flag 2 -> row 13, flag 70 -> row 12.
        'door_locks':(0x8010AF44,14,((2,13),(70,12))),
-       # 0x80101E68's set table (35 sets) and its records, ST04's generic NPC tables.
-       'stage_data':['8010C010:280','8010AFC8:4168','8010C6C0:112','8010C77C:64','8010C7E8:112'],
+       # 0x80101E68's set table (58 sets) and its records, ST04's generic NPC tables.
+       'stage_data':['8010C010:464','8010AFC8:4168','8010C6C0:112','8010C77C:64','8010C7E8:112'],
        # Classes whose variant 0 (1F800058 table 0x8010A570) is the generic NPC 0x8010215C.
        'generic_npc':(0x8010A570,0x8010215C)},
+    # Stage 9 (the first ruin, S5): nine areas; the S5 scenes (oracle saves
+    # m3_09..m3_11) all run in area 0 on ST09_00.BIN (4 KiB at 0x8016C000).
+    # The other areas' containers are not identified yet (map data only).
+    9:{'container':'ST09.BIN','areas':('ST09_00.BIN',None,None,None,None,None,None,None,None),
+       'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':(),
+       # Set 0 (0x80100B20(0)): the one record at 0x8011DD68, the trapped man.
+       'stage_data':['8011DD68:20']},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
     0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
