@@ -2,6 +2,7 @@
 #include "legends3ds/source_st03_event8.h"
 #include "legends3ds/source_st0c.h"
 #include "legends3ds/source_st04.h"
+#include "legends3ds/source_st09.h"
 #include <cstdio>
 
 using namespace l3;
@@ -286,6 +287,20 @@ int main() {
         const auto npc = spawn_st03_object(pr.object_sets[0][0], &*pr.generic_classes);
         CHECK(npc.generic);
         CHECK(!spawn_st03_object(pr.object_sets[0][0]).generic);   // ST03's list has no class 0x13
+    }
+    // ST09 area 0 (0x80100670) and its set 0.
+    {
+        std::array<bool, 0x800> fl{};
+        const auto get = [&](uint16_t f) { return fl[f]; };
+        uint8_t st = 0; auto o = st09_area0_update_80100670(st, get); CHECK(*o.object_set == 0 && st == 1);
+        o = st09_area0_update_80100670(st, get); CHECK(!o.object_set && !o.event_unported && st == 1);
+        fl[0x60C] = true; o = st09_area0_update_80100670(st, get); CHECK(*o.event_unported == 0x17 && st == 255);
+        st = 0; fl[12] = true; o = st09_area0_update_80100670(st, get); CHECK(!o.object_set && st == 255);
+        StageDataBlock rec{kSt09Set0Record, {0, 0x13, 1, 0x20, 0, 0, 0, 0, 1, 0, 0, 1, 0x0A, 0x59, 0xBF, 0xFD, 0x00, 0x1D, 0, 8}};
+        St03Event8Profile p9;
+        CHECK(bind_st09_profile({rec}, p9) && p9.object_sets[0].size() == 1 && p9.object_sets[0][0].object_class == 0x13 &&
+              p9.object_sets[0][0].subtype == 1 && p9.object_sets[0][0].position[0] == 22794 && p9.object_sets[0][0].position[1] == -577);
+        CHECK(!spawn_st03_object(p9.object_sets[0][0], &*p9.generic_classes).generic);   // variant 1: not the generic NPC
     }
     // Area 2 set-up 0x80100BF8, first pass.
     {

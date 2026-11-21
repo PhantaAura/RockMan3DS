@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st04_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_static_pose_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st04_area0_state_=0; st09_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_static_pose_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -1860,7 +1860,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     // flag 0 the north gate 0x7E1 opens on the next one), the area loader's
     // 0x1FF clear (0x8001F554) on every load, then the area-enter call 0x8010089C until it sets 0x1FF; the
     // per-area update (area 1: 0x80100990) runs only once 0x1FF is set.
-    const bool field_stage=stage_==3||stage_==4||stage_==0x0C;
+    const bool field_stage=stage_==3||stage_==4||stage_==9||stage_==0x0C;
     const int area_key=field_stage?int(map_area_index_):-1;
     const bool loaded_now=area_key!=st03_area_key_;
     if(loaded_now){
@@ -1884,6 +1884,14 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(a0.flag_clear)set_story_flag(*a0.flag_clear,false);
         if(a0.object_set){st03_area1_object_set_=*a0.object_set;spawn_st03_object_set(*a0.object_set);}
     }else if(stage_!=4||loaded_now)st04_area0_state_=0;
+    if(stage_==9){
+        // 0x801005F4 at the end of the area setup: 0x16 on every area load.
+        if(loaded_now){set_story_flag(0x16,true);st09_area0_state_=0;}
+        if(map_area_index_==0){
+            const auto a0=st09_area0_update_80100670(st09_area0_state_,[&](uint16_t f){return story_flag(f);});
+            if(a0.object_set){st03_area1_object_set_=*a0.object_set;spawn_st03_object_set(*a0.object_set);}
+        }
+    }
     if(stage_==0x0C&&!loaded_now&&!story_flag(0x1FF))
         (void)st0c_area0_enter_801012d4(0,[&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});   // block +4 = 0 (CANDIDATE)
     if(stage_==0x0C&&story_flag(0x1FF)&&map_area_index_==0){
@@ -2200,7 +2208,7 @@ void RuntimeSession::update_st03_objects(SourceRngService* rng){
     // admitted (its seed comes from the oracle-observed profile) the draws use it at their real
     // call sites; without it a local seed from 0 stands in (CANDIDATE). The EXE has no srand
     // stub (no A0:30 call), so nothing reseeds after boot.
-    if(stage_!=3&&stage_!=4&&stage_!=0x0C)return;
+    if(stage_!=3&&stage_!=4&&stage_!=9&&stage_!=0x0C)return;
     // The talk runner's block +0 clears once the talk's window closed.
     if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){

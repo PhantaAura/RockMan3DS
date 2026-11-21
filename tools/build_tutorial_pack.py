@@ -95,7 +95,9 @@ EXTRA_STAGES={
     # m3_09..m3_11) all run in area 0 on ST09_00.BIN (4 KiB at 0x8016C000).
     # The other areas' containers are not identified yet (map data only).
     9:{'container':'ST09.BIN','areas':('ST09_00.BIN',None,None,None,None,None,None,None,None),
-       'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':()},
+       'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':(),
+       # Set 0 (0x80100B20(0)): the one record at 0x8011DD68, the trapped man.
+       'stage_data':['8011DD68:20']},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
     0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
