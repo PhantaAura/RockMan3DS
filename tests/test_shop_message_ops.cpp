@@ -5,6 +5,8 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <set>
+#include <tuple>
 
 using namespace l3;
 
@@ -23,9 +25,11 @@ ExeExcerpt authored() {
     ExeExcerpt::Range colors; colors.addr = kMsgClutTable80097f30; colors.bytes.assign(0x60, 0);
     ExeExcerpt::Range table; table.addr = kMsgTable8008cacc; table.bytes.assign(4 * 16, 0);
     ExeExcerpt::Range options; options.addr = kMsgOptionTable8008d0d4; options.bytes.assign(4 * 32, 0);
-    put32(options.bytes, 4 * 20, 0x800C1B68);                    // setting 20 -> a byte the windows map
+    put32(options.bytes, 4 * 20, 0x800C1B68);
+    put32(options.bytes, 4 * 14, 0x80098B6C);                    // setting 14 -> gp+0x1308 (test wiring)                    // setting 20 -> a byte the windows map
+    ExeExcerpt::Range prices; prices.addr = kShopPrices8008fd3c; prices.bytes.assign(0x128, 0); put16(prices.bytes, 2 * 5, 100);
     ExeExcerpt::Range option_msg; option_msg.addr = kOptionMessage8008b69c; option_msg.bytes = {0x95};
-    e.ranges = {widths, decor, number, digits, colors, table, options, option_msg};
+    e.ranges = {widths, decor, number, digits, colors, table, options, option_msg, prices};
     return e;
 }
 } // namespace
@@ -68,6 +72,33 @@ int main() {
         const uint8_t want2[7] = {0xED, 0xED, 0xED, 0xED, 6, 1, 1};   // 50 -> "    50" + fixed 0
         for (uint32_t k = 0; k < 7; ++k) assert(v.byte(at2 + k) == want2[k]);
         assert(v.slot(0).exec_depth == 0 && (v.slot(0).flags & 0x80000000u));
+    }
+    {   // 0xBC picks the cursor row's item and checks the money; 0xBD buys or sells it.
+        std::set<uint16_t> flags;
+        auto run = [&](uint32_t money, bool sell) {
+            MessageWindows v(authored());
+            v.story_flag = [&](uint16_t f) { return flags.count(f) != 0; };
+            v.set_story_flag = [&](uint16_t f, bool on) { if (on) flags.insert(f); else flags.erase(f); };
+            if (sell) flags.insert(0x2EE); else flags.erase(0x2EE);
+            v.list_800be2f8[0] = 5; v.zenny_800c1b2c = money;
+            std::vector<uint8_t> bk(0x40, 0);
+            const std::vector<uint8_t> blk = {0xA1, 0x8A, 0x00, 0x00, 0xBC, 0x00, 0xBB, 0x0E, 0x00, 0x01, 0x01, 0x8A, 0x01, 0x00, 0x95, 0x00, 0x00};
+            const std::vector<uint8_t> buy = {0xBD, 0x8A, 0x01, 0x00, 0x95, 0x00, 0x00};
+            put16(bk, 0, 4); put16(bk, 2, uint16_t(4 + blk.size()));
+            std::memcpy(bk.data() + 4, blk.data(), blk.size()); std::memcpy(bk.data() + 4 + blk.size(), buy.data(), buy.size());
+            v.map_range(0x80158000u, bk);
+            assert(v.open_8005382c(0, 0x80158000u, 0));
+            MessageWindowFrame last; int16_t bought = -1, sold = -1;
+            for (int i = 0; i < 4; ++i) { last = v.tick_80053b40(0, 0); if (last.shop_bought >= 0) bought = last.shop_bought; if (last.shop_sold >= 0) sold = last.shop_sold; }
+            return std::tuple<uint32_t, uint8_t, int16_t, int16_t, uint8_t>(v.zenny_800c1b2c, v.shop_short_gp1308, bought, sold, v.shop_item_gp10cc);
+        };
+        auto [m1, short1, b1, s1, item1] = run(50, false);    // short: 0xBB (setting 14 = gp+0x1308 == 0) does not open the buy block
+        assert(item1 == 5 && short1 == 1 && m1 == 50 && b1 == -1 && s1 == -1 && !flags.count(0x505));
+        auto [m2, short2, b2, s2, item2] = run(500, false);   // buys: 400 left, item 5 owned
+        assert(short2 == 0 && m2 == 400 && b2 == 5 && flags.count(0x505));
+        auto [m3, short3, b3, s3, item3] = run(10, true);     // sells for a quarter: +25, no longer owned
+        assert(short3 == 0 && m3 == 35 && s3 == 5 && !flags.count(0x505));
+        (void)item2; (void)item3; (void)s2; (void)b3;
     }
     std::cout << "shop_message_ops: ok\n";
     return 0;

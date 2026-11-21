@@ -49,7 +49,8 @@ constexpr uint32_t kMsgDecorParam8008af18 = 0x8008AF18;    // u8[9]
 constexpr uint32_t kMsgNumberDivisors8008af24 = 0x8008AF24; // u32[6]
 constexpr uint32_t kMsgNumberPads8008af3c = 0x8008AF3C;     // pad glyph by kind
 constexpr uint32_t kMsgDigitGlyphs8008d028 = 0x8008D028;    // digit -> glyph
-constexpr uint32_t kMsgFrameColors80097f6c = 0x80097F6C;   // u8[6 x n] bg colours
+constexpr uint32_t kMsgFrameColors80097f6c = 0x80097F6C;
+constexpr uint32_t kShopPrices8008fd3c = 0x8008FD3C;       // u16 per item id (0xBC / 0xBD)   // u8[6 x n] bg colours
 constexpr uint32_t kMsgBorderColors80097f78 = 0x80097F78;  // u8[16] edge vertex greys
 constexpr uint32_t kOptionMessage8008b69c = 0x8008B69C;
 // GetTPage(0, 0, 960, 256): the font page (KAIFONT.BIN, 0x80054240).
@@ -101,6 +102,10 @@ struct MessageWindowFrame {
     // Layout calls the list choice 0xDC makes: 0x80063F28(slot) clears a
     // slot (list = -1), 0x80063FC0(slot, 0x20000 | list) starts one.
     std::vector<std::pair<int8_t, int16_t>> layout_calls;
+    // 0xBD (0x800572C8): the item bought (money already taken) or sold (money already paid);
+    // the caller applies the item-specific effects (0x23 life max +16, 0x24 / 0x25 the canteen
+    // bytes 0x800C1B8C/8D) and, after a sale, the part re-equip 0x80061320.
+    int16_t shop_bought = -1, shop_sold = -1;
 };
 
 class MessageWindows {
@@ -120,7 +125,10 @@ public:
     int8_t phase_800c1b10 = 3;
     // 0x80098912: the save/load screen's mode (1 save, 0 load); decor 7 reads it.
     uint16_t save_mode_80098912 = 0;
-    uint32_t zenny_800c1b2c = 0;   // 0xBA
+    uint32_t zenny_800c1b2c = 0;   // 0xBA, 0xBC / 0xBD (0x8004327C, 0x80043294)
+    uint8_t shop_item_gp10cc = 0;  // 0x80098930: the list row's item (0xBC)
+    uint8_t shop_short_gp1308 = 0; // 0x80098B6C: 1 = not enough money for it (0xBC)
+    std::function<void(uint16_t, bool)> set_story_flag;   // 0x8001DA8C / 0x8001DCD0 (unset: dropped)
     // Map more original bytes (a stage message bank at its load address) next to the excerpt.
     void map_range(uint32_t addr, std::vector<uint8_t> bytes) { exe_.ranges.push_back({addr, std::move(bytes)}); }
     // Item list state (0xDF/0xDD/0xDC/0xE0): owned normal items, a 64-bit
