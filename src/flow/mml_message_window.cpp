@@ -357,6 +357,17 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         s.read = (story_flag && story_flag(f)) ? exe_.u32(0x8008BAA4u + 4u * f) : exe_.u32(0x8008CE58u);
         return true;
     }
+    case 0x94: s.flags |= 0x08000000u; s.read += 1; return true;            // 0x80054B88
+    case 0x8D: {                                                             // 0x80054804: wait for slot n to close (or its 0x20000)
+        s.flags |= 0x10000000u;
+        const uint8_t n = mem(r + 1);
+        const uint32_t other = n < 5 ? slots_[n].flags : 0u;
+        if (!(other & 0x80000000u) || (other & 0x00020000u)) { s.read += 2; return true; }
+        return false;
+    }
+    case 0x9A: case 0x9B:                                                    // 0x800553A8 / 0x800553F0: set / clear a flag
+        if (set_story_flag) set_story_flag(u16(r + 1), op == 0x9A);
+        s.read += 3; return true;
     case 0xA7:                                                               // 0x80055B14: layout start / clear
         if (u16(r + 1)) out.layout_calls.push_back({int8_t(int16_t(u16(r + 3))), -1});
         else out.layout_calls.push_back({int8_t(u16(r + 3)), int16_t(u16(r + 5))});
@@ -588,6 +599,9 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
     case 0xDC: case 0xD9: case 0x98: case 0xA9: s.draw += 1; return;
     case 0x8B: case 0x84: case 0xBF: s.draw += 3; return;
     case 0xA7: s.draw += 9; return;                                          // 0x80054388
+    case 0x94: s.draw += 1; return;                                          // 0x800542FC
+    case 0x8D: s.draw += 2; return;                                          // 0x80054310
+    case 0x9A: case 0x9B: s.draw += 3; return;                               // 0x80054324
     case 0x9F: s.draw += 1; return;
     case 0xC1:                                                               // 0x80057708
         if (s.draw_depth < s.draw_stack.size()) { s.draw_stack[s.draw_depth++] = d + 1; s.draw = exe_.u32(0x8008CBA4u + 4u * name_index_gp4044); }
@@ -746,7 +760,7 @@ bool MessageWindows::decor_exec(MessageSlot& s) {
         } else if (s.decor_state == 2) s.flags = (s.flags | 0x10000000u) & 0xF9FFFFFFu;
         return true;
     }
-    if (s.decor != 8) return false;
+    if (s.decor != 8 && s.decor != 0) return false;   // decor 0 (0x8005A874) grows like 8
     switch (s.decor_state) {                                                 // 0x8005B98C
     case 0: {                                                                // start collapsed at the middle
         s.decor_step = 8; s.flags |= 0x14000000u; s.decor_saved = s.flags & 0x08000000u; s.flags |= 0x08000000u;

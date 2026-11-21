@@ -27,3 +27,13 @@ ownership words the sub-screen already models (0x800BE420, 0x800B5600/04).
 
 Plan: run the shop's blocks on MessageWindows (like the save screen), port the opcodes above with
 host tests from the bank's real blocks, then wire the talk to the junk-shop owner once ST04 loads.
+
+## Port status (2026-11-20)
+Ported on MessageWindows: 0x90, 0xB6..0xBD, 0xC0..0xC5, 0x8D, 0x94, 0x9A/0x9B, decor 0 (as 8), the
+number printer 0x8005BF10; prices/tables cooked into option.l3ex (0x8008FD3C.., 0x8008AF24..).
+Host probe on the real ST04_01 bank (local only, not committed): the counter (block 0 -> 0x22),
+Buy -> Items -> the one-row list (0x13) -> Yes -> 0xBD bought (zenny 1000 -> 950) -> back to the
+Items/Parts menu, with no unported opcode on the way.
+Open: the talk that opens block 0 (the shop NPC's behaviour in the ST04 overlay), the bottom-screen
+host like the save screen, applying shop_bought/shop_sold to the player (0x23 life max, 0x24/0x25
+canteen, 0x80061320 re-equip), Azahar once ST04 runs there, and the recomp flag compare.
