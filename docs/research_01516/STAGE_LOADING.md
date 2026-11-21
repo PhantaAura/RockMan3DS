@@ -568,3 +568,58 @@ CANDIDATE: 0x800C1B62 and block 0x800989F8 +4 read 0.
 - **Routes:**
   - the Barrell approach now stops near z 1186, since state-1 walking overshoots more than the earlier state-3 fallback did;
   - the gate approach ends at z 24671, where the oracle's Circle works.
+
+## S5: the first ruin (ST09) — enemies, the trapped man, event 0x17 (2026-11-21)
+
+Static disassembly (`R3_ST09.BIN`, base 0x80100000) unless marked.
+
+### Enemy framework (reusable for S10 and later ruins)
+Enemies are not per-stage code. Each stage overlay links its own copy of
+the shared class-20 enemy callbacks and of the E0/00 conditional spawner;
+the copies are instruction-for-instruction identical to ST00's, with code
+and tables relocated by a constant per overlay. Checked by normalised word
+compare (opcode/register fields equal, jal/branch targets and lo16 data
+offsets shifted uniformly):
+
+| piece | ST00 | ST09 | shift |
+|---|---|---|---|
+| class 20/03 callback .. 0x80104474 | 0x8010226C | 0x80103450 | code +0x11E4, data +0x1FA0 |
+| class 20/19 Reaverbot .. 0x80106030 | 0x80104864 | 0x8010870C | code +0x3EA8, data +0x205C |
+| E0/00 spawner state 0 | 0x80111718 | 0x801178B4 | code +0x619C |
+
+So the port runs them with the existing `Class20_03*` / `Class20_19`
+code; the original addresses in those files are identity tokens (ST00's).
+Stats come from the EXE's global tables (stage independent).
+
+To add a stage: (1) confirm its callbacks match with the same normalised
+compare (the class table is `1F800058`'s row per class: ST09 rows at
+0x8011CCBC + 4 × class; 0x19 -> 0x8011CCA4 -> 0x8010870C); (2) find its
+E0/00 slot array (state 0 loads `slots[0x800C1B60]`, then `[0x800C1B61]`;
+ST00 0x8011C898, ST09 0x8011E430); (3) add `'spawn':(slots, areas)` to the
+stage in `tools/build_tutorial_pack.py`, which runs
+`l3cook_st00_spawn R3_STxx.BIN stages/stNN/spawn.l3spawn slots stage areas`;
+main binds it for the stage's areas. A different callback (a new enemy
+type) needs its own port before it can spawn.
+
+ST09's catalog: 9 areas, 33 regions, 257 records (regions repeat their
+shared lists). Area 0 region 0 (tiles x 32..35, z 7..9, the arrival point)
+spawns six class 20/03 and nine 20/19, flags 0x611..0x621 (set when one is
+defeated, so it never returns). Region 3 (qualifier 1) holds 11 more.
+
+### The trapped man (class 0x13 variant 1, 0x80107CDC)
+Set 0's only record (0x8011DD68). Action 0 (0x801080B8): the class-20
+pool scan for enemies inside box 0x8011DF64 (tiles x 43..46, z 14..18),
+call-outs in message window 4, and the talk that sets 0x60C once the box
+is clear. Actions 1/2 belong to event 0x17. Details in `source_st09.h`.
+
+### Event 0x17 (0x8010074C -> 0x80100788)
+Started by area 0's update on 0x60C. The player walks up, the man thanks
+him (message +6) and runs to (22789, 9890); flag 12 ends it (0x397).
+Cooked as `stages/st09/event23.l3cs`.
+
+### Open gaps (CANDIDATE)
+- Window 4 (non-blocking speech) is shown through the slot-0 dialogue.
+- The man's action 2 has no 0x8004B414 floor pass: no hops or landing
+  sound 279; the dust effect is reported only. Shots at him (his hit
+  proxy, message +5) are not delivered.
+- Talk kind 3 joins kind 1's candidate list.
