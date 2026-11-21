@@ -100,6 +100,31 @@ int main() {
         assert(short3 == 0 && m3 == 35 && s3 == 5 && !flags.count(0x505));
         (void)item2; (void)item3; (void)s2; (void)b3;
     }
+    {   // 0xB8: the item list (kind 1, flags from 0x500) and the window by row count.
+        auto ex = authored();
+        for (auto& r : ex.ranges) if (r.addr == kMsgClutTable80097f30) {
+            put16(r.bytes, 0x34, 0x500); put16(r.bytes, 0x36, 0x480);   // 0x80097F64: parts 0x500, items 0x480
+            r.bytes[0x38] = 8; r.bytes[0x39] = 8;                        // 0x80097F68: eight rows each
+        }
+        MessageWindows v(std::move(ex));
+        v.story_flag = [](uint16_t) { return false; };
+        v.shop_kind_gp0fec = 1; v.life_max_800b5260 = 0xA0; v.canteen_800c1b8d = 0;
+        // Items 0x480..0x487: owned rows 0, 2, 3 (0x480 byte bits); row 2 is "in stock" (0x400 byte) so it hides.
+        v.flags_800be378[0x480 >> 3] = 0x80 | 0x20 | 0x10;   // rows 0, 2, 3 owned
+        v.flags_800be378[0x400 >> 3] = 0x20;                  // row 2's second flag
+        std::vector<uint8_t> bk(0x80, 0);
+        const std::vector<uint8_t> blk = {0xA1, 0xB8, 0x01, 0x05, 0x0B, 0x0C, 0x0D, 0x0E, 0x8A, 0x01, 0x00, 0x95, 0x00, 0x00};
+        put16(bk, 0, 0x20);   // 16 blocks; block k > 0 = HALT at 0x20 + 2k
+        for (int k = 1; k < 16; ++k) { put16(bk, size_t(2 * k), uint16_t(0x20 + 0x30 + 2 * k)); bk[size_t(0x50 + 2 * k)] = 0x95; }
+        std::memcpy(bk.data() + 0x20, blk.data(), blk.size());
+        v.map_range(0x80159000u, bk);
+        assert(v.open_8005382c(0, 0x80159000u, 0));
+        (void)v.tick_80053b40(0, 0);
+        // Rows whose (second flag | ~owned) bit is clear go straight in: 0 and 3. Row 2 (second flag)
+        // and the unowned rows fall to the item checks: 3 would need max life != 0xA0, 5 a canteen.
+        assert(v.list_count_gp4420 == 2 && v.list_800be2f8[0] == 0 && v.list_800be2f8[1] == 3 && v.list_800be2f8[2] == 255);
+        assert(v.slot(0).index == 0x0D);   // two rows -> the byte at +5 (0x0D)
+    }
     std::cout << "shop_message_ops: ok\n";
     return 0;
 }
