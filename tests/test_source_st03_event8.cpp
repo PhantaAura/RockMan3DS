@@ -325,6 +325,51 @@ int main() {
         in.player_targets_me = false; in.window_open = false; in.enemies = {{{int16_t(22812), int16_t(9834)}}};
         m = step_st09_trapped_man_801080b8(man, in); CHECK(!m.enemies_in_box);
         man.action_09 = 1; m = step_st09_trapped_man_801080b8(man, in); CHECK(m.action_unported);
+        // State 1 (0x80107E54): action 1 waits for frame 15/35, talks (+6), then hands over to action 2.
+        {
+            St09TrappedMan mm; mm.message_0c = 1; mm.action_09 = 1;
+            St03Npc npc; npc.w.raw_14 = {{22794, -577, 7424}};
+            St09TrappedManWorldInputs wi; wi.action0.box = in.box;
+            auto s1 = step_st09_trapped_man_80107e54(mm, npc, wi); CHECK(!s1.talk && mm.phase_0a == 0);
+            wi.frame_a4 = 15; s1 = step_st09_trapped_man_80107e54(mm, npc, wi);
+            CHECK(*s1.talk == 7 && mm.request_ac == 21 && mm.phase_0a == 1);
+            wi.action0.window_open = true; s1 = step_st09_trapped_man_80107e54(mm, npc, wi); CHECK(mm.action_09 == 1);
+            wi.action0.window_open = false; s1 = step_st09_trapped_man_80107e54(mm, npc, wi);
+            CHECK(mm.action_09 == 2 && mm.phase_0a == 0 && !(mm.flags_348 & 1u));
+            s1 = step_st09_trapped_man_80107e54(mm, npc, wi);
+            CHECK(*s1.flag_set == 0x60D && mm.request_ac == 2 && mm.speed_44 == 384 && mm.timer_34c == 8);
+            s1 = step_st09_trapped_man_80107e54(mm, npc, wi); CHECK(s1.refs_missing && !s1.moved);   // no trig table
+            npc.w.raw_14 = {{22790, -577, 9880}};                     // at the exit (distance^2 101)
+            // Arrival sets bit 0 and the same tick's 0x80107F04 check releases him.
+            s1 = step_st09_trapped_man_80107e54(mm, npc, wi); CHECK(s1.released && *s1.flag_set == 12);
+        }
+        // Event 0x17 (0x80100788).
+        {
+            St03Event8Profile pr; pr.st09_rescue_loaded = true;
+            pr.st09_rescue.records = {{{0xFFFF0000u, kSt09RescueRecordCallback}}, {{0xFFu, 0u}}};
+            St03Event8 ev = start_st03_event8(0); ev.event = 0x17;
+            St09Event17Inputs e;
+            auto s = step_st09_event17_80100788(ev, pr, e); CHECK(ev.state == 0 && !s.player);
+            e.player_ready = true; s = step_st09_event17_80100788(ev, pr, e);
+            CHECK(ev.state == 1 && s.player && s.player->walk && *s.player->heading == 3540 && s.player->position[0] == 22626 && ev.countdown == 30);
+            e.player_ready = false;
+            for (int k = 0; k < 29; ++k) s = step_st09_event17_80100788(ev, pr, e);
+            CHECK(ev.state == 1 && !s.objects[0].state_09);
+            s = step_st09_event17_80100788(ev, pr, e); CHECK(ev.state == 2 && *s.objects[0].state_09 == 1 && ev.countdown == 36);
+            s = step_st09_event17_80100788(ev, pr, e); CHECK(ev.state == 2 && !s.player_anim_448);   // waits for 0x60D
+            e.flag_60d = true; e.turn_delta = 32;
+            s = step_st09_event17_80100788(ev, pr, e); CHECK(*s.player_anim_448 == 13 && *s.player_heading_add == 32 && ev.countdown == 35);
+            for (int k = 0; k < 34; ++k) s = step_st09_event17_80100788(ev, pr, e);
+            CHECK(ev.state == 2 && ev.countdown == 1);
+            s = step_st09_event17_80100788(ev, pr, e); CHECK(ev.state == 3 && *s.player_anim_448 == 48 && !s.player_heading_add);
+            e.flag_12 = true; s = step_st09_event17_80100788(ev, pr, e);
+            CHECK(s.player_release && s.ended && !ev.active);
+            // The skip in state 1: set 0 released, flag 12, state 3, the player facing 2401.
+            St03Event8 sk = start_st03_event8(0); sk.event = 0x17; St09Event17Inputs e2; e2.player_ready = true;
+            (void)step_st09_event17_80100788(sk, pr, e2); e2.player_ready = false; e2.start_pressed = true;
+            s = step_st09_event17_80100788(sk, pr, e2);
+            CHECK(s.skipped && s.release_set && *s.flag_set == 12 && sk.state == 3 && *s.player->heading == 2401 && !s.player->walk);
+        }
         StageDataBlock rec{kSt09Set0Record, {0, 0x13, 1, 0x20, 0, 0, 0, 0, 1, 0, 0, 1, 0x0A, 0x59, 0xBF, 0xFD, 0x00, 0x1D, 0, 8}};
         St03Event8Profile p9;
         CHECK(bind_st09_profile({rec}, p9) && p9.object_sets[0].size() == 1 && p9.object_sets[0][0].object_class == 0x13 &&

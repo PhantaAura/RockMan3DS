@@ -95,7 +95,8 @@ EXTRA_STAGES={
     # m3_09..m3_11) all run in area 0 on ST09_00.BIN (4 KiB at 0x8016C000).
     # The other areas' containers are not identified yet (map data only).
     9:{'container':'ST09.BIN','areas':('ST09_00.BIN',None,None,None,None,None,None,None,None),
-       'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':(),
+       # Event 0x17 (23): the rescue (handler 0x8010074C, timeline 0x8011DD7C, camera 0x8011DD8C).
+       'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':(23,),
        # Set 0 (0x80100B20(0)): the one record at 0x8011DD68, the trapped man.
        # 0x8011DF64: the trapped man's enemy/call-out box {min x, min z, w, d} (512 tiles).
        'stage_data':['8011DD68:20','8011DF64:4'],

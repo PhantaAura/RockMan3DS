@@ -1894,6 +1894,10 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(map_area_index_==0){
             const auto a0=st09_area0_update_80100670(st09_area0_state_,[&](uint16_t f){return story_flag(f);});
             if(a0.object_set){st03_area1_object_set_=*a0.object_set;spawn_st03_object_set(*a0.object_set);}
+            // 0x8001DDE4(0x17): the rescue (one scene, +4 = 0).
+            if(a0.event_unported&&st03_event8_profile_&&st03_event8_profile_->st09_rescue_loaded&&!st03_event8_.active){
+                st03_event8_=start_st03_event8(0);st03_event8_.event=0x17;
+            }
         }
     }
     if(stage_==0x0C&&!loaded_now&&!story_flag(0x1FF))
@@ -1922,9 +1926,23 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(setup.flag_clear)set_story_flag(*setup.flag_clear,false);
         if(setup.event8_scene&&st03_event8_profile_)st03_event8_=start_st03_event8(*setup.event8_scene);
     }else{st03_area1_setup_done_=false;st03_area1_setup_state_=0;}
-    if(stage_!=3)return;
+    if(stage_!=3&&stage_!=9)return;
     auto& ev=st03_event8_;
     if(!ev.active||!st03_event8_profile_)return;
+    St03Event8Step step;
+    if(stage_==9){
+        St09Event17Inputs e;
+        if(ev.state==0){const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);e.player_ready=ready&&*ready;}
+        e.start_pressed=(in.pressed_psx_mask&0x0008u)!=0;
+        e.flag_60d=story_flag(0x60D);e.flag_12=story_flag(12);
+        if(!st03_objects_.empty()&&st03_objects_[0].w.live){
+            // 0x80031BEC(player +0x14, man +0x14, +0x442, 32).
+            const auto& m=st03_objects_[0].w.raw_14;
+            const auto h=source_heading_80031198(rds16w(player_,0x14),rds16w(player_,0x18),m[0],m[2],actor_angle_steps_);
+            e.turn_delta=h?class20_03_turn_step(uint16_t(*h),rd16w(player_,0x442),32):0;
+        }
+        step=step_st09_event17_80100788(ev,*st03_event8_profile_,e);
+    }else{
     St03Event8Inputs input;
     if((ev.scene==0&&ev.state==1)||(ev.scene==1&&ev.state<=1)||(ev.scene==2&&ev.state==2)){   // 0x80042238 runs only in the state that calls it
         const auto ready=source_player_event_ready_80042238(player_,source_event_byte_800c1b93_);
@@ -1953,7 +1971,8 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
             input.heading_barrell_to_player=h?uint16_t(*h):0;
         }
     }
-    auto step=step_st03_event8(ev,*st03_event8_profile_,input);
+    step=step_st03_event8(ev,*st03_event8_profile_,input);
+    }
     if(step.player){
         // The event writes player state 3/1's targets (+0x428 16.16, +0x438
         // shorts via 0x80030150, heading +0x442); player state 3
@@ -2007,7 +2026,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(step.skipped&&dialogue_.active)stop_dialogue();   // 0x80053A30 closes the windows
     if(step.flag_set)set_story_flag(*step.flag_set,true);
     if(step.player_release)source_player_event_release_80042314(player_);
-    if(step.release_set)release_st03_objects();   // 0x80103BA0
+    if(step.release_set)release_st03_objects();   // 0x80103BA0 (ST09: 0x80100BF0, set 0's objects)
     if(step.spawn_set){st03_area1_object_set_=*step.spawn_set;spawn_st03_object_set(*step.spawn_set);}
     // Scene-object writes (*(0x8011CB30 + 4 * i)), after a respawn in the
     // same tick (scene 2 state 2 respawns set 1, then writes +4 / +8).
@@ -2016,7 +2035,8 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(!o.w.live)continue;
         if(wr.variant_04)st03_object_set_variant(o,*wr.variant_04,st03_event8_profile_&&st03_event8_profile_->generic_classes?&*st03_event8_profile_->generic_classes:nullptr);   // +4: the class row's column
         if(wr.state_08)o.w.state_08=*wr.state_08;
-        if(wr.state_09){o.w.state_09=*wr.state_09;o.w.sub_0a=0;}
+        if(wr.state_09){o.w.state_09=*wr.state_09;o.w.sub_0a=0;
+            if(st09_trapped_[i]){st09_trapped_[i]->action_09=*wr.state_09;st09_trapped_[i]->phase_0a=0;}}
         if(wr.clear_0a_0b){o.w.sub_0a=0;o.w.byte_0b=0;}
         if(wr.heading_56)o.w.rot_54[1]=*wr.heading_56;
         auto id_of=[&](uint8_t k)->uint8_t{return k<st03_objects_.size()?uint8_t(st03_objects_[k].family|k):0;};
@@ -2026,7 +2046,7 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
         if(wr.clear_0b)o.w.byte_0b=0;
     }
     if(step.release_slots)for(size_t i=0;i<st03_objects_.size();++i)if(step.release_slots&(1u<<i)){st03_objects_[i]={};st03_object_current_[i]=nullptr;}   // 0x80103CC4(i)
-    if(step.ended)set_story_flag(0x388,true);   // 0x8001D9F0: 0x380 + event 8
+    if(step.ended)set_story_flag(uint16_t(0x380u+ev.event),true);   // 0x8001D9F0: 0x380 + event
     if(step.unsupported_scene&&ev.active)ev.active=false;   // scenes 3..4 (or missing data): no hang
     st03_event8_step_=step;
 }
@@ -2312,15 +2332,26 @@ void RuntimeSession::update_st09_trapped_man(size_t i){
     in.player_targets_me=player_check_npc_&&*player_check_npc_==i;
     in.window_open=dialogue_.active;
     auto& mt=st09_trapped_ticks_[i];
-    mt=step_st09_trapped_man_801080b8(man,in);
+    St09TrappedManWorldInputs wi;wi.action0=in;
+    wi.frame_a4=st03_object_cursor_[i].frame_a4;wi.anim_a6=st03_object_cursor_[i].opaque_a6;
+    wi.refs=reference_tables_?&*reference_tables_:nullptr;wi.angle_steps=actor_angle_steps_;
+    const auto ws=step_st09_trapped_man_80107e54(man,o,wi);
+    mt=ws.action0;
     if(mt.clear_player_target)player_check_npc_.reset();
     for(const auto f:mt.flag_clears)if(f)set_story_flag(f,false);
-    if(mt.flag_set)set_story_flag(*mt.flag_set,true);
+    if(ws.flag_set)set_story_flag(*ws.flag_set,true);
+    if(ws.sound)(void)enqueue_source_audio_8001a008(source_audio_queue_,*ws.sound,0,0);
+    if(ws.talk){   // 0x80063BC8 + the talk runner (slot 0)
+        st03_talk_active_=true;
+        if(!dialogue_.active)try{if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*ws.talk});}
+            catch(const std::exception&){}
+    }
+    if(ws.released){st03_objects_[i]={};st09_trapped_[i].reset();st03_object_current_[i]=nullptr;return;}   // 0x80031824
     if(man.heading_56){o.w.rot_54[1]=*man.heading_56;}
     if(mt.message&&!dialogue_.active)try{
         if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*mt.message});
     }catch(const std::exception&){}
-    t.checkable=true;
+    t.checkable=true;   // 0x80051B68 kind 3, every tick (only action 0 reads +0x184)
     const bool changed=man.request_ac!=before||(mt.request&&!st03_object_current_[i]);
     if(changed)t.anim_request=man.request_ac;
     t.anim_advance=!t.anim_request;
@@ -2908,7 +2939,7 @@ void RuntimeSession::tick(const RuntimeInputFrame& in,SourceRngService* candidat
         if(in.source_event_player_position)selected.held_psx_mask=selected.pressed_psx_mask=0;
         // ST03 NPC talk: the original puts the player in action 0x10 (talk pose), which takes no
         // pad input; the pose itself is not ported, the pad is held off instead (CANDIDATE).
-        if((stage_==3||stage_==4||stage_==0x0C)&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
+        if((stage_==3||stage_==4||stage_==9||stage_==0x0C)&&(st03_talk_active_||save_screen_frames_))selected.held_psx_mask=selected.pressed_psx_mask=0;
         update_input_compat(selected);
         // 0x8003C07C: +0xBD 0x40 zeroes the pad, 0x20 takes event 0's 0x800C0F96.
         (void)source_player_input_select_8003c07c(player_,source_door_event0_.forced_pad);

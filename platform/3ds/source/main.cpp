@@ -5354,7 +5354,14 @@ int main() {
         if(g_stage==9) {
             bool bound=false;
             try{if(const auto blocks=l3::load_stage_data(read_binary(stage_path("stage.l3sd"),65536))){
-                l3::St03Event8Profile profile;if(l3::bind_st09_profile(*blocks,profile)){session.bind_field_objects_profile(std::move(profile));bound=true;}}}
+                l3::St03Event8Profile profile;if(l3::bind_st09_profile(*blocks,profile)){
+                    // Event 0x17, the rescue (stages/st09/event23.l3cs).
+                    bool rescue=false;
+                    try{l3::SourceScenePackage package;
+                        rescue=l3::load_source_scene_package(read_binary(stage_path("event23.l3cs"),l3::kSourceScenePackageMaxBytes),package)&&
+                               l3::bind_st09_event17(package,profile);}catch(const std::exception&){}
+                    hardware_test_trace("# st09_event17_profile,bound=%u",unsigned(rescue));
+                    session.bind_field_objects_profile(std::move(profile));bound=true;}}}
             catch(const std::exception&){}
             hardware_test_trace("# st09_profile,bound=%u",unsigned(bound));
         }
@@ -6548,10 +6555,12 @@ int main() {
                     for(size_t i=0;i<session.st09_trapped().size();++i){
                         if(!session.st09_trapped()[i])continue;
                         const auto& t=session.st09_trapped_ticks()[i];const auto& m=*session.st09_trapped()[i];
-                        if(t.message||t.flag_set||t.request)
+                        static uint8_t last_action=0xFF;
+                        if(t.message||t.flag_set||t.request||m.action_09!=last_action)
                             hardware_test_trace("# st09_trapped_man,frame=%lu,slot=%lu,enemies_in_box=%u,flags_348=%04x,timer=%d,message=%d,flag=%d,action=%u,callback=801080B8,behavior=SOURCE_BACKED_PARTIAL",
                                 (unsigned long)session.frame_counter(),(unsigned long)i,unsigned(t.enemies_in_box),unsigned(m.flags_348),int(m.timer_34c),
                                 t.message?int(*t.message):-1,t.flag_set?int(*t.flag_set):-1,unsigned(m.action_09));
+                        last_action=m.action_09;
                     }
                 }
                 if(!g_game_over_freeze&&session.stage()==3){
@@ -7946,12 +7955,12 @@ int main() {
                     (unsigned long)session.frame_counter(),unsigned(g_source_scene_actor40_only),unsigned(draw_legacy_player));
             const u64 actors_start=svcGetSystemTick();g_frame_split.player+=actors_start-player_start;
             if (use_uv_renderer()&&g_hardware_scene_draw==HardwareSceneDraw::All) draw_imported_actors_uv(actors);
-            if(session.stage()==3){
+            if(session.stage()==3||session.stage()==9){
                 static uint8_t last_state=0xFF;static bool last_active=false;
                 const auto& e8=session.st03_event8();const auto& s8=session.st03_event8_step();
                 if(e8.state!=last_state||e8.active!=last_active||s8.message_count||s8.flag_set){
-                    hardware_test_trace("# st03_event8,frame=%lu,active=%u,scene=%u,state=%u,record=%lu,message=%u,flag=%d,skipped=%u,ended=%u,set=%d,pos=%d/%d/%d",
-                        (unsigned long)session.frame_counter(),unsigned(e8.active),unsigned(e8.scene),unsigned(e8.state),(unsigned long)e8.record,
+                    hardware_test_trace("# st03_event8,event=%u,frame=%lu,active=%u,scene=%u,state=%u,record=%lu,message=%u,flag=%d,skipped=%u,ended=%u,set=%d,pos=%d/%d/%d",
+                        unsigned(e8.event),(unsigned long)session.frame_counter(),unsigned(e8.active),unsigned(e8.scene),unsigned(e8.state),(unsigned long)e8.record,
                         unsigned(s8.message_count?s8.messages[0]:0),s8.flag_set?int(*s8.flag_set):-1,unsigned(s8.skipped),unsigned(s8.ended),
                         session.st03_area1_object_set()?int(*session.st03_area1_object_set()):-1,
                         int(session.player_position().x),int(session.player_position().y),int(session.player_position().z));

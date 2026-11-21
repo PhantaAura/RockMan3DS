@@ -29,6 +29,9 @@ struct St03Event8Profile {
     std::array<std::vector<St03ObjectRecord>,64> object_sets;   // 0x80116578 (cooked extras; ST04 has 58 sets)
     std::optional<St03GenericClasses> generic_classes;           // other stages: classes whose variant 0 is the generic NPC
     std::optional<std::array<uint8_t,4>> st09_trapped_man_box;   // ST09 0x8011DF64
+    bool st09_rescue_loaded = false;               // ST09 event 0x17
+    SourceSceneTimeline st09_rescue;               // 0x8011DD7C
+    SourceSceneCameraProgram st09_rescue_camera;   // 0x8011DD8C
     bool idle_timers_loaded = false;
     std::array<uint8_t,64> idle_timers{};          // 0x80116E68
     bool walk_loaded = false;
@@ -44,6 +47,7 @@ bool bind_st03_event8_profile(const SourceScenePackage& package, St03Event8Profi
 
 struct St03Event8 {
     bool active = false;          // event +0
+    uint8_t event = 8;            // +1 (ST09's rescue: 0x17)
     uint8_t scene = 0;            // +4
     uint8_t state = 0;            // +6
     uint8_t byte_07 = 0;          // +7
