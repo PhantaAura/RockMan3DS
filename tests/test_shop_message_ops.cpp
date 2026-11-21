@@ -170,6 +170,19 @@ int main() {
         auto [i3, m3, f3] = run(5, 2, 10, 0);  assert(i3 == 3 && m3 == 10 && f3 == 2);    // not enough money
         auto [i4, m4, f4] = run(5, 2, 10, 0x80); assert(i4 == 4 && m4 == 0 && f4 == 5);   // the free refill takes what is left
     }
+    {   // 0xC5 draws the refill cost with pad kind 1; 0xC0 the row price (items table at 0x8008FD7C).
+        MessageWindows v(authored());
+        v.canteen_800c1b8d = 5; v.canteen_fill_800c1b8c = 2;
+        std::vector<uint8_t> bk(0x40, 0);
+        const std::vector<uint8_t> b0 = {0xA1, 0x8A, 0x00, 0x00, 0x8C, 0x10, 0x00, 0x10, 0x00, 0x08, 0x01, 0x93, 0x02, 0x04,
+            0xC5, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x8A, 0x01, 0x00, 0x95, 0x00, 0x00};
+        put16(bk, 0, 2); std::memcpy(bk.data() + 2, b0.data(), b0.size());
+        v.map_range(0x8015C000u, bk);
+        assert(v.open_8005382c(0, 0x8015C000u, 0));
+        for (int i = 0; i < 3; ++i) (void)v.tick_80053b40(0, 0);
+        const uint8_t want[7] = {0x00, 0x00, 0x00, 0x00, 4, 1, 1};   // 30 -> pad kind 1 (authored 0) x4, '3','0', fixed '0'
+        for (uint32_t k = 0; k < 7; ++k) assert(v.byte(0x8015C002u + 15u + k) == want[k]);
+    }
     std::cout << "shop_message_ops: ok\n";
     return 0;
 }

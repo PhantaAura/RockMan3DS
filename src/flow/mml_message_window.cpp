@@ -532,6 +532,26 @@ void MessageWindows::draw(MessageSlot& s, uint8_t op, MessageWindowFrame& out, i
         }
         return;
     }
+    case 0xC0: {                                                             // 0x80057574: the row's price (a quarter when selling)
+        const uint8_t item = list_800be2f8[size_t((list_scroll_gp4408 + uint32_t(int8_t(s.row_draw)) - 1u) & 0x7Fu)];
+        uint32_t price = u16((shop_kind_gp0fec ? 0x8008FD7Cu : kShopPrices8008fd3c) + 2u * item);
+        if (story_flag && story_flag(0x2EE)) price >>= 2;
+        print_number_8005bf10(0, price, d + 1u);
+        s.draw += 1; return;
+    }
+    case 0xC5:                                                               // 0x800579D8: the refill cost
+        print_number_8005bf10(1, uint32_t(canteen_800c1b8d - canteen_fill_800c1b8c) * 10u, d + 1u);
+        s.draw += 1; return;
+    case 0xB6: {                                                             // 0x800563A8: the cursor item's help window
+        const uint8_t item = list_800be2f8[size_t((list_scroll_gp4408 + uint32_t(int8_t(s.cursor))) & 0x7Fu)];
+        name_index_gp4044 = uint8_t(item + (shop_kind_gp0fec ? 0x20u : 0u));
+        if (s.flags & 0x2000u) {
+            const int8_t slot = int8_t(mem(d + 1)); const uint8_t id = uint8_t(mem(d + 2) + item);
+            if (s.index_base) open_8005382c(slot, s.index_base, id);
+            else open_8005382c(slot, exe_.u32(kMsgTable8008cacc + 4u * id), 255);
+        }
+        s.draw += 3; return;
+    }
     case 0xD6: {                                                             // 0x800564C8
         // Help for the cursor row: message (arg2 + cursor) in slot arg1.
         const uint8_t slot = mem(d + 1), base = mem(d + 2);
