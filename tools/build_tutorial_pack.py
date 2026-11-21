@@ -97,7 +97,8 @@ EXTRA_STAGES={
     9:{'container':'ST09.BIN','areas':('ST09_00.BIN',None,None,None,None,None,None,None,None),
        'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':(),
        # Set 0 (0x80100B20(0)): the one record at 0x8011DD68, the trapped man.
-       'stage_data':['8011DD68:20'],
+       # 0x8011DF64: the trapped man's enemy/call-out box {min x, min z, w, d} (512 tiles).
+       'stage_data':['8011DD68:20','8011DF64:4'],
        # E0/00 conditional spawns (slot array 0x8011E430[9] -> 0x8011CC68, nine
        # areas). Area 0: six class 20/03 and nine 20/19 Reaverbots, flags 0x611..0x621.
        'spawn':(0x8011E430,9)},

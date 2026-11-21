@@ -375,6 +375,11 @@ public:
     size_t source_st03_object_draws(std::array<St02ActorDraw,kSt03ObjectSlots>& out) const noexcept;
     const std::array<St03Npc,kSt03ObjectSlots>& st03_objects() const noexcept { return st03_objects_; }
     const std::array<St03NpcTick,kSt03ObjectSlots>& st03_object_ticks() const noexcept { return st03_object_ticks_; }
+    const std::array<std::optional<St09TrappedMan>,kSt03ObjectSlots>& st09_trapped() const noexcept { return st09_trapped_; }
+    const std::array<St09TrappedManTick,kSt03ObjectSlots>& st09_trapped_ticks() const noexcept { return st09_trapped_ticks_; }
+    // The class-20 pool as the trapped man scans it (0x801080B8): the actor
+    // runtime's live class-20 objects other than class 0x13, set each frame.
+    void set_field_enemies(std::vector<std::array<int16_t,2>> points) { field_enemies_ = std::move(points); }
     const std::optional<SourcePostWinHandoff>& source_post_win_handoff() const noexcept { return source_post_win_handoff_; }
     std::optional<uint32_t> pending_source_post_win_cd() const noexcept {
         return source_post_win_cd_done_?std::nullopt:source_post_win_cd_;
@@ -730,6 +735,7 @@ private:
     void update_st03_objects(SourceRngService* rng);
     void spawn_st03_object_set(uint8_t n);
     void release_st03_objects() noexcept;
+    void update_st09_trapped_man(size_t slot);
     void update_source_door_objects();
     void write_idx_descriptor(uint16_t idx,uint16_t descriptor);
     std::optional<int16_t> player_packed_cell() const;
@@ -878,6 +884,9 @@ private:
     std::optional<uint8_t> st03_area1_object_set_;
     std::array<St03Npc,kSt03ObjectSlots> st03_objects_{};
     std::array<St03NpcTick,kSt03ObjectSlots> st03_object_ticks_{};
+    std::array<std::optional<St09TrappedMan>,kSt03ObjectSlots> st09_trapped_{};   // ST09 class 0x13 variant 1
+    std::array<St09TrappedManTick,kSt03ObjectSlots> st09_trapped_ticks_{};
+    std::vector<std::array<int16_t,2>> field_enemies_;   // live class-20 actors (x, z), from the actor runtime
     std::array<St02ActorModel,kSt03ObjectSlots> st03_object_models_{};
     std::array<uint8_t,kSt03ObjectSlots> st03_model_class_{};
     // Family-0x60 slots (the police car 60/0E): a static mesh and its rest pose.

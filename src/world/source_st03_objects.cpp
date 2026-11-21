@@ -3,6 +3,7 @@
 #include "legends3ds/class20_03_behavior.h"
 #include "legends3ds/reference_tables.h"
 #include "legends3ds/source_angle.h"
+#include <algorithm>
 
 namespace l3 {
 namespace {
@@ -694,10 +695,12 @@ St03NpcTick step_st03_npc(St03Npc& n, const St03NpcInputs& in) noexcept {
     return out;
 }
 
-St02ActorModel decode_st03_npc_model(const EbdDirectory& ebd, uint8_t object_class, size_t cap) noexcept {
+St02ActorModel decode_st03_npc_model(const EbdDirectory& ebd, uint8_t object_class, size_t cap,
+                                     const std::vector<uint8_t>& extra) noexcept {
     // The generic NPC requests 0 / 1 (idle) and 8 / 9 (fidget); a row whose
     // bank lacks some keeps the ones it has (request 0 at least).
-    static const uint8_t all[] = {0, 1, 8, 9};
+    std::vector<uint8_t> all = {0, 1, 8, 9};
+    for (const uint8_t r : extra) if (std::find(all.begin(), all.end(), r) == all.end()) all.push_back(r);
     St02ActorModel out;
     try {
         const auto rows = find_ebd_entries(ebd, 0x20, object_class);

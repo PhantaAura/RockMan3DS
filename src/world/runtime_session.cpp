@@ -81,7 +81,7 @@ void RuntimeSession::reset_player(RuntimeVec3i p,uint16_t yaw,uint16_t hp,uint16
     player_.bytes[0x175]=7;
     l3_pl00_shot_enable_on(&player_); sync_primary_position_to_compat();
     reset_player_contact();
-    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st04_area0_state_=0; st04_area1_state_=0; st09_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st03_object_models_={}; st03_static_pose_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
+    locked_target_index_.reset(); projectiles_.clear(); frame_counter_=0; aux_triggers_.clear(); source_st02_actors_={}; source_st02_actor_ticks_={}; source_st02_sequence_={}; source_st02_banks_tried_=false; source_st02_models_={}; source_st02_prop_models_={}; st03_event8_={}; st03_event8_step_={}; st03_area1_setup_done_=false; st03_area1_setup_state_=0; st03_area_key_=-1; st03_area_enter_ported_=true; st0c_area0_state_=0; st04_area0_state_=0; st04_area1_state_=0; st09_area0_state_=0; st03_area1_object_set_.reset(); st03_objects_={}; st03_object_ticks_={}; st09_trapped_={}; st09_trapped_ticks_={}; field_enemies_.clear(); st03_object_models_={}; st03_static_pose_={}; st03_object_current_.fill(nullptr); st03_npc_seed_=0; st03_talk_active_=false; player_check_npc_.reset();
     source_door_event0_={};source_door_objects_.clear();
     update_gameplay_camera_target(); camera_.current=camera_.target;
 }
@@ -2165,7 +2165,7 @@ void RuntimeSession::update_source_st02_event4_actors(const SourcePostWinProfile
 }
 void RuntimeSession::release_st03_objects() noexcept {
     for(auto& o:st03_objects_)o={};
-    st03_object_current_.fill(nullptr);st03_object_ticks_={};
+    st03_object_current_.fill(nullptr);st03_object_ticks_={};st09_trapped_={};st09_trapped_ticks_={};
 }
 void RuntimeSession::spawn_st03_object_set(uint8_t n){
     // 0x80103AB0(n): 0x8001EAE8 for each record of set n into its slot.
@@ -2178,6 +2178,11 @@ void RuntimeSession::spawn_st03_object_set(uint8_t n){
         const bool same=m.mesh&&m.bank&&st03_model_class_[r.slot]==r.object_class;
         st03_objects_[r.slot]=spawn_st03_object(r,st03_event8_profile_->generic_classes?&*st03_event8_profile_->generic_classes:nullptr);
         st03_object_current_[r.slot]=nullptr;
+        // ST09's trapped man: state 0 0x80107D28 (+0 |= 2 visible, request 20).
+        const bool trapped=stage_==9&&r.family==0x20&&r.object_class==0x13&&r.subtype==1;
+        st09_trapped_[r.slot].reset();st09_trapped_ticks_[r.slot]={};
+        if(trapped){St09TrappedMan man;man.message_0c=r.word_08[0];st09_trapped_[r.slot]=man;st03_objects_[r.slot].w.flags_00|=2u;
+            st03_objects_[r.slot].check_box={{-32,32,-32,32,-32,0}};}   // 0x8011DF4C
         if(r.family==0x60){   // 0x8002F9C4 on the family-0x60 row: one-part static mesh (no banks)
             st03_static_pose_[r.slot].reset();
             budget+=m.decoded_bytes;m={};st03_model_class_[r.slot]=0xFF;
@@ -2197,7 +2202,8 @@ void RuntimeSession::spawn_st03_object_set(uint8_t n){
         if(r.family!=0x20){budget+=m.decoded_bytes;m={};st03_model_class_[r.slot]=0xFF;continue;}
         if(!same){
             st03_model_class_[r.slot]=r.object_class;
-            budget+=m.decoded_bytes;m=decode_st03_npc_model(area_.ebd,r.object_class,budget);
+            budget+=m.decoded_bytes;m=decode_st03_npc_model(area_.ebd,r.object_class,budget,
+                trapped?std::vector<uint8_t>{20,21,2}:std::vector<uint8_t>{});
             budget-=std::min(budget,m.decoded_bytes);
         }
     }
@@ -2217,6 +2223,7 @@ void RuntimeSession::update_st03_objects(SourceRngService* rng){
     if(st03_talk_active_&&!dialogue_.active&&!save_screen_frames_)st03_talk_active_=false;
     for(size_t i=0;i<st03_objects_.size();++i){
         auto& o=st03_objects_[i];auto& t=st03_object_ticks_[i];t={};
+        if(o.w.live&&st09_trapped_[i]){update_st09_trapped_man(i);continue;}
         if(!o.w.live||!(o.generic||o.scene_v1||o.car))continue;
         St03NpcInputs in;
         in.player_x=rds16w(player_,0x14);in.player_z=rds16w(player_,0x18);
@@ -2289,6 +2296,44 @@ void RuntimeSession::update_st03_objects(SourceRngService* rng){
             if(actor_sequence_step(st03_object_cursor_[i],r.data(),r.size()).status!=ActorSequenceStatus::SourceBackedPartial)
                 st03_object_current_[i]=nullptr;
         }
+    }
+}
+void RuntimeSession::update_st09_trapped_man(size_t i){
+    // 0x80107E54 (state 1) around action 0 (0x801080B8): previous request,
+    // the action, then 0x800322A8 on a changed request else 0x80032488;
+    // 0x80051B68(work, 3, -1, 0) makes him a talk candidate (kind 3 joins
+    // the kind-1 list: CANDIDATE).
+    auto& o=st03_objects_[i];auto& man=*st09_trapped_[i];auto& t=st03_object_ticks_[i];
+    const uint8_t before=man.request_ac;
+    St09TrappedManInputs in;
+    if(st03_event8_profile_&&st03_event8_profile_->st09_trapped_man_box)in.box=*st03_event8_profile_->st09_trapped_man_box;
+    in.player_x=rds16w(player_,0x14);in.player_z=rds16w(player_,0x18);
+    in.enemies=field_enemies_;
+    in.player_targets_me=player_check_npc_&&*player_check_npc_==i;
+    in.window_open=dialogue_.active;
+    auto& mt=st09_trapped_ticks_[i];
+    mt=step_st09_trapped_man_801080b8(man,in);
+    if(mt.clear_player_target)player_check_npc_.reset();
+    for(const auto f:mt.flag_clears)if(f)set_story_flag(f,false);
+    if(mt.flag_set)set_story_flag(*mt.flag_set,true);
+    if(man.heading_56){o.w.rot_54[1]=*man.heading_56;}
+    if(mt.message&&!dialogue_.active)try{
+        if(map_area_index_<message_banks_->size())start_source_tutorial_dialogue({uint16_t(map_area_index_),*mt.message});
+    }catch(const std::exception&){}
+    t.checkable=true;
+    const bool changed=man.request_ac!=before||(mt.request&&!st03_object_current_[i]);
+    if(changed)t.anim_request=man.request_ac;
+    t.anim_advance=!t.anim_request;
+    const auto& bank=st03_object_models_[i].bank;
+    if(t.anim_request){
+        st03_object_current_[i]=bank?find_actor_animation_request(*bank,*t.anim_request):nullptr;
+        if(st03_object_current_[i]&&actor_sequence_reset(st03_object_cursor_[i],st03_object_current_[i]->sequence.records.data(),
+            st03_object_current_[i]->sequence.records.size())!=ActorSequenceStatus::SourceBackedPartial)st03_object_current_[i]=nullptr;
+    }
+    else if(st03_object_current_[i]){
+        const auto& r=st03_object_current_[i]->sequence.records;
+        if(actor_sequence_step(st03_object_cursor_[i],r.data(),r.size()).status!=ActorSequenceStatus::SourceBackedPartial)
+            st03_object_current_[i]=nullptr;
     }
 }
 size_t RuntimeSession::source_st03_object_draws(std::array<St02ActorDraw,kSt03ObjectSlots>& out) const noexcept {

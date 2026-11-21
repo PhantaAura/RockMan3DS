@@ -6537,7 +6537,23 @@ int main() {
                         (unsigned long)g_player_proxy_target.packet_00,unsigned(session.hp()),unsigned(session.compat_player().bytes[9]));
                     g_player_proxy_target.packet_00=0;
                 }
+                if(session.stage()==9){   // the trapped man's class-20 pool scan (0x801080B8)
+                    std::vector<std::array<int16_t,2>> enemies;
+                    for(const auto& a:actors.actors)if(a.source_class==0x20&&a.subtype!=0x13&&!a.source_released)
+                        enemies.push_back({{a.source_origin[0],a.source_origin[2]}});
+                    session.set_field_enemies(std::move(enemies));
+                }
                 if(!g_game_over_freeze)session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
+                if(!g_game_over_freeze&&session.stage()==9){
+                    for(size_t i=0;i<session.st09_trapped().size();++i){
+                        if(!session.st09_trapped()[i])continue;
+                        const auto& t=session.st09_trapped_ticks()[i];const auto& m=*session.st09_trapped()[i];
+                        if(t.message||t.flag_set||t.request)
+                            hardware_test_trace("# st09_trapped_man,frame=%lu,slot=%lu,enemies_in_box=%u,flags_348=%04x,timer=%d,message=%d,flag=%d,action=%u,callback=801080B8,behavior=SOURCE_BACKED_PARTIAL",
+                                (unsigned long)session.frame_counter(),(unsigned long)i,unsigned(t.enemies_in_box),unsigned(m.flags_348),int(m.timer_34c),
+                                t.message?int(*t.message):-1,t.flag_set?int(*t.flag_set):-1,unsigned(m.action_09));
+                    }
+                }
                 if(!g_game_over_freeze&&session.stage()==3){
                     // The police car's dust (0x80110ACC): effect 1/0x83/1 with the point at +0x1C; the
                     // loop stops at the first full pool, like the original's null check.

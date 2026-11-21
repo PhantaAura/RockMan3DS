@@ -302,6 +302,29 @@ int main() {
         o = st09_area0_update_80100670(st, get); CHECK(!o.object_set && !o.event_unported && st == 1);
         fl[0x60C] = true; o = st09_area0_update_80100670(st, get); CHECK(*o.event_unported == 0x17 && st == 255);
         st = 0; fl[12] = true; o = st09_area0_update_80100670(st, get); CHECK(!o.object_set && st == 255);
+        // The trapped man, action 0 (0x801080B8): box tiles x 43..46, z 14..18.
+        St09TrappedMan man; man.message_0c = 1;
+        St09TrappedManInputs in; in.box = {{0x2B, 0x0E, 4, 5}};
+        in.player_x = 17085; in.player_z = 4342;                    // the arrival point, outside the box
+        in.enemies = {{{int16_t(23321), int16_t(7923)}}};             // a Reaverbot inside it
+        auto m = step_st09_trapped_man_801080b8(man, in);           // phase 0 -> 1, timer 60, then phase 1
+        CHECK(man.phase_0a == 1 && *m.request == 20 && m.enemies_in_box && !(man.flags_348 & 8u) && man.timer_34c == 59 && !m.message);
+        man.timer_34c = 1; m = step_st09_trapped_man_801080b8(man, in);   // timer reaches 0: the call-out
+        CHECK(*m.message == 1 && man.timer_34c == 450);
+        in.player_x = 22900; in.player_z = 8000;                    // walk into the box
+        m = step_st09_trapped_man_801080b8(man, in);
+        CHECK(*m.message == 1 && m.flag_clears[0] == 0x60A && m.flag_clears[1] == 0x60B && (man.flags_348 & 4u));
+        m = step_st09_trapped_man_801080b8(man, in); CHECK(!m.message);
+        in.player_targets_me = true; m = step_st09_trapped_man_801080b8(man, in);   // talk with enemies left
+        CHECK(m.clear_player_target && *m.message == 5 && !m.flag_set && man.timer_34c == 450);
+        in.enemies.clear(); m = step_st09_trapped_man_801080b8(man, in);           // box clear
+        CHECK(*m.flag_set == 0x60C && *man.heading_56 == 1492 && (man.flags_348 & 8u) && !m.message);
+        in.window_open = true; man.heading_56.reset(); m = step_st09_trapped_man_801080b8(man, in);
+        CHECK(!m.flag_set && !man.heading_56);
+        // Enemy tiles mask to a byte; one just past the box (z 9834 -> tile 19) does not count.
+        in.player_targets_me = false; in.window_open = false; in.enemies = {{{int16_t(22812), int16_t(9834)}}};
+        m = step_st09_trapped_man_801080b8(man, in); CHECK(!m.enemies_in_box);
+        man.action_09 = 1; m = step_st09_trapped_man_801080b8(man, in); CHECK(m.action_unported);
         StageDataBlock rec{kSt09Set0Record, {0, 0x13, 1, 0x20, 0, 0, 0, 0, 1, 0, 0, 1, 0x0A, 0x59, 0xBF, 0xFD, 0x00, 0x1D, 0, 8}};
         St03Event8Profile p9;
         CHECK(bind_st09_profile({rec}, p9) && p9.object_sets[0].size() == 1 && p9.object_sets[0][0].object_class == 0x13 &&

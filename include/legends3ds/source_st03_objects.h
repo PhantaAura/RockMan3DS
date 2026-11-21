@@ -151,6 +151,8 @@ uint8_t st03_npc_fidget_request(uint8_t object_class, uint16_t rand) noexcept;
 
 // The class-0x20 row for one NPC class in the area EBD, with the requests
 // the generic NPC issues (0, 1, 8, 9; those the bank has), within `cap`.
-St02ActorModel decode_st03_npc_model(const EbdDirectory& ebd, uint8_t object_class, size_t cap) noexcept;
+// `extra`: further requests an object issues (ST09's trapped man: 20, 21, 2).
+St02ActorModel decode_st03_npc_model(const EbdDirectory& ebd, uint8_t object_class, size_t cap,
+                                     const std::vector<uint8_t>& extra = {}) noexcept;
 
 } // namespace l3
