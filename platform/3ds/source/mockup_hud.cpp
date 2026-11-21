@@ -321,14 +321,16 @@ void draw_status(Raster& r, const l3::BottomScreenModel& status) {
     if(!g_gauge.loaded) {
         r.text(p.x+8,p.y+40,"GAUGE",kMuted); r.text(p.x+8,p.y+52,"ART",kMuted); r.text(p.x+8,p.y+64,"MISSING",kMuted);
     } else if(status.hp_max) {
-        // Cap top to ring bottom is 80+body px; centre it in the top 130 px.
+        // Cap top to ring bottom is 80+body px; the cap sits at the top of the panel.
         constexpr int kMaxBody=46;
         const int body=std::clamp(int(status.hp_max>>4)*5-10,0,kMaxBody);
-        const int cap_top=p.y+4+(130-80-body)/2;
+        const int cap_top=p.y+4;
         draw_life_gauge(r,p.x+12,cap_top+body-16,std::min(status.hp,status.hp_max),status.hp_max,kMaxBody);
         draw_ring_icon(r,p.x+12,cap_top+body-16,status.hud_anim);
     }
-    if(g_gauge.loaded) draw_weapon_gauge(r,p.x+p.w-6-24,p.y+92);
+    // Weapon gauge lower in the right column (lamp p.y+80, hook base to p.y+144),
+    // clear of the footer.
+    if(g_gauge.loaded) draw_weapon_gauge(r,p.x+p.w-6-24,p.y+104);
     r.text(text_x,p.y+8,"LIFE",kAccent);
     if(status.hp_max) {
         char hp[8], max[8];
@@ -338,9 +340,9 @@ void draw_status(Raster& r, const l3::BottomScreenModel& status) {
     } else r.text(text_x,p.y+20,"--",kMuted);
     // The last enemy hit: original target gauge (FUN_8005CEFC) under a label.
     if(g_gauge.loaded && status.target_visible && status.target_hp_max) {
-        r.fill(p.x+6,p.y+134,p.w-12,1,kBorder);
-        r.text(p.x+8,p.y+142,"TARGET",kAccent);
-        draw_target_gauge(r,p.x+p.w-6-32,p.y+154,status.target_hp,status.target_hp_max,p.w-6-32-14);
+        r.fill(p.x+6,p.y+148,p.w-12,1,kBorder);
+        r.text(p.x+8,p.y+152,"TARGET",kAccent);
+        draw_target_gauge(r,p.x+p.w-6-32,p.y+162,status.target_hp,status.target_hp_max,p.w-6-32-14);
     }
 }
 // Footer: GAUGE01u ZENNY plate (0,177 96x14) with the money in its box.

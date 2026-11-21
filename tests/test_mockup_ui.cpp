@@ -181,7 +181,7 @@ int main() {
     mockup_hud_raster(pixels,state,status,map);
     assert_guards(framebuffer);
     const auto& panel=layout.status;
-    const int gauge_x=panel.x+12, gauge_y=panel.y+4+(130-100)/2+20-16;
+    const int gauge_x=panel.x+12, gauge_y=panel.y+4+20-16;   // cap at the panel top
     expect_pixel(pixels,gauge_x-8,gauge_y+0x38,248,0,0);   // ring
     expect_pixel(pixels,gauge_x,gauge_y+0x28,248,0,0);     // base
     expect_pixel(pixels,222,224,248,0,0);                  // ZENNY plate
