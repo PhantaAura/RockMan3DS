@@ -85,6 +85,12 @@ constexpr StageFlowAddresses kSt03Flow{3, 9, 0x80114918u, 0x80114B7Cu, 0x80114BA
 // 0x8010AD54, selector 0x8010AD9C. Six areas: the town and five shops.
 constexpr StageFlowAddresses kSt04Flow{4, 6, 0x8010AA84u, 0x8010AC4Cu, 0x8010AC64u,
     0x8010AD9Cu, 0x8010AD54u, 0x8010A8C8u};
+// Stage 9 (the ruins) 0x80100398 (base 0x80120000): objects 0x8011D488, aux
+// 0x8011DAAC (nine pointers), blob 0x8011DAD0, seed 0x8011DC38, selector
+// 0x8011DC90. The area setup does not call 0x80022FD4; the table it passes
+// to 0x8005DC10 (0x8011BBB4) stands as the resource table (CANDIDATE).
+constexpr StageFlowAddresses kSt09Flow{9, 9, 0x8011D488u, 0x8011DAACu, 0x8011DAD0u,
+    0x8011DC90u, 0x8011DC38u, 0x8011BBB4u};
 // Stage 0x0C (the forest path) 0x80100C1C (base 0x80110000): resource
 // 0x8010C3A4, objects 0x8010C468, aux 0x8010C4D8, blob 0x8010C4E8, selector
 // 0x8010C788, seed 0x8010C588. One area (ST0C.BIN carries its own EBD and
@@ -99,6 +105,7 @@ const StageFlowAddresses* stage_flow_addresses_us(uint8_t stage) noexcept {
     case 2: return &kSt02Flow;
     case 3: return &kSt03Flow;
     case 4: return &kSt04Flow;
+    case 9: return &kSt09Flow;
     case 0x0C: return &kSt0CFlow;
     default: return nullptr;
     }

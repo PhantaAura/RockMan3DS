@@ -91,6 +91,11 @@ EXTRA_STAGES={
        'stage_data':['8010C010:280','8010AFC8:4168','8010C6C0:112','8010C77C:64','8010C7E8:112'],
        # Classes whose variant 0 (1F800058 table 0x8010A570) is the generic NPC 0x8010215C.
        'generic_npc':(0x8010A570,0x8010215C)},
+    # Stage 9 (the first ruin, S5): nine areas; the S5 scenes (oracle saves
+    # m3_09..m3_11) all run in area 0 on ST09_00.BIN (4 KiB at 0x8016C000).
+    # The other areas' containers are not identified yet (map data only).
+    9:{'container':'ST09.BIN','areas':('ST09_00.BIN',None,None,None,None,None,None,None,None),
+       'ebd':{0:r'..\EMBIN\ST09_00.EBD'},'events':()},
     # Stage 0x0C (forest path, S2): one area; ST0C.BIN holds the overlay, the
     # map quartet, ST0C_00A.EBD and ST0C_00.MSG. No arrival event.
     0x0C:{'container':'ST0C.BIN','areas':('ST0C.BIN',),'ebd':r'..\EMBIN\ST0C_00A.EBD','events':(),
