@@ -1891,7 +1891,10 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(stage_==9){
         // 0x801005F4 at the end of the area setup: 0x16 on every area load.
         if(loaded_now){set_story_flag(0x16,true);st09_area0_state_=0;}
-        if(map_area_index_==0){
+        // The per-frame dispatcher 0x8010061C runs once the loader is done:
+        // from the frame after the load (CANDIDATE timing; the load frame's
+        // object reset would drop a set spawned on it, run57).
+        else if(map_area_index_==0){
             const auto a0=st09_area0_update_80100670(st09_area0_state_,[&](uint16_t f){return story_flag(f);});
             if(a0.object_set){st03_area1_object_set_=*a0.object_set;spawn_st03_object_set(*a0.object_set);}
             // 0x8001DDE4(0x17): the rescue (one scene, +4 = 0).
