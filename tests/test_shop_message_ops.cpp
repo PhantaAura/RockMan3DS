@@ -150,6 +150,26 @@ int main() {
         (void)v.tick_80053b40(0, 0);
         assert(v.name_index_gp4044 == uint8_t(10 + 1 + 1 + 0x20));                         // last drawn row: scroll 1 + row 1, items +0x20
     }
+    {   // 0xC2 / 0xC3 / 0xC4: the canteen refill.
+        auto run = [&](uint8_t cap, uint8_t fill, uint32_t money, int16_t w70) {
+            MessageWindows v(authored());
+            v.canteen_800c1b8d = cap; v.canteen_fill_800c1b8c = fill; v.zenny_800c1b2c = money; v.word_800c1b70 = w70;
+            std::vector<uint8_t> bk(0x60, 0);
+            // block 0: C2 full->1 / else continue; C3 pay->2, short->3, free->4. Blocks 1, 3 halt; 2 = C4 00 halt; 4 = C4 01 halt.
+            const std::vector<uint8_t> b0 = {0xC2, 0x01, 0xFF, 0xC3, 0x02, 0x03, 0x04, 0x95, 0x00, 0x00};
+            put16(bk, 0, 10); size_t at = 10; std::memcpy(bk.data() + at, b0.data(), b0.size()); at += b0.size();
+            const std::vector<std::vector<uint8_t>> rest = {{0x95, 0, 0}, {0xC4, 0x00, 0x95, 0, 0}, {0x95, 0, 0}, {0xC4, 0x01, 0x95, 0, 0}};
+            for (size_t k = 0; k < rest.size(); ++k) { put16(bk, 2 * (k + 1), uint16_t(at)); std::memcpy(bk.data() + at, rest[k].data(), rest[k].size()); at += rest[k].size(); }
+            v.map_range(0x8015B000u, bk);
+            assert(v.open_8005382c(0, 0x8015B000u, 0));
+            for (int i = 0; i < 3; ++i) (void)v.tick_80053b40(0, 0);
+            return std::tuple<uint16_t, uint32_t, uint8_t>(v.slot(0).index, v.zenny_800c1b2c, v.canteen_fill_800c1b8c);
+        };
+        auto [i1, m1, f1] = run(5, 5, 100, 0); assert(i1 == 1 && m1 == 100 && f1 == 5);   // already full
+        auto [i2, m2, f2] = run(5, 2, 100, 0); assert(i2 == 2 && m2 == 70 && f2 == 5);    // pays 30
+        auto [i3, m3, f3] = run(5, 2, 10, 0);  assert(i3 == 3 && m3 == 10 && f3 == 2);    // not enough money
+        auto [i4, m4, f4] = run(5, 2, 10, 0x80); assert(i4 == 4 && m4 == 0 && f4 == 5);   // the free refill takes what is left
+    }
     std::cout << "shop_message_ops: ok\n";
     return 0;
 }

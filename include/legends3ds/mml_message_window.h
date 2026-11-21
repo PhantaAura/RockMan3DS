@@ -133,7 +133,9 @@ public:
     uint8_t row_block_gp0f94 = 0;      // 0x800987F8 (setting 13): the block each 0xB7 row calls
     uint8_t cancel_slot_gp1200 = 0, cancel_block_gp1201 = 0;   // 0x80098A64/65: 0xB7's Triangle message
     int16_t life_max_800b5260 = 0;     // 0xB8: the life-up price follows the max life
-    uint8_t canteen_800c1b8d = 0;      // 0xB8: the canteen row and its price
+    uint8_t canteen_800c1b8d = 0;      // 0xB8: the canteen row and its price; capacity for 0xC2..0xC4
+    uint8_t canteen_fill_800c1b8c = 0; // 0xC2..0xC4: the canteen's current fill
+    int16_t word_800c1b70 = 0;         // 0xC3: >= 0x80 allows the free refill branch (meaning UNKNOWN)
     // 0xB8 (0x80056D10): build the shop list into 0x800BE2F8 from the flag rows of table
     // 0x80097F64/68 and pick the window block by the row count.
     std::array<uint8_t,256> flags_800be378{};   // the story flag bytes the list reads (caller mirror)

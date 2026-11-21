@@ -276,6 +276,27 @@ bool MessageWindows::exec(MessageSlot& s, uint8_t op, MessageWindowFrame& out, b
         s.repeat = 0; ++s.rows; s.flags |= 0x00402000u; s.read += 3;
         return true;
     }
+    case 0xC2: case 0xC3: {                                                  // 0x80057744 / 0x800577FC: canteen branches
+        uint8_t target;
+        if (op == 0xC2) target = canteen_fill_800c1b8c == canteen_800c1b8d ? mem(r + 1) : mem(r + 2);   // full / not full
+        else {
+            const uint32_t cost = uint32_t(canteen_800c1b8d - canteen_fill_800c1b8c) * 10u;
+            if (zenny_800c1b2c >= cost) target = mem(r + 1);                                         // affordable
+            else if (word_800c1b70 < 0x80 || zenny_800c1b2c < 1u) target = mem(r + 2);               // not enough money
+            else target = mem(r + 3);                                                                // the free refill
+        }
+        if (target == 255) { s.read += op == 0xC2 ? 3u : 4u; return true; }
+        s.index = target;
+        s.read = s.page = s.index_base ? s.index_base + u16(s.index_base + 2u * target) : exe_.u32(kMsgTable8008cacc + 4u * target);
+        s.color = 0; s.rows = 0;
+        return true;
+    }
+    case 0xC4: {                                                             // 0x80057924: refill (arg 0: pay; else all money)
+        const uint32_t cost = mem(r + 1) == 0 ? uint32_t(canteen_800c1b8d - canteen_fill_800c1b8c) * 10u : zenny_800c1b2c;
+        zenny_800c1b2c = zenny_800c1b2c >= cost ? zenny_800c1b2c - cost : 0u;   // 0x80043294(-cost)
+        canteen_fill_800c1b8c = canteen_800c1b8d;
+        s.read += 2; return true;
+    }
     case 0xBD: {                                                             // 0x800572C8: buy or sell the item
         const uint8_t item = shop_item_gp10cc;
         const uint32_t price = u16(kShopPrices8008fd3c + 2u * item);
