@@ -5690,7 +5690,9 @@ int main() {
                     if(!session.dialogue().active)return 0;
                     const uint32_t phase=autoplay_tick%12u;
                     const auto& dlg=session.dialogue();
-                    if(dlg.waiting_for_choice&&size_t(dlg.choice)+1<dlg.choice_targets.size())
+                    // Talk steps move to the last choice; "ffffd 1" keeps the first (the junk shop's Yes).
+                    const bool keep_first=autoplay_step.keys==kAutoplayTalk&&autoplay_step.cx==1;
+                    if(!keep_first&&dlg.waiting_for_choice&&size_t(dlg.choice)+1<dlg.choice_targets.size())
                         return phase%6u==3u?u32(KEY_DRIGHT):0u;
                     return phase==0?u32(KEY_A):0u;
                 };
