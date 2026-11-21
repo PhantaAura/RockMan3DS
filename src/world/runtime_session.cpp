@@ -1887,7 +1887,15 @@ void RuntimeSession::update_st03_event8(const RuntimeInputFrame& in){
     if(stage_==0x0C&&!loaded_now&&!story_flag(0x1FF))
         (void)st0c_area0_enter_801012d4(0,[&](uint16_t f){return story_flag(f);},[&](uint16_t f,bool v){set_story_flag(f,v);});   // block +4 = 0 (CANDIDATE)
     if(stage_==0x0C&&story_flag(0x1FF)&&map_area_index_==0){
-        if(st0c_area0_update_80100ed4(st0c_area0_state_))spawn_st03_object_set(0);   // the ruin guard (0x8010CB70)
+        if(st0c_area0_update_80100ed4(st0c_area0_state_)){
+            spawn_st03_object_set(0);   // the ruin guard (0x8010CB70)
+            // 0x80100F14..0x80100F38: 0x8003AC9C(0x80048C60(0xB00, 0, 0x900), 0x000E0100) puts the
+            // variant-1 descriptor (floor only: the gate walls of variant 0 drop out) on that IDX row.
+            // Oracle: row 413 0x801952C0 -> 0x801952F0 at 0x8003ACD4 on the first frame after load.
+            if(const auto c=runtime_map_find_cell(*map_,map_area_index_,0xB00,0x900);c&&c->packed_cell>0)
+                if(const auto d=source_descriptor_by_word0_8003ac24(*map_,0x000E0100u))
+                    write_idx_descriptor(uint16_t(c->packed_cell),*d);
+        }
     }else if(stage_!=0x0C||loaded_now)st0c_area0_state_=0;
     // An area load frees the outgoing area's ST03 objects (0x80103BA0 path).
     if(loaded_now)release_st03_objects();

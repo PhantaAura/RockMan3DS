@@ -108,6 +108,26 @@ St00Source parse_st00(const std::vector<uint8_t>& mdt, const std::vector<uint8_t
     for (const auto& r : out.idx) {
         if (r.descriptor_ptr && !by_ptr.count(r.descriptor_ptr)) by_ptr.emplace(r.descriptor_ptr, read_descriptor(stg, r.descriptor_ptr));
     }
+    // ROCK_NEO.EXE 0x8003A3B4 (stage load, before 0x8003AD14): for every IDX
+    // row with a descriptor, scan the HED rows (loaded at 0x8013A000; at most
+    // 0x200 rows, ending at the first null pointer) for one whose pointer
+    // matches the row's descriptor in its low 24 bits; on a match, IDX+6 =
+    // the halfword at (descriptor+0x18 -> pointer)+2. Rows without a match
+    // keep the disc value. Oracle (ST03 -> ST0C load): row 413 0 -> 0xF001
+    // written at 0x8003A434; the other 900 described rows read 1.
+    for (auto& r : out.idx) {
+        if (!r.descriptor_ptr) continue;
+        for (size_t o = 0; o + 8 <= hed.size() && o < 0x1000; o += 8) {
+            const uint32_t ptr = rd_u32(&hed[o + 4]);
+            if (!ptr) break;
+            if ((ptr & 0xFFFFFFu) != (r.descriptor_ptr & 0xFFFFFFu)) continue;
+            if (!in_stg(r.descriptor_ptr, stg.size(), 0x1C)) break;
+            const uint32_t render = rd_u32(&stg[r.descriptor_ptr - kSt00StgBase + 0x18]);
+            if (!in_stg(render + 2, stg.size(), 2)) throw std::runtime_error("IDX raw6 source pointer outside STG");
+            r.raw6 = rd_s16(&stg[render + 2 - kSt00StgBase]);
+            break;
+        }
+    }
     // ROCK_NEO.EXE 0x800219C0..0x800219E4 and 0x80022274..0x80022298
     // select the loaded STG base for negative cells whose bit7 is clear. It is
     // not reached through a HED or IDX reference, so collect it explicitly.

@@ -210,11 +210,9 @@ std::optional<uint16_t> runtime_map_cell_contact_list_index(const RuntimeMap& ma
     const auto* idx = runtime_map_cell_idx(map, cell);
     const auto* desc = runtime_map_cell_descriptor(map, cell);
     if (!idx || !desc) return std::nullopt;
-    // 0x8005172C picks the alternate list (+4) when IDX raw6 & 0xFFF is nonzero. The disc's raw6 is 0,
-    // but in RAM the stage's IDX rows carry raw6 = 1 exactly when their descriptor has an alternate
-    // list (oracle: ST00 994/994, ST03 1689/1689, ST0C 902/902 rows; the writer is UNKNOWN), so the
-    // runtime value is applied here: the alternate list whenever one exists.
-    const bool use_alt = (static_cast<uint16_t>(idx->raw6) & 0x0FFFu) != 0u || desc->alt_contact_index != 0xFFFFu;
+    // 0x8005172C picks the alternate list (+4) when IDX raw6 & 0xFFF is nonzero, else the default (+8).
+    // raw6 is the load-time value of 0x8003A3B4, cooked by parse_st00 (descriptor+0x18 -> +2).
+    const bool use_alt = (static_cast<uint16_t>(idx->raw6) & 0x0FFFu) != 0u;
     const uint16_t li = use_alt ? desc->alt_contact_index : desc->default_contact_index;
     if (li == 0xFFFFu || li >= map.contact_lists.size()) return std::nullopt;
     return li;

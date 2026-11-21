@@ -20,10 +20,10 @@ l3::RuntimeMap make_map(int16_t sx, int16_t sz, uint16_t width, uint16_t height)
     for (uint32_t i = 0; i < area.cell_count; ++i) {
         map.cells.push_back(static_cast<int16_t>(i + 1));
         map.idx[i + 1].descriptor_index = static_cast<uint16_t>(i);
-        map.idx[i + 1].raw6 = 0;   // the disc value; the runtime picks the alternate list when one exists
+        map.idx[i + 1].raw6 = (i & 1u) ? 1 : 0;
         l3::RuntimeMapDescriptor desc{};
         desc.default_contact_index = static_cast<uint16_t>(i * 2);
-        desc.alt_contact_index = (i & 1u) ? static_cast<uint16_t>(i * 2 + 1) : uint16_t(0xFFFFu);
+        desc.alt_contact_index = static_cast<uint16_t>(i * 2 + 1);
         map.descriptors.push_back(desc);
         // Distinct default/alternate groups make wrong IDX/list selection fail.
         for (uint32_t branch = 0; branch < 2; ++branch) {
