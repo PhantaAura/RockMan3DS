@@ -246,6 +246,7 @@ static bool g_retail_actor_animation = false;
 static bool g_actor_state_fields = false;
 static bool g_actor_rng_candidate = false;
 static bool g_source_event_boot = false;
+static bool g_source_event_boot_config = false;   // SOURCE_EVENT_BOOT as configured, restored on a return to the title
 static bool g_new_game_opening = false;   // NEW GAME plays ST00 event 1
 // Exact first E0 callback stores, with an explicitly diagnostic native sweep
 // and frontend Near LOD. Main-phase scheduling and source camera depth are held.
@@ -1538,7 +1539,6 @@ static bool g_game_over_freeze=false, g_game_over_front_end_logged=false;
 // title (PSXRecomp, tutorial death from savestate 3: main 9/6 -> stage 0 area 0 ->
 // main 1 title with NEW GAME/CONTINUE/OPTION; NEW GAME restarts at 80/80).
 static bool g_return_to_title=false, g_skip_intro_once=false;
-static bool g_source_event_boot_config=false;
 // The shared target every effect-128 proxy names (0x800A86C0).
 static l3::SourceHitProxyTarget g_effect_shared_target{0x800a86c0u};
 struct DiagnosticAutoplay {
