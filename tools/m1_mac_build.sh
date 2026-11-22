@@ -18,7 +18,11 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 OUT="${OUT:-$PROJECT/work/pass-$STAMP-m2-01516}"
 CACHE="${CACHE:-$PROJECT/work/mml3ds-cache-01500}"
 CUE="${CUE:-$HOME/Downloads/MML_Discoken/Mega Man Legends (USA).cue}"
-RNG="${RNG:-$PROJECT/work/pass-20261017-worldalive-01447/native-r1/sd_out/3ds/Legends3DS/data/legends3ds/tutorial/source_rng.l3rg}"
+# The private RNG profile lives outside the pass folders (passes get cleaned up;
+# the old default pass-20261017-worldalive-01447 was deleted on 2026-11-21 and
+# every build after that shipped without it, so enemies held at their first draw).
+RNG="${RNG:-$PROJECT/owner-data/source_rng.l3rg}"
+[ -f "$RNG" ] || RNG="$PROJECT/work/pass-20261017-worldalive-01447/native-r1/sd_out/3ds/Legends3DS/data/legends3ds/tutorial/source_rng.l3rg"
 export DEVKITPRO="${DEVKITPRO:-/opt/devkitpro}"
 export DEVKITARM="${DEVKITARM:-$DEVKITPRO/devkitARM}"
 
