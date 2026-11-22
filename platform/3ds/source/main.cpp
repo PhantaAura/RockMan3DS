@@ -507,6 +507,7 @@ void load_actor_rng_candidate_gate() {
         const bool invalid=n==0||std::ferror(file)!=0||!std::feof(file);std::fclose(file);
         g_source_event_boot=!invalid&&std::sscanf(data,"SOURCE_EVENT_BOOT=%u %c",&enabled,&trailing)==1&&enabled==1;
     }
+    g_source_event_boot_config=g_source_event_boot;
     g_source_actor_proxy=load_default_gate("sdmc:/3ds/Legends3DS/source_actor_proxy.ini",
         "SOURCE_ACTOR_PROXY",g_gameplay_defaults.source_actor_proxy);
     if(FILE* file=std::fopen("sdmc:/3ds/Legends3DS/source_scene_e0.ini","rb")) {
@@ -1533,6 +1534,11 @@ static std::optional<std::array<int16_t,3>> g_player_point_3e8;
 // Main phase 9 (game over) and whether this update freezes gameplay.
 static l3::SourceGameOverState g_game_over;
 static bool g_game_over_freeze=false, g_game_over_front_end_logged=false;
+// Game over ends in 0x80016798's front-end request: the original returns to the
+// title (PSXRecomp, tutorial death from savestate 3: main 9/6 -> stage 0 area 0 ->
+// main 1 title with NEW GAME/CONTINUE/OPTION; NEW GAME restarts at 80/80).
+static bool g_return_to_title=false, g_skip_intro_once=false;
+static bool g_source_event_boot_config=false;
 // The shared target every effect-128 proxy names (0x800A86C0).
 static l3::SourceHitProxyTarget g_effect_shared_target{0x800a86c0u};
 struct DiagnosticAutoplay {
@@ -5585,7 +5591,9 @@ int main() {
             if(FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_title.txt","r")){std::fclose(f);title_file=true;}
             if(!spawn_file&&(!g_autoplay.active||title_file)){
                 // Oracle cold boot: narration (event 71), then the title.
-                if(!g_autoplay.active)run_intro_event71(false);
+                // Not after a game over: the original goes straight to the title.
+                if(!g_autoplay.active&&!g_skip_intro_once)run_intro_event71(false);
+                g_skip_intro_once=false;
                 // Title timeouts alternate the attract scenes (oracle): ST07
                 // event 10, then the narration, then event 10 again.
                 bool attract_bonne=true;
@@ -5632,6 +5640,8 @@ int main() {
 
         bool stage_request_held=false;
         while(aptMainLoop()) {
+            // Game over finished: tear the stage down and rebuild from the title.
+            if(g_return_to_title)break;
             // Stage change: the hand-off named another stage. Leave the loop;
             // the teardown below releases this stage and boot reloads.
             if(const auto stage_request=session.source_stage_request()) {
@@ -6271,8 +6281,8 @@ int main() {
                     if(go.cd_8001d854)music.fade_out();
                     if(go.clear_flag_1fe)session.set_story_flag(0x1fe,false);
                     if(go.to_front_end&&!g_game_over_front_end_logged){
-                        g_game_over_front_end_logged=true;
-                        hardware_test_trace("# game_over_front_end,frame=%lu,held=1,reason=return_to_title_not_ported",(unsigned long)session.frame_counter());
+                        g_game_over_front_end_logged=true;g_return_to_title=true;
+                        hardware_test_trace("# game_over_front_end,frame=%lu,return_to_title=1",(unsigned long)session.frame_counter());
                     }
                     g_game_over_freeze=!go.update_pass;
                     if(sub_before!=uint8_t(g_game_over.sub))
@@ -8231,6 +8241,18 @@ int main() {
         session.release_inactive_locations();
         hardware_test_area_event("gpu_unloaded",g_current_area,0,
             g_package_bytes,g_package_decoded_estimate,g_package_peak_estimate);
+        if(g_return_to_title) {
+            // A fresh boot of stage 0 (no arrival, no carry): the title runs and NEW GAME
+            // builds a new session, so life, the player work and the flags start over.
+            g_return_to_title=false;g_skip_intro_once=true;
+            g_stage=0;g_stage_arrival.reset();g_stage_carry.reset();
+            g_game_over={};g_game_over_freeze=false;g_game_over_front_end_logged=false;
+            g_source_event_boot=g_source_event_boot_config;g_new_game_opening=false;
+            g_children.initialize();
+            l3::NegativeMaterialTables().swap(g_negative_materials);
+            hardware_test_trace("# return_to_title,stage=0");
+            goto stage_reload;
+        }
         if(g_stage_arrival) {
             g_stage=g_stage_arrival->stage;
             g_children.initialize();
