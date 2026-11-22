@@ -39,12 +39,11 @@ struct ActorFloorContact {
     uint32_t unsupported_primitives = 0;
 };
 
-// Allocation-free, bounded source subset. Candidate gathering, class filter,
-// list selection, rectangle1/3/15 responses, packed negative-cell Y response,
-// and final core-result masks retain original integer behavior. Unknown
-// families can only be excluded using the separately proved strict envelope
-// guard. Intersecting unknown families, deep overlap and arithmetic outside
-// the admitted bounds reject the complete query.
+// 0x8004B6AC through the shared player port (runtime_player_contact_step): all
+// primitive families it answers, the correction history and the deep-overlap
+// recovery. A primitive the port does not answer that holds the actor in X/Z
+// still rejects the query (Unsupported). Nine passes give the original
+// 0x80000000 result, which the wrapper commits as its negative branch.
 ActorWallContact query_actor_wall_contact_8004b6ac(
     const RuntimeMap& map, size_t area_index, const ActorContactWork& work,
     RetailPlayerBounds bounds) noexcept;
@@ -57,9 +56,9 @@ bool apply_actor_contact_result_8004b414(
     ActorContactWork& work, const ActorWallContact& core) noexcept;
 
 // Generic source floor query after wall mutation, including original signed
-// raw-Y delta selection and 32767 sentinel. Supports rectangle1/3/15.
-// Slope8..11 and unknown visits reject the query without a substituted current
-// Y. Their scalar transform evidence does not prove the full wrapper contract.
+// raw-Y delta selection and 32767 sentinel. Rectangles 1/3/15, slopes 8..11 and
+// the sloped diagonals 0x24..0x54 through the shared 0x8004A060 port; other
+// diagonal families keep the strict envelope guard.
 ActorFloorContact query_actor_floor_contact_80048ea4(
     const RuntimeMap& map, size_t area_index, const ActorContactWork& work,
     RetailPlayerBounds bounds) noexcept;

@@ -77,129 +77,78 @@ bool diagonal_excluded(const RuntimeMapIdx& idx, const RuntimeContactGroup& grou
     return !(x0 - bounds.x1 < x && x < x1 - bounds.x0 &&
              z0 - bounds.z1 < z && z < z1 - bounds.z0);
 }
+bool core_ported(uint16_t code) noexcept {
+    // Primitive codes the shared 0x8004BDC8 port answers (player_contact_runtime.cpp).
+    if (code >= 256u) return true;   // the dispatcher admits only codes below 0x100
+    const unsigned family = (code & 0xf0u) >> 4, low = code & 0x0fu;
+    if (family < 2u) return code == 1u || code == 3u || code == 15u || (code >= 8u && code <= 11u);
+    if (family <= 5u) return low == 1u || low == 2u || low == 4u;
+    return false;
+}
 bool allowed(const RuntimeContactPrimitive& primitive, uint8_t object_class) noexcept {
     return l3_obj_group_bits_8002fe74(object_class) == 0 || !(primitive.flags & 0x8000u);
-}
-bool eligible(int16_t correction, int16_t delta, uint8_t blocked,
-              uint8_t positive, uint8_t negative) noexcept {
-    return delta != 0 && std::abs(int(correction)) <= std::abs(int(delta)) &&
-           !(blocked & (correction > 0 ? positive : negative));
-}
-bool respond_rectangle(const Rect& rect, L3RetailContactScratch& point,
-                       int16_t dx, int16_t dy, int16_t dz, uint8_t& blocked,
-                       ActorWallContact& out) noexcept {
-    const int16_t cx = wrap((dx < 0 ? rect.x1 : rect.x0) - int32_t(point.x));
-    const int16_t cy = wrap((dy < 0 ? rect.y1 : rect.y0) - int32_t(point.y));
-    const int16_t cz = wrap((dz < 0 ? rect.z1 : rect.z0) - int32_t(point.z));
-    const bool ex = eligible(cx, dx, blocked, 2, 1), ez = eligible(cz, dz, blocked, 8, 4);
-    const bool ey = eligible(cy, dy, blocked, 32, 16);
-    if (!ex && !ey && !ez) { ++out.unsupported_primitives; return false; }
-    int axis = !ex ? (ez ? 2 : 1) : (!ez ? 0 : (std::abs(int(cx)) < std::abs(int(cz)) ? 0 : 2));
-    const int horizontal = axis == 0 ? std::abs(int(cx)) : std::abs(int(cz));
-    if (ey && ((!ex && !ez) || ((ex && ez) ? std::abs(int(cy)) < horizontal :
-                                                       std::abs(int(cy)) <= horizontal))) axis = 1;
-    if (axis == 0) { point.x = wrap(int32_t(point.x) + cx); blocked = cx > 0 ? 1 : 2; }
-    else if (axis == 2) { point.z = wrap(int32_t(point.z) + cz); blocked = cz > 0 ? 4 : 8; }
-    else {
-        point.y = wrap(int32_t(point.y) + cy); blocked = cy > 0 ? 16 : 32;
-        if (cy <= 0) { point.contact_state = 0; return true; }
-    }
-    return false;
 }
 } // namespace
 
 ActorWallContact query_actor_wall_contact_8004b6ac(
     const RuntimeMap& map, size_t area, const ActorContactWork& work, RetailPlayerBounds bounds) noexcept {
+    // 0x8004B414 calls the same core 0x8004B6AC (dispatcher 0x8004BDC8) for every
+    // object, so actors share the player port: all primitive families it covers
+    // (rectangles, slopes 8..11, diagonals x1/x2, sloped diagonals 0x24..0x54),
+    // the 0x1F800100/106 correction history and the 0x80050400 deep-overlap
+    // recovery. Only the work fields the core reads are filled: +14/+16/+18,
+    // +2C/+2E/+30, the class byte (+1, the 0x8002FE74 filter) and +74.
     ActorWallContact out;
-    const L3RetailContactScratch requested{work.raw[0], work.raw[1], work.raw[2], work.state74};
-    out.scratch = requested;
-    const auto candidates = gather(map, area, requested.x, requested.z);
+    const auto candidates = gather(map, area, work.raw[0], work.raw[2]);
     out.candidate_cells = candidates.count;
-    if (candidates.malformed) return out;
+    if (candidates.malformed) return out;   // Unsupported: the grid itself is out of range
     if (!candidates.count) { out.status = RuntimeContactStatus::NoData; return out; }
-    out.status = RuntimeContactStatus::SourceBackedPartial;
-    uint8_t blocked = 0;
-    for (unsigned pass = 0; pass < 9; ++pass) {
-        out.iterations = static_cast<uint8_t>(pass + 1);
-        bool repeat = false;
-        for (uint8_t reverse = candidates.count; reverse > 0 && !repeat; --reverse) {
-            const auto& cell = candidates.cells[reverse - 1];
-            const int32_t vx = int32_t(out.scratch.x) - work.previous_raw[0];
-            const int32_t vy = int32_t(out.scratch.y) - work.previous_raw[1];
-            const int32_t vz = int32_t(out.scratch.z) - work.previous_raw[2];
-            if (!fits_short(vx) || !fits_short(vy) || !fits_short(vz)) { ++out.unsupported_primitives; continue; }
-            const auto dx = wrap(vx), dy = wrap(vy), dz = wrap(vz);
-            if (cell.packed_cell < 0) {
-                const auto containing = runtime_map_find_cell(map, area, out.scratch.x, out.scratch.z);
-                if (!containing || containing->cell_index != cell.cell_index) continue;
-                const int32_t top = -int32_t((uint16_t(cell.packed_cell) & 0x1f00u) >> 1);
-                const int32_t floor = top - 1 - bounds.y1;
-                if (!fits_short(floor)) { ++out.unsupported_primitives; continue; }
-                if (floor < out.scratch.y) {
-                    out.scratch.y = wrap(floor);
-                    if (dy > 0) out.scratch.contact_state = 0;
-                    repeat = true;
-                } else if (uint16_t(cell.packed_cell) & 0x6000u) {
-                    const int32_t ceiling = top - int32_t((uint16_t(cell.packed_cell) & 0x6000u) >> 13) * 384 + 1 - bounds.y0;
-                    if (!fits_short(ceiling)) { ++out.unsupported_primitives; continue; }
-                    if (out.scratch.y < ceiling) { out.scratch.y = wrap(ceiling); repeat = true; }
-                }
-                continue;
-            }
-            const auto* idx = runtime_map_cell_idx(map, cell);
-            const auto* list = runtime_map_cell_contact_list(map, cell);
-            if (!idx || !list) { ++out.unsupported_primitives; continue; }
-            if (uint64_t(list->group_first) + list->group_count > map.contact_groups.size()) {
-                ++out.unsupported_primitives; continue;
-            }
-            for (uint32_t gi = 0; gi < list->group_count && !repeat; ++gi) {
-                const uint64_t index = uint64_t(list->group_first) + gi;
-                if (index >= map.contact_groups.size()) { ++out.unsupported_primitives; continue; }
-                const auto& group = map.contact_groups[static_cast<size_t>(index)];
-                ++out.groups_tested;
-                if (!group.primitive_count) continue;
-                if (uint64_t(group.primitive_first) + group.primitive_count > map.contact_primitives.size()) {
-                    ++out.unsupported_primitives; continue;
-                }
-                const auto family = map.contact_primitives[group.primitive_first].code;
-                if (family >= 256u) continue;
-                if ((family & 0xf0u) >= 0x20u) {
-                    if (!diagonal_excluded(*idx, group, family, bounds, out.scratch.x, out.scratch.z)) ++out.unsupported_primitives;
-                    continue;
-                }
-                for (uint32_t pi = 0; pi < group.primitive_count && !repeat; ++pi) {
-                    const uint64_t primitive_index = uint64_t(group.primitive_first) + pi;
-                    if (primitive_index >= map.contact_primitives.size()) { ++out.unsupported_primitives; continue; }
-                    const auto& primitive = map.contact_primitives[static_cast<size_t>(primitive_index)];
-                    ++out.primitives_tested;
-                    if (!allowed(primitive, work.object_class)) continue;
-                    const auto rect = rectangle(*idx, group, primitive, bounds);
-                    if (!rect.ordered_unwrapped) { ++out.unsupported_primitives; continue; }
-                    if (!inside_xz(rect, out.scratch.x, out.scratch.z)) continue;
-                    if (primitive.code != 1u && primitive.code != 3u && primitive.code != 15u) { ++out.unsupported_primitives; continue; }
-                    if (!(rect.y0 < out.scratch.y && out.scratch.y < rect.y1)) continue;
-                    if (primitive.code == 3u) {
-                        if (dy >= 0 || out.scratch.contact_state == 0) {
-                            out.scratch.y = rect.y0; out.scratch.contact_state = 0; repeat = true;
-                        } else ++out.unsupported_primitives;
-                    } else if (primitive.code == 15u) { out.scratch.y = rect.y1; repeat = true; }
-                    else if (out.scratch.contact_state == 0 && int32_t(out.scratch.y) - rect.y0 < 8 && !blocked) {
-                        out.scratch.y = rect.y0; repeat = true;
-                    } else repeat = respond_rectangle(rect, out.scratch, dx, dy, dz, blocked, out);
+    L3PlayerCompatWork w{};
+    const auto put = [&](size_t o, int16_t v) {
+        w.bytes[o] = uint8_t(uint16_t(v)); w.bytes[o + 1] = uint8_t(uint16_t(v) >> 8);
+    };
+    put(0x14, work.raw[0]); put(0x16, work.raw[1]); put(0x18, work.raw[2]);
+    put(0x2C, work.previous_raw[0]); put(0x2E, work.previous_raw[1]); put(0x30, work.previous_raw[2]);
+    w.bytes[1] = work.object_class; w.bytes[0x74] = work.state74;
+    // Conservative actor rule kept from the earlier subset: an unported primitive
+    // whose expanded box holds the actor in X/Z rejects the query (the original
+    // handler might respond; the port cannot say).
+    for (uint8_t i = 0; i < candidates.count; ++i) {
+        const auto& cell = candidates.cells[i];
+        if (cell.packed_cell <= 0) continue;
+        const auto* idx = runtime_map_cell_idx(map, cell);
+        const auto* list = runtime_map_cell_contact_list(map, cell);
+        if (!idx || !list) continue;
+        for (uint32_t gi = 0; gi < list->group_count; ++gi) {
+            const uint64_t gix = uint64_t(list->group_first) + gi;
+            if (gix >= map.contact_groups.size()) break;
+            const auto& group = map.contact_groups[static_cast<size_t>(gix)];
+            for (uint32_t pi = 0; pi < group.primitive_count; ++pi) {
+                const uint64_t pix = uint64_t(group.primitive_first) + pi;
+                if (pix >= map.contact_primitives.size()) break;
+                const auto& primitive = map.contact_primitives[static_cast<size_t>(pix)];
+                if (core_ported(primitive.code) || !allowed(primitive, work.object_class)) continue;
+                if (inside_xz(rectangle(*idx, group, primitive, bounds), work.raw[0], work.raw[2])) {
+                    out.unsupported_primitives = 1; return out;
                 }
             }
         }
-        if (!repeat) break;
-        if (pass == 8) { out.status = RuntimeContactStatus::IterationLimit; return out; }
     }
-    if (out.unsupported_primitives) { out.status = RuntimeContactStatus::Unsupported; return out; }
-    if (!fits_short(int32_t(requested.x) - out.scratch.x) ||
-        !fits_short(int32_t(requested.y) - out.scratch.y) ||
-        !fits_short(int32_t(requested.z) - out.scratch.z)) {
-        out.status = RuntimeContactStatus::Unsupported; return out;
+    const auto core = runtime_player_contact_step(map, area, w, bounds);
+    out.scratch = core.scratch;
+    out.candidate_cells = core.candidate_cells;
+    out.groups_tested = core.groups_tested;
+    out.primitives_tested = core.primitives_tested;
+    out.unsupported_primitives = core.unsupported_primitives;
+    out.iterations = core.iterations;
+    out.result = core.result;
+    out.status = core.candidate_cells == 0 ? RuntimeContactStatus::NoData : core.status;
+    // After nine passes 0x8004B6AC returns 0x80000000; 0x8004B414 then takes its
+    // negative branch (previous pose restored), so the wrapper commits it.
+    if (core.status == RuntimeContactStatus::IterationLimit) {
+        out.status = RuntimeContactStatus::SourceBackedPartial;
+        out.result = static_cast<int32_t>(0x80000000u);
     }
-    out.result = l3_collision_no_contact_result_8004bc2c(requested.x, requested.y, requested.z,
-                                                       out.scratch.x, out.scratch.y, out.scratch.z);
     return out;
 }
 
@@ -264,7 +213,8 @@ ActorFloorContact query_actor_floor_contact_80048ea4(
                 }
                 const auto family = map.contact_primitives[group.primitive_first].code;
                 if (family >= 256u) continue;
-                if ((family & 0xf0u) >= 0x20u) {
+                const bool sloped = family == 0x24u || family == 0x34u || family == 0x44u || family == 0x54u;
+                if ((family & 0xf0u) >= 0x20u && !sloped) {
                     if (!diagonal_excluded(*idx, group, family, bounds, x, z)) ++out.unsupported_primitives;
                     continue;
                 }
@@ -273,14 +223,17 @@ ActorFloorContact query_actor_floor_contact_80048ea4(
                     if (primitive_index >= map.contact_primitives.size()) { ++out.unsupported_primitives; continue; }
                     const auto& primitive = map.contact_primitives[static_cast<size_t>(primitive_index)];
                     if (!allowed(primitive, work.object_class)) continue;
+                    if (sloped && primitive.code != family) continue;
                     const auto rect = rectangle(*idx, group, primitive, bounds);
                     if (!rect.ordered_unwrapped) { ++out.unsupported_primitives; continue; }
-                    if (!inside_xz(rect, x, z)) continue;
-                    if (primitive.code != 1u && primitive.code != 3u && primitive.code != 15u) {
+                    // Sloped diagonals test their clipped triangle inside 0x8004A060.
+                    if (!sloped && !inside_xz(rect, x, z)) continue;
+                    const unsigned c = primitive.code;
+                    if (!sloped && c != 1u && c != 3u && c != 15u && (c < 8u || c > 11u)) {
                         ++out.unsupported_primitives; continue;
                     }
                     const auto interval = runtime_contact_floor_interval_8004a060(*idx, group, primitive, bounds, x, z);
-                    if (!interval) { ++out.unsupported_primitives; continue; }
+                    if (!interval) { if (!sloped) ++out.unsupported_primitives; continue; }
                     const int32_t compare = dy < 0 ? y : std::min<int32_t>(y, best);
                     if (interval->y0 < best && compare < interval->y1) {
                         best = interval->y0; out.cell_index = cell.cell_index;

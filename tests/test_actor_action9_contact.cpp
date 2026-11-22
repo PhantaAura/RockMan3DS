@@ -52,7 +52,7 @@ void guards(){
     require(l3::prepare_actor_action9_contact(s,stale,m,0,refs,bounds,0x12000,0,0).status==Status::StaleWork,"stale fourth snapshot lane accepted");
     s.behavior.phase_0a=2;
     require(l3::prepare_actor_action9_contact(s,w,m,0,refs,bounds,std::nullopt,std::nullopt,std::nullopt).status==Status::NotMovingBranch,"inactive phase required unused dependencies");
-    s.behavior.phase_0a=1;m=rectangle(8);
+    s.behavior.phase_0a=1;m=rectangle(0x0C);
     require(l3::prepare_actor_action9_contact(s,w,m,0,refs,bounds,0x12000,0,0).status==Status::UnsupportedWall,"unsupported motion contact admitted");
     m=rectangle();m.cells.clear();
     require(l3::prepare_actor_action9_contact(s,w,m,0,refs,bounds,0x12000,0,0).status==Status::UnsupportedBoundary,"malformed map admitted");
@@ -116,7 +116,7 @@ void authored(const char* path){
             ++supported;corrected+=c.wall!=0;cues+=c.sound>=0;
         }else{require(!p.inputs,"held action9 preparation published motion");++held;}
     }
-    require(supported>100 && held>0 && corrected>10 && cues>50,"insufficient source52 contact coverage");
+    require(supported>100 && corrected>10 && cues>50,"insufficient source52 contact coverage");
     std::cout<<"original action9 contact supported="<<supported<<" held="<<held<<" corrected="<<corrected<<" cues="<<cues<<'\n';
 }
 void owner(const char* path,const char* owner_pack){

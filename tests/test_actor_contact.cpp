@@ -60,23 +60,24 @@ void scalar_tests() {
     assert(work.raw[3] == 1234 && work.velocity[0] == 321);
     work = work_at(0, -60, 0, 0, -60, 0);
     wall = l3::query_actor_wall_contact_8004b6ac(map, 0, work, bounds);
-    assert(wall.status == l3::RuntimeContactStatus::Unsupported); // Deep-overlap handler excluded.
-    const auto unsupported_before = work;
-    assert(!l3::apply_actor_contact_result_8004b414(work, wall));
-    expect_work(work, unsupported_before);
+    // Deep overlap: the shared core's 0x80050400 recovery now answers it.
+    assert(wall.status == l3::RuntimeContactStatus::SourceBackedPartial);
+    const auto overlap_before = work;
+    assert(l3::apply_actor_contact_result_8004b414(work, wall));
+    work = overlap_before;
     map = rectangle_map(3);
     wall = l3::query_actor_wall_contact_8004b6ac(map, 0, work, bounds);
     assert(wall.status == l3::RuntimeContactStatus::SourceBackedPartial && wall.scratch.y == -128);
     assert(l3::apply_actor_contact_result_8004b414(work, wall));
     const auto floor = l3::query_actor_floor_contact_80048ea4(map, 0, work, bounds);
     assert(floor.status == l3::RuntimeContactStatus::SourceBackedPartial && floor.result == -128);
-    map = rectangle_map(8);
+    map = rectangle_map(0x0C);   // 0x8004CAEC: still unported
     assert(l3::query_actor_wall_contact_8004b6ac(map, 0, work, bounds).status == l3::RuntimeContactStatus::Unsupported);
     map = rectangle_map(0x21);
     work = work_at(-160, -60, 0, -164, -60, 0);
     assert(l3::query_actor_wall_contact_8004b6ac(map, 0, work, bounds).status == l3::RuntimeContactStatus::SourceBackedPartial);
-    work.raw[0] = -159;
-    assert(l3::query_actor_wall_contact_8004b6ac(map, 0, work, bounds).status == l3::RuntimeContactStatus::Unsupported);
+    work.raw[0] = -159;   // inside the x1 diagonal: the shared core's diagonal response
+    assert(l3::query_actor_wall_contact_8004b6ac(map, 0, work, bounds).status == l3::RuntimeContactStatus::SourceBackedPartial);
     map.contact_groups[0].x1 = map.contact_groups[0].x0;
     work.raw[0] = -180;
     assert(l3::query_actor_wall_contact_8004b6ac(map, 0, work, bounds).status == l3::RuntimeContactStatus::Unsupported);
@@ -221,7 +222,7 @@ void source_fixtures(const std::string& prefix) {
             ++floor_count;
         }
     });
-    if (wrapper_count != 176 || core_count < 100 || corrections < 100 || floor_count < 100 || unsupported_count == 0)
+    if (wrapper_count != 176 || core_count < 100 || corrections < 100 || floor_count < 100)   // every row now answered by the shared core
         throw std::runtime_error("insufficient original/native contact coverage");
     std::cout << "source wrapper cases=" << wrapper_count << ", supported core cases=" << core_count
               << ", corrections=" << corrections << ", excluded core cases=" << unsupported_count

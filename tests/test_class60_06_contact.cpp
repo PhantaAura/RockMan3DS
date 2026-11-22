@@ -34,7 +34,7 @@ void fixtures(const char* path){
  if(haseffect){const auto& e=*got.effect;require(e.work00==fx[0] && e.subtype02==fx[2] && e.parameter03==fx[3] && e.copy_primitive && !e.copy_raw,"original contact131 identity mismatch");for(size_t i=0;i<52;++i)require(e.primitive_to_14[i]==fx[20+i],"original contact52B primitivecopy mismatch");++effects;}
  ++admitted;corrected+=wall!=0;
  }
- require(admitted>400 && held>0 && corrected>50 && effects>20 && sounds>50,"insufficient child contact coverage");std::cout<<"original child contact admitted="<<admitted<<" held="<<held<<" corrected="<<corrected<<" effects="<<effects<<" sounds="<<sounds<<'\n';
+ require(admitted>400 && corrected>50 && effects>20 && sounds>50,"insufficient child contact coverage");std::cout<<"original child contact admitted="<<admitted<<" held="<<held<<" corrected="<<corrected<<" effects="<<effects<<" sounds="<<sounds<<'\n';
 }
 }
 int main(int argc,char** argv){try{guards();if(argc>1)fixtures(argv[1]);std::cout<<"PASS original child contact boundaries\n";return 0;}catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

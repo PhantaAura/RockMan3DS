@@ -170,7 +170,7 @@ void child_transactions(){
     require(ground.committed && ground.effects_allocated==1 && o.effect_pool().slots[0][2]==131,"real contact131 allocation/initializer did not commit");
     for(size_t i=0;i<52;++i)require(o.effect_pool().slots[0][0x14+i]==(*ground_request.contact_request)[0x88+i],"copied contact131 original52-byte packet changed");
     const auto effects=o.tick_effects();require(effects.committed==1 && effects.held==0 && source_effect_primitive(o.effect_pool().slots[0]),"complete scalar131 callback not live");
-    o.initialize();q=authored_audio();const auto high_child=spawn(o,authored_parent(-1000),refs,q);auto slope=authored_map(1,8);auto unknown=context(slope,refs,profile,q);before=snapshot(o,q);
+    o.initialize();q=authored_audio();const auto high_child=spawn(o,authored_parent(-1000),refs,q);auto slope=authored_map(1,0x0C);auto unknown=context(slope,refs,profile,q);before=snapshot(o,q);
     const auto held=o.tick(high_child,unknown);
     require(!held.committed && held.lifecycle_status==Class60_06Status::UnsupportedWall,"unproved slope geometry admitted child motion");unchanged(o,q,before);
     require(!o.tick(0x1234,c).committed && !o.mark_release(0x1234),"invalid source identity accepted");
