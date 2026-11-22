@@ -1549,6 +1549,10 @@ struct DiagnosticAutoplay {
 static DiagnosticAutoplay g_autoplay;
 // Autoplay only: the Area 3 boss is winding up a slam (substate 6, phase <= 3).
 static bool g_autoplay_boss_slam=false;
+// DIAGNOSTIC (diagnostic_padlog.txt present): the PSX pad mask the session got on each
+// game update, with the player's pose, for replaying the same inputs on PSXRecomp
+// and finding the first divergence. One line per change, else every 30 updates.
+static int g_padlog=-1;static uint32_t g_padlog_last=0xFFFFFFFFu;
 static int g_autoplay_boss_x=0;
 // Autoplay combat (diagnostic only): face the target and fire, keeping it in
 // a distance band. approach > 0: walk in to `approach`, backpedal (still
@@ -6575,6 +6579,18 @@ int main() {
                     hardware_test_trace("# player_hit,frame=%lu,packet=%08lx,hp=%u,action=%u",(unsigned long)session.frame_counter(),
                         (unsigned long)g_player_proxy_target.packet_00,unsigned(session.hp()),unsigned(session.compat_player().bytes[9]));
                     g_player_proxy_target.packet_00=0;
+                }
+                if(g_padlog<0){FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_padlog.txt","r");g_padlog=f?1:0;if(f)std::fclose(f);}
+                if(g_padlog==1&&!g_game_over_freeze){
+                    const uint32_t key=(uint32_t(in.held_psx_mask)<<16)|in.pressed_psx_mask;
+                    if(key!=g_padlog_last||session.frame_counter()%30u==0u){
+                        g_padlog_last=key;const auto& pl=session.compat_player();
+                        hardware_test_trace("# pad,frame=%lu,held=%04x,pressed=%04x,stage=%u,area=%u,pos=%d:%d:%d,heading=%u,hp=%u,state=%u/%u",
+                            (unsigned long)session.frame_counter(),unsigned(in.held_psx_mask),unsigned(in.pressed_psx_mask),
+                            unsigned(session.stage()),unsigned(g_current_area),int(session.player_position().x),int(session.player_position().y),
+                            int(session.player_position().z),unsigned(uint16_t(pl.bytes[0x56]|(pl.bytes[0x57]<<8))),unsigned(session.hp()),
+                            unsigned(pl.bytes[8]),unsigned(pl.bytes[9]));
+                    }
                 }
                 if(!g_game_over_freeze)session.tick(in,g_actor_rng.admitted()&&!g_source_scene_rng_replay?&g_actor_rng:nullptr);
                 if(!g_game_over_freeze&&session.stage()==3){
