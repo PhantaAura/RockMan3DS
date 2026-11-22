@@ -564,8 +564,12 @@ std::optional<RuntimeContactFloorInterval> y_range_8004a060(
     const int32_t raw_y1=short_wrap(int32_t(idx.y)+primitive.y1);
     const bool along_z=code==8u || code==9u;
     const int32_t span=along_z?int32_t(r.z1)-r.z0:int32_t(r.x1)-r.x0;
-    const int32_t bounds_delta=along_z?int32_t(bounds.z0)-bounds.z1:
-                                          int32_t(bounds.x0)-bounds.x1;
+    // 0x8004A0B8: y0 -= H * (scratch 0x12A - 0x128) / span, i.e. the bounds'
+    // z1 - z0 (x1 - x0 for 10/11). Original-executed fixture contact_01418
+    // row 1157 (code 8 at x -120, z 0): floor -48. Through b5cf36e the port
+    // used z0 - z1 and returned +48 there.
+    const int32_t bounds_delta=along_z?int32_t(bounds.z1)-bounds.z0:
+                                          int32_t(bounds.x1)-bounds.x0;
     const auto expansion=divide(multiply(raw_y1-raw_y0,bounds_delta),span);
     if(!expansion)return {};
     const int32_t adjusted_y0=wrap32(int64_t(raw_y0)-*expansion);

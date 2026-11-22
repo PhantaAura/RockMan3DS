@@ -303,9 +303,9 @@ void source_floor_interval_and_unknown_movement(){
     l3::RuntimeMapIdx idx{};
     l3::RuntimeContactGroup group{-256,256,-512,0,0,1};
     l3::RuntimeContactPrimitive primitive{-129,383,8,0};
-    // Independently recorded outputs from the original 0x8004A060, with the
+    // Outputs of the original 0x8004A060 (floor08_source_regen.py), with the
     // source classifier's expanded rectangle and original PL00 bounds.
-    const std::array<int16_t,4> expected{{256,53,53,256}};
+    const std::array<int16_t,4> expected{{225,-28,-28,225}};
     for(uint16_t code=8;code<=11;++code){
         primitive.code=code;
         const auto interval=l3::runtime_contact_floor_interval_8004a060(idx,group,primitive,{},-128,-384);
@@ -324,7 +324,7 @@ void source_floor_interval_and_unknown_movement(){
     L3PlayerCompatWork player{};put(player,0x18,-256);put(player,0x30,-256);
     put(player,0x16,155);put(player,0x2E,155);
     const auto contact=l3::runtime_player_contact_step(map,0,player);
-    assert(contact.floor_y==155);
+    assert(contact.floor_y==99);   // original 0x8004A060 at (0,-256): see floor08-source-cases.tsv
     // The 0x8004BDC8 slope cases now answer the movement step too.
     assert(contact.status==l3::RuntimeContactStatus::SourceBackedPartial && contact.unsupported_code==0 &&
            contact.grounded.has_value());

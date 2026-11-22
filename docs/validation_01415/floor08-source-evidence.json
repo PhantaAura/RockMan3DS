@@ -7,11 +7,12 @@
     "transformed_floor_y",
     "transformed_ceiling_y"
   ],
-  "fixture_sha256": "626341024529a4d2a25dc8d09947473df88082b9f410fabe98bdca7e9cc8c328",
+  "fixture_sha256": "8c2beae05470509f4e079d68c3fd0dd18b4055a49374b803f71054d27589c957",
   "limits": [
     "synthetic bounded scalar transform; not movement solver or retail trajectories",
     "requires classifier-expanded X/Z extents",
     "unsupported degenerate/overflow-trap cases rejected",
     "movement codes08..0B not claimed implemented"
-  ]
+  ],
+  "regenerated_2026_11_21": "Expected values re-executed from the original 0x8004A060 by docs/research_01516/floor08_source_regen.py with bounds at 0x1F800124 in table order; the earlier file matched only with z0/z1 (x0/x1) swapped, so 180 of 240 slope rows had the wrong sign of the bounds term."
 }
