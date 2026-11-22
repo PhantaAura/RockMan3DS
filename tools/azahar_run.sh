@@ -109,7 +109,7 @@ while kill -0 $PID 2>/dev/null && [ $n -lt $MAXN ]; do
     sleep 5; n=$((n + 1))
     sz=$(cat /dev/null "$D"/hardware_*.csv 2>/dev/null | wc -c | tr -d ' ')
     if [ "$sz" = "$last" ]; then still=$((still + 1)); else still=0; last=$sz; fi
-    if [ $still -ge 36 ] || { [ $n -ge $(( ${BOOTMIN:-20} * 12 )) ] && [ "$sz" -eq 0 ]; }; then kill -9 $PID; echo "stalled (no trace growth)"; fi
+    if { [ "$sz" -gt 0 ] && [ $still -ge 36 ]; } || { [ $n -ge $(( ${BOOTMIN:-20} * 12 )) ] && [ "$sz" -eq 0 ]; }; then kill -9 $PID; echo "stalled (no trace growth)"; fi
     if grep -qE "${STOPRE:-# game_over,frame|diagnostic_autoplay_end}" /dev/null "$D"/hardware_*.csv 2>/dev/null; then
         sleep 10; kill -9 $PID 2>/dev/null; echo "stopped (end marker)"
     fi
