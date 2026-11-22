@@ -5,7 +5,7 @@
 #
 # Usage:
 #   OWNER=<session-name> PASS=pass-YYYYMMDD-HHMMSS-m2-01516 ROUTE=<route.txt> \
-#   [STAGE="stage 2 area 0"] [MAXMIN=15] [WAITMIN=180] [STOPRE=<regex>] \
+#   [STAGE="stage 2 area 0"] [MAXMIN=15] [WAITMIN=180] [BOOTMIN=20] [STOPRE=<regex>] \
 #   tools/azahar_run.sh <outdir>
 #
 # Rules it enforces:
@@ -18,6 +18,8 @@
 # A stale lock (its pid is gone) is reported, never taken over automatically:
 # check $SDROOT, put the original folder back by hand, then rmdir the lock.
 # The screen must be unlocked (Azahar stalls behind the lock screen).
+# BOOTMIN: minutes to wait for the first trace line; under heavy load the
+# game has taken 16 minutes to boot (run58, load average ~60).
 set -u
 setopt nullglob
 
@@ -107,7 +109,7 @@ while kill -0 $PID 2>/dev/null && [ $n -lt $MAXN ]; do
     sleep 5; n=$((n + 1))
     sz=$(cat /dev/null "$D"/hardware_*.csv 2>/dev/null | wc -c | tr -d ' ')
     if [ "$sz" = "$last" ]; then still=$((still + 1)); else still=0; last=$sz; fi
-    if [ $still -ge 36 ] || { [ $n -ge 48 ] && [ "$sz" -eq 0 ]; }; then kill -9 $PID; echo "stalled (no trace growth)"; fi
+    if [ $still -ge 36 ] || { [ $n -ge $(( ${BOOTMIN:-20} * 12 )) ] && [ "$sz" -eq 0 ]; }; then kill -9 $PID; echo "stalled (no trace growth)"; fi
     if grep -qE "${STOPRE:-# game_over,frame|diagnostic_autoplay_end}" /dev/null "$D"/hardware_*.csv 2>/dev/null; then
         sleep 10; kill -9 $PID 2>/dev/null; echo "stopped (end marker)"
     fi
