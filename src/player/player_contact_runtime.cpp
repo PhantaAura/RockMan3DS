@@ -443,6 +443,63 @@ std::optional<bool> diagonal_slope_response(uint16_t code,const Rect& raw,const 
     if(dy>=0)p.contact_state=0;
     return true;
 }
+// 0x8004BDC8 cases 0x10..0x13 (0x8004D384 / D3F4 / D464 / D4D4, tail 0x8004D540 ->
+// 0x8004E294): the ceiling slopes. On the expanded rectangle r (Y raw = r.y0 + b.y1,
+// r.y1 + b.y0): a3 = y0 + H * (bounds span) / span; surface = a3 + (y1 - a3) * d / span
+// with d = z1 - pz (0x10), pz - z0 (0x11), px - x0 (0x12), x1 - px (0x13); at most y1.
+// Between the slab top and surface - b.y0 the point goes to surface - b.y0 + 1 and the
+// pending correction u is cleared (0x8004E2C8); returns true then.
+// Returns nullopt on a division trap.
+std::optional<bool> ceiling_slope_response(uint16_t code,const Rect& r,L3RetailContactScratch& p,
+                                           const RetailPlayerBounds& b,History& hist) {
+    const int32_t Y0=int32_t(r.y0)+b.y1, Y1=int32_t(r.y1)+b.y0, H=Y1-Y0;
+    const bool along_z=code==0x10u||code==0x11u;
+    const int32_t span=along_z?int32_t(r.z1)-r.z0:int32_t(r.x1)-r.x0;
+    const int32_t bd=along_z?int32_t(b.z1)-b.z0:int32_t(b.x1)-b.x0;
+    const auto e=word_div(word_mul(H,bd),span);
+    if(!e)return std::nullopt;
+    const int32_t a3=word_wrap(int64_t(Y0)+*e);
+    const int32_t d=code==0x10u?int32_t(r.z1)-p.z:code==0x11u?int32_t(p.z)-r.z0:
+                    code==0x12u?int32_t(p.x)-r.x0:int32_t(r.x1)-p.x;
+    const auto q=word_div(word_mul(Y1-a3,d),span);
+    if(!q)return std::nullopt;
+    int32_t t0=word_wrap(int64_t(a3)+*q);
+    if(Y1<t0)t0=Y1;
+    const int32_t top=t0-b.y0;
+    if(!(int32_t(r.y0)<p.y&&p.y<top))return false;
+    p.y=short_wrap(top+1);clear_pending(hist);return true;
+}
+// 0x8004BDC8 cases 0x1C..0x1F (0x8004C104) -> 0x800501E8(mode = code - 0x1C): the
+// corner chamfers of the expanded rectangle r. Mode 0: corner (x1, z0), 1: (x0, z0),
+// 2: (x1, z1), 3: (x0, z1). The horizontal push goes along the 45-degree line: the
+// smaller axis distance in full, the other axis by the same magnitude with its own sign.
+// When moving vertically and |cy| <= |push x| (cy to y0 when dy > 0, else y1), the point
+// moves in Y instead (blocked 0x20, h.y = -cy, result 1); otherwise X/Z move and the
+// 0x80050B74/0x80050BB4 history rules run (result 0). The caller (inside the slab only)
+// returns true; a nonzero result sets contact_state 0 when not rising and clears u.
+bool chamfer_response_800501e8(uint16_t code,const Rect& r,L3RetailContactScratch& p,int16_t dy,
+                               uint8_t& blocked,History& hist,RuntimePlayerContact& out) {
+    if(!(int32_t(r.y0)<p.y&&p.y<int32_t(r.y1)))return false;
+    const unsigned mode=code-0x1Cu;
+    const int32_t cxs=(mode==0u||mode==2u)?r.x1:r.x0;
+    const int32_t czs=(mode<=1u)?r.z0:r.z1;
+    const int16_t dxc=short_wrap(cxs-p.x), dzc=short_wrap(czs-p.z);
+    const int32_t ax=std::abs(int(dxc)), az=std::abs(int(dzc));
+    int16_t px_,pz_;
+    if(az<ax){px_=short_wrap(dxc>0?az:-az);pz_=dzc;}
+    else{px_=dxc;pz_=short_wrap(dzc>0?ax:-ax);}
+    const int16_t cy=short_wrap(int32_t(dy>0?r.y0:r.y1)-p.y);
+    bool result=false;
+    if(dy!=0&&std::abs(int(cy))<=std::abs(int(px_))){
+        p.y=short_wrap(int32_t(p.y)+cy);blocked=0x20;hist.h[1]=short_wrap(-int32_t(cy));result=true;
+        if(cy>0)out.ceiling_contact=true;
+    }else{
+        p.x=short_wrap(int32_t(p.x)+px_);p.z=short_wrap(int32_t(p.z)+pz_);
+        block_x(px_,blocked,hist);block_z(pz_,blocked,hist);out.wall_contact=true;
+    }
+    if(result){if(dy>=0)p.contact_state=0;clear_pending(hist);}
+    return true;
+}
 bool sloped_diagonal(unsigned code){return code==0x24u||code==0x34u||code==0x44u||code==0x54u;}
 bool allowed(const RuntimeContactPrimitive& p,const L3PlayerCompatWork& player) {
     // Geometry response 0x8004BA98..BAA8 uses only the 0x8000 filter bit.
@@ -519,7 +576,15 @@ std::optional<RuntimeContactFloorInterval> runtime_contact_floor_interval_8004a0
         if(!clipped)return {};
         return y_range_8004a060(idx,group,primitive,bounds,query_x,query_z);
     }
-    if(code!=1u && code!=3u && code!=15u && (code<8u || code>11u))return {};
+    // Diagonal walls x1/x2/x3 (families 2..5): 0x8004A060's default case (0x8004AC30) inside
+    // the family classifier's clipped triangle (0x8004E304 table, diagonal_rect).
+    if(code<256u&&((code&0xF0u)>>4)>=2u&&((code&0xF0u)>>4)<=5u&&(code&0x0Fu)>=1u&&(code&0x0Fu)<=3u){
+        const auto clipped=diagonal_rect(idx,group,primitive,code,bounds,query_x,query_z);
+        if(!clipped)return {};
+        return RuntimeContactFloorInterval{clipped->y0,clipped->y1};
+    }
+    if(code!=1u && code!=3u && code!=15u && (code<8u || code>11u) &&
+       (code<0x10u || code>0x13u) && (code<0x1Cu || code>0x1Fu))return {};
     if(!inside_xz(rect(idx,group,primitive,bounds),query_x,query_z))return {};
     return y_range_8004a060(idx,group,primitive,bounds,query_x,query_z);
 }
@@ -545,11 +610,14 @@ std::optional<RuntimeContactFloorInterval> y_range_8004a060(
         if(!q)return {};
         return RuntimeContactFloorInterval{short_wrap(word_wrap(int64_t(y0)+*q)-bounds.y1),r.y1};
     }
-    if((code>=0x0cu&&code<=0x0eu)||(code>=0x10u&&code<=0x13u)||(code>=0x18u&&code<=0x1bu)||
-       code==0x24u||code==0x34u||code==0x44u||code==0x54u||
+    if((code>=0x0cu&&code<=0x0eu)||(code>=0x18u&&code<=0x1bu)||
        code==0x25u||code==0x35u||code==0x45u||code==0x55u)return {}; // unported 0x8004A060 case
+    // 0x10..0x13 share 8..11's handlers (0x8004A0B8 / A17C / A240 / A304); the tail 0x8004AC30
+    // stores the result as y0 for 8..11 and as y1 (the ceiling) for 0x10..0x13.
+    const bool ceiling=code>=0x10u&&code<=0x13u;
+    const unsigned slope=ceiling?code-8u:code;
     // 0x8004A060 default: the bounds-expanded Y range.
-    if(code<8u || code>11u)return RuntimeContactFloorInterval{r.y0,r.y1};
+    if(slope<8u || slope>11u)return RuntimeContactFloorInterval{r.y0,r.y1};
 
     // MIPS MULT retains its low signed 32 bits. AD(D)U also wraps before the
     // subsequent signed division. Preserve those operations explicitly rather
@@ -562,7 +630,7 @@ std::optional<RuntimeContactFloorInterval> y_range_8004a060(
     };
     const int32_t raw_y0=short_wrap(int32_t(idx.y)+primitive.y0);
     const int32_t raw_y1=short_wrap(int32_t(idx.y)+primitive.y1);
-    const bool along_z=code==8u || code==9u;
+    const bool along_z=slope==8u || slope==9u;
     const int32_t span=along_z?int32_t(r.z1)-r.z0:int32_t(r.x1)-r.x0;
     // 0x8004A0B8: y0 -= H * (scratch 0x12A - 0x128) / span, i.e. the bounds'
     // z1 - z0 (x1 - x0 for 10/11). Original-executed fixture contact_01418
@@ -573,12 +641,13 @@ std::optional<RuntimeContactFloorInterval> y_range_8004a060(
     const auto expansion=divide(multiply(raw_y1-raw_y0,bounds_delta),span);
     if(!expansion)return {};
     const int32_t adjusted_y0=wrap32(int64_t(raw_y0)-*expansion);
-    const int32_t distance=code==8u?int32_t(r.z1)-query_z:
-                           code==9u?int32_t(query_z)-r.z0:
-                           code==10u?int32_t(query_x)-r.x0:int32_t(r.x1)-query_x;
+    const int32_t distance=slope==8u?int32_t(r.z1)-query_z:
+                           slope==9u?int32_t(query_z)-r.z0:
+                           slope==10u?int32_t(query_x)-r.x0:int32_t(r.x1)-query_x;
     const auto interpolation=divide(multiply(wrap32(int64_t(raw_y1)-adjusted_y0),distance),span);
     if(!interpolation)return {};
     const int32_t floor=std::max(raw_y0,wrap32(int64_t(adjusted_y0)+*interpolation));
+    if(ceiling)return RuntimeContactFloorInterval{r.y0,short_wrap(wrap32(int64_t(floor)-bounds.y0))};
     return RuntimeContactFloorInterval{short_wrap(wrap32(int64_t(floor)-bounds.y1)),r.y1};
 }
 } // namespace
@@ -731,6 +800,16 @@ RuntimePlayerContact runtime_player_contact_step(const RuntimeMap& map,size_t ar
                         const auto res=slope_response(p.code,r,out.scratch,before_x,before_y,before_z,dx,dy,dz,b,blocked,hist,out);
                         if(!res){++out.unsupported_primitives;if(!out.unsupported_code)out.unsupported_code=p.code;continue;}
                         if(*res)repeat=true;
+                        continue;
+                    }
+                    if((first_code&0xF0u)<0x20u && p.code>=0x10u && p.code<=0x13u){
+                        const auto res=ceiling_slope_response(p.code,r,out.scratch,b,hist);
+                        if(!res){++out.unsupported_primitives;if(!out.unsupported_code)out.unsupported_code=p.code;continue;}
+                        if(*res)repeat=true;
+                        continue;
+                    }
+                    if((first_code&0xF0u)<0x20u && p.code>=0x1Cu && p.code<=0x1Fu){
+                        if(chamfer_response_800501e8(p.code,r,out.scratch,dy,blocked,hist,out))repeat=true;
                         continue;
                     }
                     if((first_code&0xF0u)>=0x20u || (p.code!=1u&&p.code!=3u&&p.code!=15u)){

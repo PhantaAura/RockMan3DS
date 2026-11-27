@@ -81,7 +81,8 @@ bool core_ported(uint16_t code) noexcept {
     // Primitive codes the shared 0x8004BDC8 port answers (player_contact_runtime.cpp).
     if (code >= 256u) return true;   // the dispatcher admits only codes below 0x100
     const unsigned family = (code & 0xf0u) >> 4, low = code & 0x0fu;
-    if (family < 2u) return code == 1u || code == 3u || code == 15u || (code >= 8u && code <= 11u);
+    if (family < 2u) return code == 1u || code == 3u || code == 15u || (code >= 8u && code <= 11u) ||
+                            (code >= 0x10u && code <= 0x13u) || (code >= 0x1Cu && code <= 0x1Fu);
     if (family <= 5u) return low == 1u || low == 2u || low == 4u;
     return false;
 }
@@ -213,7 +214,10 @@ ActorFloorContact query_actor_floor_contact_80048ea4(
                 }
                 const auto family = map.contact_primitives[group.primitive_first].code;
                 if (family >= 256u) continue;
-                const bool sloped = family == 0x24u || family == 0x34u || family == 0x44u || family == 0x54u;
+                // Families 2..5 answered by the shared 0x8004A060: sloped diagonals (x4) and the
+                // diagonal walls x1/x2/x3 (default case), each inside its clipped triangle.
+                const unsigned fam = (family & 0xf0u) >> 4, low = family & 0x0fu;
+                const bool sloped = fam >= 2u && fam <= 5u && low >= 1u && low <= 4u;
                 if ((family & 0xf0u) >= 0x20u && !sloped) {
                     if (!diagonal_excluded(*idx, group, family, bounds, x, z)) ++out.unsupported_primitives;
                     continue;
@@ -229,7 +233,8 @@ ActorFloorContact query_actor_floor_contact_80048ea4(
                     // Sloped diagonals test their clipped triangle inside 0x8004A060.
                     if (!sloped && !inside_xz(rect, x, z)) continue;
                     const unsigned c = primitive.code;
-                    if (!sloped && c != 1u && c != 3u && c != 15u && (c < 8u || c > 11u)) {
+                    if (!sloped && c != 1u && c != 3u && c != 15u && (c < 8u || c > 11u) &&
+                        (c < 0x10u || c > 0x13u) && (c < 0x1Cu || c > 0x1Fu)) {
                         ++out.unsupported_primitives; continue;
                     }
                     const auto interval = runtime_contact_floor_interval_8004a060(*idx, group, primitive, bounds, x, z);

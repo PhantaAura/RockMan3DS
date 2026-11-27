@@ -314,7 +314,7 @@ void source_floor_interval_and_unknown_movement(){
     primitive.code=8;
     assert(!l3::runtime_contact_floor_interval_8004a060(idx,group,primitive,{},-288,-384));
     assert(!l3::runtime_contact_floor_interval_8004a060(idx,group,primitive,{},-128,32));
-    primitive.code=0x10; // The unimplemented ceiling-slope branch stays unknown.
+    primitive.code=0x0C; // 0x8004A060 case 0x0C (not ported) stays unknown.
     assert(!l3::runtime_contact_floor_interval_8004a060(idx,group,primitive,{},-128,-384));
     primitive.code=8;group.z1=group.z0;l3::RetailPlayerBounds zero{0,0,0,0,0,0};
     assert(!l3::runtime_contact_floor_interval_8004a060(idx,group,primitive,zero,0,-512));
