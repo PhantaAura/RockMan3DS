@@ -162,5 +162,12 @@
  "branches_not_merged": {
   "claude/option-menu-b69b4f": "OPTION menu (message windows 0x80053B40, KAIFONT, settings 0x800C1B64..69); host 178/178, native PASS, Azahar OPTION->Close->NEW GAME"
  },
- "handoff": "RESUME_01516.md (one page); full log docs/archive/resume/RESUME_01516_log.md"
+ "handoff": "RESUME_01516.md (one page); full log docs/archive/resume/RESUME_01516_log.md",
+ "function_coverage": {
+  "tool": "tools/function_coverage.py",
+  "report": "docs/validation_01516/FUNCTION_COVERAGE.md",
+  "oracle_patch": "tools/psxrecomp_fn_hist.patch",
+  "branch": "claude/function-coverage",
+  "scope": "ROCK_NEO.EXE + R3_ST00/02/03/04/05/06/09/0C/0F overlays; executed = psxrecomp runs from saves/m3/*.pst (+ read-only slot states)"
+ }
 }

@@ -25,6 +25,15 @@ One page. The full log of this checkpoint is in
   the tutorial corridor deaths against the oracle, one uninterrupted
   normal-start run. Then render fixes.
 
+## Function coverage audit (claude/function-coverage)
+- `tools/function_coverage.py` (ghidra → collect → report) writes
+  `docs/validation_01516/FUNCTION_COVERAGE.md`: original functions the M3
+  savestates run in the oracle but the port never cites, per stage, with
+  CANDIDATE guesses and PsyQ/BIOS functions marked. The oracle needs
+  `tools/psxrecomp_fn_hist.patch` (debug-only `fn_hist_reset` / `fn_hist_dump`).
+- Not covered by the oracle runs: M1 tutorial route except the extra slot
+  states, title/new game, and anything after the Tron fight start.
+
 ## Open, in order
 1. M1 release: death/continue bug (player keeps playing at 0 HP, invisible);
    uninterrupted normal-start tutorial → boss → post-win → ST02 run.
