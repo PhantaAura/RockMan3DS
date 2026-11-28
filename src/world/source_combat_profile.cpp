@@ -124,9 +124,10 @@ const SourceCombatProfile* find_source_combat_profile(
     const SourceCombatProfiles& profiles, uint8_t raw_stats_selector,
     uint8_t source_class, uint8_t subtype, uint8_t record_index_0c,
     uint8_t context_high_0f) noexcept {
-    // 0x8010252C reads work +0F only as HP x ((+0F & 0x7F) + 1); bit 0x80 is
-    // masked away and selects the same record. Other low bits stay unadmitted.
-    if (context_high_0f & 0x7fu) return nullptr;
+    // 0x8010252C reads work +0F only as HP x ((+0F & 0x7F) + 1): every value
+    // selects the same record (the caller applies the multiplier; ST09's copy
+    // 0x8010370C reads +0F for nothing else).
+    (void)context_high_0f;
     const SourceCombatProfileIdentity wanted{source_class, subtype, raw_stats_selector,
         static_cast<uint8_t>(raw_stats_selector == 2), record_index_0c, 0};
     if (!admitted(wanted) || profiles.count == 0 || profiles.count > profiles.entries.size()) return nullptr;

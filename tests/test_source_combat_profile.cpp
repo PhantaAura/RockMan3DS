@@ -54,9 +54,9 @@ void package_tests() {
         assert(!l3::find_source_combat_profile(parsed, 0, 0x20, 3, 0, 0));
         assert(!l3::find_source_combat_profile(parsed, 255, 0x20, 3, 0, 0));
         assert(!l3::find_source_combat_profile(parsed, 1, 0x20, 3, 1, 0));
-        assert(!l3::find_source_combat_profile(parsed, 1, 0x20, 3, 0, 0x40));
+        assert(l3::find_source_combat_profile(parsed, 1, 0x20, 3, 0, 0x40) == a);  // +0F only scales HP
         assert(l3::find_source_combat_profile(parsed, 1, 0x20, 3, 0, 0x80) == a); // masked by 0x7F
-        assert(!l3::find_source_combat_profile(parsed, 1, 0x20, 3, 0, 0x81));
+        assert(l3::find_source_combat_profile(parsed, 1, 0x20, 3, 0, 0x81) == a);
         assert(!l3::find_source_combat_profile(parsed, 1, 0x20, 4, 0, 0));
         assert(!l3::find_source_combat_profile(parsed, 1, 0x40, 3, 0, 0));
     }

@@ -118,8 +118,10 @@ std::optional<ActorInitializerProfile> actor_initializer_profile_for(const Stage
 std::optional<int16_t> class20_03_initial_hp(uint8_t raw_stats_selector,
                                           uint8_t raw_context_high_byte) {
     // 0x80102528: HP = (byte08 << 4) * ((+0F & 0x7F) + 1). Bit 0x80 is masked.
-    if ((raw_context_high_byte & 0x7fu) != 0u) return std::nullopt;
-    return raw_stats_selector == 2 ? int16_t(128) : int16_t(64);
+    // ST09's copy (0x8010370C, +0x11E4) is the same multiply; +0F is read for
+    // nothing else (its other "15(" read, 0x801036B8, is stats-record +15).
+    const int base = raw_stats_selector == 2 ? 128 : 64;
+    return int16_t(base * ((raw_context_high_byte & 0x7f) + 1));
 }
 
 ActorAreaRuntime spawn_imported_actors(const StageRuntimeArea& stage, const EbdDirectory& ebd, size_t cap) {
@@ -626,7 +628,9 @@ bool bind_imported_actor_combat_profile(ImportedActorInstance& actor,
         actor.subtype,state.flags_0c,actor.source_context_high_byte);
     if(!profile)return false;
     // The supported original initializer installs these three copies together.
-    state.health_6e=profile->initial_hp();state.initial_health_b0=state.health_6e;
+    // 0x80102528: x ((+0F & 0x7F) + 1) (ST09's 20/03 records carry +0F = 1).
+    state.health_6e=int16_t(profile->initial_hp()*((actor.source_context_high_byte&0x7fu)+1u));
+    state.initial_health_b0=state.health_6e;
     state.previous_health_b2=state.health_6e;
     state.detection_profile_352=profile->detection_profile();
     actor.source_combat_byte_a=profile->unsigned_byte0a;
@@ -1312,7 +1316,7 @@ bool morph_imported_actor_popout_to_class20_03(ActorAreaRuntime& area, size_t in
     state.previous_angle_5c = state.angle_54;
     state.work_64 = 0;
     Class20_03InitializeInputs input; // parameter 0x40 needs no floor word
-    if (state.flags_0c == 0 && (actor.source_context_high_byte & 0x7fu) == 0) input.source_detection_profile = 4;
+    if (state.flags_0c == 0) input.source_detection_profile = 4;   // +0F only scales HP (0x80102528)
     if (class20_03_initialize_scalar_state(state, input) != Class20_03CallbackStatus::SourceBackedPartial)
         return false;
     auto next = actor;
@@ -1546,7 +1550,7 @@ void bind_imported_actor_floor(ImportedActorInstance& actor, int16_t raw_floor_y
         // Both original statistics tables' fresh index0 records select profile4
         // (80036478). This does not establish the HP/global selector. Restrict
         // admission to the source-tested zero context/index inputs.
-        if (actor.source_behavior->flags_0c == 0 && (actor.source_context_high_byte & 0x7fu) == 0)
+        if (actor.source_behavior->flags_0c == 0)   // +0F only scales HP (0x80102528)
             input.source_detection_profile = 4;
         // Statistics globals and HP ownership remain unknown. Profile is not
         // inferred here; the initializer binds only independently proved fields.
