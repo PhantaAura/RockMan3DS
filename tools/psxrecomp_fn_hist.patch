@@ -1,0 +1,131 @@
+diff --git a/runtime/src/debug_server.c b/runtime/src/debug_server.c
+index 31391384..c73df965 100644
+--- a/runtime/src/debug_server.c
++++ b/runtime/src/debug_server.c
+@@ -2089,6 +2089,29 @@ void debug_server_log_call_entry_fn(uint32_t func_addr) {
+ #endif
+ }
+ 
++
++/* ---- fn_hist: per-function hit counter (debug build only) ----
++ * Table 0: compiled function entries (debug_server_log_call_entry).
++ * Table 1: call targets seen by psx_dispatch (fntrace_record) and by the
++ * dirty-RAM interpreter's JAL/JALR (overlays that run interpreted).
++ * Open addressing keyed by the virtual address. fn_hist_reset clears both,
++ * fn_hist_dump path=<file> writes "table addr count" lines. */
++#ifndef PSX_NO_DEBUG_TOOLS
++#define FN_HIST_CAP (1u << 17)
++typedef struct { uint32_t addr; uint32_t n; } FnHistSlot;
++static PSX_BSS FnHistSlot s_fn_hist[2][FN_HIST_CAP];
++static uint32_t s_fn_hist_full[2];
++void psx_fn_hist_hit(int table, uint32_t addr) {
++    FnHistSlot *t = s_fn_hist[table & 1];
++    uint32_t h = (addr * 2654435761u) & (FN_HIST_CAP - 1u);
++    for (uint32_t i = 0; i < 64u; i++) {
++        FnHistSlot *e = &t[(h + i) & (FN_HIST_CAP - 1u)];
++        if (e->addr == addr && e->n) { e->n++; return; }
++        if (e->n == 0) { e->addr = addr; e->n = 1; return; }
++    }
++    s_fn_hist_full[table & 1]++;
++}
++#endif
+ #ifdef PSX_NO_DEBUG_TOOLS
+ /* Release: inlined in cpu_state.h for every generated TU. */
+ #else
+@@ -2097,6 +2120,7 @@ void debug_server_log_call_entry(uint32_t func_addr) {
+      * overwrite live trace/stack-watch state. Architectural CPU state is
+      * compared by the caller; these observers are intentionally inert. */
+     { extern int g_ls_replay_active; if (g_ls_replay_active) return; }
++    psx_fn_hist_hit(0, func_addr);
+     g_psx_last_fn_entry = func_addr;
+ #ifdef PSX_STACK_GUARD
+     g_psx_recent_fn[g_psx_recent_fn_i++ & (PSX_RECENT_FN_CAP - 1u)] = func_addr;
+@@ -13188,6 +13212,41 @@ static void handle_wtrace_trans_dump(int id, const char *json)
+     free(buf);
+ }
+ 
++
++static void handle_fn_hist_reset(int id, const char *json)
++{
++    (void)json;
++#ifdef PSX_NO_DEBUG_TOOLS
++    send_err(id, "fn_hist needs a debug-tools build"); return;
++#else
++    memset(s_fn_hist, 0, sizeof(s_fn_hist));
++    s_fn_hist_full[0] = s_fn_hist_full[1] = 0;
++    send_ok(id);
++#endif
++}
++
++static void handle_fn_hist_dump(int id, const char *json)
++{
++#ifdef PSX_NO_DEBUG_TOOLS
++    (void)json; send_err(id, "fn_hist needs a debug-tools build"); return;
++#else
++    char path[1024];
++    if (!json_get_str(json, "path", path, sizeof(path))) { send_err(id, "path required"); return; }
++    FILE *f = fopen(path, "w");
++    if (!f) { send_err(id, "cannot open path"); return; }
++    unsigned n0 = 0, n1 = 0;
++    for (int t = 0; t < 2; t++)
++        for (uint32_t i = 0; i < FN_HIST_CAP; i++)
++            if (s_fn_hist[t][i].n) {
++                fprintf(f, "%d %08X %u\n", t, s_fn_hist[t][i].addr, s_fn_hist[t][i].n);
++                if (t) n1++; else n0++;
++            }
++    fclose(f);
++    send_fmt("{\"id\":%d,\"ok\":true,\"entries\":%u,\"calls\":%u,\"overflow\":[%u,%u]}",
++             id, n0, n1, s_fn_hist_full[0], s_fn_hist_full[1]);
++#endif
++}
++
+ static void handle_call_focus_stats(int id, const char *json)
+ {
+     (void)json;
+@@ -16492,6 +16551,8 @@ static const CmdEntry s_commands[] = {
+     { "cdrom_state",       handle_cdrom_state },
+     { "cdrom_sector_dump", handle_cdrom_sector_dump },
+     { "cdrom_sector_history", handle_cdrom_sector_history },
++    { "fn_hist_reset",     handle_fn_hist_reset },
++    { "fn_hist_dump",      handle_fn_hist_dump },
+     { "cdrom_sector_history_clear", handle_cdrom_sector_history_clear },
+     { "cdrom_command_history", handle_cdrom_command_history },
+     { "cdrom_command_history_clear", handle_cdrom_command_history_clear },
+diff --git a/runtime/src/dirty_ram_interp.c b/runtime/src/dirty_ram_interp.c
+index b50d3f29..e2edb82f 100644
+--- a/runtime/src/dirty_ram_interp.c
++++ b/runtime/src/dirty_ram_interp.c
+@@ -1783,6 +1783,7 @@ static int exec_one_fetched_inner(CPUState *cpu, uint32_t pc, uint32_t insn,
+             cosim_exec_one_transfer_hook(pc + 4);
+             uint32_t site_sp = cpu->gpr[29];  /* call contract: sp at the call */
+ #ifndef PSX_NO_DEBUG_TOOLS
++            if (rd != 0) { extern void psx_fn_hist_hit(int, uint32_t); psx_fn_hist_hit(1, target); }
+             xprobe_event(pc, XOP_JALR, XSITE_INTERP, target,
+                          fetch_word((pc + 4) & 0x1FFFFFFFu), site_sp, cpu->gpr[31], 1);
+ #endif
+@@ -2059,6 +2060,7 @@ static int exec_one_fetched_inner(CPUState *cpu, uint32_t pc, uint32_t insn,
+         cosim_exec_one_transfer_hook(pc + 4);
+         uint32_t site_sp = cpu->gpr[29];  /* call contract: sp at the call */
+ #ifndef PSX_NO_DEBUG_TOOLS
++        { extern void psx_fn_hist_hit(int, uint32_t); psx_fn_hist_hit(1, target); }
+         int xw = g_xprobe_watch(target);  /* record RESOLUTION path for watched targets */
+         xprobe_event(pc, XOP_JAL, XSITE_INTERP, target,
+                      fetch_word((pc + 4) & 0x1FFFFFFFu), site_sp, cpu->gpr[31], 1);
+diff --git a/runtime/src/fntrace.c b/runtime/src/fntrace.c
+index 6b08fcd7..7b6fe1a8 100644
+--- a/runtime/src/fntrace.c
++++ b/runtime/src/fntrace.c
+@@ -130,7 +130,13 @@ static uint32_t s_spdom_prev_sp = 0;
+ DispTailEntry g_disp_tail[DISP_TAIL_CAP];
+ uint64_t      g_disp_tail_seq = 0;
+ 
++#ifndef PSX_NO_DEBUG_TOOLS
++extern void psx_fn_hist_hit(int table, uint32_t addr);
++#endif
+ void fntrace_record(CPUState* cpu, uint32_t target) {
++#ifndef PSX_NO_DEBUG_TOOLS
++    psx_fn_hist_hit(1, target);
++#endif
+     /* The BIOS has completed the PS-X EXE load by the time it dispatches the
+      * entry point. Apply the validated plan before the first guest instruction. */
+     mod_runtime_on_dispatch(target);
