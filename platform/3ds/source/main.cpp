@@ -8242,6 +8242,14 @@ int main() {
                     (unsigned long)music.player().key_ons(),(unsigned long)music.player().loops(),(unsigned long)music.player().sounding_voices(),
                     (unsigned long)music.player().errors(),(unsigned long)music.underruns(),
                     unsigned(music.player().reverb_type()),int(music.player().reverb_out()));
+            {   // DIAGNOSTIC (diagnostic_shots.txt present): the top framebuffer every 240 updates,
+                // at most 40 shots, so an unattended Azahar run can be looked at afterwards.
+                static int shots_enabled=-1;static unsigned shots_taken=0;static uint64_t shots_last=~0ull;
+                if(shots_enabled<0){FILE* f=std::fopen("sdmc:/3ds/Legends3DS/diagnostic_shots.txt","r");shots_enabled=f?1:0;if(f)std::fclose(f);}
+                const uint64_t fc=session.frame_counter();
+                if(shots_enabled==1&&shots_taken<40u&&fc%240u==0u&&fc!=shots_last){
+                    shots_last=fc;++shots_taken;dump_top_framebuffer("play",uint32_t(fc));}
+            }
             hardware_test_sample(session,g_runtime_diag,frame_start,held,down,g_current_area);
             hardware_test_actor_target_event(session, actors,
                 actor_angle_steps ? &*actor_angle_steps : nullptr);

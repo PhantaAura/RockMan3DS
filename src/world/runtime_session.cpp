@@ -2489,6 +2489,11 @@ void RuntimeSession::write_idx_descriptor(uint16_t idx,uint16_t descriptor){
     door_map_->idx[idx].descriptor_index=descriptor;
     ++idx_descriptor_generation_;
 }
+// ST00 door object per-frame entry 0x8011216C (pointer-called; ~136k oracle calls in the
+// function-coverage audit): state routine from table 0x8011C928 by +8; in state 0x0A it
+// writes the object's descriptor (+0x30) to its IDX row (0x8015C008 + 12 * (+0x44)) - the
+// closed/open swap below; it tests flags 0x606 and 0x7B0 and projects the player
+// (0x800B51C4) against the door through the GTE. Ported in part (CANDIDATE spawn, see below).
 void RuntimeSession::update_source_door_objects(){
     const bool f7b1=story_flag(0x7B1);
     // CANDIDATE: the area object list that spawns 0x801124B0 is not cooked.
