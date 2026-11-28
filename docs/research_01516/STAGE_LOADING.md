@@ -623,3 +623,30 @@ Cooked as `stages/st09/event23.l3cs`.
   sound 279; the dust effect is reported only. Shots at him (his hit
   proxy, message +5) are not delivered.
 - Talk kind 3 joins kind 1's candidate list.
+
+### S5 in Azahar: state on 2026-11-27 (runs 57-62)
+
+Verified (Azahar traces): junk shop -> ST04 -> ST03 area 2 -> ruin door ->
+stage 9; flag 0x16; E0/00 catalog bound, 15 enemies spawned; set 0's trapped
+man spawns (from the frame after the load) and calls out every 450 frames;
+his box starts clear (+0x348 bit 3, run61/62).
+
+With tutorial-boss e9e7cae merged (actor floor/wall: run62, local test branch
+s5-wallfix-test = this branch + e9e7cae, build pass-20261127-151519 with the
+RNG profile) the Class20_19s wander, detect, chase and lunge; they hit the
+player (443 hit packets) and the player dies on the upper level at
+(22049, -385, 9761) before reaching the man.
+
+Open (in order):
+1. Buster shots never lower a Reaverbot's HP (all stay 32): the ST09 shot ->
+   class20_19 hit path (0x80105DEC equivalent, proxy registered) delivers no
+   damage. Class 20/03 in ST09 has no combat record (actor_state1 hp_known=0,
+   status 4). Both block clearing the box and defeat flags 0x611..0x621.
+2. Talk -> 0x60C -> event 0x17 -> flag 12 is unverified in Azahar (host tests
+   only). Route stage2_s5_full/fight reaches the man's level via the ramp at
+   x 20736 and the detour at z ~10700; it needs the fight to survive.
+3. Window 4 lines use the slot-0 dialogue (CANDIDATE); the man's action-2
+   hops have no floor pass.
+Tooling: tools/azahar_run.sh (shared lock), owner-data/source_rng.l3rg (the
+RNG profile; builds without it freeze every enemy at its first draw), host
+tests only count in the default CMake config (Release strips asserts).
