@@ -650,3 +650,39 @@ Open (in order):
 Tooling: tools/azahar_run.sh (shared lock), owner-data/source_rng.l3rg (the
 RNG profile; builds without it freeze every enemy at its first draw), host
 tests only count in the default CMake config (Release strips asserts).
+
+### ST09 function citations (FUNCTION_COVERAGE.md checklist, 2026-11-27)
+
+The audit's "executed but not cited" ST09 functions are, except two, ST09's
+relocated copies of ST00 code the port already runs (checked by normalised
+compare of the first 16-24 words: opcodes and registers equal, jal/branch
+targets and lo16 data offsets shifted by one constant):
+
+| ST09 | ST00 (ported) | shift | what |
+|---|---|---|---|
+| 0x80103450 | 0x8010226C | +0x11E4 | class 20/03 callback |
+| 0x80103A68 | 0x80102884 | +0x11E4 | 20/03 state |
+| 0x80103B98 | 0x801029B4 | +0x11E4 | 20/03 state |
+| 0x80103CC4 | 0x80102AE0 | +0x11E4 | 20/03 state |
+| 0x801037E4 | 0x80102600 | +0x11E4 | 20/03 state 1 |
+| 0x80105394 | 0x801041B0 | +0x11E4 | 20/03 helper |
+| 0x8010870C | 0x80104864 | +0x3EA8 | class 20/19 callback |
+| 0x80108A8C | 0x80104BE4 | +0x3EA8 | 20/19 state 1 |
+| 0x80108D0C | 0x80104E64 | +0x3EA8 | 20/19 action 1 wander |
+| 0x80108F90 | 0x801050E8 | +0x3EA8 | 20/19 action 2 chase |
+| 0x80109260 | 0x801053B8 | +0x3EA8 | 20/19 action 3 |
+| 0x801095E8 | 0x80105740 | +0x3EA8 | 20/19 action 4 hop |
+| 0x8010981C | 0x80105974 | +0x3EA8 | 20/19 action 5 lunge |
+| 0x80109BB8 | 0x80105D10 | +0x3EA8 | 20/19 selector |
+| 0x80109C94 | 0x80105DEC | +0x3EA8 | 20/19 hit |
+| 0x80109ED4 | 0x801068A8 | +0x362C | class 20/35 callback |
+| 0x8010A13C | 0x80106B10 | +0x362C | 20/35 state table entry |
+| 0x80117878 | 0x801116DC | +0x619C | E0/00 spawner |
+| 0x801179AC | 0x80111810 | +0x619C | E0/00 state (region scan) |
+
+Cited elsewhere: 0x80107E54 / 0x801080B8 (the trapped man, source_st09.h),
+0x8010061C (ST09's per-frame dispatcher, source_st09.h).
+Genuinely missing (ST09-specific, no ST00 copy): 0x80119074 (GTE math,
+story-flag test, pointer-called; ~67k calls in the m3_09..11 saves) and
+0x80119390 (story-flag set/test, pointer-called). Next: identify their
+owner (likely the area-0 E0 objects E0/21 or E0/2F) and port them.
